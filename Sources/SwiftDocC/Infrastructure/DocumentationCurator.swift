@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,21 +10,17 @@
 
 import Foundation
 import Markdown
-import SymbolKit
+private import SymbolKit
 
 /// Crawls a context and curates nodes if necessary.
 struct DocumentationCurator {
     /// The documentation context to crawl.
     private let context: DocumentationContext
     
-    /// The current bundle.
-    private let bundle: DocumentationBundle
-    
     private(set) var problems = [Problem]()
     
-    init(in context: DocumentationContext, bundle: DocumentationBundle, initial: Set<ResolvedTopicReference> = []) {
+    init(in context: DocumentationContext, initial: Set<ResolvedTopicReference> = []) {
         self.context = context
-        self.bundle = bundle
         self.curatedNodes = initial
     }
     
@@ -99,7 +95,7 @@ struct DocumentationCurator {
             // - "documentation/CatalogName/ArticleName"
             switch path.components(separatedBy: "/").count {
             case 0,1:
-                return NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: path).stringValue
+                return NodeURLGenerator.Path.article(bundleName: context.inputs.displayName, articleName: path).stringValue
             case 2:
                 return "\(NodeURLGenerator.Path.documentationFolder)/\(path)"
             default:
@@ -109,7 +105,7 @@ struct DocumentationCurator {
         let reference = ResolvedTopicReference(
             bundleID: resolved.bundleID,
             path: sourceArticlePath,
-            sourceLanguages: resolved.sourceLanguages)
+            sourceLanguages: resolved._sourceLanguages)
         
         guard let currentArticle = self.context.uncuratedArticles[reference],
             let documentationNode = try? DocumentationNode(reference: reference, article: currentArticle.value) else { return nil }
@@ -187,7 +183,7 @@ struct DocumentationCurator {
         let addedGroups = automaticallyGeneratedTaskGroups ?? []
         
         // Validate the node groups' links
-        (taskGroups + authoredSeeAlsoGroups).forEach({ group in
+        for group in (taskGroups + authoredSeeAlsoGroups) {
             problems.append(contentsOf:
                 group.problemsForGroupLinks().map({ problem -> Problem in
                     var diagnostic = problem.diagnostic
@@ -195,11 +191,11 @@ struct DocumentationCurator {
                     return Problem(diagnostic: diagnostic, possibleSolutions: problem.possibleSolutions)
                 })
             )
-        })
+        }
 
         // Crawl the automated curation
-        try addedGroups.forEach { section in
-            try section.references.forEach { childReference in
+        for section in addedGroups {
+            for childReference in section.references {
                 // Descend further into curated topics
                 try crawlChildren(of: childReference, prepareForCuration: prepareForCuration, relateNodes: relateNodes)
             }

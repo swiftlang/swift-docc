@@ -10,13 +10,14 @@
 
 @testable import SwiftDocC
 import XCTest
+import DocCCommon
 
 class RenderHierarchyTranslatorTests: XCTestCase {
     func test() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let technologyReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
-        var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var translator = RenderHierarchyTranslator(context: context)
         let renderHierarchyVariants = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchyVariants
         XCTAssertEqual(renderHierarchyVariants?.variants, [], "Unexpected variant hierarchies for tutorial table of content page")
         let renderHierarchy = renderHierarchyVariants?.defaultValue
@@ -89,7 +90,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
     
     func testMultiplePaths() async throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
@@ -104,7 +105,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         // Get a translated render node
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
+        var translator = RenderNodeTranslator(context: context, identifier: identifier)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         guard case .tutorials(let hierarchy) = renderNode.hierarchyVariants.defaultValue else {
@@ -129,7 +130,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
     }
     
     func testLanguageSpecificHierarchies() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "GeometricalShapes")
+        let (_, context) = try await testBundleAndContext(named: "GeometricalShapes")
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
         // An inner function to assert the rendered hierarchy values for a given reference
@@ -141,7 +142,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
             line: UInt = #line
         ) throws {
             let documentationNode = try context.entity(with: reference)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visit(documentationNode.semantic) as? RenderNode, file: file, line: line)
             
             if let expectedSwiftPaths {

@@ -12,7 +12,8 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class SymbolAvailabilityTests: XCTestCase {
     
@@ -37,11 +38,11 @@ class SymbolAvailabilityTests: XCTestCase {
                 )),
             ]
         )
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: reference.path, sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
-        return try XCTUnwrap((translator.visit(node.semantic as! Symbol) as! RenderNode).metadata.platformsVariants.defaultValue)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: reference.path, sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
+        return (translator.visit(node.semantic as! Symbol) as! RenderNode).metadata.platformsVariants.defaultValue ?? []
     }
     
     func testSymbolGraphSymbolWithoutDeprecatedVersionAndIntroducedVersion() async throws {

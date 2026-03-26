@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// Functions providing tools for generating English language.
 public struct EnglishLanguage: LanguageConstructible {
     private static let vowels = "aeiou"

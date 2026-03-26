@@ -66,6 +66,18 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         return abstractSection?.paragraph
     }
 
+    /// The list of supported languages for the article, if present.
+    ///
+    /// This information is available via `@SupportedLanguage` in the `@Metadata` directive.
+    public var supportedLanguages: Set<SourceLanguage>? {
+        guard let metadata = self.metadata else {
+            return nil
+        }
+
+        let langs = metadata.supportedLanguages.map(\.language)
+        return langs.isEmpty ? nil : Set(langs)
+    }
+
     /// An optional custom deprecation summary for a deprecated symbol.
     private(set) public var deprecationSummary: MarkupContainer?
     
@@ -98,7 +110,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
     public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
-            let range = markup.child(at: 0)?.range ?? SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
+            let range = markup.child(at: 0)?.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil)
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
 
             let replacementText: String
@@ -197,7 +209,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         
         let relevantCategorizedOptions = allCategorizedOptions.compactMapValues(\.first)
         
-        let isDocumentationExtension = title.child(at: 0) is (any AnyLink)
+        let isDocumentationExtension = title.startsWithAnyLink
         if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
             let diagnosticSummary = """
             A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.

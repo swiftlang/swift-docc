@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 @testable import SwiftDocC
 
@@ -166,7 +166,7 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "title": "APICollection",
                         "path": "/documentation/mixedlanguageframework/apicollection",
-                        "type": "symbol",
+                        "type": "article",
                         "children": [
                             {
                               "title": "Objective-C–only APIs",
@@ -204,7 +204,7 @@ final class RenderIndexTests: XCTestCase {
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
                             "title": "MixedLanguageProtocol Implementations",
-                            "type": "symbol",
+                            "type": "article",
                             "children": [
                               {
                                 "title": "Instance Methods",
@@ -391,7 +391,7 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "path": "/documentation/mixedlanguageframework/apicollection",
                         "title": "APICollection",
-                        "type": "symbol",
+                        "type": "article",
                         "children": [
                           {
                             "title": "Swift-only APIs",
@@ -449,7 +449,7 @@ final class RenderIndexTests: XCTestCase {
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
                             "title": "MixedLanguageProtocol Implementations",
-                            "type": "symbol",
+                            "type": "article",
                             "children": [
                               {
                                 "title": "Instance Methods",
@@ -648,10 +648,10 @@ final class RenderIndexTests: XCTestCase {
         )
         try bundle.write(to: bundleDirectory)
 
-        let (_, loadedBundle, context) = try await loadBundle(from: bundleDirectory)
+        let (_, _, context) = try await loadBundle(from: bundleDirectory)
 
         XCTAssertEqual(
-            try generatedRenderIndex(for: loadedBundle, withIdentifier: "com.test.example", withContext: context),
+            try generatedRenderIndex(forIdentifier: "com.test.example", inContext: context),
             try RenderIndex.fromString(#"""
             {
                 "interfaceLanguages": {
@@ -707,7 +707,7 @@ final class RenderIndexTests: XCTestCase {
                   },
                   "references" : {
                     "plus.svg" : {
-                      "alt" : null,
+                      "alt" : "A plus icon.",
                       "type" : "image",
                       "identifier" : "plus.svg",
                       "variants" : [
@@ -737,17 +737,17 @@ final class RenderIndexTests: XCTestCase {
     }
     
     func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) async throws -> RenderIndex {
-        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
-        return try generatedRenderIndex(for: bundle, withIdentifier: bundleIdentifier, withContext: context)
+        let (_, context) = try await testBundleAndContext(named: testBundleName)
+        return try generatedRenderIndex(forIdentifier: bundleIdentifier, inContext: context)
     }
     
-    func generatedRenderIndex(for bundle: DocumentationBundle, withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+    func generatedRenderIndex(forIdentifier bundleIdentifier: String, inContext context: DocumentationContext) throws -> RenderIndex {
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let indexDirectory = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(
             outputURL: indexDirectory,
-            bundleIdentifier: bundleIdentifier,
+            bundleIdentifier: context.inputs.id.rawValue,
             sortRootChildrenByName: true
         )
 

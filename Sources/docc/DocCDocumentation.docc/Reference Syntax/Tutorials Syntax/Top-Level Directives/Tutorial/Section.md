@@ -11,7 +11,7 @@ Displays a grouping of text, images, and tasks on a tutorial page.
 
 ## Overview
 
-Use a `Section` directive to show a unit of work that consists of text, media, for example images and videos, and tasks on a tutorial page. A tutorial page must includes one or more sections.
+Use a `Section` directive to show a unit of work that consists of text, media (for example images and videos), and tasks on a tutorial page. A tutorial page must includes one or more sections.
 
 ![A screenshot showing a section on a tutorial page. The section includes text, an image, and coding steps.](1)
 
@@ -79,4 +79,4 @@ The following pages can include sections:
 
 - ``Stack``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

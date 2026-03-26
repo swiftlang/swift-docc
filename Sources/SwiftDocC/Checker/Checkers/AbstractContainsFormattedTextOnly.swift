@@ -14,7 +14,7 @@ public import Markdown
 /**
  A document's abstract may only contain formatted text. Images and links are not allowed.
  */
-@available(*, deprecated, message: "This check is no longer applicable. This deprecated API will be removed after 6.3 is released")
+@available(*, deprecated, message: "This check is no longer applicable. This deprecated API will be removed after 6.4 is released")
 public struct AbstractContainsFormattedTextOnly: Checker {
     public var problems: [Problem] = [Problem]()
     private var sourceFile: URL?

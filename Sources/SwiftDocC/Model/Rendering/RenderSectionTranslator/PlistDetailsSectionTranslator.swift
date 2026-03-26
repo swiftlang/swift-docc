@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+private import SymbolKit
 
 /// Translates a symbol's details into a render nodes's details section.
 struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {

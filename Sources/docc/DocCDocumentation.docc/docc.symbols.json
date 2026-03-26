@@ -1,0 +1,7601 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "generator" : "docc-generate-symbol-graph"
+  },
+  "module" : {
+    "bystanders" : [
+
+    ],
+    "isVirtual" : false,
+    "name" : "docc",
+    "platform" : {
+
+    },
+    "version" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "relationships" : [
+
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 6,
+            "minor" : 1,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "AlternateRepresentation"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "reference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TopicReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that configures an alternate language representation of a symbol."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "An API that can be called from more than one source language has more than one language representation."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Whenever possible, prefer to define alternative language representations for a symbol by using in-source annotations"
+          },
+          {
+            "text" : "such as the `@objc` and `@_objcImplementation` attributes in Swift,"
+          },
+          {
+            "text" : "or the `NS_SWIFT_NAME` macro in Objective-C."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If your source language doesn’t have a mechanism for specifying alternate representations or if your intended alternate representation isn't compatible with those attributes,"
+          },
+          {
+            "text" : "you can use the `@AlternateRepresentation` directive to specify another symbol that should be considered an alternate representation of the documented symbol."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @AlternateRepresentation(MyApp\/MyClass\/property)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "If you prefer, you can wrap the symbol link in a set of double backticks (\\`\\`), or use any other supported syntax for linking to symbols."
+          },
+          {
+            "text" : "For more information about linking to symbols, see <doc:linking-to-symbols-and-other-content>."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This provides a hint to the renderer as to the alternate language representations for the current symbol."
+          },
+          {
+            "text" : "The renderer may use this hint to provide a link to these alternate symbols."
+          },
+          {
+            "text" : "For example, Swift-DocC-Render shows a toggle between supported languages, where switching to a different language representation will redirect to the documentation for the configured alternate symbol."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Special considerations"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Links containing a colon (`:`) must be wrapped in quotes:"
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @AlternateRepresentation(\"doc:\/\/com.example\/documentation\/MyClass\/property\")"
+          },
+          {
+            "text" : "    @AlternateRepresentation(\"MyClass\/myFunc(_:_:)\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The `@AlternateRepresentation` directive only specifies an alternate language representation in one direction."
+          },
+          {
+            "text" : "To define a two-way relationship, add an `@AlternateRepresentation` directive, linking to this symbol, to the other symbol as well."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You can only configure custom alternate language representations for languages that the documented symbol doesn't already have a language representation for,"
+          },
+          {
+            "text" : "either from in-source annotations or from a previous `@AlternateRepresentation` directive."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - reference: A link to another symbol that should be considered an alternate language representation of the current symbol."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     If you prefer, you can wrap the symbol link in a set of double backticks (\\`\\`)."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$AlternateRepresentation"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$AlternateRepresentation",
+            "spelling" : "AlternateRepresentation"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "AlternateRepresentation"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "reference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "TopicReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "AlternateRepresentation"
+      },
+      "pathComponents" : [
+        "AlternateRepresentation"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Article"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Article"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Article",
+            "spelling" : "Article"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Article"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Article"
+      },
+      "pathComponents" : [
+        "Article"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Assessments"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
+          "spelling" : "MultipleChoice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A collection of questions about the concepts the documentation presents."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Assessments"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Assessments",
+            "spelling" : "Assessments"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Assessments"
+          }
+        ],
+        "title" : "Assessments"
+      },
+      "pathComponents" : [
+        "Assessments"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "AutomaticArticleSubheading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that modifies Swift-DocC's default behavior for automatic subheading generation on"
+          },
+          {
+            "text" : "article pages."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "By default, articles receive a second-level \"Overview\" heading unless the author explicitly writes"
+          },
+          {
+            "text" : "some other H2 heading below the abstract. This allows for opting out of that behavior."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - enabledness: Whether or not DocC generates automatic second-level \"Overview\" subheadings."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `enabled`: An overview subheading should be automatically created for the article (the default)."
+          },
+          {
+            "text" : "     - term `disabled`: No automatic overview subheading should be created for the article."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$AutomaticArticleSubheading"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticArticleSubheading",
+            "spelling" : "AutomaticArticleSubheading"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "AutomaticArticleSubheading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "AutomaticArticleSubheading"
+      },
+      "pathComponents" : [
+        "AutomaticArticleSubheading"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "AutomaticSeeAlso"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying Swift-DocC's automatic behavior when generating a page's"
+          },
+          {
+            "text" : "See Also section."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - enabledness: Whether or not DocC generates automatic See Also sections."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `enabled`: A See Also section should be automatically created (the default)."
+          },
+          {
+            "text" : "     - term `disabled`: No automatic See Also section should be created."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$AutomaticSeeAlso"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticSeeAlso",
+            "spelling" : "AutomaticSeeAlso"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "AutomaticSeeAlso"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "AutomaticSeeAlso"
+      },
+      "pathComponents" : [
+        "AutomaticSeeAlso"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "AutomaticTitleHeading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying Swift-DocC's automatic behavior when generating a page's"
+          },
+          {
+            "text" : "title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "A title heading is also known as a page eyebrow or kicker."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - enabledness: Whether or not DocC generates automatic title headings."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `enabled`: A title heading should be automatically created for the page (the default)."
+          },
+          {
+            "text" : "     - term `disabled`: No automatic title heading should be created for the page."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$AutomaticTitleHeading"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticTitleHeading",
+            "spelling" : "AutomaticTitleHeading"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "AutomaticTitleHeading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "AutomaticTitleHeading"
+      },
+      "pathComponents" : [
+        "AutomaticTitleHeading"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Available"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "platform"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Platform"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "introduced"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SemanticVersion"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "deprecated"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SemanticVersion"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies when a documentation page is available for a given platform."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Whenever possible, prefer to specify availability information using in-source annotations such as the `@available` attribute in Swift or the `API_AVAILABLE` macro in Objective-C."
+          },
+          {
+            "text" : "Using in-source annotations ensures that your documentation matches the availability of your API."
+          },
+          {
+            "text" : "If you duplicate availability information in the documentation markup, the information from the `@Available` directive overrides the information for the in-source annotations from that platform and risks being inaccurate."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If your source language doesn't have a mechanism for specifying API availability or if you're writing articles about a newly introduced or deprecated API,"
+          },
+          {
+            "text" : "you can use the `@Available` directive to specify when you introduced, and optionally deprecated, an API or documentation page for a given platform."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Each `@Available` directive specifies the availability information for a single platform."
+          },
+          {
+            "text" : "The directive matches the `iOS`, `macOS`, `watchOS`, and `tvOS` platform names case-insensitively."
+          },
+          {
+            "text" : "Any other platform names are displayed verbatim."
+          },
+          {
+            "text" : "If a platform name contains whitespace, commas, or other special characters you need to surround it with quotation marks (`\"`)."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @Available(iOS, introduced: \"15.0\")"
+          },
+          {
+            "text" : "    @Available(macOS, introduced: \"12.0\", deprecated: \"14.0\")"
+          },
+          {
+            "text" : "    @Available(\"My Package\", introduced: \"1.2.3\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Both the \"introduced\" and \"deprecated\" parameters take string representations of semantic version numbers (major`.`minor`.`patch)."
+          },
+          {
+            "text" : "If you omit the \"patch\" or \"minor\" components, they are assumed to be `0`."
+          },
+          {
+            "text" : "This means that `\"1.0.0\"`, `\"1.0\"`, and `\"1\"` all specify the same semantic version."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier Versions:"
+          },
+          {
+            "text" : "> Before Swift-DocC 6.0, the `@Available` directive didn't support the \"deprecated\" parameter."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip:"
+          },
+          {
+            "text" : "> In addition to specifying the version when you deprecated an API or documentation page,"
+          },
+          {
+            "text" : "> you can use the ``DeprecationSummary`` directive to provide the reader with additional information about the deprecation or refer them to a replacement API."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - platform: The platform name that this version information applies to."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - introduced: The semantic version (major`.`minor`.`patch) when you introduced this API or documentation page."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - deprecated: The semantic version (major`.`minor`.`patch) when you deprecated this API or documentation page."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Available"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Available",
+            "spelling" : "Available"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Available"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "platform"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Platform"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "introduced"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "SemanticVersion"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "deprecated"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "SemanticVersion"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Available"
+      },
+      "pathComponents" : [
+        "Available"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "CallToAction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "url"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "URL"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "file"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "label"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that adds a prominent button or link to a page's header."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "A \"Call to Action\" has two main components: a link or file path, and the link text to display."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The link path can be specified in one of two ways:"
+          },
+          {
+            "text" : "- The `url` parameter specifies a URL that will be used verbatim. Use this when you're linking"
+          },
+          {
+            "text" : "  to an external page or externally-hosted file."
+          },
+          {
+            "text" : "- The `path` parameter specifies the path to a file hosted within your documentation catalog."
+          },
+          {
+            "text" : "  Use this if you're linking to a downloadable file that you're managing alongside your"
+          },
+          {
+            "text" : "  articles and tutorials."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The link text can also be specified in one of two ways:"
+          },
+          {
+            "text" : "- The `purpose` parameter can be used to use a default button label. There are two valid values:"
+          },
+          {
+            "text" : "  - `download` indicates that the link is to a downloadable file. The button will be labeled \"Download\"."
+          },
+          {
+            "text" : "  - `link` indicates that the link is to an external webpage."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "     The button will be labeled \"Visit\" when used on article pages and \"View Source\" when used on sample code pages."
+          },
+          {
+            "text" : "- The `label` parameter specifies the literal text to use as the button label."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "`@CallToAction` requires one of `url` or `path`, and one of `purpose` or `label`. Specifying both"
+          },
+          {
+            "text" : "`purpose` and `label` is allowed, but the `label` will override the default label provided by"
+          },
+          {
+            "text" : "`purpose`."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @CallToAction(url: \"https:\/\/example.com\/sample.zip\", purpose: download)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - url: The location of the associated link, as a fixed URL."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - file: The location of the associated link, as a reference to a file in this documentation bundle."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - purpose: The purpose of this Call to Action, which provides a default button label."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     - term `download`: References a link to download an associated asset, like a sample project."
+          },
+          {
+            "text" : "     - term `link`: References a link to view external content, like a source code repository."
+          },
+          {
+            "text" : "  - label: Text to use as the button label, which may override the default provided by a"
+          },
+          {
+            "text" : "     given `purpose`."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$CallToAction"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$CallToAction",
+            "spelling" : "CallToAction"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "CallToAction"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "url"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "URL"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "file"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "label"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "CallToAction"
+      },
+      "pathComponents" : [
+        "CallToAction"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Chapter"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "name"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    ...\n\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Image",
+          "spelling" : "Image"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "source"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alt"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$TutorialReference",
+          "spelling" : "TutorialReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "tutorial"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TopicReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A chapter containing ``Tutorial``s to complete."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - name: The name of the chapter."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Chapter"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Chapter",
+            "spelling" : "Chapter"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Chapter"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "name"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Chapter"
+      },
+      "pathComponents" : [
+        "Chapter"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Choice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "isCorrect"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Bool"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    ...\n\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Justification",
+          "spelling" : "Justification"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "reaction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "One of possibly many choices in a ``MultipleChoice`` question."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - isCorrect: `true` if this choice is a correct one; there can be multiple correct choices."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Choice"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Choice",
+            "spelling" : "Choice"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Choice"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "isCorrect"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Bool"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Choice"
+      },
+      "pathComponents" : [
+        "Choice"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Code"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Code"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Code",
+            "spelling" : "Code"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Code"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Code"
+      },
+      "pathComponents" : [
+        "Code"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Column"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "size"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = 1"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A container directive that holds general markup content describing a column"
+          },
+          {
+            "text" : "with a row in a grid-based layout."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - size: The size of this column."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     Specify a value greater than `1` to make this column span multiple columns"
+          },
+          {
+            "text" : "     in the parent ``Row``."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Column"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Column",
+            "spelling" : "Column"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Column"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "size"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Column"
+      },
+      "pathComponents" : [
+        "Column"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Comment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Comment"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Comment",
+            "spelling" : "Comment"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Comment"
+          }
+        ],
+        "title" : "Comment"
+      },
+      "pathComponents" : [
+        "Comment"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ContentAndMedia"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$ContentAndMedia"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
+            "spelling" : "ContentAndMedia"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "ContentAndMedia"
+          }
+        ],
+        "title" : "ContentAndMedia"
+      },
+      "pathComponents" : [
+        "ContentAndMedia"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "DeprecationSummary"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Many in-source deprecation annotations—such as the `@available` attribute in Swift—allow you to specify a plain text deprecation message."
+          },
+          {
+            "text" : "You can use the `@DeprecationSummary` directive to override that deprecation message with one or more paragraphs of formatted documentation markup."
+          },
+          {
+            "text" : "For example,"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@DeprecationSummary {"
+          },
+          {
+            "text" : "    This method is unsafe because it could potentially cause buffer overruns."
+          },
+          {
+            "text" : "    Use ``getBytes(_:length:)`` or ``getBytes(_:range:)`` instead."
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You can use the `@DeprecationSummary` directive top-level in articles, documentation extension files, or documentation comments."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier versions: Before Swift-DocC 6.1, `@DeprecationSummary` was not supported in documentation comments."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip:"
+          },
+          {
+            "text" : "> If you are writing a custom deprecation summary message for an API or documentation page that isn't already deprecated,"
+          },
+          {
+            "text" : "> you should also deprecate it—using in-source annotations when possible or ``Available`` directives when in-source annotations aren't available—so that the reader knows the version when you deprecated that API or documentation page."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$DeprecationSummary"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DeprecationSummary",
+            "spelling" : "DeprecationSummary"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "DeprecationSummary"
+          }
+        ],
+        "title" : "DeprecationSummary"
+      },
+      "pathComponents" : [
+        "DeprecationSummary"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 7,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "DisplayName"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "name"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "style"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Style"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = conceptual"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that controls how the documentation-extension file overrides the symbol's display name."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The ``name`` property will override the symbol's default display name."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "When the ``style`` property is ``Style\/conceptual``, the symbol's name is rendered as \"conceptual\"---same as article names or tutorial names---where applicable. The default style is ``Style\/conceptual``."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "When the ``style`` property is ``Style\/symbol``, the symbol's name is rendered as \"symbol\"---same as article names or tutorial names---where applicable. The default style is ``Style\/conceptual``."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @DisplayName(\"Custom Symbol Name\", style: conceptual)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - name: The custom display name for this symbol."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - style: The style of the display name for this symbol."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     Defaults to ``Style\/conceptual``."
+          },
+          {
+            "text" : "     - term `symbol`: Completely override any in-source content with the content from the documentation-extension."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$DisplayName"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DisplayName",
+            "spelling" : "DisplayName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "DisplayName"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "name"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "style"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Style"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "DisplayName"
+      },
+      "pathComponents" : [
+        "DisplayName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Documentation"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Documentation"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Documentation",
+            "spelling" : "Documentation"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Documentation"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Documentation"
+      },
+      "pathComponents" : [
+        "Documentation"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "DocumentationExtension"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "mergeBehavior"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Behavior"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "By default, content from the documentation-extension file is added after the content from the in-source documentation for that symbol."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You get this default behavior in two cases:"
+          },
+          {
+            "text" : "- when the documentation-extension file doesn't have a `DocumentationExtension` directive"
+          },
+          {
+            "text" : "- when the `DocumentationExtension` directive explicitly specifies the ``Behavior\/append`` behavior"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The other merge behavior completely replaces the content from the in-source documentation for that symbol with the content from the documentation-extension file. To get this behavior, specify ``Behavior\/override`` as the merge behavior."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @DocumentationExtension(mergeBehavior: override)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The `DocumentationExtension` is only valid within a ``Metadata`` directive."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - mergeBehavior: A value of `append` or `override`, denoting whether an extension file's content amends or replaces the in-source documentation."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `append`: Append the documentation-extension content to the in-source content and process them together."
+          },
+          {
+            "text" : "     - term `override`: Completely override any in-source content with the content from the documentation-extension."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$DocumentationExtension"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DocumentationExtension",
+            "spelling" : "DocumentationExtension"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "DocumentationExtension"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "mergeBehavior"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Behavior"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "DocumentationExtension"
+      },
+      "pathComponents" : [
+        "DocumentationExtension"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Downloads"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Downloads"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Downloads",
+            "spelling" : "Downloads"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Downloads"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Downloads"
+      },
+      "pathComponents" : [
+        "Downloads"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Forums"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Forums"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Forums",
+            "spelling" : "Forums"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Forums"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Forums"
+      },
+      "pathComponents" : [
+        "Forums"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Image"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "source"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alt"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A block filled with an image."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - source: A reference to the source file for the media item."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Optional alternate text for an image."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Image"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Image",
+            "spelling" : "Image"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Image"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "source"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "alt"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Image"
+      },
+      "pathComponents" : [
+        "Image"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Intro"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "title"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "An introductory section for instructional pages."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - title: The title of the containing ``Tutorial``."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Intro"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Intro",
+            "spelling" : "Intro"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Intro"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "title"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Intro"
+      },
+      "pathComponents" : [
+        "Intro"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Justification"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "reaction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A short justification as to whether a ``Choice`` is correct for a question."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - reaction: The reaction to the reader selecting the containing ``Choice``. Defaults to nil."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Justification"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Justification",
+            "spelling" : "Justification"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Justification"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "reaction"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Justification"
+      },
+      "pathComponents" : [
+        "Justification"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Links"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "visualStyle"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "VisualStyle"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for authoring authoring embedded"
+          },
+          {
+            "text" : "previews of documentation links (similar to how links are currently"
+          },
+          {
+            "text" : "rendered in Topics sections) anywhere on the page without affecting page"
+          },
+          {
+            "text" : "curation behavior."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "`@Links` gives authors flexibility in choosing how they want to highlight"
+          },
+          {
+            "text" : "documentation on the page itself versus in the navigation sidebar."
+          },
+          {
+            "text" : "It also allows for mixing and matching different visual styles of"
+          },
+          {
+            "text" : "topics."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "..."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### What's New in SlothCreator"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@Links(visualStyle: compactGrid) {"
+          },
+          {
+            "text" : "   - <doc:get-started-preparing-sloth-food>"
+          },
+          {
+            "text" : "   - <doc:feeding-your-sloth-in-winter>"
+          },
+          {
+            "text" : "   - <doc:ordering-food-delivery>"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "..."
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - visualStyle: The specified style that should be used when rendering the specified links."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `list`: A list of the linked pages, including their full declaration and abstract."
+          },
+          {
+            "text" : "     - term `compactGrid`: A grid of items based on the card image for the linked pages."
+          },
+          {
+            "text" : "        "
+          },
+          {
+            "text" : "        Includes each page’s title and card image but excludes their abstracts."
+          },
+          {
+            "text" : "     - term `detailedGrid`: A grid of items based on the card image for the linked pages."
+          },
+          {
+            "text" : "        "
+          },
+          {
+            "text" : "        Unlike ``compactGrid``, this style includes the abstract for each page."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Links"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Links",
+            "spelling" : "Links"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Links"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "visualStyle"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "VisualStyle"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Links"
+      },
+      "pathComponents" : [
+        "Links"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Metadata"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that contains various metadata about a page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive acts as a container for metadata and configuration without any arguments of its own."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## Topics"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Child Directives"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``AlternateRepresentation``"
+          },
+          {
+            "text" : "- ``DocumentationExtension``"
+          },
+          {
+            "text" : "- ``TechnologyRoot``"
+          },
+          {
+            "text" : "- ``DisplayName``"
+          },
+          {
+            "text" : "- ``PageImage``"
+          },
+          {
+            "text" : "- ``PageColor``"
+          },
+          {
+            "text" : "- ``CallToAction``"
+          },
+          {
+            "text" : "- ``Availability``"
+          },
+          {
+            "text" : "- ``PageKind``"
+          },
+          {
+            "text" : "- ``SupportedLanguage``"
+          },
+          {
+            "text" : "- ``TitleHeading``"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Metadata"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Metadata",
+            "spelling" : "Metadata"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Metadata"
+          }
+        ],
+        "title" : "Metadata"
+      },
+      "pathComponents" : [
+        "Metadata"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "MultipleChoice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$MultipleChoice"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
+            "spelling" : "MultipleChoice"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "MultipleChoice"
+          }
+        ],
+        "title" : "MultipleChoice"
+      },
+      "pathComponents" : [
+        "MultipleChoice"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Options"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "scope"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Scope"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = local"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive to adjust Swift-DocC's default behaviors when rendering a page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - scope: Whether the options in this Options directive should apply locally to the page"
+          },
+          {
+            "text" : "     or globally to the DocC catalog."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     - term `local`: The directive should only affect the current page."
+          },
+          {
+            "text" : "     - term `global`: The directive should affect all pages in the current DocC catalog."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## Topics"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Adjusting Automatic Behaviors"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``AutomaticSeeAlso``"
+          },
+          {
+            "text" : "- ``AutomaticTitleHeading``"
+          },
+          {
+            "text" : "- ``AutomaticArticleSubheading``"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Adjusting Visual Style"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``TopicsVisualStyle``"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Options"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Options",
+            "spelling" : "Options"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Options"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "scope"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Scope"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Options"
+      },
+      "pathComponents" : [
+        "Options"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 9,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "PageColor"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies an accent color for a given documentation page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the `PageColor` directive to provide a hint to the renderer as to how"
+          },
+          {
+            "text" : "the page should be accented with color. The renderer may use this color,"
+          },
+          {
+            "text" : "depending on the context, as a foundation for other colors used on the"
+          },
+          {
+            "text" : "page. For example, Swift-DocC-Render uses this color as the primary"
+          },
+          {
+            "text" : "background color of a page's introduction section and adjusts other"
+          },
+          {
+            "text" : "elements in the introduction section to account for the new background."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @PageColor(orange)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - color: A context-dependent, standard color."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `blue`: A context-dependent blue color."
+          },
+          {
+            "text" : "     - term `gray`: A context-dependent gray color."
+          },
+          {
+            "text" : "     - term `green`: A context-dependent green color."
+          },
+          {
+            "text" : "     - term `orange`: A context-dependent orange color."
+          },
+          {
+            "text" : "     - term `purple`: A context-dependent purple color."
+          },
+          {
+            "text" : "     - term `red`: A context-dependent red color."
+          },
+          {
+            "text" : "     - term `yellow`: A context-dependent yellow color."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageColor"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageColor",
+            "spelling" : "PageColor"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageColor"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageColor"
+      },
+      "pathComponents" : [
+        "PageColor"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "PageImage"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "source"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alt"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Associates an image with a page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You can use this directive to set the image used when rendering a user-interface element representing the page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the \"icon\" purpose to customize the icon that DocC uses to represent this page in the navigation sidebar."
+          },
+          {
+            "text" : "For article pages, DocC also uses this icon to represent the article in topics sections and in ``Links`` directives that use the `list` visual style."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip: Page images with the \"icon\" purpose work best when they're square and when they have good visual clarity at small sizes (less than 20×20 points)."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the \"card\" purpose to customize the image that DocC uses to represent this page inside ``Links`` directives that use the either the `detailedGrid` or the `compactGrid` visual style."
+          },
+          {
+            "text" : "For article pages, DocC also incorporates a partially faded out version of the card image in the background of the page itself."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip: Page images with the \"card\" purpose work best when they have a 16:9 aspect ratio. Currently, the largest size that DocC displays a card image is 640×360 points."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If you specify an \"icon\" page image without specifying a \"card\" page image, DocC will use the icon as a fallback in places where the card image is preferred."
+          },
+          {
+            "text" : "To avoid upscaled pixelated icons in these places, either configure a \"card\" page image as well or use a scalable vector image asset for the \"icon\" page image."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - purpose: The image's purpose."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `icon`: The image will be used when representing the page as an icon, such as in the navigation sidebar."
+          },
+          {
+            "text" : "     - term `card`: The image will be used when representing the page as a card, such as in grid styled Topics sections."
+          },
+          {
+            "text" : "  - source: The base file name of an image in your documentation catalog."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Alternative text that describes the image to screen readers."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageImage"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageImage",
+            "spelling" : "PageImage"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageImage"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "source"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "alt"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageImage"
+      },
+      "pathComponents" : [
+        "PageImage"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "PageKind"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "kind"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Kind"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that allows you to set a page's kind, which affects its default title heading and page icon."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The `@PageKind` directive tells Swift-DocC to treat a documentation page as a particular"
+          },
+          {
+            "text" : "\"kind\". This is used to determine the page's default navigator icon, as well as the default"
+          },
+          {
+            "text" : "title heading on the page itself."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The available page kinds are `article` and `sampleCode`."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a `@Metadata` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @PageKind(sampleCode)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - kind: The page kind to apply to the page."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `article`: An article of free-form text; the default for standalone markdown files."
+          },
+          {
+            "text" : "     - term `sampleCode`: A page describing a \"sample code\" project."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageKind"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageKind",
+            "spelling" : "PageKind"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageKind"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "kind"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Kind"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageKind"
+      },
+      "pathComponents" : [
+        "PageKind"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Redirected"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "from"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "URL"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies a previous URL for the page where the directive appears."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If the page has moved more than once you can add multiple  `Redirected` directives, each specifying one previous URL. For example:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Redirected(from: \"old\/path\/to\/this\/page\")"
+          },
+          {
+            "text" : "@Redirected(from: \"another\/old\/path\/to\/this\/page\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Note: Starting with version 6.0, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In"
+          },
+          {
+            "text" : "earlier versions, the `Redirected` directive is only supported as a top-level directive."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Setting up Redirects"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If you host your documentation on a web server, you can set a HTTP \"301 Moved Permanently\" redirect for each `Redirected` value to avoid breaking existing links to your content."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "To find each page’s Redirected values, pass the `--emit-digest` flag to DocC."
+          },
+          {
+            "text" : "This flag configures DocC to write additional metadata files to the output directory."
+          },
+          {
+            "text" : "One of these files, `linkable-entities.json`, contains summarized information about all pages and on-page landmarks that you can link to from outside the DocC documentation."
+          },
+          {
+            "text" : "Each of these \"entities\" has a `\"path\"`---which represents the current relative path of that page---and an optional list of `\"redirects\"`---which represent all the `Redirected` values for page as they were authored in the markup."
+          },
+          {
+            "text" : "You can write either relative redirect values or absolute redirect values in the markup depending on what information you need when setting up HTTP \"301 Moved Permanently\" redirects on your web server."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - from: The URL that redirects to the page associated with the directive."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Redirected"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Redirected",
+            "spelling" : "Redirected"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Redirected"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "from"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "URL"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Redirected"
+      },
+      "pathComponents" : [
+        "Redirected"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Resources"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Resources"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Resources",
+            "spelling" : "Resources"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Resources"
+          }
+        ],
+        "title" : "Resources"
+      },
+      "pathComponents" : [
+        "Resources"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Row"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "numberOfColumns"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Column",
+          "spelling" : "Column"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "size"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = 1"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A container directive that arranges content into a grid-based row and column"
+          },
+          {
+            "text" : "layout."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Create a new row by creating an `@Row` that contains child `@Column` directives."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Row {"
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"icon-power-icon\", alt: \"A blue square containing a snowflake.\") {"
+          },
+          {
+            "text" : "         Ice power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"fire-power-icon\", alt: \"A red square containing a flame.\") {"
+          },
+          {
+            "text" : "         Fire power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"wind-power-icon\", alt: \"A teal square containing a breath of air.\") {"
+          },
+          {
+            "text" : "         Wind power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"lightning-power-icon\", alt: \"A yellow square containing a lightning bolt.\") {"
+          },
+          {
+            "text" : "         Lightning power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - numberOfColumns: The number of columns available in this row."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## Topics"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``Column``"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Row"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Row",
+            "spelling" : "Row"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Row"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "numberOfColumns"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Row"
+      },
+      "pathComponents" : [
+        "Row"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SampleCode"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$SampleCode"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$SampleCode",
+            "spelling" : "SampleCode"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "SampleCode"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "SampleCode"
+      },
+      "pathComponents" : [
+        "SampleCode"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Section"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Section"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Section",
+            "spelling" : "Section"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Section"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Section"
+      },
+      "pathComponents" : [
+        "Section"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Small"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying small print text like legal, license, or copyright text that"
+          },
+          {
+            "text" : "should be rendered in a smaller font size."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The `@Small` directive is based on HTML's small tag (`<small>`). It supports any inline markup"
+          },
+          {
+            "text" : "formatting like bold and italics but does not support more structured markup like ``Row``"
+          },
+          {
+            "text" : "and ``Row\/Column``."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "You can create a sloth using the ``init(name:color:power:)``"
+          },
+          {
+            "text" : "initializer, or create randomly generated sloth using a"
+          },
+          {
+            "text" : "``SlothGenerator``:"
+          },
+          {
+            "text" : "   "
+          },
+          {
+            "text" : "   let slothGenerator = MySlothGenerator(seed: randomSeed())"
+          },
+          {
+            "text" : "   let habitat = Habitat(isHumid: false, isWarm: true)"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   \/\/ ..."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@Small {"
+          },
+          {
+            "text" : "    _Licensed under Apache License v2.0 with Runtime Library Exception._"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Small"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Small",
+            "spelling" : "Small"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Small"
+          }
+        ],
+        "title" : "Small"
+      },
+      "pathComponents" : [
+        "Small"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 7,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Snippet"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "path"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "slice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Embeds a code example from the project's code snippets."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use a `Snippet` directive to embed a code example from the project's \"Snippets\" directory on the page."
+          },
+          {
+            "text" : "The `path` argument is the relative path from the package's top-level \"Snippets\" directory to your snippet file without the `.swift` extension."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Snippet(path: \"example-snippet\", slice: \"setup\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If you prefer, you can specify the relative path from the package's _root_ directory (by including a \"Snippets\/\" prefix)."
+          },
+          {
+            "text" : "You can also include the package name---as defined in `Package.swift`---before the \"Snippets\/\" prefix."
+          },
+          {
+            "text" : "Neither of these leading path components are necessary because all your snippet code files are always located in your package's \"Snippets\" directory."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier Versions:"
+          },
+          {
+            "text" : "> Before Swift-DocC 6.2.1, the `@Snippet` path needed to include both the package name component and the \"Snippets\" component:"
+          },
+          {
+            "text" : ">"
+          },
+          {
+            "text" : "> ```markdown"
+          },
+          {
+            "text" : "> @Snippet(path: \"my-package\/Snippets\/example-snippet\")"
+          },
+          {
+            "text" : "> ```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You can define named slices of your snippet by annotating the snippet file with `\/\/ snippet.<name>` and `\/\/ snippet.end` lines."
+          },
+          {
+            "text" : "A named slice automatically ends at the start of the next named slice, without an explicit `snippet.end` annotation."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If the referenced snippet includes annotated slices, you can limit the embedded code example to a certain line range by specifying a `slice` name."
+          },
+          {
+            "text" : "By default, the embedded code example includes the full snippet. For more information, see <doc:adding-code-snippets-to-your-content#Slice-up-your-snippet-to-break-it-up-in-your-content>."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - path: The relative path from your package's top-level \"Snippets\" directory to the snippet file that you want to embed in the page, without the `.swift` file extension."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - slice: The name of a snippet slice to limit the embedded code example to a certain line range."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     By default, the embedded code example includes the full snippet."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Snippet"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Snippet",
+            "spelling" : "Snippet"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Snippet"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "path"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "slice"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Snippet"
+      },
+      "pathComponents" : [
+        "Snippet"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Stack"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
+          "spelling" : "ContentAndMedia"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A semantic model for a view that arranges its children in a row."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Stack"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Stack",
+            "spelling" : "Stack"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Stack"
+          }
+        ],
+        "title" : "Stack"
+      },
+      "pathComponents" : [
+        "Stack"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Step"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Step"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Step",
+            "spelling" : "Step"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Step"
+          }
+        ],
+        "title" : "Step"
+      },
+      "pathComponents" : [
+        "Step"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Steps"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Steps"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Steps",
+            "spelling" : "Steps"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Steps"
+          }
+        ],
+        "title" : "Steps"
+      },
+      "pathComponents" : [
+        "Steps"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SupportedLanguage"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "language"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SourceLanguage"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that controls what programming languages an article is available in."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "By default, an article is available in the languages the module that's being documented is available in. Use"
+          },
+          {
+            "text" : "this directive to override this behavior in a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @SupportedLanguage(swift)"
+          },
+          {
+            "text" : "    @SupportedLanguage(objc)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive supports any language identifier, but only the following are currently supported"
+          },
+          {
+            "text" : "by Swift-DocC Render:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "| Identifier                                 | Language               |"
+          },
+          {
+            "text" : "| --------------------------------- | ----------------------|"
+          },
+          {
+            "text" : "| `swift`                                | Swift                       |"
+          },
+          {
+            "text" : "| `objc`, `objective-c`   | Objective-C            |"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - language: A source language that this symbol is available in."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     For supported values, see ``SupportedLanguage``."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$SupportedLanguage"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$SupportedLanguage",
+            "spelling" : "SupportedLanguage"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "SupportedLanguage"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "language"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "SourceLanguage"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "SupportedLanguage"
+      },
+      "pathComponents" : [
+        "SupportedLanguage"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Tab"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "title"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A container directive that holds general markup content describing an individual"
+          },
+          {
+            "text" : "tab within a tab-based layout."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "To add a new tab to a ``TabNavigator``, add a `@Tab` directive within the content of the `@TabNavigator` directive."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - title: The title that should identify the content in this tab when rendered."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Tab"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tab",
+            "spelling" : "Tab"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Tab"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "title"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Tab"
+      },
+      "pathComponents" : [
+        "Tab"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TabNavigator"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Tab",
+          "spelling" : "Tab"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "title"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A container directive that arranges content into a tab-based layout."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Create a new tab navigator by writing a `@TabNavigator` directive that contains child"
+          },
+          {
+            "text" : "`@Tab` directives."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@TabNavigator {"
+          },
+          {
+            "text" : "   @Tab(\"Powers\") {"
+          },
+          {
+            "text" : "      ![A diagram with the five sloth power types.](sloth-powers)"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Tab(\"Exercise routines\") {"
+          },
+          {
+            "text" : "      ![A sloth relaxing and enjoying a good book.](sloth-exercise)"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Tab(\"Hats\") {"
+          },
+          {
+            "text" : "      ![A sloth discovering newfound confidence after donning a fedora.](sloth-hats)"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## Topics"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``Tab``"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TabNavigator"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TabNavigator",
+            "spelling" : "TabNavigator"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TabNavigator"
+          }
+        ],
+        "title" : "TabNavigator"
+      },
+      "pathComponents" : [
+        "TabNavigator"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TechnologyRoot"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Configures an article to become a top-level page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If your documentation only consists of articles, without any framework documentation or other top-level pages, DocC will use the only article or the article with the same base name as the documentation catalog ('.docc' directory) as the top-level page."
+          },
+          {
+            "text" : "If the documentation doesn't contain an article with the same base name as the documentation catalog, DocC will synthesize a minimal top-level page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "To customize which article is the top-level page of your documentation, add a `TechnologyRoot` directive within a `Metadata` directive in that article:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "# Page Title"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @TechnologyRoot"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier Versions:"
+          },
+          {
+            "text" : "> Before Swift-DocC 6.0, article-only documentation catalogs require one of the articles to be marked as a `TechnologyRoot`."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Containing Elements"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The following items can include a technology root element:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``Metadata``"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## See Also"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- <doc:formatting-your-documentation-content>"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TechnologyRoot"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TechnologyRoot",
+            "spelling" : "TechnologyRoot"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TechnologyRoot"
+          }
+        ],
+        "title" : "TechnologyRoot"
+      },
+      "pathComponents" : [
+        "TechnologyRoot"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 9,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TitleHeading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "heading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for customizing the text of a page's title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The ``heading`` property will override the page's default title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The `@TitleHeading` directive accepts an unnamed parameter containing containing the page's title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a top-level ``Metadata`` directive:"
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @TitleHeading(\"Release Notes\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - heading: An unnamed parameter containing containing the page-title’s heading text."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TitleHeading"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TitleHeading",
+            "spelling" : "TitleHeading"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TitleHeading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "heading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "TitleHeading"
+      },
+      "pathComponents" : [
+        "TitleHeading"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 8,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TopicsVisualStyle"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "style"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Style"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying the style that should be used when rendering a page's"
+          },
+          {
+            "text" : "Topics section."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - style: The specified style that should be used when rendering a page's Topics section."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `list`: A list of the page's topics, including their full declaration and abstract."
+          },
+          {
+            "text" : "     - term `compactGrid`: A grid of items based on the card image for each page."
+          },
+          {
+            "text" : "        "
+          },
+          {
+            "text" : "        Includes each page’s title and card image but excludes their abstracts."
+          },
+          {
+            "text" : "     - term `detailedGrid`: A grid of items based on the card image for each page."
+          },
+          {
+            "text" : "        "
+          },
+          {
+            "text" : "        Unlike ``compactGrid``, this style includes the abstract for each page."
+          },
+          {
+            "text" : "     - term `hidden`: Do not show child pages anywhere on the page."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TopicsVisualStyle"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TopicsVisualStyle",
+            "spelling" : "TopicsVisualStyle"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TopicsVisualStyle"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "style"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Style"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "TopicsVisualStyle"
+      },
+      "pathComponents" : [
+        "TopicsVisualStyle"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Tutorial"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "time"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "projectFiles"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Intro",
+          "spelling" : "Intro"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "title"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Section",
+          "spelling" : "Section"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A tutorial to complete in order to gain knowledge of a technology."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - time: The estimated time in minutes that the containing ``Tutorial`` will take."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - projectFiles: Project files to download to get started with the ``Tutorial``."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Tutorial"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorial",
+            "spelling" : "Tutorial"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Tutorial"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "time"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "projectFiles"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Tutorial"
+      },
+      "pathComponents" : [
+        "Tutorial"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TutorialReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "tutorial"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TopicReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A reference to a ``Tutorial`` or ``TutorialArticle`` by `URL`."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - tutorial: The tutorial page or tutorial article to which this refers."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TutorialReference"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TutorialReference",
+            "spelling" : "TutorialReference"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TutorialReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "tutorial"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "TopicReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "TutorialReference"
+      },
+      "pathComponents" : [
+        "TutorialReference"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Tutorials"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Tutorials"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorials",
+            "spelling" : "Tutorials"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Tutorials"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Tutorials"
+      },
+      "pathComponents" : [
+        "Tutorials"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Video"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "source"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alt"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "poster"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A block filled with a video."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - source: A reference to the source file for the media item."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Alternate text describing the video."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - poster: An image to be shown when the video isn't playing."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Video"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Video",
+            "spelling" : "Video"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Video"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "source"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "alt"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "poster"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Video"
+      },
+      "pathComponents" : [
+        "Video"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Videos"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Videos"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Videos",
+            "spelling" : "Videos"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Videos"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Videos"
+      },
+      "pathComponents" : [
+        "Videos"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Volume"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Volume"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Volume",
+            "spelling" : "Volume"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Volume"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Volume"
+      },
+      "pathComponents" : [
+        "Volume"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "XcodeRequirement"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "title"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "destination"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "URL"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "An informal Xcode requirement for completing an instructional ``Tutorial``."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - title: Human readable title."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - destination: Domain where requirement applies."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$XcodeRequirement"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$XcodeRequirement",
+            "spelling" : "XcodeRequirement"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "XcodeRequirement"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "title"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "destination"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "URL"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "XcodeRequirement"
+      },
+      "pathComponents" : [
+        "XcodeRequirement"
+      ]
+    }
+  ]
+}

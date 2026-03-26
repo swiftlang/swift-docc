@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 @testable import SymbolKit
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class DiagnosticTests: XCTestCase {
 
@@ -79,7 +79,7 @@ class DiagnosticTests: XCTestCase {
     
     /// Test offsetting diagnostic ranges
     func testOffsetDiagnostics() async throws {
-        let (bundle, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName"))
         ]))
 
@@ -87,7 +87,7 @@ class DiagnosticTests: XCTestCase {
         let markup = Document(parsing: content, source: URL(string: "/tmp/foo.symbols.json"), options: .parseSymbolLinks)
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
-        var resolver = ReferenceResolver(context: context, bundle: bundle, rootReference: moduleReference)
+        var resolver = ReferenceResolver(context: context, rootReference: moduleReference)
         
         // Resolve references
         _ = resolver.visitMarkup(markup)
@@ -117,9 +117,6 @@ class DiagnosticTests: XCTestCase {
 
         let note = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
         XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: note, options: .formatConsoleOutputForTools), "\(expectedLocation): note: \(summary)\n\(explanation)")
-
-        let notice = Diagnostic(source: source, severity: .hint, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: notice, options: .formatConsoleOutputForTools), "\(expectedLocation): notice: \(summary)\n\(explanation)")
     }
 
     func testLocalizedDescriptionWithNote() {

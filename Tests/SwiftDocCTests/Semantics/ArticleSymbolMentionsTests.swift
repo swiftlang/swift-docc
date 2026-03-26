@@ -11,8 +11,9 @@
 import XCTest
 @testable @preconcurrency import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import SymbolKit
+import DocCCommon
 
 class ArticleSymbolMentionsTests: XCTestCase {
     /// Test that the recording abstraction for ``ArticleSymbolMentions`` works as expected.

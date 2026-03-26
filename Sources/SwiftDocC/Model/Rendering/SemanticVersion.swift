@@ -11,7 +11,7 @@
 /// A semantic version.
 ///
 /// A version that follows the [Semantic Versioning](https://semver.org) specification.
-public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConvertible {
+public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConvertible, Sendable {
 
     /// The major version number.
     ///

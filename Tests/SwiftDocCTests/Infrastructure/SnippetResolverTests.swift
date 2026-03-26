@@ -11,7 +11,8 @@
 import XCTest
 @testable import SwiftDocC
 import SymbolKit
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class SnippetResolverTests: XCTestCase {
     
@@ -235,7 +236,7 @@ class SnippetResolverTests: XCTestCase {
         
         let reference = try XCTUnwrap(context.soleRootModuleReference, file: file, line: line)
         let moduleNode = try context.entity(with: reference)
-        let renderNode = DocumentationNodeConverter(bundle: context.bundle, context: context).convert(moduleNode)
+        let renderNode = DocumentationNodeConverter(context: context).convert(moduleNode)
         
         let renderBlocks = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection, file: file, line: line).content
         

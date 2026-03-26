@@ -10,12 +10,9 @@
 
 import Foundation
 import Markdown
+private import SymbolKit
 
-func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
-    var notes = uncuratedArticleMatch.map {
-        [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
-    } ?? []
-    
+func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     let referenceSourceRange: SourceRange? = range.map { range in
         // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
         // https://github.com/apple/swift-markdown/issues/109
@@ -33,6 +30,7 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
     }
     
     var solutions: [Solution] = []
+    var notes: [DiagnosticNote] = []
     if let referenceSourceRange {
         if let note = errorInfo.note, let source {
             notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
@@ -95,9 +93,6 @@ struct ReferenceResolver: SemanticVisitor {
     /// The context to use to resolve references.
     var context: DocumentationContext
     
-    /// The bundle in which visited documents reside.
-    var bundle: DocumentationBundle
-    
     /// Problems found while trying to resolve references.
     var problems = [Problem]()
     
@@ -106,10 +101,9 @@ struct ReferenceResolver: SemanticVisitor {
     /// If the documentation is inherited, the reference of the parent symbol.
     var inheritanceParentReference: ResolvedTopicReference?
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
+    init(context: DocumentationContext, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
         self.context = context
-        self.bundle = bundle
-        self.rootReference = rootReference ?? bundle.rootReference
+        self.rootReference = rootReference ?? context.inputs.rootReference
         self.inheritanceParentReference = inheritanceParentReference
     }
     
@@ -119,8 +113,11 @@ struct ReferenceResolver: SemanticVisitor {
             return .success(resolved)
             
         case let .failure(unresolved, error):
-            let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
+            if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.documentationRootReference.appendingPathOfReference(unresolved)] {
+                problems.append(makeUnfindableArticleProblem(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
+            } else {
+                problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: false))
+            }
             return .failure(unresolved, error)
         }
     }
@@ -172,9 +169,9 @@ struct ReferenceResolver: SemanticVisitor {
         
         // Change the context of the project file to `download`
         if let projectFiles = tutorial.projectFiles,
-            var resolvedDownload = context.resolveAsset(named: projectFiles.path, in: bundle.rootReference) {
+            var resolvedDownload = context.resolveAsset(named: projectFiles.path, in: rootReference) {
             resolvedDownload.context = .download
-            context.updateAsset(named: projectFiles.path, asset: resolvedDownload, in: bundle.rootReference)
+            context.updateAsset(named: projectFiles.path, asset: resolvedDownload, in: rootReference)
         }
         
         return Tutorial(originalMarkup: tutorial.originalMarkup, durationMinutes: tutorial.durationMinutes, projectFiles: tutorial.projectFiles, requirements: newRequirements, intro: newIntro, sections: newSections, assessments: newAssessments, callToActionImage: newCallToActionImage, redirects: tutorial.redirects)
@@ -215,7 +212,7 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> Semantic {
-        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: rootReference)
+        var markupResolver = MarkupReferenceResolver(context: context, rootReference: rootReference)
         let parent = inheritanceParentReference
         let context = self.context
         
@@ -315,7 +312,7 @@ struct ReferenceResolver: SemanticVisitor {
         // i.e. doc:/${SOME_TECHNOLOGY}/${PROJECT} or doc://${BUNDLE_ID}/${SOME_TECHNOLOGY}/${PROJECT}
         switch tutorialReference.topic {
         case .unresolved:
-            let maybeResolved = resolve(tutorialReference.topic, in: bundle.tutorialsContainerReference,
+            let maybeResolved = resolve(tutorialReference.topic, in: context.inputs.tutorialsContainerReference,
                                         range: tutorialReference.originalMarkup.range,
                                         severity: .warning)
             return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: .resolved(maybeResolved))
@@ -369,10 +366,10 @@ struct ReferenceResolver: SemanticVisitor {
             visitMarkupContainer($0) as? MarkupContainer
         }
         // If there's a call to action with a local-file reference, change its context to `download`
-        if let downloadFile = article.metadata?.callToAction?.resolveFile(for: bundle, in: context, problems: &problems),
-            var resolvedDownload = context.resolveAsset(named: downloadFile.path, in: bundle.rootReference) {
+        if let downloadFile = article.metadata?.callToAction?.resolveFile(for: context.inputs, in: context, problems: &problems),
+            var resolvedDownload = context.resolveAsset(named: downloadFile.path, in: rootReference) {
             resolvedDownload.context = .download
-            context.updateAsset(named: downloadFile.path, asset: resolvedDownload, in: bundle.rootReference)
+            context.updateAsset(named: downloadFile.path, asset: resolvedDownload, in: rootReference)
         }
 
         return Article(
@@ -554,4 +551,27 @@ extension Image {
             return ResourceReference(bundleID: bundle.id, path: source)
         }
     }
+}
+
+// MARK: Diagnostics
+
+func makeUnfindableArticleProblem(
+    source: URL?,
+    severity: DiagnosticSeverity,
+    range: SourceRange?,
+    articleNotInHierarchy: DocumentationContext.SemanticResult<Article>,
+    rootPageNames: [String]
+) -> Problem {
+    Problem(diagnostic: Diagnostic(
+        source: source,
+        severity: severity,
+        range: range,
+        identifier: "UnfindableArticle",
+        summary: "Article is not findable in invalid documentation hierarchy with \(rootPageNames.count) roots",
+        explanation: """
+            Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
+            Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
+            As a consequence, the '\(articleNotInHierarchy.topicGraphNode.title)' article (\(articleNotInHierarchy.source.lastPathComponent)) is not findable and has no page in the output.
+            """
+    ))
 }

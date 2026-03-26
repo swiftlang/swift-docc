@@ -360,8 +360,7 @@
                 "type": "object",
                 "required": [
                     "kind",
-                    "tiles",
-                    "content"
+                    "tiles"
                 ],
                 "properties": {
                     "kind": {
@@ -526,8 +525,7 @@
                     "kind",
                     "content",
                     "media",
-                    "mediaPosition",
-                    "layout"
+                    "mediaPosition"
                 ],
                 "properties": {
                     "kind": {
@@ -781,6 +779,39 @@
                     }
                 }
             },
+            "LineAnnotation": {
+                "type": "object",
+                "properties": {
+                    "style": {
+                        "type": "string",
+                        "enum": ["highlight", "strikeout"]
+                    },
+                    "range": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Position"
+                        }
+                    }
+                },
+                "required": [
+                    "style",
+                    "range"
+                ]
+            },
+            "Position": {
+                "type": "object",
+                "properties": {
+                    "line": {
+                        "type": "integer"
+                    },
+                    "character": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "line"
+                ]
+            },
             "CodeListing": {
                 "type": "object",
                 "required": [
@@ -805,6 +836,21 @@
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/RenderContentMetadata"
+                    },
+                    "copyToClipboard": {
+                        "type": "boolean"
+                    },
+                    "showLineNumbers": {
+                        "type": "boolean"
+                    },
+                    "wrap": {
+                        "type": "integer"
+                    },
+                    "lineAnnotations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LineAnnotation"
+                        }
                     }
                 }
             },
@@ -1802,7 +1848,7 @@
                         "type": "string",
                         "enum": ["icon", "card"]
                     },
-                    "reference": {
+                    "identifier": {
                         "type": "string",
                         "format": "reference(ImageRenderReference)"
                     }
@@ -1963,7 +2009,7 @@
                         "type": "string",
                         "format": "reference(RenderReference)"
                     },
-                    "sections": {
+                    "kind": {
                         "type": "string",
                         "enum": ["task", "assessment", "heading"]
                     }
@@ -2499,7 +2545,6 @@
             },
             "MentionsRenderSection": {
                 "required": [
-                    "kind",
                     "mentions"
                 ],
                 "type": "object",

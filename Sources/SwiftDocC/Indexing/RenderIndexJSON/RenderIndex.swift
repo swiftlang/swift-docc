@@ -8,7 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SymbolKit
+private import SymbolKit
+private import Foundation
 
 /// A navigation index of the content in a DocC archive, optimized for rendering.
 ///
@@ -223,7 +224,7 @@ extension RenderIndex {
         public init(
             title: String,
             path: String?,
-            type: String,
+            type: String?,
             children: [Node]?,
             isDeprecated: Bool,
             isExternal: Bool,

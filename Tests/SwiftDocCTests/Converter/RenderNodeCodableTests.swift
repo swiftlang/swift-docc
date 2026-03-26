@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class RenderNodeCodableTests: XCTestCase {
     
@@ -170,7 +171,7 @@ class RenderNodeCodableTests: XCTestCase {
     }
     
     func testEncodeRenderNodeWithCustomTopicSectionStyle() async throws {
-        let (bundle, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
         
         let source = """
@@ -185,7 +186,7 @@ class RenderNodeCodableTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: bundle, problems: &problems)
+            Article(from: document.root, source: nil, for: context.inputs, problems: &problems)
         )
         
         let reference = ResolvedTopicReference(
@@ -203,7 +204,7 @@ class RenderNodeCodableTests: XCTestCase {
         )
         context.topicGraph.addNode(topicGraphNode)
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         XCTAssertEqual(node.topicSectionsStyle, .compactGrid)
         

@@ -11,6 +11,8 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCTestUtilities
+import DocCCommon
 
 class TutorialTests: XCTestCase {
     func testEmpty() async throws {
@@ -195,12 +197,24 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
+            InfoPlist(identifier: "org.swift.docc.example"),
+            
+            DataFile(name: "app.mov", data: Data()),
+            DataFile(name: "app2.mov", data: Data()),
+            DataFile(name: "figure1.png", data: Data()),
+            DataFile(name: "myimage.png", data: Data()),
+            DataFile(name: "poster.png", data: Data()),
+            DataFile(name: "screenshot.png", data: Data()),
+            DataFile(name: "xcode.png", data: Data()),
+            DataFile(name: "xcode1.png", data: Data()),
+            DataFile(name: "test.mp4", data: Data()),
+        ]))
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertTrue(problems.isEmpty)
             tutorial.map { tutorial in
@@ -354,12 +368,18 @@ Tutorial @1:1-150:2 projectFiles: nil
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
+            InfoPlist(identifier: "org.swift.docc.example"),
+            
+            DataFile(name: "myimage.png", data: Data()),
+            DataFile(name: "poster.png", data: Data()),
+            DataFile(name: "test.mp4", data: Data()),
+        ]))
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertEqual(1, tutorial?.sections.count)
             XCTAssertEqual([
@@ -373,7 +393,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -392,7 +412,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -409,10 +429,10 @@ Tutorial @1:1-150:2 projectFiles: nil
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
-        let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
+        let range = SourceRange.makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -430,11 +450,11 @@ Tutorial @1:1-150:2 projectFiles: nil
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
             let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
-            let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
+            let range = SourceRange.makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: url)
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
 
         let tutorialNode = node(withTitle: "tutorial-article", ofKind: .tutorial)
 

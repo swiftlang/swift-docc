@@ -461,7 +461,7 @@ public class NavigatorTree {
         public func filter(_ isIncluded: (NavigatorItem) -> Bool) -> Node? {
             guard isIncluded(self.item) else { return nil }
             let node = Node(item: item, bundleIdentifier: self.bundleIdentifier)
-            children.forEach { (child) in
+            for child in children {
                 if let child = child.filter(isIncluded) {
                     node.add(child: child)
                 }

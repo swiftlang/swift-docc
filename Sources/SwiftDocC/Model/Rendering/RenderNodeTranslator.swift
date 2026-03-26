@@ -11,6 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
+private import DocCCommon
 
 /// A visitor which converts a semantic model into a render node.
 ///
@@ -72,7 +73,30 @@ public struct RenderNodeTranslator: SemanticVisitor {
         )
         return assetReference
     }
-    
+
+    /// Converts `@Available` directives to render availability items.
+    private func renderAvailabilities(
+        from availabilities: [Metadata.Availability],
+        currentPlatforms: [String: PlatformVersion]?
+    ) -> [String: AvailabilityRenderItem] {
+        var result = [String: AvailabilityRenderItem]()
+        result.reserveCapacity(availabilities.count)
+        
+        for availability in availabilities {
+            let current: PlatformVersion? = if let currentPlatforms, let name = PlatformName(metadataPlatform: availability.platform) {
+                currentPlatforms[name.displayName]
+            } else {
+                nil
+            }
+            let renderItem = AvailabilityRenderItem(availability, current: current)
+            if let name = renderItem.name {
+                result[name] = renderItem
+            }
+        }
+        
+        return result
+    }
+
     private func fileContents(with fileReference: ResourceReference) -> String? {
         // Check if the file is a local asset that can be read directly from the context
         if let fileData = try? context.resource(with: fileReference) {
@@ -134,7 +158,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitTutorial(_ tutorial: Tutorial) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .tutorial)
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         
         if let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) {
             let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
@@ -276,7 +300,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Set the Intro's background image to the video's poster image.
         section.backgroundImage = intro.video?.poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
-            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source) }
+            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source, altText: $0.altText) }
         
         return section
     }
@@ -315,7 +339,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
     // Visits a container and expects the elements to be block level elements
     public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> (any RenderTree)? {
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         let content = markupContainer.elements.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderBlockContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references found in the markup container.
@@ -327,7 +351,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     // Visits a collection of inline markup elements.
     public mutating func visitMarkup(_ markup: [any Markup]) -> (any RenderTree)? {
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         let content = markup.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderInlineContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references.
@@ -401,7 +425,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.sections.append(visitResources(resources) as! ResourcesRenderSection)
         }
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         if let (hierarchyVariants, _) = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier, omittingChapters: true) {
             node.hierarchyVariants = hierarchyVariants
             collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
@@ -419,7 +443,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     private mutating func createTopicRenderReferences() -> [String: any RenderReference] {
         var renderReferences: [String: any RenderReference] = [:]
-        let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let renderer = DocumentationContentRenderer(context: context)
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
@@ -530,7 +554,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
         
     public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> (any RenderTree)? {
-        switch context.resolve(tutorialReference.topic, in: bundle.rootReference) {
+        switch context.resolve(tutorialReference.topic, in: context.inputs.rootReference) {
         case let .failure(reference, _):
             return RenderReferenceIdentifier(reference.topicURL.absoluteString)
         case let .success(resolved):
@@ -600,7 +624,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitArticle(_ article: Article) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
         // Contains symbol references declared in the Topics section.
-        var topicSectionContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var topicSectionContentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
         node.metadata.title = article.title!.plainText
         
@@ -624,17 +648,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let documentationNode = try! context.entity(with: identifier)
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitArticle(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchyVariants = hierarchyVariants
         
         // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
-        // advertising the page as "Swift", which is the language DocC assigns to pages in article only pages.
+        // advertising the page as "Swift", which is the language DocC assigns to pages in article only catalogs.
         // (github.com/swiftlang/swift-docc/issues/240).
-        if let topLevelModule = context.soleRootModuleReference,
-           try! context.entity(with: topLevelModule).kind.isSymbol
-        {
+        let isArticleOnlyCatalog = context.rootModules.allSatisfy { !context.isSymbol(reference: $0) }
+        if !isArticleOnlyCatalog {
             node.variants = variants(for: documentationNode)
         }
         
@@ -761,7 +784,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
        
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }
@@ -806,7 +829,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
-                bundle: bundle,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ) {
@@ -839,16 +861,38 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
-        if let availability = article.metadata?.availability, !availability.isEmpty {
-            let renderAvailability = availability.compactMap({
-                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
+        if let availabilities = article.metadata?.availability, !availabilities.isEmpty {
+            // FIXME: Move this logic out of the rendering code (rdar://172280267)
+            let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
+            // These are the same for all platforms, so we only need to compute them once.
+            var directiveAvailabilityByPlatform = documentationNode.metadata.map {
+                renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
+            } ?? .init()
+            
+            if let iOSAvailability = directiveAvailabilityByPlatform[PlatformName.iOS.displayName] {
+                var unavailableDefaultPlatformNames = Set<String>()
+                if let defaultAvailability = context.inputs.info.defaultAvailability {
+                    for availabilities in defaultAvailability.modules.values {
+                        for availability in availabilities where availability.versionInformation == .unavailable {
+                            unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
+                        }
+                    }
                 }
-                return .init($0, current: currentPlatform)
-            }).sorted(by: AvailabilityRenderOrder.compare)
-
-            if !renderAvailability.isEmpty {
-                node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
+                
+                func addFallbackIfNeeded(named name: String) {
+                    guard directiveAvailabilityByPlatform[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                        return
+                    }
+                    var copy = iOSAvailability
+                    copy.name = name
+                    directiveAvailabilityByPlatform[name] = copy
+                }
+                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+            }
+            
+            if !directiveAvailabilityByPlatform.isEmpty {
+                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderOrder.compare))
             }
         }
         
@@ -878,7 +922,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitTutorialArticle(_ article: TutorialArticle) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         guard let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) else {
             // This tutorial article is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
@@ -1029,7 +1073,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: bundle)?.language
+                SupportedLanguage(from: $0, source: nil, for: context.inputs)?.language
             }
             
             // If the task group has a set of supported languages, see if it should render for the allowed traits.
@@ -1054,17 +1098,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                guard context.isSymbol(reference: reference) else {
-                    // If the reference corresponds to any kind except Symbol
-                    // (e.g., Article, Tutorial, SampleCode...), allow the topic
-                    // to appear independently of the source language it belongs to.
+                // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
+                // and is external to the bundle, then curate the topic irrespective of the source
+                // language of the page or reference, since non-symbol kinds are not tied to a language.
+                // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+                // FIXME: This should ideally be solved by making the article language-agnostic rather
+                // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+                if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
                     return true
                 }
                 
-                let referenceSourceLanguageIDs = Set(context.sourceLanguages(for: reference).map(\.id))
+                let referenceSourceLanguages = SmallSourceLanguageSet(context.sourceLanguages(for: reference))
                 
-                let availableSourceLanguageTraits = Set(availableTraits.compactMap(\.interfaceLanguage))
-                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguageIDs) {
+                let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
+                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
                     // The set of available source language traits has no members in common with the
                     // set of source languages the given reference is available in.
                     //
@@ -1073,10 +1120,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                return referenceSourceLanguageIDs.contains { sourceLanguageID in
-                    allowedTraits.contains { trait in
-                        trait.interfaceLanguage == sourceLanguageID
-                    }
+                return allowedTraits.contains { trait in
+                    trait.sourceLanguage.map { referenceSourceLanguages.contains($0) } ?? false
                 }
             }
             
@@ -1201,7 +1246,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
         
         var node = RenderNode(identifier: identifier, kind: .symbol)
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
         /*
          FIXME: We shouldn't be doing this kind of crawling here.
@@ -1241,47 +1286,101 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
-        let defaultAvailability = defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
-            .filter { $0.unconditionallyUnavailable != true }
-            .sorted(by: AvailabilityRenderOrder.compare)
+        let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
+        // These are the same for all platforms, so we only need to compute them once.
+        let baseAvailabilityByPlatform = defaultAvailability(moduleName: moduleName.symbolName, currentPlatforms: currentPlatforms) ?? .init()
+        let directiveAvailabilityByPlatform = documentationNode.metadata.map {
+            renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
+        } ?? .init()
         
-        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
-            guard !availability.availability.isEmpty else {
-                return defaultAvailability
+        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
+            // Different sources of availability information are added in-order to compute the complete availability information.
+            // FIXME: Move this logic out of the rendering code (rdar://172280267)
+            
+            // The "default" information provided by the Info.plist is the base information because it applies to every thing in the module.
+            var information = baseAvailabilityByPlatform
+            
+            var unavailablePlatformNamesToRemove = [String]()
+            
+            // The symbol's individual in-source attributes is more specific information that reflects the source-availability of the API.
+            for availability in inSourceAvailability.availability {
+                guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue).displayName }) else {
+                    // Don't include wildcard information
+                    continue
+                }
+                guard availability.obsoletedVersion == nil && !availability.isUnconditionallyUnavailable /* Don't include obsoleted or unavailable API */ else {
+                    unavailablePlatformNamesToRemove.append(name)
+                    continue
+                }
+                
+                let renderItem = AvailabilityRenderItem(availability, current: currentPlatforms?[name])
+                assert(renderItem.unconditionallyUnavailable != true, "Unavailable API should have already been filtered out above.")
+                information[name] = renderItem
             }
             
-            return availability.availability
-                .compactMap { availability -> AvailabilityRenderItem? in
-                    // Allow availability items without introduced and/or deprecated version,
-                    // but filter out items that are obsoleted.
-                    if availability.obsoletedVersion != nil {
-                        return nil
+            // FIXME: Combine the in-source attributes with the Available directives as a per-platform override (rdar://171807245)
+            
+            // After we've gathered all the information, see if we need to fill in inferred information for iPadOS and Mac Catalyst.
+            if let iOSAvailability = information[PlatformName.iOS.displayName],
+               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            {
+                var unavailableDefaultPlatformNames = Set<String>()
+                if let defaultAvailability = context.inputs.info.defaultAvailability?.modules[moduleName.symbolName] {
+                    for availability in defaultAvailability where availability.versionInformation == .unavailable {
+                        unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
                     }
-                    // Filter out this availability item if it has a missing or invalid domain.
-                    guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }) else {
-                        return nil
-                    }
-                    guard let currentPlatform = context.configuration.externalMetadata.currentPlatforms?[name.displayName] else {
-                        // No current platform provided by the context
-                        return AvailabilityRenderItem(availability, current: nil)
-                    }
-                    return AvailabilityRenderItem(availability, current: currentPlatform)
                 }
-                .filter { $0.unconditionallyUnavailable != true }
-                .sorted(by: AvailabilityRenderOrder.compare)
-        } ?? .init(defaultValue: defaultAvailability)
-
-        if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
-            let renderAvailability = availability.compactMap({
-                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
+                
+                func addFallbackIfNeeded(named name: String) {
+                    guard information[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                        return
+                    }
+                    var copy = iOSAvailability
+                    copy.name = name
+                    information[name] = copy
                 }
-                return .init($0, current: currentPlatform)
-            }).sorted(by: AvailabilityRenderOrder.compare)
-
-            if !renderAvailability.isEmpty {
-                node.metadata.platformsVariants.defaultValue = renderAvailability
+                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
             }
+            
+            // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.
+            for name in unavailablePlatformNamesToRemove {
+                information[name] = nil
+            }
+            
+            guard !information.isEmpty else {
+                return nil
+            }
+            
+            return information.values.sorted(by: AvailabilityRenderOrder.compare)
+        } ?? .init(defaultValue: {
+            assertionFailure("This default value is never used")
+            return nil
+        }())
+
+        // FIXME: Adding even a single Available directive discards all the in-source information (rdar://171807245)
+        if !directiveAvailabilityByPlatform.isEmpty {
+            var information = baseAvailabilityByPlatform
+                .merging(directiveAvailabilityByPlatform, uniquingKeysWith: { _, new in new }) // override any value with the directive information
+            
+            if let iOSAvailability = information[PlatformName.iOS.displayName],
+               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            {
+                func addFallbackIfNeeded(named name: String) {
+                    guard information[name] == nil,
+                          context.inputs.info.defaultAvailability?.modules[moduleName.symbolName]?.contains(where: { $0.platformName.displayName == name && $0.versionInformation == .unavailable }) != true
+                    else {
+                        return
+                    }
+                    var copy = iOSAvailability
+                    copy.name = name
+                    information[name] = copy
+                }
+                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+            }
+            
+            node.metadata.platforms = information.values.sorted(by: AvailabilityRenderOrder.compare)
         }
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
@@ -1307,7 +1406,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }
@@ -1330,10 +1429,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         collectedTopicReferences.append(identifier)
         
-        let contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let contentRenderer = DocumentationContentRenderer(context: context)
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitSymbol(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchyVariants = hierarchyVariants
@@ -1648,7 +1747,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
-                bundle: bundle,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ), !seeAlso.references.isEmpty {
@@ -1774,7 +1872,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     var context: DocumentationContext
-    var bundle: DocumentationBundle
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
     var videoReferences: [String: VideoReference] = [:]
@@ -1783,7 +1880,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var requirementReferences: [String: XcodeRequirementReference] = [:]
     var downloadReferences: [String: DownloadReference] = [:]
     
-    private var bundleAvailability: [BundleModuleIdentifier: [AvailabilityRenderItem]] = [:]
+    private var defaultAvailabilityCacheByModuleName: [String /* module name */: [String /* platform name*/ : AvailabilityRenderItem]?] = [:]
     
     /// Given module availability and the current platforms we're building against return if the module is a beta framework.
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
@@ -1808,36 +1905,34 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// The default availability for modules in a given bundle and module.
-    mutating func defaultAvailability(for bundle: DocumentationBundle, moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [AvailabilityRenderItem]? {
-        let identifier = BundleModuleIdentifier(bundle: bundle, moduleName: moduleName)
-        
-        // Cached availability
-        if let availability = bundleAvailability[identifier] {
-            return availability
+    private mutating func defaultAvailability(moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [String: AvailabilityRenderItem]? {
+        // FIXME: Move this logic out of the rendering code (rdar://172280267)
+        if let cached = defaultAvailabilityCacheByModuleName[moduleName] {
+            return cached
         }
         
-        // Find default module availability if existing
-        guard let bundleDefaultAvailability = bundle.info.defaultAvailability,
-            let moduleAvailability = bundleDefaultAvailability.modules[moduleName] else {
+        guard let defaultAvailabilityForModule = context.inputs.info.defaultAvailability?.modules[moduleName] else {
+            // Don't repeatedly look up the default availability in the Info.plist for every symbol
+            defaultAvailabilityCacheByModuleName[moduleName] = nil
             return nil
         }
         
-        // Prepare for rendering
-        let renderedAvailability = moduleAvailability
-            .filter({ $0.versionInformation != .unavailable })
-            .compactMap({ availability -> AvailabilityRenderItem? in
-                return AvailabilityRenderItem(
-                    name: availability.platformName.displayName,
-                    introduced: availability.introducedVersion,
-                    isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
-                )
-            })
+        var result = [String: AvailabilityRenderItem]()
+        for availability in defaultAvailabilityForModule where availability.versionInformation != .unavailable {
+            let name = availability.platformName.displayName
+            let renderItem = AvailabilityRenderItem(
+                name: name,
+                introduced: availability.introducedVersion,
+                isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
+            )
+            assert(renderItem.unconditionallyUnavailable != true, "Default availability shouldn't ever be unconditionally unavailable")
+            
+            // Override any previous value if the same platform is specified multiple times
+            result[name] = renderItem
+        }
         
-        // Cache the availability to use for further symbols
-        bundleAvailability[identifier] = renderedAvailability
-        
-        // Return the availability
-        return renderedAvailability
+        defaultAvailabilityCacheByModuleName[moduleName] = result
+        return result
     }
    
     mutating func createRenderSections(
@@ -1851,7 +1946,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
-        let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        let generator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
         
         var allVariants: [SourceLanguage: ResolvedTopicReference] = documentationNode.availableSourceLanguages.reduce(into: [:]) { partialResult, language in
             partialResult[language] = identifier
@@ -1870,7 +1965,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.
                 // If the current symbol and its custom alternate representation share language representations, the custom language representation is ignored.
                 allVariants.merge(
-                    alternateRepresentationReference.sourceLanguages.map { ($0, alternateRepresentationReference) }
+                    alternateRepresentationReference._sourceLanguages.map { ($0, alternateRepresentationReference) }
                 ) { existing, _ in existing }
             }
         }
@@ -1975,7 +2070,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Extract the availability information
             if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
-                availabilityItems.forEach { item in
+                for item in availabilityItems {
                     if deprecated == nil && (item.isUnconditionallyDeprecated || item.deprecatedVersion != nil) {
                         deprecated = true
                     }
@@ -2002,7 +2097,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     init(
         context: DocumentationContext,
-        bundle: DocumentationBundle,
         identifier: ResolvedTopicReference,
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
@@ -2011,22 +2105,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
         self.context = context
-        self.bundle = bundle
         self.identifier = identifier
         self.renderContext = renderContext
-        self.contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        self.contentRenderer = DocumentationContentRenderer(context: context)
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
         self.sourceRepository = sourceRepository
         self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
-    }
-}
-
-fileprivate typealias BundleModuleIdentifier = String
-
-extension BundleModuleIdentifier {
-    fileprivate init(bundle: DocumentationBundle, moduleName: String) {
-        self = "\(bundle.id):\(moduleName)"
     }
 }
 
@@ -2056,13 +2141,8 @@ extension ContentRenderSection: RenderTree {}
 
 private extension Sequence<SourceLanguage> {
     func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
-        traits.contains(where: {
-            guard let languageID = $0.interfaceLanguage,
-                  let traitLanguage = SourceLanguage(knownLanguageIdentifier: languageID)
-            else {
-                return false
-            }
-            return self.contains(traitLanguage)
+        traits.contains(where: { trait in
+            trait.sourceLanguage.map { self.contains($0) } ?? false
         })
     }
 }

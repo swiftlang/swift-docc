@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,12 +10,14 @@
 
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import SymbolKit
+import DocCCommon
 
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType
 
-let testBundleIdentifier = "org.swift.docc.example"
+private let testBundleIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
     
@@ -457,9 +459,9 @@ Root
     }
     
     func testNavigatorIndexGeneration() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
@@ -500,11 +502,6 @@ Root
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
                 return node.bundleIdentifier == testBundleIdentifier
             }))
-            
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
             
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
@@ -646,10 +643,10 @@ Root
             """),
         ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
@@ -694,12 +691,12 @@ Root
     }
     
     func testNavigatorWithDifferentSwiftAndObjectiveCHierarchies() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(named: "GeometricalShapes")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
-        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
-        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         fromMemoryBuilder.setup()
         fromDecodedBuilder.setup()
         
@@ -953,11 +950,82 @@ Root
             """
         )
     }
+
+    // Bug: rdar://160284853
+    // The supported languages of an article need to be stored in the resolved
+    // topic reference that eventually gets serialised into the render node,
+    // which the navigator uses. This must be done when creating the topic
+    // graph node, rather than updating the set of supported languages when
+    // registering the article. If a catalog contains more than one module, any
+    // articles present are not registered in the documentation cache, since it
+    // is not possible to determine what module it is belongs to. This test
+    // ensures that in such cases, the supported languages information is
+    // correctly included in the render node, and that the navigator is built
+    // correctly.
+    func testSupportedLanguageDirectiveForStandaloneArticles() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(identifier: testBundleIdentifier),
+            TextFile(name: "UnitTest.md", utf8Content: """
+            # UnitTest
+
+            @Metadata {
+              @TechnologyRoot
+              @SupportedLanguage(data)
+            }
+
+            ## Topics
+
+            - <doc:Article>
+            - ``Foo``
+            """),
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+
+            Just a random article.
+            """),
+            // The correct way to configure a catalog is to have a single root module. If multiple modules,
+            // are present, it is not possible to determine which module an article is supposed to be
+            // registered with. We include multiple modules to prevent registering the articles in the
+            // documentation cache, to test if the supported languages are attached prior to registration.
+            JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo", symbols: [
+                makeSymbol(id: "some-symbol", language: SourceLanguage.data, kind: .class, pathComponents: ["SomeSymbol"]),
+            ]))
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
+
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        builder.setup()
+
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+        }
+
+        builder.finalize()
+
+        let navigatorIndex = try XCTUnwrap(builder.navigatorIndex)
+
+        let expectedNavigator = """
+[Root]
+┗╸UnitTest
+  ┣╸Article
+  ┗╸Foo
+    ┣╸Classes
+    ┗╸SomeSymbol
+"""
+        XCTAssertEqual(navigatorIndex.navigatorTree.root.dumpTree(), expectedNavigator)
+    }
     
     func testNavigatorIndexUsingPageTitleGeneration() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
@@ -989,11 +1057,6 @@ Root
                 return node.bundleIdentifier == testBundleIdentifier
             }))
             
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
-            
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
             try FileManager.default.removeItem(at: targetURL)
@@ -1004,8 +1067,8 @@ Root
     }
     
     func testNavigatorIndexGenerationNoPaths() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
@@ -1037,11 +1100,6 @@ Root
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
                 return node.bundleIdentifier == testBundleIdentifier
             }))
-            
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
             
             // Test path persistence
             XCTAssertNil(navigatorIndex.path(for: 0)) // Root should have not path persisted.
@@ -1081,9 +1139,9 @@ Root
 
     
     func testNavigatorIndexGenerationWithCuratedFragment() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have no non-deterministic behavior across builds
@@ -1144,9 +1202,9 @@ Root
     }
     
     func testNavigatorIndexAvailabilityGeneration() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
@@ -1248,12 +1306,12 @@ Root
     }
     
     func testCustomIconsInNavigator() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "BookLikeContent") // This content has a @PageImage with the "icon" purpose
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, context) = try await testBundleAndContext(named: "BookLikeContent") // This content has a @PageImage with the "icon" purpose
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -1269,14 +1327,14 @@ Root
         
         let imageReference = try XCTUnwrap(renderIndex.references["plus.svg"])
         XCTAssertEqual(imageReference.asset.variants.values.map(\.path).sorted(), [
-            "/images/\(bundle.id)/plus.svg",
+            "/images/\(context.inputs.id)/plus.svg",
         ])
     }
     
     func testNavigatorIndexDifferentHasherGeneration() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
@@ -1601,7 +1659,7 @@ Root
         XCTAssertEqual(PageType(role: "pseudosymbol"), .symbol)
         XCTAssertEqual(PageType(role: "pseudocollection"), .framework)
         XCTAssertEqual(PageType(role: "collection"), .framework)
-        XCTAssertEqual(PageType(role: "collectiongroup"), .symbol)
+        XCTAssertEqual(PageType(role: "collectiongroup"), .article)
         XCTAssertEqual(PageType(role: "article"), .article)
         XCTAssertEqual(PageType(role: "samplecode"), .sampleCode)
         
@@ -1642,7 +1700,7 @@ Root
         verifySymbolKind(["enumdata", "structdata", "cldata", "clconst", "intfdata"], .instanceVariable)
         verifySymbolKind(["enumsub", "structsub", "instsub", "intfsub"], .subscript)
         verifySymbolKind(["enumcm", "structcm", "clm", "intfcm"], .typeMethod)
-        verifySymbolKind(["httpget", "httpput", "httppost", "httppatch", "httpdelete"], .httpRequest)
+        verifySymbolKind(["httpget", "httpput", "httppost", "httppatch", "httpdelete", "httprequest"], .httpRequest)
         
         // Verify mappings provided from Delphi to SymbolKit
         
@@ -1723,8 +1781,8 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
         
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)
@@ -1901,7 +1959,7 @@ Root
     func testPathHasher() throws {
         let pathHasher = try XCTUnwrap(PathHasher(rawValue: "MD5"))
         // Test that the results are stable for the given inputs
-        (0...100).forEach { _ in
+        for _ in (0...100) {
             XCTAssertEqual("41dc6c05a0b5", pathHasher.hash("/documentation/foundation/nsurlsessionwebsockettask"))
             XCTAssertEqual("ffdc704430d3", pathHasher.hash("/documentation/foundation/urlsessionwebsockettask/3281790-send"))
             XCTAssertEqual("1161063e700c", pathHasher.hash("/documentation/swiftui/texteditor/disableautocorrection(_:)"))
@@ -2050,11 +2108,11 @@ Root
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = platformMetadata
         
-        let (_, bundle, context) = try await testBundleAndContext(named: "AvailabilityBetaBundle", configuration: configuration)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, _, context) = try await testBundleAndContext(named: "AvailabilityBetaBundle", configuration: configuration)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
@@ -2076,6 +2134,57 @@ Root
         XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Sanity check
     }
     
+    func testNavigatorUsesCustomDisplayName() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                // There's special logic for common Swift symbols, so use another kind of symbol here.
+                makeSymbol(id: "some-symbol-id", language: .data, kind: .dictionary, pathComponents: ["SomeDictionary"])
+            ])),
+            TextFile(name: "SomeDictionary.md", utf8Content: """
+            # ``SomeDictionary``    
+            
+            Customize the display name of this dictionary (for some reason)
+            
+            @Metadata {
+              @DisplayName("Some custom name")
+            }
+            """)
+        ])
+        let (_, context) = try await loadBundle(catalog: catalog)
+        
+        // Navigator Index / Builder can only use real file systems
+        let targetURL = try createTemporaryDirectory()
+        
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
+        builder.setup()
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+            
+            if identifier.lastPathComponent == "SomeDictionary" {
+                XCTAssertEqual(renderNode.metadata.title, "Some custom name")
+                XCTAssertEqual(renderNode.metadata.navigatorTitle?.map(\.text).joined(), "Some custom name")
+            }
+        }
+        builder.finalize()
+        
+        XCTAssertEqual(builder.navigatorIndex?.navigatorTree.root.dumpTree(), """
+        [Root]
+        ┗╸ModuleName
+          ┣╸Dictionaries
+          ┗╸Some custom name
+        """)
+        
+        let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+        XCTAssertEqual(renderIndex.interfaceLanguages["data"]?.map(\.title), [
+            "Dictionaries",
+            "Some custom name",
+        ])
+    }
+    
     private func findNodesWithBetaStatus(in nodes: [RenderIndex.Node], isBeta: Bool) -> [RenderIndex.Node] {
         var betaNodes: [RenderIndex.Node] = []
         
@@ -2093,9 +2202,9 @@ Root
     }
 
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {
-        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (_, context) = try await testBundleAndContext(named: testBundleName)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
 
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)

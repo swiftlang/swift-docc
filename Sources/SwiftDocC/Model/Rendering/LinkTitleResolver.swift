@@ -9,7 +9,9 @@
 */
 
 import Foundation
-import Markdown
+private import Markdown
+private import DocCCommon
+import SymbolKit
 
 /// A type that resolves values that are appropriate as link titles for documentation nodes.
 struct LinkTitleResolver {
@@ -31,11 +33,11 @@ struct LinkTitleResolver {
             var problems = [Problem]()
             switch directive.name {
             case Tutorial.directiveName:
-                if let tutorial = Tutorial(from: directive, source: source, for: context.bundle, problems: &problems) {
+                if let tutorial = Tutorial(from: directive, source: source, for: context.inputs, problems: &problems) {
                     return .init(defaultVariantValue: tutorial.intro.title)
                 }
             case TutorialTableOfContents.directiveName:
-                if let overview = TutorialTableOfContents(from: directive, source: source, for: context.bundle, problems: &problems) {
+                if let overview = TutorialTableOfContents(from: directive, source: source, for: context.inputs, problems: &problems) {
                     return .init(defaultVariantValue: overview.name)
                 }
             default: break

@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class TopicRenderReferenceEncoderTests: XCTestCase {
 
@@ -149,17 +150,21 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         }
         
         // Pipe through encoding errors.
-        encodingErrors.sync({ $0.forEach({ XCTFail(String(describing: $0)) }) })
+        encodingErrors.sync({ errors in
+            for error in errors {
+                XCTFail(String(describing: error))
+            }
+        })
         
         // Verify all references have been cached
         XCTAssertEqual(cache.sync({ $0.keys.count }), 1000)
     }
     
     /// Verifies that when JSON encoder should sort keys, the custom render reference cache
-    /// respects that setting and prints the referencs in alphabetical order.
+    /// respects that setting and prints the reference in alphabetical order.
     func testSortedReferences() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
 
         // Create a JSON encoder
         let encoder = RenderJSONEncoder.makeEncoder()
@@ -218,8 +223,8 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     // Verifies that there is no extra comma at the end of the references list.
     func testRemovesLastReferencesListDelimiter() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
 
         // Create a JSON encoder
         let encoder = RenderJSONEncoder.makeEncoder()

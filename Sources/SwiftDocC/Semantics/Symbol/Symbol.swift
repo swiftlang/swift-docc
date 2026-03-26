@@ -557,10 +557,10 @@ extension Symbol {
         for (selector, mixins) in unifiedSymbol.mixins {
             let trait = DocumentationDataVariantsTrait(for: selector)
             if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
-                unifiedSymbolAvailability.availability.forEach { availabilityItem in
-                    guard let availabilityVariantTrait = availabilityVariants[trait] else { return }
+                for availabilityItem in unifiedSymbolAvailability.availability {
+                    guard let availabilityVariantTrait = availabilityVariants[trait] else { continue }
                     if (availabilityVariantTrait.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
-                        return
+                        continue
                     }
                     availabilityVariants[trait]?.availability.append(availabilityItem)
                 }

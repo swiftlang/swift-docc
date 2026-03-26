@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class ArticleTests: XCTestCase {
     func testValid() async throws {
@@ -248,5 +249,27 @@ class ArticleTests: XCTestCase {
         XCTAssertNil(semantic.metadata?.callToAction)
         XCTAssertNil(semantic.metadata?.pageKind)
         XCTAssertNil(semantic.metadata?.titleHeading)
+    }
+
+    func testSupportedLanguageDirective() async throws {
+        let source = """
+        # Root
+
+        @Metadata {
+          @SupportedLanguage(swift)
+          @SupportedLanguage(objc)
+          @SupportedLanguage(data)
+        }
+        """
+        let document = Document(parsing: source, options: [.parseBlockDirectives])
+        let (bundle, _) = try await testBundleAndContext()
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+
+        XCTAssertNotNil(article)
+        XCTAssertNotNil(article?.metadata, "Article should have a metadata container since the markup has a @Metadata directive")
+        XCTAssertEqual(article?.metadata?.supportedLanguages.map(\.language), [.swift, .objectiveC, .data])
     }
 }

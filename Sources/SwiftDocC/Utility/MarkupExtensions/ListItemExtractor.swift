@@ -9,7 +9,6 @@
 */
 
 import Markdown
-import Foundation
 
 /// The list of tags that can appear at the start of a list item to indicate
 /// some meaning in the markup, taken from Swift documentation comments. These
