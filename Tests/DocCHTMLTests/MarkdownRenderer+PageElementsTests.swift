@@ -336,35 +336,221 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
                 .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
                 .init(kind: .keyword,           spelling: "throws",      preciseIdentifier: nil),
-                .init(kind: .text,              spelling: "-> ",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " -> ",        preciseIdentifier: nil),
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
             ]
         ])
         switch goal {
         case .richness:
+            #expect(declaration.plainTextForTesting == """
+            func doSomething(
+                with first: FirstParameterValue,
+                and second: SecondParameterValue
+            ) throws -> ReturnValue
+            """)
+            
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code>
               <span class="token-keyword">func</span>
                <span class="token-identifier">doSomething</span>
-              (<span class="token-externalParam">with</span>
+              (
+                  <span class="token-externalParam">with</span>
                <span class="token-internalParam">first</span>
               : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
-              , <span class="token-externalParam">and</span>
+              ,
+                  <span class="token-externalParam">and</span>
                <span class="token-internalParam">second</span>
               : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
               ) <span class="token-keyword">throws</span>
-              -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+               -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
             </code>
             </pre>
             """)
         case .conciseness:
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre>
-              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws -&gt; ReturnValue</code>
             </pre>
             """)
         }
+    }
+    
+    @Test
+    func prettyPrintsSwiftDeclarations() {
+        let symbolPaths = [
+            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
+            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
+            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
+        ]
+        
+        // func withUnsafeTemporaryAllocation<T, R, E>(of type: T.Type, capacity: Int, _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> R) throws(E) -> R where E : Error, T : ~Copyable, R : ~Copyable
+        let functionDeclaration = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",           preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "withUnsafeTemporaryAllocation", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "<",              preciseIdentifier: nil),
+                .init(kind: .genericParameter,  spelling: "T",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",             preciseIdentifier: nil),
+                .init(kind: .genericParameter,  spelling: "R",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",             preciseIdentifier: nil),
+                .init(kind: .genericParameter,  spelling: "E",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ">(",             preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "of",             preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "type",           preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",             preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "T",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ".Type, ",        preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "capacity",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",             preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",            preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ", ",             preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "_",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "body",           preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "UnsafeMutableBufferPointer", preciseIdentifier: "s:Sr"),
+                .init(kind: .text,              spelling: "<",              preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "T",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ">) ",            preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "throws",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",              preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "E",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ") -> ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "R",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ") ",             preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "throws",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",              preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "E",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ") -> ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "R",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "where",          preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "E",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " : ",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Error",          preciseIdentifier: "s:s5ErrorP",),
+                .init(kind: .text,              spelling: ", ",             preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "T",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " : ~Copyable, ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "R",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " : ~Copyable",   preciseIdentifier: nil),
+            ]
+        ])
+        
+        #expect(functionDeclaration.plainTextForTesting == """
+        func withUnsafeTemporaryAllocation<T, R, E>(
+            of type: T.Type,
+            capacity: Int,
+            _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> R
+        ) throws(E) -> R where E : Error, T : ~Copyable, R : ~Copyable
+        """)
+        
+        functionDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+        <pre id="declaration">
+        <code>
+          <span class="token-keyword">func</span>
+           <span class="token-identifier">withUnsafeTemporaryAllocation</span>
+          &lt;<span class="token-genericParameter">T</span>
+          , <span class="token-genericParameter">R</span>
+          , <span class="token-genericParameter">E</span>
+          &gt;(
+              <span class="token-externalParam">of</span>
+           <span class="token-internalParam">type</span>
+          : <span class="token-typeIdentifier">T</span>
+          .Type,
+              <span class="token-externalParam">capacity</span>
+          : <span class="token-typeIdentifier">Int</span>
+          ,
+              <span class="token-externalParam">_</span>
+           <span class="token-internalParam">body</span>
+          : (<span class="token-typeIdentifier">UnsafeMutableBufferPointer</span>
+          &lt;<span class="token-typeIdentifier">T</span>
+          &gt;) <span class="token-keyword">throws</span>
+          (<span class="token-typeIdentifier">E</span>
+          ) -&gt; <span class="token-typeIdentifier">R</span>
+          
+        ) <span class="token-keyword">throws</span>
+          (<span class="token-typeIdentifier">E</span>
+          ) -&gt; <span class="token-typeIdentifier">R</span>
+           <span class="token-keyword">where</span>
+           <span class="token-typeIdentifier">E</span>
+           : <span class="token-typeIdentifier">Error</span>
+          , <span class="token-typeIdentifier">T</span>
+           : ~Copyable, <span class="token-typeIdentifier">R</span>
+           : ~Copyable</code>
+        </pre>
+        """)
+        
+        // @attached(accessor) @attached(peer, names: prefixed(`$`)) macro TaskLocal()
+        let macroDeclaration = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .attribute,  spelling: "@attached",    preciseIdentifier: nil),
+                .init(kind: .text,       spelling: "(accessor) ",  preciseIdentifier: nil),
+                .init(kind: .attribute,  spelling: "@attached",    preciseIdentifier: nil),
+                .init(kind: .text,       spelling: "(peer, names: prefixed(`$`)) ", preciseIdentifier: nil),
+                .init(kind: .keyword,    spelling: "macro",        preciseIdentifier: nil),
+                .init(kind: .text,       spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .identifier, spelling: "TaskLocal",    preciseIdentifier: nil),
+                .init(kind: .text,       spelling: "()",           preciseIdentifier: nil),
+            ]
+        ])
+        
+        #expect(macroDeclaration.plainTextForTesting == """
+        @attached(accessor) @attached(peer, names: prefixed(`$`))
+        macro TaskLocal()
+        """)
+        
+        macroDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+        ​<pre id="declaration">
+        <code>
+          <span class="token-attribute">@attached</span>
+          (accessor) <span class="token-attribute">@attached</span>
+          (peer, names: prefixed(`$`)) 
+          <span class="token-keyword">macro</span>
+           <span class="token-identifier">TaskLocal</span>
+          ()</code>
+        </pre>
+        """)
+
+        // @freestanding(declaration) macro warning(_ message: String)
+        let macroDeclaration2 = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .attribute,         spelling: "@freestanding",  preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(declaration) ", preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "macro",          preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "warning",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",              preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "_",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "message",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",             preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "String",         preciseIdentifier: "s:preciseIdentifierS"),
+                .init(kind: .text,              spelling: ")",              preciseIdentifier: nil),
+            ]
+        ])
+        
+        #expect(macroDeclaration2.plainTextForTesting == """
+        @freestanding(declaration)
+        macro warning(_ message: String)
+        """)
+        
+        macroDeclaration2.assertMatches(prettyFormatted: true, expectedXMLString: """
+        ​<pre id="declaration">
+        <code>
+          <span class="token-attribute">@freestanding</span>
+          (declaration) 
+          <span class="token-keyword">macro</span>
+           <span class="token-identifier">warning</span>
+          (<span class="token-externalParam">_</span>
+           <span class="token-internalParam">message</span>
+          : <span class="token-typeIdentifier">String</span>
+          )</code>
+        </pre>
+        """)
     }
     
     @Test(arguments: RenderGoal.allCases)
@@ -395,7 +581,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
                 .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
                 .init(kind: .keyword,           spelling: "throws",      preciseIdentifier: nil),
-                .init(kind: .text,              spelling: "-> ",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " -> ",        preciseIdentifier: nil),
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
             ],
             
@@ -425,19 +611,30 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         switch goal {
         case .richness:
+            #expect(declaration.childCount == 2)
+            #expect((declaration.children ?? []).first?.plainTextForTesting == """
+            func doSomething(
+                with first: FirstParameterValue,
+                and second: SecondParameterValue
+            ) throws -> ReturnValue
+            """)
+            
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code class="swift-only">
               <span class="token-keyword">func</span>
                <span class="token-identifier">doSomething</span>
-              (<span class="token-externalParam">with</span>
+              (
+                  <span class="token-externalParam">with</span>
                <span class="token-internalParam">first</span>
               : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
-              , <span class="token-externalParam">and</span>
+              ,
+                  <span class="token-externalParam">and</span>
                <span class="token-internalParam">second</span>
               : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+                  
               ) <span class="token-keyword">throws</span>
-              -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+               -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
             </code>
             <code class="occ-only">- (<a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
               ) <span class="token-identifier">doSomethingWithFirst</span>
@@ -456,7 +653,7 @@ struct MarkdownRenderer_PageElementsTests {
         case .conciseness:
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre>
-              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws -&gt; ReturnValue</code>
             </pre>
             """)
         }
@@ -759,5 +956,19 @@ struct MultiValueLinkProvider: LinkProvider {
 extension RenderGoal: CaseIterable {
     static var allCases: [RenderGoal] {
         [.richness, .conciseness]
+    }
+}
+
+private extension XMLNode {
+    var plainTextForTesting: String {
+        var result = ""
+        for child in self.children ?? [] {
+            if child.kind == .text {
+                result.append(child.stringValue ?? "")
+            } else {
+                result.append(child.plainTextForTesting)
+            }
+        }
+        return result
     }
 }
