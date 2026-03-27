@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1700,7 +1700,7 @@ Root
         verifySymbolKind(["enumdata", "structdata", "cldata", "clconst", "intfdata"], .instanceVariable)
         verifySymbolKind(["enumsub", "structsub", "instsub", "intfsub"], .subscript)
         verifySymbolKind(["enumcm", "structcm", "clm", "intfcm"], .typeMethod)
-        verifySymbolKind(["httpget", "httpput", "httppost", "httppatch", "httpdelete"], .httpRequest)
+        verifySymbolKind(["httpget", "httpput", "httppost", "httppatch", "httpdelete", "httprequest"], .httpRequest)
         
         // Verify mappings provided from Delphi to SymbolKit
         
