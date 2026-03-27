@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -148,7 +148,69 @@ package extension MarkdownRenderer {
     }
     
     private func _prettyPrintedObjectiveCDeclaration(_ fragments: [DeclarationFragment]) -> [XMLNode] {
-        fragments.map(_render)
+        // FIXME: Do a Swift-like pretty printing for C functions (rdar://173489263)
+        
+        let parameterCount = fragments.count(where: { $0.kind == .internalParameter })
+        guard parameterCount > 1 else {
+            return fragments.map(_render)
+        }
+        
+        var result = [XMLNode]()
+        result.reserveCapacity(fragments.count)
+        
+        // Determine how far the parameters need to be indented to align
+        var colonAlignmentLength = 0
+        var remaining = fragments[...]
+        while let fragment = remaining.popFirst() {
+            result.append(_render(fragment))
+            if let colonIndex = fragment.spelling.utf8.firstIndex(of: colon) {
+                colonAlignmentLength += fragment.spelling.distance(from: fragment.spelling.startIndex, to: colonIndex)
+                break
+            } else {
+                colonAlignmentLength += fragment.spelling.count
+            }
+        }
+        
+        // Transform the fragments past the first parameter
+        while let fragment = remaining.popFirst() {
+            result.append(_render(fragment))
+            if fragment.kind == .internalParameter {
+                break
+            }
+        }
+            
+        for _ in 0 ..< parameterCount - 1 { // Don't split after the last parameter, keep the semicolon on the same line.
+            var distanceToColon = 0
+            for fragment in remaining {
+                if let colonIndex = fragment.spelling.utf8.firstIndex(of: colon) {
+                    distanceToColon += fragment.spelling.distance(from: fragment.spelling.startIndex, to: colonIndex)
+                    break
+                } else {
+                    distanceToColon += fragment.spelling.count
+                }
+            }
+            
+            guard var fragment = remaining.popFirst() else {
+                break
+            }
+            
+            let whitespaceToAdd = colonAlignmentLength - distanceToColon
+            fragment.spelling.insert(contentsOf: "\n" + String(repeating: " ", count: whitespaceToAdd), at: fragment.spelling.startIndex)
+            result.append(_render(fragment))
+            
+            while let fragment = remaining.popFirst() {
+                result.append(_render(fragment))
+                if fragment.kind == .internalParameter {
+                    break
+                }
+            }
+        }
+        
+        while let fragment = remaining.popFirst() {
+            result.append(_render(fragment))
+        }
+        
+        return result
     }
     
     private func _render(_ fragment: DeclarationFragment) -> XMLNode {
@@ -176,6 +238,7 @@ package extension MarkdownRenderer {
 private let openParen  = UInt8(ascii: "(")
 private let closeParen = UInt8(ascii: ")")
 private let comma      = UInt8(ascii: ",")
+private let colon      = UInt8(ascii: ":")
 
 private extension String.UTF8View {
     var containsParenthesis: Bool {

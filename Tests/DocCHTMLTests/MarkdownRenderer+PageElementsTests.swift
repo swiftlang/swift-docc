@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -618,6 +618,11 @@ struct MarkdownRenderer_PageElementsTests {
                 and second: SecondParameterValue
             ) throws -> ReturnValue
             """)
+            #expect((declaration.children ?? []).last?.plainTextForTesting == """
+            - (ReturnValue) doSomethingWithFirst: (FirstParameterValue) first
+                                       andSecond: (SecondParameterValue) second
+                                           error: (NSError **) error;
+            """)
             
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
@@ -640,10 +645,10 @@ struct MarkdownRenderer_PageElementsTests {
               ) <span class="token-identifier">doSomethingWithFirst</span>
               : (<a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
               ) <span class="token-internalParam">first</span>
-               <span class="token-identifier">andSecond</span>
+                                                     <span class="token-identifier">andSecond</span>
               : (<a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
               ) <span class="token-internalParam">second</span>
-               <span class="token-identifier">error</span>
+                                                         <span class="token-identifier">error</span>
               : (<a class="token-typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a>
                **) <span class="token-internalParam">error</span>
               ;</code>
