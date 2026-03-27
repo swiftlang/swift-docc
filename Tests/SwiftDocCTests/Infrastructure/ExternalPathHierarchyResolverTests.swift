@@ -1073,12 +1073,7 @@ struct ExternalPathHierarchyResolverTests_new {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
-        
-        let original = FeatureFlags.current
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = true
-        defer {
-            FeatureFlags.current = original
-        }
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
         
         let mainContext = try await load(
             catalog: Folder(name: "Main.docc") {
