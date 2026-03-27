@@ -352,18 +352,16 @@ struct MarkdownRenderer_PageElementsTests {
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code>
-              <span class="token-keyword">func</span>
-               <span class="token-identifier">doSomething</span>
-              (
-                  <span class="token-externalParam">with</span>
-               <span class="token-internalParam">first</span>
-              : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              <span class="keyword">func</span>
+               doSomething(
+                  with <span class="internalParameter">first</span>
+              : <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
               ,
-                  <span class="token-externalParam">and</span>
-               <span class="token-internalParam">second</span>
-              : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
-              ) <span class="token-keyword">throws</span>
-               -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+                  and <span class="internalParameter">second</span>
+              : <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              
+              ) <span class="keyword">throws</span>
+               -&gt; <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
             </code>
             </pre>
             """)
@@ -451,35 +449,28 @@ struct MarkdownRenderer_PageElementsTests {
         functionDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
         <pre id="declaration">
         <code>
-          <span class="token-keyword">func</span>
-           <span class="token-identifier">withUnsafeTemporaryAllocation</span>
-          &lt;<span class="token-genericParameter">T</span>
-          , <span class="token-genericParameter">R</span>
-          , <span class="token-genericParameter">E</span>
-          &gt;(
-              <span class="token-externalParam">of</span>
-           <span class="token-internalParam">type</span>
-          : <span class="token-typeIdentifier">T</span>
+          <span class="keyword">func</span>
+           withUnsafeTemporaryAllocation&lt;T, R, E&gt;(
+              of <span class="internalParameter">type</span>
+          : <span class="typeIdentifier">T</span>
           .Type,
-              <span class="token-externalParam">capacity</span>
-          : <span class="token-typeIdentifier">Int</span>
+              capacity: <span class="typeIdentifier">Int</span>
           ,
-              <span class="token-externalParam">_</span>
-           <span class="token-internalParam">body</span>
-          : (<span class="token-typeIdentifier">UnsafeMutableBufferPointer</span>
-          &lt;<span class="token-typeIdentifier">T</span>
-          &gt;) <span class="token-keyword">throws</span>
-          (<span class="token-typeIdentifier">E</span>
-          ) -&gt; <span class="token-typeIdentifier">R</span>
+              _ <span class="internalParameter">body</span>
+          : (<span class="typeIdentifier">UnsafeMutableBufferPointer</span>
+          &lt;<span class="typeIdentifier">T</span>
+          &gt;) <span class="keyword">throws</span>
+          (<span class="typeIdentifier">E</span>
+          ) -&gt; <span class="typeIdentifier">R</span>
           
-        ) <span class="token-keyword">throws</span>
-          (<span class="token-typeIdentifier">E</span>
-          ) -&gt; <span class="token-typeIdentifier">R</span>
-           <span class="token-keyword">where</span>
-           <span class="token-typeIdentifier">E</span>
-           : <span class="token-typeIdentifier">Error</span>
-          , <span class="token-typeIdentifier">T</span>
-           : ~Copyable, <span class="token-typeIdentifier">R</span>
+          ) <span class="keyword">throws</span>
+          (<span class="typeIdentifier">E</span>
+          ) -&gt; <span class="typeIdentifier">R</span>
+           <span class="keyword">where</span>
+           <span class="typeIdentifier">E</span>
+           : <span class="typeIdentifier">Error</span>
+          , <span class="typeIdentifier">T</span>
+           : ~Copyable, <span class="typeIdentifier">R</span>
            : ~Copyable</code>
         </pre>
         """)
@@ -504,14 +495,13 @@ struct MarkdownRenderer_PageElementsTests {
         """)
         
         macroDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
-        ​<pre id="declaration">
+        <pre id="declaration">
         <code>
-          <span class="token-attribute">@attached</span>
-          (accessor) <span class="token-attribute">@attached</span>
-          (peer, names: prefixed(`$`)) 
-          <span class="token-keyword">macro</span>
-           <span class="token-identifier">TaskLocal</span>
-          ()</code>
+          <span class="attribute">@attached</span>
+          (accessor) <span class="attribute">@attached</span>
+          (peer, names: prefixed(`$`))
+          <span class="keyword">macro</span>
+           TaskLocal()</code>
         </pre>
         """)
 
@@ -539,15 +529,13 @@ struct MarkdownRenderer_PageElementsTests {
         """)
         
         macroDeclaration2.assertMatches(prettyFormatted: true, expectedXMLString: """
-        ​<pre id="declaration">
+        <pre id="declaration">
         <code>
-          <span class="token-attribute">@freestanding</span>
-          (declaration) 
-          <span class="token-keyword">macro</span>
-           <span class="token-identifier">warning</span>
-          (<span class="token-externalParam">_</span>
-           <span class="token-internalParam">message</span>
-          : <span class="token-typeIdentifier">String</span>
+          <span class="attribute">@freestanding</span>
+          (declaration)
+          <span class="keyword">macro</span>
+           warning(_ <span class="internalParameter">message</span>
+          : <span class="typeIdentifier">String</span>
           )</code>
         </pre>
         """)
@@ -627,30 +615,26 @@ struct MarkdownRenderer_PageElementsTests {
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code class="swift-only">
-              <span class="token-keyword">func</span>
-               <span class="token-identifier">doSomething</span>
-              (
-                  <span class="token-externalParam">with</span>
-               <span class="token-internalParam">first</span>
-              : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              <span class="keyword">func</span>
+               doSomething(
+                  with <span class="internalParameter">first</span>
+              : <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
               ,
-                  <span class="token-externalParam">and</span>
-               <span class="token-internalParam">second</span>
-              : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
-                  
-              ) <span class="token-keyword">throws</span>
-               -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+                  and <span class="internalParameter">second</span>
+              : <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              
+              ) <span class="keyword">throws</span>
+               -&gt; <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
             </code>
-            <code class="occ-only">- (<a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
-              ) <span class="token-identifier">doSomethingWithFirst</span>
-              : (<a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
-              ) <span class="token-internalParam">first</span>
-                                                     <span class="token-identifier">andSecond</span>
-              : (<a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
-              ) <span class="token-internalParam">second</span>
-                                                         <span class="token-identifier">error</span>
-              : (<a class="token-typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a>
-               **) <span class="token-internalParam">error</span>
+            <code class="occ-only">- (<a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+              ) doSomethingWithFirst: (<a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              ) <span class="internalParameter">first</span>
+              
+                                     andSecond: (<a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              ) <span class="internalParameter">second</span>
+              
+                                         error: (<a class="typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a>
+               **) <span class="internalParameter">error</span>
               ;</code>
             </pre>
             """)
