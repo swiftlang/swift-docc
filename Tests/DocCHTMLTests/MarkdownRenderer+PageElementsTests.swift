@@ -736,17 +736,14 @@ struct MarkdownRenderer_PageElementsTests {
                       <span class="identifier">TLASome<wbr/>
                           Class</span>
                     </code>
-                    <p>Some <i>formatted</i>
-                       description of this class</p>
                   </a>
+                  <p>Some <i>formatted</i> description of this class</p>
                 </li>
                 <li>
                   <a href="../../somearticle/index.html">
                     <p>Some Article</p>
-                    <p>Some <b>formatted</b>
-                       description of this <i>article</i>
-                      .</p>
                   </a>
+                  <p>Some <b>formatted</b>description of this <i>article</i>.</p>
                 </li>
                 <li>
                   <a href="../../someclass/somemethod(with:and:)/index.html">
@@ -785,17 +782,14 @@ struct MarkdownRenderer_PageElementsTests {
             <li>
               <a href="../../someclass/index.html">
                 <code>class SomeClass</code>
-                <p>Some <i>formatted</i>
-                   description of this class</p>
               </a>
+              <p>Some <i>formatted</i> description of this class</p>
             </li>
             <li>
               <a href="../../somearticle/index.html">
                 <p>Some Article</p>
-                <p>Some <b>formatted</b>
-                   description of this <i>article</i>
-                  .</p>
               </a>
+              <p>Some <b>formatted</b> description of this <i>article</i>.</p>
             </li>
             <li>
               <a href="../../someclass/somemethod(with:and:)/index.html">
