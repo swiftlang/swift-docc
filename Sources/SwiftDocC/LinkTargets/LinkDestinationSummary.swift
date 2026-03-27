@@ -557,7 +557,10 @@ extension LinkDestinationSummary {
         let referenceURL = documentationNode.reference.url
         
         let topicImages = renderNode.metadata.images
-        let referenceIdentifiers = topicImages.map(\.identifier)
+        var referenceIdentifiers = Set(topicImages.map(\.identifier))
+        for case .reference(identifier: let identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) in renderNode.abstract ?? [] {
+            referenceIdentifiers.insert(identifier)
+        }
         
         guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.sourceLanguage == documentationNode.sourceLanguage }) else {
             // Only symbol documentation currently support multi-language variants (rdar://86580915)
