@@ -130,7 +130,6 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
 
             return nil
         }
-        let featureFlags = FeatureFlags()
         
         var remainder: [any Markup]
         var redirects: [Redirect]

@@ -926,7 +926,7 @@ extension PathHierarchy {
         self.tutorialContainer = lookup[identifiers[fileRepresentation.tutorialContainer]]!
         self.tutorialOverviewContainer = lookup[identifiers[fileRepresentation.tutorialOverviewContainer]]!
         
-        // If we're decoding another path hierarchy from a file, then we want to be able to
+        // If we're decoding another path hierarchy from a file, then we want to raise module-not-found errors for that hierarchy.
         self.isModuleNotFoundErrorsEnabled = true
         
         mapCreatedIdentifiers(identifiers)

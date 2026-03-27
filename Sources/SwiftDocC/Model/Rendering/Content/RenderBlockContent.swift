@@ -332,6 +332,11 @@ public enum RenderBlockContent: Equatable {
             }
             self.lineAnnotations = annotations
         }
+        
+        @available(*, deprecated, renamed: "init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)", message: "Use 'CodeBlockOptions.init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)' instead. This deprecated API will be removed after 6.5 is released.")
+        public init(showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
+            self.init(copyToClipboard: FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: showLineNumbers, wrap: wrap, highlight: highlight, strikeout: strikeout)
+        }
 
         public init(copyToClipboard: Bool, showLineNumbers: Bool, wrap: Int, lineAnnotations: [LineAnnotation]) {
             self.copyToClipboard = copyToClipboard

@@ -774,7 +774,7 @@ public struct DocumentationNode {
         // Prefer content sections coming from an article (documentation extension file)
         var deprecated: DeprecatedSection?
         
-        let (markup, docChunks, _) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, featureFlags: FeatureFlags(), engine: engine)
+        let (markup, docChunks, _) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, featureFlags: featureFlags, engine: engine)
         self.markup = markup
         self.docChunks = docChunks
         

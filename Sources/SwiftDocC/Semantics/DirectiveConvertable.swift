@@ -59,8 +59,9 @@ public extension DirectiveConvertible {
 
 // Default implementation so that conforming types don't need to implement deprecated API.
 public extension DirectiveConvertible {
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:problems:)", message: "Use 'init(from:source:for:featureFlags:problems:)' instead. This deprecated API will be removed after 6.5 is released.")
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
-        self.init(from: directive, source: source, for: bundle, featureFlags: .init(), problems: &problems)
+        self.init(from: directive, source: source, for: bundle, featureFlags: FeatureFlags.current, problems: &problems)
     }
 }
 

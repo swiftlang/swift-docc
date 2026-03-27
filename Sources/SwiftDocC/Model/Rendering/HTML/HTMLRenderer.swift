@@ -127,7 +127,7 @@ struct HTMLRenderer {
     
     private let renderer: MarkdownRenderer<ContextLinkProvider>
     
-    init(reference: ResolvedTopicReference, context: DocumentationContext, goal: RenderGoal, featureFlags: FeatureFlags = .init()) {
+    init(reference: ResolvedTopicReference, context: DocumentationContext, goal: RenderGoal, featureFlags: FeatureFlags) {
         self.reference = reference
         self.context = context
         self.goal = goal
