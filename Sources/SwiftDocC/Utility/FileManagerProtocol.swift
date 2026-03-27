@@ -150,19 +150,54 @@ extension FileManager: FileManagerProtocol {
         do {
             try copyItem(at: source, to: destination)
         } catch let error as CocoaError {
-            // In Swift 6 on Linux, `FileManager/copyItems(at:to:)` raises an error _after_ successfully copying the files when it's moving over file attributes from the source to the destination.
-            // To workaround this issue, we check if the destination exist and the error wasn't that the destination _already_ existed.
+            // In Swift 6 on Linux, `FileManager/copyItem(at:to:)` raises an error _after_ successfully copying the files when it's moving over file attributes from the source to the destination.
+            // To workaround this issue, we check if the destination exists and the error wasn't that the destination _already_ existed.
             if error.code != CocoaError.Code.fileWriteFileExists,
                fileExists(atPath: destination.path)
             {
+                // The destination exists, but the copy may be incomplete if the error occurred mid-copy
+                // (e.g., when copying a directory and fchown fails on the first child item).
+                // For directory copies, verify completeness and copy any missing items individually.
+                if directoryExists(atPath: source.path) {
+                    try _copyMissingChildren(from: source, to: destination)
+                }
                 // Ignore this error.
                 // The consequence is that the copied item may have some different attributes (creation date, owner, etc.) compared to the source.
                 // These attributes aren't critical for copying input files over to the output documentation archive.
                 return
             }
-            
-            // Otherwise, if this was any other error or if the destination file doesn't exist after calling `FileManager/copyItems(at:to:)`, re-throw the error to the caller.
+
+            // Otherwise, if this was any other error or if the destination file doesn't exist after calling `FileManager/copyItem(at:to:)`, re-throw the error to the caller.
             throw error
+        }
+    }
+
+    /// Copies any children of `source` that are missing from `destination`, recursively.
+    ///
+    /// This handles the case where `copyItem(at:to:)` fails mid-copy when copying a directory,
+    /// leaving some children uncopied. Each missing child is copied individually so that a
+    /// per-file `fchown` failure doesn't prevent copying the remaining items.
+    private func _copyMissingChildren(from source: URL, to destination: URL) throws {
+        let sourceChildren: [String]
+        do {
+            sourceChildren = try contentsOfDirectory(atPath: source.path)
+        } catch {
+            return // Can't list source — nothing more we can do
+        }
+
+        for childName in sourceChildren {
+            let sourceChild = source.appendingPathComponent(childName)
+            let destinationChild = destination.appendingPathComponent(childName)
+
+            if fileExists(atPath: destinationChild.path) {
+                // Child exists — if it's a directory, recurse to check its children too
+                if directoryExists(atPath: sourceChild.path) {
+                    try _copyMissingChildren(from: sourceChild, to: destinationChild)
+                }
+            } else {
+                // Child is missing — copy it individually
+                try _copyItem(at: sourceChild, to: destinationChild)
+            }
         }
     }
 }
