@@ -30,6 +30,7 @@ public import Markdown
 /// - ``PageKind``
 /// - ``SupportedLanguage``
 /// - ``TitleHeading``
+/// - ``EditLink``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
@@ -79,6 +80,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective
     var redirects: [Redirect]? = nil
     
+    @ChildDirective
+    var editLink: EditLink? = nil
+    
     @ChildDirective(requirements: .zeroOrMore)
     var alternateRepresentations: [AlternateRepresentation]
 
@@ -96,6 +100,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "titleHeading"          : \Metadata._titleHeading,
         "redirects"             : \Metadata._redirects,
         "alternateRepresentations"  : \Metadata._alternateRepresentations,
+        "editLink"              : \Metadata._editLink,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
@@ -105,7 +110,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && supportedLanguages.isEmpty && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && supportedLanguages.isEmpty && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty && editLink == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,

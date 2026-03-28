@@ -627,6 +627,33 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var topicSectionContentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
         node.metadata.title = article.title!.plainText
+
+        // Handle "Edit this Page" link
+        if let editLink = article.metadata?.editLink, !editLink.isDisabled {
+            if let customURL = editLink.url {
+                node.metadata.remoteSource = RenderMetadata.RemoteSource(
+                    fileName: article.source?.lastPathComponent ?? article.title!.plainText,
+                    url: customURL
+                )
+            } else if let sourceRepository = sourceRepository,
+                      let sourceURL = article.source,
+                      let remoteURL = sourceRepository.format(sourceFileURL: sourceURL) {
+                node.metadata.remoteSource = RenderMetadata.RemoteSource(
+                    fileName: sourceURL.lastPathComponent,
+                    url: remoteURL
+                )
+            }
+        } else if article.metadata?.editLink == nil {
+            // Automatic if no directive is present
+            if let sourceRepository = sourceRepository,
+               let sourceURL = article.source,
+               let remoteURL = sourceRepository.format(sourceFileURL: sourceURL) {
+                node.metadata.remoteSource = RenderMetadata.RemoteSource(
+                    fileName: sourceURL.lastPathComponent,
+                    url: remoteURL
+                )
+            }
+        }
         
         // Detect the article modules from its breadcrumbs.
         var modules = Set<ResolvedTopicReference>()
