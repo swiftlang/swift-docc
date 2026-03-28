@@ -215,6 +215,39 @@ class ConvertActionTests: XCTestCase {
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
+
+    // Ensures that theme-settings.json is always present in the output directory
+    // even if not provided in the documentation bundle.
+    func testThemeSettingsJSONIsAlwaysPresentInBuildOutput() async throws {
+        // Empty documentation bundle
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        
+        let action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            fileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+        let result = try await action.perform(logHandle: .none)
+        
+        // Verify that theme-settings.json exists at the output location
+        let themeSettingsURL = result.outputs[0].appendingPathComponent("theme-settings.json", isDirectory: false)
+        XCTAssertTrue(testDataProvider.fileExists(atPath: themeSettingsURL.path), "theme-settings.json should be present in the output even if not provided in the bundle.")
+        
+        // Verify it contains an empty JSON object
+        let contents = try XCTUnwrap(testDataProvider.contentsOfURL(themeSettingsURL))
+        XCTAssertEqual(String(data: contents, encoding: .utf8), "{}")
+    }
     
     func testConvertsWithoutErrorsWhenBundleIsNotAtRoot() async throws {
         let bundle = Folder(name: "unit-test.docc", content: [

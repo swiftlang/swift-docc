@@ -153,5 +153,32 @@ struct FileRequestHandlerTests {
         #expect(response.body == nil)
         #expect(response.requestError?.status.code == RequestError.init(status: .badRequest).status.code)
     }
+
+    @Test
+    func fileHandlerServesThemeSettingsWhenFound() throws {
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
+            TextFile(name: "theme-settings.json", utf8Content: "{\"custom\": true}"),
+        ])
+
+        let request = makeRequestHead(uri: "/theme-settings.json")
+        let factory = FileRequestHandler(rootURL: folderURL, fileManager: fileSystem)
+        let response = try responseWithPipeline(request: request, handler: factory)
+        
+        #expect(response.head?.status == .ok)
+        #expect(response.body == "{\"custom\": true}")
+    }
+
+    @Test
+    func fileHandlerServesEmptyThemeSettingsWhenNotFound() throws {
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [])
+
+        let request = makeRequestHead(uri: "/theme-settings.json")
+        let factory = FileRequestHandler(rootURL: folderURL, fileManager: fileSystem)
+        let response = try responseWithPipeline(request: request, handler: factory)
+        
+        #expect(response.head?.status == .ok)
+        #expect(response.body == "{}")
+        #expect(response.head?.headers["Content-type"] == ["application/json"])
+    }
 }
 #endif

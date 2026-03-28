@@ -155,6 +155,12 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
                 try fileManager.removeItem(at: targetFile)
             }
             try fileManager._copyItem(at: themeSettings, to: targetFile)
+        } else {
+            // If No theme-settings.json was provided, ensure one exists in the output.
+            let targetFile = targetFolder.appendingPathComponent("theme-settings.json", isDirectory: false)
+            if !fileManager.fileExists(atPath: targetFile.path) {
+                try fileManager.createFile(at: targetFile, contents: Data("{}".utf8))
+            }
         }
 
         // If a custom favicon is provided, it will be copied in the output directory

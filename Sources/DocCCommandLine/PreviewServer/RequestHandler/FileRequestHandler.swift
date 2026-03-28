@@ -160,7 +160,12 @@ struct FileRequestHandler: RequestHandlerFactory {
                     data = try fileManager.contents(of: fileURL)
                     totalLength = data.count
                 } catch {
-                    throw RequestError(status: .notFound)
+                    if components.path == "/theme-settings.json" {
+                        data = Data("{}".utf8)
+                        totalLength = data.count
+                    } else {
+                        throw RequestError(status: .notFound)
+                    }
                 }
 
                 // Add Range header if necessary
