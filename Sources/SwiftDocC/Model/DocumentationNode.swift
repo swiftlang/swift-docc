@@ -747,6 +747,7 @@ public struct DocumentationNode {
     ///   - article: The documentation extension content for this symbol.
     ///   - featureFlags: A collection of feature flags.
     ///   - engine:The engine that collects any problems encountered during initialization.
+    @available(*, deprecated, message: "This API is only used from tests. It will be removed after 6.5 is released.")
     public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, featureFlags: FeatureFlags = .init(), engine: DiagnosticEngine) {
         self.reference = reference
         
