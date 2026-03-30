@@ -138,8 +138,7 @@ struct PathHierarchy {
 
                     let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
-                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
-                    if symbol.identifier.precise.contains("::SYNTHESIZED::") {
+                    if symbol.identifier.isSynthesized {
                         node.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
                     }
                     nodes[id] = node
@@ -995,4 +994,40 @@ private func assertAllNodes(
         file: file,
         line: line
     )
+}
+
+private extension SymbolGraph.Symbol.Identifier {
+    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
+    var isSynthesized: Bool {
+        return precise.withCString {
+            // This is a rather quick way to check if the symbol's unique identifier string contains the "::SYNTHESIZED::" string or not.
+            // Because this check is performed for every symbol once per language representation and platforms, it's good if it can be fast.
+            
+            // Only Swift types use the "::SYNTHESIZED::" separator, so if this unique identifier doesn't have a "s:" prefix, then we can exit early.
+            let pointer = UnsafeRawPointer($0)
+            guard pointer.hasASCIIPrefix("s:") else {
+                return false
+            }
+            
+            // We know that _if_ the symbol's unique identifier contains this separator, then it also contains another unique identifier afterwards.
+            // Because the "::SYNTHESIZED::" separator is 15 characters and the following unique identifier has to be _at least_ 1 character long,
+            // we know that there's less than 16 characters left in the symbol's unique identifier, we can't find a valid "::SYNTHESIZED::" separator anymore.
+            let lengthToCheck = precise.utf8.count &- 16
+            // We know that the first 2 characters are "s:" so there's no reason to check them again. That colon can't be part of a valid "::SYNTHESIZED::" separator.
+            var offset = 2
+            while offset < lengthToCheck {
+                // Because there will always be at more than 8 characters remaining in the, we can safely check 8 characters at a time when looking for the first ":" without risking reading out-of-bounds.
+                defer { offset += 8 }
+                // Our `ByteMatches` reads 8 bytes and uses bitwise operations to determine if any of the next 8 bytes is a ":"
+                let match = ByteMatches(pointer.loadUnaligned(fromByteOffset: offset, as: UInt64.self), ByteMatches.colonSearchPattern)
+                // If _any_ of the next 8 bytes is a ":", we make larger reads and check if the 15 bytes that starts at that ":" is exactly that separator.
+                if match.hasMatches, pointer.hasASCIIPrefix("::SYNTHESIZED::", byteOffset: offset + match.numberOfLeadingNonMatches) {
+                    return true
+                }
+            }
+            // If we reached the last 16 bytes without finding the separator, then we won't find it.
+            assert(!precise.contains("::SYNTHESIZED::"), "The custom implementation didn't produce the same result as a 'String.contains(_:)' check.")
+            return false
+        }
+    }
 }
