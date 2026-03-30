@@ -268,6 +268,7 @@ public enum RenderBlockContent: Equatable {
         }
 
         // empty initializer with default values
+        @available(*, deprecated, renamed: "init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)", message: "Use 'CodeBlockOptions.init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)' instead. This deprecated API will be removed after 6.5 is released.")
         public init() {
             self.language = ""
             self.copyToClipboard = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
@@ -313,7 +314,7 @@ public enum RenderBlockContent: Equatable {
             self.lineAnnotations = annotations
         }
 
-        public init(copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
+        public init(copyToClipboard: Bool, showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
             self.copyToClipboard = copyToClipboard
             self.showLineNumbers = showLineNumbers
             self.wrap = wrap
@@ -330,6 +331,11 @@ public enum RenderBlockContent: Equatable {
                     annotations.append(LineAnnotation(style: "strikeout", range: range))
             }
             self.lineAnnotations = annotations
+        }
+        
+        @available(*, deprecated, renamed: "init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)", message: "Use 'CodeBlockOptions.init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)' instead. This deprecated API will be removed after 6.5 is released.")
+        public init(showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
+            self.init(copyToClipboard: FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: showLineNumbers, wrap: wrap, highlight: highlight, strikeout: strikeout)
         }
 
         public init(copyToClipboard: Bool, showLineNumbers: Bool, wrap: Int, lineAnnotations: [LineAnnotation]) {
@@ -1000,6 +1006,8 @@ extension RenderBlockContent: Codable {
         case identifier
     }
     
+    static let isExperimentalCodeBlockAnnotationsEnabledUserInfoKey = CodingUserInfoKey(rawValue: "isExperimentalCodeBlockAnnotationsEnabled")!
+    
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BlockType.self, forKey: .type)
@@ -1020,7 +1028,7 @@ extension RenderBlockContent: Codable {
             }
             self = .aside(aside)
         case .codeListing:
-            let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
+            let copy = decoder.userInfo[Self.isExperimentalCodeBlockAnnotationsEnabledUserInfoKey] as? Bool == true
             let options: CodeBlockOptions?
             if !Set(container.allKeys).isDisjoint(with: [.copyToClipboard, .showLineNumbers, .wrap, .lineAnnotations]) {
                 options = try CodeBlockOptions(
@@ -1058,7 +1066,7 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample:
             self = try .dictionaryExample(.init(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example)))
         case .table:
-            // Defer to Table's own Codable implemenatation to parse `extendedData` properly.
+            // Defer to Table's own Codable implementation to parse `extendedData` properly.
             self = try .table(.init(from: decoder))
         case .termList:
             self = try .termList(.init(items: container.decode([TermListItem].self, forKey: .items)))
@@ -1169,7 +1177,7 @@ extension RenderBlockContent: Codable {
             try container.encodeIfPresent(e.summary, forKey: .summary)
             try container.encode(e.example, forKey: .example)
         case .table(let t):
-            // Defer to Table's own Codable implemenatation to format `extendedData` properly.
+            // Defer to Table's own Codable implementation to format `extendedData` properly.
             try t.encode(to: encoder)
         case .termList(items: let l):
             try container.encode(l.items, forKey: .items)

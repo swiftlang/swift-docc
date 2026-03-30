@@ -19,12 +19,12 @@ class XcodeRequirementTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(XcodeRequirement.directiveName, directive.name)
-            let requirement = XcodeRequirement(from: directive, source: nil, for: bundle, problems: &problems)
+            let requirement = XcodeRequirement(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNil(requirement)
             XCTAssertEqual(2, problems.count)
             XCTAssertEqual(
@@ -48,12 +48,12 @@ class XcodeRequirementTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(XcodeRequirement.directiveName, directive.name)
-            let requirement = XcodeRequirement(from: directive, source: nil, for: bundle, problems: &problems)
+            let requirement = XcodeRequirement(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(requirement)
             XCTAssertTrue(problems.isEmpty)
             requirement.map { requirement in

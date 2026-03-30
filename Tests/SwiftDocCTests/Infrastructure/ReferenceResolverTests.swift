@@ -28,7 +28,7 @@ class ReferenceResolverTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: context.inputs, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)!
         
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitIntro(intro)
@@ -47,7 +47,7 @@ class ReferenceResolverTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, problems: &problems)!
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)!
         
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visit(contentAndMedia)
@@ -64,7 +64,7 @@ class ReferenceResolverTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: context.inputs, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)!
         
         var resolver = ReferenceResolver(context: context)
         
@@ -576,7 +576,7 @@ class ReferenceResolverTests: XCTestCase {
         let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
 
-        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: context.inputs, problems: &problems))
+        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitChapter(chapter)
         XCTAssertFalse(resolver.problems.containsErrors)
