@@ -20,11 +20,11 @@ public protocol ConvertOutputConsumer {
     /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
     func consume(assetsInBundle bundle: DocumentationBundle) throws
     
-    /// Consumes the linkable element summaries produced during a conversion.
+    /// Consumes a linkable element summary produced during a conversion.
     /// > Warning: This method might be called concurrently.
     func consumeIncremental(linkableElementSummary: LinkDestinationSummary) throws
-    /// Consumes the linkable element summaries produced during a conversion.
-    func finishedConsumingLinkElementSummaries() throws
+    /// Finishes consuming all linkable element summaries that were incrementally and individually consumed.
+    func finishConsumingLinkElementSummaries() throws
     
     @available(*, deprecated, renamed: "consume(linkableElementSummary:)", message: "Use 'consume(linkableElementSummary:)' instead. This deprecated API will be removed after 6.4 is released")
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws
@@ -71,7 +71,7 @@ public extension ConvertOutputConsumer {
 // Default implementations to avoid a source breaking change from introducing new protocol requirements
 public extension ConvertOutputConsumer {
     func consumeIncremental(linkableElementSummary: LinkDestinationSummary) throws {}
-    func finishedConsumingLinkElementSummaries() throws {}
+    func finishConsumingLinkElementSummaries() throws {}
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.

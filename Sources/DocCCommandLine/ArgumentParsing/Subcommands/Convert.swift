@@ -429,7 +429,7 @@ extension Docc {
             @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
             var allowArbitraryCatalogDirectories = false
             
-            /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
+            /// A user-provided value that is true if the user enables serialization of the local link resolution information.
             @Flag(
                 name: .customLong("external-link-support"),
                 inversion: .prefixedEnableDisable,

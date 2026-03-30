@@ -182,7 +182,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
     }
     
     /// Finishes consuming the linkable element summaries produced during a conversion.
-    func finishedConsumingLinkElementSummaries() throws {
+    func finishConsumingLinkElementSummaries() throws {
         let linkableElementsURL = targetFolder.appendingPathComponent(Self.linkableEntitiesFileName, isDirectory: false)
         let data = linkableElementsData.sync { accumulatedData in
             var data = Data()
