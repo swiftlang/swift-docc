@@ -19,9 +19,9 @@ class TutorialSectionTests: XCTestCase {
         let source = "@Section"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let section = TutorialSection(from: directive, source: nil, for: bundle, problems: &problems)
+        let section = TutorialSection(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(section)
         XCTAssertEqual(2, problems.count)
         XCTAssertEqual(

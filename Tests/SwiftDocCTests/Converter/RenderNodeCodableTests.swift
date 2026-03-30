@@ -186,7 +186,7 @@ class RenderNodeCodableTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: context.inputs, problems: &problems)
+            Article(from: document.root, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         )
         
         let reference = ResolvedTopicReference(

@@ -130,6 +130,28 @@ struct PathHierarchyTests_new {
         #expect(foundWithAnchor    == heading, "Should find the heading when the link has a '#' prefix")
         #expect(foundWithoutAnchor == secondArticle, "Should find the article before considering heading matches")
     }
+    
+    @Test(arguments: [
+        "/", "Þ", "π", "→", "⠞", "😀", "🏁"
+    ])
+    func transformsSpecialCharactersInPaths(character: String) async throws {
+        let symbolName = "Symbol\(character)Name\(character)\(character)"
+        
+        let catalog = Folder(name: "Something.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: [symbolName]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        let links = tree.disambiguatedAbsoluteLinks()
+        
+        #expect(paths["some-symbol-id"] == "/ModuleName/Symbol_Name__", "Each special character should be replaced with a '_'")
+        #expect(links["some-symbol-id"] == "/ModuleName/\(symbolName)", "Links allow any special characters")
+    }
 }
 
 class PathHierarchyTests: XCTestCase {
@@ -1435,8 +1457,6 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testOverloadedSymbolsWithOverloadGroups() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
         let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
         let tree = context.linkResolver.localResolver.pathHierarchy
 
@@ -2250,9 +2270,10 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testOverloadGroupSymbolsResolveLinksWithoutHash() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols", configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         // The enum case should continue to resolve by kind, since it has no hash collision
@@ -2269,8 +2290,10 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testAmbiguousPathsForOverloadedGroupSymbols() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
+        
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols", configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
         try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
