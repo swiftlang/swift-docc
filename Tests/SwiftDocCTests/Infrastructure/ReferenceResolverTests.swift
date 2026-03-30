@@ -772,8 +772,15 @@ class ReferenceResolverTests: XCTestCase {
             """)
         }
         let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
+            "'NotFoundArticle' doesn't exist at '/ModuleName/Something'",
+            "'NotFoundSymbol' doesn't exist at '/ModuleName/Something'",
+            "'OtherNotFoundArticle' doesn't exist at '/ModuleName/Something'",
+            "'OtherNotFoundSymbol' doesn't exist at '/ModuleName/Something'",
+            "Resource 'not-found-image' couldn't be found",
+            "Resource 'other-not-found-image' couldn't be found",
+        ])
         let node = try XCTUnwrap(context.documentationCache["some-symbol-id"])
-        
         XCTAssertEqual(node.docChunks.count, 2, "This node has content from both the in-source comment and the documentation extension file.")
         
         var resolver = ReferenceResolver(context: context)
