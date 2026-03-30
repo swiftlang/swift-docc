@@ -97,7 +97,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         }
     }
 
-    func validate(source: URL?, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
         var isValid = true
 
         if self.url == nil && self.file == nil {

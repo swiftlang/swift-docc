@@ -65,7 +65,7 @@ public final class Choice: Semantic, AutomaticDirectiveConvertible {
         self.originalMarkup = originalMarkup
     }
     
-    func validate(source: URL?, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
         if content.isEmpty && image == nil {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.\(Choice.self).Empty", summary: "\(Choice.directiveName.singleQuoted) answer content must consist of a paragraph, code block, or \(ImageMedia.directiveName.singleQuoted) directive")
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))

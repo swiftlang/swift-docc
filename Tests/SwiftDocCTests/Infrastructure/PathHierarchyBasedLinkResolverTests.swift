@@ -14,14 +14,11 @@ import SymbolKit
 
 struct PathHierarchyBasedLinkResolverTests {
     @Test
-    func listingOverloadedSymbolsBelogningToOverloadGroups() async throws {
-        let currentValue = FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
-        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = true
-        defer {
-            FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = currentValue
-        }
-        
-        let context = try await loadFromDisk(catalogName: "OverloadedSymbols")
+    func listingOverloadedSymbolsBelongingToOverloadGroups() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
+
+        let context = try await loadFromDisk(catalogName: "OverloadedSymbols", configuration: configuration)
         let moduleReference = try #require(context.soleRootModuleReference)
         
         // Returns nil for all non-overload groups
