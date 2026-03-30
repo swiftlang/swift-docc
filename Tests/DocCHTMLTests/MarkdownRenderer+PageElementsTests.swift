@@ -429,7 +429,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .text,              spelling: " ",              preciseIdentifier: nil),
                 .init(kind: .typeIdentifier,    spelling: "E",              preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " : ",            preciseIdentifier: nil),
-                .init(kind: .typeIdentifier,    spelling: "Error",          preciseIdentifier: "s:s5ErrorP",),
+                .init(kind: .typeIdentifier,    spelling: "Error",          preciseIdentifier: "s:s5ErrorP"),
                 .init(kind: .text,              spelling: ", ",             preciseIdentifier: nil),
                 .init(kind: .typeIdentifier,    spelling: "T",              preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " : ~Copyable, ", preciseIdentifier: nil),
