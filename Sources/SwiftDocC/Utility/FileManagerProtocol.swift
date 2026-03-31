@@ -178,12 +178,7 @@ extension FileManager: FileManagerProtocol {
     /// leaving some children uncopied. Each missing child is copied individually so that a
     /// per-file `fchown` failure doesn't prevent copying the remaining items.
     private func _copyMissingChildren(from source: URL, to destination: URL) throws {
-        let sourceChildren: [String]
-        do {
-            sourceChildren = try contentsOfDirectory(atPath: source.path)
-        } catch {
-            return // Can't list source — nothing more we can do
-        }
+        let sourceChildren = try contentsOfDirectory(atPath: source.path)
 
         for childName in sourceChildren {
             let sourceChild = source.appendingPathComponent(childName)
