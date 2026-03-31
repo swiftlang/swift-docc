@@ -14,7 +14,15 @@ import SymbolKit
 import DocCTestUtilities
 
 struct AvailabilityTests {
-    @Test(arguments: ["8.0.0", nil])
+    
+    enum DirectiveLocation: CaseIterable {
+        case extensionFile
+        case inSourceComment
+    }
+    
+    // MARK: Fallback availability
+    
+    @Test(arguments: ["8.0", nil])
     func fillsInFallbackAvailabilityFromDefaultAvailability(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
             // This symbol graph file is not for iOS and the symbol doesn't have iOS availability. This means that the iOS availability has to come from the Info.plist
@@ -22,49 +30,69 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
             ]))
             
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some article
+            """)
+            
             InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(platformName: .iOS, platformVersion: defaultIntroducedVersion)
             ]])
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
-        if defaultIntroducedVersion != nil {
-            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "tvOS"])
-        } else {
-            // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
-            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "tvOS"])
-        }
-        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == defaultIntroducedVersion)
-        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == defaultIntroducedVersion)
-        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == defaultIntroducedVersion)
-        #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == nil)
-    }
-     
-    @Test
-    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailable() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            // This symbol graph file is not for iOS and the symbol doesn't have iOS availability. This means that the iOS availability has to come from the Info.plist
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "tvos")), symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
-            ]))
+        // Verify that the symbol has filled in iPadOS and Mac Catalyst from the iOS default availability.
+        do {
+            let node = try #require(context.documentationCache["some-symbol-id"])
+            let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(platformName: .iOS, platformVersion: "8.0"),
-                .init(unavailablePlatformName: .catalyst), // Mac Catalyst is marked unavailable here so its fallback availability won't be added
-            ]])
+            // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+            if defaultIntroducedVersion != nil {
+                #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "tvOS"])
+            } else {
+                // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+                #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "tvOS"])
+            }
+            #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == defaultIntroducedVersion.map { "\($0).0" })
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == defaultIntroducedVersion.map { "\($0).0" })
+            #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == defaultIntroducedVersion.map { "\($0).0" })
+            #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == nil)
+            
+            let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+            let renderNode = try #require(converter.renderNode(for: node))
+            
+            let renderPlatforms = try #require(renderNode.metadata.platforms)
+            if defaultIntroducedVersion != nil {
+                #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "tvOS"])
+            } else {
+                // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+                #expect(renderPlatforms.compactMap(\.name) == ["iOS", "tvOS"])
+            }
+            #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
+            #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == nil)
         }
-        let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
         
-        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
-        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "tvOS"])
-        
-        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "8.0.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "8.0.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }) == nil)
-        #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == nil)
+        // Verify that the article has filled in iPadOS and Mac Catalyst from the iOS default availability.
+        do {
+            // FIXME: Articles don't display default availability (rdar://173688303)
+//            let articleReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+//            let node = try #require(context.documentationCache[articleReference])
+//            let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+//            let renderNode = try #require(converter.renderNode(for: node))
+//
+//            let renderPlatforms = try #require(renderNode.metadata.platforms)
+//            if defaultIntroducedVersion != nil {
+//                #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+//            } else {
+//                // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+//                #expect(renderPlatforms.compactMap(\.name) == ["iOS"])
+//            }
+//            #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
+//            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
+//            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
+        }
     }
     
     @Test
@@ -77,7 +105,9 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst"])
@@ -85,14 +115,188 @@ struct AvailabilityTests {
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
+    }
+    
+    @Test(arguments: DirectiveLocation.allCases)
+    func fillsInFallbackAvailabilityFromDirectiveAnnotations(_ directiveLocation: DirectiveLocation) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(iOS, introduced: "9.2")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(directiveLocation == .inSourceComment ? availableDirective : "")
+                    """, availability: []) // No availability _attributes_ for this symbol
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(directiveLocation == .extensionFile ? availableDirective : "")
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        #expect(node.metadata?.availability.count == 1)
+        let directiveAvailability = node.metadata?.availability.first
+        #expect(directiveAvailability?.platform.rawValue      == "iOS")
+        #expect(directiveAvailability?.introduced.description == "9.2.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
+    }
+    
+    @Test
+    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDefaultAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            // This symbol graph file is not for iOS and the symbol doesn't have iOS availability. This means that the iOS availability has to come from the Info.plist
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "tvos")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
+            ]))
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .iOS, platformVersion: "8.0"),
+                .init(unavailablePlatformName: .catalyst), // Mac Catalyst is marked unavailable here so its fallback availability won't be added
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "tvOS"])
+        
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "8.0.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "8.0.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }) == nil)
+        #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == nil)
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "tvOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "8.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "8.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })  == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == nil)
+    }
+    
+    @Test
+    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromInSourceAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "iOS", introduced: .init(major: 11, minor: 2, patch: 0), deprecated: nil)
+                ])
+            ]))
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(unavailablePlatformName: .catalyst), // Mac Catalyst is marked unavailable here so its fallback availability won't be added
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS"])
+        
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "11.2.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "11.2.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }) == nil)
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "11.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "11.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
+    }
+    
+    @Test(arguments: DirectiveLocation.allCases)
+    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDirectiveAvailability(_ directiveLocation: DirectiveLocation) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(iOS, introduced: "9.3")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(directiveLocation == .inSourceComment ? availableDirective : "")
+                    """, availability: []) // No availability _attributes_ for this symbol
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(directiveLocation == .extensionFile ? availableDirective : "")
+            """)
+            
+            InfoPlist(defaultAvailability: ["SomeModule": [
+                .init(unavailablePlatformName: .catalyst), // Mac Catalyst is marked unavailable here so its fallback availability won't be added
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        #expect(node.metadata?.availability.count == 1)
+        let directiveAvailability = node.metadata?.availability.first
+        #expect(directiveAvailability?.platform.rawValue      == "iOS")
+        #expect(directiveAvailability?.introduced.description == "9.3.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.3")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.3")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
     }
     
     @Test
     func fallbackAvailabilityDoesNotOverrideInSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
+            // This catalog contains two symbol graph files. One with iOS availability and one with Mac Catalyst availability for the same symbol.
             for (domainName, environment, introducedVersion) in [
                 ("iOS",         nil,      SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0)),
-                ("macCatalyst", "macabi", SymbolGraph.SemanticVersion(major:  6, minor: 5, patch: 0))
+                ("macCatalyst", "macabi", SymbolGraph.SemanticVersion(major:  6, minor: 5, patch: 0)), // This explicit Mac Catalyst annotation takes precedence over the "fallback" information derived from the iOS availability.
             ] {
                 JSONFile(name: "ModuleName-\(domainName).symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: environment), symbols: [
                     makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
@@ -102,7 +306,9 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst"])
@@ -110,11 +316,22 @@ struct AvailabilityTests {
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description ==  "6.5.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "6.5")
     }
     
     @Test
     func defaultAvailabilityDoesNotOverrideInSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
+            // This catalog contains two symbol graph files. One with iOS availability and one with Mac Catalyst availability for the same symbol.
             for (domainName, environment, introducedVersion) in [
                 ("iOS",         nil,      SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0)),
                 ("macCatalyst", "macabi", SymbolGraph.SemanticVersion(major:  6, minor: 5, patch: 0))
@@ -133,7 +350,9 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst"])
@@ -141,7 +360,19 @@ struct AvailabilityTests {
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description ==  "6.5.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "6.5")
     }
+    
+    // MARK: Default Availability
     
     @Test
     func defaultAvailabilityFillMissingSourceAvailability() async throws {
@@ -160,7 +391,9 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "tvOS"])
@@ -169,11 +402,23 @@ struct AvailabilityTests {
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description ==  "7.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description ==  "6.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == "10.0.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "tvOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "8.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "7.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "6.0")
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == "10.0")
     }
     
     @Test
     func unavailableDefaultPlatformsDoNotRemovePlatformsWithSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
+            // This catalog contains two symbol graph files. One with iOS availability and one with Mac Catalyst availability for the same symbol.
             for (domainName, environment, introducedVersion) in [
                 ("iOS",         nil,      SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0)),
                 ("macCatalyst", "macabi", SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
@@ -186,13 +431,15 @@ struct AvailabilityTests {
             }
             
             InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(unavailablePlatformName: .iOS),
+                .init(unavailablePlatformName: .iOS),      // This configuration doesn't remove the in-source "iOS" availability from above
                 .init(unavailablePlatformName: .iPadOS),
-                .init(unavailablePlatformName: .catalyst),
+                .init(unavailablePlatformName: .catalyst), // This configuration doesn't remove the in-source "macCatalyst" availability from above
             ]])
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macCatalyst"])
@@ -200,10 +447,233 @@ struct AvailabilityTests {
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "10.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      }) == nil)
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "10.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       }) == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
+    }
+    
+    @Test
+    func platformSpecificSymbolDoesNotDisplayDefaultAvailabilityForOtherPlatforms() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "tvos"), environment: nil), symbols: [
+                makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"]) // No in-source availability attributes.
+            ]))
+            
+            JSONFile(name: "ModuleName-catalyst.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["First"]),  // No in-source availability attributes.
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]), // No in-source availability attributes.
+            ]))
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .tvOS, platformVersion: nil),
+                .init(platformName: .iOS,  platformVersion: nil),
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let firstNode  = try #require(context.documentationCache["first-symbol-id"])
+        let secondNode = try #require(context.documentationCache["second-symbol-id"])
+        let firstAvailability  = try #require((firstNode.semantic  as? Symbol)?.availability?.availability)
+        let secondAvailability = try #require((secondNode.semantic as? Symbol)?.availability?.availability)
+        
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        #expect(firstAvailability.compactMap(\.domain?.rawValue).sorted()  == ["iOS", "macCatalyst", "tvOS"])
+        #expect(secondAvailability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macCatalyst"],
+                "The 'Second' symbol is not present in the tvOS symbol graph, so it shouldn't have any tvOS availability")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        
+        let firstRenderPlatforms  = try #require(converter.renderNode(for: firstNode )?.metadata.platforms)
+        //        let secondRenderPlatforms = try #require(converter.renderNode(for: secondNode)?.metadata.platforms)
+        #expect(firstRenderPlatforms.compactMap(\.name)  == ["iOS", "Mac Catalyst", "tvOS"])
+        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
+//        #expect(secondRenderPlatforms.compactMap(\.name) == ["iOS", "Mac Catalyst"],
+//                "The 'Second' symbol is not present in the tvOS symbol graph, so it shouldn't have any tvOS availability")
+    }
+    
+    @Test
+    func fillsVersionFromDefaultAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macosx")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No explicit availability
+            ]))
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .macOS, platformVersion: "10.0")
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["macOS"])
+        #expect(availability.first(where: { $0.domain?.rawValue == "macOS" })?.introducedVersion?.description == "10.0.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.0")
+    }
+    
+    @Test
+    func prefersMoreSpecificDefaultAvailabilityWhenThereIsNoSourceAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(name: "ModuleName-catalyst.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
+            ]))
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .iOS,      platformVersion: "2.3"),
+                .init(platformName: .catalyst, platformVersion: "4.5"),
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst"])
+        
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "2.3.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "2.3.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "4.5.0",
+                "The Mac Catalyst 'default' availability from the Info.plist is more specific than the 'fallback' from the 'default' iOS availability (also from the Info.plist)")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "4.5",
+                "The Mac Catalyst 'default' availability from the Info.plist is more specific than the 'fallback' from the 'default' iOS availability (also from the Info.plist)")
+    }
+    
+    // MARK: In-Source Availability
+    
+    @Test(arguments: Self.allMainPlatforms)
+    func displaysInSourceAvailabilityForAllPlatformsWhenThereIsOnlyOneSymbolGraph(_ platform: SymbolGraph.Platform) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    // In-source availability attributes for many platforms
+                    .init(domainName: "iOS",         introduced: .init(major: 1, minor: 1, patch: 0), deprecated: nil),
+                    .init(domainName: "macCatalyst", introduced: .init(major: 2, minor: 2, patch: 0), deprecated: nil),
+                    .init(domainName: "macOS",       introduced: .init(major: 3, minor: 3, patch: 0), deprecated: nil),
+                    .init(domainName: "tvOS",        introduced: .init(major: 4, minor: 4, patch: 0), deprecated: nil),
+                    .init(domainName: "visionOS",    introduced: .init(major: 5, minor: 5, patch: 0), deprecated: nil),
+                    .init(domainName: "watchOS",     introduced: .init(major: 6, minor: 6, patch: 0), deprecated: nil),
+                ])
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        
+        if platform == .init(operatingSystem: .init(name: "ios")) {
+            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        } else {
+            // ???: Why do we only fill "iPadOS" availability from the iOS symbol graph? (rdar://172280267)
+            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macCatalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        }
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "1.1.0")
+        if platform == .init(operatingSystem: .init(name: "ios")) {
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "1.1.0")
+        } else {
+            // ???: Why do we only fill "iPadOS" availability from the iOS symbol graph? (rdar://172280267)
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      }) == nil)
+        }
+        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "2.2.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macOS"       })?.introducedVersion?.description == "3.3.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == "4.4.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "visionOS"    })?.introducedVersion?.description == "5.5.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "watchOS"     })?.introducedVersion?.description == "6.6.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) ==  ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.1")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.1")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "2.2")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "3.3")
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == "4.4")
+        #expect(renderPlatforms.first(where: { $0.name == "visionOS"     })?.introduced == "5.5")
+        #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced == "6.6")
+    }
+    
+    @Test(arguments: [
+        SymbolGraph.Platform(operatingSystem: .init(name: "ios")),
+        SymbolGraph.Platform(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst
+        SymbolGraph.Platform(operatingSystem: .init(name: "macosx")),
+        SymbolGraph.Platform(operatingSystem: .init(name: "macos")),
+        SymbolGraph.Platform(operatingSystem: .init(name: "watchos")),
+        // tvOS and visionOS have custom symbol graphs in this test
+    ])
+    func symbolsMissingFromSpecificPlatformsDoNotDisplayInSourceAvailabilityForThosePlatforms(_ platform: SymbolGraph.Platform) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(name: "ModuleName-\(platform.operatingSystem!.name).symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    // In-source availability attributes for many platforms
+                    .init(domainName: "iOS",         introduced: .init(major: 1, minor: 1, patch: 0), deprecated: nil),
+                    .init(domainName: "macCatalyst", introduced: .init(major: 2, minor: 2, patch: 0), deprecated: nil),
+                    .init(domainName: "macOS",       introduced: .init(major: 3, minor: 3, patch: 0), deprecated: nil),
+                    .init(domainName: "tvOS",        introduced: .init(major: 4, minor: 4, patch: 0), deprecated: nil),
+                    .init(domainName: "visionOS",    introduced: .init(major: 5, minor: 5, patch: 0), deprecated: nil),
+                    .init(domainName: "watchOS",     introduced: .init(major: 6, minor: 6, patch: 0), deprecated: nil),
+                ])
+            ]))
+            
+            // The symbol from above doesn't exist in the symbol graphs for tvOS and visionOS.
+            for name in ["tvos", "visionos"] {
+                JSONFile(name: "ModuleName-\(name).symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: name)), symbols: [
+                    // no symbols
+                ]))
+            }
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.inputs.symbolGraphURLs.count == 3)
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
+//        #expect((node.semantic  as? Symbol)?.availability?.availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "macOS", "watchOS"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
+//        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "watchOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.1")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.1")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "2.2")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "3.3")
+        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
+//        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         }) == nil)
+//        #expect(renderPlatforms.first(where: { $0.name == "visionOS"     }) == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced == "6.6")
     }
     
     @Test(arguments: [true, false])
-    func testSymbolUnavailablePerPlatform(withUnavailablePlatformsInInfoPlist: Bool) async throws {
+    func platformSpecificSymbolOnlyDisplaysItsOwnAvailability(withUnavailablePlatformsInInfoPlist: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: nil), symbols: [
                 makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], availability: [
@@ -229,48 +699,53 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        let firstAvailability  = try #require((context.documentationCache["first-symbol-id"]?.semantic  as? Symbol)?.availability?.availability)
-        let secondAvailability = try #require((context.documentationCache["second-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let firstNode  = try #require(context.documentationCache["first-symbol-id"])
+        let secondNode = try #require(context.documentationCache["second-symbol-id"])
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        let firstAvailability  = try #require((firstNode.semantic  as? Symbol)?.availability?.availability)
+        let secondAvailability = try #require((secondNode.semantic as? Symbol)?.availability?.availability)
+        
         if withUnavailablePlatformsInInfoPlist {
             #expect(firstAvailability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macCatalyst"])
             
             #expect(firstAvailability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "10.0.0")
             #expect(firstAvailability.first(where: { $0.domain?.rawValue == "iPadOS"      }) == nil)
             #expect(firstAvailability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0")
-            
-            #expect(secondAvailability.compactMap(\.domain?.rawValue).sorted() == ["macCatalyst"])
-            #expect(secondAvailability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0")
         } else {
             #expect(firstAvailability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst"])
             
             #expect(firstAvailability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "10.0.0")
             #expect(firstAvailability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "10.0.0")
             #expect(firstAvailability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0")
-            
-            #expect(secondAvailability.compactMap(\.domain?.rawValue).sorted() == ["macCatalyst"])
-            #expect(secondAvailability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0")
         }
-    }
-    
-    @Test
-    func fillsVersionFromDefaultAvailability() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macosx")), symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No explicit availability
-            ]))
-            
-            InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(platformName: .macOS, platformVersion: "10.0")
-            ]])
-        }
-        let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(secondAvailability.compactMap(\.domain?.rawValue).sorted() == ["macCatalyst"])
+        #expect(secondAvailability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0")
         
-        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
-        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["macOS"])
-        #expect(availability.first(where: { $0.domain?.rawValue == "macOS" })?.introducedVersion?.description == "10.0.0")
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let firstRenderNode  = try #require(converter.renderNode(for: firstNode))
+        let secondRenderNode = try #require(converter.renderNode(for: secondNode))
+        
+        let firstRenderPlatforms  = try #require(firstRenderNode.metadata.platforms)
+        let secondRenderPlatforms = try #require(secondRenderNode.metadata.platforms)
+        
+        if withUnavailablePlatformsInInfoPlist {
+            #expect(firstRenderPlatforms.compactMap(\.name) == ["iOS", "Mac Catalyst"])
+            
+            #expect(firstRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "10.0")
+            #expect(firstRenderPlatforms.first(where: { $0.name == "iPadOS"       }) == nil)
+            #expect(firstRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
+            
+        } else {
+            #expect(firstRenderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+            
+            #expect(firstRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "10.0")
+            #expect(firstRenderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "10.0")
+            #expect(firstRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
+        }
+        #expect(secondRenderPlatforms.compactMap(\.name) == ["Mac Catalyst"])
+        #expect(secondRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
     }
     
     @Test
@@ -294,13 +769,24 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["macCatalyst", "tvOS"])
         
         #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "15.2.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["Mac Catalyst", "tvOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "15.2")
     }
     
     @Test
@@ -318,7 +804,9 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macCatalyst"])
@@ -326,57 +814,16 @@ struct AvailabilityTests {
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "12.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "12.0.0",
                 "The Mac Catalyst 'fallback' from the per-symbol iOS availability is more specific than the Info.plist information that applies to all symbols")
-    }
-    
-    @Test
-    func prefersMoreSpecificDefaultAvailabilityWhenThereIsNoSourceAvailability() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(name: "ModuleName-catalyst.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
-            ]))
-            
-            InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(platformName: .iOS,      platformVersion: "2.3"),
-                .init(platformName: .catalyst, platformVersion: "4.5"),
-            ]])
-        }
-        let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
         
-        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
-        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
         
-        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "2.3.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "2.3.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "4.5.0",
-                "The Mac Catalyst 'default' availability from the Info.plist is more specific than the 'fallback' from the 'default' iOS availability (also from the Info.plist)")
-    }
-    
-    @Test
-    func testDefaultAvailabilityWhenSymbolIsNotAvailableForThatPlatform() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "tvos"), environment: nil), symbols: [
-                makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"]) // No in-source availability attributes.
-            ]))
-            
-            JSONFile(name: "ModuleName-catalyst.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
-                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["First"]),  // No in-source availability attributes.
-                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]), // No in-source availability attributes.
-            ]))
-            
-            InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(platformName: .tvOS, platformVersion: nil),
-                .init(platformName: .iOS,  platformVersion: nil),
-            ]])
-        }
-        let context = try await load(catalog: catalog)
-        let firstAvailability  = try #require((context.documentationCache["first-symbol-id"]?.semantic  as? Symbol)?.availability?.availability)
-        let secondAvailability = try #require((context.documentationCache["second-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
         
-        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
-        #expect(firstAvailability.compactMap(\.domain?.rawValue).sorted()  == ["iOS", "macCatalyst", "tvOS"])
-        #expect(secondAvailability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macCatalyst"],
-                "The 'Second' symbol is not present in the tvOS symbol graph, so it shouldn't have any tvOS availability")
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
     }
     
     enum FakeExtensionGraph: Equatable, CaseIterable {
@@ -417,16 +864,762 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        let availability = try #require((context.documentationCache["some-symbol-id"]?.semantic as? Symbol)?.availability?.availability)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
         #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "macOS", "tvOS", "watchOS"])
         
-        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description ==  nil)
-        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.deprecatedVersion?.description == "13.0.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"    })?.introducedVersion?.description == nil)
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"    })?.deprecatedVersion?.description == "13.0.0")
+        // FIXME: iPadOS availability should follow iOS availability (rdar://173704351)
+//        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion?.description == nil)
+//        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.deprecatedVersion?.description == "13.0.0")
+        
         #expect(availability.first(where: { $0.domain?.rawValue == "macOS"       })?.introducedVersion?.description == "10.15.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description ==  "1.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == "13.0.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "watchOS"     })?.introducedVersion?.description ==  "6.0.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "watchOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"    })?.introduced == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"    })?.deprecated == "13.0")
+        // FIXME: iPadOS availability should follow iOS availability (rdar://173704351)
+//        #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.introduced == nil)
+//        #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.deprecated == "13.0")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.15")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "1.0")
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced ==  "6.0")
     }
+    
+    // MARK: Deprecations
+    
+    @Test(arguments: Self.allMainPlatforms)
+    func symbolIsConsideredDeprecatedWhenAllPlatformsHaveDeprecatedVersion(_ platform: SymbolGraph.Platform) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    // In-source availability attributes for many platforms
+                    .init(domainName: "iOS",         introduced: nil, deprecated: .init(major: 1, minor: 1, patch: 0)),
+                    .init(domainName: "macCatalyst", introduced: nil, deprecated: .init(major: 2, minor: 2, patch: 0)),
+                    .init(domainName: "macOS",       introduced: nil, deprecated: .init(major: 3, minor: 3, patch: 0)),
+                    .init(domainName: "tvOS",        introduced: nil, deprecated: .init(major: 4, minor: 4, patch: 0)),
+                    .init(domainName: "visionOS",    introduced: nil, deprecated: .init(major: 5, minor: 5, patch: 0)),
+                    .init(domainName: "watchOS",     introduced: nil, deprecated: .init(major: 6, minor: 6, patch: 0)),
+                ])
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        
+        if platform == .init(operatingSystem: .init(name: "ios")) {
+            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        } else {
+            // ???: Why do we only fill "iPadOS" availability from the iOS symbol graph? (rdar://172280267)
+            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macCatalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        }
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.deprecatedVersion?.description == "1.1.0")
+        if platform == .init(operatingSystem: .init(name: "ios")) {
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"  })?.deprecatedVersion?.description == "1.1.0")
+        } else {
+            // ???: Why do we only fill "iPadOS" availability from the iOS symbol graph? (rdar://172280267)
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"  }) == nil)
+        }
+        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.deprecatedVersion?.description == "2.2.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macOS"       })?.deprecatedVersion?.description == "3.3.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.deprecatedVersion?.description == "4.4.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "visionOS"    })?.deprecatedVersion?.description == "5.5.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "watchOS"     })?.deprecatedVersion?.description == "6.6.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        if platform == .init(operatingSystem: .init(name: "ios")) {
+            #expect(renderPlatforms.compactMap(\.name) ==  ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        } else {
+            // ???: Why do we only fill "iPadOS" availability from the iOS symbol graph? (rdar://172280267)
+            #expect(renderPlatforms.compactMap(\.name) ==  ["iOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        }
+            
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "1.1")
+        if platform == .init(operatingSystem: .init(name: "ios")) {
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"   })?.deprecated == "1.1")
+        } else {
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"   }) == nil)
+        }
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "2.2")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.deprecated == "3.3")
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.deprecated == "4.4")
+        #expect(renderPlatforms.first(where: { $0.name == "visionOS"     })?.deprecated == "5.5")
+        #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.deprecated == "6.6")
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated)
+    }
+    
+    @Test
+    func symbolAvailableOnOnePlatformIsNotConsideredDeprecated() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "iOS",   introduced: .init(major:  9, minor: 2, patch: 0), deprecated: nil),
+                    .init(domainName: "macOS", introduced: .init(major: 10, minor: 7, patch: 0), deprecated: .init(major: 10, minor: 9, patch: 2)),
+                ]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macOS"])
+        
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"   })?.introducedVersion?.description ==  "9.2.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macOS" })?.introducedVersion?.description == "10.7.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macOS" })?.deprecatedVersion?.description == "10.9.2")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.7")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.deprecated == "10.9.2")
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated == false)
+    }
+    
+    @Test(arguments: ["9.2", nil])
+    func symbolAvailableOnOnePlatformIsNotConsideredDeprecatedWhenDefaultAvailable(defaultIntroducedVersion: String?) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "macOS", introduced: .init(major: 10, minor: 7, patch: 0), deprecated: .init(major: 10, minor: 9, patch: 2)),
+                ]),
+            ]))
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .iOS, platformVersion: defaultIntroducedVersion)
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
+        
+        // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
+        if defaultIntroducedVersion != nil {
+            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "macOS"])
+        } else {
+            // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "macOS"])
+        }
+        
+        #expect(availability.first(where: { $0.domain?.rawValue == "iOS"   })?.introducedVersion?.description == defaultIntroducedVersion.map { "\($0).0"})
+        #expect(availability.first(where: { $0.domain?.rawValue == "macOS" })?.introducedVersion?.description == "10.7.0")
+        #expect(availability.first(where: { $0.domain?.rawValue == "macOS" })?.deprecatedVersion?.description == "10.9.2")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        if defaultIntroducedVersion != nil {
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        } else {
+            // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "macOS"])
+        }
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.7")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.deprecated == "10.9.2")
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated == false)
+    }
+
+    @Test(arguments: DirectiveLocation.allCases)
+    func symbolIsConsideredDeprecatedWhenOnlyAvailableDirectiveHasDeprecatedVersion(_ directiveLocation: DirectiveLocation) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(iOS, introduced: "9.2", deprecated: "13.0")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(directiveLocation == .inSourceComment ? availableDirective : "")
+                    """, availability: []) // No availability _attributes_ for this symbol
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(directiveLocation == .extensionFile ? availableDirective : "")
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        #expect(node.metadata?.availability.count == 1)
+        let directiveAvailability = node.metadata?.availability.first
+        #expect(directiveAvailability?.platform.rawValue       == "iOS")
+        #expect(directiveAvailability?.introduced.description  ==  "9.2.0")
+        #expect(directiveAvailability?.deprecated?.description == "13.0.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "13.0")
+        
+        // FIXME: Available directive isn't considered for TopicRenderReference deprecation (rdar://173761647)
+//        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+//        #expect(renderReference.isDeprecated)
+    }
+    
+    @Test
+    func articleIsConsideredDeprecatedWhenOnlyAvailableDirectiveHasDeprecatedVersion() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some article 
+            
+            @Metadata {
+              @Available(iOS, introduced: "9.2", deprecated: "13.0")
+            }
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        #expect(node.metadata?.availability.count == 1)
+        let directiveAvailability = node.metadata?.availability.first
+        #expect(directiveAvailability?.platform.rawValue       == "iOS")
+        #expect(directiveAvailability?.introduced.description  ==  "9.2.0")
+        #expect(directiveAvailability?.deprecated?.description == "13.0.0")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "13.0")
+        
+        // FIXME: Available directive isn't considered for TopicRenderReference deprecation (rdar://173761647)
+//        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+//        #expect(renderReference.isDeprecated)
+    }
+    
+    @Test(arguments: DirectiveLocation.allCases)
+    func symbolIsNotConsideredDeprecatedWhenOnlySomeAvailableDirectivesHaveDeprecatedVersion(_ directiveLocation: DirectiveLocation) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(iOS,   introduced: "9.2",  deprecated: "13.0")
+          @Available(macOS, introduced: "10.14")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(directiveLocation == .inSourceComment ? availableDirective : "")
+                    """, availability: []) // No availability _attributes_ for this symbol
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(directiveLocation == .extensionFile ? availableDirective : "")
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        #expect(node.metadata?.availability.count == 2)
+        let iOSDirectiveAvailability = node.metadata?.availability.first
+        #expect(iOSDirectiveAvailability?.platform.rawValue       == "iOS")
+        #expect(iOSDirectiveAvailability?.introduced.description  ==  "9.2.0")
+        #expect(iOSDirectiveAvailability?.deprecated?.description == "13.0.0")
+        
+        let macOSDirectiveAvailability = node.metadata?.availability.last
+        #expect(macOSDirectiveAvailability?.platform.rawValue      == "macOS")
+        #expect(macOSDirectiveAvailability?.introduced.description == "10.14.0")
+        #expect(macOSDirectiveAvailability?.deprecated             == nil)
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "13.0")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.14")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == nil)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated == false)
+    }
+    
+    @Test
+    func articleIsNotConsideredDeprecatedWhenOnlySomeAvailableDirectivesHaveDeprecatedVersion() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some article 
+               
+            @Metadata {
+              @Available(iOS,   introduced: "9.2",  deprecated: "13.0")
+              @Available(macOS, introduced: "10.14")
+            }    
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        #expect(node.metadata?.availability.count == 2)
+        let iOSDirectiveAvailability = node.metadata?.availability.first
+        #expect(iOSDirectiveAvailability?.platform.rawValue       == "iOS")
+        #expect(iOSDirectiveAvailability?.introduced.description  ==  "9.2.0")
+        #expect(iOSDirectiveAvailability?.deprecated?.description == "13.0.0")
+        
+        let macOSDirectiveAvailability = node.metadata?.availability.last
+        #expect(macOSDirectiveAvailability?.platform.rawValue      == "macOS")
+        #expect(macOSDirectiveAvailability?.introduced.description == "10.14.0")
+        #expect(macOSDirectiveAvailability?.deprecated             == nil)
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "13.0")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.14")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == nil)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated == false)
+    }
+    
+    enum AvailabilitySource: Equatable, CaseIterable {
+        case infoPlist
+        case inSourceAttribute
+        case directiveInDocComment
+        case directiveInExtensionFile
+    }
+    
+    @Test(arguments: DirectiveLocation.allCases, AvailabilitySource.allCases)
+    func symbolIsConsideredDeprecatedWithWarningWhenAvailableWithDeprecationSummaryDirective(_ deprecationSummaryLocation: DirectiveLocation, _ availabilitySource: AvailabilitySource) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(macOS, introduced: "10.14")
+        }
+        """
+        
+        let deprecationSummaryDirective = """
+        @DeprecationSummary {
+          Some message that describes why this symbol is deprecated
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(
+                    id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
+                    docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(availabilitySource == .directiveInDocComment ? availableDirective : "")
+                    \(deprecationSummaryLocation == .inSourceComment ? deprecationSummaryDirective : "")
+                    """,
+                    availability: availabilitySource == .inSourceAttribute ? [
+                        .init(domainName: "macOS", introduced: .init(major: 10, minor: 14, patch: 0), deprecated: nil)
+                    ] : [])
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(availabilitySource == .directiveInExtensionFile ? availableDirective : "")
+            \(deprecationSummaryLocation == .extensionFile ? deprecationSummaryDirective : "")
+            """)
+            
+            if availabilitySource == .infoPlist {
+                InfoPlist(defaultAvailability: ["SomeModule": [
+                    .init(platformName: .macOS, platformVersion: "10.14")
+                ]])
+            }
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        
+        #expect(renderNode.deprecationSummary == [.paragraph(.init(inlineContent: [
+            .text("Some message that describes why this symbol is deprecated")
+        ]))])
+        
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.14")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == nil)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated)
+    }
+    
+    // FIXME: Articles don't display or consider DeprecationSummary information (rdar://173688303)
+    @Test(.disabled("rdar://173688303"), arguments: [AvailabilitySource.directiveInExtensionFile])
+    func articleIsConsideredDeprecatedWhenAvailableWithDeprecationSummaryDirective(_ availabilitySource: AvailabilitySource) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(macOS, introduced: "10.14")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some Article
+            
+            This is a deprecated article that's also still available one one platform.
+            
+            \(availabilitySource == .directiveInExtensionFile ? availableDirective : "")
+            
+            @DeprecationSummary {
+              Some message that describes why this article is deprecated
+            }
+            """)
+            
+            if availabilitySource == .infoPlist {
+                InfoPlist(defaultAvailability: ["SomeModule": [
+                    .init(platformName: .macOS, platformVersion: "10.14")
+                ]])
+            }
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        
+        #expect(renderNode.deprecationSummary == [.paragraph(.init(inlineContent: [
+            .text("Some message that describes why this article is deprecated")
+        ]))])
+        
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.14")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == nil)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated)
+    }
+    
+    // MARK: Beta
+    
+    @Test(arguments: AvailabilitySource.allCases)
+    func symbolIsConsideredInBetaWhenOnlyPlatformIsCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(macOS, introduced: "10.14")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(
+                    id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
+                    docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(availabilitySource == .directiveInDocComment ? availableDirective : "")
+                    """,
+                    availability: availabilitySource == .inSourceAttribute ? [
+                        .init(domainName: "macOS", introduced: .init(major: 10, minor: 14, patch: 0), deprecated: nil)
+                    ] : [])
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(availabilitySource == .directiveInExtensionFile ? availableDirective : "")
+            """)
+            
+            if availabilitySource == .infoPlist {
+                InfoPlist(defaultAvailability: ["SomeModule": [
+                    .init(platformName: .macOS, platformVersion: "10.14")
+                ]])
+            }
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms =  [
+            "macOS": .init(.init(10, 14, 0), beta: true),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+        #expect(renderPlatforms.first?.introduced == "10.14")
+        #expect(renderPlatforms.first?.isBeta     == true)
+        
+        // FIXME: Symbols are only considered in-beta when the introduced version is from in-source attributes (rdar://173773442)
+        if availabilitySource == .inSourceAttribute {
+            let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+            #expect(renderReference.isBeta)
+        }
+    }
+    
+    // FIXME: Articles don't display default availability (rdar://173688303)
+    // FIXME: Articles are not considered in-beta for any source of availability (rdar://173773442)
+    @Test(.disabled("rdar://173773442&173688303"), arguments: [AvailabilitySource.infoPlist, .directiveInExtensionFile])
+    func articleIsConsideredInBetaWhenOnlyPlatformIsCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(macOS, introduced: "10.14")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some Article
+            
+            Some additional documentation for this class.
+            \(availabilitySource == .directiveInExtensionFile ? availableDirective : "")
+            """)
+            
+            if availabilitySource == .infoPlist {
+                InfoPlist(defaultAvailability: ["SomeModule": [
+                    .init(platformName: .macOS, platformVersion: "10.14")
+                ]])
+            }
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms =  [
+            "macOS": .init(.init(10, 14, 0), beta: true),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+        #expect(renderPlatforms.first?.introduced == "10.14")
+        #expect(renderPlatforms.first?.isBeta     == true)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isBeta)
+    }
+    
+    @Test(arguments: AvailabilitySource.allCases)
+    func symbolIsNotConsideredInBetaWhenOnlySomePlatformsAreCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(macOS, introduced: "10.14")
+          @Available(iOS,   introduced: "9.2")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(
+                    id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
+                    docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(availabilitySource == .directiveInDocComment ? availableDirective : "")
+                    """,
+                    availability: availabilitySource == .inSourceAttribute ? [
+                        .init(domainName: "macOS", introduced: .init(major: 10, minor: 14, patch: 0), deprecated: nil),
+                        .init(domainName: "iOS",   introduced: .init(major:  9, minor:  2, patch: 0), deprecated: nil),
+                    ] : [])
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(availabilitySource == .directiveInExtensionFile ? availableDirective : "")
+            """)
+            
+            if availabilitySource == .infoPlist {
+                InfoPlist(defaultAvailability: ["SomeModule": [
+                    .init(platformName: .macOS, platformVersion: "10.14"),
+                    .init(platformName: .iOS,   platformVersion:  "9.2"),
+                ]])
+            }
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms =  [
+            "macOS": .init(.init(10, 14, 0), beta: true),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.isBeta     == false)
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.isBeta     == false)
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.isBeta     == false)
+        
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.14")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.isBeta     == true)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isBeta == false)
+    }
+    
+    // MARK: Mixed sources
+    
+    @Test(arguments: DirectiveLocation.allCases)
+    func combinesAvailabilityFromMultipleSources(_ directiveLocation: DirectiveLocation) async throws {
+        // This symbol has macOS availability for different platforms from all 3 sources; Info.plist, in-source attributes, @Available directives.
+        let availableDirective = """
+        @Metadata {
+          @Available(tvOS, introduced: "7.1")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(
+                    id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
+                    docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(directiveLocation == .inSourceComment ? availableDirective : "")
+                    """,
+                    availability: [
+                        .init(domainName: "macOS", introduced: .init(major: 10, minor: 14, patch: 0), deprecated: nil),
+                    ]
+                )
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(directiveLocation == .extensionFile ? availableDirective : "")
+            """)
+            
+            InfoPlist(defaultAvailability: ["SomeModule": [
+                .init(platformName: .iOS, platformVersion:  "9.2"),
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        // FIXME: Available directives remove all in-source availability information (rdar://171807245)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "tvOS"])
+//        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
+//        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.14")
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced ==  "7.1")
+    }
+    
+    private static let allMainPlatforms: [SymbolGraph.Platform] = [
+        .init(operatingSystem: .init(name: "ios")),
+        .init(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst
+        .init(operatingSystem: .init(name: "macosx")),
+        .init(operatingSystem: .init(name: "macos")),
+        .init(operatingSystem: .init(name: "watchos")),
+        .init(operatingSystem: .init(name: "tvos")),
+        .init(operatingSystem: .init(name: "visionos")),
+    ]
 }
