@@ -17,8 +17,10 @@ extension Semantic.Analyses {
      */
     public struct HasAtLeastOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible> {
         let severityIfNotFound: DiagnosticSeverity?
-        public init(severityIfNotFound: DiagnosticSeverity?) {
+        let featureFlags: FeatureFlags
+        public init(severityIfNotFound: DiagnosticSeverity?, featureFlags: FeatureFlags = .init()) {
             self.severityIfNotFound = severityIfNotFound
+            self.featureFlags = featureFlags
         }
         
         public func analyze(
@@ -35,6 +37,7 @@ extension Semantic.Analyses {
                 source: source,
                 for: bundle,
                 severityIfNotFound: severityIfNotFound,
+                featureFlags: featureFlags,
                 problems: &problems
             ) as! ([Child], MarkupContainer)
         }
@@ -47,6 +50,7 @@ extension Semantic.Analyses {
         source: URL?,
         for bundle: DocumentationBundle,
         severityIfNotFound: DiagnosticSeverity? = .warning,
+        featureFlags: FeatureFlags,
         problems: inout [Problem]
     ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {
         let (matches, remainder) = children.categorize { child -> BlockDirective? in
@@ -80,6 +84,7 @@ extension Semantic.Analyses {
                 from: childDirective,
                 source: source,
                 for: bundle,
+                featureFlags: featureFlags,
                 problems: &problems
             )
         }

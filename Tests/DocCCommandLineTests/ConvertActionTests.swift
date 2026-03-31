@@ -916,7 +916,8 @@ class ConvertActionTests: XCTestCase {
     }
 
     func testLinkableEntitiesMetadataIncludesOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var featureFlags = FeatureFlags()
+        featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let bundle = try Folder.createFromDisk(
             url: Bundle.module.url(
@@ -945,7 +946,9 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
+            featureFlags: featureFlags
+        )
         let result = try await action.perform(logHandle: .none)
 
         guard let resultLikableEntities: [LinkDestinationSummary] = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("linkable-entities.json")) else {

@@ -16,6 +16,8 @@ extension Semantic.Analyses {
      Checks to see if a parent directive has at most one child directive of a specified type. If so, return that child and the remainder.
      */
     public struct HasAtMostOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible> {
+        let featureFlags: FeatureFlags
+        
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
             return Semantic.Analyses.extractAtMostOne(
                 childType: Child.self,
@@ -23,6 +25,7 @@ extension Semantic.Analyses {
                 children: children,
                 source: source,
                 for: bundle,
+                featureFlags: featureFlags,
                 problems: &problems
             ) as! (Child?, MarkupContainer)
         }
@@ -35,6 +38,7 @@ extension Semantic.Analyses {
         source: URL?,
         for bundle: DocumentationBundle,
         severityIfNotFound: DiagnosticSeverity = .warning,
+        featureFlags: FeatureFlags,
         problems: inout [Problem]
     ) -> ((any DirectiveConvertible)?, remainder: MarkupContainer) {
         let (matches, remainder) = children.categorize { child -> BlockDirective? in
@@ -67,7 +71,7 @@ extension Semantic.Analyses {
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
         }
         
-        return (childType.init(from: match, source: source, for: bundle, problems: &problems), MarkupContainer(remainder))
+        return (childType.init(from: match, source: source, for: bundle, featureFlags: featureFlags, problems: &problems), MarkupContainer(remainder))
     }
 }
 

@@ -202,7 +202,7 @@ struct SymbolGraphLoaderTests {
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: folderURL, allowArbitraryCatalogDirectories: true, options: .init())
         
-        var loader = SymbolGraphLoader(bundle: inputs, dataProvider: dataProvider) { symbolGraph in
+        var loader = SymbolGraphLoader(bundle: inputs, dataProvider: dataProvider, shouldCreateOverloadGroups: false) { symbolGraph in
             // Make any verifiable change to the symbol graph
             symbolGraph.metadata.formatVersion = .init(major: 9, minor: 9, patch: 9)
         }
@@ -217,6 +217,6 @@ struct SymbolGraphLoaderTests {
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: folderURL, allowArbitraryCatalogDirectories: true, options: .init())
         
-        return SymbolGraphLoader(bundle: inputs, dataProvider: dataProvider)
+        return SymbolGraphLoader(bundle: inputs, dataProvider: dataProvider, shouldCreateOverloadGroups: false)
     }
 }

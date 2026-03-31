@@ -17,9 +17,9 @@ class ResourcesTests: XCTestCase {
         let source = "@\(Resources.directiveName)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(resources)
         XCTAssertEqual(1, problems.count)
       
@@ -67,9 +67,9 @@ class ResourcesTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(resources)
         XCTAssertTrue(problems.isEmpty, "Unexpected problems: \(problems)")
         
@@ -120,9 +120,9 @@ Resources @1:1-29:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(resources)
         XCTAssertFalse(problems.containsErrors)
         

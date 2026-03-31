@@ -17,9 +17,11 @@ import DocCCommon
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
+    private var configuration = DocumentationContext.Configuration()
+    
     override func setUp() {
         super.setUp()
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
     }
     
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
@@ -853,7 +855,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     }
 
     func testOverloadGroupSymbolsResolveWithoutHash() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let linkResolvers = try await makeLinkResolversForTestBundle(named: "OverloadedSymbols")
 
@@ -882,10 +884,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
             "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
         ]
-        var configuration = DocumentationContext.Configuration()
 
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        let linkResolvers = try await makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle")
         
         // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)
         try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyClass", isBeta: true)
@@ -990,7 +991,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> LinkResolvers {
+    private func makeLinkResolversForTestBundle(named testBundleName: String) async throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
         
@@ -1072,12 +1073,7 @@ struct ExternalPathHierarchyResolverTests_new {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
-        
-        let original = FeatureFlags.current
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = true
-        defer {
-            FeatureFlags.current = original
-        }
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
         
         let mainContext = try await load(
             catalog: Folder(name: "Main.docc") {

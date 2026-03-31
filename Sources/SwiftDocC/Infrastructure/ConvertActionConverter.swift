@@ -73,6 +73,7 @@ package enum ConvertActionConverter {
         )
         
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
+        let featureFlags = context.configuration.featureFlags
         
         // Render all pages and gather their supplementary "digest" information if enabled.
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
@@ -86,7 +87,7 @@ package enum ConvertActionConverter {
                         let entity = try context.entity(with: identifier)
 
                         if let htmlContentConsumer {
-                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
+                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness, featureFlags: featureFlags)
                             
                             if let symbol = entity.semantic as? Symbol {
                                 let renderedPageInfo = renderer.renderSymbol(symbol)
@@ -102,12 +103,12 @@ package enum ConvertActionConverter {
                             return
                         }
                         
-                        if FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
+                        if featureFlags.isExperimentalMarkdownOutputEnabled,
                            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
                            let markdownNode = converter.markdownOutput(for: entity)
                         {
                             try markdownConsumer.consume(markdownNode: markdownNode.writable)
-                            if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+                            if featureFlags.isExperimentalMarkdownOutputManifestEnabled,
                                let manifest = markdownNode.manifest
                             {
                                 supplementaryRenderInfo.markdownManifestDocuments.formUnion(manifest.documents)
@@ -134,7 +135,7 @@ package enum ConvertActionConverter {
                             supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                             supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
-                        } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                        } else if featureFlags.isExperimentalLinkHierarchySerializationEnabled {
                             let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
@@ -188,7 +189,7 @@ package enum ConvertActionConverter {
             }
         }
         
-        if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+        if featureFlags.isExperimentalLinkHierarchySerializationEnabled {
             try signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
                 let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
                 try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
@@ -199,7 +200,7 @@ package enum ConvertActionConverter {
             }
         }
         
-        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+        if featureFlags.isExperimentalMarkdownOutputManifestEnabled,
            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
         {
             try markdownConsumer.consume(

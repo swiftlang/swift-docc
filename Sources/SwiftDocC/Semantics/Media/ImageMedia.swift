@@ -47,8 +47,8 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
         "deviceFrame" : \ImageMedia._deviceFrame,
     ]
     
-    func validate(source: URL?, problems: inout [Problem]) -> Bool {
-        if !FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
+    func validate(source: URL?, problems: inout [Problem], featureFlags: FeatureFlags) -> Bool {
+        if !featureFlags.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .warning, range: originalMarkup.range,

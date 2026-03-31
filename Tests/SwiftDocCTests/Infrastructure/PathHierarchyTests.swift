@@ -427,9 +427,10 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
         
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let (_, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements", configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // Symbol name not found. Suggestions only include module names (search is not relative to a known page)
@@ -1459,8 +1460,6 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testOverloadedSymbolsWithOverloadGroups() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
         let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
         let tree = context.linkResolver.localResolver.pathHierarchy
 
@@ -2274,9 +2273,10 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testOverloadGroupSymbolsResolveLinksWithoutHash() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols", configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         // The enum case should continue to resolve by kind, since it has no hash collision
@@ -2293,8 +2293,10 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testAmbiguousPathsForOverloadedGroupSymbols() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
+        
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols", configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
         try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
@@ -3041,7 +3043,8 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testLanguageRepresentationsWithDifferentParentKinds() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
 
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
@@ -3080,7 +3083,7 @@ class PathHierarchyTests: XCTestCase {
             })
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         let resolvedSwiftContainerID = try tree.find(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
@@ -3372,7 +3375,8 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testAbsoluteLinksToOtherModuleWithExtensions() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
 
         let extendedTypeID = "extended-type-id"
         let extensionID = "extension-id"
@@ -3419,7 +3423,7 @@ class PathHierarchyTests: XCTestCase {
             ))
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         try assertFindsPath(
@@ -4757,7 +4761,8 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testResolveExternalLinkFromTechnologyRoot() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
         
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
@@ -4767,7 +4772,7 @@ class PathHierarchyTests: XCTestCase {
             """),
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)
