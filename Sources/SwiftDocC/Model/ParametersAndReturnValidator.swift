@@ -46,6 +46,8 @@ struct ParametersAndReturnValidator {
     /// The list of sources for this symbol's documentation.
     let docChunkSources: [DocumentationNode.DocumentationChunk.Source]
     
+    let isValidationEnabled: Bool
+    
     /// Creates validated parameter section variants and returns section variants for the symbol.
     ///
     /// The validator processes the parameter and return value documentation in 3 ways:
@@ -69,7 +71,7 @@ struct ParametersAndReturnValidator {
         parameterSection: DocumentationDataVariants<ParametersSection>,
         returnsSection: DocumentationDataVariants<ReturnsSection>
     ) {
-        guard FeatureFlags.current.isParametersAndReturnsValidationEnabled,
+        guard isValidationEnabled,
               let symbol = unifiedSymbol,
               !hasInheritedDocumentationComment(symbol: symbol),
               let signatures = Self.traitSpecificSignatures(symbol)

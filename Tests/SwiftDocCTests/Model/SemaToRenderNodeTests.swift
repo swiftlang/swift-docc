@@ -26,7 +26,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -413,7 +413,7 @@ class SemaToRenderNodeTests: XCTestCase {
             }
             
             var problems = [Problem]()
-            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
+            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
                 XCTFail("Couldn't create tutorial from markup: \(problems)")
                 return
             }
@@ -579,7 +579,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -816,7 +816,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -1589,7 +1589,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -2470,7 +2470,7 @@ Document
         }
         
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -2490,7 +2490,7 @@ Document
                 return
             }
             
-            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, problems: &problems) else {
+            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
                 XCTFail("Couldn't create tutorial from markup: \(problems)")
                 return
             }
@@ -2562,7 +2562,7 @@ Document
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, problems: &problems) else {
+        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -3339,7 +3339,7 @@ Document
             return
         }
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: context.inputs, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create technology from markup: \(problems)")
             return
         }
@@ -3581,7 +3581,7 @@ Document
     }
     
     func testTopicSectionWithUnsupportedDirectives() async throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "root.md", utf8Content: """
                 # Main article
                 
@@ -3602,17 +3602,15 @@ Document
                 @SomeUnknownDirective()
                 
                 - <doc:article>
-                """),
+                """)
             
             TextFile(name: "article.md", utf8Content: """
                 # An article
-                """),
-        ])
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
-        
-        let (_, _, context) = try await loadBundle(from: bundleURL, diagnosticEngine: .init() /* no diagnostic consumers */)
-        
+                """)
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["org.swift.docc.unknownDirective"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+            
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         
         let documentationNode = try context.entity(with: reference)

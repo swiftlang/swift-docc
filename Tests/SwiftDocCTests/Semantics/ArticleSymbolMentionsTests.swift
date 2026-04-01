@@ -110,14 +110,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
     }
 
     func testSymbolLinkCollectorDisabled() async throws {
-        let currentFeatureFlags = FeatureFlags.current
-        addTeardownBlock {
-            FeatureFlags.current = currentFeatureFlags
-        }
-        FeatureFlags.current.isMentionedInEnabled = false
-        
-        
-        let (bundle, context) = try await createMentionedInTestBundle()
+        let (bundle, context) = try await createMentionedInTestBundle(isFeatureFlagEnabled: false)
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(

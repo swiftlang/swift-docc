@@ -558,6 +558,248 @@ struct LinkDestinationSummaryTests {
         try assertRoundTripCoding(summary)
     }
     
+    enum AvailabilitySource: Equatable, CaseIterable {
+        case inSourceAttributes, directives
+    }
+    
+    enum AvailabilityConfiguration: Equatable, CaseIterable {
+        case isBeta, isDeprecated
+    }
+    
+    // FIXME: Symbol semantics and RenderContext doesn't consider pages deprecated when all their platforms are deprecated (rdar://172273148)
+    @Test(arguments: [AvailabilitySource.inSourceAttributes], AvailabilityConfiguration.allCases)
+    func symbolsIncludePlatformAvailability(from availabilitySource: AvailabilitySource, _ availabilityConfiguration: AvailabilityConfiguration) async throws {
+        let isDeprecated = availabilityConfiguration == .isDeprecated
+        let isBeta       = availabilityConfiguration == .isBeta
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                A symbol with availability information for macOS and iOS.
+                
+                \(availabilitySource == .directives ? """
+                @Metadata {
+                   @Available(macOS, introduced: 1.2.3\(isDeprecated ? ", deprecated: 3.2.1" : "")
+                   @Available(iOS,   introduced: 2.3.4\(isDeprecated ? ", deprecated: 4.5.6" : "")
+                }
+                """ : "")
+                """, availability: availabilitySource == .inSourceAttributes ? [
+                    .init(domainName: "macOS", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: isDeprecated ? .init(major: 3, minor: 2, patch: 1) : nil),
+                    .init(domainName: "iOS",   introduced: .init(major: 2, minor: 3, patch: 4), deprecated: isDeprecated ? .init(major: 4, minor: 5, patch: 6) : nil),
+                ] : [])
+            ]))
+            
+            // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(unavailablePlatformName: .iPadOS),
+            ]])
+        }
+
+        var configuration = DocumentationContext.Configuration()
+        if isBeta {
+            configuration.externalMetadata.currentPlatforms = [
+                "macOS": .init(.init(1, 2, 3), beta: true),
+                "iOS":   .init(.init(2, 3, 4), beta: true),
+            ]
+        }
+        
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+
+        // Because there's only a single language representation we can make a simple non-variant check
+        let platforms = try #require(renderNode.metadata.platforms)
+        
+        // Check the names as kind-of count comparison. That also makes it easy to spot any ordering issues.
+        // Because of all the optional properties in a AvailabilityRenderItem, it's harder spot differences in the full-item-comparisons below.
+        #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
+        
+        let expectedUnconditionalInfo = availabilitySource == .inSourceAttributes ? false : nil
+        // From the in-source attribute
+        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        // Inherited from the iOS availability information
+        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        // No iPad availability because it's marked as unavailable in the Info.plist
+        
+        // From the in-source attribute
+        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let summary = try #require(summaries.first)
+
+        #expect(summary.platforms == renderNode.metadata.platforms)
+        try assertRoundTripCoding(summary)
+        
+        let summaryRenderReference = summary.makeTopicRenderReference()
+        
+        #expect(summaryRenderReference.isBeta       == isBeta)
+        #expect(summaryRenderReference.isDeprecated == isDeprecated)
+        try assertRoundTripCoding(summaryRenderReference)
+        
+        #expect((node.semantic as? Symbol)?.isDeprecated == isDeprecated)
+        
+        // Verify that the summary's render reference matches the information from the full page's render reference.
+        let pageRenderReference = try #require(RenderContext(documentationContext: context).store.content(for: reference)?.renderReference as? TopicRenderReference)
+        
+        #expect(pageRenderReference.isBeta       == isBeta)
+        #expect(pageRenderReference.isDeprecated == isDeprecated)
+    }
+    
+    @Test(arguments: AvailabilityConfiguration.allCases)
+    func articleIncludePlatformAvailability(_ availabilityConfiguration: AvailabilityConfiguration) async throws {
+        let isDeprecated = availabilityConfiguration == .isDeprecated
+        let isBeta       = availabilityConfiguration == .isBeta
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "First.md", utf8Content: """
+            # Some article
+            An article with availability information for macOS and iOS.
+            
+            @Metadata {
+               @Available(macOS, introduced: 1.2.3\(isDeprecated ? ", deprecated: 3.2.1" : "")
+               @Available(iOS,   introduced: 2.3.4\(isDeprecated ? ", deprecated: 4.5.6" : "")
+            }
+            """)
+            
+            TextFile(name: "Second.md", utf8Content: """
+            # Another article
+            This second article exist so that the first article isn't elevated to be the root page.
+            """)
+            
+            // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(unavailablePlatformName: .iPadOS),
+            ]])
+        }
+
+        var configuration = DocumentationContext.Configuration()
+        if isBeta {
+            configuration.externalMetadata.currentPlatforms = [
+                "macOS": .init(.init(1, 2, 3), beta: true),
+                "iOS":   .init(.init(2, 3, 4), beta: true),
+            ]
+        }
+        
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+
+        // Because there's only a single language representation we can make a simple non-variant check
+        let platforms = try #require(renderNode.metadata.platforms)
+        
+        // Check the names as kind-of count comparison. That also makes it easy to spot any ordering issues.
+        // Because of all the optional properties in a AvailabilityRenderItem, it's harder spot differences in the full-item-comparisons below.
+        #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
+        
+        // From the in-source attribute
+        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        // Inherited from the iOS availability information
+        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        // No iPad availability because it's marked as unavailable in the Info.plist
+        
+        // From the in-source attribute
+        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let summary = try #require(summaries.first)
+
+        #expect(summary.platforms == renderNode.metadata.platforms)
+        try assertRoundTripCoding(summary)
+        
+        let summaryRenderReference = summary.makeTopicRenderReference()
+        
+        #expect(summaryRenderReference.isBeta       == isBeta)
+        #expect(summaryRenderReference.isDeprecated == isDeprecated)
+        try assertRoundTripCoding(summaryRenderReference)
+        
+        // FIXME: Articles don't consider the availability information from directives. (rdar://172280267)
+//        // Verify that the summary's render reference matches the information from the full page's render reference.
+//        let pageRenderReference = try #require(RenderContext(documentationContext: context).store.content(for: reference)?.renderReference as? TopicRenderReference)
+//        
+//        #expect(pageRenderReference.isBeta       == isBeta)
+//        #expect(pageRenderReference.isDeprecated == isDeprecated)
+    }
+    
+    // FIXME: Add tests that verify the behaviors of mixing in-source availability attributes and Available directives (rdar://171807245)
+    
+    @Test
+    func includesTopicReferencesFromSymbolAbstract() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], docComment: """
+                This first symbol links to the ``Second`` symbol.    
+                """),
+                
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let summary = try #require(summaries.first)
+        
+        let renderReferenceID = RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName/Second")
+        #expect(summary.abstract == [
+            .text("This first symbol links to the "),
+            .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .text(" symbol."),
+        ])
+        
+        #expect(summary.references?.count == 1)
+        let renderReference = try #require(summary.references?.first as? TopicRenderReference)
+        #expect(renderReference.title == "Second")
+        #expect(renderReference.kind  == .symbol)
+        #expect(renderReference.url   == "/documentation/modulename/second")
+    }
+    
+    @Test
+    func includesTopicReferencesFromArticleAbstract() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "First.md", utf8Content: """
+            # First
+            
+            This first article links to the <doc:Second> article.
+            """)
+            
+            TextFile(name: "Second.md", utf8Content: """
+            # Second
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let summary = try #require(summaries.first)
+        
+        let renderReferenceID = RenderReferenceIdentifier("doc://unit-test/documentation/unit-test/Second")
+        #expect(summary.abstract == [
+            .text("This first article links to the "),
+            .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .text(" article."),
+        ])
+        
+        #expect(summary.references?.count == 1)
+        let renderReference = try #require(summary.references?.first as? TopicRenderReference)
+        #expect(renderReference.title == "Second")
+        #expect(renderReference.kind  == .article)
+        #expect(renderReference.url   == "/documentation/unit-test/second")
+    }
+    
     @Test
     func summarizeTutorialPage() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -664,5 +906,31 @@ struct LinkDestinationSummaryTests {
         #expect(sectionSummary.references  == nil, "Because sections don't have any topic images it also doesn't have any references")
         
         try assertRoundTripCoding(summaries)
+    }
+}
+
+private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    init(
+        domainName: String,
+        introduced: SymbolGraph.SemanticVersion?,
+        deprecated: SymbolGraph.SemanticVersion?,
+        obsoleted: SymbolGraph.SemanticVersion? = nil,
+        message: String? = nil,
+        renamed: String? = nil,
+        isUnconditionallyDeprecated:  Bool = false,
+        isUnconditionallyUnavailable: Bool = false,
+        willEventuallyBeDeprecated:   Bool = false
+    ) {
+        self.init(
+            domain: .init(rawValue: domainName),
+            introducedVersion: introduced,
+            deprecatedVersion: deprecated,
+            obsoletedVersion: obsoleted,
+            message: message,
+            renamed: renamed,
+            isUnconditionallyDeprecated: isUnconditionallyDeprecated,
+            isUnconditionallyUnavailable: isUnconditionallyUnavailable,
+            willEventuallyBeDeprecated: willEventuallyBeDeprecated
+        )
     }
 }

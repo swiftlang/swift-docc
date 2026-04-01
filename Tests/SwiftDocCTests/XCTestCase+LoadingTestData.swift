@@ -124,8 +124,8 @@ extension XCTestCase {
         return (context.inputs, context)
     }
     
-    func renderNode(atPath path: String, fromTestBundleNamed testCatalogName: String) async throws -> RenderNode {
-        let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: testCatalogName))
+    func renderNode(atPath path: String, fromTestBundleNamed testCatalogName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> RenderNode {
+        let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: testCatalogName), configuration: configuration)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         return try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
@@ -143,8 +143,8 @@ extension XCTestCase {
         return try inputProvider.makeInputs(contentOf: catalogURL, options: .init())
     }
     
-    func testBundleAndContext() async throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
-        let context = try await makeEmptyContext()
+    func testBundleAndContext(configuration: DocumentationContext.Configuration = .init()) async throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
+        let context = try await makeEmptyContext(configuration: configuration)
         return (context.inputs, context)
     }
     
@@ -154,7 +154,7 @@ extension XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> (problemIdentifiers: [String], directive: Directive?) {
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
         let document = Document(parsing: content(), source: source, options: .parseBlockDirectives)
@@ -165,7 +165,8 @@ extension XCTestCase {
         let directive = directive.init(
             from: blockDirectiveContainer,
             source: source,
-            for: bundle,
+            for: context.inputs,
+            featureFlags: context.configuration.featureFlags,
             problems: &problems
         )
         
@@ -182,6 +183,7 @@ extension XCTestCase {
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
         catalog: Folder,
+        configuration: DocumentationContext.Configuration = .init(),
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -191,7 +193,7 @@ extension XCTestCase {
         directive: Directive?,
         collectedReferences: [String : any RenderReference]
     ) {
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         return try parseDirective(directive, context: context, content: content, file: file, line: line)
     }
     
@@ -237,13 +239,14 @@ extension XCTestCase {
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
         withAvailableAssetNames assetNames: [String],
+        configuration: DocumentationContext.Configuration = .init(),
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
         let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: assetNames.map {
             DataFile(name: $0, data: Data())
-        }))
+        }), configuration: configuration)
         
         let (renderedContent, problems, directive, _) = try parseDirective(directive, context: context, content: content)
         return (renderedContent, problems, directive)
@@ -268,7 +271,7 @@ extension XCTestCase {
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs)
+        var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         let result = analyzer.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(analyzer.problems)
         

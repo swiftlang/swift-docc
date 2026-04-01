@@ -49,7 +49,7 @@ public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertib
         case override
     }
     
-    func validate(source: URL?, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
         if behavior == .append {
             let diagnostic = Diagnostic(
                 source: source,

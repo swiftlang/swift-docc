@@ -104,5 +104,10 @@ extension DocumentationContext {
         struct TopicAnalysisConfiguration {
             var additionalChecks: [DocumentationContext.ReferenceCheck] = []
         }
+        
+        // MARK: Feature flags
+        
+        /// A collection of feature flags.
+        package var featureFlags = FeatureFlags()
     }
 }

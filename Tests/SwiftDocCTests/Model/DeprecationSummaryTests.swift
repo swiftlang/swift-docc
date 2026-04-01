@@ -361,6 +361,80 @@ struct DeprecationSummaryTests {
         #expect(solution.summary == "Update wildcard '@available()' attribute with a deprecated version or unconditional deprecation")
     }
     
+    @Test
+    func marksSymbolAsDeprecatedWithoutMessage() async throws {
+        // Verify that a symbol with a single availability item that is unconditionally deprecated
+        // on a custom domain is marked as deprecated in topic render references, even without a message.
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "parent-symbol-id", language: SourceLanguage(name: "Data", id: "data"), kind: .class, pathComponents: ["SomeClass"], docComment: "A class."),
+                makeSymbol(id: "deprecated-symbol-id", language: SourceLanguage(name: "Data", id: "data"), kind: .typealias, pathComponents: ["SomeClass", "SomeTypeAlias"], docComment: "A deprecated type alias.", availability: [
+                    .init(
+                        domain: .init(rawValue: "MapKit JS"),
+                        introducedVersion: .init(major: 5, minor: 0, patch: 0),
+                        deprecatedVersion: .init(major: 5, minor: 9999, patch: 0),
+                        obsoletedVersion: .init(major: 5, minor: 9999, patch: 0),
+                        message: nil,
+                        renamed: nil,
+                        isUnconditionallyDeprecated: true,
+                        isUnconditionallyUnavailable: false,
+                        willEventuallyBeDeprecated: false
+                    ),
+                ]),
+            ], relationships: [
+                .init(source: "deprecated-symbol-id", target: "parent-symbol-id", kind: .memberOf, targetFallback: nil),
+            ]))
+        ])
+
+        let context = try await load(catalog: catalog)
+
+        // Render the parent and check the topic render reference for the deprecated child
+        let parentNode = try #require(context.documentationCache["parent-symbol-id"])
+        var translator = RenderNodeTranslator(context: context, identifier: parentNode.reference)
+        let renderNode = translator.visit(parentNode.semantic) as! RenderNode
+
+        let deprecatedRef = renderNode.references.values.compactMap { $0 as? TopicRenderReference }.first { $0.title == "SomeTypeAlias" }
+        let topicRef = try #require(deprecatedRef, "Expected to find a topic render reference for SomeTypeAlias")
+        #expect(topicRef.isDeprecated == true, "Symbol should be marked as deprecated even without a message")
+    }
+
+    @Test
+    func marksSymbolAsDeprecatedWithMessage() async throws {
+        // Verify that a symbol with a single availability item that is unconditionally deprecated
+        // on a custom domain is marked as deprecated in topic render references when a message is present.
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "parent-symbol-id", language: SourceLanguage(name: "Data", id: "data"), kind: .class, pathComponents: ["SomeClass"], docComment: "A class."),
+                makeSymbol(id: "deprecated-symbol-id", language: SourceLanguage(name: "Data", id: "data"), kind: .typealias, pathComponents: ["SomeClass", "SomeTypeAlias"], docComment: "A deprecated type alias.", availability: [
+                    .init(
+                        domain: .init(rawValue: "MapKit JS"),
+                        introducedVersion: .init(major: 5, minor: 0, patch: 0),
+                        deprecatedVersion: .init(major: 5, minor: 9999, patch: 0),
+                        obsoletedVersion: .init(major: 5, minor: 9999, patch: 0),
+                        message: "This property has been removed.",
+                        renamed: nil,
+                        isUnconditionallyDeprecated: true,
+                        isUnconditionallyUnavailable: false,
+                        willEventuallyBeDeprecated: false
+                    ),
+                ]),
+            ], relationships: [
+                .init(source: "deprecated-symbol-id", target: "parent-symbol-id", kind: .memberOf, targetFallback: nil),
+            ]))
+        ])
+
+        let context = try await load(catalog: catalog)
+
+        // Render the parent and check the topic render reference for the deprecated child
+        let parentNode = try #require(context.documentationCache["parent-symbol-id"])
+        var translator = RenderNodeTranslator(context: context, identifier: parentNode.reference)
+        let renderNode = translator.visit(parentNode.semantic) as! RenderNode
+
+        let deprecatedRef = renderNode.references.values.compactMap { $0 as? TopicRenderReference }.first { $0.title == "SomeTypeAlias" }
+        let topicRef = try #require(deprecatedRef, "Expected to find a topic render reference for SomeTypeAlias")
+        #expect(topicRef.isDeprecated == true, "Symbol should be marked as deprecated with a message")
+    }
+
     private static func makeInSourceAvailabilityInfo(
         domain: String?,
         introduced: SymbolGraph.SemanticVersion? = .init(major: 1, minor: 2, patch: 3),

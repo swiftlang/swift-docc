@@ -19,9 +19,9 @@ class TutorialReferenceTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, problems: &problems)
+        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(tutorialReference)
         XCTAssertEqual(1, problems.count)
         problems.first.map { problem in
@@ -37,9 +37,9 @@ class TutorialReferenceTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, problems: &problems)
+        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(tutorialReference)
         tutorialReference.map { tutorialReference in
             guard case let .unresolved(unresolved) = tutorialReference.topic else {
@@ -57,9 +57,9 @@ class TutorialReferenceTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, problems: &problems)
+        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(tutorialReference)
         XCTAssertEqual(problems.count, 1)
         let problem = try XCTUnwrap(problems.first)

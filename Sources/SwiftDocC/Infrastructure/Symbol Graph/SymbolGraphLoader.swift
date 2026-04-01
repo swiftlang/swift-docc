@@ -28,32 +28,25 @@ struct SymbolGraphLoader {
     private let dataProvider: any DataProvider
     private let bundle: DocumentationBundle
     private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
+    private let shouldCreateOverloadGroups: Bool
     
     /// Creates a new symbol graph loader
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
     ///   - dataProvider: A provider that the loader uses to read symbol graph data.
+    ///   - shouldCreateOverloadGroups: Whether or not experimental support for combining overloaded symbol pages is enabled.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
         bundle: DocumentationBundle,
         dataProvider: any DataProvider,
+        shouldCreateOverloadGroups: Bool,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
         self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
+        self.shouldCreateOverloadGroups = shouldCreateOverloadGroups
     }
-
-    /// A strategy to decode symbol graphs.
-    enum DecodingConcurrencyStrategy {
-        /// Decode all symbol graph files on separate threads concurrently.
-        case concurrentlyAllFiles
-        /// Decode all symbol graph files sequentially, each one split into batches that are decoded concurrently.
-        case concurrentlyEachFileInBatches
-    }
-    
-    /// The symbol graph decoding strategy to use.
-    private(set) var decodingStrategy: DecodingConcurrencyStrategy = .concurrentlyEachFileInBatches
 
     /// Loads all symbol graphs in the given bundle.
     ///
@@ -111,28 +104,9 @@ struct SymbolGraphLoader {
             }
         }
         
-        // If we have symbol graph files for multiple platforms
-        // load and decode each one on a separate thread.
-        // This strategy benchmarks better when we have multiple
-        // "larger" symbol graphs.
-        #if os(macOS) || os(iOS)
-        if bundle.symbolGraphURLs.filter({ !$0.lastPathComponent.contains("@") }).count > 1 {
-            // There are multiple main symbol graphs, better parallelize all files decoding.
-            decodingStrategy = .concurrentlyAllFiles
-        }
-        #endif
-        
         let numberOfSymbolGraphs = bundle.symbolGraphURLs.count
         let decodeSignpostHandle = signposter.beginInterval("Decode symbol graphs", id: signposter.makeSignpostID(), "Decode \(numberOfSymbolGraphs) symbol graphs")
-        switch decodingStrategy {
-        case .concurrentlyAllFiles:
-            // Concurrently load and decode all symbol graphs
-            bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
-            
-        case .concurrentlyEachFileInBatches:
-            // Serially load and decode all symbol graphs, each one in concurrent batches.
-            bundle.symbolGraphURLs.forEach(loadGraphAtURL)
-        }
+        bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
         signposter.endInterval("Decode symbol graphs", decodeSignpostHandle)
         
         // define an appropriate merging strategy based on the graph formats
@@ -158,7 +132,7 @@ struct SymbolGraphLoader {
         self.symbolGraphs        = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? nil   : graph })
         self.snippetSymbolGraphs = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? graph : nil   })
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
-            createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
+            createOverloadGroups: shouldCreateOverloadGroups
         )
         signposter.endInterval("Build unified symbol graph", mergeSignpostHandle)
 
