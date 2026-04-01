@@ -32,7 +32,7 @@ class DocumentationNodeTests: XCTestCase {
         ###### Heading6
         """
         
-        let article = Article(markup: Document(parsing: articleSource, options: []), metadata: nil, redirects: nil, options: [:])
+        let article = Article(markup: Document(parsing: articleSource, options: []), source: nil, metadata: nil, redirects: nil, options: [:])
         let node = try DocumentationNode(
             reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift),
             article: article
@@ -82,7 +82,7 @@ class DocumentationNodeTests: XCTestCase {
     func testWithMultipleSourceLanguages() throws {
         let sourceLanguages: Set<SourceLanguage> = [.swift, .objectiveC]
         // Test if articles contain all available source languages
-        let article = Article(markup: Document(parsing: "# Title", options: []), metadata: nil, redirects: nil, options: [:])
+        let article = Article(markup: Document(parsing: "# Title", options: []), source: nil, metadata: nil, redirects: nil, options: [:])
         let articleNode = try DocumentationNode(
             reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguages: sourceLanguages),
             article: article
