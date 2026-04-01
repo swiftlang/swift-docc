@@ -1018,6 +1018,7 @@ extension RenderBlockContent: Codable {
         case numberOfColumns, columns
         case tabs
         case identifier
+        case head
     }
     
     static let isExperimentalCodeBlockAnnotationsEnabledUserInfoKey = CodingUserInfoKey(rawValue: "isExperimentalCodeBlockAnnotationsEnabled")!
@@ -1115,13 +1116,20 @@ extension RenderBlockContent: Codable {
                     metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
                 )
             )
+        case .card:
+            self = try .card(
+                Card(
+                    head: container.decode([RenderBlockContent].self, forKey: .head),
+                    content: container.decode([RenderBlockContent].self, forKey: .content)
+                )
+            )
         case .thematicBreak:
             self = .thematicBreak
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links, video, thematicBreak
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links, video, card, thematicBreak
     }
     
     private var type: BlockType {
@@ -1142,6 +1150,7 @@ extension RenderBlockContent: Codable {
         case .tabNavigator: return .tabNavigator
         case .links: return .links
         case .video: return .video
+        case .card: return .card
         case .thematicBreak: return .thematicBreak
         default: fatalError("unknown RenderBlockContent case in type property")
         }
@@ -1208,6 +1217,9 @@ extension RenderBlockContent: Codable {
         case .video(let video):
             try container.encode(video.identifier, forKey: .identifier)
             try container.encodeIfPresent(video.metadata, forKey: .metadata)
+        case .card(let card):
+            try container.encode(card.head, forKey: .head)
+            try container.encode(card.content, forKey: .content)
         case .thematicBreak:
             break
         default:
