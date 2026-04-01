@@ -1195,6 +1195,7 @@ class SymbolTests: XCTestCase {
                   @PageColor(orange)
                   @TitleHeading("Release Notes")
                   @Redirected(from: "old/path/to/this/page")
+                  @EditLink(url: "https://example.com/edit/path.md")
                 }
                 """,
             extensionFileContent: nil
@@ -1213,6 +1214,7 @@ class SymbolTests: XCTestCase {
                 "org.swift.docc.Metadata.InvalidPageColorInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidTitleHeadingInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidRedirectedInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidEditLinkInDocumentationComment",
             ]
         )
         

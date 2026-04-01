@@ -19,8 +19,6 @@ public import Markdown
 public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
     /// The markup that makes up this article's content.
     let markup: (any Markup)?
-    /// The location of the file that this article's content comes from.
-    public let source: URL?
     /// An optional container for metadata that's unrelated to the article's content.
     private(set) var metadata: Metadata?
     /// An optional container for options that are unrelated to the article's content.
@@ -32,14 +30,12 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
-    ///   - source: The location of the file that this article's content comes from.
     ///   - metadata: An optional container for metadata that's unrelated to the article's content.
     ///   - redirects: An optional list of previously known locations for this article.
-    init(markup: (any Markup)?, source: URL?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options]) {
+    init(markup: (any Markup)?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options]) {
         let markupModel = markup.map { DocumentationMarkup(markup: $0) }
 
         self.markup = markup
-        self.source = source
         self.options = options
         self.metadata = metadata
         self.redirects = redirects
@@ -52,8 +48,8 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
         self.automaticTaskGroups = []
     }
 
-    convenience init(title: Heading?, abstractSection: AbstractSection?, discussion: DiscussionSection?, topics: TopicsSection?, seeAlso: SeeAlsoSection?, deprecationSummary: MarkupContainer?, metadata: Metadata?, redirects: [Redirect]?, automaticTaskGroups: [AutomaticTaskGroupSection]? = nil, source: URL? = nil) {
-        self.init(markup: nil, source: source, metadata: metadata, redirects: redirects, options: [:])
+    convenience init(title: Heading?, abstractSection: AbstractSection?, discussion: DiscussionSection?, topics: TopicsSection?, seeAlso: SeeAlsoSection?, deprecationSummary: MarkupContainer?, metadata: Metadata?, redirects: [Redirect]?, automaticTaskGroups: [AutomaticTaskGroupSection]? = nil) {
+        self.init(markup: nil, metadata: metadata, redirects: redirects, options: [:])
         self.title = title
         self.abstractSection = abstractSection
         self.discussion = discussion
@@ -241,7 +237,6 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
         
         self.init(
             markup: markup,
-            source: source,
             metadata: optionalMetadata,
             redirects: redirects.isEmpty ? nil : redirects,
             options: relevantCategorizedOptions

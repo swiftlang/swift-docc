@@ -39,4 +39,75 @@ class SemaToRenderNodeSourceRepositoryTests: XCTestCase {
             )
         )
     }
+    
+    func testEmitsCustomEditLinkForArticles() async throws {
+        let (_, _, context) = try await testBundleAndContext(
+            copying: "SampleBundle",
+            configureBundle: { bundleURL in
+                let articleURL = bundleURL.appendingPathComponent("MyArticle.md")
+                let content = """
+                # MyArticle
+                
+                @Metadata {
+                  @EditLink(url: "https://example.com/edit/main/MyArticle.md")
+                }
+                
+                Article abstract.
+                """
+                try content.write(to: articleURL, atomically: true, encoding: .utf8)
+            }
+        )
+        
+        let outputConsumer = TestRenderNodeOutputConsumer()
+        try await ConvertActionConverter.convert(
+            context: context,
+            outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
+            sourceRepository: nil,
+            emitDigest: false,
+            documentationCoverageOptions: .noCoverage
+        )
+        
+        XCTAssertEqual(
+            try outputConsumer.renderNode(withTitle: "MyArticle").metadata.remoteSource,
+            RenderMetadata.RemoteSource(
+                fileName: "MyArticle.md",
+                url: URL(string: "https://example.com/edit/main/MyArticle.md")!
+            )
+        )
+    }
+    
+    func testDisabledEditLinkRemovesArticleRemoteSource() async throws {
+        let (bundleURL, _, context) = try await testBundleAndContext(
+            copying: "SampleBundle",
+            configureBundle: { bundleURL in
+                let articleURL = bundleURL.appendingPathComponent("MyArticle.md")
+                let content = """
+                # MyArticle
+                
+                @Metadata {
+                  @EditLink(isDisabled: true)
+                }
+                
+                Article abstract.
+                """
+                try content.write(to: articleURL, atomically: true, encoding: .utf8)
+            }
+        )
+        
+        let outputConsumer = TestRenderNodeOutputConsumer()
+        try await ConvertActionConverter.convert(
+            context: context,
+            outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
+            sourceRepository: SourceRepository.github(
+                checkoutPath: bundleURL.deletingLastPathComponent().path,
+                sourceServiceBaseURL: URL(string: "https://example.com/my-repo")!
+            ),
+            emitDigest: false,
+            documentationCoverageOptions: .noCoverage
+        )
+        
+        XCTAssertNil(try outputConsumer.renderNode(withTitle: "MyArticle").metadata.remoteSource)
+    }
 }

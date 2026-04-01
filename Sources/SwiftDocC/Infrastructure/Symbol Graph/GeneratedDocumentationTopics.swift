@@ -166,8 +166,7 @@ enum GeneratedDocumentationTopics {
                 seeAlso: nil,
                 deprecationSummary: nil,
                 metadata: nil,
-                redirects: nil,
-                source: nil
+                redirects: nil
             )
         }
 

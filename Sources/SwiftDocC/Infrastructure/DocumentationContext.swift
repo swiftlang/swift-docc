@@ -1846,8 +1846,7 @@ public class DocumentationContext {
             }
             let article = Article(
                 markup: articleResult.value.markup,
-                source: articleResult.source,
-                metadata: Metadata(from: metadataMarkup, for: inputs),
+                metadata: Metadata(from: metadataMarkup, for: inputs, featureFlags: configuration.featureFlags),
                 redirects: articleResult.value.redirects,
                 options: articleResult.value.options
             )
@@ -1880,8 +1879,8 @@ public class DocumentationContext {
                 Heading(level: 1, Text(title)),
                 metadataDirectiveMarkup
             )
-            let metadata = Metadata(from: metadataDirectiveMarkup, for: inputs)
-            let article = Article(markup: markup, source: nil, metadata: metadata, redirects: nil, options: [:])
+            let metadata = Metadata(from: metadataDirectiveMarkup, for: inputs, featureFlags: configuration.featureFlags)
+            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
             let documentationNode = DocumentationNode(
                 reference: reference,
                 kind: .collection,

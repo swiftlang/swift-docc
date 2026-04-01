@@ -595,7 +595,7 @@ class ReferenceResolverTests: XCTestCase {
         
         let (_, context) = try await testBundleAndContext()
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
+        let article = Article(markup: document, metadata: nil, redirects: nil, options: [:])
         
         var resolver = ReferenceResolver(context: context)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)
