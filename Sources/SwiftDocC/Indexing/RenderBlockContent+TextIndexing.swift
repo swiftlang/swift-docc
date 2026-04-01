@@ -77,6 +77,10 @@ extension RenderBlockContent: TextIndexing {
                 .joined(separator: " ")
         case .video(let video):
             return video.metadata?.rawIndexableTextContent(references: references) ?? ""
+        case .card(let card):
+            let headText = card.head.rawIndexableTextContent(references: references)
+            let contentText = card.content.rawIndexableTextContent(references: references)
+            return [headText, contentText].filter { !$0.isEmpty }.joined(separator: " ")
         case .thematicBreak:
             return ""
         default:
