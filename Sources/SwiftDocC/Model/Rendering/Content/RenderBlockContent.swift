@@ -78,6 +78,9 @@ public enum RenderBlockContent: Equatable {
     /// A video with an optional caption.
     case video(Video)
     
+    /// A card with separate head and content sections.
+    case card(Card)
+
     /// An authored thematic break between block elements.
     case thematicBreak
     
@@ -834,6 +837,17 @@ public enum RenderBlockContent: Equatable {
             /// The content that should be rendered in this tab.
             public var content: [RenderBlockContent]
         }
+    }
+
+    /// A card element with separate head and content sections.
+    ///
+    /// The head section typically contains a heading and its first associated paragraph,
+    /// while the content section contains the remaining block elements.
+    public struct Card: Codable, Equatable {
+        /// The head content, typically a heading and the first paragraph.
+        public var head: [RenderBlockContent]
+        /// The body content containing remaining block elements.
+        public var content: [RenderBlockContent]
     }
     
     /// A collection of authored links that should be rendered in a similar style
