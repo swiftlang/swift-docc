@@ -58,28 +58,61 @@ public final class Card: Semantic, AutomaticDirectiveConvertible, MarkupContaini
 
 extension Card: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
-        let allBlocks = content.elements.flatMap { element in
-            return contentCompiler.visit(element) as! [RenderBlockContent]
+        // partition flat list of markdown blocks into 2 lists:
+        // 1. elements before thematic break
+        // 2. elements after thematic break (if any)
+        let (before, after) = partition(
+            elements: content.elements,
+            separatedBy: ThematicBreak.self
+        )
+
+        // if there was a thematic break, use the elements before it as the
+        // head of the card
+        // 
+        // use the rest of the elements as the content (will be the original,
+        // full list if a thematic break is never encountered)
+        //
+        // if there are multiple thematic breaks, subsequent ones after the
+        // initial one will just be included in the content
+        let head = after.count > 0 ? before : []
+        let content = after.count > 0 ? after : before
+
+        let card = RenderBlockContent.Card(
+            head: render(blocks: head, with: &contentCompiler),
+            content: render(blocks: content, with: &contentCompiler)
+        )
+        return [RenderBlockContent.card(card)]
+    }
+
+    private func render(
+        blocks: [any Markup],
+        with contentCompiler: inout RenderContentCompiler
+    ) -> [RenderBlockContent] {
+        blocks.flatMap { block in
+            (contentCompiler.visit(block) as? [RenderBlockContent]) ?? []
         }
+    }
 
-        // Partition: first heading + first paragraph after it = head; rest = content
-        var head = [RenderBlockContent]()
-        var body = [RenderBlockContent]()
-        var foundHeading = false
-        var foundFirstParagraphAfterHeading = false
-
-        for block in allBlocks {
-            if !foundHeading, case .heading = block {
-                head.append(block)
-                foundHeading = true
-            } else if foundHeading && !foundFirstParagraphAfterHeading, case .paragraph = block {
-                head.append(block)
-                foundFirstParagraphAfterHeading = true
+    private func partition<Separator: Markup>(
+        elements: [any Markup],
+        separatedBy separator: Separator.Type
+    ) -> (before: [any Markup], after: [any Markup]) {
+        var beforeSeparator = true
+        return elements.reduce((before: [], after: [])) { partitioned, element in
+            if beforeSeparator && type(of: element) == separator.self {
+                beforeSeparator = false
+                return partitioned
+            } else if beforeSeparator {
+                return (
+                    before: partitioned.before + [element],
+                    after: partitioned.after
+                )
             } else {
-                body.append(block)
+                return (
+                    before: partitioned.before,
+                    after: partitioned.after + [element]
+                )
             }
         }
-
-        return [RenderBlockContent.card(RenderBlockContent.Card(head: head, content: body))]
     }
 }

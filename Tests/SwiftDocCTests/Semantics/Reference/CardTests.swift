@@ -37,6 +37,8 @@ struct CardTests {
 
                 Some head content.
 
+                ---
+
                 Some body content.
 
                 Another body paragraph.
@@ -88,29 +90,6 @@ struct CardTests {
     }
 
     @Test
-    func cardWithHeadingOnly() async throws {
-        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
-            """
-            @Card {
-                ### Just a heading
-            }
-            """
-        }
-
-        #expect(card != nil)
-        #expect(problems == [])
-
-        #expect(renderBlockContent == [
-            .card(RenderBlockContent.Card(
-                head: [
-                    .heading(.init(level: 3, text: "Just a heading", anchor: "Just-a-heading")),
-                ],
-                content: []
-            ))
-        ])
-    }
-
-    @Test
     func cardWithMultipleHeadings() async throws {
         let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
             """
@@ -118,6 +97,8 @@ struct CardTests {
                 ### First heading
 
                 Head paragraph.
+
+                ---
 
                 ### Second heading
 
@@ -138,6 +119,50 @@ struct CardTests {
                 content: [
                     .heading(.init(level: 3, text: "Second heading", anchor: "Second-heading")),
                     .paragraph(.init(inlineContent: [.text("Body paragraph.")])),
+                ]
+            ))
+        ])
+    }
+
+    @Test
+    func cardWithMultipleThematicBreaks() async throws {
+        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
+            """
+            @Card {
+                ### Heading one
+
+                In head section
+
+                ---
+
+                ### Heading two
+
+                In content section
+
+                ---
+
+                ### Heading three
+
+                Still in content section
+            }
+            """
+        }
+
+        #expect(card != nil)
+        #expect(problems == [])
+
+        #expect(renderBlockContent == [
+            .card(RenderBlockContent.Card(
+                head: [
+                    .heading(.init(level: 3, text: "Heading one", anchor: "Heading-one")),
+                    .paragraph(.init(inlineContent: [.text("In head section")])),
+                ],
+                content: [
+                    .heading(.init(level: 3, text: "Heading two", anchor: "Heading-two")),
+                    .paragraph(.init(inlineContent: [.text("In content section")])),
+                    .thematicBreak,
+                    .heading(.init(level: 3, text: "Heading three", anchor: "Heading-three")),
+                    .paragraph(.init(inlineContent: [.text("Still in content section")])),
                 ]
             ))
         ])
