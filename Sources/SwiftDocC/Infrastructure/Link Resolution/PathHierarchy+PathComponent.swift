@@ -164,7 +164,7 @@ extension PathHierarchy.PathParser {
         // the path parser can identify that "ModuleName" (without the leading slash) is a valid module name, but "=(_:_:)" (without the leading slash) isn't.
         // This tells the parser to remove the leading slash from "/ModuleName" and return that this link string represented an absolute link, whereas it leaves
         // "/=(_:_:)" as-is and returns that that link string represented a relative link.
-        let isAbsolute: Bool
+        var isAbsolute: Bool
         if path.first == PathComponentScanner.separator {
             guard let maybeModuleName = components.first?.dropFirst(), !maybeModuleName.isEmpty else {
                 return ([], true, nil)
@@ -179,6 +179,11 @@ extension PathHierarchy.PathParser {
             let name = components.first.map(String.init)
             isAbsolute = name == NodeURLGenerator.Path.documentationFolderName
                       || name == NodeURLGenerator.Path.tutorialsFolderName
+            
+            // A relative link like "ModuleName::SymbolName" is also absolute because it specifies the module to start the search from.
+            if !isAbsolute, let first = components.first, path.hasPrefix(first + PathComponentScanner.moduleSeparator) {
+                isAbsolute = first.isValidModuleName()
+            }
         }
         
         return (components, isAbsolute, anchor)
@@ -210,6 +215,7 @@ private struct PathComponentScanner: ~Copyable {
     private var remaining: Substring
     
     static let separator: Character = "/"
+    static let moduleSeparator: String = "::"
     private static let anchorSeparator: Character = "#"
     
     static let swiftOperatorEnd: Character = ")"
@@ -238,7 +244,7 @@ private struct PathComponentScanner: ~Copyable {
                  + scanPathComponent()
         }
         
-        // If the string doesn't contain a slash then the rest of the string is the component
+        // If the string contains a slash or a module separator then the next component ends there.
         return scanUntilSeparatorAndThenSkipIt()
     }
     
@@ -328,13 +334,34 @@ private struct PathComponentScanner: ~Copyable {
     }
     
     private mutating func scanUntilSeparatorAndThenSkipIt() -> Substring {
-        guard let index = remaining.firstIndex(of: Self.separator) else {
+        let separatorIndex = remaining.firstIndex(of: Self.separator)
+        let moduleSeparatorIndex = remaining.range(of: Self.moduleSeparator)?.lowerBound
+        
+        let index: Substring.Index
+        let separatorLength: Int
+        
+        switch (separatorIndex, moduleSeparatorIndex) {
+        case (let s?, let m?):
+            if s < m {
+                index = s
+                separatorLength = 1
+            } else {
+                index = m
+                separatorLength = Self.moduleSeparator.count
+            }
+        case (let s?, nil):
+            index = s
+            separatorLength = 1
+        case (nil, let m?):
+            index = m
+            separatorLength = Self.moduleSeparator.count
+        case (nil, nil):
             defer { remaining.removeAll() }
             return remaining
         }
         
         defer {
-            remaining = remaining[index...].dropFirst() // drop the slash
+            remaining = remaining[index...].dropFirst(separatorLength)
         }
         return remaining[..<index]
     }
