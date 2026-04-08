@@ -28,7 +28,8 @@ struct DiagnosticFileWriterTests {
         
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
+        let groupIdentifier = "test-group-identifier"
         let summary = "Test diagnostic summary"
         let solutionSummary = "Test solution summary"
         let explanation = "Test diagnostic explanation."
@@ -38,7 +39,7 @@ struct DiagnosticFileWriterTests {
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, groupIdentifier: groupIdentifier, summary: summary, explanation: explanation)
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             
             writer.receive([problem])
@@ -83,6 +84,8 @@ struct DiagnosticFileWriterTests {
         
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.first)
+            #expect(diagnostic.id == identifier)
+            #expect(diagnostic.groupID == groupIdentifier)
             #expect(diagnostic.source == source)
             #expect(diagnostic.range?.start.line == 1)
             #expect(diagnostic.range?.start.column == 8)
@@ -106,6 +109,8 @@ struct DiagnosticFileWriterTests {
         
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst().first)
+            #expect(diagnostic.id == identifier)
+            #expect(diagnostic.groupID == nil)
             #expect(diagnostic.source == source)
             #expect(diagnostic.range?.start.line == 1)
             #expect(diagnostic.range?.start.column == 8)
@@ -136,6 +141,8 @@ struct DiagnosticFileWriterTests {
         
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst(2).first)
+            #expect(diagnostic.id == identifier)
+            #expect(diagnostic.groupID == nil)
             #expect(diagnostic.source == source)
             #expect(diagnostic.range?.start.line == 1)
             #expect(diagnostic.range?.start.column == 8)
