@@ -71,6 +71,7 @@ public struct ConvertAction: AsyncAction {
     ///   - diagnosticIDsWithErrorSeverity: A list of diagnostic identifiers that are explicitly raised to an "error" severity.
     ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
     ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
+    ///   - featureFlags: A collection of feature flags that the convert action uses to enable or disable certain optional behaviors.
     ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
     ///   - includeContentInEachHTMLFile: `true` if the convert action should process each static hosting HTML file so that it includes documentation content for environments without JavaScript enabled, otherwise `false`.
     ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
@@ -101,6 +102,7 @@ public struct ConvertAction: AsyncAction {
         diagnosticIDsWithErrorSeverity: Set<String> = [],
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
+        featureFlags: FeatureFlags = .init(),
         transformForStaticHosting: Bool = false,
         includeContentInEachHTMLFile: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
@@ -156,6 +158,7 @@ public struct ConvertAction: AsyncAction {
         self.diagnosticEngine = engine
         
         var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags = featureFlags
         
         configuration.externalMetadata.diagnosticLevel = filterLevel
         // Inject current platform versions if provided

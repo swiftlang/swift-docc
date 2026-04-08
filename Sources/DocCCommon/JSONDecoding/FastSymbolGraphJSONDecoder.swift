@@ -1124,15 +1124,14 @@ extension Dictionary: FastJSONDecodable where Key == String, Value: FastJSONDeco
 /// A very low level type that represents matching locations of a byte pattern in a collection of 8 bytes.
 ///
 /// Use this type to look for a specific byte in a sequence, checking 8 bytes at a time.
-private struct ByteMatches: ~Copyable {
+package struct ByteMatches: ~Copyable {
     private let raw: UInt64
     
     /// Creates a new byte match result to find the first byte that matches the given search pattern.
     /// - Parameters:
     ///   - bytes: The 8 consecutive bytes of data to match against the search pattern.
     ///   - searchPattern: The byte to search for, repeated 8 times.
-    @inlinable
-    init(_ bytes: UInt64, _ searchPattern: UInt64) {
+    package init(_ bytes: UInt64, _ searchPattern: UInt64) {
         // To understand how this type finds the locations of the bytes that match the search pattern,
         // consider the a decoder that has advanced to the first byte of the first key in the JSON below:
         //
@@ -1200,11 +1199,11 @@ private struct ByteMatches: ~Copyable {
     // String scanning
     
     /// A search pattern for finding the "quote" character (`0x22`) in a sequence of 8 bytes.
-    @usableFromInline
-    static let quoteSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: "\"") )
+    package static let quoteSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: "\"") )
     /// A search pattern for finding the "backslash" character (`0x5C`) in a sequence of 8 bytes.
-    @usableFromInline
-    static let backslashSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: "\\") )
+    package static let backslashSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: "\\") )
+    /// A search pattern for finding the "colon" character (`0x3A`) in a sequence of 8 bytes.
+    package static let colonSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: ":") )
     
     /// A 64-bit value that repeats a byte with only the _low_ bit set (`0b00000001`) 8 times.
     private static let lowBitInEachByte  : UInt64 = 0x01_01_01_01_01_01_01_01
@@ -1212,20 +1211,17 @@ private struct ByteMatches: ~Copyable {
     private static let highBitInEachByte : UInt64 = 0x80_80_80_80_80_80_80_80
     
     /// A Boolean value indicating whether there are any matches.
-    @inlinable
-    var hasMatches: Bool {
+    package var hasMatches: Bool {
         raw != 0
     }
     
     /// The number of leading bytes that don't match the search pattern.
-    @inlinable
-    var numberOfLeadingNonMatches: Int {
+    package var numberOfLeadingNonMatches: Int {
         raw.trailingZeroBitCount / 8
     }
     
     /// Returns a Boolean value indicating whether the first matching location in this byte match are before the first matching location in the other byte match.
-    @inlinable
-    func isBefore(_ other: borrowing ByteMatches) -> Bool {
+    package func isBefore(_ other: borrowing ByteMatches) -> Bool {
         guard other.hasMatches else {
             // Avoid counting the trailing zero bits if there are no matches in the other element.
             return true

@@ -55,6 +55,7 @@ public class NavigatorIndex {
         case missingBundleIdentifier
         
         /// A RenderNode has no title and won't be indexed.
+        @available(*, deprecated, message: "This error type is no longer used. This deprecated API will be removed after 6.5 is released.")
         case missingTitle(description: String)
         
         /// The navigator index has not been initialized.
@@ -713,8 +714,11 @@ extension NavigatorIndex {
                 return nil // skip as item exists already.
             }
             
-            guard let title = usePageTitle ? renderNode.metadata.title : renderNode.navigatorTitle() else {
-                throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
+            guard let title = usePageTitle ? renderNode.metadata.title : renderNode.navigatorTitle(), !title.isEmpty else {
+                // Nodes without a title are erroneous entries in the symbol graph.
+                // An index entry cannot be constructed without a title, so the node is skipped.
+                assertionFailure("\(renderNode.identifier.absoluteString.singleQuoted) has an empty title, and cannot have a usable index entry")
+                return nil
             }
             
             // Get the identifier path

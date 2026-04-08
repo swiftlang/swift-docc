@@ -16,21 +16,21 @@ import Markdown
 
 class SnippetTests: XCTestCase {
     func testWarningAboutMissingPathPath() async throws {
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         let source = """
         @Snippet()
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        XCTAssertNil(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        XCTAssertNil(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual(.warning, problems[0].diagnostic.severity)
         XCTAssertEqual("org.swift.docc.HasArgument.path", problems[0].diagnostic.identifier)
     }
 
     func testWarningAboutInnerContent() async throws {
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         let source = """
         @Snippet(path: "path/to/snippet") {
             This content shouldn't be here.
@@ -39,21 +39,21 @@ class SnippetTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        XCTAssertNotNil(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        XCTAssertNotNil(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual(.warning, problems[0].diagnostic.severity)
         XCTAssertEqual("org.swift.docc.Snippet.NoInnerContentAllowed", problems[0].diagnostic.identifier)
     }
 
     func testParsesPath() async throws {
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
         XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)
@@ -101,14 +101,14 @@ class SnippetTests: XCTestCase {
     }
     
     func testParsesSlice() async throws {
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet", slice: "foo")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
         XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
         XCTAssertEqual("foo", snippet.slice)
         XCTAssertNotNil(snippet)

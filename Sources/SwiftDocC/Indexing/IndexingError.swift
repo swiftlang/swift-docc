@@ -10,6 +10,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "This error type is no longer used. This deprecated API will be removed after 6.5 is released.")
 public enum IndexingError: DescribedError {
     /**
      A page or other piece of documentation doesn't have a title, so it can't

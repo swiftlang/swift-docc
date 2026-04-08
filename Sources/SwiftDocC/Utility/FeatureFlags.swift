@@ -10,8 +10,7 @@
 
 /// A set of feature flags that conditionally enable (usually experimental) behavior in Swift-DocC.
 public struct FeatureFlags: Codable {
-    /// The current feature flags that Swift-DocC uses to conditionally enable
-    /// (usually experimental) behavior in Swift-DocC.
+    @available(*, deprecated, message: "Pass a feature flags value instead. This deprecated API will be removed after 6.5 is released.")
     public static var current = FeatureFlags()
 
     /// Whether or not experimental annotation of code blocks is enabled.
