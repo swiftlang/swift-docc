@@ -35,7 +35,11 @@ public protocol DirectiveConvertible {
     ///   -  directive: The parsed block directive to create a semantic object from.
     ///   -  source: The location of the source file that contains the markup for the parsed block directive.
     ///   -  bundle: The documentation bundle that the source file belongs to.
+    ///   -  featureFlags: A collection of feature flags.
     ///   -  problems: An inout array of ``Problem`` to be collected for later diagnostic reporting.
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem])
+    
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:problems:)", message: "Use 'init(from:source:for:featureFlags:problems:)' instead. This deprecated API will be removed after 6.5 is released.")
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem])
     
     /// Returns a Boolean value indicating whether the `DirectiveConvertible` recognizes the given directive.
@@ -53,3 +57,19 @@ public extension DirectiveConvertible {
     }
 }
 
+// Default implementation so that conforming types don't need to implement deprecated API.
+public extension DirectiveConvertible {
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:problems:)", message: "Use 'init(from:source:for:featureFlags:problems:)' instead. This deprecated API will be removed after 6.5 is released.")
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+        self.init(from: directive, source: source, for: bundle, featureFlags: FeatureFlags.current, problems: &problems)
+    }
+}
+
+// Default implementation so that existing conformances  by the additional initializer parameter in the protocol requirements.
+public extension DirectiveConvertible {
+    @available(*, deprecated) // This needs to be marked deprecated because it calls deprecated API.
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        // This will recurse infinitely (until the program traps) if types don't implement either the new or the old required initializer.
+        self.init(from: directive, source: source, for: bundle, problems: &problems)
+    }
+}

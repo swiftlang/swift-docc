@@ -12,12 +12,6 @@ private import Foundation
 private import SymbolKit
 private import DocCCommon
 
-private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted.union(["/"])
-
-private func symbolFileName(_ symbolName: String) -> String {
-    return symbolName.components(separatedBy: nonAllowedPathCharacters).joined(separator: "_")
-}
-
 extension PathHierarchy {
     /// Determines the least disambiguated paths for all symbols in the path hierarchy.
     ///
@@ -103,15 +97,15 @@ extension PathHierarchy {
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [String: String] {
-        let nameTransform: (String) -> String
-        if transformToFileNames {
-            nameTransform = symbolFileName(_:)
+        let nameTransform: (String) -> String = if transformToFileNames {
+            symbolFileName(_:)
         } else {
-            nameTransform = { $0 }
+            { $0 }
         }
         
-        func descend(_ node: Node, accumulatedPath: String) -> [String: String] {
-            var innerPathsByUSR: [String: String] = [:]
+        var pathsByUSR: [String: String] = [:]
+        
+        func descend(_ node: borrowing Node, accumulatedPath: consuming String, updating pathsByUSR: inout [String: String]) {
             let children = [String: DisambiguationContainer](node.children.map {
                 var name = $0.key
                 if !caseSensitive {
@@ -125,49 +119,39 @@ extension PathHierarchy {
                 let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation != .none && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
                 
                 for (node, disambiguation) in disambiguatedChildren {
-                    var path: String
+                    var path = "\(accumulatedPath)/\(nameTransform(node.name))"
                     if node.identifier == nil && disambiguatedChildren.count == 1 {
+                        let element = container.storage.first!
                         // When descending through placeholder nodes, we trust that the known disambiguation
                         // that they were created with is necessary.
-                        var knownDisambiguation = ""
-                        let element = container.storage.first!
                         if let kind = element.kind {
-                            knownDisambiguation += "-\(kind)"
+                            path.append("-\(kind)")
                         }
                         if let hash = element.hash {
-                            knownDisambiguation += "-\(hash)"
+                            path.append("-\(hash)")
                         }
-                        path = accumulatedPath + "/" + nameTransform(node.name) + knownDisambiguation
-                    } else {
-                        path = accumulatedPath + "/" + nameTransform(node.name)
                     }
                     if let symbol = node.symbol,
                        // If a symbol node exist in multiple languages, prioritize the Swift variant.
                        node.counterpart == nil || symbol.identifier.interfaceLanguage == "swift"
                     {
-                        innerPathsByUSR[symbol.identifier.precise] = path + disambiguation.makeSuffix()
+                        let newPath = path.appending(disambiguation.makeSuffix())
+                        if let oldPath = pathsByUSR.updateValue(newPath, forKey: symbol.identifier.precise) {
+                            assertionFailure("Should only have gathered one path per symbol ID. Found \(oldPath) and \(newPath) for the same USR.")
+                        }
                     }
                     if includeDisambiguationForUnambiguousChildren || uniqueNodesWithChildren.count > 1 {
                         path += disambiguation.makeSuffix()
                     }
-                    innerPathsByUSR.merge(descend(node, accumulatedPath: path), uniquingKeysWith: { currentPath, newPath in
-                        assertionFailure("Should only have gathered one path per symbol ID. Found \(currentPath) and \(newPath) for the same USR.")
-                        return currentPath
-                    })
+                    descend(node, accumulatedPath: path, updating: &pathsByUSR)
                 }
             }
-            return innerPathsByUSR
         }
         
-        var pathsByUSR: [String: String] = [:]
-        
         for node in modules {
-            let modulePath = "/" + node.name
+            let modulePath = "/\(nameTransform(node.name))"
             pathsByUSR[node.name] = modulePath
-            pathsByUSR.merge(descend(node, accumulatedPath: modulePath), uniquingKeysWith: { currentPath, newPath in
-                assertionFailure("Should only have gathered one path per symbol ID. Found \(currentPath) and \(newPath) for the same USR.")
-                return currentPath
-            })
+            descend(node, accumulatedPath: modulePath, updating: &pathsByUSR)
         }
         
         assert(
@@ -318,51 +302,70 @@ extension PathHierarchy.DisambiguationContainer {
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
-        typealias DisambiguationPair = (String, String)
-        
-        var uniqueSymbolIDs = [String: [Element]]()
-        var nonSymbols = [Element]()
-        for element in storage {
-            guard let symbol = element.node.symbol else {
-                nonSymbols.append(element)
-                continue
+        // This implementation uses partitioning and sorting to avoid tracking non-symbol, unique symbols, and duplicate symbols in their separately allocated data structures.
+        var storage = storage
+        // By partitioning the non-symbols from the symbols, we can separate the non-symbols in a single linear scan  ...
+        let articlePivot = storage.partition(by: { $0.node.symbol != nil })
+        // ... this also means that we only have to sort the symbol slice (which may check each element more than once)
+        storage[articlePivot...].sort(by: { lhs, rhs in
+            let lhsID = lhs.node.symbol!.identifier
+            let rhsID = rhs.node.symbol!.identifier
+            guard lhsID.precise == rhsID.precise else {
+                // By sorting the symbols by their unique identifiers we implicitly group duplicates (by them being a consecutive series with the same unique identifier)
+                return lhsID.precise < rhsID.precise
             }
-            if symbol.identifier.interfaceLanguage == "swift" {
-                uniqueSymbolIDs[symbol.identifier.precise, default: []].insert(element, at: 0)
-            } else {
-                uniqueSymbolIDs[symbol.identifier.precise, default: []].append(element)
-            }
-        }
-        
-        var duplicateSymbols = [String: ArraySlice<Element>]()
-        
+            
+            // Among the duplicates, we only care about ordering the Swift language representation before the other duplicates.
+            return lhsID.interfaceLanguage == "swift"
+        })
+       
+        // To compute how the disambiguation suffixes without needing to disambiguate between two different versions of the same symbol,
+        // we create a new disambiguation container and add the articles and non-duplicate symbols to it.
         var new = PathHierarchy.DisambiguationContainer()
-        for element in nonSymbols {
+        for element in storage[..<articlePivot] {
+            assert(element.node.symbol == nil, "Miscategorized '\(element.node.symbol!.names.title)' as non-symbol")
             new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
         }
-        for (id, symbolDisambiguations) in uniqueSymbolIDs {
-            let element = symbolDisambiguations.first!
-            new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
+        
+        // We need some way to temporarily track the duplicates so that we can add them to the result at the end.
+        // Hoping to avoid a _heap_ allocation, we use `withUnsafeTemporaryAllocation` for this.
+        // It gives us a buffer pointer to some uninitialized memory that will be deallocated by the end of the closure's scope.
+        // Depending on the requires size, the compiler may use _stack_ memory for this.
+        var symbols = storage[articlePivot...]
+        return withUnsafeTemporaryAllocation(of: Element.self, capacity: symbols.count /* There can never be more duplicates than the number of symbols */) { duplicatesBuffer in
+            // We keep track of how many duplicates we've found so that we know where in the buffer to write the next value and how much memory we need to deinitialize.
+            var duplicatesCount = 0
             
-            if symbolDisambiguations.count > 1 {
-                duplicateSymbols[id] = symbolDisambiguations.dropFirst()
+            // Iterate over the sorted symbols and add the first symbol (but not its duplicates) to the new disambiguation container.
+            while let element = symbols.popFirst() {
+                assert(element.node.symbol != nil, "Miscategorized '\(element.node.name)' as a symbol")
+                // The first symbol is already sorted based on the interface language
+                new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
+                
+                // Because two symbols with the same unique identifier have the same (very short) disambiguation hash, we make that cheaper comparison to identify duplicate.
+                while symbols.first?.hash == element.hash {
+                    // As long as the symbols are duplicates we save them in the temporary buffer, so that we can iterate them a few lines further down.
+                    duplicatesBuffer.initializeElement(at: duplicatesCount, to: symbols.removeFirst())
+                    duplicatesCount &+= 1
+                }
             }
-        }
-        
-        var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
-        guard !duplicateSymbols.isEmpty else {
-            return disambiguated
-        }
-        
-        for (id, disambiguations) in duplicateSymbols {
-            let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == id })!.disambiguation
             
-            for element in disambiguations {
+            // Now that we've added the articles and the non-duplicate symbols to the new container, compute the disambiguation suffixes based on only that information.
+            var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
+            
+            // Lastly, for each duplicate, add it the result (without updating the _amount_ of necessary disambiguation for the rest).
+            // We could possibly get rid of the duplicates all together in the future but it would require changing the calling code some as well.
+            for index in 0 ..< duplicatesCount {
+                let element = duplicatesBuffer[index]
+                let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == element.node.symbol?.identifier.precise })!.disambiguation
+            
                 disambiguated.append((element.node, primaryDisambiguation.updated(kind: element.kind, hash: element.hash)))
             }
+            
+            // The closure is responsible for both deinitializing any memory that it initializes. However, the buffer will trap if it deinitializes memory that it never initialized.
+            duplicatesBuffer[0..<duplicatesCount].deinitialize()
+            return disambiguated
         }
-        
-        return disambiguated
     }
     
     /// The computed disambiguation for a given path hierarchy node.
@@ -484,5 +487,80 @@ private extension Collection {
         }
         
         return matchingIndex
+    }
+}
+
+/// Transforms a symbol name to make it safe to use as a file name.
+///
+/// This process replaces any character that's not allowed in a path with "\_".
+/// It also replaces a forward slash with "\_" to avoid the file name being considered two (or more) path components.
+private func symbolFileName(_ symbolName: String) -> String {
+    let utf8SymbolName = symbolName.utf8
+    
+    return String(unsafeUninitializedCapacity: utf8SymbolName.count) { buffer in
+        var length = 0
+        
+        // Most symbol names consist of only ASCII characters; for example "SomeClass" and "+=(_:_:)".
+        // In this common case, we can use a fast path.
+        for byte in utf8SymbolName {
+            if byte.isAllowedInSymbolFileName {
+                buffer[length] = byte
+                length &+= 1
+                continue
+            }
+            // Replace disallowed characters with "_"
+            buffer[length] = .init(ascii: "_")
+            length &+= 1
+            if byte.isSingleByteCharacter {
+                // If the disallowed character was still a single-byte character we continue the fast path
+                continue
+            }
+            
+            // If we encounter _any_ variable-length unicode scalars we switch away from the fast path and process full `Character` values instead.
+            // This ensures that visual characters that are represented by multiple unicode scalars are transformed into a single "_".
+            for character in symbolName.dropFirst(length) {
+                buffer[length] = if character.utf8.count == 1, let byte = character.utf8.first, byte.isAllowedInSymbolFileName {
+                    byte
+                } else {
+                    .init(ascii: "_")
+                }
+                length &+= 1
+            }
+            // Return here so that the fast path loop doesn't continue processing what was already processed as full `Character` values.
+            return length
+        }
+        
+        return length
+    }
+}
+
+private extension UTF8.CodeUnit {
+    /// A Boolean value indicating if the UTF8 code unit is a character that's allowed in the "path" of a URL (except for "/" which is allowed in a path but not permitted in the file name).
+    var isAllowedInSymbolFileName: Bool {
+        switch self {
+        case
+            // ! & & ' ( ) * + , - .
+            0x21, 0x24, 0x26...0x2E,
+            // 0–9,
+            0x30...0x39,
+            // : ; = @
+            0x3A, 0x3B, 0x3D, 0x40,
+            // A-Z
+            0x41...0x5A,
+            // _
+            0x5F,
+            // a–z
+            0x61...0x7A,
+            // ~
+            0x7E: true
+        default:  false
+        }
+    }
+    
+    /// A Boolean value indicating if the UTF8 code unit represents a single-byte character or if it is the start of a variable-length unicode scalar.
+    var isSingleByteCharacter: Bool {
+        // The first bit in the first byte of a valid UTF8 code unit indicates if the variable-length encoding uses one or multiple bytes to represent that scalar.
+        // Other bit patterns (with the first bit set) gives the exact length of how many bytes (2, 3, or 4) are used to represent that scalar.
+        self < 0b1000_0000
     }
 }

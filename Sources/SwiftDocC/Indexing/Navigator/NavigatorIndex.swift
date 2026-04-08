@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -55,6 +55,7 @@ public class NavigatorIndex {
         case missingBundleIdentifier
         
         /// A RenderNode has no title and won't be indexed.
+        @available(*, deprecated, message: "This error type is no longer used. This deprecated API will be removed after 6.5 is released.")
         case missingTitle(description: String)
         
         /// The navigator index has not been initialized.
@@ -320,7 +321,7 @@ public class NavigatorIndex {
             case "enumdata", "structdata", "cldata", "clconst", "intfdata", "type.property", "typeConstant": self = .instanceVariable
             case "enumsub", "structsub", "instsub", "intfsub", "subscript": self = .subscript
             case "enumcm", "structcm", "clm", "intfcm", "type.method": self = .typeMethod
-            case "httpget", "httpput", "httppost", "httppatch", "httpdelete": self = .httpRequest
+            case "httpget", "httpput", "httppost", "httppatch", "httpdelete", "httprequest": self = .httpRequest
             case "dict", "dictionary": self = .dictionarySymbol
             case "namespace": self = .namespace
             default: self = .symbol
@@ -712,8 +713,11 @@ extension NavigatorIndex {
                 return nil // skip as item exists already.
             }
             
-            guard let title = usePageTitle ? renderNode.metadata.title : renderNode.navigatorTitle() else {
-                throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
+            guard let title = usePageTitle ? renderNode.metadata.title : renderNode.navigatorTitle(), !title.isEmpty else {
+                // Nodes without a title are erroneous entries in the symbol graph.
+                // An index entry cannot be constructed without a title, so the node is skipped.
+                assertionFailure("\(renderNode.identifier.absoluteString.singleQuoted) has an empty title, and cannot have a usable index entry")
+                return nil
             }
             
             // Get the identifier path

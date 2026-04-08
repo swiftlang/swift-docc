@@ -19,12 +19,12 @@ class JustificationTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(directive.name, Justification.directiveName)
-            let justification = Justification(from: directive, source: nil, for: bundle, problems: &problems)
+            let justification = Justification(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(justification)
             XCTAssertNil(justification?.reaction)
             XCTAssertTrue(problems.isEmpty)
@@ -44,12 +44,12 @@ class JustificationTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(directive.name, Justification.directiveName)
-            let justification = Justification(from: directive, source: nil, for: bundle, problems: &problems)
+            let justification = Justification(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertTrue(problems.isEmpty)
             XCTAssertNotNil(justification)
             XCTAssertEqual(justification?.reaction, "Correct!")

@@ -28,8 +28,8 @@ func parseDirective<Directive: DirectiveConvertible>(
     let blockDirectiveContainer = try #require(document.child(at: 0) as? BlockDirective, sourceLocation: sourceLocation)
     
     var problems = [Problem]()
-    let inputs = try await makeEmptyContext().inputs
-    let directive = directive.init(from: blockDirectiveContainer, source: source, for: inputs, problems: &problems)
+    let context = try await makeEmptyContext()
+    let directive = directive.init(from: blockDirectiveContainer, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
     
     let problemIDs = problems.map { problem -> String in
         #expect(problem.diagnostic.source != nil, "Problem \(problem.diagnostic.identifier) is missing a source URL.", sourceLocation: sourceLocation)
@@ -125,7 +125,7 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
     
     let blockDirectiveContainer = try #require(document.child(at: 0) as? BlockDirective, sourceLocation: sourceLocation)
     
-    var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs)
+    var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
     let result = analyzer.visit(blockDirectiveContainer)
     context.diagnosticEngine.emit(analyzer.problems)
     

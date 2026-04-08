@@ -580,6 +580,65 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssertEqual(node.markdown, content)
     }
     
+    func testHTMLRemoval() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "Comments.md", utf8Content: """
+                # Comments
+
+                Showing how comments are removed from the markdown export
+
+                ## Overview
+
+                @Comment {
+                    COMMENT CONTENT 1
+                }
+                
+                This text is fine
+                
+                <!-- COMMENT CONTENT 2 -->
+                
+                Comments in code blocks should be kept
+                
+                ```
+                <h1>Text in a code block HTML</h1>
+                <!-- COMMENT CONTENT 3 -->
+                ```
+                
+                Raw HTML in the body should not be kept
+                                
+                <h1>More Complex example</h1>
+
+                <!-- COMMENT CONTENT 4 -->
+
+                <p>This paragraph is invisible.</p>
+
+                <!--
+                  COMMENT CONTENT 5
+                  COMMENT CONTENT 6
+                -->
+
+                <p>This paragraph is also invisible. <!-- COMMENT CONTENT 7 --></p>
+                
+                Inline HTML is <em>EMPHASISED</em> stripped of tags
+                """)
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Comments")
+        let markdown = node.markdown
+        XCTAssertFalse(markdown.contains("COMMENT CONTENT 1"))
+        XCTAssertFalse(markdown.contains("COMMENT CONTENT 2"))
+        XCTAssertFalse(markdown.contains("COMMENT CONTENT 4"))
+        XCTAssertFalse(markdown.contains("COMMENT CONTENT 5"))
+        XCTAssertFalse(markdown.contains("COMMENT CONTENT 6"))
+        XCTAssertFalse(markdown.contains("COMMENT CONTENT 7"))
+        XCTAssertFalse(markdown.contains("More Complex example"))
+        XCTAssertFalse(markdown.contains("This paragraph is invisible"))
+        XCTAssertFalse(markdown.contains("This paragraph is also invisible"))
+        XCTAssert(markdown.contains("COMMENT CONTENT 3"))
+        XCTAssert(markdown.contains("Text in a code block HTML"))
+        XCTAssert(markdown.contains("Inline HTML is EMPHASISED stripped of tags"))
+    }
+    
     
     
     // MARK: - Metadata

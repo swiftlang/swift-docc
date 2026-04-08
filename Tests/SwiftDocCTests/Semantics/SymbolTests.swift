@@ -502,18 +502,12 @@ class SymbolTests: XCTestCase {
     }
     
     func testNoWarningWhenDocCommentContainsDoxygen() async throws {
-        let tempURL = try createTemporaryDirectory()
-        
-        let bundleURL = try Folder(name: "Inheritance.docc", content: [
-            InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),
-            CopyOfFile(original: Bundle.module.url(
-                forResource: "Inheritance.symbols", withExtension: "json",
-                subdirectory: "Test Resources")!),
-        ]).write(inside: tempURL)
-        
-        let (_, _, context) = try await loadBundle(from: bundleURL)
-        let problems = context.diagnosticEngine.problems
-        XCTAssertEqual(problems.count, 0)
+        let catalog = Folder(name: "Inheritance.docc") {
+            InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance")
+            CopyOfFile(original: Bundle.module.url(forResource: "Inheritance.symbols", withExtension: "json", subdirectory: "Test Resources")!)
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
     }
 
     func testParseDoxygen() async throws {
@@ -1005,7 +999,7 @@ class SymbolTests: XCTestCase {
         )
         
         let engine = DiagnosticEngine()
-        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, featureFlags: .init(), engine: engine)
         XCTAssertEqual(engine.problems.count, 0)
     }
 

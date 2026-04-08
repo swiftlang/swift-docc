@@ -102,7 +102,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -125,7 +125,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }
@@ -150,7 +150,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -202,7 +202,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }

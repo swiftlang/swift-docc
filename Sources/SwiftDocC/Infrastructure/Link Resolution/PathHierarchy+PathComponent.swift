@@ -244,7 +244,9 @@ private struct PathComponentScanner: ~Copyable {
     
     mutating func _scanOperatorName() -> Substring? {
         // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.unicodeScalars.prefix(3).isValidSwiftOperator() {
+        if let parametersStart = remaining.firstIndex(of: "("),
+           remaining.unicodeScalars.prefix(upTo: parametersStart).isValidSwiftOperator()
+        {
             return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd)) + scan(length: 1)
         }
         

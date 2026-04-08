@@ -20,9 +20,9 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
+        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertEqual([
             "org.swift.docc.HasContent",
         ], problems.map { $0.diagnostic.identifier })
@@ -51,7 +51,7 @@ class StepTests: XCTestCase {
             DataFile(name: "test.png", data: Data())
         ]))
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: context.inputs, problems: &problems)
+        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
         XCTAssertNotNil(step)
         
@@ -107,9 +107,9 @@ Step @1:1-9:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
+        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertEqual(2, problems.count)
         
         XCTAssertEqual([
