@@ -2042,11 +2042,11 @@ Root
     }
 
     func testNavigatorDoesNotContainOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
         let navigatorIndex = try await generatedNavigatorIndex(
             for: "OverloadedSymbols",
-            bundleIdentifier: "com.shapes.ShapeKit")
+            bundleIdentifier: "com.shapes.ShapeKit",
+            isExperimentalOverloadedSymbolPresentationEnabled: true
+        )
 
         XCTAssertEqual(
             navigatorIndex.navigatorTree.root.dumpTree(),
@@ -2201,8 +2201,10 @@ Root
         return betaNodes
     }
 
-    func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {
-        let (_, context) = try await testBundleAndContext(named: testBundleName)
+    private func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String, isExperimentalOverloadedSymbolPresentationEnabled: Bool = false) async throws -> NavigatorIndex {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = isExperimentalOverloadedSymbolPresentationEnabled
+        let (_, _, context) = try await testBundleAndContext(named: testBundleName, configuration: configuration)
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
 

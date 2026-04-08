@@ -106,12 +106,8 @@ public struct ConvertService: DocumentationService {
         request: ConvertRequest,
         messageIdentifier: String
     ) async throws -> ([RenderNode], RenderReferenceStore?) {
-            // Update DocC's current feature flags based on the ones provided
-            // in the request.
-            FeatureFlags.current = request.featureFlags
-            
             var configuration = DocumentationContext.Configuration()
-            
+            configuration.featureFlags = request.featureFlags
             configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
             
             // Enable support for generating documentation for standalone articles and tutorials.

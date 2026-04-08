@@ -525,7 +525,7 @@ public class DocumentationContentRenderer {
             }
             
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: context.inputs)?.language
+                SupportedLanguage(from: $0, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags)?.language
             }
             
             return ReferenceGroup(

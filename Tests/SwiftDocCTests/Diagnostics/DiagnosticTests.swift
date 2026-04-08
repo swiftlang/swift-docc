@@ -170,7 +170,7 @@ class DiagnosticTests: XCTestCase {
         let symbol = createTestSymbol(commentText: commentText)
         let engine = DiagnosticEngine()
 
-        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, featureFlags: FeatureFlags(), engine: engine)
         XCTAssertEqual(engine.problems.count, 0)
 
         // testing scenario with known directive
@@ -183,7 +183,7 @@ class DiagnosticTests: XCTestCase {
         let symbolWithKnownDirective = createTestSymbol(commentText: commentWithKnownDirective)
         let engine1 = DiagnosticEngine()
 
-        let _ = DocumentationNode.contentFrom(documentedSymbol: symbolWithKnownDirective, documentationExtension: nil, engine: engine1)
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbolWithKnownDirective, documentationExtension: nil, featureFlags: FeatureFlags(), engine: engine1)
         
         // count should be 1 for the known directive '@TitleHeading'
         // TODO: Consider adding a diagnostic for Doxygen tags (rdar://92184094)

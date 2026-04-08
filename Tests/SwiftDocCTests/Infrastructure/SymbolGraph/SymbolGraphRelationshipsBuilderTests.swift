@@ -33,18 +33,17 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: sourceType, mixins: [:])
         let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: targetType, mixins: [:])
         
-        let engine = DiagnosticEngine()
+        let module = SymbolGraph.Module(name: "SomeModuleName", platform: .init(operatingSystem: .init(name: "macosx")))
         documentationCache.add(
-            DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: sourceRef, unifiedSymbol: .init(fromSingleSymbol: sourceSymbol, module: module, isMainGraph: true), moduleData: module, moduleReference: moduleRef),
             reference: sourceRef,
             symbolID: "A"
         )
         documentationCache.add(
-            DocumentationNode(reference: targetRef, symbol: targetSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: targetRef, unifiedSymbol: .init(fromSingleSymbol: targetSymbol, module: module, isMainGraph: true), moduleData: module, moduleReference: moduleRef),
             reference: targetRef,
             symbolID: "B"
         )
-        XCTAssert(engine.problems.isEmpty)
         
         return SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .defaultImplementationOf, targetFallback: nil)
     }
@@ -68,7 +67,6 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     func testMultipleImplementsRelationships() async throws {
         let (bundle, context) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
-        let engine = DiagnosticEngine()
 
         let identifierA = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let identifierB = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
@@ -83,28 +81,30 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let symbolB = SymbolGraph.Symbol(identifier: identifierB, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
         let symbolC = SymbolGraph.Symbol(identifier: identifierC, names: SymbolGraph.Symbol.Names(title: "C", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "C"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
 
+        let module = SymbolGraph.Module(name: "SomeModuleName", platform: .init(operatingSystem: .init(name: "macosx")))
         documentationCache.add(
-            DocumentationNode(reference: symbolRefA, symbol: symbolA, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: symbolRefA, unifiedSymbol: .init(fromSingleSymbol: symbolA, module: module, isMainGraph: true), moduleData: module, moduleReference: moduleRef),
             reference: symbolRefA,
             symbolID: "A"
         )
         documentationCache.add(
-            DocumentationNode(reference: symbolRefB, symbol: symbolB, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: symbolRefB, unifiedSymbol: .init(fromSingleSymbol: symbolB, module: module, isMainGraph: true), moduleData: module, moduleReference: moduleRef),
             reference: symbolRefB,
             symbolID: "B"
         )
         documentationCache.add(
-            DocumentationNode(reference: symbolRefC, symbol: symbolC, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: symbolRefC, unifiedSymbol: .init(fromSingleSymbol: symbolC, module: module, isMainGraph: true), moduleData: module, moduleReference: moduleRef),
             reference: symbolRefC,
             symbolID: "C"
         )
-        XCTAssert(engine.problems.isEmpty)
 
         let edge1 = SymbolGraph.Relationship(source: identifierB.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
         let edge2 = SymbolGraph.Relationship(source: identifierC.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
 
+        let engine = DiagnosticEngine()
         SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge1, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
         SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge2, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
+        XCTAssert(engine.problems.isEmpty)
 
         XCTAssertEqual((documentationCache["A"]!.semantic as! Symbol).defaultImplementations.groups.first?.references.map(\.url?.lastPathComponent), ["B", "C"])
     }
@@ -180,8 +180,9 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         
+        let module = SymbolGraph.Module(name: "SomeModuleName", platform: .init(operatingSystem: .init(name: "macosx")))
         documentationCache.add(
-            DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: sourceRef, unifiedSymbol: .init(fromSingleSymbol: sourceSymbol, module: module, isMainGraph: true), moduleData: module, moduleReference: moduleRef),
             reference: sourceRef,
             symbolID: "A"
         )

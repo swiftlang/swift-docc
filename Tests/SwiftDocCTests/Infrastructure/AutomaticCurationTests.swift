@@ -729,11 +729,14 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testOverloadedSymbolsAreCuratedUnderGroup() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let protocolRenderNode = try await renderNode(
             atPath: "/documentation/ShapeKit/OverloadedProtocol",
-            fromTestBundleNamed: "OverloadedSymbols")
+            fromTestBundleNamed: "OverloadedSymbols",
+            configuration: configuration
+        )
 
         guard protocolRenderNode.topicSections.count == 1, let protocolTopicSection = protocolRenderNode.topicSections.first else {
             XCTFail("Expected to find 1 topic section, found \(protocolRenderNode.topicSections.count): \(protocolRenderNode.topicSections.map(\.title?.singleQuoted))")
@@ -747,7 +750,9 @@ class AutomaticCurationTests: XCTestCase {
 
         let overloadGroupRenderNode = try await renderNode(
             atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
-            fromTestBundleNamed: "OverloadedSymbols")
+            fromTestBundleNamed: "OverloadedSymbols",
+            configuration: configuration
+        )
 
         XCTAssertEqual(
             overloadGroupRenderNode.topicSections.count, 0,
@@ -756,13 +761,14 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testAutomaticCurationHandlesOverloadsWithLanguageFilters() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let (bundle, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols", configuration: configuration)
 
         let protocolDocumentationNode = try context.entity(
             with: .init(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/ShapeKit/OverloadedProtocol",
                 sourceLanguage: .swift))
 
@@ -797,9 +803,10 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testAutomaticCurationDropsOverloadGroupWhenOverloadsAreCurated() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let (_, bundle, context) = try await testBundleAndContext(copying: "OverloadedSymbols") { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "OverloadedSymbols", configuration: configuration) { url in
             try """
             # ``OverloadedProtocol``
 

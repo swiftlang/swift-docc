@@ -48,7 +48,7 @@ func load(
     return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
 
-func makeEmptyContext() async throws -> DocumentationContext {
+func makeEmptyContext(configuration: DocumentationContext.Configuration = .init()) async throws -> DocumentationContext {
     let bundle = DocumentationBundle(
         info: DocumentationBundle.Info(
             displayName: "Test",
@@ -60,7 +60,7 @@ func makeEmptyContext() async throws -> DocumentationContext {
         miscResourceURLs: []
     )
     
-    return try await DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []))
+    return try await DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []), configuration: configuration)
 }
 
 // MARK: Using the real file system
