@@ -26,7 +26,7 @@ protocol AutomaticDirectiveConvertible: DirectiveConvertible, Semantic {
     ///
     /// Return false if a serious enough error is encountered such that the directive
     /// should not be initialized.
-    func validate(source: URL?, problems: inout [Problem]) -> Bool
+    func validate(source: URL?, problems: inout [Problem], featureFlags: FeatureFlags) -> Bool
     
     /// The key paths to any property wrapped directive arguments, child directives,
     /// or child markup properties.
@@ -75,7 +75,7 @@ extension AutomaticDirectiveConvertible {
         String(describing: self)
     }
     
-    func validate(source: URL?, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
         return true
     }
     
@@ -92,14 +92,15 @@ extension AutomaticDirectiveConvertible {
     /// the same function but supports collecting an array of problems for diagnostics.
     ///
     /// - Parameters:
-    ///     - directive: The block directive that will be parsed
-    ///     - source: An optional URL for the source location where this directive is written.
-    ///     - bundle: The documentation bundle that owns the directive.
-    ///     - context: The documentation context in which the bundle resides.
+    ///   - directive: The block directive that will be parsed
+    ///   - source: An optional URL for the source location where this directive is written.
+    ///   - bundle: The documentation bundle that owns the directive.
+    ///   - featureFlags: A collection of feature flags.
     public init?(
         from directive: BlockDirective,
         source: URL? = nil,
-        for bundle: DocumentationBundle
+        for bundle: DocumentationBundle,
+        featureFlags: FeatureFlags
     ) {
         var problems = [Problem]()
         
@@ -107,6 +108,7 @@ extension AutomaticDirectiveConvertible {
             from: directive,
             source: source,
             for: bundle,
+            featureFlags: featureFlags,
             problems: &problems
         )
     }
@@ -115,6 +117,7 @@ extension AutomaticDirectiveConvertible {
         from directive: BlockDirective,
         source: URL?,
         for bundle: DocumentationBundle,
+        featureFlags: FeatureFlags,
         problems: inout [Problem]
     ) {
         precondition(directive.name == Self.directiveName)
@@ -178,6 +181,7 @@ extension AutomaticDirectiveConvertible {
             children: remainder,
             source: source,
             for: bundle,
+            featureFlags: featureFlags,
             problems: &problems
         )
         
@@ -191,6 +195,7 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
+                    featureFlags: featureFlags,
                     problems: &problems
                 )
                 
@@ -215,6 +220,7 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
+                    featureFlags: featureFlags,
                     problems: &problems
                 )
                 
@@ -238,6 +244,7 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
+                    featureFlags: featureFlags,
                     problems: &problems
                 )
                 
@@ -252,6 +259,7 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
+                    featureFlags: featureFlags,
                     problems: &problems
                 )
                 
@@ -343,7 +351,7 @@ extension AutomaticDirectiveConvertible {
             return nil
         }
         
-        guard validate(source: source, problems: &problems) else {
+        guard validate(source: source, problems: &problems, featureFlags: featureFlags) else {
             return nil
         }
     }

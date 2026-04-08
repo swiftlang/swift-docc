@@ -76,12 +76,12 @@ class PageKindTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+        let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Metadata.directiveName, directive.name)
-            let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+            let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(metadata)
             XCTAssertNotNil(metadata?.pageKind)
             XCTAssertEqual(metadata?.pageKind?.kind, .article)

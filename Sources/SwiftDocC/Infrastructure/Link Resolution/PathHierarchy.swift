@@ -48,6 +48,8 @@ struct PathHierarchy {
     
     /// A map of known documentation nodes based on their unique identifiers.
     private(set) var lookup: [ResolvedIdentifier: Node]
+    /// Whether or not the link resolver should raise module-not-found errors if it can't find the first component of an absolute link.
+    let isModuleNotFoundErrorsEnabled: Bool
     
     // MARK: Creating a path hierarchy
     
@@ -58,12 +60,16 @@ struct PathHierarchy {
     ///   - bundleName: The name of the documentation bundle, used as a container for articles and tutorials.
     ///   - moduleKindDisplayName: The display name for the "module" kind of symbol.
     ///   - knownDisambiguatedPathComponents: A list of path components with known required disambiguations.
+    ///   - isModuleNotFoundErrorsEnabled: Whether or not the link resolver should raise module-not-found errors if it can't find the first component of an absolute link.
     init(
         symbolGraphLoader loader: SymbolGraphLoader,
         bundleName: String,
         moduleKindDisplayName: String = "Framework",
-        knownDisambiguatedPathComponents: [String: [String]]? = nil
+        knownDisambiguatedPathComponents: [String: [String]]? = nil,
+        isModuleNotFoundErrorsEnabled: Bool
     ) {
+        self.isModuleNotFoundErrorsEnabled = isModuleNotFoundErrorsEnabled
+        
         var roots: [String: Node] = [:]
         var allNodes: [String: [Node]] = [:]
         
@@ -918,6 +924,9 @@ extension PathHierarchy {
         self.articlesContainer = lookup[identifiers[fileRepresentation.articlesContainer]]!
         self.tutorialContainer = lookup[identifiers[fileRepresentation.tutorialContainer]]!
         self.tutorialOverviewContainer = lookup[identifiers[fileRepresentation.tutorialOverviewContainer]]!
+        
+        // If we're decoding another path hierarchy from a file, then we want to raise module-not-found errors for that hierarchy.
+        self.isModuleNotFoundErrorsEnabled = true
         
         mapCreatedIdentifiers(identifiers)
     }

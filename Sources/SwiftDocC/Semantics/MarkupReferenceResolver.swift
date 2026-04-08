@@ -167,7 +167,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         switch blockDirective.name {
         case Snippet.directiveName:
             var ignoredParsingProblems = [Problem]() // Any argument parsing problems have already been reported elsewhere
-            guard let snippet = Snippet(from: blockDirective, source: source, for: context.inputs, problems: &ignoredParsingProblems) else {
+            guard let snippet = Snippet(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &ignoredParsingProblems) else {
                 return blockDirective
             }
             
@@ -184,7 +184,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 return blockDirective
             }
         case ImageMedia.directiveName:
-            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: context.inputs) else {
+            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags) else {
                 return blockDirective
             }
             
@@ -202,7 +202,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
             return blockDirective
         case VideoMedia.directiveName:
-            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: context.inputs) else {
+            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags) else {
                 return blockDirective
             }
             

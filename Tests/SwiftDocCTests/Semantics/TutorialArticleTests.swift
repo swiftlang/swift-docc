@@ -21,12 +21,12 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(2, problems.count)
             XCTAssertEqual([
@@ -58,12 +58,12 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(2, problems.count)
             article.map { article in
@@ -108,12 +108,12 @@ TutorialArticle @1:1-13:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(4, problems.count)
             article.map { article in
@@ -165,7 +165,7 @@ TutorialArticle @1:1-23:2
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(0, problems.count)
             article.map { article in
@@ -281,7 +281,7 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(3, problems.count)
             let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.Stack.UnexpectedContent" })
@@ -380,7 +380,7 @@ TutorialArticle @1:1-81:2
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-                let article = TutorialArticle(from: directive, source: nil, for: context.inputs, problems: &problems)
+                let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
                 XCTAssertNotNil(article)
                 XCTAssertEqual(0, problems.count)
                 article.map { article in

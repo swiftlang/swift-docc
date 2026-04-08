@@ -4593,11 +4593,7 @@ let expected = """
         // "Log a hello world message. This line contains an ``invalid`` link."
         let (_, context) = try await testBundleAndContext(named: "ObjCFrameworkWithInvalidLink")
         let problems = context.problems
-        if FeatureFlags.current.isParametersAndReturnsValidationEnabled {
-            XCTAssertEqual(4, problems.count)
-        } else {
-            XCTAssertEqual(1, problems.count)
-        }
+        XCTAssertEqual(4, problems.count)
         let problem = try XCTUnwrap(problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
         let basename = try XCTUnwrap(problem.diagnostic.source?.lastPathComponent)
         XCTAssertEqual("HelloWorldFramework.h", basename)
@@ -4858,7 +4854,8 @@ let expected = """
     }
     
     func testContextRecognizesOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
         
         let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
@@ -4876,7 +4873,7 @@ let expected = """
                     symbols: symbols
                 ))
             ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
 
         for kindID in overloadableKindIDs {
@@ -4983,7 +4980,8 @@ let expected = """
 
     // The overload behavior doesn't apply to symbol kinds that don't support overloading
     func testContextDoesNotRecognizeNonOverloadableSymbolKinds() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
         
         let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter {
             !$0.isOverloadableKind &&
@@ -5006,7 +5004,7 @@ let expected = """
                 ))
             ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
         for kindID in nonOverloadableKindIDs {
             // Find the 4 symbols of this specific kind
@@ -5075,7 +5073,8 @@ let expected = """
     }
 
     func testContextGeneratesUnifiedOverloadGroupsAcrossPlatforms() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
 
@@ -5097,7 +5096,7 @@ let expected = """
                     ])),
             ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
 
         let overloadGroupNode: DocumentationNode
@@ -5148,7 +5147,8 @@ let expected = """
     }
 
     func testContextGeneratesOverloadGroupsWhenOnePlatformHasNoOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
 
@@ -5174,7 +5174,7 @@ let expected = """
                     ])),
             ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
 
         let overloadGroupNode: DocumentationNode
@@ -5228,7 +5228,8 @@ let expected = """
     /// Ensure that overload groups are correctly loaded into the path hierarchy and create nodes,
     /// even when they came from an extension symbol graph.
     func testContextGeneratesOverloadGroupsForExtensionGraphOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
 
@@ -5249,7 +5250,7 @@ let expected = """
                     ])),
             ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
 
         let overloadGroupNode: DocumentationNode
@@ -5298,7 +5299,8 @@ let expected = """
     }
 
     func testContextGeneratesOverloadGroupsForDisjointOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
 
@@ -5318,7 +5320,7 @@ let expected = """
                         makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
                     ])),
             ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
 
         let overloadGroupNode: DocumentationNode
@@ -5525,7 +5527,8 @@ let expected = """
     }
 
     func testResolveExternalLinkFromTechnologyRoot() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
         
         let externalModuleName = "ExternalModuleName"
         
@@ -5538,7 +5541,8 @@ let expected = """
                     
                     Some description of this module.
                     """)
-                ])
+                ]),
+                configuration: configuration
             )
             
             // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
@@ -5566,7 +5570,6 @@ let expected = """
         
         let (linkResolutionInformation, linkSummaries) = try await makeExternalDependencyFiles()
         
-        var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.dependencyArchives = [
             URL(fileURLWithPath: "/path/to/SomeDependency.doccarchive")
         ]

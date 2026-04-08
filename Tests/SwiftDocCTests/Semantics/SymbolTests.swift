@@ -999,7 +999,7 @@ class SymbolTests: XCTestCase {
         )
         
         let engine = DiagnosticEngine()
-        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, featureFlags: .init(), engine: engine)
         XCTAssertEqual(engine.problems.count, 0)
     }
 
