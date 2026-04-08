@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -189,6 +189,12 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         
         result += "\(diagnostic.severity): \(diagnostic.summary)"
         
+        let identifier = diagnostic.groupIdentifier ?? diagnostic.identifier
+        // If this is one of the diagnostics that we have updated, display it's identifier in the output
+        if !identifier.hasPrefix("org.swift.") {
+            result += " [\(identifier)]"
+        }
+        
         return result
     }
     
@@ -276,12 +282,19 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 
 extension DefaultDiagnosticConsoleFormatter {
     private func formattedDiagnosticsSummary(for diagnostic: Diagnostic) -> String {
-        let summary =  diagnostic.severity.description + ": " + diagnostic.summary
-        if highlight {
-            let ansiAnnotation = diagnostic.severity.ansiAnnotation
-            return ansiAnnotation.applied(to: summary)
+        let summary = diagnostic.severity.description + ": " + diagnostic.summary
+        let formattedSummary = if highlight {
+            diagnostic.severity.ansiAnnotation.applied(to: summary)
         } else {
-            return summary
+            summary
+        }
+        
+        let identifier = diagnostic.groupIdentifier ?? diagnostic.identifier
+        // If this is one of the diagnostics that we have updated, display it's identifier in the output
+        if identifier.hasPrefix("org.swift.") {
+            return formattedSummary
+        } else {
+            return formattedSummary + " [\(identifier)]"
         }
     }
     
