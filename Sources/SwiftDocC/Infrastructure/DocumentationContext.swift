@@ -2684,7 +2684,7 @@ public class DocumentationContext {
                 source: nil, // There's no meaningful source file to associate this warning with
                 severity: .warning,
                 identifier: "MultipleModules",
-//                groupIdentifier: "MultipleRootPages", // TODO: Specify this group ID in https://github.com/swiftlang/swift-docc/pull/1347
+                groupIdentifier: "MultipleRootPages",
                 summary: "Input files cannot describe more than one main module; got inputs for \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and))",
                 explanation: """
                 A single DocC build covers a single module (for example a framework, library, or executable).
@@ -2716,7 +2716,7 @@ public class DocumentationContext {
                     severity: .warning,
                     range: technologyRoot.originalMarkup.range,
                     identifier: "MultipleTechnologyRoots",
-//                    groupIdentifier: "MultipleRootPages", // TODO: Specify this group ID in https://github.com/swiftlang/swift-docc/pull/1347
+                    groupIdentifier: "MultipleRootPages",
                     summary: "Documentation hierarchy cannot have multiple root pages",
                     explanation: """
                     A single article-only documentation catalog ('docc' directory) covers a single technology, with a single root page.
@@ -2743,7 +2743,7 @@ public class DocumentationContext {
                     severity: .warning,
                     range: technologyRoot.originalMarkup.range,
                     identifier: "TechnologyRootWithSymbols",
-//                    groupIdentifier: "MultipleRootPages", // TODO: Specify this group ID in https://github.com/swiftlang/swift-docc/pull/1347
+                    groupIdentifier: "MultipleRootPages",
                     summary: "Documentation hierarchy cannot have additional root page; already has a symbol root",
                     explanation: """
                     A single DocC build covers either a single module (for example a framework, library, or executable) or an article-only technology.
