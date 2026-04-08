@@ -278,7 +278,7 @@ public struct ConvertAction: AsyncAction {
                 isDirectory: false
             )
             indexHTML = indexHTMLUrl
-            
+
             let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
             if customHostingBasePathProvided {
                 let data = try StaticHostableTransformer.indexHTMLData(
