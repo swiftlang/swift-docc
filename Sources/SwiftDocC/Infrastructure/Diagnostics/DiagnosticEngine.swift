@@ -46,9 +46,17 @@ public final class DiagnosticEngine {
     package var diagnosticIDsWithErrorSeverity: Set<String>
     
     /// Determines whether or not the diagnostics engine will emit a problem with the given diagnostic ID or diagnostic group ID.
-    package func willEmitProblem(diagnosticID _: String, defaultSeverity: DiagnosticSeverity) -> Bool {
-        // TODO: Check if the developer changed the severity of the specific ID in https://github.com/swiftlang/swift-docc/pull/1347
-        filterLevel <= defaultSeverity || (treatWarningsAsErrors && filterLevel == .warning)
+    package func willEmitProblem(diagnosticID: String, defaultSeverity: DiagnosticSeverity) -> Bool {
+        if diagnosticIDsWithErrorSeverity.contains(diagnosticID) {
+            true // Errors are always emitted
+        } else if diagnosticIDsWithWarningSeverity.contains(diagnosticID) {
+            // `--Wwarning` can be used to lower severity even when `--warnings-as-errors` is passed to is needs to be checked first
+            filterLevel <= .warning
+        } else if treatWarningsAsErrors {
+            true // Errors are always emitted
+        } else {
+            filterLevel <= defaultSeverity
+        }
     }
 
     /// Determines which problems should be emitted.
