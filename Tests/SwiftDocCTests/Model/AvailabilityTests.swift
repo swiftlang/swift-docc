@@ -1557,6 +1557,187 @@ struct AvailabilityTests {
         #expect(renderReference.isBeta == false)
     }
     
+    // MARK: Custom platforms
+    
+    @Test(arguments: [true, false])
+    func symbolDisplaysCustomDefaultPlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                    Some in-source documentation for this class.
+                    
+                    """, availability: [
+                        .init(domainName: "iOS", introduced: .init(major: 9, minor: 2, patch: 0), deprecated: nil)
+                    ])
+            ]))
+            
+            InfoPlist(defaultAvailability: ["SomeModule": [
+                .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
+                .init(platformName: .iOS, platformVersion: "9.2"),
+            ]])
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms =  [
+            "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "Something"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+    }
+    
+    @Test(arguments: DirectiveLocation.allCases, [true, false])
+    func symbolDisplaysCustomDirectivePlatformAfterKnownPlatforms(_ directiveLocation: DirectiveLocation, customPlatformIsBeta: Bool) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available("Something", introduced: "1.2.3")
+          @Available(iOS, introduced: "9.2")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(directiveLocation == .inSourceComment ? availableDirective : "")
+                    """, availability: [
+                        .init(domainName: "iOS", introduced: .init(major: 9, minor: 2, patch: 0), deprecated: nil)
+                    ])
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(directiveLocation == .extensionFile ? availableDirective : "")
+            """)
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms =  [
+            "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        #expect(node.metadata?.availability.count == 2)
+        do {
+            let directiveAvailability = node.metadata?.availability.first
+            #expect(directiveAvailability?.platform.rawValue      == "Something")
+            #expect(directiveAvailability?.introduced.description ==  "1.2.3")
+        }
+        do {
+            let directiveAvailability = node.metadata?.availability.last
+            #expect(directiveAvailability?.platform.rawValue       == "iOS")
+            #expect(directiveAvailability?.introduced.description  == "9.2.0")
+        }
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "Something"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+    }
+    
+    // FIXME: Articles don't display default availability (rdar://173688303)
+    @Test(.disabled("rdar://173688303"), arguments: [true, false])
+    func articleDisplaysCustomDefaultPlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some article    
+            """)
+            
+            InfoPlist(defaultAvailability: ["SomeModule": [
+                .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
+                .init(platformName: .iOS, platformVersion: "9.2"),
+            ]])
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms =  [
+            "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "Something"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+    }
+    
+    @Test(arguments: [true, false])
+    func articleDisplaysCustomDirectivePlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some article   
+            
+            @Metadata {
+              @Available("Something", introduced: "1.2.3")
+              @Available(iOS, introduced: "9.2")
+            }
+            """)
+            
+            InfoPlist(defaultAvailability: ["SomeModule": [
+                .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
+                .init(platformName: .iOS, platformVersion: "9.2"),
+            ]])
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms =  [
+            "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let renderPlatforms  = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "Something"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
+        
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+    }
+    
     // MARK: Mixed sources
     
     @Test(arguments: DirectiveLocation.allCases)
