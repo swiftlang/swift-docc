@@ -136,7 +136,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                     Some in-source documentation for this class.
                     
@@ -295,7 +295,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                     Some in-source documentation for this class.
                     
@@ -310,7 +310,7 @@ struct AvailabilityTests {
             \(directiveLocation == .extensionFile ? availableDirective : "")
             """)
             
-            InfoPlist(defaultAvailability: ["SomeModule": [
+            InfoPlist(defaultAvailability: ["ModuleName": [
                 // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
                 .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
             ]])
@@ -656,7 +656,7 @@ struct AvailabilityTests {
         let renderNode = try #require(converter.renderNode(for: node))
         
         let renderPlatforms = try #require(renderNode.metadata.platforms)
-        #expect(renderPlatforms.compactMap(\.name) ==  ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
         
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.1")
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.1")
@@ -996,10 +996,10 @@ struct AvailabilityTests {
         
         let renderPlatforms = try #require(renderNode.metadata.platforms)
         if platform == .init(operatingSystem: .init(name: "ios")) {
-            #expect(renderPlatforms.compactMap(\.name) ==  ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
         } else {
             // ???: Why do we only fill "iPadOS" availability from the iOS symbol graph? (rdar://172280267)
-            #expect(renderPlatforms.compactMap(\.name) ==  ["iOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"])
         }
             
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "1.1")
@@ -1116,7 +1116,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                     Some in-source documentation for this class.
                     
@@ -1161,7 +1161,7 @@ struct AvailabilityTests {
     @Test
     func articleIsConsideredDeprecatedWhenOnlyAvailableDirectiveHasDeprecatedVersion() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
             
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some article 
@@ -1209,7 +1209,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                     Some in-source documentation for this class.
                     
@@ -1261,7 +1261,7 @@ struct AvailabilityTests {
     @Test
     func articleIsNotConsideredDeprecatedWhenOnlySomeAvailableDirectivesHaveDeprecatedVersion() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
             
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some article 
@@ -1328,7 +1328,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(
                     id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
                     docComment: """
@@ -1351,7 +1351,7 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["SomeModule": [
+                InfoPlist(defaultAvailability: ["ModuleName": [
                     .init(platformName: .macOS, platformVersion: "10.14")
                 ]])
             }
@@ -1387,7 +1387,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
             
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some Article
@@ -1402,7 +1402,7 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["SomeModule": [
+                InfoPlist(defaultAvailability: ["ModuleName": [
                     .init(platformName: .macOS, platformVersion: "10.14")
                 ]])
             }
@@ -1440,7 +1440,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(
                     id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
                     docComment: """
@@ -1461,14 +1461,14 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["SomeModule": [
+                InfoPlist(defaultAvailability: ["ModuleName": [
                     .init(platformName: .macOS, platformVersion: "10.14")
                 ]])
             }
         }
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.currentPlatforms =  [
+        configuration.externalMetadata.currentPlatforms = [
             "macOS": .init(.init(10, 14, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
@@ -1502,7 +1502,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
             
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some Article
@@ -1512,14 +1512,14 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["SomeModule": [
+                InfoPlist(defaultAvailability: ["ModuleName": [
                     .init(platformName: .macOS, platformVersion: "10.14")
                 ]])
             }
         }
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.currentPlatforms =  [
+        configuration.externalMetadata.currentPlatforms = [
             "macOS": .init(.init(10, 14, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
@@ -1549,7 +1549,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(
                     id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
                     docComment: """
@@ -1571,7 +1571,7 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["SomeModule": [
+                InfoPlist(defaultAvailability: ["ModuleName": [
                     .init(platformName: .macOS, platformVersion: "10.14"),
                     .init(platformName: .iOS,   platformVersion:  "9.2"),
                 ]])
@@ -1579,7 +1579,7 @@ struct AvailabilityTests {
         }
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.currentPlatforms =  [
+        configuration.externalMetadata.currentPlatforms = [
             "macOS": .init(.init(10, 14, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
@@ -1611,7 +1611,7 @@ struct AvailabilityTests {
     @Test(arguments: [true, false])
     func symbolDisplaysCustomDefaultPlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                     Some in-source documentation for this class.
                     
@@ -1620,14 +1620,14 @@ struct AvailabilityTests {
                     ])
             ]))
             
-            InfoPlist(defaultAvailability: ["SomeModule": [
+            InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
             ]])
         }
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.currentPlatforms =  [
+        configuration.externalMetadata.currentPlatforms = [
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
@@ -1657,7 +1657,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                     Some in-source documentation for this class.
                     
@@ -1676,7 +1676,7 @@ struct AvailabilityTests {
         }
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.currentPlatforms =  [
+        configuration.externalMetadata.currentPlatforms = [
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
@@ -1711,20 +1711,20 @@ struct AvailabilityTests {
     @Test(.disabled("rdar://173688303"), arguments: [true, false])
     func articleDisplaysCustomDefaultPlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
             
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some article    
             """)
             
-            InfoPlist(defaultAvailability: ["SomeModule": [
+            InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
             ]])
         }
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.currentPlatforms =  [
+        configuration.externalMetadata.currentPlatforms = [
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
@@ -1748,7 +1748,7 @@ struct AvailabilityTests {
     @Test(arguments: [true, false])
     func articleDisplaysCustomDirectivePlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: []))
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
             
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some article   
@@ -1759,14 +1759,14 @@ struct AvailabilityTests {
             }
             """)
             
-            InfoPlist(defaultAvailability: ["SomeModule": [
+            InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
             ]])
         }
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.currentPlatforms =  [
+        configuration.externalMetadata.currentPlatforms = [
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
@@ -1799,7 +1799,7 @@ struct AvailabilityTests {
         """
         
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(
                     id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
                     docComment: """
@@ -1820,7 +1820,7 @@ struct AvailabilityTests {
             \(directiveLocation == .extensionFile ? availableDirective : "")
             """)
             
-            InfoPlist(defaultAvailability: ["SomeModule": [
+            InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(platformName: .iOS, platformVersion:  "9.2"),
             ]])
         }
