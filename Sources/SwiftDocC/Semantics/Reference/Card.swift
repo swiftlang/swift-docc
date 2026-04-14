@@ -23,6 +23,8 @@ public import Markdown
 ///
 ///     Some head content.
 ///
+///     ---
+///
 ///     Some body content.
 ///
 ///     Another body paragraph.
