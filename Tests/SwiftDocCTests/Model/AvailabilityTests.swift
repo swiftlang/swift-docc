@@ -170,8 +170,26 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
     }
     
-    @Test
-    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDefaultAvailability() async throws {
+    enum UnavailableDefaultPlatform: Equatable, CaseIterable {
+        case iPadOS, catalyst
+        
+        var platformName: PlatformName {
+            switch self {
+                case .iPadOS:   .iPadOS
+                case .catalyst: .catalyst
+            }
+        }
+        
+        var availablePlatformsDisplayName: String {
+            switch self {
+                case .iPadOS:   "Mac Catalyst"
+                case .catalyst: "iPadOS"
+            }
+        }
+    }
+    
+    @Test(arguments: UnavailableDefaultPlatform.allCases)
+    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDefaultAvailability(_ unavailableDefaultPlatform: UnavailableDefaultPlatform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
             // This symbol graph file is not for iOS and the symbol doesn't have iOS availability. This means that the iOS availability has to come from the Info.plist
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "tvos")), symbols: [
@@ -180,7 +198,8 @@ struct AvailabilityTests {
             
             InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(platformName: .iOS, platformVersion: "8.0"),
-                .init(unavailablePlatformName: .catalyst), // Mac Catalyst is marked unavailable here so its fallback availability won't be added
+                // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
+                .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
             ]])
         }
         let context = try await load(catalog: catalog)
@@ -189,26 +208,38 @@ struct AvailabilityTests {
         let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
-        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "tvOS"])
+        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", unavailableDefaultPlatform == .catalyst ? "iPadOS" : "macCatalyst", "tvOS"])
         
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "8.0.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "8.0.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }) == nil)
+        switch unavailableDefaultPlatform {
+        case .iPadOS:
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      }) == nil)
+            #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "8.0.0")
+        case .catalyst:
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "8.0.0")
+            #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }) == nil)
+        }
         #expect(availability.first(where: { $0.domain?.rawValue == "tvOS"        })?.introducedVersion?.description == nil)
         
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
         
         let renderPlatforms = try #require(renderNode.metadata.platforms)
-        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "tvOS"])
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", unavailableDefaultPlatform.availablePlatformsDisplayName, "tvOS"])
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "8.0")
-        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "8.0")
-        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })  == nil)
+        switch unavailableDefaultPlatform {
+        case .iPadOS:
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       }) == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "8.0")
+        case .catalyst:
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "8.0")
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
+        }
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == nil)
     }
     
-    @Test
-    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromInSourceAvailability() async throws {
+    @Test(arguments: UnavailableDefaultPlatform.allCases)
+    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromInSourceAvailability(_ unavailableDefaultPlatform: UnavailableDefaultPlatform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
@@ -217,7 +248,8 @@ struct AvailabilityTests {
             ]))
             
             InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(unavailablePlatformName: .catalyst), // Mac Catalyst is marked unavailable here so its fallback availability won't be added
+                // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
+                .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
             ]])
         }
         let context = try await load(catalog: catalog)
@@ -226,25 +258,36 @@ struct AvailabilityTests {
         let availability = try #require((node.semantic as? Symbol)?.availability?.availability)
         
         // FIXME: It might make more sense to move this information elsewhere (rdar://172280267)
-        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS"])
+        #expect(availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", unavailableDefaultPlatform == .catalyst ? "iPadOS" : "macCatalyst"])
         
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"         })?.introducedVersion?.description == "11.2.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "11.2.0")
-        #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }) == nil)
+        switch unavailableDefaultPlatform {
+        case .iPadOS:
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      }) == nil)
+            #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description == "11.2.0")
+        case .catalyst:
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS"      })?.introducedVersion?.description == "11.2.0")
+            #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }) == nil)
+        }
         
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
         
         let renderPlatforms = try #require(renderNode.metadata.platforms)
-        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS"])
-        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", unavailableDefaultPlatform.availablePlatformsDisplayName])
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "11.2")
-        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "11.2")
-        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
+        switch unavailableDefaultPlatform {
+        case .iPadOS:
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       }) == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "11.2")
+        case .catalyst:
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "11.2")
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
+        }
     }
     
-    @Test(arguments: DirectiveLocation.allCases)
-    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDirectiveAvailability(_ directiveLocation: DirectiveLocation) async throws {
+    @Test(arguments: DirectiveLocation.allCases, UnavailableDefaultPlatform.allCases)
+    func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDirectiveAvailability(_ directiveLocation: DirectiveLocation, _ unavailableDefaultPlatform: UnavailableDefaultPlatform) async throws {
         let availableDirective = """
         @Metadata {
           @Available(iOS, introduced: "9.3")
@@ -268,7 +311,8 @@ struct AvailabilityTests {
             """)
             
             InfoPlist(defaultAvailability: ["SomeModule": [
-                .init(unavailablePlatformName: .catalyst), // Mac Catalyst is marked unavailable here so its fallback availability won't be added
+                // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
+                .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
             ]])
         }
         let context = try await load(catalog: catalog)
@@ -283,11 +327,16 @@ struct AvailabilityTests {
         let renderNode = try #require(converter.renderNode(for: node))
         
         let renderPlatforms = try #require(renderNode.metadata.platforms)
-        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS"])
-        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", unavailableDefaultPlatform.availablePlatformsDisplayName])
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.3")
-        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.3")
-        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
+        switch unavailableDefaultPlatform {
+        case .iPadOS:
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       }) == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.3")
+        case .catalyst:
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.3")
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
+        }
     }
     
     @Test
