@@ -1659,7 +1659,7 @@ Root
         XCTAssertEqual(PageType(role: "pseudosymbol"), .symbol)
         XCTAssertEqual(PageType(role: "pseudocollection"), .framework)
         XCTAssertEqual(PageType(role: "collection"), .framework)
-        XCTAssertEqual(PageType(role: "collectiongroup"), .article)
+        XCTAssertEqual(PageType(role: "collectiongroup"), .collection)
         XCTAssertEqual(PageType(role: "article"), .article)
         XCTAssertEqual(PageType(role: "samplecode"), .sampleCode)
         

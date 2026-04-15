@@ -363,6 +363,8 @@ extension NavigatorIndex.PageType {
             return RenderNode.Kind.overview.rawValue
         case .resources:
             return "resources"
+        case .collection:
+            return "collection"
         case .symbol:
             return  RenderNode.Kind.symbol.rawValue
         case .framework:
