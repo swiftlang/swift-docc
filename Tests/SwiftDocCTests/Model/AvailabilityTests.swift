@@ -1787,6 +1787,62 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
     }
     
+    // MARK: Multiple language representations
+    
+    @Test(arguments: ["7.3", nil])
+    func symbolVariantDisplaysTheirOwnInSourceAvailability(defaultIntroducedVersion: String?) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            Folder(name: "swift") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"], availability: [
+                        .init(domainName: "iOS",   introduced: .init(major:  9, minor: 2, patch: 0), deprecated: nil),
+                        .init(domainName: "macOS", introduced: .init(major: 10, minor: 7, patch: 0), deprecated: nil),
+                    ])
+                ]))
+            }
+            Folder(name: "clang") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macosx")), symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"], availability: [
+                        .init(domainName: "macOS", introduced: .init(major: 12, minor: 1, patch: 0), deprecated: nil)
+                    ])
+                ]))
+            }
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .iOS, platformVersion: defaultIntroducedVersion),
+            ]])
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode  = try #require(converter.renderNode(for: node))
+        let swiftRenderPlatforms  = try #require(renderNode.metadata.platformsVariants.value(for: .swift))
+        
+        #expect(swiftRenderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        #expect(swiftRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
+        #expect(swiftRenderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
+        #expect(swiftRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
+        #expect(swiftRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.7")
+        
+        // FIXME: Language specific availability isn't reflected on the rendered page (rdar://174818876)
+//        #expect(!renderNode.metadata.platformsVariants.variants.isEmpty)
+//        let objcRenderPlatforms  = try #require(renderNode.metadata.platformsVariants.value(for: .objectiveC))
+//        
+//        if defaultIntroducedVersion != nil {
+//            #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+//        } else {
+//            // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+//            #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "macOS"])
+//        }
+//        #expect(objcRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
+//        #expect(objcRenderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
+//        #expect(objcRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
+//        #expect(objcRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "12.1")
+    }
+    
     // MARK: Mixed sources
     
     @Test(arguments: DirectiveLocation.allCases)
