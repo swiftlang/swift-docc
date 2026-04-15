@@ -354,19 +354,19 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled)
     }
     
-    func testExperimentalEnableExternalLinkSupportFlag() throws {
+    func testEnableExternalLinkSupportFlag() throws {
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
         let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
+        XCTAssertTrue(commandWithoutFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertTrue(actionWithoutFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
-            "--enable-experimental-external-link-support",
+            "--disable-external-link-support",
             testBundleURL.path,
         ])
         let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
+        XCTAssertFalse(commandWithFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertFalse(actionWithFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
     }
     
     func testExperimentalEnableOverloadedSymbolPresentation() throws {
@@ -611,6 +611,24 @@ class ConvertSubcommandTests: XCTestCase {
             warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
             """)
         }
+    }
+
+    func testExternalLinkSupportFlag() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        XCTAssertEqual(noFlagConvert.featureFlags.enableLinkHierarchySerialization, true)
+        
+        // It's allowed to pass the previous "--enable-experimental-..." flag.
+        let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-external-link-support"])
+        XCTAssertEqual(oldFlagConvert.featureFlags.enableLinkHierarchySerialization, true)
+        
+        // It's allowed to pass the redundant "--enable-..." flag.
+        let enabledFlagConvert = try Docc.Convert.parse(["--enable-external-link-support"])
+        XCTAssertEqual(enabledFlagConvert.featureFlags.enableLinkHierarchySerialization, true)
+        
+        // Passing the "--disable-..." flag turns of the feature.
+        let disabledFlagConvert = try Docc.Convert.parse(["--disable-external-link-support"])
+        XCTAssertEqual(disabledFlagConvert.featureFlags.enableLinkHierarchySerialization, false)
     }
 
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.

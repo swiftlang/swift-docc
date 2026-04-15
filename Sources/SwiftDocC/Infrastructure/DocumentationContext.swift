@@ -2043,7 +2043,7 @@ public class DocumentationContext {
                         symbolGraphLoader: symbolGraphLoader,
                         bundleName: urlReadablePath(inputs.displayName),
                         knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents,
-                        isModuleNotFoundErrorsEnabled: configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled
+                        isModuleNotFoundErrorsEnabled: configuration.featureFlags.isLinkHierarchySerializationEnabled
                     ))
                 }
             }
