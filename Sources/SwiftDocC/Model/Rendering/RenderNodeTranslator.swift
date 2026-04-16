@@ -1248,17 +1248,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
-        /*
-         FIXME: We shouldn't be doing this kind of crawling here.
-         
-         We should be doing a graph search to build up a breadcrumb and pass that to the translator, giving
-         a definitive hierarchy before we even begin to build a RenderNode.
-         */
-        var ref = documentationNode.reference
-        while let grandparent = context.parents(of: ref).first {
-            ref = grandparent
-        }
-        
         let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
