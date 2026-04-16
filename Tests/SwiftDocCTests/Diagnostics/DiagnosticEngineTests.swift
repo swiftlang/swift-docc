@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -277,6 +277,20 @@ class DiagnosticEngineTests: XCTestCase {
         error: Test diagnostic A [A]
         error: Test diagnostic B [A]
         error: Test diagnostic C [A]
+        """)
+    }
+    
+    func testLowerSpecificDiagnosticInRaisedDiagnosticGroup() async throws {
+        let letterWarnings = ["A", "B", "C"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, groupIdentifier: "Letters", summary: "Test diagnostic \(id)"), possibleSolutions: [])
+        }
+        let engine = DiagnosticEngine(diagnosticIDsWithWarningSeverity: ["A"], diagnosticIDsWithErrorSeverity: ["Letters"])
+        engine.emit(letterWarnings)
+        
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engine.problems, options: .formatConsoleOutputForTools), """
+        warning: Test diagnostic A [Letters]
+        error: Test diagnostic B [Letters]
+        error: Test diagnostic C [Letters]
         """)
     }
 }

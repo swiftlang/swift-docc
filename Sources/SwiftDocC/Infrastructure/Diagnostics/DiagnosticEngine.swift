@@ -161,7 +161,7 @@ public final class DiagnosticEngine {
             else                                                          { nil }
         }
         
-        if let severity = diagnostic.groupIdentifier.flatMap(_severity) ?? _severity(identifier: diagnostic.identifier) {
+        if let severity = _severity(identifier: diagnostic.identifier) ?? diagnostic.groupIdentifier.flatMap(_severity) {
             diagnostic.severity = severity
         } else if treatWarningsAsErrors, diagnostic.severity == .warning {
             diagnostic.severity = .error
