@@ -265,4 +265,18 @@ class DiagnosticEngineTests: XCTestCase {
         error: Test diagnostic 3 [Number]
         """)
     }
+    
+    func testRaisingSeverityWhenGroupIdentifierMatchesDiagnosticIdentifier() async throws {
+        let letterWarnings = ["A", "B", "C"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, groupIdentifier: "A", summary: "Test diagnostic \(id)"), possibleSolutions: [])
+        }
+        let engine = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["A"])
+        engine.emit(letterWarnings)
+        
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engine.problems, options: .formatConsoleOutputForTools), """
+        error: Test diagnostic A [A]
+        error: Test diagnostic B [A]
+        error: Test diagnostic C [A]
+        """)
+    }
 }
