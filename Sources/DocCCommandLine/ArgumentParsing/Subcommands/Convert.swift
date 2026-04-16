@@ -232,18 +232,18 @@ extension Docc {
             @Flag(help: "Treat all warnings as errors")
             var warningsAsErrors = false
             
-            /// A list of diagnostic identifiers that are explicitly raised to an "error" severity.
+            /// A list of identifiers for diagnostic groups or individual diagnostics that are explicitly raised to an "error" severity.
             @Option(
                 name: [
                     .customLong("Werror"), // This matches Swift's spellings
                     .customLong("Werror", withSingleDash: true), // This matches Clang's spellings
                 ],
                 parsing: ArrayParsingStrategy.singleValue,
-                help: ArgumentHelp("Treat this diagnostic group as an error", valueName: "diagnostic-id")
+                help: ArgumentHelp("Treat this diagnostic group (or individual diagnostic) as an error", valueName: "diagnostic-id")
             )
             var warningGroupsWithErrorSeverity: [String] = []
             
-            /// A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
+            /// A list of identifiers for diagnostic groups or individual diagnostics that are explicitly lowered to a "warning" severity.
             @Option(
                 name: [
                     .customLong("Wwarning"), // This matches Swift's spellings
@@ -251,7 +251,7 @@ extension Docc {
                 ],
                 parsing: ArrayParsingStrategy.singleValue,
                 help: ArgumentHelp(
-                    "Treat this diagnostic group as a warning",
+                    "Treat this diagnostic group (or individual diagnostic) as a warning",
                     discussion: """
                     If you pass '--warnings-as-errors' you can use this flag to lower one or more specific groups of diagnostics to a warnings severity.
                     """,
