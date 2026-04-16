@@ -71,7 +71,7 @@ public final class DiagnosticEngine {
 
     /// Creates a new diagnostic engine instance with no consumers.
     /// - Parameters:
-    ///   - filterLevel: The lowers severity (inclusive) that the engine emits to its consumers.
+    ///   - filterLevel: The lowest severity (inclusive) that the engine emits to its consumers.
     ///   - treatWarningsAsErrors: A Boolean value indicating whether the engine raises the severity of warnings to "error" (unless `warningGroupsWithWarningSeverity` explicitly lowers the severity of that diagnostic to a warning)
     ///   - diagnosticIDsWithWarningSeverity: A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
     ///   - diagnosticIDsWithErrorSeverity: A list of diagnostic identifiers that are explicitly raised to an "error" severity.
