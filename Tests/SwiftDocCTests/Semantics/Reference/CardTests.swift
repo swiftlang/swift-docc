@@ -13,9 +13,16 @@ import Testing
 @testable import SwiftDocC
 
 struct CardTests {
+    /// A configuration with the card directive feature flag enabled.
+    static var cardEnabledConfiguration: DocumentationContext.Configuration {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isCardDirectiveEnabled = true
+        return configuration
+    }
+
     @Test
     func noContent() async throws {
-        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
+        let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card
             """
@@ -30,7 +37,7 @@ struct CardTests {
 
     @Test
     func basicCard() async throws {
-        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
+        let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
                 ### Example heading
@@ -65,7 +72,7 @@ struct CardTests {
 
     @Test
     func cardWithNoHeading() async throws {
-        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
+        let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
                 First paragraph.
@@ -91,7 +98,7 @@ struct CardTests {
 
     @Test
     func cardWithMultipleHeadings() async throws {
-        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
+        let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
                 ### First heading
@@ -126,7 +133,7 @@ struct CardTests {
 
     @Test
     func cardWithMultipleThematicBreaks() async throws {
-        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
+        let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
                 ### Heading one
@@ -165,6 +172,26 @@ struct CardTests {
                     .paragraph(.init(inlineContent: [.text("Still in content section")])),
                 ]
             ))
+        ])
+    }
+
+    @Test
+    func cardIgnoredWhenFeatureFlagDisabled() async throws {
+        let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
+            """
+            @Card {
+                ### Example heading
+
+                Some content.
+            }
+            """
+        }
+
+        #expect(card != nil)
+        #expect(problems == [])
+        #expect(renderBlockContent == [
+            .heading(.init(level: 3, text: "Example heading", anchor: "Example-heading")),
+            .paragraph(.init(inlineContent: [.text("Some content.")])),
         ])
     }
 

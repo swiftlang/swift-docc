@@ -60,6 +60,11 @@ public final class Card: Semantic, AutomaticDirectiveConvertible, MarkupContaini
 
 extension Card: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
+        // Gate the Card directive behind its feature flag.
+        guard contentCompiler.context.configuration.featureFlags.isCardDirectiveEnabled else {
+            return render(blocks: content.elements, with: &contentCompiler)
+        }
+
         // partition flat list of markdown blocks into 2 lists:
         // 1. elements before thematic break
         // 2. elements after thematic break (if any)

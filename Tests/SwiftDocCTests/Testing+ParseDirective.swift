@@ -70,6 +70,17 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
     return (renderedContent, problems, directive)
 }
 
+func parseDirective<Directive: RenderableDirectiveConvertible>(
+    _ directive: Directive.Type,
+    configuration: DocumentationContext.Configuration,
+    content: () -> String,
+    sourceLocation: Testing.SourceLocation = #_sourceLocation
+) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
+    let context = try await makeEmptyContext(configuration: configuration)
+    let (renderedContent, problems, directive, _) = try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
+    return (renderedContent, problems, directive)
+}
+
 // MARK: Using the real file system
 
 func parseDirective<Directive: RenderableDirectiveConvertible>(

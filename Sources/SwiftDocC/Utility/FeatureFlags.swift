@@ -36,6 +36,9 @@ public struct FeatureFlags: Codable {
     
     /// Whether or not support for validating parameters and return value documentation is enabled.
     public var isParametersAndReturnsValidationEnabled = true
+
+    /// Whether or not support for the `@Card` directive is enabled.
+    public var isCardDirectiveEnabled = false
     
     /// Creates a set of feature flags with all default values.
     public init() {}

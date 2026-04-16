@@ -24,6 +24,7 @@ class DirectiveIndexTests: XCTestCase {
                 "AutomaticTitleHeading",
                 "Available",
                 "CallToAction",
+                "Card",
                 "Chapter",
                 "Choice",
                 "Column",
@@ -63,6 +64,7 @@ class DirectiveIndexTests: XCTestCase {
         XCTAssertEqual(
             DirectiveIndex.shared.renderableDirectives.keys.sorted(),
             [
+                "Card",
                 "Image",
                 "Links",
                 "Row",

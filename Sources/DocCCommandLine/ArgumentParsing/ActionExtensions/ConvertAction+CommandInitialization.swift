@@ -28,6 +28,7 @@ extension ConvertAction {
         featureFlags.isParametersAndReturnsValidationEnabled = convert.featureFlags.enableParametersAndReturnsValidation
         featureFlags.isExperimentalMarkdownOutputEnabled = convert.featureFlags.enableExperimentalMarkdownOutput
         featureFlags.isExperimentalMarkdownOutputManifestEnabled = convert.featureFlags.enableExperimentalMarkdownOutputManifest
+        featureFlags.isCardDirectiveEnabled = convert.featureFlags.enableCardDirective
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
