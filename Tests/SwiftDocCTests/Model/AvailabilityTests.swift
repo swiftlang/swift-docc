@@ -540,11 +540,10 @@ struct AvailabilityTests {
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         
         let firstRenderPlatforms  = try #require(converter.renderNode(for: firstNode )?.metadata.platforms)
-        //        let secondRenderPlatforms = try #require(converter.renderNode(for: secondNode)?.metadata.platforms)
+        let secondRenderPlatforms = try #require(converter.renderNode(for: secondNode)?.metadata.platforms)
         #expect(firstRenderPlatforms.compactMap(\.name)  == ["iOS", "Mac Catalyst", "tvOS"])
-        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
-//        #expect(secondRenderPlatforms.compactMap(\.name) == ["iOS", "Mac Catalyst"],
-//                "The 'Second' symbol is not present in the tvOS symbol graph, so it shouldn't have any tvOS availability")
+        #expect(secondRenderPlatforms.compactMap(\.name) == ["iOS", "Mac Catalyst"],
+                "The 'Second' symbol is not present in the tvOS symbol graph, so it shouldn't have any tvOS availability")
     }
     
     @Test
