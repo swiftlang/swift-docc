@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -145,7 +145,8 @@ public final class PreviewAction: AsyncAction {
             previewResult = ActionResult(didEncounterError: false)
         } catch {
             let diagnosticEngine = convertAction.diagnosticEngine
-            diagnosticEngine.emit(.init(description: error.localizedDescription, source: nil))
+            // FIXME: Instead of wrapping the error message in a diagnostic, re-throw the original Error after removing the server.
+            diagnosticEngine.emit(.init(diagnostic: Diagnostic(severity: .error, range: nil, identifier: "UnexpectedPreviewFailure", summary: error.localizedDescription)))
             diagnosticEngine.flush()
             
             // Stale server entry, remove it from the list

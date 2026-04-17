@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,11 +40,23 @@ public final class DiagnosticEngine {
     
     /// Determines whether warnings will be treated as errors.
     private let treatWarningsAsErrors: Bool
+    /// A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
+    package var diagnosticIDsWithWarningSeverity: Set<String>
+    /// A list of diagnostic identifiers that are explicitly raised to an "error" severity.
+    package var diagnosticIDsWithErrorSeverity: Set<String>
     
     /// Determines whether or not the diagnostics engine will emit a problem with the given diagnostic ID or diagnostic group ID.
-    package func willEmitProblem(diagnosticID _: String, defaultSeverity: DiagnosticSeverity) -> Bool {
-        // TODO: Check if the developer changed the severity of the specific ID in https://github.com/swiftlang/swift-docc/pull/1347
-        filterLevel <= defaultSeverity || (treatWarningsAsErrors && filterLevel == .warning)
+    package func willEmitProblem(diagnosticID: String, defaultSeverity: DiagnosticSeverity) -> Bool {
+        if diagnosticIDsWithErrorSeverity.contains(diagnosticID) {
+            true // Errors are always emitted
+        } else if diagnosticIDsWithWarningSeverity.contains(diagnosticID) {
+            // `--Wwarning` can be used to lower severity even when `--warnings-as-errors` is passed to is needs to be checked first
+            filterLevel <= .warning
+        } else if treatWarningsAsErrors {
+            true // Errors are always emitted
+        } else {
+            filterLevel <= defaultSeverity
+        }
     }
 
     /// Determines which problems should be emitted.
@@ -58,9 +70,21 @@ public final class DiagnosticEngine {
     }
 
     /// Creates a new diagnostic engine instance with no consumers.
-    public init(filterLevel: DiagnosticSeverity = .warning, treatWarningsAsErrors: Bool = false) {
+    /// - Parameters:
+    ///   - filterLevel: The lowest severity (inclusive) that the engine emits to its consumers.
+    ///   - treatWarningsAsErrors: A Boolean value indicating whether the engine raises the severity of warnings to "error" (unless `warningGroupsWithWarningSeverity` explicitly lowers the severity of that diagnostic to a warning)
+    ///   - diagnosticIDsWithWarningSeverity: A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
+    ///   - diagnosticIDsWithErrorSeverity: A list of diagnostic identifiers that are explicitly raised to an "error" severity.
+    public init(
+        filterLevel: DiagnosticSeverity = .warning,
+        treatWarningsAsErrors: Bool = false,
+        diagnosticIDsWithWarningSeverity: Set<String> = [],
+        diagnosticIDsWithErrorSeverity: Set<String> = []
+    ) {
         self.filterLevel = filterLevel
         self.treatWarningsAsErrors = treatWarningsAsErrors
+        self.diagnosticIDsWithWarningSeverity = diagnosticIDsWithWarningSeverity
+        self.diagnosticIDsWithErrorSeverity   = diagnosticIDsWithErrorSeverity
     }
 
     /// Removes all of the encountered diagnostics from this engine.
@@ -83,9 +107,7 @@ public final class DiagnosticEngine {
     public func emit(_ problems: [Problem]) {
         let mappedProblems = problems.map { problem -> Problem in
             var problem = problem
-            if treatWarningsAsErrors, problem.diagnostic.severity == .warning {
-                problem.diagnostic.severity = .error
-            }
+            updateDiagnosticSeverity(&problem.diagnostic)
             return problem
         }
         let filteredProblems = mappedProblems.filter(shouldEmit)
@@ -129,6 +151,20 @@ public final class DiagnosticEngine {
     public func remove(_ consumer: any DiagnosticConsumer) {
         consumers.sync {
             $0.removeValue(forKey: ObjectIdentifier(consumer))
+        }
+    }
+    
+    private func updateDiagnosticSeverity(_ diagnostic: inout Diagnostic) {
+        func _severity(identifier: String) -> DiagnosticSeverity? {
+            if      diagnosticIDsWithErrorSeverity.contains(identifier)   { .error }
+            else if diagnosticIDsWithWarningSeverity.contains(identifier) { .warning }
+            else                                                          { nil }
+        }
+        
+        if let severity = _severity(identifier: diagnostic.identifier) ?? diagnostic.groupIdentifier.flatMap(_severity) {
+            diagnostic.severity = severity
+        } else if treatWarningsAsErrors, diagnostic.severity == .warning {
+            diagnostic.severity = .error
         }
     }
 }
