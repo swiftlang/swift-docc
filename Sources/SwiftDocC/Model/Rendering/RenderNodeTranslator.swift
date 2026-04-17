@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1248,17 +1248,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
-        /*
-         FIXME: We shouldn't be doing this kind of crawling here.
-         
-         We should be doing a graph search to build up a breadcrumb and pass that to the translator, giving
-         a definitive hierarchy before we even begin to build a RenderNode.
-         */
-        var ref = documentationNode.reference
-        while let grandparent = context.parents(of: ref).first {
-            ref = grandparent
-        }
-        
         let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
@@ -1295,10 +1284,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
             // Different sources of availability information are added in-order to compute the complete availability information.
+
+            // The default availability is merged with the in-source availability when loading a symbol graph (see ``SymbolGraphLoader.addDefaultAvailability(to:moduleName:)``).
+            // If no in-source availability is present, we fall back to the default availability for the module (in Info.plist).
             // FIXME: Move this logic out of the rendering code (rdar://172280267)
-            
-            // The "default" information provided by the Info.plist is the base information because it applies to every thing in the module.
-            var information = baseAvailabilityByPlatform
+            var information = inSourceAvailability.availability.isEmpty ? baseAvailabilityByPlatform : [String: AvailabilityRenderItem]()
             
             var unavailablePlatformNamesToRemove = [String]()
             
