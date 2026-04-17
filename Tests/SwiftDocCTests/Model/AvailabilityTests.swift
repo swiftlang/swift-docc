@@ -463,48 +463,6 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "6.0")
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == "10.0")
     }
-
-    // Regression test for rdar://174841126
-    // Symbols should not use the module-level default availability (in Info.plist) if in-source availability is present.
-    @Test
-    func symbolWithInSourceAvailabilityDoesNotUseModuleDefaultAvailability() async throws {
-        let macOSOnlySymbol = makeSymbol(
-            id: "macos-only-symbol",
-            kind: .class,
-            pathComponents: ["MacOSOnlyClass"],
-            availability: [makeAvailabilityItem(domainName: "macOS", introduced: SymbolGraph.SemanticVersion(string: "14.0"))]
-        )
-
-        let catalog = Folder(name: "unit-test.docc") {
-            for (platformName, symbols) in [
-            ("macos",   [macOSOnlySymbol]),
-            ("ios",     []),
-            ("watchos", [])
-            ] {
-                JSONFile(name: "ModuleName-\(platformName).symbols.json", content: makeSymbolGraph(
-                    moduleName: "ModuleName",
-                    platform: .init(operatingSystem: .init(name: platformName)),
-                    symbols: symbols
-                    ))
-            }
-
-            InfoPlist(defaultAvailability: [
-                "ModuleName": [
-                    .init(platformName: .macOS,   platformVersion: "10.0"),
-                    .init(platformName: .iOS,     platformVersion: "10.0"),
-                    .init(platformName: .watchOS, platformVersion: "10.0"),
-                ]
-            ])
-        }
-
-        let context = try await load(catalog: catalog)
-
-        let node = try #require(context.documentationCache["macos-only-symbol"])
-        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
-        let availability = try #require((translator.visit(node.semantic as! Symbol) as! RenderNode).metadata.platformsVariants.defaultValue)
-        #expect(availability.map(\.name) == ["macOS"])
-        #expect(availability.map(\.introduced) == ["14.0"])
-    }
     
     @Test
     func unavailableDefaultPlatformsDoNotRemovePlatformsWithSourceAvailability() async throws {
@@ -551,7 +509,7 @@ struct AvailabilityTests {
     }
     
     @Test
-    func platformSpecificSymbolDoesNotDisplayDefaultAvailabilityForOtherPlatforms() async throws {
+    func platformSpecificSymbolWithoutInSourceAvailabilityDoesNotDisplayDefaultAvailabilityForOtherPlatforms() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "tvos"), environment: nil), symbols: [
                 makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"]) // No in-source availability attributes.
@@ -587,6 +545,43 @@ struct AvailabilityTests {
         // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
 //        #expect(secondRenderPlatforms.compactMap(\.name) == ["iOS", "Mac Catalyst"],
 //                "The 'Second' symbol is not present in the tvOS symbol graph, so it shouldn't have any tvOS availability")
+    }
+    
+    @Test
+    func platformSpecificSymbolWithInSourceAvailabilityDoesNotDisplayDefaultAvailabilityForOtherPlatforms() async throws {
+        let macOSOnlySymbol = makeSymbol(id: "macOS-only-symbol", kind: .class, pathComponents: ["MacOSOnlyClass"], availability: [
+            makeAvailabilityItem(domainName: "macOS", introduced: .init(major: 14, minor: 0, patch: 0))
+        ])
+
+        let catalog = Folder(name: "unit-test.docc") {
+            for (platformName, symbols) in [
+                ("macos",   [macOSOnlySymbol]),
+                ("ios",     []),
+                ("watchos", [])
+            ] {
+                JSONFile(name: "ModuleName-\(platformName).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: platformName)),
+                    symbols: symbols
+                ))
+            }
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .macOS,   platformVersion: "10.0"),
+                .init(platformName: .iOS,     platformVersion: "10.0"),
+                .init(platformName: .watchOS, platformVersion: "10.0"),
+            ]])
+        }
+
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["macOS-only-symbol"])
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.map(\.name) == ["macOS"])
+        #expect(renderPlatforms.map(\.introduced) == ["14.0"])
     }
     
     @Test
