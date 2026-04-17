@@ -76,22 +76,23 @@ struct AvailabilityTests {
         
         // Verify that the article has filled in iPadOS and Mac Catalyst from the iOS default availability.
         do {
-            // FIXME: Articles don't display default availability (rdar://173688303)
-//            let articleReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
-//            let node = try #require(context.documentationCache[articleReference])
-//            let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
-//            let renderNode = try #require(converter.renderNode(for: node))
-//
-//            let renderPlatforms = try #require(renderNode.metadata.platforms)
-//            if defaultIntroducedVersion != nil {
-//                #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
-//            } else {
-//                // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
-//                #expect(renderPlatforms.compactMap(\.name) == ["iOS"])
-//            }
-//            #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
-//            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
-//            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
+            withKnownIssue("Articles don't display default availability (rdar://173688303)") {
+                let articleReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+                let node = try #require(context.documentationCache[articleReference])
+                let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+                let renderNode = try #require(converter.renderNode(for: node))
+                
+                let renderPlatforms = try #require(renderNode.metadata.platforms)
+                if defaultIntroducedVersion != nil {
+                    #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+                } else {
+                    // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+                    #expect(renderPlatforms.compactMap(\.name) == ["iOS"])
+                }
+                #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
+                #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
+                #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
+            }
         }
     }
     
@@ -737,23 +738,26 @@ struct AvailabilityTests {
         #expect(context.inputs.symbolGraphURLs.count == 3)
         let node = try #require(context.documentationCache["some-symbol-id"])
         
-        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
-//        #expect((node.semantic  as? Symbol)?.availability?.availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "macOS", "watchOS"])
+        withKnownIssue("Platform specific symbols shouldn't display 'default' availability for other platforms (rdar://173691006)") {
+            #expect((node.semantic  as? Symbol)?.availability?.availability.compactMap(\.domain?.rawValue).sorted() == ["iOS", "iPadOS", "macCatalyst", "macOS", "watchOS"])
+        }
         
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode  = try #require(converter.renderNode(for: node))
         
         let renderPlatforms = try #require(renderNode.metadata.platforms)
-        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
-//        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "watchOS"])
+        withKnownIssue("Platform specific symbols shouldn't display 'default' availability for other platforms (rdar://173691006)") {
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "watchOS"])
+        }
         
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.1")
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.1")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "2.2")
         #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "3.3")
-        // FIXME: Platform specific symbols shouldn't display "default" availability for other platforms (rdar://173691006)
-//        #expect(renderPlatforms.first(where: { $0.name == "tvOS"         }) == nil)
-//        #expect(renderPlatforms.first(where: { $0.name == "visionOS"     }) == nil)
+        withKnownIssue("Platform specific symbols shouldn't display 'default' availability for other platforms (rdar://173691006)") {
+            #expect(renderPlatforms.first(where: { $0.name == "tvOS"         }) == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "visionOS"     }) == nil)
+        }
         #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced == "6.6")
     }
     
@@ -958,9 +962,11 @@ struct AvailabilityTests {
         
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"    })?.introducedVersion?.description == nil)
         #expect(availability.first(where: { $0.domain?.rawValue == "iOS"    })?.deprecatedVersion?.description == "13.0.0")
-        // FIXME: iPadOS availability should follow iOS availability (rdar://173704351)
-//        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion?.description == nil)
-//        #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.deprecatedVersion?.description == "13.0.0")
+        
+        withKnownIssue("iPadOS availability should follow iOS availability (rdar://173704351)", {
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion?.description == nil)
+            #expect(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.deprecatedVersion?.description == "13.0.0")
+        }, when: { fakeExtensionGraph == .iOS })
         
         #expect(availability.first(where: { $0.domain?.rawValue == "macOS"       })?.introducedVersion?.description == "10.15.0")
         #expect(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion?.description ==  "1.0.0")
@@ -975,9 +981,10 @@ struct AvailabilityTests {
         
         #expect(renderPlatforms.first(where: { $0.name == "iOS"    })?.introduced == nil)
         #expect(renderPlatforms.first(where: { $0.name == "iOS"    })?.deprecated == "13.0")
-        // FIXME: iPadOS availability should follow iOS availability (rdar://173704351)
-//        #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.introduced == nil)
-//        #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.deprecated == "13.0")
+        withKnownIssue("iPadOS availability should follow iOS availability (rdar://173704351)", {
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.introduced == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.deprecated == "13.0")
+        }, when: { fakeExtensionGraph == .iOS })
         
         #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.15")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "1.0")
@@ -1189,9 +1196,10 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.deprecated == "13.0")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "13.0")
         
-        // FIXME: Available directive isn't considered for TopicRenderReference deprecation (rdar://173761647)
-//        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
-//        #expect(renderReference.isDeprecated)
+        withKnownIssue("Available directive isn't considered for TopicRenderReference deprecation (rdar://173761647)") {
+            let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+            #expect(renderReference.isDeprecated)
+        }
     }
     
     @Test
@@ -1230,9 +1238,10 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.deprecated == "13.0")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "13.0")
         
-        // FIXME: Available directive isn't considered for TopicRenderReference deprecation (rdar://173761647)
-//        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
-//        #expect(renderReference.isDeprecated)
+        withKnownIssue("Available directive isn't considered for TopicRenderReference deprecation (rdar://173761647)") {
+            let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+            #expect(renderReference.isDeprecated)
+        }
     }
     
     @Test(arguments: DirectiveLocation.allCases)
@@ -1414,7 +1423,7 @@ struct AvailabilityTests {
     }
     
     // FIXME: Articles don't display or consider DeprecationSummary information (rdar://173688303)
-    @Test(.disabled("rdar://173688303"), arguments: [AvailabilitySource.directiveInExtensionFile])
+    @Test(.bug("rdar://173688303"), arguments: [AvailabilitySource.directiveInExtensionFile])
     func articleIsConsideredDeprecatedWhenAvailableWithDeprecationSummaryDirective(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
         @Metadata {
@@ -1444,16 +1453,20 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        withKnownIssue("Articles don't display or consider DeprecationSummary information (rdar://173688303)") {
+            #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        }
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
         
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode  = try #require(converter.renderNode(for: node))
         
-        #expect(renderNode.deprecationSummary == [.paragraph(.init(inlineContent: [
-            .text("Some message that describes why this article is deprecated")
-        ]))])
+        withKnownIssue("Articles don't display or consider DeprecationSummary information (rdar://173688303)") {
+            #expect(renderNode.deprecationSummary == [.paragraph(.init(inlineContent: [
+                .text("Some message that describes why this article is deprecated")
+            ]))])
+        }
         
         let renderPlatforms  = try #require(renderNode.metadata.platforms)
         
@@ -1461,8 +1474,10 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.14")
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == nil)
         
-        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
-        #expect(renderReference.isDeprecated)
+        withKnownIssue("Articles don't display or consider DeprecationSummary information (rdar://173688303)") {
+            let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+            #expect(renderReference.isDeprecated)
+        }
     }
     
     // MARK: Beta
@@ -1531,7 +1546,7 @@ struct AvailabilityTests {
     
     // FIXME: Articles don't display default availability (rdar://173688303)
     // FIXME: Articles are not considered in-beta for any source of availability (rdar://173773442)
-    @Test(.disabled("rdar://173773442&173688303"), arguments: [AvailabilitySource.infoPlist, .directiveInExtensionFile])
+    @Test(.bug("rdar://173773442&173688303"), arguments: [AvailabilitySource.infoPlist, .directiveInExtensionFile])
     func articleIsConsideredInBetaWhenOnlyPlatformIsCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
         @Metadata {
@@ -1567,16 +1582,18 @@ struct AvailabilityTests {
         
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode  = try #require(converter.renderNode(for: node))
-        let renderPlatforms  = try #require(renderNode.metadata.platforms)
-        
-        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
-        #expect(renderPlatforms.first?.introduced == "10.14")
-        #expect(renderPlatforms.first?.isBeta     == true)
-        
-        #expect(renderNode.metadata.isBeta)
-        
-        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
-        #expect(renderReference.isBeta)
+        withKnownIssue("Articles don't display default availability (rdar://173688303) and don't consider in-beta from any source of availability (rdar://173773442)") {
+            let renderPlatforms = try #require(renderNode.metadata.platforms)
+            
+            #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+            #expect(renderPlatforms.first?.introduced == "10.14")
+            #expect(renderPlatforms.first?.isBeta     == true)
+            
+            #expect(renderNode.metadata.isBeta)
+            
+            let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+            #expect(renderReference.isBeta)
+        }
     }
     
     @Test(arguments: AvailabilitySource.allCases)
@@ -1754,7 +1771,7 @@ struct AvailabilityTests {
     }
     
     // FIXME: Articles don't display default availability (rdar://173688303)
-    @Test(.disabled("rdar://173688303"), arguments: [true, false])
+    @Test(.bug("rdar://173688303"), arguments: [true, false])
     func articleDisplaysCustomDefaultPlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
@@ -1780,17 +1797,19 @@ struct AvailabilityTests {
         
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode  = try #require(converter.renderNode(for: node))
-        let renderPlatforms  = try #require(renderNode.metadata.platforms)
-        
-        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "Something"])
-        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
-        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
-        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
-        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
-        
-        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
-        
-        #expect(renderNode.metadata.isBeta == false)
+        withKnownIssue("Articles don't display default availability (rdar://173688303)") {
+            let renderPlatforms  = try #require(renderNode.metadata.platforms)
+            
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "Something"])
+            #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
+            #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
+            
+            #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+            
+            #expect(renderNode.metadata.isBeta == false)
+        }
     }
     
     @Test(arguments: [true, false])
@@ -1877,20 +1896,21 @@ struct AvailabilityTests {
         #expect(swiftRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
         #expect(swiftRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.7")
         
-        // FIXME: Language specific availability isn't reflected on the rendered page (rdar://174818876)
-//        #expect(!renderNode.metadata.platformsVariants.variants.isEmpty)
-//        let objcRenderPlatforms  = try #require(renderNode.metadata.platformsVariants.value(for: .objectiveC))
-//        
-//        if defaultIntroducedVersion != nil {
-//            #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
-//        } else {
-//            // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
-//            #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "macOS"])
-//        }
-//        #expect(objcRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
-//        #expect(objcRenderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
-//        #expect(objcRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
-//        #expect(objcRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "12.1")
+        withKnownIssue("Language specific availability isn't reflected on the rendered page (rdar://174818876)") {
+            #expect(!renderNode.metadata.platformsVariants.variants.isEmpty)
+            let objcRenderPlatforms  = try #require(renderNode.metadata.platformsVariants.value(for: .objectiveC))
+            
+            if defaultIntroducedVersion != nil {
+                #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+            } else {
+                // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+                #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "macOS"])
+            }
+            #expect(objcRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
+            #expect(objcRenderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
+            #expect(objcRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
+            #expect(objcRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "12.1")
+        }
     }
     
     // MARK: Mixed sources
@@ -1939,13 +1959,14 @@ struct AvailabilityTests {
 
         let renderPlatforms  = try #require(renderNode.metadata.platforms)
         
-        // FIXME: Available directives remove all in-source availability information (rdar://171807245)
+        withKnownIssue("Available directives remove all in-source availability information (rdar://171807245)") {
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS"])
+            #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.14")
+        }
         #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "tvOS"])
-//        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS"])
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced ==  "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
-//        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.14")
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced ==  "7.1")
     }
     
