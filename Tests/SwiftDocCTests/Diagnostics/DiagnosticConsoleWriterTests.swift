@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -34,7 +34,27 @@ class DiagnosticConsoleWriterTests: XCTestCase {
     }
 
     func testReceiveProblem() {
-        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: [])
+        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic"), possibleSolutions: [])
+
+        let logger = Logger()
+        let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
+        XCTAssert(logger.output.isEmpty)
+        consumer.receive([problem])
+        XCTAssertEqual(logger.output, "warning: Test diagnostic [test-identifier]\n")
+    }
+    
+    func testDisplaysGroupIdentifier() {
+        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", groupIdentifier: "test-group-identifier", summary: "Test diagnostic"), possibleSolutions: [])
+
+        let logger = Logger()
+        let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
+        XCTAssert(logger.output.isEmpty)
+        consumer.receive([problem])
+        XCTAssertEqual(logger.output, "warning: Test diagnostic [test-group-identifier]\n")
+    }
+    
+    func testDoesNotDisplayNotYetModernizedIdentifier() {
+        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.test-identifier", summary: "Test diagnostic"), possibleSolutions: [])
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
@@ -44,15 +64,15 @@ class DiagnosticConsoleWriterTests: XCTestCase {
     }
 
     func testReceiveMultipleProblems() {
-        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: [])
+        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic"), possibleSolutions: [])
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
         consumer.receive([problem, problem])
         XCTAssertEqual(logger.output, """
-        warning: Test diagnostic
-        warning: Test diagnostic
+        warning: Test diagnostic [test-identifier]
+        warning: Test diagnostic [test-identifier]
 
         """)
     }
@@ -60,7 +80,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
     func testEmitsFixits() {
         let source = URL(string: "/path/to/file.md")!
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let solutionSummary = "Test solution summary"
         let explanation = "Test diagnostic explanation."
@@ -78,7 +98,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([problem])
             XCTAssertEqual(logger.output, """
-            \(expectedLocation): error: \(summary). \(solutionSummary).
+            \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
             \(explanation)
             \(source):1:8-1:24: fixit: Replacement text
             
@@ -98,7 +118,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([problem])
             XCTAssertEqual(logger.output, """
-            \(expectedLocation): error: \(summary). \(firstSolutionSummary) \(secondSolutionSummary).
+            \(expectedLocation): error: \(summary) [\(identifier)] \(firstSolutionSummary) \(secondSolutionSummary).
             \(explanation)
             
             """)
@@ -119,7 +139,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([problem])
             XCTAssertEqual(logger.output, """
-            \(expectedLocation): error: \(summary). \(solutionSummary).
+            \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
             \(explanation)
             \(source):1:8-1:8: fixit: ABC
             \(source):1:14-1:14: fixit: abc

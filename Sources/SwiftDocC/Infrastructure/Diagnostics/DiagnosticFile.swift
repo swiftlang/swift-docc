@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,7 +24,7 @@ struct DiagnosticFile: Codable {
     // Breaking changes should increment the major version component.
     // Non breaking additions should increment the minor version.
     // Bug fixes should increment the patch version.
-    static var currentVersion = SemanticVersion(major: 1, minor: 0, patch: 0, prerelease: nil, buildMetadata: nil)
+    static var currentVersion = SemanticVersion(major: 1, minor: 1, patch: 0, prerelease: nil, buildMetadata: nil)
     
     enum Error: Swift.Error {
         case unknownMajorVersion(found: SemanticVersion, latestKnown: SemanticVersion)
@@ -45,6 +45,8 @@ struct DiagnosticFile: Codable {
                 var column: Int
             }
         }
+        var id: String
+        var groupID: String?
         var source: URL?
         var range: Range?
         var severity: Severity
@@ -87,6 +89,8 @@ struct DiagnosticFile: Codable {
 
 extension DiagnosticFile.Diagnostic {
     init(_ problem: Problem) {
+        self.id          = problem.diagnostic.identifier
+        self.groupID     = problem.diagnostic.groupIdentifier
         self.source      = problem.diagnostic.source
         self.range       = problem.diagnostic.range.map { .init($0) }
         self.severity    = .init(problem.diagnostic.severity)

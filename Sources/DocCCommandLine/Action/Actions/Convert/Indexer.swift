@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -55,6 +55,7 @@ extension ConvertAction {
                     try $0.index(renderNode: renderNode)
                     nodeCount += 1
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     self.problems.append(error.problem(source: renderNode.identifier.url,
                                                   severity: .warning,
                                                   summaryPrefix: "RenderNode indexing process failed"))
@@ -71,6 +72,7 @@ extension ConvertAction {
                     try $0.index(renderNode: renderNode)
                     nodeCount += 1
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     self.problems.append(error.problem(source: renderNode.identifier.url,
                                                   severity: .warning,
                                                   summaryPrefix: "External render node indexing process failed"))

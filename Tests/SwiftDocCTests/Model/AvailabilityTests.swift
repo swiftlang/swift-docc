@@ -463,6 +463,48 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "6.0")
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == "10.0")
     }
+
+    // Regression test for rdar://174841126
+    // Symbols should not use the module-level default availability (in Info.plist) if in-source availability is present.
+    @Test
+    func symbolWithInSourceAvailabilityDoesNotUseModuleDefaultAvailability() async throws {
+        let macOSOnlySymbol = makeSymbol(
+            id: "macos-only-symbol",
+            kind: .class,
+            pathComponents: ["MacOSOnlyClass"],
+            availability: [makeAvailabilityItem(domainName: "macOS", introduced: SymbolGraph.SemanticVersion(string: "14.0"))]
+        )
+
+        let catalog = Folder(name: "unit-test.docc") {
+            for (platformName, symbols) in [
+            ("macos",   [macOSOnlySymbol]),
+            ("ios",     []),
+            ("watchos", [])
+            ] {
+                JSONFile(name: "ModuleName-\(platformName).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: platformName)),
+                    symbols: symbols
+                    ))
+            }
+
+            InfoPlist(defaultAvailability: [
+                "ModuleName": [
+                    .init(platformName: .macOS,   platformVersion: "10.0"),
+                    .init(platformName: .iOS,     platformVersion: "10.0"),
+                    .init(platformName: .watchOS, platformVersion: "10.0"),
+                ]
+            ])
+        }
+
+        let context = try await load(catalog: catalog)
+
+        let node = try #require(context.documentationCache["macos-only-symbol"])
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
+        let availability = try #require((translator.visit(node.semantic as! Symbol) as! RenderNode).metadata.platformsVariants.defaultValue)
+        #expect(availability.map(\.name) == ["macOS"])
+        #expect(availability.map(\.introduced) == ["14.0"])
+    }
     
     @Test
     func unavailableDefaultPlatformsDoNotRemovePlatformsWithSourceAvailability() async throws {
