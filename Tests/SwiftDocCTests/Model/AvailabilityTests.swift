@@ -1520,6 +1520,8 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first?.introduced == "10.14")
         #expect(renderPlatforms.first?.isBeta     == true)
         
+        #expect(renderNode.metadata.isBeta)
+        
         // FIXME: Symbols are only considered in-beta when the introduced version is from in-source attributes (rdar://173773442)
         if availabilitySource == .inSourceAttribute {
             let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
@@ -1570,6 +1572,8 @@ struct AvailabilityTests {
         #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
         #expect(renderPlatforms.first?.introduced == "10.14")
         #expect(renderPlatforms.first?.isBeta     == true)
+        
+        #expect(renderNode.metadata.isBeta)
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isBeta)
@@ -1638,6 +1642,8 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.14")
         #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.isBeta     == true)
         
+        #expect(renderNode.metadata.isBeta == false)
+        
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isBeta == false)
     }
@@ -1681,6 +1687,8 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
         
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+        
+        #expect(renderNode.metadata.isBeta == false)
     }
     
     @Test(arguments: DirectiveLocation.allCases, [true, false])
@@ -1741,6 +1749,8 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
         
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+        
+        #expect(renderNode.metadata.isBeta == false)
     }
     
     // FIXME: Articles don't display default availability (rdar://173688303)
@@ -1779,6 +1789,8 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
         
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+        
+        #expect(renderNode.metadata.isBeta == false)
     }
     
     @Test(arguments: [true, false])
@@ -1821,6 +1833,8 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
         
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+        
+        #expect(renderNode.metadata.isBeta == false)
     }
     
     // MARK: Multiple language representations
