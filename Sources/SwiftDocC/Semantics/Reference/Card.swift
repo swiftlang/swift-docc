@@ -11,23 +11,37 @@
 import Foundation
 public import Markdown
 
-/// A directive that renders its content as a card with separate head and content sections.
+/// A directive that renders its content as a card with an optional head section.
 ///
-/// The `@Card` directive partitions its child markup into two sections:
-/// - **head**: The first heading and the first paragraph following it.
-/// - **content**: All remaining block elements.
+/// If a thematic break is present within the `@Card` block,
+/// all elements before the thematic break are considered part of the "head"
+/// section, with all elements after the break being considered the "content"
+/// section.
 ///
+/// If no thematic break is present within the `@Card` block, all elements are
+/// considered the "content" section.
+///
+/// Example with no head section:
 /// ```md
 /// @Card {
 ///     ### Example heading
 ///
-///     Some head content.
+///     Example content
+/// }
+/// ```
+///
+/// Example with a head section:
+/// ```md
+/// @Card {
+///     ### Example heading
+///
+///     Example head content
 ///
 ///     ---
 ///
-///     Some body content.
+///     Example body content.
 ///
-///     Another body paragraph.
+///     More body content.
 /// }
 /// ```
 public final class Card: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
