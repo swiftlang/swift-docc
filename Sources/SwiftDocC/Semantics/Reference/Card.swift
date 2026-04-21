@@ -70,6 +70,25 @@ public final class Card: Semantic, AutomaticDirectiveConvertible, MarkupContaini
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
+
+    func validate(source: URL?, problems: inout [Problem], featureFlags: FeatureFlags) -> Bool {
+        if !featureFlags.isExperimentalCardDirectiveEnabled {
+            problems.append(Problem(
+                diagnostic: .init(
+                    source: source,
+                    severity: .warning,
+                    range: originalMarkup.range,
+                    identifier: "org.swift.docc.\(Self.directiveName).RequiresFeatureFlag",
+                    summary: """
+                        @\(Self.directiveName) must be enabled with the \
+                        --enable-experimental-card-directive feature flag
+                        """
+                )
+            ))
+        }
+
+        return true
+    }
 }
 
 extension Card: RenderableDirectiveConvertible {

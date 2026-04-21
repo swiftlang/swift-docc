@@ -188,7 +188,7 @@ struct CardTests {
         }
 
         #expect(card != nil, "@Card directive was not parsed as expected")
-        #expect(problems.isEmpty, "Unexpected problems: \(problems)")
+        #expect(problems == ["1: warning – org.swift.docc.Card.RequiresFeatureFlag"])
         #expect(renderBlockContent == [
             .heading(.init(level: 3, text: "Example heading", anchor: "Example-heading")),
             .paragraph(.init(inlineContent: [.text("Some content.")])),
