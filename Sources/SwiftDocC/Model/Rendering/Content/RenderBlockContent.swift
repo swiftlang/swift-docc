@@ -848,6 +848,15 @@ public enum RenderBlockContent: Equatable {
         public var head: [RenderBlockContent]
         /// The body content containing remaining block elements.
         public var content: [RenderBlockContent]
+
+        /// Create a new card with the given content and optional head section.
+        ///
+        /// - Parameter head: An optional list of block content for the head section of the card.
+        /// - Parameter content: A list of block content contained within the card.
+        public init(head: [RenderBlockContent] = [], content: [RenderBlockContent]) {
+            self.head = head
+            self.content = content
+        }
     }
     
     /// A collection of authored links that should be rendered in a similar style
