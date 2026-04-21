@@ -60,66 +60,42 @@ public final class Card: Semantic, AutomaticDirectiveConvertible, MarkupContaini
 
 extension Card: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
-        // Gate the Card directive behind its feature flag.
-        guard contentCompiler.context.configuration.featureFlags.isCardDirectiveEnabled else {
-            return render(blocks: content.elements, with: &contentCompiler)
-        }
-
-        // partition flat list of markdown blocks into 2 lists:
-        // 1. elements before thematic break
-        // 2. elements after thematic break (if any)
-        let (before, after) = partition(
-            elements: content.elements,
-            separatedBy: ThematicBreak.self
-        )
-
-        // if there was a thematic break, use the elements before it as the
-        // head of the card
-        // 
-        // use the rest of the elements as the content (will be the original,
-        // full list if a thematic break is never encountered)
-        //
-        // if there are multiple thematic breaks, subsequent ones after the
-        // initial one will just be included in the content
-        let head = after.count > 0 ? before : []
-        let content = after.count > 0 ? after : before
-
-        let card = RenderBlockContent.Card(
-            head: render(blocks: head, with: &contentCompiler),
-            content: render(blocks: content, with: &contentCompiler)
-        )
-        return [RenderBlockContent.card(card)]
-    }
-
-    private func render(
-        blocks: [any Markup],
-        with contentCompiler: inout RenderContentCompiler
-    ) -> [RenderBlockContent] {
-        blocks.flatMap { block in
+        // Render all inner content blocks
+        let renderedContent = content.elements.flatMap { block in
             (contentCompiler.visit(block) as? [RenderBlockContent]) ?? []
         }
-    }
 
-    private func partition<Separator: Markup>(
-        elements: [any Markup],
-        separatedBy separator: Separator.Type
-    ) -> (before: [any Markup], after: [any Markup]) {
-        var beforeSeparator = true
-        return elements.reduce((before: [], after: [])) { partitioned, element in
-            if beforeSeparator && type(of: element) == separator.self {
-                beforeSeparator = false
-                return partitioned
-            } else if beforeSeparator {
-                return (
-                    before: partitioned.before + [element],
-                    after: partitioned.after
-                )
-            } else {
-                return (
-                    before: partitioned.before,
-                    after: partitioned.after + [element]
-                )
-            }
+        // Gate the Card directive behind its feature flag.
+        // If the flag is not enabled, just render its inner contents.
+        guard contentCompiler.context.configuration.featureFlags.isCardDirectiveEnabled else {
+            return renderedContent
+        }
+
+        // If the feature flag _is_ enabled, render a card.
+        // 
+        // If a thematic break is present, all blocks before it will be
+        // presented in the `head` section and all remaining blocks will be
+        // presented in the `content` section.
+        //
+        // If no thematic break is present, all blocks are presented in the
+        // `content` section.
+        if let thematicBreakIndex = renderedContent.firstIndex(of: .thematicBreak) {
+            let rangeBeforeBreak = 0..<thematicBreakIndex
+            let rangeAfterBreak = thematicBreakIndex.advanced(by: 1)...
+            return [
+                RenderBlockContent.card(
+                    RenderBlockContent.Card(
+                        head: Array(renderedContent[rangeBeforeBreak]),
+                        content: Array(renderedContent[rangeAfterBreak])
+                    )
+                ),
+            ]
+        } else {
+            return [
+                RenderBlockContent.card(
+                    RenderBlockContent.Card(content: renderedContent)
+                ),
+            ]
         }
     }
 }
