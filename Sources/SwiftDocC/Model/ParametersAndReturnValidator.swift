@@ -296,6 +296,15 @@ struct ParametersAndReturnValidator {
     ) -> DocumentationDataVariants<ReturnsSection> {
         let returnsSection = returns.map { ReturnsSection(content: $0.contents) }
         var variants = DocumentationDataVariants<ReturnsSection>()
+
+        // Tuple-element validation is only applicable when the authored return value is in the outline form:
+        //
+        // - Returns:
+        //   - name: description
+        //
+        // and only when we can determine the Swift tuple arity from the signature.
+        let documentedTupleElementCount = returns.flatMap(Self.documentedTupleElementCount(from:))
+        var swiftTupleElementCount: Int?
         
         var traitsWithNonVoidReturnValues = Set(signatures.keys)
         for (trait, signature) in signatures {
@@ -323,6 +332,11 @@ struct ParametersAndReturnValidator {
                 variants[trait] = ReturnsSection(content: [])
                 continue
             }
+
+            // Capture the Swift tuple arity (if any) for validation.
+            if language == .swift, swiftSymbolKind != .`init` {
+                swiftTupleElementCount = swiftTupleElementCount ?? Self.tupleElementCount(from: signature)
+            }
             
             variants[trait] = returnsSection
         }
@@ -335,6 +349,25 @@ struct ParametersAndReturnValidator {
         // Diagnose if the symbol had documented its return values but all language representations only return void.
         if let returns, traitsWithNonVoidReturnValues.isEmpty {
             diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: documentedSymbolKind))
+        }
+
+        // Diagnose tuple return documentation element count mismatches.
+        //
+        // This is intentionally conservative:
+        // - It only triggers for the outline-form `- Returns:` syntax.
+        // - It only triggers for Swift tuple return types where arity can be determined.
+        if let returns,
+           let documentedTupleElementCount,
+           let swiftTupleElementCount,
+           documentedTupleElementCount != swiftTupleElementCount
+        {
+            diagnosticEngine.emit(
+                makeTupleReturnValueDocumentationCountMismatchProblem(
+                    returns,
+                    documentedCount: documentedTupleElementCount,
+                    tupleElementCount: swiftTupleElementCount
+                )
+            )
         }
         return variants
     }
@@ -465,6 +498,127 @@ struct ParametersAndReturnValidator {
             .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v"),
         ]
     ]
+
+    private static func documentedTupleElementCount(from returns: Return) -> Int? {
+        guard returns.contents.count == 1, let list = returns.contents.first as? UnorderedList else {
+            return nil
+        }
+        // For the outline-form syntax, every list child should be a tuple element item.
+        let listChildren = Array(list.children)
+        let listItems = listChildren.compactMap { $0 as? ListItem }
+        guard listItems.count == listChildren.count, !listItems.isEmpty else {
+            return nil
+        }
+        for listItem in listItems {
+            guard let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                  hasTupleElementNameInlineColon(firstParagraph)
+            else {
+                return nil
+            }
+        }
+        return listItems.count
+    }
+
+    private static func tupleElementCount(from signature: SymbolGraph.Symbol.FunctionSignature) -> Int? {
+        // SymbolKit models function return types as a list of declaration fragments. For Swift tuple
+        // types, the spelling is typically the tuple as a parenthesized list of element type/value
+        // descriptions.
+        //
+        // Example spelling:
+        // `(quotient: Int, remainder: Int)`
+        let joinedSpelling = signature.returns.map(\.spelling).joined()
+        return tupleElementCount(fromTypeSpelling: joinedSpelling)
+    }
+
+    private static func tupleElementCount(fromTypeSpelling spelling: String) -> Int? {
+        let trimmed = spelling.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.first == "(", trimmed.last == ")" else {
+            return nil
+        }
+        let inner = String(trimmed.dropFirst().dropLast())
+        let innerTrimmed = inner.trimmingCharacters(in: .whitespacesAndNewlines)
+        if innerTrimmed.isEmpty {
+            return 0
+        }
+
+        // Scan the inner content and count commas at the "top level" of the tuple type.
+        //
+        // We track:
+        // - parenthesis nesting: `( ... (nested) ... )`
+        // - angle nesting for generics: `<T, U>`
+        // - bracket nesting for dictionary types: `[K: V]`
+        var depthParen = 0
+        var depthAngle = 0
+        var depthBracket = 0
+
+        var topLevelCommaCount = 0
+        var hasTopLevelColon = false
+
+        for character in inner {
+            switch character {
+            case "(":
+                depthParen += 1
+            case ")":
+                depthParen = max(0, depthParen - 1)
+            case "<":
+                depthAngle += 1
+            case ">":
+                depthAngle = max(0, depthAngle - 1)
+            case "[":
+                depthBracket += 1
+            case "]":
+                depthBracket = max(0, depthBracket - 1)
+            case ",":
+                if depthParen == 0 && depthAngle == 0 && depthBracket == 0 {
+                    topLevelCommaCount += 1
+                }
+            case ":":
+                if depthParen == 0 && depthAngle == 0 && depthBracket == 0 {
+                    hasTopLevelColon = true
+                }
+            default:
+                break
+            }
+        }
+
+        // Avoid false positives for parenthesized expressions.
+        guard topLevelCommaCount > 0 || hasTopLevelColon else {
+            return nil
+        }
+
+        return topLevelCommaCount + 1
+    }
+
+    private static func hasTupleElementNameInlineColon(_ paragraph: Paragraph) -> Bool {
+        for inline in paragraph.children {
+            guard let text = inline as? Text,
+                  let colonIndex = text.string.firstIndex(of: ":")
+            else {
+                continue
+            }
+            let name = String(text.string[..<colonIndex]).trimmingCharacters(in: .whitespaces)
+            if !name.isEmpty {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func makeTupleReturnValueDocumentationCountMismatchProblem(
+        _ returns: Return,
+        documentedCount: Int,
+        tupleElementCount: Int
+    ) -> Problem {
+        Problem(
+            diagnostic: Diagnostic(
+                source: returns.range?.source,
+                severity: .warning,
+                range: adjusted(returns.range),
+                identifier: "org.swift.docc.TupleReturnValueDocumentationCountMismatch",
+                summary: "Tuple return value documentation describes \(documentedCount) element(s) but the return value tuple has \(tupleElementCount) element(s)"
+            )
+        )
+    }
     
     /// Translates a relative documentation comment source range to the absolute location in that source file.
     private func adjusted(_ range: SourceRange?) -> SourceRange? {

@@ -132,8 +132,17 @@ struct TaggedListItemExtractor: MarkupRewriter {
         
         switch extractedTag.knownTag {
         case .returns:
-            // - Returns: ...
-            returns.append(.init(extractedTag))
+            // - Returns: ... or outline form:
+            // - Returns:
+            //   - name: ...
+            //   - name: ...
+            let outline = listItem.extractInnerTagOutline()
+            if !outline.isEmpty,
+               let innerList = listItem.children.compactMap({ $0 as? UnorderedList }).first {
+                returns.append(Return(contents: [innerList], range: extractedTag.range))
+            } else {
+                returns.append(.init(extractedTag))
+            }
             
         case .throws:
             // "Throws" asides are currently (still) parsed as blockquote-style asides
