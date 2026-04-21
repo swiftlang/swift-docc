@@ -10,7 +10,7 @@
 
 import Foundation
 import Testing
-@testable import SwiftDocC
+import SwiftDocC
 
 struct CardTests {
     /// A configuration with the card directive feature flag enabled.
