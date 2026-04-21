@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,12 +18,12 @@ class MetadataAvailabilityTests: XCTestCase {
     func testInvalidWithNoArguments() async throws {
         let source = "@Available"
         
-        try await assertDirective(Metadata.Availability.self, source: source) { directive, problems in
+        try await assertDirective(Metadata.Availability.self, source: source) { directive, diagnostics in
             XCTAssertNil(directive)
             
-            XCTAssertEqual(2, problems.count)
-            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-            let diagnosticExplanations = Set(problems.map { $0.diagnostic.explanation })
+            XCTAssertEqual(2, diagnostics.count)
+            let diagnosticIdentifiers = Set(diagnostics.map { $0.identifier })
+            let diagnosticExplanations = Set(diagnostics.map { $0.explanation })
             XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.HasArgument.unlabeled", "org.swift.docc.HasArgument.introduced"])
             XCTAssertEqual(diagnosticExplanations, [
                 "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
@@ -40,9 +40,9 @@ class MetadataAvailabilityTests: XCTestCase {
                 @Available(\(platform.rawValue), introduced: \"2.0\")
             }
             """
-            try await assertDirective(Metadata.self, source: source) { directive, problems in
-                XCTAssertEqual(2, problems.count)
-                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            try await assertDirective(Metadata.self, source: source) { directive, diagnostics in
+                XCTAssertEqual(2, diagnostics.count)
+                let diagnosticIdentifiers = Set(diagnostics.map { $0.identifier })
                 XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced"])
             }
         }
@@ -63,10 +63,10 @@ class MetadataAvailabilityTests: XCTestCase {
         }
         """
 
-        try await assertDirective(Metadata.self, source: source) { directive, problems in
-            XCTAssertEqual(8, problems.count)
-            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-            let diagnosticExplanations = Set(problems.map { $0.diagnostic.explanation })
+        try await assertDirective(Metadata.self, source: source) { directive, diagnostics in
+            XCTAssertEqual(8, diagnostics.count)
+            let diagnosticIdentifiers = Set(diagnostics.map { $0.identifier })
+            let diagnosticExplanations = Set(diagnostics.map { $0.explanation })
             XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.HasArgument.introduced.ConversionFailed"])
             XCTAssertEqual(diagnosticExplanations, [
                 "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
@@ -83,8 +83,8 @@ class MetadataAvailabilityTests: XCTestCase {
         }
         """
 
-        try await assertDirective(Metadata.self, source: source) { directive, problems in
-            XCTAssertEqual(0, problems.count)
+        try await assertDirective(Metadata.self, source: source) { directive, diagnostics in
+            XCTAssertEqual(0, diagnostics.count)
 
             let directive = try XCTUnwrap(directive)
             XCTAssertEqual(3, directive.availability.count)
@@ -153,25 +153,25 @@ class MetadataAvailabilityTests: XCTestCase {
         try await assertValidMetadata(source: source)
     }
     
-    func assertDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String, assertion assert: (Directive?, [Problem]) throws -> Void) async throws {
+    private func assertDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String, assertion assert: (Directive?, [Diagnostic]) throws -> Void) async throws {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
         let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
 
-        try directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Directive.directiveName, directive.name)
-            let converted = Directive(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
-            try assert(converted, problems)
+            let converted = Directive(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            try assert(converted, diagnostics)
         }
     }
 
     func assertValidDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String) async throws {
-        try await assertDirective(type, source: source) { directive, problems in
+        try await assertDirective(type, source: source) { directive, diagnostics in
             XCTAssertNotNil(directive)
-            XCTAssert(problems.isEmpty)
+            XCTAssert(diagnostics.isEmpty)
         }
     }
 

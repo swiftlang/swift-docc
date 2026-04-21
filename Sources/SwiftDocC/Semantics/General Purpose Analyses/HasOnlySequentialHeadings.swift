@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,8 +35,19 @@ extension Semantic.Analyses {
             self.startingFromLevel = startingFromLevel
         }
         
+        @available(*, deprecated, renamed: "analyze(_:children:source:for:diagnostics:)", message: "Use 'analyze(_:children:source:for:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
+        @discardableResult
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for unusedBundle: DocumentationBundle, problems: inout [Problem]) -> [Heading] {
+            var diagnostics = [Diagnostic]()
+            defer {
+                problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+            }
+            return analyze(directive, children: children, source: source, for: unusedBundle, diagnostics: &diagnostics)
+        }
+        
         /// Returns all valid headings.
-        @discardableResult public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, problems: inout [Problem]) -> [Heading] {
+        @discardableResult
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, diagnostics: inout [Diagnostic]) -> [Heading] {
             var currentHeadingLevel = startingFromLevel
             var headings: [Heading] = []
             for case let child as Heading in children {
@@ -54,7 +65,7 @@ extension Semantic.Analyses {
                         diagnosticMessageDetail = "sequentially follow the previous heading"
                     }
                     let diagnostic = Diagnostic(source: source, severity: severity, range: child.range, identifier: "org.swift.docc.HasOnlySequentialHeadings<\(Parent.self)>", summary: "This heading doesn't \(diagnosticMessageDetail)", explanation: "Make the heading level greater than or equal to \(startingFromLevel) and less than or equal to \(maximumAllowedHeadingLevel)")
-                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                    diagnostics.append(diagnostic)
                 }
             }
             

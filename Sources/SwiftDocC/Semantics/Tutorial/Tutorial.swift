@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -102,7 +102,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
         self.originalMarkup = originalMarkup
     }
     
-    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         var seenSectionTitles = [String: SourceRange]()
         sections = sections.filter { section -> Bool in
             let arguments = section.originalMarkup.arguments()
@@ -112,7 +112,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
                 if let source {
                     diagnostic.notes.append(DiagnosticNote(source: source, range: previousRange, message: "First \(TutorialSection.directiveName.singleQuoted) directive with the title '\(section.title)' written here"))
                 }
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                diagnostics.append(diagnostic)
                 return false
             }
             seenSectionTitles[section.title] = thisTitleRange
@@ -134,10 +134,8 @@ extension Tutorial {
         if let project = try? context.entity(with: node.reference).semantic as? Tutorial, let projectFiles = project.projectFiles {
             if context.resolveAsset(named: projectFiles.url.lastPathComponent, in: node.reference) == nil {
                 // The project download file is not found.
-                engine.emit(.init(
-                    diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Project.ProjectFilesNotFound", 
-                        summary: "\(projectFiles.path) file reference not found in \(Tutorial.directiveName.singleQuoted) directive"), 
-                    possibleSolutions: [
+                engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Project.ProjectFilesNotFound",
+                    summary: "\(projectFiles.path) file reference not found in \(Tutorial.directiveName.singleQuoted) directive", possibleSolutions: [
                         Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
                     ]
                 ))
@@ -148,9 +146,7 @@ extension Tutorial {
             .compactMap({ context.topicGraph.nodeWithReference($0) })
             .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
         guard tutorialTableOfContentsParent != nil else {
-            engine.emit(.init(
-                diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents"),
-                possibleSolutions: [
+            engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents", possibleSolutions: [
                     Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
                 ]
             ))

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,10 +24,10 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid", "bar"]).analyze(directive, children: directive.children, source: nil, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid", "bar"]).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
     
     /// When there are no allowed directives, diagnose for any provided directive.
@@ -42,10 +42,10 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: []).analyze(directive, children: directive.children, source: nil, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: []).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        XCTAssertEqual(problems.count, 2)
+        XCTAssertEqual(diagnostics.count, 2)
     }
     
     /// When there are directives that aren't allowed, diagnose.
@@ -60,10 +60,10 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"]).analyze(directive, children: directive.children, source: nil, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"]).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        XCTAssertEqual(problems.count, 1)
+        XCTAssertEqual(diagnostics.count, 1)
     }
     
     /// When there are directives that aren't allowed, diagnose.
@@ -81,16 +81,16 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         
         // Does allow arbitrary markup
-        var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: true).analyze(directive, children: directive.children, source: nil, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: true).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        XCTAssertEqual(problems.count, 1)
+        XCTAssertEqual(diagnostics.count, 1)
         
         // Doesn't allow arbitrary markup
-        problems = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: false).analyze(directive, children: directive.children, source: nil, problems: &problems)
+        diagnostics.removeAll()
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: false).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        XCTAssertEqual(problems.count, 2)
+        XCTAssertEqual(diagnostics.count, 2)
     }
     
     func testInvalidDirectivesWithSuggestions() throws {
@@ -106,12 +106,12 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        XCTAssertEqual(problems.count, 1)
-        guard let first = problems.first else { return }
-        XCTAssertEqual("error: 'baz' directive is unsupported as a child of the 'dir' directive\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", DiagnosticConsoleWriter.formattedDescription(for: first.diagnostic, options: .formatConsoleOutputForTools))
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
+        XCTAssertEqual("error: 'baz' directive is unsupported as a child of the 'dir' directive\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: .formatConsoleOutputForTools))
     }
 }
 

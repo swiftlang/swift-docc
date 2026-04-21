@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,12 +18,12 @@ class IntroTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(intro)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual("org.swift.docc.HasArgument.title", problems[0].diagnostic.identifier)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.title")
     }
     
     func testValid() async throws {
@@ -43,11 +43,11 @@ class IntroTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(intro)
-        XCTAssertTrue(problems.isEmpty)
-        intro.map { intro in
+        XCTAssertTrue(diagnostics.isEmpty)
+        if let intro {
             XCTAssertEqual(title, intro.title)
             XCTAssertNotNil(intro.video)
             XCTAssertEqual(intro.video?.source.path, videoPath)
@@ -69,21 +69,15 @@ class IntroTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(intro)
-        XCTAssertEqual(2, problems.count)
-        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(2, diagnostics.count)
+        XCTAssertFalse(diagnostics.containsError)
         
-        let expectedIds = [
+        XCTAssertEqual(diagnostics.map(\.identifier), [
             "org.swift.docc.UnknownArgument",
             "org.swift.docc.HasArgument.title",
-        ]
-        
-        let problemIds = problems.map(\.diagnostic.identifier)
-        
-        for id in expectedIds {
-            XCTAssertTrue(problemIds.contains(id))
-        }
+        ])
     }
 }

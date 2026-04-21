@@ -24,12 +24,12 @@ public struct DuplicateTopicsSections: Checker {
         self.sourceFile = sourceFile
     }
 
-    public var problems: [Problem] {
+    public var diagnostics: [Diagnostic] {
         guard foundTopicsHeadings.count > 1 else {
             return []
         }
         
-        // The notes are the same for all problems, so only create them once.
+        // The notes are the same for all diagnostics, so only create them once.
         let first = foundTopicsHeadings[0]
         let notes: [DiagnosticNote]
         if let sourceFile, let range = first.range {
@@ -42,19 +42,17 @@ public struct DuplicateTopicsSections: Checker {
         return duplicates.map { duplicateHeading in
             let range = duplicateHeading.range!
             
-            return Problem(
-                diagnostic: Diagnostic(
-                    source: sourceFile,
-                    severity: .warning,
-                    range: range,
-                    identifier: "MultipleTopicsSections",
-                    summary: "Topics section can only appear once per page",
-                    explanation: """
-                    A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. \
-                    Each page can only have a single Topics section.
-                    """,
-                    notes: notes
-                ),
+            return Diagnostic(
+                source: sourceFile,
+                severity: .warning,
+                range: range,
+                identifier: "MultipleTopicsSections",
+                summary: "Topics section can only appear once per page",
+                explanation: """
+                A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. \
+                Each page can only have a single Topics section.
+                """,
+                notes: notes,
                 possibleSolutions: [
                     Solution(summary: "Change heading name", replacements: [
                         .init(range: range, replacement: "## <#New heading name#>")

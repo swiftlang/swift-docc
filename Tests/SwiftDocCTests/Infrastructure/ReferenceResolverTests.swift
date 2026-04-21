@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,12 +27,12 @@ class ReferenceResolverTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)!
+        var diagnostics = [Diagnostic]()
+        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)!
         
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitIntro(intro)
-        XCTAssertEqual(resolver.problems.count, 1)
+        XCTAssertEqual(resolver.diagnostics.count, 1)
     }
     
     func testResolvesMediaForContentAndMedia() async throws {
@@ -46,12 +46,12 @@ class ReferenceResolverTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)!
+        var diagnostics = [Diagnostic]()
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)!
         
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visit(contentAndMedia)
-        XCTAssertEqual(resolver.problems.count, 1)
+        XCTAssertEqual(resolver.diagnostics.count, 1)
     }
 
     func testResolvesExternalLinks() async throws {
@@ -63,8 +63,8 @@ class ReferenceResolverTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)!
+        var diagnostics = [Diagnostic]()
+        let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)!
         
         var resolver = ReferenceResolver(context: context)
         
@@ -330,12 +330,12 @@ class ReferenceResolverTests: XCTestCase {
         ])
         let (_, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
         
-        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
-        XCTAssertEqual(problems.map(\.diagnostic.identifier), ["MultipleModules", "UnfindableArticle", "ArticleNotInDocumentationHierarchy"],
-                       "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let diagnostics = context.diagnostics.sorted(by: { $0.source?.lastPathComponent ?? "" < $1.source?.lastPathComponent ?? "" })
+        XCTAssertEqual(diagnostics.map(\.identifier), ["MultipleModules", "UnfindableArticle", "ArticleNotInDocumentationHierarchy"],
+                       "Encountered unexpected diagnostics: \(context.diagnostics.map(\.summary))")
         
         do {
-            let diagnostic = try XCTUnwrap(problems.dropFirst().first?.diagnostic)
+            let diagnostic = try XCTUnwrap(diagnostics.dropFirst().first)
             XCTAssertEqual(diagnostic.source?.lastPathComponent, "FirstModule.md")
             XCTAssertEqual(diagnostic.summary, "Article is not findable in invalid documentation hierarchy with 2 roots")
             XCTAssertEqual(diagnostic.explanation, """
@@ -346,7 +346,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         do {
-            let diagnostic = try XCTUnwrap(problems.last?.diagnostic)
+            let diagnostic = try XCTUnwrap(diagnostics.last)
             XCTAssertEqual(diagnostic.source?.lastPathComponent, "UncuratedArticle.md")
             XCTAssertEqual(diagnostic.summary, "Article 'UncuratedArticle.md' has no default location in invalid documentation hierarchy with 2 roots")
             XCTAssertEqual(diagnostic.explanation, """
@@ -450,7 +450,7 @@ class ReferenceResolverTests: XCTestCase {
         }
 
         // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
-        let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
+        let diagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
         XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
         let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
@@ -490,7 +490,7 @@ class ReferenceResolverTests: XCTestCase {
         }
 
         // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
-        let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination" }))
+        let diagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination" }))
         XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
         let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
@@ -524,7 +524,7 @@ class ReferenceResolverTests: XCTestCase {
         }
 
         // Make sure that linking to `Swift/Array` does not raise a diagnostic, since the page should still exist
-        XCTAssertFalse(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination" || $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
+        XCTAssertFalse(context.diagnostics.contains(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination" || $0.identifier == "org.swift.docc.unresolvedTopicReference" }))
 
         // Because the `Swift/Array` extension has an extension article, the pages should not be marked as virtual
         let extendedModule = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
@@ -574,14 +574,14 @@ class ReferenceResolverTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
 
-        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
+        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitChapter(chapter)
-        XCTAssertFalse(resolver.problems.containsErrors)
-        XCTAssertEqual(resolver.problems.count, 1)
-        XCTAssertEqual(resolver.problems.filter({ $0.diagnostic.severity == .warning }).count, 1)
+        XCTAssertFalse(resolver.diagnostics.containsError)
+        XCTAssertEqual(resolver.diagnostics.count, 1)
+        XCTAssertEqual(resolver.diagnostics.filter({ $0.severity == .warning }).count, 1)
     }
     
     func testResolvesArticleContent() async throws {
@@ -772,7 +772,7 @@ class ReferenceResolverTests: XCTestCase {
             """)
         }
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
+        XCTAssertEqual(context.diagnostics.map(\.summary).sorted(), [
             "'NotFoundArticle' doesn't exist at '/ModuleName/Something'",
             "'NotFoundSymbol' doesn't exist at '/ModuleName/Something'",
             "'OtherNotFoundArticle' doesn't exist at '/ModuleName/Something'",
@@ -786,72 +786,72 @@ class ReferenceResolverTests: XCTestCase {
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitSymbol(node.semantic as! Symbol)
         
-        let problems = resolver.problems.sorted(by: \.diagnostic.summary)
-        XCTAssertEqual(problems.count, 6)
+        let diagnostics = resolver.diagnostics.sorted(by: \.summary)
+        XCTAssertEqual(diagnostics.count, 6)
         
         // These links to ``NotFoundSymbol`` and <doc:NotFoundArticle> won't resolve.
         do {
-            let problem = try XCTUnwrap(problems.first)
-            XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'NotFoundArticle'")
-            XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
+            let diagnostic = try XCTUnwrap(diagnostics.first)
+            XCTAssertEqual(diagnostic.summary, "Can't resolve 'NotFoundArticle'")
+            XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
             // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 3)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 3)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 44)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 59)
+            XCTAssertEqual(diagnostic.range?.lowerBound.line, 3)
+            XCTAssertEqual(diagnostic.range?.upperBound.line, 3)
+            XCTAssertEqual(diagnostic.range?.lowerBound.column, 44)
+            XCTAssertEqual(diagnostic.range?.upperBound.column, 59)
         }
         do {
-            let problem = try XCTUnwrap(problems.dropFirst().first)
-            XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'NotFoundSymbol'")
-            XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
+            let diagnostic = try XCTUnwrap(diagnostics.dropFirst().first)
+            XCTAssertEqual(diagnostic.summary, "Can't resolve 'NotFoundSymbol'")
+            XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
             // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 3)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 3)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 18)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 32)
+            XCTAssertEqual(diagnostic.range?.lowerBound.line, 3)
+            XCTAssertEqual(diagnostic.range?.upperBound.line, 3)
+            XCTAssertEqual(diagnostic.range?.lowerBound.column, 18)
+            XCTAssertEqual(diagnostic.range?.upperBound.column, 32)
         }
         
         // These other links to ``OtherNotFoundSymbol`` and <doc:OtherNotFoundArticle> also won't resolve.
         do {
-            let problem = try XCTUnwrap(problems.dropFirst(2).first)
-            XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'OtherNotFoundArticle'")
-            XCTAssertEqual(problem.diagnostic.source?.path, "/SomeCatalog.docc/Something.md")
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 5)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 5)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 55)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 75)
+            let diagnostic = try XCTUnwrap(diagnostics.dropFirst(2).first)
+            XCTAssertEqual(diagnostic.summary, "Can't resolve 'OtherNotFoundArticle'")
+            XCTAssertEqual(diagnostic.source?.path, "/SomeCatalog.docc/Something.md")
+            XCTAssertEqual(diagnostic.range?.lowerBound.line, 5)
+            XCTAssertEqual(diagnostic.range?.upperBound.line, 5)
+            XCTAssertEqual(diagnostic.range?.lowerBound.column, 55)
+            XCTAssertEqual(diagnostic.range?.upperBound.column, 75)
         }
         do {
-            let problem = try XCTUnwrap(problems.dropFirst(3).first)
-            XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'OtherNotFoundSymbol'")
-            XCTAssertEqual(problem.diagnostic.source?.path, "/SomeCatalog.docc/Something.md")
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 5)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 5)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 24)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 43)
+            let diagnostic = try XCTUnwrap(diagnostics.dropFirst(3).first)
+            XCTAssertEqual(diagnostic.summary, "Can't resolve 'OtherNotFoundSymbol'")
+            XCTAssertEqual(diagnostic.source?.path, "/SomeCatalog.docc/Something.md")
+            XCTAssertEqual(diagnostic.range?.lowerBound.line, 5)
+            XCTAssertEqual(diagnostic.range?.upperBound.line, 5)
+            XCTAssertEqual(diagnostic.range?.lowerBound.column, 24)
+            XCTAssertEqual(diagnostic.range?.upperBound.column, 43)
         }
         
         // This image name won't resolve: ![Some image that's not found](some-not-found-image)
         do {
-            let problem = try XCTUnwrap(problems.dropFirst(4).first)
-            XCTAssertEqual(problem.diagnostic.summary, "Resource 'not-found-image' couldn't be found")
-            XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
+            let diagnostic = try XCTUnwrap(diagnostics.dropFirst(4).first)
+            XCTAssertEqual(diagnostic.summary, "Resource 'not-found-image' couldn't be found")
+            XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
             // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 5)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 5)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 32)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 79)
+            XCTAssertEqual(diagnostic.range?.lowerBound.line, 5)
+            XCTAssertEqual(diagnostic.range?.upperBound.line, 5)
+            XCTAssertEqual(diagnostic.range?.lowerBound.column, 32)
+            XCTAssertEqual(diagnostic.range?.upperBound.column, 79)
         }
         
         // This other image name also won't resolve: ![Some other image that's not found](other-not-found-image)
         do {
-            let problem = try XCTUnwrap(problems.dropFirst(5).first)
-            XCTAssertEqual(problem.diagnostic.summary, "Resource 'other-not-found-image' couldn't be found")
-            XCTAssertEqual(problem.diagnostic.source?.path, "/SomeCatalog.docc/Something.md")
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 43)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 102)
+            let diagnostic = try XCTUnwrap(diagnostics.dropFirst(5).first)
+            XCTAssertEqual(diagnostic.summary, "Resource 'other-not-found-image' couldn't be found")
+            XCTAssertEqual(diagnostic.source?.path, "/SomeCatalog.docc/Something.md")
+            XCTAssertEqual(diagnostic.range?.lowerBound.line, 7)
+            XCTAssertEqual(diagnostic.range?.upperBound.line, 7)
+            XCTAssertEqual(diagnostic.range?.lowerBound.column, 43)
+            XCTAssertEqual(diagnostic.range?.upperBound.column, 102)
         }
     }
 }

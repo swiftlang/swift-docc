@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,12 +14,12 @@ public import Markdown
 public struct NonOverviewHeadingChecker: Checker {
     public var overviewHeading: Heading?
     public var nonOverviewHeadings: [Heading] = []
-    public var problems: [Problem] {
+    public var diagnostics: [Diagnostic] {
         guard !nonOverviewHeadings.isEmpty else {
             return []
         }
 
-        return nonOverviewHeadings.compactMap { heading -> Problem? in
+        return nonOverviewHeadings.compactMap { heading -> Diagnostic? in
             guard let headingRange = heading.range else { return nil }
             let notes: [DiagnosticNote]
             if let sourceFile, let range = overviewHeading?.range {
@@ -27,16 +27,6 @@ public struct NonOverviewHeadingChecker: Checker {
             } else {
                 notes = []
             }
-
-            let diagnostic = Diagnostic(
-                source: sourceFile,
-                severity: .information,
-                range: heading.range,
-                identifier: "org.swift.docc.NonOverviewHeadings",
-                summary: #"The majority of content should be under level-3 headers under the "Overview" section"#,
-                explanation: nil,
-                notes: notes
-            )
 
             let solution: Solution
             if overviewHeading == nil {
@@ -47,7 +37,16 @@ public struct NonOverviewHeadingChecker: Checker {
                 solution = Solution(summary: "Change the heading to a level-3 heading", replacements: [replacement])
             }
 
-            return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            return Diagnostic(
+                source: sourceFile,
+                severity: .information,
+                range: heading.range,
+                identifier: "org.swift.docc.NonOverviewHeadings",
+                summary: #"The majority of content should be under level-3 headers under the "Overview" section"#,
+                explanation: nil,
+                notes: notes,
+                possibleSolutions: [solution]
+            )
         }
     }
 

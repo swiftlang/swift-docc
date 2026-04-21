@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,13 +25,13 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map(\.summary)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -412,9 +412,9 @@ class SemaToRenderNodeTests: XCTestCase {
                 return
             }
             
-            var problems = [Problem]()
-            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-                XCTFail("Couldn't create tutorial from markup: \(problems)")
+            var diagnostics = [Diagnostic]()
+            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+                XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
                 return
             }
             
@@ -565,12 +565,12 @@ class SemaToRenderNodeTests: XCTestCase {
         try assertCompileOverviewWithNoVolumes(
             bundle: bundle,
             context: context,
-            // Expect one problem for the empty chapter.
-            expectedProblemsCount: 1
+            // Expect one diagnostic for the empty chapter.
+            expectedDiagnosticsCount: 1
         )
     }
     
-    private func assertCompileOverviewWithNoVolumes(bundle: DocumentationBundle, context: DocumentationContext, expectedProblemsCount: Int = 0) throws {
+    private func assertCompileOverviewWithNoVolumes(bundle: DocumentationBundle, context: DocumentationContext, expectedDiagnosticsCount: Int = 0) throws {
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
@@ -578,14 +578,14 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
         // Verify we emit a diagnostic for the chapter with no tutorial references.
-        XCTAssertEqual(problems.count, expectedProblemsCount, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, expectedDiagnosticsCount, "Found diagnostics \(diagnostics.map(\.summary)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -815,13 +815,13 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 0, "Found diagnostics \(diagnostics.map(\.summary)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -1588,13 +1588,13 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -1911,10 +1911,10 @@ Document
         
         let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink" }).count, 1)
-        XCTAssertNotNil(context.problems.first(where: { problem -> Bool in
-            return problem.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink"
-                && problem.diagnostic.summary.contains("https://example.com/link")
+        XCTAssertEqual(context.diagnostics.filter { $0.identifier == "org.swift.docc.InvalidDocumentationLink" }.count, 1)
+        XCTAssertNotNil(context.diagnostics.first(where: { problem -> Bool in
+            return problem.identifier == "org.swift.docc.InvalidDocumentationLink"
+                && problem.summary.contains("https://example.com/link")
         }))
     }
     
@@ -2469,13 +2469,13 @@ Document
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssert(problems.filter { $0.diagnostic.severity == .error }.isEmpty, "Found errors when analyzing Tutorials overview.")
+        XCTAssert(diagnostics.filter { $0.severity == .error }.isEmpty, "Found errors when analyzing Tutorials overview.")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -2490,8 +2490,8 @@ Document
                 return
             }
             
-            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-                XCTFail("Couldn't create tutorial from markup: \(problems)")
+            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+                XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
                 return
             }
         
@@ -2561,13 +2561,13 @@ Document
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssert(problems.filter { $0.diagnostic.severity == .error }.isEmpty, "Found errors when analyzing tutorial.")
+        XCTAssert(diagnostics.filter { $0.severity == .error }.isEmpty, "Found errors when analyzing tutorial.")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -2730,12 +2730,12 @@ Document
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Verify that the inherited docs which should be ignored are not reference resolved.
-        // Verify inherited docs are reference resolved and their problems are recorded.
-        let missingResources = context.diagnosticEngine.problems.filter { p -> Bool in
-            return p.diagnostic.identifier == "org.swift.docc.unresolvedResource"
+        // Verify inherited docs are reference resolved and their diagnostics are recorded.
+        let missingResources = context.diagnosticEngine.diagnostics.filter { p -> Bool in
+            return p.identifier == "org.swift.docc.unresolvedResource"
         }
         XCTAssertFalse(missingResources.contains(where: { p -> Bool in
-            return p.diagnostic.summary == "Resource 'my-inherited-image.png' couldn't be found"
+            return p.summary == "Resource 'my-inherited-image.png' couldn't be found"
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
@@ -2938,8 +2938,8 @@ Document
         let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
 
         // Verify that we don't reference resolve inherited docs.
-        XCTAssertFalse(context.diagnosticEngine.problems.contains(where: { problem in
-            problem.diagnostic.summary.contains("my-inherited-image.png")
+        XCTAssertFalse(context.diagnosticEngine.diagnostics.contains(where: { problem in
+            problem.summary.contains("my-inherited-image.png")
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
@@ -3338,9 +3338,9 @@ Document
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
         }
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create technology from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create technology from markup: \(diagnostics)")
             return
         }
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
@@ -3477,7 +3477,7 @@ Document
             """.write(to: url.appendingPathComponent("MyObjectiveCClassObjectiveCName.md"), atomically: true, encoding: .utf8)
         }
         
-        XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "\(context.diagnostics.map(\.summary))")
         
         let reference = try XCTUnwrap(context.knownIdentifiers.first { $0.path.hasSuffix("MixedFramework/MyObjectiveCClassSwiftName") })
         
@@ -3539,7 +3539,7 @@ Document
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "\(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let reference = moduleReference.appendingPath("SomeClass3")
@@ -3609,7 +3609,7 @@ Document
                 """)
         }
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["org.swift.docc.unknownDirective"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssertEqual(context.diagnostics.map(\.identifier), ["org.swift.docc.unknownDirective"], "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
             
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         

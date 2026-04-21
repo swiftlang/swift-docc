@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,7 +40,7 @@ class SnippetResolverTests: XCTestCase {
     
     func testRenderingSnippetsWithOptionalPathPrefixes() async throws {
         for pathPrefix in optionalPathPrefixes {
-            let (problems, _, snippetRenderBlocks) = try await makeSnippetContext(
+            let (diagnostics, _, snippetRenderBlocks) = try await makeSnippetContext(
                 snippets: [
                     makeSnippet(
                         pathComponents: ["Snippets", "First"],
@@ -71,7 +71,7 @@ class SnippetResolverTests: XCTestCase {
             )
             
             // These links should all resolve, regardless of optional prefix
-            XCTAssertTrue(problems.isEmpty, "Unexpected problems for path prefix '\(pathPrefix)': \(problems.map(\.diagnostic.summary))")
+            XCTAssertTrue(diagnostics.isEmpty, "Unexpected problems for path prefix '\(pathPrefix)': \(diagnostics.map(\.summary))")
             
             // Because the snippet links resolved, their content should render on the page.
             
@@ -125,7 +125,7 @@ class SnippetResolverTests: XCTestCase {
     
     func testWarningsAboutMisspelledSnippetPathsAndMisspelledSlice() async throws {
         for pathPrefix in optionalPathPrefixes.prefix(1) {
-            let (problems, logOutput, snippetRenderBlocks) = try await makeSnippetContext(
+            let (diagnostics, logOutput, snippetRenderBlocks) = try await makeSnippetContext(
                 snippets: [
                     makeSnippet(
                         pathComponents: ["Snippets", "First"],
@@ -150,7 +150,7 @@ class SnippetResolverTests: XCTestCase {
             )
             
             // The first snippet has a misspelled path and the second has a misspelled slice
-            XCTAssertEqual(problems.map(\.diagnostic.summary), [
+            XCTAssertEqual(diagnostics.map(\.summary), [
                 "Snippet named 'Frst' couldn't be found",
                 "Slice named 'commt' doesn't exist in snippet 'First'",
             ])
@@ -168,14 +168,14 @@ class SnippetResolverTests: XCTestCase {
             @Snippet(path: \(pathPrefix)First, slice: commt)
             """
             do {
-                let snippetPathProblem = try XCTUnwrap(problems.first)
-                let solution = try XCTUnwrap(snippetPathProblem.possibleSolutions.first)
+                let snippetPathDiagnostic = try XCTUnwrap(diagnostics.first)
+                let solution = try XCTUnwrap(snippetPathDiagnostic.possibleSolutions.first)
                 let modifiedLines = try solution.applyTo(rootMarkupContent).components(separatedBy: "\n")
                 XCTAssertEqual(modifiedLines[6], "@Snippet(path: \(pathPrefix)First)")
             }
             do {
-                let snippetSliceProblem = try XCTUnwrap(problems.last)
-                let solution = try XCTUnwrap(snippetSliceProblem.possibleSolutions.first)
+                let snippetSliceDiagnostic = try XCTUnwrap(diagnostics.last)
+                let solution = try XCTUnwrap(snippetSliceDiagnostic.possibleSolutions.first)
                 let modifiedLines = try solution.applyTo(rootMarkupContent).components(separatedBy: "\n")
                 XCTAssertEqual(modifiedLines[8], "@Snippet(path: \(pathPrefix)First, slice: comment)")
             }
@@ -210,7 +210,7 @@ class SnippetResolverTests: XCTestCase {
         rootContent: String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) async throws -> ([Problem], logOutput: String, some Collection<RenderBlockContent>) {
+    ) async throws -> ([Diagnostic], logOutput: String, some Collection<RenderBlockContent>) {
         let catalog = Folder(name: "Something.docc", content: [
             JSONFile(name: "something-snippets.symbols.json", content: makeSymbolGraph(moduleName: "Snippets", symbols: snippets)),
             // Include a "real" module that's separate from the snippet symbol graph.
@@ -247,7 +247,7 @@ class SnippetResolverTests: XCTestCase {
             XCTFail("The rendered page is missing the 'Overview' heading. Something unexpected is happening with the page content.", file: file, line: line)
         }
         
-        return (context.problems.sorted(by: \.diagnostic.range!.lowerBound.line), logStore.text, renderBlocks.dropFirst())
+        return (context.diagnostics.sorted(by: \.range!.lowerBound.line), logStore.text, renderBlocks.dropFirst())
     }
     
     private func makeSnippet(

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,10 +22,10 @@ struct NonInclusiveLanguageCheckerTests {
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        #expect(checker.problems.count == 1)
+        #expect(checker.diagnostics.count == 1)
 
-        let problem = try #require(checker.problems.first)
-        let range = try #require(problem.diagnostic.range)
+        let diagnostic = try #require(checker.diagnostics.first)
+        let range = try #require(diagnostic.range)
         #expect(range.lowerBound.line == 1)
         #expect(range.lowerBound.column == 5)
         #expect(range.upperBound.line == 1)
@@ -42,24 +42,24 @@ struct NonInclusiveLanguageCheckerTests {
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        #expect(checker.problems.count == 3)
+        #expect(checker.diagnostics.count == 3)
 
-        let problem = try #require(checker.problems.first)
-        let range = try #require(problem.diagnostic.range)
+        let diagnostic = try #require(checker.diagnostics.first)
+        let range = try #require(diagnostic.range)
         #expect(range.lowerBound.line == 1)
         #expect(range.lowerBound.column == 5)
         #expect(range.upperBound.line == 1)
         #expect(range.upperBound.column == 18)
 
-        let problemTwo = try #require(checker.problems.dropFirst(1).first)
-        let rangeTwo = try #require(problemTwo.diagnostic.range)
+        let diagnosticTwo = try #require(checker.diagnostics.dropFirst(1).first)
+        let rangeTwo = try #require(diagnosticTwo.range)
         #expect(rangeTwo.lowerBound.line == 2)
         #expect(rangeTwo.lowerBound.column == 5)
         #expect(rangeTwo.upperBound.line == 2)
         #expect(rangeTwo.upperBound.column == 20)
 
-        let problemThree = try #require(checker.problems.dropFirst(2).first)
-        let rangeThree = try #require(problemThree.diagnostic.range)
+        let diagnosticThree = try #require(checker.diagnostics.dropFirst(2).first)
+        let rangeThree = try #require(diagnosticThree.range)
         #expect(rangeThree.lowerBound.line == 3)
         #expect(rangeThree.lowerBound.column == 5)
         #expect(rangeThree.upperBound.line == 3)
@@ -76,10 +76,10 @@ The blacklist is in the abstract.
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        #expect(checker.problems.count == 1)
+        #expect(checker.diagnostics.count == 1)
 
-        let problem = try #require(checker.problems.first)
-        let range = try #require(problem.diagnostic.range)
+        let diagnostic = try #require(checker.diagnostics.first)
+        let range = try #require(diagnostic.range)
         #expect(range.lowerBound.line == 3)
         #expect(range.lowerBound.column == 5)
         #expect(range.upperBound.line == 3)
@@ -101,10 +101,10 @@ master branch is the default.
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        #expect(checker.problems.count == 1)
+        #expect(checker.diagnostics.count == 1)
 
-        let problem = try #require(checker.problems.first)
-        let range = try #require(problem.diagnostic.range)
+        let diagnostic = try #require(checker.diagnostics.first)
+        let range = try #require(diagnostic.range)
         #expect(range.lowerBound.line == 8)
         #expect(range.lowerBound.column == 1)
         #expect(range.upperBound.line == 8)
@@ -121,10 +121,10 @@ master branch is the default.
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        #expect(checker.problems.count == 1)
+        #expect(checker.diagnostics.count == 1)
 
-        let problem = try #require(checker.problems.first)
-        let range = try #require(problem.diagnostic.range)
+        let diagnostic = try #require(checker.diagnostics.first)
+        let range = try #require(diagnostic.range)
         #expect(range.lowerBound.line == 2)
         #expect(range.lowerBound.column == 13)
         #expect(range.upperBound.line == 2)
@@ -139,10 +139,10 @@ The name `MachineSlave` is unacceptable.
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        #expect(checker.problems.count == 1)
+        #expect(checker.diagnostics.count == 1)
 
-        let problem = try #require(checker.problems.first)
-        let range = try #require(problem.diagnostic.range)
+        let diagnostic = try #require(checker.diagnostics.first)
+        let range = try #require(diagnostic.range)
         #expect(range.lowerBound.line == 1)
         #expect(range.lowerBound.column == 18)
         #expect(range.upperBound.line == 1)
@@ -164,9 +164,9 @@ func aBlackListedFunc() {
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        #expect(checker.problems.count == 1)
-        let problem = try #require(checker.problems.first)
-        let range = try #require(problem.diagnostic.range)
+        #expect(checker.diagnostics.count == 1)
+        let diagnostic = try #require(checker.diagnostics.first)
+        let range = try #require(diagnostic.range)
         #expect(range.lowerBound.line == 5)
         #expect(range.lowerBound.column == 7)
         #expect(range.upperBound.line == 5)
@@ -191,7 +191,7 @@ func aBlackListedFunc() {
         ])
         let context = try await load(catalog: catalog)
         
-        #expect(context.problems.isEmpty) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
+        #expect(context.diagnostics.isEmpty) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
     }
 
     @Test(arguments: [
@@ -208,6 +208,6 @@ func aBlackListedFunc() {
         let context = try await load(catalog: catalog, diagnosticFilterLevel: configuredDiagnosticFilterLevel, configuration: configuration)
         
         // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
-        #expect(context.problems.contains(where: { $0.diagnostic.identifier == "NonInclusiveLanguage" }) == expectsToIncludeNonInclusiveDiagnostics)
+        #expect(context.diagnostics.contains(where: { $0.identifier == "NonInclusiveLanguage" }) == expectsToIncludeNonInclusiveDiagnostics)
     }
 }

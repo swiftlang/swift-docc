@@ -21,7 +21,7 @@ struct DuplicateTopicsSectionsTests {
     func doesNotWarnForEmptyDocument() {
         var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(Document())
-        #expect(checker.problems.isEmpty)
+        #expect(checker.diagnostics.isEmpty)
     }
     
     @Test
@@ -36,7 +36,7 @@ struct DuplicateTopicsSectionsTests {
         let document = Document(parsing: markupSource, options: [])
         var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(document)
-        #expect(checker.problems.isEmpty)
+        #expect(checker.diagnostics.isEmpty)
     }
     
     @Test
@@ -62,26 +62,26 @@ struct DuplicateTopicsSectionsTests {
         let secondTopicsHeading = try #require(document.child(at: 3) as? Heading)
         let thirdTopicsHeading  = try #require(document.child(at: 5) as? Heading)
         
-        #expect(checker.problems.count == 2)
-        for (problem, expectedDiagnosticRange) in zip(checker.problems, [secondTopicsHeading.range, thirdTopicsHeading.range]) {
-            #expect(problem.diagnostic.summary == "Topics section can only appear once per page")
-            #expect(problem.diagnostic.explanation == "A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. Each page can only have a single Topics section.")
+        #expect(checker.diagnostics.count == 2)
+        for (diagnostics, expectedDiagnosticRange) in zip(checker.diagnostics, [secondTopicsHeading.range, thirdTopicsHeading.range]) {
+            #expect(diagnostics.summary == "Topics section can only appear once per page")
+            #expect(diagnostics.explanation == "A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. Each page can only have a single Topics section.")
             
             
-            #expect(problem.possibleSolutions.count == 2)
-            let firstSolution = try #require(problem.possibleSolutions.first)
+            #expect(diagnostics.possibleSolutions.count == 2)
+            let firstSolution = try #require(diagnostics.possibleSolutions.first)
             #expect(firstSolution.summary == "Change heading name")
             #expect(firstSolution.replacements.count == 1)
             #expect(firstSolution.replacements.first?.range == expectedDiagnosticRange)
             #expect(firstSolution.replacements.first?.replacement == "## <#New heading name#>")
             
-            let secondSolution = try #require(problem.possibleSolutions.last)
+            let secondSolution = try #require(diagnostics.possibleSolutions.last)
             #expect(secondSolution.summary == "Move this section's content under the first Topics section")
             #expect(secondSolution.replacements.count == 0)
             
-            let diagnostic = problem.diagnostic
+            let diagnostic = diagnostics
             #expect(diagnostic.identifier == "MultipleTopicsSections")
-            #expect(problem.diagnostic.range == expectedDiagnosticRange)
+            #expect(diagnostics.range == expectedDiagnosticRange)
             
             let note = try #require(diagnostic.notes.first)
             #expect(note.range == firstTopicsHeading.range)

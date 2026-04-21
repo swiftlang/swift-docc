@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -77,25 +77,34 @@ public final class TutorialSection: Semantic, DirectiveConvertible, Abstracted, 
         }
     }
     
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == TutorialSection.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialSection>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialSection>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<TutorialSection>(severityIfFound: .warning, allowedDirectives: [ContentAndMedia.directiveName, Stack.directiveName, Steps.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<TutorialSection>(severityIfFound: .warning, allowedDirectives: [ContentAndMedia.directiveName, Stack.directiveName, Steps.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
-        let requiredTitle = Semantic.Analyses.HasArgument<TutorialSection, Semantics.Title>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
+        let requiredTitle = Semantic.Analyses.HasArgument<TutorialSection, Semantics.Title>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
         
         var remainder: MarkupContainer
         let optionalSteps: Steps?
-        (optionalSteps, remainder) = Semantic.Analyses.HasExactlyOne<TutorialSection, Steps>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
+        (optionalSteps, remainder) = Semantic.Analyses.HasExactlyOne<TutorialSection, Steps>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
         
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         
         let redirects: [Redirect]
-        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         
-        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, featureFlags: featureFlags, problems: &problems)
+        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         
         guard let title = requiredTitle else {
             return nil

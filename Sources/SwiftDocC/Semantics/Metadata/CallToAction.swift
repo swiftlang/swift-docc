@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -97,42 +97,42 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         }
     }
 
-    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         var isValid = true
 
         if self.url == nil && self.file == nil {
-            problems.append(.init(diagnostic: .init(
+            diagnostics.append(.init(
                 source: source,
                 severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(CallToAction.self).missingLink",
                 summary: "\(CallToAction.directiveName.singleQuoted) directive requires `url` or `file` argument",
                 explanation: "The Call to Action requires a link to direct the user to."
-            )))
+            ))
 
             isValid = false
         } else if self.url != nil && self.file != nil {
-            problems.append(.init(diagnostic: .init(
+            diagnostics.append(.init(
                 source: source,
                 severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(CallToAction.self).tooManyLinks",
                 summary: "\(CallToAction.directiveName.singleQuoted) directive requires only one of `url` or `file`",
                 explanation: "Both the `url` and `file` arguments specify the link in the heading; specifying both of them creates ambiguity in where the call should link."
-            )))
+            ))
 
             isValid = false
         }
 
         if self.purpose == nil && self.label == nil {
-            problems.append(.init(diagnostic: .init(
+            diagnostics.append(.init(
                 source: source,
                 severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(CallToAction.self).missingLabel",
                 summary: "\(CallToAction.directiveName.singleQuoted) directive requires `purpose` or `label` argument",
                 explanation: "Without a `purpose` or `label`, the Call to Action has no label to apply to the link."
-            )))
+            ))
 
             isValid = false
         }
@@ -152,17 +152,16 @@ extension CallToAction {
     func resolveFile(
         for bundle: DocumentationBundle,
         in context: DocumentationContext,
-        problems: inout [Problem]) -> ResourceReference?
-    {
+        diagnostics: inout [Diagnostic]
+    ) -> ResourceReference? {
         if let file = self.file {
             if context.resolveAsset(named: file.url.lastPathComponent, in: bundle.rootReference) == nil {
-                problems.append(.init(
-                    diagnostic: Diagnostic(
-                        source: url,
-                        severity: .warning,
-                        range: originalMarkup.range,
-                        identifier: "org.swift.docc.Project.ProjectFilesNotFound",
-                        summary: "\(file.path) file reference not found in \(CallToAction.directiveName.singleQuoted) directive"),
+                diagnostics.append(Diagnostic(
+                    source: url,
+                    severity: .warning,
+                    range: originalMarkup.range,
+                    identifier: "org.swift.docc.Project.ProjectFilesNotFound",
+                    summary: "\(file.path) file reference not found in \(CallToAction.directiveName.singleQuoted) directive",
                     possibleSolutions: [
                         Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
                     ]

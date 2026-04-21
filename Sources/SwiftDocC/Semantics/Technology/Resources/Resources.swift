@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -54,7 +54,16 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         self.redirects = redirects
     }
     
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Resources.directiveName)
         
         var remainder: [any Markup]
@@ -64,19 +73,19 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             remainder = Array(directive.children.dropFirst(1))
         } else {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.Resources.HasContent", summary: "\(Resources.directiveName.singleQuoted) directive requires a brief initial paragraph describing what the reader will find on the \(Resources.title) page")
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+            diagnostics.append(diagnostic)
             remainder = Array(directive.children)
             requiredParagraph = nil
         }
 
-        Semantic.Analyses.HasOnlyKnownDirectives<Resources>(severityIfFound: .warning, allowedDirectives: Tile.DirectiveNames.allCases.map { $0.rawValue } + [Redirect.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Resources>(severityIfFound: .warning, allowedDirectives: Tile.DirectiveNames.allCases.map { $0.rawValue } + [Redirect.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
         let redirects: [Redirect]
         (redirects, remainder) = remainder.categorize { child -> Redirect? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
         
         let tiles: [Tile]
@@ -84,7 +93,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard let childDirective = child as? BlockDirective, Tile.DirectiveNames(rawValue: childDirective.name) != nil else {
                 return nil
             }
-            return Tile(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, problems: &problems)
+            return Tile(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
         
         var seenTileDirectiveNames = Set<String>()
@@ -93,9 +102,9 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard !seenTileDirectiveNames.contains(tile.title) else {
                 if !tileName.isEmpty,
                     let range = tile.originalMarkup.range {
-                    let diagnostic = Diagnostic(source: source, severity: .warning, range: tile.originalMarkup.range, identifier: "org.swift.docc.Resources.DuplicateTile", summary: "Duplicate child directive \(tileName.singleQuoted) in \(Resources.directiveName.singleQuoted)")
                     let solution = Solution.init(summary: "Remove extraneous \(tileName.singleQuoted) directive", replacements: [Replacement(range: range, replacement: "")])
-                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+                    let diagnostic = Diagnostic(source: source, severity: .warning, range: tile.originalMarkup.range, identifier: "org.swift.docc.Resources.DuplicateTile", summary: "Duplicate child directive \(tileName.singleQuoted) in \(Resources.directiveName.singleQuoted)", possibleSolutions: [solution])
+                    diagnostics.append(diagnostic)
                 }
                 return false
             }
@@ -105,13 +114,14 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         }
         
         for extraneousElement in remainder {
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: extraneousElement.range, identifier: "org.swift.docc.Resources.ExtraneousContent", summary: "Extraneous child element of \(Resources.directiveName.singleQuoted) directive")
-            if let range = extraneousElement.range {
-                let solution = Solution(summary: "Remove extraneous element", replacements: [Replacement(range: range, replacement: "")])
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+            let solutions: [Solution] = if let range = extraneousElement.range {
+                [Solution(summary: "Remove extraneous element", replacements: [Replacement(range: range, replacement: "")])]
             } else {
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                []
             }
+            diagnostics.append(
+                Diagnostic(source: source, severity: .warning, range: extraneousElement.range, identifier: "org.swift.docc.Resources.ExtraneousContent", summary: "Extraneous child element of \(Resources.directiveName.singleQuoted) directive", possibleSolutions: solutions)
+            )
         }
         
         guard let paragraph = requiredParagraph else {

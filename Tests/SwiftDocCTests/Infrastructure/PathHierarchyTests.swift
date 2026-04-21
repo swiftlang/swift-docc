@@ -33,7 +33,7 @@ struct PathHierarchyTests_new {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let tree = context.linkResolver.localResolver.pathHierarchy
         let firstArticle = try tree.find(path: "/Something/First", onlyFindSymbols: false)
@@ -85,7 +85,7 @@ struct PathHierarchyTests_new {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let tree = context.linkResolver.localResolver.pathHierarchy
         let firstSymbol  = try tree.find(path: "/ModuleName/First", onlyFindSymbols: false)
@@ -117,7 +117,7 @@ struct PathHierarchyTests_new {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let tree = context.linkResolver.localResolver.pathHierarchy
         let firstArticle  = try tree.find(path: "/Something/First", onlyFindSymbols: false)
@@ -143,7 +143,7 @@ struct PathHierarchyTests_new {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let tree = context.linkResolver.localResolver.pathHierarchy
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -1382,7 +1382,7 @@ class PathHierarchyTests: XCTestCase {
             InfoPlist(displayName: "ModuleName")
         }
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["ArticleCollideWithSymbol"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssertEqual(context.diagnostics.map(\.identifier), ["ArticleCollideWithSymbol"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // The added article above has the same path as an existing symbol in the this module.
@@ -2129,7 +2129,7 @@ class PathHierarchyTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems \(context.diagnostics.map(\.summary))")
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         
@@ -2178,7 +2178,7 @@ class PathHierarchyTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems \(context.diagnostics.map(\.summary))")
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         
@@ -2241,7 +2241,7 @@ class PathHierarchyTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems \(context.diagnostics.map(\.summary))")
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         
@@ -2334,8 +2334,8 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(errorInfo.solutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
         }
         
-        let linkProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "No symbol matched 'ModuleNaem'. Can't resolve 'ModuleNaem'."}))
-        XCTAssertEqual(linkProblem.possibleSolutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+        let linkDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "No symbol matched 'ModuleNaem'. Can't resolve 'ModuleNaem'."}))
+        XCTAssertEqual(linkDiagnostic.possibleSolutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
     }
         
     func testSymbolsWithSameNameAsModule() async throws {
@@ -2521,7 +2521,7 @@ class PathHierarchyTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems \(context.diagnostics.map(\.summary))")
         
         let articleID = try tree.find(path: "/CatalogName/Some-Article", onlyFindSymbols: false)
         
@@ -2556,7 +2556,7 @@ class PathHierarchyTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems \(context.diagnostics.map(\.summary))")
         
         try assertPathCollision("ModuleName/SomeClass-(Something)", in: tree, collisions: [
             ("some-class-id-1", "-5bq4k"),
@@ -2839,7 +2839,7 @@ class PathHierarchyTests: XCTestCase {
 
         do {
             let (_, _, context) = try await loadBundle(from: bundleURL)
-            XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0) })")
+            XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) })")
             
             let tree = context.linkResolver.localResolver.pathHierarchy
             

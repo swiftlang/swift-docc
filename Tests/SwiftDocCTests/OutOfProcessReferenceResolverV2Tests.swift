@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -388,7 +388,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             externalBundleID: resolver
         ]
         let (_, context) = try await loadBundle(catalog: inputDirectory, configuration: configuration)
-        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [], "Encountered unexpected problems")
+        XCTAssertEqual(context.diagnostics.map(\.summary), [], "Encountered unexpected problems")
         
         let reference = try XCTUnwrap(context.soleRootModuleReference, "This example catalog only has a root page")
         
@@ -461,18 +461,18 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         ]
         let (_, context) = try await loadBundle(catalog: inputDirectory, configuration: configuration)
         
-        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
+        XCTAssertEqual(context.diagnostics.map(\.summary), [
             "Some external link issue summary",
         ])
         
-        let problem = try XCTUnwrap(context.problems.sorted(by: \.diagnostic.identifier).first)
+        let diagnostic = try XCTUnwrap(context.diagnostics.sorted(by: \.identifier).first)
         
-        XCTAssertEqual(problem.diagnostic.summary, "Some external link issue summary")
-        XCTAssertEqual(problem.diagnostic.range?.lowerBound, .init(line: 3, column: 69, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
-        XCTAssertEqual(problem.diagnostic.range?.upperBound, .init(line: 3, column: 97, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
+        XCTAssertEqual(diagnostic.summary, "Some external link issue summary")
+        XCTAssertEqual(diagnostic.range?.lowerBound, .init(line: 3, column: 69, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
+        XCTAssertEqual(diagnostic.range?.upperBound, .init(line: 3, column: 97, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
         
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
         XCTAssertEqual(solution.summary, "Some external solution")
         XCTAssertEqual(solution.replacements.count, 1)
         XCTAssertEqual(solution.replacements.first?.range.lowerBound, .init(line: 3, column: 87, source: nil))
@@ -482,7 +482,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         let diagnosticOutput = LogHandle.LogStorage()
         let fileSystem = try TestFileSystem(folders: [inputDirectory])
         let diagnosticFormatter = DiagnosticConsoleWriter(LogHandle.memory(diagnosticOutput), formattingOptions: [], highlight: true, dataProvider: fileSystem)
-        diagnosticFormatter.receive(context.diagnosticEngine.problems)
+        diagnosticFormatter.receive(context.diagnosticEngine.diagnostics)
         try diagnosticFormatter.flush()
         
         let warning    = "\u{001B}[1;33m"
@@ -500,7 +500,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         """)
         
         // Verify the suggestion replacement
-        let source = try XCTUnwrap(problem.diagnostic.source)
+        let source = try XCTUnwrap(diagnostic.source)
         let original = String(decoding: try fileSystem.contents(of: source), as: UTF8.self)
         
         XCTAssertEqual(try solution.applyTo(original), """

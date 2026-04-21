@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -46,32 +46,40 @@ public final class Step: Semantic, DirectiveConvertible {
         self.caption = caption
     }
     
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Step.directiveName)
         
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Step>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Step>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Step>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName, Code.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Step>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName, Code.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
         var remainder: MarkupContainer
         let optionalMedia: (any Media)?
-        (optionalMedia, remainder) = Semantic.Analyses.HasExactlyOneMedia<Step>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
+        (optionalMedia, remainder) = Semantic.Analyses.HasExactlyOneMedia<Step>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
         
         let optionalCode: Code?
-        (optionalCode, remainder) = Semantic.Analyses.HasExactlyOne<Step, Code>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (optionalCode, remainder) = Semantic.Analyses.HasExactlyOne<Step, Code>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         
         let paragraphs: [Paragraph]
-        (paragraphs, remainder) = Semantic.Analyses.ExtractAllMarkup<Paragraph>().analyze(directive, children: remainder, source: source, problems: &problems)
+        (paragraphs, remainder) = Semantic.Analyses.ExtractAllMarkup<Paragraph>().analyze(directive, children: remainder, source: source, diagnostics: &diagnostics)
         
         let content: MarkupContainer
         let caption: MarkupContainer
         
-        func diagnoseExtraneousContent(element: any Markup) -> Problem {
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: element.range, identifier: "org.swift.docc.\(Step.self).ExtraneousContent", summary: "Extraneous element: \(Step.directiveName.singleQuoted) directive should only have a single paragraph for its instructional content and an optional paragraph to serve as a caption")
+        func diagnoseExtraneousContent(element: any Markup) -> Diagnostic {
             let solutions = element.range.map {
                 return [Solution(summary: "Remove extraneous element", replacements: [Replacement(range: $0, replacement: "")])]
             } ?? []
-            return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+            return Diagnostic(source: source, severity: .warning, range: element.range, identifier: "org.swift.docc.\(Step.self).ExtraneousContent", summary: "Extraneous element: \(Step.directiveName.singleQuoted) directive should only have a single paragraph for its instructional content and an optional paragraph to serve as a caption", possibleSolutions: solutions)
         }
         
         // The first paragraph participates in the step's main `content`.
@@ -92,23 +100,23 @@ public final class Step: Semantic, DirectiveConvertible {
             content = MarkupContainer(paragraphs[0])
             caption = MarkupContainer(paragraphs[1])
             for extraneousElement in paragraphs.suffix(from: 2) {
-                problems.append(diagnoseExtraneousContent(element: extraneousElement))
+                diagnostics.append(diagnoseExtraneousContent(element: extraneousElement))
             }
         }
         
         let blockQuotes: [BlockQuote]
-        (blockQuotes, remainder) = Semantic.Analyses.ExtractAllMarkup<BlockQuote>().analyze(directive, children: remainder, source: source, problems: &problems)
+        (blockQuotes, remainder) = Semantic.Analyses.ExtractAllMarkup<BlockQuote>().analyze(directive, children: remainder, source: source, diagnostics: &diagnostics)
         
         for extraneousElement in remainder {
             guard (extraneousElement as? BlockDirective)?.name != Comment.directiveName else {
                 continue
             }
-            problems.append(diagnoseExtraneousContent(element: extraneousElement))
+            diagnostics.append(diagnoseExtraneousContent(element: extraneousElement))
         }
         
         if content.isEmpty {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.HasContent", summary: "\(Step.directiveName.singleQuoted) has no content; \(Step.directiveName.singleQuoted) directive should at least have an instructional sentence")
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+            diagnostics.append(diagnostic)
         }
         
         self.init(originalMarkup: directive, media: optionalMedia, code: optionalCode, content: MarkupContainer(content.elements), caption: MarkupContainer(caption.elements + blockQuotes as [any Markup]))

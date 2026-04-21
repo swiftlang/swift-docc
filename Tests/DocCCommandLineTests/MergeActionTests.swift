@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -928,8 +928,8 @@ class MergeActionTests: XCTestCase {
             let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
 
             XCTAssert(
-                context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,
-                "Unexpected problems: \(context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.map(\.diagnostic.summary).joined(separator: "\n"))",
+                context.diagnostics.filter { $0.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,
+                "Unexpected problems: \(context.diagnostics.filter { $0.identifier != "org.swift.docc.SummaryContainsLink" }.map(\.summary).joined(separator: "\n"))",
                 file: file, line: line
             )
             
@@ -942,8 +942,8 @@ class MergeActionTests: XCTestCase {
             
             try await ConvertActionConverter.convert(context: context, outputConsumer: outputConsumer, htmlContentConsumer: nil, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
             
-            let navigatorProblems = indexer.finalize(emitJSON: true, emitLMDB: false)
-            XCTAssert(navigatorProblems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
+            let navigatorDiagnostics = indexer.finalize(emitJSON: true, emitLMDB: false)
+            XCTAssert(navigatorDiagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary).joined(separator: "\n"))", file: file, line: line)
             
             // Move the file from the real file system to the test file system
             let outputIndexDir = outputPath.appendingPathComponent("index")

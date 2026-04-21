@@ -31,7 +31,7 @@ struct DeprecationSummaryTests {
         ])
         
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         
         let converter = DocumentationNodeConverter(context: context)
@@ -73,7 +73,7 @@ struct DeprecationSummaryTests {
         ])
         
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         // Verify that DocC displays the deprecation text.
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -111,7 +111,7 @@ struct DeprecationSummaryTests {
         ])
         
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         
         let converter = DocumentationNodeConverter(context: context)
@@ -142,12 +142,12 @@ struct DeprecationSummaryTests {
         
         let context = try await load(catalog: catalog)
         // Verify the warning
-        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"],
-                "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"],
+                "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let problem = try #require(context.problems.first)
-        #expect(problem.diagnostic.summary == "Type alias 'SomeTypeAlias' is unconditionally available")
-        #expect(problem.diagnostic.explanation == "A symbol without any availability annotations is considered available for all versions of the module (SomeModule) for all platforms.")
+        let diagnostic = try #require(context.diagnostics.first)
+        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is unconditionally available")
+        #expect(diagnostic.explanation == "A symbol without any availability annotations is considered available for all versions of the module (SomeModule) for all platforms.")
         
         // Verify that DocC still displays the deprecation text, despite the symbol being available.
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -183,12 +183,12 @@ struct DeprecationSummaryTests {
         
         let context = try await load(catalog: catalog)
         // Verify the warning
-        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"],
-                "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"],
+                "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let problem = try #require(context.problems.first)
-        #expect(problem.diagnostic.summary == "Type alias 'SomeTypeAlias' is available for SecondPlatform and ThirdPlatform")
-        #expect(problem.diagnostic.explanation == "This type alias has attributes that mark it as available for 'SecondPlatform' 1.2.3 onwards and all versions of 'ThirdPlatform'.")
+        let diagnostic = try #require(context.diagnostics.first)
+        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for SecondPlatform and ThirdPlatform")
+        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for 'SecondPlatform' 1.2.3 onwards and all versions of 'ThirdPlatform'.")
         
         // Verify that DocC still displays the deprecation text, despite the symbol being available.
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -232,8 +232,8 @@ struct DeprecationSummaryTests {
         ])
         
         let context = try await load(catalog: catalog)
-        #expect(context.problems.map(\.diagnostic.identifier) == [],
-                "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.map(\.identifier) == [],
+                "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         // Verify that DocC displays the deprecation text.
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -277,20 +277,20 @@ struct DeprecationSummaryTests {
         
         let context = try await load(catalog: catalog)
         // Verify the warning
-        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"],
-                "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"],
+                "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let problem = try #require(context.problems.first)
-        #expect(problem.diagnostic.summary == "Type alias 'SomeTypeAlias' is available for PlatformB, PlatformC, and PlatformD")
-        #expect(problem.diagnostic.explanation == "This type alias has attributes that mark it as available for 'PlatformB' 2.3.4 onwards, all versions of 'PlatformC', and 'PlatformD' 3.4.5 onwards.")
+        let diagnostic = try #require(context.diagnostics.first)
+        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for PlatformB, PlatformC, and PlatformD")
+        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for 'PlatformB' 2.3.4 onwards, all versions of 'PlatformC', and 'PlatformD' 3.4.5 onwards.")
         
         // Verify that the notes refer to the Available directives
         let expectedSource = switch directiveLocation {
             case .extensionFile:   "/unit-test.docc/SomeTypeAlias.md"
             case .inSourceComment: "/Users/username/path/to/SomeFile.swift"
         }
-        #expect(problem.diagnostic.notes.map(\.source.path) == [expectedSource, expectedSource])
-        #expect(problem.diagnostic.notes.map(\.message) == [
+        #expect(diagnostic.notes.map(\.source.path) == [expectedSource, expectedSource])
+        #expect(diagnostic.notes.map(\.message) == [
             "Marked available for 'PlatformB' here",
             "Marked available for 'PlatformD' here",
         ])
@@ -301,11 +301,11 @@ struct DeprecationSummaryTests {
             case .objectiveC: "'API_AVAILABLE\' macros"
             default:          nil
         }
-        #expect(problem.possibleSolutions.count == (expectedSourceAttribute != nil ? 2 : 1))
+        #expect(diagnostic.possibleSolutions.count == (expectedSourceAttribute != nil ? 2 : 1))
         if let expectedSourceAttribute {
-            #expect(problem.possibleSolutions.first?.summary == "Add \(expectedSourceAttribute) marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated API")
+            #expect(diagnostic.possibleSolutions.first?.summary == "Add \(expectedSourceAttribute) marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated API")
         }
-        #expect(problem.possibleSolutions.last?.summary == "Add Available directives marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated only in documentation")
+        #expect(diagnostic.possibleSolutions.last?.summary == "Add Available directives marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated only in documentation")
         // Verify that DocC still displays the deprecation text, despite the symbol being available.
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationNodeConverter(context: context)
@@ -346,18 +346,18 @@ struct DeprecationSummaryTests {
         
         let context = try await load(catalog: catalog)
         // Verify the warning
-        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"],
-                "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"],
+                "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let problem = try #require(context.problems.first)
-        #expect(problem.diagnostic.summary == "Type alias 'SomeTypeAlias' is available for all platforms, except PlatformA and PlatformB")
-        #expect(problem.diagnostic.explanation == "This type alias has attributes that mark it as available for all platforms, except PlatformA and PlatformB.")
+        let diagnostic = try #require(context.diagnostics.first)
+        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for all platforms, except PlatformA and PlatformB")
+        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for all platforms, except PlatformA and PlatformB.")
         
-        #expect(problem.diagnostic.notes.map(\.message) == [], "Only deprecated platforms, not available ones, are defined in Available directives")
+        #expect(diagnostic.notes.map(\.message) == [], "Only deprecated platforms, not available ones, are defined in Available directives")
         
         // Verify that the solutions suggest modifying the wildcard availability attribute
-        #expect(problem.possibleSolutions.count == 1)
-        let solution = try #require(problem.possibleSolutions.first)
+        #expect(diagnostic.possibleSolutions.count == 1)
+        let solution = try #require(diagnostic.possibleSolutions.first)
         #expect(solution.summary == "Update wildcard '@available()' attribute with a deprecated version or unconditional deprecation")
     }
     

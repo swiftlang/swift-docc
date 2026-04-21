@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -57,16 +57,14 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
         "deviceFrame" : \VideoMedia._deviceFrame,
     ]
     
-    func validate(source: URL?, problems: inout [Problem], featureFlags: FeatureFlags) -> Bool {
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags: FeatureFlags) -> Bool {
         if !featureFlags.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
-            let diagnostic = Diagnostic(
+            diagnostics.append(Diagnostic(
                 source: source,
                 severity: .warning, range: originalMarkup.range,
                 identifier: "org.swift.docc.UnknownArgument",
                 summary: "Unknown argument 'deviceFrame' in \(Self.directiveName)."
-            )
-            
-            problems.append(.init(diagnostic: diagnostic))
+            ))
             
             deviceFrame = nil
         }

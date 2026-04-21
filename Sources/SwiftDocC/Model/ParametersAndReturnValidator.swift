@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -41,7 +41,7 @@ import DocCCommon
 /// func doSomething(with someValue: Int) {}
 /// ```
 struct ParametersAndReturnValidator {
-    /// The engine that collects problems encountered while validating the parameter and return value documentation.
+    /// The engine that collects diagnostics about user-actionable issues with the parameter and return value documentation.
     var diagnosticEngine: DiagnosticEngine
     /// The list of sources for this symbol's documentation.
     let docChunkSources: [DocumentationNode.DocumentationChunk.Source]
@@ -227,9 +227,9 @@ struct ParametersAndReturnValidator {
         for parameterReference in parameterReferences where !parameterReference.isMatchedInAnySignature && !allKnownFunctionParameterNames.contains(parameterReference.name) {
             let parameter = parameterReference.wrapped
             if let matchingParameterNames = parameterNamesByExternalName[parameter.name] {
-                diagnosticEngine.emit(makeExternalParameterNameProblem(parameter, knownParameterNamesWithSameExternalName: matchingParameterNames.sorted()))
+                diagnosticEngine.emit(makeExternalParameterNameDiagnostic(parameter, knownParameterNamesWithSameExternalName: matchingParameterNames.sorted()))
             } else {
-                diagnosticEngine.emit(makeExtraParameterProblem(parameter, knownParameterNames: allKnownFunctionParameterNames, symbolKind: symbolKind))
+                diagnosticEngine.emit(makeExtraParameterDiagnostic(parameter, knownParameterNames: allKnownFunctionParameterNames, symbolKind: symbolKind))
             }
         }
         
@@ -238,7 +238,7 @@ struct ParametersAndReturnValidator {
         for (name, parameters) in documentedParametersByName where allKnownFunctionParameterNames.contains(name) && parameters.count > 1 {
             let first = parameters.first! // Each group is guaranteed to be non-empty.
             for parameter in parameters.dropFirst() {
-                diagnosticEngine.emit(makeDuplicateParameterProblem(parameter, previous: first))
+                diagnosticEngine.emit(makeDuplicateParameterDiagnostic(parameter, previous: first))
             }
         }
         
@@ -266,7 +266,7 @@ struct ParametersAndReturnValidator {
                 
                 // Match the placeholder formatting with the other parameters; either as a standalone parameter or as an item in a parameters outline.
                 let standalone = parameterAfter?.isStandalone ?? parameters.first?.isStandalone ?? false
-                diagnosticEngine.emit(makeMissingParameterProblem(name: parameterName, before: parameterAfter, standalone: standalone, lastParameterEndLocation: parametersEndLocation))
+                diagnosticEngine.emit(makeMissingParameterDiagnostic(name: parameterName, before: parameterAfter, standalone: standalone, lastParameterEndLocation: parametersEndLocation))
             }
             
             for unnamedParameterNumber in undocumentedUnnamedParameters.sorted() {
@@ -334,7 +334,7 @@ struct ParametersAndReturnValidator {
         
         // Diagnose if the symbol had documented its return values but all language representations only return void.
         if let returns, traitsWithNonVoidReturnValues.isEmpty {
-            diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: documentedSymbolKind))
+            diagnosticEngine.emit(makeReturnsDocumentedForVoidDiagnostic(returns, symbolKind: documentedSymbolKind))
         }
         return variants
     }
@@ -485,7 +485,7 @@ struct ParametersAndReturnValidator {
     
     // MARK: Diagnostics
     
-    /// Creates a new problem about return value documentation for a symbol that returns void.
+    /// Creates a new diagnostic about return value documentation for a symbol that returns void.
     ///
     /// ## Example
     ///
@@ -501,16 +501,14 @@ struct ParametersAndReturnValidator {
     /// - Parameters:
     ///   - returns: The authored documentation for the return value.
     ///   - symbolKind: The kind of the symbol, used for more specific phrasing in the warning message
-    /// - Returns: A new problem that suggests that the developer removes the return value documentation.
-    private func makeReturnsDocumentedForVoidProblem(_ returns: Return, symbolKind: SymbolGraph.Symbol.Kind?) -> Problem {
-        return Problem(
-            diagnostic: Diagnostic(
-                source: returns.range?.source,
-                severity: .warning,
-                range: adjusted(returns.range),
-                identifier: "org.swift.docc.VoidReturnDocumented",
-                summary: "Return value documented for \(symbolKind?.displayName.lowercased() ?? "symbol") returning void"
-            ),
+    /// - Returns: A new diagnostic that suggests that the developer removes the return value documentation.
+    private func makeReturnsDocumentedForVoidDiagnostic(_ returns: Return, symbolKind: SymbolGraph.Symbol.Kind?) -> Diagnostic {
+        return Diagnostic(
+            source: returns.range?.source,
+            severity: .warning,
+            range: adjusted(returns.range),
+            identifier: "org.swift.docc.VoidReturnDocumented",
+            summary: "Return value documented for \(symbolKind?.displayName.lowercased() ?? "symbol") returning void",
             possibleSolutions: [
                 Solution(
                     summary: "Remove return value documentation",
@@ -520,7 +518,7 @@ struct ParametersAndReturnValidator {
         )
     }
     
-    /// Creates a new problem about documentation for a parameter that's not known to that symbol.
+    /// Creates a new diagnostic about documentation for a parameter that's not known to that symbol.
     ///
     /// ## Example
     ///
@@ -537,8 +535,8 @@ struct ParametersAndReturnValidator {
     ///   - parameter: The authored documentation for the unknown parameter name
     ///   - knownParameterNames: All known parameter names for that symbol
     ///   - symbolKind: The kind of the symbol, used for more specific phrasing in the warning message
-    /// - Returns: A new problem that suggests that the developer removes the documentation for the unknown parameter.
-    private func makeExtraParameterProblem(_ parameter: Parameter, knownParameterNames: Set<String>, symbolKind: SymbolGraph.Symbol.Kind?) -> Problem {
+    /// - Returns: A new diagnostic that suggests that the developer removes the documentation for the unknown parameter.
+    private func makeExtraParameterDiagnostic(_ parameter: Parameter, knownParameterNames: Set<String>, symbolKind: SymbolGraph.Symbol.Kind?) -> Diagnostic {
         let source = parameter.range?.source
         
         let summary = "Parameter \(parameter.name.singleQuoted) not found in \(symbolKind.map { $0.displayName.lowercased() } ?? "the") declaration"
@@ -548,30 +546,24 @@ struct ParametersAndReturnValidator {
         
         if nearMisses.isEmpty {
             // If this parameter doesn't resemble any of this symbols parameters, suggest to remove it.
-            return Problem(
-                diagnostic: Diagnostic(source: source, severity: .warning, range: adjusted(parameter.range), identifier: identifier, summary: summary),
-                possibleSolutions: [
-                    Solution(
-                        summary: "Remove \(parameter.name.singleQuoted) parameter documentation",
-                        replacements: parameter.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
-                    )
-                ]
-            )
+            return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.range), identifier: identifier, summary: summary, possibleSolutions: [
+                Solution(
+                    summary: "Remove \(parameter.name.singleQuoted) parameter documentation",
+                    replacements: parameter.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
+                )
+            ])
         }
         
         // Otherwise, suggest to replace the documented parameter name with the one of the similarly named parameters.
-        return Problem(
-            diagnostic: Diagnostic(source: source, severity: .warning, range: adjusted(parameter.nameRange), identifier: identifier, summary: summary),
-            possibleSolutions: nearMisses.map { candidate in
-                Solution(
-                    summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
-                    replacements: parameter.nameRange.map { [Replacement(range: adjusted($0), replacement: candidate)] } ?? []
-                )
-            }
-        )
+        return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.nameRange), identifier: identifier, summary: summary, possibleSolutions: nearMisses.map { candidate in
+            Solution(
+                summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
+                replacements: parameter.nameRange.map { [Replacement(range: adjusted($0), replacement: candidate)] } ?? []
+            )
+        })
     }
     
-    /// Creates a new problem about a parameter that's documented using its "external name" instead of its "name".
+    /// Creates a new diagnostic about a parameter that's documented using its "external name" instead of its "name".
     ///
     /// ## Example
     ///
@@ -586,16 +578,14 @@ struct ParametersAndReturnValidator {
     /// - Parameters:
     ///   - parameter: The authored documentation for the external parameter name
     ///   - knownParameterNamesWithSameExternalName: A list of all the known parameter names that also have that external name
-    /// - Returns: A new problem that suggests that the developer replaces the external name with one of the known parameter names.
-    private func makeExternalParameterNameProblem(_ parameter: Parameter, knownParameterNamesWithSameExternalName: [String]) -> Problem {
-        return Problem(
-            diagnostic: Diagnostic(
-                source: parameter.range?.source,
-                severity: .warning,
-                range: adjusted(parameter.nameRange),
-                identifier: "org.swift.docc.DocumentedExternalName",
-                summary: "External name \(parameter.name.singleQuoted) used to document parameter"
-            ),
+    /// - Returns: A new diagnostic that suggests that the developer replaces the external name with one of the known parameter names.
+    private func makeExternalParameterNameDiagnostic(_ parameter: Parameter, knownParameterNamesWithSameExternalName: [String]) -> Diagnostic {
+        return Diagnostic(
+            source: parameter.range?.source,
+            severity: .warning,
+            range: adjusted(parameter.nameRange),
+            identifier: "org.swift.docc.DocumentedExternalName",
+            summary: "External name \(parameter.name.singleQuoted) used to document parameter",
             // Suggest to replace the documented argument label with the one of the parameter names.
             possibleSolutions: knownParameterNamesWithSameExternalName.map { candidate in
                 Solution(
@@ -606,7 +596,7 @@ struct ParametersAndReturnValidator {
         )
     }
     
-    /// Creates a new problem about a parameter that's documented more than once.
+    /// Creates a new diagnostic about a parameter that's documented more than once.
     ///
     /// ## Example
     ///
@@ -622,8 +612,8 @@ struct ParametersAndReturnValidator {
     /// - Parameters:
     ///   - parameter: The authored documentation for this parameter
     ///   - previous: The previous occurrence of documentation for this parameter
-    /// - Returns: A new problem that suggests that the developer removes the duplicated parameter documentation.
-    private func makeDuplicateParameterProblem(_ parameter: Parameter, previous: Parameter) -> Problem {
+    /// - Returns: A new diagnostic that suggests that the developer removes the duplicated parameter documentation.
+    private func makeDuplicateParameterDiagnostic(_ parameter: Parameter, previous: Parameter) -> Diagnostic {
         let notes: [DiagnosticNote]
         if let previousRange = previous.range, let source = previousRange.source {
             notes = [DiagnosticNote(source: source, range: adjusted(previousRange), message: "Previously documented here")]
@@ -631,15 +621,13 @@ struct ParametersAndReturnValidator {
             notes = []
         }
         
-        return Problem(
-            diagnostic: Diagnostic(
-                source: parameter.range?.source,
-                severity: .warning,
-                range: adjusted(parameter.range),
-                identifier: "org.swift.docc.DuplicateParameterDocumentation",
-                summary: "Parameter \(parameter.name.singleQuoted) is already documented",
-                notes: notes
-            ),
+        return Diagnostic(
+            source: parameter.range?.source,
+            severity: .warning,
+            range: adjusted(parameter.range),
+            identifier: "org.swift.docc.DuplicateParameterDocumentation",
+            summary: "Parameter \(parameter.name.singleQuoted) is already documented",
+            notes: notes,
             possibleSolutions: [
                 Solution(
                     summary: "Remove duplicate parameter documentation",
@@ -649,7 +637,7 @@ struct ParametersAndReturnValidator {
         )
     }
     
-    /// Creates a new problem about a named parameter that's missing documentation.
+    /// Creates a new diagnostic about a named parameter that's missing documentation.
     ///
     /// ## Example
     /// 
@@ -666,9 +654,9 @@ struct ParametersAndReturnValidator {
     ///   - nextParameter: The next documented parameter for this symbol or `nil`, if the undocumented parameter is the last parameter for the symbol.
     ///   - standalone: `true` if the existing documented parameters use the standalone syntax `- Parameter someValue:` or `false` if the existing documented parameters use the `- someValue` syntax within a `- Parameters:` list.
     ///   - location: The end of the last parameter. Used as the diagnostic location when the undocumented parameter is the last parameter of the symbol.
-    /// - Returns: A new problem that suggests that the developer adds documentation for the parameter.
-    private func makeMissingParameterProblem(name: String, before nextParameter: Parameter?, standalone: Bool, lastParameterEndLocation: SourceLocation?) -> Problem {
-        _makeMissingParameterProblem(
+    /// - Returns: A new diagnostic that suggests that the developer adds documentation for the parameter.
+    private func makeMissingParameterDiagnostic(name: String, before nextParameter: Parameter?, standalone: Bool, lastParameterEndLocation: SourceLocation?) -> Diagnostic {
+        _makeMissingParameterDiagnostic(
             diagnosticSummary: "Parameter \(name.singleQuoted) is missing documentation",
             solutionText: "Document \(name.singleQuoted) parameter",
             replacementText: Self.newParameterDescription(name: name, standalone: standalone),
@@ -677,7 +665,7 @@ struct ParametersAndReturnValidator {
             lastParameterEndLocation: lastParameterEndLocation
         )
     }
-    /// Creates a new problem about an unnamed parameter that's missing documentation.
+    /// Creates a new diagnostic about an unnamed parameter that's missing documentation.
     ///
     /// ## Example
     /// 
@@ -693,9 +681,9 @@ struct ParametersAndReturnValidator {
     ///   - unnamedParameterNumber: A number indicating which unnamed parameter this diagnostic refers to.
     ///   - standalone: `true` if the existing documented parameters use the standalone syntax `- Parameter someValue:` or `false` if the existing documented parameters use the `- someValue` syntax within a `- Parameters:` list.
     ///   - location: The end of the last parameter. Used as the diagnostic location when the undocumented parameter is the last parameter of the symbol.
-    /// - Returns: A new problem that suggests that the developer adds documentation for the parameter.
-    private func makeMissingUnnamedParameterProblem(unnamedParameterNumber: Int, standalone: Bool, lastParameterEndLocation: SourceLocation?) -> Problem {
-        _makeMissingParameterProblem(
+    /// - Returns: A new diagnostic that suggests that the developer adds documentation for the parameter.
+    private func makeMissingUnnamedParameterProblem(unnamedParameterNumber: Int, standalone: Bool, lastParameterEndLocation: SourceLocation?) -> Diagnostic {
+        _makeMissingParameterDiagnostic(
             diagnosticSummary: "Unnamed parameter #\(unnamedParameterNumber + 1) is missing documentation",
             solutionText: "Document unnamed parameter #\(unnamedParameterNumber + 1)",
             replacementText: Self.newUnnamedParameterDescription(standalone: standalone),
@@ -705,14 +693,14 @@ struct ParametersAndReturnValidator {
         )
     }
     
-    private func _makeMissingParameterProblem(
+    private func _makeMissingParameterDiagnostic(
         diagnosticSummary: String,
         solutionText: String,
         replacementText: String,
         before nextParameter: Parameter?,
         standalone: Bool,
         lastParameterEndLocation: SourceLocation?
-    ) -> Problem {
+    ) -> Diagnostic {
         let solutions: [Solution]
         if let insertLocation = nextParameter?.range?.lowerBound ?? lastParameterEndLocation {
             let extraWhitespace = "\n///" + String(repeating: " ", count: (nextParameter?.range?.lowerBound.column ?? 1 + (standalone ? 0 : 2) /* indent items in a parameter outline by 2 spaces */) - 1)
@@ -742,14 +730,12 @@ struct ParametersAndReturnValidator {
             solutions = []
         }
         
-        return Problem(
-            diagnostic: Diagnostic(
-                source: lastParameterEndLocation?.source ?? nextParameter?.range?.source,
-                severity: .warning,
-                range: adjusted(lastParameterEndLocation.map { $0 ..< $0 }),
-                identifier: "org.swift.docc.MissingParameterDocumentation",
-                summary: diagnosticSummary
-            ),
+        return Diagnostic(
+            source: lastParameterEndLocation?.source ?? nextParameter?.range?.source,
+            severity: .warning,
+            range: adjusted(lastParameterEndLocation.map { $0 ..< $0 }),
+            identifier: "org.swift.docc.MissingParameterDocumentation",
+            summary: diagnosticSummary,
             possibleSolutions: solutions
         )
     }

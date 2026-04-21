@@ -37,7 +37,7 @@ struct DocumentationContext_RootPageTests {
             ])
         )
         
-        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
         
         #expect(context.knownIdentifiers.count == 2)
         
@@ -76,47 +76,47 @@ struct DocumentationContext_RootPageTests {
         )
         
         // Ensure a stable order of the diagnostics by sorting on their file names
-        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
-        #expect(problems.map(\.diagnostic.identifier) == ["TechnologyRootInExtensionFile", "TechnologyRootInExtensionFile"],
-                "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let diagnostics = context.diagnostics.sorted(by: { $0.source?.lastPathComponent ?? "" < $1.source?.lastPathComponent ?? "" })
+        #expect(diagnostics.map(\.identifier) == ["TechnologyRootInExtensionFile", "TechnologyRootInExtensionFile"],
+                "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        // Verify the problem about the module extension file
+        // Verify the diagnostic about the module extension file
         do {
-            let problem = try #require(problems.first)
-            #expect(problem.diagnostic.summary == "TechnologyRoot directive has no effect in documentation extension")
-            #expect(problem.diagnostic.explanation == """
+            let diagnostic = try #require(diagnostics.first)
+            #expect(diagnostic.summary == "TechnologyRoot directive has no effect in documentation extension")
+            #expect(diagnostic.explanation == """
                 Symbols inherently belong to a module (in this case 'SomeModule') which is already the root of the documentation hierarchy.
                 A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages (in this case the 'SomeModule' module).
                 The 'SomeModule' module is already the root of the documentation hierarchy. Specifying a TechnologyRoot directive has no effect.
                 """)
-            #expect(problem.diagnostic.source?.lastPathComponent == "Root.md")
+            #expect(diagnostic.source?.lastPathComponent == "Root.md")
             let modulePage = try #require(context.soleRootModuleReference.flatMap { context.documentationCache[$0] })
-            #expect(problem.diagnostic.range == modulePage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            #expect(diagnostic.range == modulePage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
             
-            #expect(problem.possibleSolutions.count == 1)
-            let solution = try #require(problem.possibleSolutions.first)
+            #expect(diagnostic.possibleSolutions.count == 1)
+            let solution = try #require(diagnostic.possibleSolutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == modulePage.metadata?.technologyRoot?.originalMarkup.range)
             #expect(solution.replacements.first?.replacement == "", "Should suggest to remove the TechnologyRoot directive")
         }
         
-        // Verify the problem about the class extension file
+        // Verify the diagnostic about the class extension file
         do {
-            let problem = try #require(problems.last)
-            #expect(problem.diagnostic.summary == "TechnologyRoot directive has no effect in documentation extension")
-            #expect(problem.diagnostic.explanation == """
+            let diagnostic = try #require(diagnostics.last)
+            #expect(diagnostic.summary == "TechnologyRoot directive has no effect in documentation extension")
+            #expect(diagnostic.explanation == """
                 Symbols inherently belong to a module (in this case 'SomeModule') which is already the root of the documentation hierarchy.
                 A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages (in this case the 'SomeClass' class).
                 If the 'SomeClass' class became a root page it would move out of the 'SomeModule' module, creating a disjoint documentation hierarchy with two possible starting points, \
                 resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
                 """)
-            #expect(problem.diagnostic.source?.lastPathComponent == "SomeClass.md")
+            #expect(diagnostic.source?.lastPathComponent == "SomeClass.md")
             let classPage = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }).flatMap { context.documentationCache[$0] })
-            #expect(problem.diagnostic.range == classPage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            #expect(diagnostic.range == classPage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
             
-            #expect(problem.possibleSolutions.count == 1)
-            let solution = try #require(problem.possibleSolutions.first)
+            #expect(diagnostic.possibleSolutions.count == 1)
+            let solution = try #require(diagnostic.possibleSolutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == classPage.metadata?.technologyRoot?.originalMarkup.range)
@@ -139,7 +139,7 @@ struct DocumentationContext_RootPageTests {
         #expect(context.knownPages.map(\.absoluteString) == ["doc://Something/documentation/Article"])
         #expect(context.rootModules.map(\.absoluteString) == ["doc://Something/documentation/Article"])
         
-        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
     }
     
     @Test
@@ -174,7 +174,7 @@ struct DocumentationContext_RootPageTests {
         ])
         #expect(context.rootModules.map(\.absoluteString) == ["doc://Something/documentation/Something"], "If no single article is a clear root, the root page is synthesized")
         
-        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
     }
     
     @Test
@@ -210,7 +210,7 @@ struct DocumentationContext_RootPageTests {
         ])
         #expect(context.rootModules.map(\.absoluteString) == ["doc://Something/documentation/Something"])
         
-        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
     }
 
     @Test
@@ -239,31 +239,31 @@ struct DocumentationContext_RootPageTests {
                 """),
             ])
         )
-        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
-        #expect(problems.map(\.diagnostic.identifier) == ["MultipleTechnologyRoots", "MultipleTechnologyRoots", "MultipleTechnologyRoots"],
-                "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+        let diagnostics = context.diagnostics.sorted(by: { $0.source?.lastPathComponent ?? "" < $1.source?.lastPathComponent ?? "" })
+        #expect(diagnostics.map(\.identifier) == ["MultipleTechnologyRoots", "MultipleTechnologyRoots", "MultipleTechnologyRoots"],
+                "Unexpected problems: \(diagnostics.map(\.summary))")
 
         let rootPageNames = ["FirstRoot", "SecondRoot", "ThirdRoot"]
-        for (thisName, problem) in zip(rootPageNames, problems) {
+        for (thisName, diagnostic) in zip(rootPageNames, diagnostics) {
             let otherNames = rootPageNames.filter { $0 != thisName }
             
-            #expect(problem.diagnostic.summary == "Documentation hierarchy cannot have multiple root pages")
-            #expect(problem.diagnostic.explanation == """
+            #expect(diagnostic.summary == "Documentation hierarchy cannot have multiple root pages")
+            #expect(diagnostic.explanation == """
                 A single article-only documentation catalog ('docc' directory) covers a single technology, with a single root page.
                 This TechnologyRoot directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
                 resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
                 To resolve this issue; remove all TechnologyRoot directives except for one to use that as the root of your documentation hierarchy.
                 """)
             
-            #expect(problem.diagnostic.source?.lastPathComponent == "\(thisName).md")
+            #expect(diagnostic.source?.lastPathComponent == "\(thisName).md")
             let page = try #require(context.knownPages.first(where: { $0.lastPathComponent == thisName }).flatMap { context.documentationCache[$0] })
-            #expect(problem.diagnostic.range == page.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            #expect(diagnostic.range == page.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
             
-            #expect(problem.diagnostic.notes.map(\.message) == ["Root page also defined here", "Root page also defined here"])
-            #expect(problem.diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
+            #expect(diagnostic.notes.map(\.message) == ["Root page also defined here", "Root page also defined here"])
+            #expect(diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
             
-            #expect(problem.possibleSolutions.count == 1)
-            let solution = try #require(problem.possibleSolutions.first)
+            #expect(diagnostic.possibleSolutions.count == 1)
+            let solution = try #require(diagnostic.possibleSolutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == page.metadata?.technologyRoot?.originalMarkup.range)
@@ -293,18 +293,18 @@ struct DocumentationContext_RootPageTests {
             ])
         )
 
-        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
+        let diagnostics = context.diagnostics.sorted(by: { $0.source?.lastPathComponent ?? "" < $1.source?.lastPathComponent ?? "" })
         // When there are _both_ multiple technology roots and also symbol roots,
         // we should _only_ warn about there being technology roots when there's symbols, not about there being _multiple_ technology roots.
-        #expect(problems.map(\.diagnostic.identifier) == ["TechnologyRootWithSymbols", "TechnologyRootWithSymbols"],
-                "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+        #expect(diagnostics.map(\.identifier) == ["TechnologyRootWithSymbols", "TechnologyRootWithSymbols"],
+                "Unexpected problems: \(diagnostics.map(\.summary))")
         
         let rootPageNames = ["FirstRoot", "SecondRoot"]
-        for (thisName, problem) in zip(rootPageNames, problems) {
+        for (thisName, diagnostic) in zip(rootPageNames, diagnostics) {
             let otherNames = rootPageNames.filter { $0 != thisName }
             
-            #expect(problem.diagnostic.summary == "Documentation hierarchy cannot have additional root page; already has a symbol root")
-            #expect(problem.diagnostic.explanation == """
+            #expect(diagnostic.summary == "Documentation hierarchy cannot have additional root page; already has a symbol root")
+            #expect(diagnostic.explanation == """
                 A single DocC build covers either a single module (for example a framework, library, or executable) or an article-only technology.
                 Because DocC is passed symbol inputs; the documentation hierarchy already gets its root page ('SomeModule') from those symbols.
                 This TechnologyRoot directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
@@ -312,15 +312,15 @@ struct DocumentationContext_RootPageTests {
                 To resolve this issue; remove all TechnologyRoot directives to use 'SomeModule' as the root page.
                 """)
             
-            #expect(problem.diagnostic.source?.lastPathComponent == "\(thisName).md")
+            #expect(diagnostic.source?.lastPathComponent == "\(thisName).md")
             let page = try #require(context.knownPages.first(where: { $0.lastPathComponent == thisName }).flatMap { context.documentationCache[$0] })
-            #expect(problem.diagnostic.range == page.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            #expect(diagnostic.range == page.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
             
-            #expect(problem.diagnostic.notes.map(\.message) == ["Root page also defined here"])
-            #expect(problem.diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
+            #expect(diagnostic.notes.map(\.message) == ["Root page also defined here"])
+            #expect(diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
             
-            #expect(problem.possibleSolutions.count == 1)
-            let solution = try #require(problem.possibleSolutions.first)
+            #expect(diagnostic.possibleSolutions.count == 1)
+            let solution = try #require(diagnostic.possibleSolutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == page.metadata?.technologyRoot?.originalMarkup.range)
@@ -353,15 +353,15 @@ struct DocumentationContext_RootPageTests {
             ])
         )
 
-        let symbolsWithRootProblems = context.problems.filter { $0.diagnostic.identifier == "TechnologyRootWithSymbols" }
-        #expect(symbolsWithRootProblems.count == 2, "Expected TechnologyRootWithSymbols for each @TechnologyRoot directive")
+        let symbolsWithRootDiagnostics = context.diagnostics.filter { $0.identifier == "TechnologyRootWithSymbols" }
+        #expect(symbolsWithRootDiagnostics.count == 2, "Expected TechnologyRootWithSymbols for each @TechnologyRoot directive")
 
-        let problemSources = symbolsWithRootProblems.compactMap { $0.diagnostic.source?.lastPathComponent }.sorted()
-        #expect(problemSources == ["FirstRoot.md", "SecondRoot.md"])
+        let diagnosticSources = symbolsWithRootDiagnostics.compactMap { $0.source?.lastPathComponent }.sorted()
+        #expect(diagnosticSources == ["FirstRoot.md", "SecondRoot.md"])
 
         // Mutually exclusive: no MultipleTechnologyRoots warnings
-        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "MultipleTechnologyRoots" }
-        #expect(multipleRootsProblems.isEmpty, "MultipleTechnologyRoots should not be emitted when symbols provide a root")
+        let multipleRootsDiagnostics = context.diagnostics.filter { $0.identifier == "MultipleTechnologyRoots" }
+        #expect(multipleRootsDiagnostics.isEmpty, "MultipleTechnologyRoots should not be emitted when symbols provide a root")
     }
 
     @Test
@@ -373,14 +373,14 @@ struct DocumentationContext_RootPageTests {
             ])
         )
 
-        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
-        #expect(problems.map(\.diagnostic.identifier) == ["MultipleModules"],
-                "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+        let diagnostics = context.diagnostics.sorted(by: { $0.source?.lastPathComponent ?? "" < $1.source?.lastPathComponent ?? "" })
+        #expect(diagnostics.map(\.identifier) == ["MultipleModules"],
+                "Unexpected problems: \(diagnostics.map(\.summary))")
         
-        let problem = try #require(problems.first)
+        let diagnostic = try #require(diagnostics.first)
         
-        #expect(problem.diagnostic.summary == "Input files cannot describe more than one main module; got inputs for 'ModuleA' and 'ModuleB'")
-        #expect(problem.diagnostic.explanation == """
+        #expect(diagnostic.summary == "Input files cannot describe more than one main module; got inputs for 'ModuleA' and 'ModuleB'")
+        #expect(diagnostic.explanation == """
             A single DocC build covers a single module (for example a framework, library, or executable).
             To produce a documentation archive that covers 'ModuleA' and 'ModuleB'; \
             first document each module separately and then combine their individual archives into a single combined archive by running:

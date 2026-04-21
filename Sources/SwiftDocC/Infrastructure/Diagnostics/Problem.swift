@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,22 +13,27 @@ import SymbolKit
 /**
  A problem with a document along with possible solutions to the problem.
  */
+@available(*, deprecated, message: "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.")
 public struct Problem {
     /// A diagnostic describing the problem.
     public var diagnostic: Diagnostic
     
     /// The possible solutions to the problem if there are any.
-    public var possibleSolutions: [Solution]
+    public var possibleSolutions: [Solution] {
+        get { diagnostic.possibleSolutions }
+        set { diagnostic.possibleSolutions = newValue }
+    }
     public init(diagnostic: Diagnostic, possibleSolutions: some Sequence<Solution>) {
         self.diagnostic = diagnostic
         self.possibleSolutions = Array(possibleSolutions)
     }
 
     public init(diagnostic: Diagnostic) {
-        self.init(diagnostic: diagnostic, possibleSolutions: [])
+        self.init(diagnostic: diagnostic, possibleSolutions: diagnostic.possibleSolutions)
     }
 }
 
+@available(*, deprecated, message: "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.")
 extension Problem {
     /// Offsets the problem using a certain SymbolKit `SourceRange`.
     ///
@@ -51,6 +56,7 @@ extension Problem {
     }
 }
 
+@available(*, deprecated, message: "Use 'Sequence<Diagnostic>' instead. This deprecated API will be removed after 6.5 is released.")
 extension Sequence<Problem> {
     /// Returns `true` if there are problems with diagnostics with `error` severity.
     public var containsErrors: Bool {

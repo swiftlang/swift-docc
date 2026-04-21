@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,21 +35,21 @@ A subsection
         var checker = NonOverviewHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null"))
         checker.visit(document)
 
-        XCTAssertEqual(checker.problems.count, 1)
-        let problem = try XCTUnwrap(checker.problems.first)
+        XCTAssertEqual(checker.diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(checker.diagnostics.first)
 
-        XCTAssertEqual(problem.diagnostic.notes.count, 1)
-        let note = try XCTUnwrap(problem.diagnostic.notes.first)
+        XCTAssertEqual(diagnostic.notes.count, 1)
+        let note = try XCTUnwrap(diagnostic.notes.first)
         XCTAssertEqual(note.range.lowerBound.line, 4)
         XCTAssertEqual(note.range.lowerBound.column, 1)
         XCTAssertEqual(note.range.upperBound.line, 4)
         XCTAssertEqual(note.range.upperBound.column, 12)
 
-        let range = problem.diagnostic.range
+        let range = diagnostic.range
         XCTAssertEqual(range?.lowerBound.line, 7)
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
 
-        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
 
         let replacement = try XCTUnwrap(solution.replacements.first)
@@ -73,15 +73,15 @@ A discussion
         var checker = NonOverviewHeadingChecker(sourceFile: nil)
         checker.visit(document)
 
-        XCTAssertEqual(checker.problems.count, 1)
-        let problem = try XCTUnwrap(checker.problems.first)
-        XCTAssert(problem.diagnostic.notes.isEmpty)
+        XCTAssertEqual(checker.diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(checker.diagnostics.first)
+        XCTAssert(diagnostic.notes.isEmpty)
 
-        let range = problem.diagnostic.range
+        let range = diagnostic.range
         XCTAssertEqual(range?.lowerBound.line, 4)
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
 
-        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
 
         let replacement = try XCTUnwrap(solution.replacements.first)

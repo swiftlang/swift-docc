@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -103,36 +103,36 @@ class DocumentationCuratorTests: XCTestCase {
         
         XCTAssertNoThrow(try crawler.crawlChildren(of: mykit.reference, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
         
-        let myClassProblems = crawler.problems.filter({ $0.diagnostic.source?.standardizedFileURL == extensionFile.standardizedFileURL })
-        XCTAssertEqual(myClassProblems.count, 2)
+        let myClassDiagnostics = crawler.diagnostics.filter({ $0.source?.standardizedFileURL == extensionFile.standardizedFileURL })
+        XCTAssertEqual(myClassDiagnostics.count, 2)
         
-        let moduleCurationProblem = myClassProblems.first(where: { $0.diagnostic.identifier == "org.swift.docc.ModuleCuration" })
-        XCTAssertNotNil(moduleCurationProblem)
-        XCTAssertNotNil(moduleCurationProblem?.diagnostic.source, "This diagnostics should have a source")
+        let moduleCurationDiagnostic = myClassDiagnostics.first(where: { $0.identifier == "org.swift.docc.ModuleCuration" })
+        XCTAssertNotNil(moduleCurationDiagnostic)
+        XCTAssertNotNil(moduleCurationDiagnostic?.source, "This diagnostics should have a source")
         XCTAssertEqual(
-            moduleCurationProblem?.diagnostic.range,
-            SourceLocation(line: 12, column: 4, source: moduleCurationProblem?.diagnostic.source)..<SourceLocation(line: 12, column: 13, source: moduleCurationProblem?.diagnostic.source)
+            moduleCurationDiagnostic?.range,
+            SourceLocation(line: 12, column: 4, source: moduleCurationDiagnostic?.source)..<SourceLocation(line: 12, column: 13, source: moduleCurationDiagnostic?.source)
         )
         XCTAssertEqual(
-            moduleCurationProblem?.diagnostic.summary,
+            moduleCurationDiagnostic?.summary,
             "Organizing the module 'MyKit' under 'MyKit/MyClass/myFunction()' isn't allowed"
         )
-        XCTAssertEqual(moduleCurationProblem?.diagnostic.explanation, """
+        XCTAssertEqual(moduleCurationDiagnostic?.explanation, """
             Links in a "Topics section" are used to organize documentation into a hierarchy. Modules should be roots in the documentation hierarchy.
             """)
         
-        let cyclicReferenceProblem = myClassProblems.first(where: { $0.diagnostic.identifier == "org.swift.docc.CyclicReference" })
-        XCTAssertNotNil(cyclicReferenceProblem)
-        XCTAssertNotNil(cyclicReferenceProblem?.diagnostic.source, "This diagnostics should have a source")
+        let cyclicReferenceDiagnostic = myClassDiagnostics.first(where: { $0.identifier == "org.swift.docc.CyclicReference" })
+        XCTAssertNotNil(cyclicReferenceDiagnostic)
+        XCTAssertNotNil(cyclicReferenceDiagnostic?.source, "This diagnostics should have a source")
         XCTAssertEqual(
-            cyclicReferenceProblem?.diagnostic.range,
-            SourceLocation(line: 13, column: 4, source: moduleCurationProblem?.diagnostic.source)..<SourceLocation(line: 13, column: 20, source: moduleCurationProblem?.diagnostic.source)
+            cyclicReferenceDiagnostic?.range,
+            SourceLocation(line: 13, column: 4, source: moduleCurationDiagnostic?.source)..<SourceLocation(line: 13, column: 20, source: moduleCurationDiagnostic?.source)
         )
         XCTAssertEqual(
-            cyclicReferenceProblem?.diagnostic.summary,
+            cyclicReferenceDiagnostic?.summary,
             "Organizing 'MyKit/MyClass/myFunction()' under itself forms a cycle"
         )
-        XCTAssertEqual(cyclicReferenceProblem?.diagnostic.explanation, """
+        XCTAssertEqual(cyclicReferenceDiagnostic?.explanation, """
             Links in a "Topics section" are used to organize documentation into a hierarchy. The documentation hierarchy shouldn't contain cycles.
             """)
     }
@@ -158,8 +158,8 @@ class DocumentationCuratorTests: XCTestCase {
         let crawler = DocumentationCurator(in: context)
 
         // This test has both a TechnologyRoot and symbol graph files, which is an unsupported setup that DocC warns about.
-        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["TechnologyRootWithSymbols"],
-                       "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssertEqual(context.diagnostics.map(\.identifier), ["TechnologyRootWithSymbols"],
+                       "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         guard let moduleNode = context.documentationCache["SourceLocations"],
               let pathToRoot = context.shortestFinitePath(to: moduleNode.reference),
@@ -170,7 +170,7 @@ class DocumentationCuratorTests: XCTestCase {
         }
 
         XCTAssertEqual(root.path, "/documentation/Root")
-        XCTAssertEqual(crawler.problems.count, 0)
+        XCTAssertEqual(crawler.diagnostics.count, 0)
     }
     
     func testCuratorDoesNotRelateNodesWhenArticleLinksContainExtraPathComponents() async throws {
@@ -210,16 +210,16 @@ class DocumentationCuratorTests: XCTestCase {
                 TextFile(name: "Forth.md",  utf8Content: "# Forth"),
             ])
         )
-        let (linkResolutionProblems, otherProblems) = context.problems.categorize(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" })
-        XCTAssert(otherProblems.isEmpty, "Unexpected problems: \(otherProblems.map(\.diagnostic.summary).sorted())")
+        let (linkResolutionDiagnostics, otherDiagnostics) = context.diagnostics.categorize(where: { $0.identifier == "org.swift.docc.unresolvedTopicReference" })
+        XCTAssert(otherDiagnostics.isEmpty, "Unexpected problems: \(otherDiagnostics.map(\.summary).sorted())")
         
         XCTAssertEqual(
-            linkResolutionProblems.map(\.diagnostic.source?.lastPathComponent),
+            linkResolutionDiagnostics.map(\.source?.lastPathComponent),
             ["API-Collection.md", "API-Collection.md", "API-Collection.md", "API-Collection.md"],
             "Every unresolved link is in the API collection"
         )
         XCTAssertEqual(
-            linkResolutionProblems.map({ $0.diagnostic.range?.lowerBound.line }), [9, 10, 11, 12],
+            linkResolutionDiagnostics.map({ $0.range?.lowerBound.line }), [9, 10, 11, 12],
             "There should be one warning about an unresolved reference for each link in the API collection's top"
         )
         
@@ -301,8 +301,8 @@ class DocumentationCuratorTests: XCTestCase {
         }
 
         // This test has both a TechnologyRoot and symbol graph files, which is an unsupported setup that DocC warns about.
-        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["TechnologyRootWithSymbols"],
-                       "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssertEqual(context.diagnostics.map(\.identifier), ["TechnologyRootWithSymbols"],
+                       "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         guard let moduleNode = context.documentationCache["SourceLocations"],
               let pathToRoot = context.shortestFinitePath(to: moduleNode.reference),
@@ -471,37 +471,37 @@ class DocumentationCuratorTests: XCTestCase {
 
         // Verify the crawler emitted warnings for the 3 invalid links in the sidekit Topics/See Alsos groups
         // in both the sidecar and the api collection article
-        XCTAssertEqual(crawler.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.UnexpectedTaskGroupItem" }).count, 6)
-        XCTAssertTrue(crawler.problems
-            .filter({ $0.diagnostic.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
-            .compactMap({ $0.diagnostic.source?.path })
+        XCTAssertEqual(crawler.diagnostics.filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" }).count, 6)
+        XCTAssertTrue(crawler.diagnostics
+            .filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
+            .compactMap({ $0.source?.path })
             .allSatisfy({ $0.hasSuffix("documentation/sidekit.md") || $0.hasSuffix("documentation/api-collection.md") })
         )
         // Verify we emit a fix-it to remove the non link items
-        XCTAssertTrue(crawler.problems
-            .filter({ $0.diagnostic.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
+        XCTAssertTrue(crawler.diagnostics
+            .filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
             .allSatisfy({ $0.possibleSolutions.first?.replacements.first?.replacement == "" })
         )
         // Verify we emit the correct ranges
         XCTAssertEqual(
-            crawler.problems
-                .filter({ $0.diagnostic.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
+            crawler.diagnostics
+                .filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
                 .compactMap({ $0.possibleSolutions.first?.replacements.first?.range })
                 .map({ "\($0.lowerBound.line):\($0.lowerBound.column)..<\($0.upperBound.line):\($0.upperBound.column)" }),
             ["6:1..<6:13", "9:1..<9:20", "19:1..<19:13", "5:1..<5:13", "8:1..<8:20", "11:1..<11:13"]
         )
         
         // Verify the crawler emitted warnings for the 5 items with trailing content.
-        XCTAssertEqual(crawler.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" }).count, 5)
-        XCTAssertTrue(crawler.problems
-            .filter({ $0.diagnostic.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" })
-            .compactMap({ $0.diagnostic.source?.path })
+        XCTAssertEqual(crawler.diagnostics.filter({ $0.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" }).count, 5)
+        XCTAssertTrue(crawler.diagnostics
+            .filter({ $0.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" })
+            .compactMap({ $0.source?.path })
             .allSatisfy({ $0.hasSuffix("documentation/sidekit.md") })
         )
 
         // Verify we emit a fix-it to remove the trailing content
-        XCTAssertTrue(crawler.problems
-            .filter({ $0.diagnostic.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" })
+        XCTAssertTrue(crawler.diagnostics
+            .filter({ $0.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" })
             .allSatisfy({ $0.possibleSolutions.first != nil })
         )
     }
@@ -635,20 +635,20 @@ struct DocumentationCuratorTests_New {
             ])
         )
         
-        #expect(context.problems.map(\.diagnostic.identifier) == ["org.swift.docc.CyclicReference"])
-        let curationProblem = try #require(context.problems.first)
+        #expect(context.diagnostics.map(\.identifier) == ["org.swift.docc.CyclicReference"])
+        let curationDiagnostic = try #require(context.diagnostics.first)
         
-        #expect(curationProblem.diagnostic.source?.lastPathComponent == "Third.md")
-        #expect(curationProblem.diagnostic.summary == "Organizing 'unit-test/First' under 'unit-test/Third' forms a cycle")
+        #expect(curationDiagnostic.source?.lastPathComponent == "Third.md")
+        #expect(curationDiagnostic.summary == "Organizing 'unit-test/First' under 'unit-test/Third' forms a cycle")
         
-        #expect(curationProblem.diagnostic.explanation == """
+        #expect(curationDiagnostic.explanation == """
             Links in a "Topics section" are used to organize documentation into a hierarchy. The documentation hierarchy shouldn't contain cycles.
             If this link contributed to the documentation hierarchy it would introduce this cycle:
             ╭─▶︎ Third ─▶︎ First ─▶︎ Second ─╮
             ╰─────────────────────────────╯
             """)
         
-        #expect(curationProblem.possibleSolutions.map(\.summary) == ["Remove '- <doc:First>'"])
+        #expect(curationDiagnostic.possibleSolutions.map(\.summary) == ["Remove '- <doc:First>'"])
     }
     
     @Test(arguments: [true, false])
@@ -679,10 +679,10 @@ struct DocumentationCuratorTests_New {
             """),
         ])
         let context = try await load(catalog: catalog)
-        #expect(context.problems.map(\.diagnostic.summary) == [
-            // There should only be a single problem about the unresolvable link in the API collection.
+        #expect(context.diagnostics.map(\.summary) == [
+            // There should only be a single diagnostic about the unresolvable link in the API collection.
             "'NotFound' doesn't exist at '/unit-test/API-Collection'"
-        ], "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n")) \(assertionMessageDescription)")
+        ], "Unexpected problems: \(context.diagnostics.map(\.summary).joined(separator: "\n")) \(assertionMessageDescription)")
         
         // Verify that the topic graph paths to the symbol (although not used for its breadcrumbs) doesn't have the automatic edge anymore.
         let symbolReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }))

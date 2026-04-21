@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,17 +20,14 @@ class TutorialSectionTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let section = TutorialSection(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let section = TutorialSection(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(section)
-        XCTAssertEqual(2, problems.count)
-        XCTAssertEqual(
-            problems.map { $0.diagnostic.identifier },
-            [
-                "org.swift.docc.HasArgument.title",
-                "org.swift.docc.HasExactlyOne<Section, Steps>.Missing",
-            ]
-        )
-        XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
+        XCTAssertEqual(2, diagnostics.count)
+        XCTAssertEqual(diagnostics.map(\.identifier), [
+            "org.swift.docc.HasArgument.title",
+            "org.swift.docc.HasExactlyOne<Section, Steps>.Missing",
+        ])
+        XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
     }
 }

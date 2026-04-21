@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ struct DocumentationCurator {
     /// The documentation context to crawl.
     private let context: DocumentationContext
     
-    private(set) var problems = [Problem]()
+    private(set) var diagnostics = [Diagnostic]()
     
     init(in context: DocumentationContext, initial: Set<ResolvedTopicReference> = []) {
         self.context = context
@@ -53,7 +53,7 @@ struct DocumentationCurator {
             .requiring(scheme: ResolvedTopicReference.urlScheme)
             .map(UnresolvedTopicReference.init(topicURL:)) else {
                 // Emit a warning regarding the invalid link found in a task group.
-                problems.append(Problem(diagnostic: Diagnostic(source: source, severity: .warning, range: link.range, identifier: "org.swift.docc.InvalidDocumentationLink", summary: "The link \((link.destination ?? "").singleQuoted) isn't valid", explanation: "Expected a well-formed URL that uses the \(ResolvedTopicReference.urlScheme.singleQuoted) scheme. You can only curate external links in a 'See Also' section."), possibleSolutions: []))
+                diagnostics.append(Diagnostic(source: source, severity: .warning, range: link.range, identifier: "org.swift.docc.InvalidDocumentationLink", summary: "The link \((link.destination ?? "").singleQuoted) isn't valid", explanation: "Expected a well-formed URL that uses the \(ResolvedTopicReference.urlScheme.singleQuoted) scheme. You can only curate external links in a 'See Also' section."))
                 return nil
         }
         let maybeResolved = context.resolve(.unresolved(unresolved), in: resolved)
@@ -70,7 +70,7 @@ struct DocumentationCurator {
             }
             // The link resolves to a known content section, emit a warning.
             if resolved.fragment != nil, context.nodeAnchorSections.keys.contains(resolved) {
-                problems.append(Problem(diagnostic: Diagnostic(source: source, severity: .warning, range: link.range, identifier: "org.swift.docc.SectionCuration", summary: "The content section link \((link.destination ?? "").singleQuoted) isn't allowed in a Topics link group", explanation: "Content sections cannot participate in the documentation hierarchy."), possibleSolutions: []))
+                diagnostics.append(Diagnostic(source: source, severity: .warning, range: link.range, identifier: "org.swift.docc.SectionCuration", summary: "The content section link \((link.destination ?? "").singleQuoted) isn't allowed in a Topics link group", explanation: "Content sections cannot participate in the documentation hierarchy."))
                 return resolved
             }
         }
@@ -184,11 +184,11 @@ struct DocumentationCurator {
         
         // Validate the node groups' links
         for group in (taskGroups + authoredSeeAlsoGroups) {
-            problems.append(contentsOf:
-                group.problemsForGroupLinks().map({ problem -> Problem in
-                    var diagnostic = problem.diagnostic
+            diagnostics.append(contentsOf:
+                group.diagnosticsForGroupLinks().map({ diagnostic in
+                    var diagnostic = diagnostic
                     diagnostic.source = context.documentLocationMap[nodeReference]
-                    return Problem(diagnostic: diagnostic, possibleSolutions: problem.possibleSolutions)
+                    return diagnostic
                 })
             )
         }
@@ -233,7 +233,7 @@ struct DocumentationCurator {
                 }
                 
                 guard let childReference = resolved else {
-                    // This problem will be raised when the references are resolved.
+                    // This issue will be raised when the references are resolved.
                     continue
                 }
 
@@ -268,11 +268,10 @@ struct DocumentationCurator {
                     let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.reachableRoots(from: nodeReference).contains(where: isTechnologyRoot)
 
                     if !hasTechnologyRoot {
-                        problems.append(Problem(
-                            diagnostic: Diagnostic(
-                                source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration",
-                                summary: "Organizing the module \(childReference.lastPathComponent.singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) isn't allowed",
-                                explanation: "\(topicSectionBaseExplanation). Modules should be roots in the documentation hierarchy."),
+                        diagnostics.append(Diagnostic(
+                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration",
+                            summary: "Organizing the module \(childReference.lastPathComponent.singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) isn't allowed",
+                            explanation: "\(topicSectionBaseExplanation). Modules should be roots in the documentation hierarchy.",
                             possibleSolutions: removeListItemSolutions))
                         continue
                     }
@@ -280,11 +279,10 @@ struct DocumentationCurator {
                 
                 // Verify we are not creating a graph cyclic relationship.
                 guard childReference != nodeReference else {
-                    problems.append(Problem(
-                        diagnostic: Diagnostic(
-                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
-                            summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cycle",
-                            explanation: "\(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles."),
+                    diagnostics.append(Diagnostic(
+                        source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
+                        summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cycle",
+                        explanation: "\(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.",
                         possibleSolutions: removeListItemSolutions
                     ))
                     continue
@@ -299,18 +297,17 @@ struct DocumentationCurator {
                     
                     let cycleDescriptions: [String] = graph.cycles(from: nodeReference).map { prettyPrint(cycle: $0) }
                     
-                    problems.append(Problem(
-                        diagnostic: Diagnostic(
-                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
-                            summary: """
-                            Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) \
-                            forms \(cycleDescriptions.count == 1 ? "a cycle" : "\(cycleDescriptions.count) cycles")
-                            """,
-                            explanation: """
-                            \(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.
-                            If this link contributed to the documentation hierarchy it would introduce \(cycleDescriptions.count == 1 ? "this cycle" : "these \(cycleDescriptions.count) cycles"):
-                            \(cycleDescriptions.joined(separator: "\n"))
-                            """),
+                    diagnostics.append(Diagnostic(
+                        source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
+                        summary: """
+                        Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) \
+                        forms \(cycleDescriptions.count == 1 ? "a cycle" : "\(cycleDescriptions.count) cycles")
+                        """,
+                        explanation: """
+                        \(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.
+                        If this link contributed to the documentation hierarchy it would introduce \(cycleDescriptions.count == 1 ? "this cycle" : "these \(cycleDescriptions.count) cycles"):
+                        \(cycleDescriptions.joined(separator: "\n"))
+                        """,
                         possibleSolutions: removeListItemSolutions
                     ))
                     continue

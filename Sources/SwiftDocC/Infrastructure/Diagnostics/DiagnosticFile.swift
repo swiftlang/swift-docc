@@ -15,9 +15,9 @@ struct DiagnosticFile: Codable {
     var version: SemanticVersion
     var diagnostics: [Diagnostic]
     
-    init(version: SemanticVersion = Self.currentVersion, problems: [Problem]) {
+    init(version: SemanticVersion = Self.currentVersion, _ diagnostics: [SwiftDocC.Diagnostic]) {
         self.version = version
-        self.diagnostics = problems.map { .init($0) }
+        self.diagnostics = diagnostics.map { .init($0) }
     }
     
     // This file format follows semantic versioning.
@@ -88,16 +88,16 @@ struct DiagnosticFile: Codable {
 // MARK: Initialization
 
 extension DiagnosticFile.Diagnostic {
-    init(_ problem: Problem) {
-        self.id          = problem.diagnostic.identifier
-        self.groupID     = problem.diagnostic.groupIdentifier
-        self.source      = problem.diagnostic.source
-        self.range       = problem.diagnostic.range.map { .init($0) }
-        self.severity    = .init(problem.diagnostic.severity)
-        self.summary     = problem.diagnostic.summary
-        self.explanation = problem.diagnostic.explanation
-        self.solutions   = problem.possibleSolutions.map { .init($0) }
-        self.notes       = problem.diagnostic.notes.map { .init($0) }
+    init(_ diagnostic: SwiftDocC.Diagnostic) {
+        self.id          = diagnostic.identifier
+        self.groupID     = diagnostic.groupIdentifier
+        self.source      = diagnostic.source
+        self.range       = diagnostic.range.map { .init($0) }
+        self.severity    = .init(diagnostic.severity)
+        self.summary     = diagnostic.summary
+        self.explanation = diagnostic.explanation
+        self.solutions   = diagnostic.possibleSolutions.map { .init($0) }
+        self.notes       = diagnostic.notes.map { .init($0) }
     }
 }
 

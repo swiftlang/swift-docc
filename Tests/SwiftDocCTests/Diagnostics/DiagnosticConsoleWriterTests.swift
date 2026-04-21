@@ -33,43 +33,43 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         }
     }
 
-    func testReceiveProblem() {
-        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic"), possibleSolutions: [])
+    func testReceiveDiagnostic() {
+        let diagnostic = Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic")
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
-        consumer.receive([problem])
+        consumer.receive([diagnostic])
         XCTAssertEqual(logger.output, "warning: Test diagnostic [test-identifier]\n")
     }
     
     func testDisplaysGroupIdentifier() {
-        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", groupIdentifier: "test-group-identifier", summary: "Test diagnostic"), possibleSolutions: [])
+        let diagnostic = Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", groupIdentifier: "test-group-identifier", summary: "Test diagnostic")
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
-        consumer.receive([problem])
+        consumer.receive([diagnostic])
         XCTAssertEqual(logger.output, "warning: Test diagnostic [test-group-identifier]\n")
     }
     
     func testDoesNotDisplayNotYetModernizedIdentifier() {
-        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.test-identifier", summary: "Test diagnostic"), possibleSolutions: [])
+        let diagnostic = Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.test-identifier", summary: "Test diagnostic")
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
-        consumer.receive([problem])
+        consumer.receive([diagnostic])
         XCTAssertEqual(logger.output, "warning: Test diagnostic\n")
     }
 
-    func testReceiveMultipleProblems() {
-        let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic"), possibleSolutions: [])
+    func testReceiveMultipleDiagnostics() {
+        let diagnostic = Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic")
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
-        consumer.receive([problem, problem])
+        consumer.receive([diagnostic, diagnostic])
         XCTAssertEqual(logger.output, """
         warning: Test diagnostic [test-identifier]
         warning: Test diagnostic [test-identifier]
@@ -91,12 +91,11 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
             
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
-            consumer.receive([problem])
+            consumer.receive([diagnostic])
             XCTAssertEqual(logger.output, """
             \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
             \(explanation)
@@ -111,12 +110,11 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let firstSolution = Solution(summary: firstSolutionSummary, replacements: [replacement])
             let secondSolution = Solution(summary: secondSolutionSummary, replacements: [])
             
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [firstSolution, secondSolution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [firstSolution, secondSolution])
             
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
-            consumer.receive([problem])
+            consumer.receive([diagnostic])
             XCTAssertEqual(logger.output, """
             \(expectedLocation): error: \(summary) [\(identifier)] \(firstSolutionSummary) \(secondSolutionSummary).
             \(explanation)
@@ -132,12 +130,11 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
             
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
             
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
-            consumer.receive([problem])
+            consumer.receive([diagnostic])
             XCTAssertEqual(logger.output, """
             \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
             \(explanation)

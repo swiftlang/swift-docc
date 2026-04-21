@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -104,7 +104,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let engine = DiagnosticEngine()
         SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge1, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
         SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge2, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
-        XCTAssert(engine.problems.isEmpty)
+        XCTAssert(engine.diagnostics.isEmpty)
 
         XCTAssertEqual((documentationCache["A"]!.semantic as! Symbol).defaultImplementations.groups.first?.references.map(\.url?.lastPathComponent), ["B", "C"])
     }
@@ -186,7 +186,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
             reference: sourceRef,
             symbolID: "A"
         )
-        XCTAssert(engine.problems.isEmpty)
+        XCTAssert(engine.diagnostics.isEmpty)
         
         let edge = SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .inheritsFrom, targetFallback: "MyOtherKit.B")
         

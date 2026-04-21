@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,69 +21,65 @@ struct ExtractLinks: MarkupRewriter {
     }
     
     var links = [any AnyLink]()
-    var problems = [Problem]()
+    var diagnostics = [Diagnostic]()
     var mode = Mode.taskGroup
         
     /// Creates a warning with a suggestion to remove all paragraph elements but the first.
-    private func problemForTrailingContent(_ paragraph: Paragraph) -> Problem {
+    private func makeTrailingContentDiagnostic(_ paragraph: Paragraph) -> Diagnostic {
         let range = paragraph.range ?? paragraph.firstChildRange()
         // An unexpected non-link list item found, suggest to remove it
         let trailingContent = Document(Paragraph(paragraph.inlineChildren.dropFirst()))
         let replacements = trailingContent.children.range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
+        let solutions = [Solution(summary: "Remove extraneous content", replacements: replacements)]
         
-        let diagnostic: Diagnostic
         switch mode {
         case .taskGroup:
-            diagnostic = Diagnostic(
+            return Diagnostic(
                 source: range?.source,
                 severity: .warning,
                 range: range,
                 identifier: "org.swift.docc.ExtraneousTaskGroupItemContent",
-                summary: "Extraneous content found after a link in task group list item"
+                summary: "Extraneous content found after a link in task group list item",
+                possibleSolutions: solutions
             )
         case .linksDirective:
-            diagnostic = Diagnostic(
+            return Diagnostic(
                 source: range?.source,
                 severity: .warning,
                 range: range,
                 identifier: "org.swift.docc.ExtraneousLinksDirectiveItemContent",
                 summary: "Extraneous content found after a link",
-                explanation: "\(Links.directiveName.singleQuoted) can only contain a bulleted list of documentation links"
+                explanation: "\(Links.directiveName.singleQuoted) can only contain a bulleted list of documentation links",
+                possibleSolutions: solutions
             )
         }
-        
-        return .init(diagnostic: diagnostic, possibleSolutions: [
-            Solution(summary: "Remove extraneous content", replacements: replacements)
-        ])
     }
     
-    private func problemForNonLinkContent(_ item: ListItem) -> Problem {
+    private func makeNonLinkContentDiagnostic(_ item: ListItem) -> Diagnostic {
         let range = item.range ?? item.firstChildRange()
         let replacements = range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
+        let solutions = [Solution(summary: "Remove non-link item", replacements: replacements)]
         
-        let diagnostic: Diagnostic
         switch mode {
         case .taskGroup:
-            diagnostic = Diagnostic(
+            return Diagnostic(
                 source: range?.source,
                 severity: .warning,
                 range: range,
                 identifier: "org.swift.docc.UnexpectedTaskGroupItem",
-                summary: "Only links are allowed in task group list items"
+                summary: "Only links are allowed in task group list items",
+                possibleSolutions: solutions
             )
         case .linksDirective:
-            diagnostic = Diagnostic(
+            return Diagnostic(
                 source: range?.source,
                 severity: .warning,
                 range: range,
                 identifier: "org.swift.docc.UnexpectedLinksDirectiveListItem",
-                summary: "Only documentation links are allowed in \(Links.directiveName.singleQuoted) list items"
+                summary: "Only documentation links are allowed in \(Links.directiveName.singleQuoted) list items",
+                possibleSolutions: solutions
             )
         }
-        
-        return .init(diagnostic: diagnostic, possibleSolutions: [
-            Solution(summary: "Remove non-link item", replacements: replacements)
-        ])
     }
     
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> (any Markup)? {
@@ -115,7 +111,7 @@ struct ExtractLinks: MarkupRewriter {
                         case .linksDirective:
                             // The 'Links' directive only supports `doc:` links.
                             guard ResolvedTopicReference.urlHasResolvedTopicScheme(url) else {
-                                problems.append(problemForNonLinkContent(item))
+                                diagnostics.append(makeNonLinkContentDiagnostic(item))
                                 return true
                             }
                         case .taskGroup:
@@ -127,7 +123,7 @@ struct ExtractLinks: MarkupRewriter {
                         // Warn if there is a trailing content after the link
                         if containsInvalidContent {
                             
-                            problems.append(problemForTrailingContent(paragraph))
+                            diagnostics.append(makeTrailingContentDiagnostic(paragraph))
                         }
                         return false
                     case let link as SymbolLink:
@@ -136,11 +132,11 @@ struct ExtractLinks: MarkupRewriter {
                         
                         // Warn if there is a trailing content after the link
                         if containsInvalidContent {
-                            problems.append(problemForTrailingContent(paragraph))
+                            diagnostics.append(makeTrailingContentDiagnostic(paragraph))
                         }
                         return false
                     default:
-                        problems.append(problemForNonLinkContent(item))
+                        diagnostics.append(makeNonLinkContentDiagnostic(item))
                         return true
                 }
         }
@@ -231,13 +227,12 @@ public struct TaskGroup {
 }
 
 extension TaskGroup {
-    /// Validates the task group links markdown and return the problems, if any.
-    func problemsForGroupLinks() -> [Problem] {
+    /// Validates the task group links markdown and return the diagnostics, if any.
+    func diagnosticsForGroupLinks() -> [Diagnostic] {
         var extractor = ExtractLinks()
         for child in originalContent {
             _ = extractor.visit(child)
         }
-        return extractor.problems
+        return extractor.diagnostics
     }
 }
-

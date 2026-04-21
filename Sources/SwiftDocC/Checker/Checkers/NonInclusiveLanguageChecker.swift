@@ -18,7 +18,7 @@ public struct NonInclusiveLanguageChecker: Checker {
     /// The severity for this checker's diagnostics.
     public static let severity: DiagnosticSeverity = .information
 
-    public var problems: [Problem] = []
+    public var diagnostics = [Diagnostic]()
 
     /// The list of terms to search for in documentation.
     ///
@@ -80,26 +80,24 @@ public struct NonInclusiveLanguageChecker: Checker {
         }
     }
 
-    /// Adds a new diagnostic describing where a term was found to `self.problems`.
+    /// Adds a new diagnostic describing where a term was found to `self.diagnostics`.
     /// - Parameters:
     ///   - term: The term that was found.
     ///   - range: The range at which the term was found in the current file.
     private mutating func addDiagnosticAboutMatch(_ term: Term, at range: SourceRange) {
-        let diagnostic = Diagnostic(
-            source: sourceFile,
-            severity: Self.severity,
-            range: range,
-            identifier: "NonInclusiveLanguage",
-            summary: "Documentation should use inclusive language",
-            explanation: term.message
+        diagnostics.append(
+            Diagnostic(
+                source: sourceFile,
+                severity: Self.severity,
+                range: range,
+                identifier: "NonInclusiveLanguage",
+                summary: "Documentation should use inclusive language",
+                explanation: term.message,
+                possibleSolutions: [Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [
+                    Replacement(range: range, replacement: term.replacement)
+                ])]
+            )
         )
-        
-        let solution = Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [
-            Replacement(range: range, replacement: term.replacement)
-        ])
-        
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
-        problems.append(problem)
     }
 
     /// Checks for a non-inclusive term in the given text and returns the matching ranges.

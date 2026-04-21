@@ -38,7 +38,7 @@ struct AnchorSectionTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let firstArticleReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let headingReference      = firstArticleReference.withFragment("Some-heading")
@@ -84,7 +84,7 @@ struct AnchorSectionTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let firstSymbolReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let headingReference      = firstSymbolReference.withFragment("Some-heading")
@@ -130,7 +130,7 @@ struct AnchorSectionTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let rootReference = try #require(context.soleRootModuleReference)
         let headingReference    = rootReference.withFragment("Some-heading")
@@ -192,7 +192,7 @@ struct AnchorSectionTests {
         }
         let context = try await load(catalog: catalog)
         
-        #expect(context.problems.map(\.diagnostic.summary) == [
+        #expect(context.diagnostics.map(\.summary) == [
             "The content section link 'doc:First#Some-symbol-heading' isn't allowed in a Topics link group",
             "The content section link 'doc:OtherArticle#Some-article-heading' isn't allowed in a Topics link group",
             
@@ -200,12 +200,12 @@ struct AnchorSectionTests {
             "The content section link 'doc:OtherArticle#Some-article-heading' isn't allowed in a Topics link group",
         ])
         
-        #expect(context.problems.map(\.diagnostic.identifier) == [
+        #expect(context.diagnostics.map(\.identifier) == [
             "org.swift.docc.SectionCuration",
             "org.swift.docc.SectionCuration",
             "org.swift.docc.SectionCuration",
             "org.swift.docc.SectionCuration",
-        ], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        ], "Unexpected problems: \(context.diagnostics.map(\.summary))")
     }
     
     @Test
@@ -226,7 +226,7 @@ struct AnchorSectionTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let symbolNode = try context.entity(with: reference)
@@ -269,7 +269,7 @@ struct AnchorSectionTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let articleNode = try context.entity(with: reference)

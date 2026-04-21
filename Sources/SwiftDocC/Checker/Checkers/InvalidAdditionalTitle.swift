@@ -13,7 +13,7 @@ public import Markdown
 
 /// A checker that warns about additional first-level headings.
 public struct InvalidAdditionalTitle: Checker {
-    public var problems = [Problem]()
+    public var diagnostics = [Diagnostic]()
     
     /// The first level-one heading that the checker encountered, if any.
     private var documentTitle: Heading? = nil
@@ -46,28 +46,6 @@ public struct InvalidAdditionalTitle: Checker {
             return [DiagnosticNote(source: source, range: range, message: message())]
         }
         
-        let diagnostic = if isExtensionFile {
-            Diagnostic(
-                source: sourceFile,
-                severity: .warning,
-                range: heading.range,
-                identifier: "MultipleSymbolExtensionAssociations",
-                summary: "Documentation extension file can only extend one symbol",
-                explanation: "A first-level heading with a symbol link is reserved for defining which symbol a documentation extension file is associated with.",
-                notes: makeNote(message: "Previously extending '\(documentTitle.title.trimmingCharacters(in: CharacterSet(charactersIn: "`")))' here")
-            )
-        } else {
-            Diagnostic(
-                source: sourceFile,
-                severity: .warning,
-                range: heading.range,
-                identifier: "MultiplePageTitles",
-                summary: "Page title can only be specified once",
-                explanation: "A first-level heading is reserved for specifying the title of an article.",
-                notes: makeNote(message: "Previously specified title '\(documentTitle.title)' here")
-            )
-        }
-        
         var solutions = [
             Solution(summary: "Remove heading", replacements: heading.range.map { range in
                 [Replacement(range: range, replacement: "")]
@@ -80,6 +58,31 @@ public struct InvalidAdditionalTitle: Checker {
                 } ?? [])
             )
         }
-        problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+        
+        let diagnostic = if isExtensionFile {
+            Diagnostic(
+                source: sourceFile,
+                severity: .warning,
+                range: heading.range,
+                identifier: "MultipleSymbolExtensionAssociations",
+                summary: "Documentation extension file can only extend one symbol",
+                explanation: "A first-level heading with a symbol link is reserved for defining which symbol a documentation extension file is associated with.",
+                notes: makeNote(message: "Previously extending '\(documentTitle.title.trimmingCharacters(in: CharacterSet(charactersIn: "`")))' here"),
+                possibleSolutions: solutions
+            )
+        } else {
+            Diagnostic(
+                source: sourceFile,
+                severity: .warning,
+                range: heading.range,
+                identifier: "MultiplePageTitles",
+                summary: "Page title can only be specified once",
+                explanation: "A first-level heading is reserved for specifying the title of an article.",
+                notes: makeNote(message: "Previously specified title '\(documentTitle.title)' here"),
+                possibleSolutions: solutions
+            )
+        }
+        
+        diagnostics.append(diagnostic)
     }
 }

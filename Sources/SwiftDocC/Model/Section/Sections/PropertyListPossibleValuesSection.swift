@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -44,7 +44,7 @@ public struct PropertyListPossibleValuesSection {
     public let possibleValues: [PossibleValue]
     
     enum Validator {
-        /// Creates a new problem about documentation for a possible value that's not known to that symbol.
+        /// Creates a new diagnostic about documentation for a possible value that's not known to that symbol.
         ///
         /// ## Example
         ///
@@ -59,8 +59,8 @@ public struct PropertyListPossibleValuesSection {
         /// - Parameters:
         ///   - unknownPossibleValue: The authored documentation for the unknown possible value name.
         ///   - knownPossibleValues: All known possible value names for that symbol.
-        /// - Returns: A new problem that suggests that the developer removes the documentation for the unknown possible value.
-        static func makeExtraPossibleValueProblem(_ unknownPossibleValue: PossibleValue, knownPossibleValues: Set<String>, symbolName: String) -> Problem {
+        /// - Returns: A new diagnostic that suggests that the developer removes the documentation for the unknown possible value.
+        static func makeExtraPossibleValueDiagnostic(_ unknownPossibleValue: PossibleValue, knownPossibleValues: Set<String>, symbolName: String) -> Diagnostic {
             
             let source = unknownPossibleValue.range?.source
             let summary = """
@@ -74,26 +74,20 @@ public struct PropertyListPossibleValuesSection {
             
             if nearMisses.isEmpty {
                 // If this possible value doesn't resemble any of this symbols possible values, suggest to remove it.
-                return Problem(
-                    diagnostic: Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary),
-                    possibleSolutions: [
-                        Solution(
-                            summary: solutionSummary,
-                            replacements: unknownPossibleValue.range.map { [Replacement(range: $0, replacement: "")] } ?? []
-                        )
-                    ]
-                )
+                return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary, possibleSolutions: [
+                    Solution(
+                        summary: solutionSummary,
+                        replacements: unknownPossibleValue.range.map { [Replacement(range: $0, replacement: "")] } ?? []
+                    )
+                ])
             }
             // Otherwise, suggest to replace the documented possible value name with the one of the similarly named possible values.
-            return Problem(
-                diagnostic: Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.nameRange, identifier: identifier, summary: summary),
-                possibleSolutions: nearMisses.map { candidate in
-                    Solution(
-                        summary: "Replace \(unknownPossibleValue.value.singleQuoted) with \(candidate.singleQuoted)",
-                        replacements: unknownPossibleValue.nameRange.map { [Replacement(range: $0, replacement: candidate)] } ?? []
-                    )
-                }
-            )
+            return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.nameRange, identifier: identifier, summary: summary, possibleSolutions: nearMisses.map { candidate in
+                Solution(
+                    summary: "Replace \(unknownPossibleValue.value.singleQuoted) with \(candidate.singleQuoted)",
+                    replacements: unknownPossibleValue.nameRange.map { [Replacement(range: $0, replacement: candidate)] } ?? []
+                )
+            })
         }
     }
 

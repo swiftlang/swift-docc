@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,14 +19,12 @@ class HasContentTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, problems: &problems)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
             XCTAssertTrue(hasContent.isEmpty)
-            XCTAssertEqual(1, problems.count)
-            problems.first.map { problem in
-                XCTAssertEqual("org.swift.docc.Intro.HasContent", problem.diagnostic.identifier)
-            }
+            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.Intro.HasContent")
         }
     }
     
@@ -40,11 +38,11 @@ class HasContentTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, problems: &problems)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
             XCTAssertFalse(hasContent.isEmpty)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
         }
     }
 }
