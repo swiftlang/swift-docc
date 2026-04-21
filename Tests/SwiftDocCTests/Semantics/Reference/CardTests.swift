@@ -21,7 +21,7 @@ struct CardTests {
     }
 
     @Test
-    func noContent() async throws {
+    func emitsWarningWithNoContent() async throws {
         let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card
@@ -36,7 +36,7 @@ struct CardTests {
     }
 
     @Test
-    func basicCard() async throws {
+    func rendersWithHeadAndContentSections() async throws {
         let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
@@ -71,7 +71,7 @@ struct CardTests {
     }
 
     @Test
-    func cardWithNoHeading() async throws {
+    func rendersWithContentSectionOnly() async throws {
         let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
@@ -97,7 +97,7 @@ struct CardTests {
     }
 
     @Test
-    func cardWithMultipleHeadings() async throws {
+    func rendersWithHeadingsInBothSections() async throws {
         let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
@@ -132,7 +132,7 @@ struct CardTests {
     }
 
     @Test
-    func cardWithMultipleThematicBreaks() async throws {
+    func onlyPartitionsHeadAndContentSectionsUsingFirstThematicBreak() async throws {
         let (renderBlockContent, problems, card) = try await parseDirective(Card.self, configuration: Self.cardEnabledConfiguration) {
             """
             @Card {
@@ -176,7 +176,7 @@ struct CardTests {
     }
 
     @Test
-    func cardIgnoredWhenFeatureFlagDisabled() async throws {
+    func rendersOnlyInnerContentsWithoutFeatureFlagEnabled() async throws {
         let (renderBlockContent, problems, card) = try await parseDirective(Card.self) {
             """
             @Card {
@@ -196,7 +196,7 @@ struct CardTests {
     }
 
     @Test
-    func jsonRoundTrip() throws {
+    func encodesAndDecodesRoundTrip() throws {
         try assertRoundTripCoding(
             RenderBlockContent.card(RenderBlockContent.Card(
                 head: [
