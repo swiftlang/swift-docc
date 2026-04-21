@@ -91,15 +91,15 @@ private let space      = UInt8(ascii: " ")
 
 /// A scope for a collection of methods that pretty print declarations
 private enum DeclarationFormatter {
-    // The general high-level design of these methods are can be described in 3 steps:
+    // The general high-level design of these methods can be described in 3 steps:
     // First, the SymbolKit fragments are transformed into `Fragment` types that join consecutive fragments that display the same. This happens in `withJoinedConsecutiveFragments(...)`
     // Second, some in-place mutation happens on the temporary buffer of those "fragments" to insert line breaks and modify whitespace.
     // Lastly, those fragments are transformed into XMLNode elements by calling `MarkdownRenderer.render(_:)` on each fragment.
     
-    /// A compact representation of the information of a SymbolKit fragment for the purpose of rendering an symbol declaration in static HTML.
+    /// A compact representation of the information in a SymbolKit fragment for the purpose of rendering a symbol declaration in static HTML.
     ///
-    /// This type exist to join consecutive SymbolKit declaration fragments---that map to the same ``Kind``---into a single element.
-    /// It also makes it provides some abstractions for manipulating the fragment's ``text``.
+    /// This type exists to join consecutive SymbolKit declaration fragments---that map to the same ``Kind``---into a single element.
+    /// It also provides some abstractions for manipulating the fragment's ``text``.
     struct Fragment {
         /// The known kinds of symbol fragments (that specifically appear in declarations).
         ///
@@ -161,7 +161,7 @@ private enum DeclarationFormatter {
     /// - Parameters:
     ///   - fragments: The SymbolKit fragments to transform and join
     ///   - body: A closure where the caller can operate on a temporary buffer of `Fragment` values, with the counted number of external and internal parameter fragments for convenience.
-    ///     The buffer is mutable so that the closure can in-place modify the fragment values.
+    ///     The buffer is mutable so that the closure can modify the fragment values in-place.
     ///     > Important: The closure must not change the length of the buffer. If it does, then this function may not be able to successfully clean up the temporary buffer.
     /// - Returns: The return value of the `body` closure.
     static func withJoinedConsecutiveFragments<Result>(
@@ -216,7 +216,7 @@ private enum DeclarationFormatter {
             }
             
             defer {
-                // The closure is responsible for both deinitializing any memory that it initializes. However, the buffer will trap if it deinitializes memory that it never initialized.
+                // The closure is responsible for deinitializing any memory that it initializes. However, the buffer will trap if it deinitializes memory that it never initialized.
                 buffer[0..<elementCount].deinitialize()
             }
             // We need to pass the closure a buffer with a `count` so that it can use for-loops and otherwise check the length of the buffer.
@@ -248,7 +248,7 @@ private enum DeclarationFormatter {
             var index = 0
             
             // Attributes such as `nonisolated`, `@MainActor`, `@frozen`, `@peer(...)`, or `@freestanding(...)` are placed on their own line.
-            // We found the end of the attributes when we encounter the first keyword (for example `func`, `struct`, or `macro`.
+            // We have found the end of the list of attributes when we encounter the first keyword (for example `func`, `struct`, or `macro`.
             if fragments[index].kind == .attribute,
                let firstKeywordIndex = fragments.firstIndex(where: { $0.kind == .keyword })
             {
@@ -256,7 +256,7 @@ private enum DeclarationFormatter {
                 index = firstKeywordIndex
             }
             
-            // Only place parameters on their on lines if the function has more than one parameter.
+            // Only place parameters on their own lines if the function has more than one parameter.
             // Here we check the _external_ names because Swift parameters always have those in their declaration.
             guard externalParametersCount > 1 else {
                 return fragments.map { renderer.render($0) }
@@ -269,7 +269,7 @@ private enum DeclarationFormatter {
                 defer { index &+= 1 }
                 
                 // We iterate over each fragment's UTF-8 code units to check where we need to insert a line break.
-                // Note that can happen in the middle of a fragment, especially since multiple fragments may have already been joined together.
+                // Note that it can happen in the middle of a fragment, especially since multiple fragments may have already been joined together.
                 for utf8Index in fragments[index].text.utf8.indices {
                     let byte = fragments[index].text.utf8[utf8Index]
                     switch byte {
@@ -362,7 +362,7 @@ private enum DeclarationFormatter {
             // From here on we want to add a newline and leading whitespace to each parameter except the last (we keep the semicolon on the same line)
             for _ in 0 ..< internalParametersCount - 1 {
                 advancePastNextParameterName()
-                // After advancing past the previous name, we know the the fragment that we need to add a line break and indentation to.
+                // After advancing past the previous name, we know the fragment that we need to add a line break and indentation to.
                 let lineStartIndex = fragmentIndex
                 
                 let distanceToColon = countCharactersAndAdvanceUpUntilNextColon()
