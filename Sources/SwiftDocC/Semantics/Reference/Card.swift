@@ -81,7 +81,7 @@ extension Card: RenderableDirectiveConvertible {
 
         // Gate the Card directive behind its feature flag.
         // If the flag is not enabled, just render its inner contents.
-        guard contentCompiler.context.configuration.featureFlags.isCardDirectiveEnabled else {
+        guard contentCompiler.context.configuration.featureFlags.isExperimentalCardDirectiveEnabled else {
             return renderedContent
         }
 

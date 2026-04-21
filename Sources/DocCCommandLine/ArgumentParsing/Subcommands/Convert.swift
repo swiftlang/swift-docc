@@ -487,10 +487,10 @@ extension Docc {
 
             /// A user-provided value that is true if the user enables support for the `@Card` directive.
             @Flag(
-                name: .customLong("enable-card-directive"),
+                name: .customLong("enable-experimental-card-directive"),
                 help: "Enable support for the @Card directive."
             )
-            var enableCardDirective = false
+            var enableExperimentalCardDirective = false
         
             /// A user-provided value that is true if additional metadata files should be produced.
             @Flag(help: "Write additional metadata files to the output directory.")

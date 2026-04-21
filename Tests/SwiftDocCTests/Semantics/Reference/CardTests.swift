@@ -16,7 +16,7 @@ struct CardTests {
     /// A configuration with the card directive feature flag enabled.
     static var cardEnabledConfiguration: DocumentationContext.Configuration {
         var configuration = DocumentationContext.Configuration()
-        configuration.featureFlags.isCardDirectiveEnabled = true
+        configuration.featureFlags.isExperimentalCardDirectiveEnabled = true
         return configuration
     }
 
