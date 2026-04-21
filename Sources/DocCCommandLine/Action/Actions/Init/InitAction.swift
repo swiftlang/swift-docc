@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -132,7 +132,7 @@ public struct InitAction: AsyncAction {
                 try fileManager.createFile(at: fileURL, contents: Data(content.utf8))
                 directoryURLsList.append(fileURL.relative(to: catalogOutputURL)!)
             }
-            // Write additional directiories defined in the catalog.
+            // Write additional directories defined in the catalog.
             // Ex. `Resources`
             for relativePath in catalogTemplate.additionalDirectories {
                 let directoryURL = catalogOutputURL.appendingPathComponent(relativePath)
@@ -165,6 +165,7 @@ public struct InitAction: AsyncAction {
             if fileManager.fileExists(atPath: catalogOutputURL.path) {
                 try fileManager.removeItem(at: catalogOutputURL)
             }
+            // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
             diagnosticEngine.emit(
                 Problem(
                     diagnostic: Diagnostic(

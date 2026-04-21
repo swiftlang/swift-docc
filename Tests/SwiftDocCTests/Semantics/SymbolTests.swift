@@ -137,6 +137,30 @@ class SymbolTests: XCTestCase {
         }
     }
     
+    func testRelationshipToSelfDoesNotCauseCyclicTopicGraph() async throws {
+        let symbolID = "some-symbol-id"
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: symbolID, kind: .struct, pathComponents: ["Something"], otherMixins: [
+                    SymbolGraph.Symbol.Swift.Extension(extendedModule: "ExtendedModuleName", constraints: [])
+                ])
+            ], relationships: [
+                // Symbols shouldn't have memberOf relationships to themselves (rdar://174848289), but we ensure that DocC gracefully handles it when they do.
+                .init(source: symbolID, target: symbolID, kind: .memberOf, targetFallback: nil, mixins: [
+                    SymbolGraph.Relationship.SourceOrigin(identifier: "origin-symbol-id", displayName: "OriginSymbolName")
+                ])
+            ]))
+        }
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        for reference in context.knownPages {
+            let cycles = context.topicGraph.reverseEdgesGraph.cycles(from: reference)
+            XCTAssert(cycles.isEmpty, "Unexpectedly found cycles in the topic graph:\n  \(cycles.map { $0.map(\.path).joined(separator: " -> ") }.joined(separator: "\n  "))")
+        }
+    }
+    
     func testAppendingInSourceDocumentationWithArticle() async throws {
         // The article heading—which should always be the symbol link header—is not considered part of the article's content
         let (withEmptyArticleOverride, problems) = try await makeDocumentationNodeSymbol(
@@ -1573,5 +1597,12 @@ extension SourceLocation {
         }
         
         return string.endIndex
+    }
+}
+
+private extension SymbolGraph.Relationship {
+    init(source: String, target: String, kind: Kind, targetFallback: String?, mixins: [any Mixin] = []) {
+        self.init(source: source, target: target, kind: kind, targetFallback: targetFallback)
+        self.mixins = makeMixins(mixins)
     }
 }
