@@ -361,6 +361,7 @@ add_library(SwiftDocC
   Semantics/Redirect.swift
   Semantics/Redirected.swift
   Semantics/ReferenceResolver.swift
+  Semantics/Reference/Card.swift
   Semantics/Reference/Links.swift
   Semantics/Reference/Row.swift
   Semantics/Reference/Small.swift
