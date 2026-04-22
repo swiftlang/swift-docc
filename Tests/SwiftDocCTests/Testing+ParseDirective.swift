@@ -58,25 +58,15 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
 
 func parseDirective<Directive: RenderableDirectiveConvertible>(
     _ directive: Directive.Type,
-    withAvailableAssetNames assetNames: [String],
+    withAvailableAssetNames assetNames: [String] = [],
+    configuration: DocumentationContext.Configuration = .init(),
     content: () -> String,
     sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
     let context = try await load(catalog: Folder(name: "Something.docc", content: assetNames.map {
         DataFile(name: $0, data: Data())
-    }))
+    }), configuration: configuration)
     
-    let (renderedContent, problems, directive, _) = try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
-    return (renderedContent, problems, directive)
-}
-
-func parseDirective<Directive: RenderableDirectiveConvertible>(
-    _ directive: Directive.Type,
-    configuration: DocumentationContext.Configuration,
-    content: () -> String,
-    sourceLocation: Testing.SourceLocation = #_sourceLocation
-) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
-    let context = try await makeEmptyContext(configuration: configuration)
     let (renderedContent, problems, directive, _) = try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
     return (renderedContent, problems, directive)
 }
