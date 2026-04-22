@@ -52,6 +52,8 @@ public final class Card: Semantic, AutomaticDirectiveConvertible, MarkupContaini
     @ChildMarkup(numberOfParagraphs: .oneOrMore, supportsStructure: true)
     public private(set) var content: MarkupContainer
 
+    public static var hiddenFromDocumentation: Bool { true }
+
     static var keyPaths: [String : AnyKeyPath] = [
         "content" : \Card._content,
     ]
