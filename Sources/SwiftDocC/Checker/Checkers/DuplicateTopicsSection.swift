@@ -31,11 +31,10 @@ public struct DuplicateTopicsSections: Checker {
         
         // The notes are the same for all diagnostics, so only create them once.
         let first = foundTopicsHeadings[0]
-        let notes: [DiagnosticNote]
-        if let sourceFile, let range = first.range {
-            notes = [DiagnosticNote(source: sourceFile, range: range, message: "Topics section starts here")]
+        let notes: [Diagnostic.Note] = if let sourceFile, let range = first.range {
+            [.init(source: sourceFile, range: range, message: "Topics section starts here")]
         } else {
-            notes = []
+            []
         }
         
         let duplicates = foundTopicsHeadings[1...]

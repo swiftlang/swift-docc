@@ -98,8 +98,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
                     continue
                 }
                 if let source {
-                    let note = DiagnosticNote(source: source, range: range, message: "This `\(Choice.directiveName)` directive is marked as the correct option")
-                    diagnostic.notes.append(note)
+                    diagnostic.notes.append(.init(source: source, range: range, message: "This `\(Choice.directiveName)` directive is marked as the correct option"))
                 }
             }
             diagnostics.append(diagnostic)

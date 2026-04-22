@@ -820,7 +820,7 @@ public class DocumentationContext {
                     Because the pages for '\(thisRelativePath)' and '\(otherRelativePath)' would have the same web URL, DocC can only create a web page for one of them; deterministically keeping '\(otherRelativePath)' and dropping '\(thisRelativePath)'.
                     """,
                     notes: [
-                        DiagnosticNote(
+                        .init(
                             source: firstFoundAtURL,
                             range: SourceLocation(line: 1, column: 1, source: nil) ..<  SourceLocation(line: 1, column: 1, source: nil),
                             message: "Other \(fileDescription) with same output path here"
@@ -2560,11 +2560,11 @@ public class DocumentationContext {
             guard let link = firstExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                 fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(firstExtension.source.absoluteString.singleQuoted)")
             }
-            let notes: [DiagnosticNote] = documentationExtensions.dropFirst().map { documentationExtension in
+            let notes: [Diagnostic.Note] = documentationExtensions.dropFirst().map { documentationExtension in
                 guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
-                return DiagnosticNote(source: documentationExtension.source, range: link.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil), message: "\(symbolPath.singleQuoted) is also documented here.")
+                return .init(source: documentationExtension.source, range: link.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil), message: "\(symbolPath.singleQuoted) is also documented here.")
             }
             
             diagnosticEngine.emit(Diagnostic(source: firstExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.DuplicateMarkdownTitleSymbolReferences", summary: "Multiple documentation extensions matched \(symbolPath.singleQuoted).", notes: notes))
@@ -2692,7 +2692,7 @@ public class DocumentationContext {
 
         let allNotes = rootPageArticles.compactMap { article in
             article.value.metadata?.technologyRoot?.originalMarkup.range.map { range in
-                DiagnosticNote(source: article.source, range: range, message: "Root page also defined here")
+                Diagnostic.Note(source: article.source, range: range, message: "Root page also defined here")
             }
         }
         
@@ -3185,14 +3185,14 @@ extension DocumentationContext {
                 
                 let duplicateAlternateLanguages = Set(sourceLanguageToReference.keys).intersection(alternateRepresentationEntity.availableSourceLanguages)
                 if !duplicateAlternateLanguages.isEmpty {
-                    let notes: [DiagnosticNote] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
+                    let notes: [Diagnostic.Note] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
                         guard let alreadyExistingRepresentation = sourceLanguageToReference[duplicateAlternateLanguage],
                               let range = alreadyExistingRepresentation.originalMarkup.range,
                               let source = range.source else {
                             return nil
                         }
                         
-                        return DiagnosticNote(source: source, range: range, message: "This directive already specifies an alternate \(duplicateAlternateLanguage.name) representation.")
+                        return .init(source: source, range: range, message: "This directive already specifies an alternate \(duplicateAlternateLanguage.name) representation.")
                     }
                     diagnostics.append(Diagnostic(
                         source: alternateRepresentation.originalMarkup.range?.source,

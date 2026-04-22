@@ -614,11 +614,10 @@ struct ParametersAndReturnValidator {
     ///   - previous: The previous occurrence of documentation for this parameter
     /// - Returns: A new diagnostic that suggests that the developer removes the duplicated parameter documentation.
     private func makeDuplicateParameterDiagnostic(_ parameter: Parameter, previous: Parameter) -> Diagnostic {
-        let notes: [DiagnosticNote]
-        if let previousRange = previous.range, let source = previousRange.source {
-            notes = [DiagnosticNote(source: source, range: adjusted(previousRange), message: "Previously documented here")]
+        let notes: [Diagnostic.Note] = if let previousRange = previous.range, let source = previousRange.source {
+            [.init(source: source, range: adjusted(previousRange), message: "Previously documented here")]
         } else {
-            notes = []
+            []
         }
         
         return Diagnostic(

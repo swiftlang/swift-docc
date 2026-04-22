@@ -129,7 +129,7 @@ class DiagnosticTests: XCTestCase {
 
         let noteSource = URL(string: "/a/file/path.md")!
         let noteRange = SourceLocation(line: 1, column: 1, source: source)..<SourceLocation(line: 9, column: 7, source: noteSource)
-        let note = DiagnosticNote(
+        let note = Diagnostic.Note(
             source: noteSource,
             range: noteRange,
             message: "The message of the note."

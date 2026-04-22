@@ -21,11 +21,10 @@ public struct NonOverviewHeadingChecker: Checker {
 
         return nonOverviewHeadings.compactMap { heading -> Diagnostic? in
             guard let headingRange = heading.range else { return nil }
-            let notes: [DiagnosticNote]
-            if let sourceFile, let range = overviewHeading?.range {
-                notes = [DiagnosticNote(source: sourceFile, range: range, message: "Overview section starts here")]
+            let notes: [Diagnostic.Note] = if let sourceFile, let range = overviewHeading?.range {
+                [.init(source: sourceFile, range: range, message: "Overview section starts here")]
             } else {
-                notes = []
+                []
             }
 
             let solution: Solution

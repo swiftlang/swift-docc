@@ -987,11 +987,11 @@ public struct DocumentationNode {
             explanation = makeExplanation(availabilityDescription: longAvailabilityDescription)
         }
         
-        let notes: [DiagnosticNote] = metadata?.availability.compactMap { availability -> DiagnosticNote? in
+        let notes: [Diagnostic.Note] = metadata?.availability.compactMap { availability -> Diagnostic.Note? in
             guard availability.deprecated == nil, let range = availability.originalMarkup.range, let source = range.source else {
                 return nil
             }
-            return DiagnosticNote(source: source, range: range, message: "Marked available for '\(availability.platform.rawValue)' here")
+            return .init(source: source, range: range, message: "Marked available for '\(availability.platform.rawValue)' here")
         } ?? []
         
         

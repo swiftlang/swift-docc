@@ -130,7 +130,7 @@ extension DiagnosticFile.Diagnostic.Solution.Replacement {
 }
 
 extension DiagnosticFile.Diagnostic.Note {
-    init(_ note: DiagnosticNote) {
+    init(_ note: Diagnostic.Note) {
         self.source  = note.source
         self.range   = .init(note.range)
         self.message = note.message

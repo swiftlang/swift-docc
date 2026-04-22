@@ -39,7 +39,7 @@ public struct Diagnostic {
     ///
     /// For example, if you're diagnosing the fact that there are multiple *X* in a document, you might diagnose on
     /// the second *X* while adding a note on the first *X* to note that it was the first occurrence.
-    public var notes: [DiagnosticNote]
+    public var notes: [Note]
     
     /// A list of possible solutions that the end-use can take to resolve the problem or issue.
     public var solutions: [Solution]
@@ -52,7 +52,7 @@ public struct Diagnostic {
         groupIdentifier: String? = nil,
         summary: String,
         explanation: String? = nil,
-        notes: [DiagnosticNote] = [],
+        notes: [Note] = [],
         solutions: [Solution] = []
     ) {
         self.source = source

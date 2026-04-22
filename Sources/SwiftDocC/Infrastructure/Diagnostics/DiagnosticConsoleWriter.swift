@@ -209,7 +209,7 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         return result
     }
     
-    private func formattedDescription(for note: DiagnosticNote) -> String {
+    private func formattedDescription(for note: Diagnostic.Note) -> String {
         let location = "\(note.source.path):\(note.range.lowerBound.line):\(note.range.lowerBound.column)"
         return "\(location): note: \(note.message)"
     }

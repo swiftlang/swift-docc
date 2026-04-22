@@ -30,10 +30,10 @@ func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: 
     }
     
     var solutions: [Solution] = []
-    var notes: [DiagnosticNote] = []
+    var notes: [Diagnostic.Note] = []
     if let referenceSourceRange {
         if let note = errorInfo.note, let source {
-            notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
+            notes.append(.init(source: source, range: referenceSourceRange, message: note))
         }
         
         solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: referenceSourceRange))

@@ -153,7 +153,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             identifier: identifier,
             summary: summary,
             explanation: explanation,
-            notes: [DiagnosticNote(source: noteSource, range: noteRange, message: "This is a note")]
+            notes: [.init(source: noteSource, range: noteRange, message: "This is a note")]
         )
         consumer.receive([diagnostic])
         try? consumer.flush()

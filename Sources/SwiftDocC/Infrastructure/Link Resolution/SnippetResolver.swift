@@ -117,10 +117,10 @@ extension SnippetResolver {
     
     private static func _diagnostic(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo, id: String) -> Diagnostic {
         var solutions: [Solution] = []
-        var notes: [DiagnosticNote] = []
+        var notes: [Diagnostic.Note] = []
         if let range {
             if let note = errorInfo.note, let source {
-                notes.append(DiagnosticNote(source: source, range: range, message: note))
+                notes.append(.init(source: source, range: range, message: note))
             }
             
             solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: range))

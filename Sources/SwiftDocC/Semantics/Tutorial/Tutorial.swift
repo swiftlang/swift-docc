@@ -110,7 +110,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
             if let previousRange = seenSectionTitles[section.title] {
                 var diagnostic = Diagnostic(source: source, severity: .warning, range: thisTitleRange, identifier: "org.swift.docc.\(Tutorial.self).DuplicateSectionTitle", summary: "Duplicate title in \(TutorialSection.directiveName.singleQuoted) directive", explanation: "\(TutorialSection.directiveName.singleQuoted) directives are identified and linked using their titles and so must be unique within a \(Tutorial.directiveName.singleQuoted) directive; this directive will be dropped")
                 if let source {
-                    diagnostic.notes.append(DiagnosticNote(source: source, range: previousRange, message: "First \(TutorialSection.directiveName.singleQuoted) directive with the title '\(section.title)' written here"))
+                    diagnostic.notes.append(.init(source: source, range: previousRange, message: "First \(TutorialSection.directiveName.singleQuoted) directive with the title '\(section.title)' written here"))
                 }
                 diagnostics.append(diagnostic)
                 return false
