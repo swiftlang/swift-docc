@@ -120,7 +120,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 var logHandle = LogHandle.memory(logStorage)
                 let result = try await preview.perform(logHandle: &logHandle)
                 
-                guard !result.diagnostics.containsError else {
+                guard !result.diagnostics.containsAnyError else {
                     throw ErrorsEncountered()
                 }
             }
@@ -371,7 +371,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 var logHandle = LogHandle.memory(logStorage)
                 let result = try await preview.perform(logHandle: &logHandle)
                 
-                guard !result.diagnostics.containsError else {
+                guard !result.diagnostics.containsAnyError else {
                     throw ErrorsEncountered()
                 }
             }

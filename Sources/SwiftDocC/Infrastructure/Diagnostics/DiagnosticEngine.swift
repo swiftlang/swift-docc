@@ -130,7 +130,7 @@ public final class DiagnosticEngine {
         let filteredProblems = mappedProblems.filter(shouldReport)
         guard !filteredProblems.isEmpty else { return }
 
-        if filteredProblems.containsError {
+        if filteredProblems.containsAnyError {
             didEncounterError.sync { $0 = true }
         }
         

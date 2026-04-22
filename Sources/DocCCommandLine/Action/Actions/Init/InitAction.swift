@@ -107,7 +107,7 @@ public struct InitAction: AsyncAction {
                 )
             )
             return ActionResult(
-                didEncounterError: diagnosticEngine.diagnostics.containsError,
+                didEncounterError: diagnosticEngine.diagnostics.containsAnyError,
                 outputs: []
             )
         }
@@ -174,7 +174,7 @@ public struct InitAction: AsyncAction {
         }
         
         return ActionResult(
-            didEncounterError: diagnosticEngine.diagnostics.containsError,
+            didEncounterError: diagnosticEngine.diagnostics.containsAnyError,
             outputs: [catalogOutputURL]
         )
     }

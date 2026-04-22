@@ -36,7 +36,7 @@ public struct IndexAction: AsyncAction {
         let diagnostics = try buildIndex()
         diagnosticEngine.emit(diagnostics)
         
-        return ActionResult(didEncounterError: diagnostics.containsError, outputs: [outputURL])
+        return ActionResult(didEncounterError: diagnostics.containsAnyError, outputs: [outputURL])
     }
     
     private func buildIndex() throws -> [Diagnostic] {

@@ -26,7 +26,7 @@ class VideoMediaTests: XCTestCase {
         let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(video)
         XCTAssertEqual(1, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.source")
     }
     
@@ -81,7 +81,7 @@ class VideoMediaTests: XCTestCase {
         let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(video)
         XCTAssertEqual(3, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
         XCTAssertEqual(diagnostics.map(\.identifier), [
             "org.swift.docc.UnknownArgument",

@@ -93,7 +93,7 @@ public extension Diagnostic {
 
 extension Sequence<Diagnostic> {
     /// A Boolean value that indicates if any of the diagnostics has an`error` severity.
-    package var containsError: Bool {
+    package var containsAnyError: Bool {
         contains { $0.severity == .error }
     }
 }

@@ -24,7 +24,7 @@ class ImageMediaTests: XCTestCase {
         let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(image)
         XCTAssertEqual(1, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(diagnostics.map(\.identifier), [
             "org.swift.docc.HasArgument.source",
         ])
@@ -80,7 +80,7 @@ class ImageMediaTests: XCTestCase {
         let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(image)
         XCTAssertEqual(3, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
         XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
             "org.swift.docc.HasArgument.source",

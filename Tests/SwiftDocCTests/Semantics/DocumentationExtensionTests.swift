@@ -23,7 +23,7 @@ class DocumentationExtensionTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(options)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior", diagnostics.first?.identifier)
     }
@@ -61,7 +61,7 @@ class DocumentationExtensionTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(options)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior.ConversionFailed", diagnostics.first?.identifier)
     }
@@ -74,7 +74,7 @@ class DocumentationExtensionTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options, "Even if there are warnings we can create an options value")
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.UnknownArgument", diagnostics.first?.identifier)
     }
@@ -91,7 +91,7 @@ class DocumentationExtensionTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options, "Even if there are warnings we can create a DocumentationExtension value")
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(2, diagnostics.count)
         XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", diagnostics.first?.identifier)
         XCTAssertEqual("org.swift.docc.DocumentationExtension.NoInnerContentAllowed", diagnostics.last?.identifier)
@@ -109,7 +109,7 @@ class DocumentationExtensionTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options, "Even if there are warnings we can create a DocumentationExtension value")
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.DocumentationExtension.NoInnerContentAllowed")
     }
@@ -122,7 +122,7 @@ class DocumentationExtensionTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(options)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(2, diagnostics.count)
         
         XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [

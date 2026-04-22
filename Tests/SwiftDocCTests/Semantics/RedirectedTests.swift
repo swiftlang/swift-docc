@@ -24,7 +24,7 @@ class RedirectedTests: XCTestCase {
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(redirected)
         XCTAssertEqual(1, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.from")
     }
     
@@ -50,7 +50,7 @@ class RedirectedTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.UnknownArgument")
     }
@@ -69,7 +69,7 @@ class RedirectedTests: XCTestCase {
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
         XCTAssertEqual(2, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasOnlyKnownDirectives")
         XCTAssertEqual(diagnostics.last?.identifier,  "org.swift.docc.Redirected.NoInnerContentAllowed")
     }
@@ -87,7 +87,7 @@ class RedirectedTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.Redirected.NoInnerContentAllowed")
     }
@@ -403,7 +403,7 @@ class RedirectedTests: XCTestCase {
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(redirected)
         XCTAssertEqual(2, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
         XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
             "org.swift.docc.HasArgument.from",

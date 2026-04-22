@@ -53,7 +53,7 @@ package enum ConvertActionConverter {
             benchmark(end: processingDurationMetric)
         }
         
-        guard !context.diagnosticEngine.diagnostics.containsError else {
+        guard !context.diagnosticEngine.diagnostics.containsAnyError else {
             return
         }
         

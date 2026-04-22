@@ -121,7 +121,7 @@ Resources @1:1-29:2
         var diagnostics = [Diagnostic]()
         let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(resources)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
         // Two directives are supposed to have at least one link
         XCTAssertEqual(2, diagnostics.count)

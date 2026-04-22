@@ -364,7 +364,7 @@ public struct ConvertAction: AsyncAction {
             signposter.endInterval("Process", processInterval)
         }
 
-        var didEncounterError = context.diagnosticEngine.diagnostics.containsError
+        var didEncounterError = context.diagnosticEngine.diagnostics.containsAnyError
         let hasTutorial = context.knownPages.contains(where: {
             guard let kind = try? context.entity(with: $0).kind else { return false }
             return kind == .tutorial || kind == .tutorialArticle
@@ -425,7 +425,7 @@ public struct ConvertAction: AsyncAction {
             postConversionDiagnostics.append(contentsOf: coverageResults.diagnostics)
         }
         
-        didEncounterError = didEncounterError || postConversionDiagnostics.containsError
+        didEncounterError = didEncounterError || postConversionDiagnostics.containsAnyError
         
         // We should generally only replace the current build output if we didn't encounter errors during conversion.
         // However, if the `emitDigest` flag is true, we should replace the current output with our digest of diagnostics.

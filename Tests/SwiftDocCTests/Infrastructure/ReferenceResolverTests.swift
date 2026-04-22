@@ -579,7 +579,7 @@ class ReferenceResolverTests: XCTestCase {
         let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitChapter(chapter)
-        XCTAssertFalse(resolver.diagnostics.containsError)
+        XCTAssertFalse(resolver.diagnostics.containsAnyError)
         XCTAssertEqual(resolver.diagnostics.count, 1)
         XCTAssertEqual(resolver.diagnostics.filter({ $0.severity == .warning }).count, 1)
     }

@@ -22,7 +22,7 @@ class IntroTests: XCTestCase {
         let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(intro)
         XCTAssertEqual(1, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.title")
     }
     
@@ -73,7 +73,7 @@ class IntroTests: XCTestCase {
         let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(intro)
         XCTAssertEqual(2, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsError)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
         XCTAssertEqual(diagnostics.map(\.identifier), [
             "org.swift.docc.UnknownArgument",
