@@ -19,8 +19,8 @@ final class MarkdownOutputTests: XCTestCase {
     
     // MARK: - Test conveniences
     
-    private func markdownOutput(catalog: Folder, path: String) async throws -> (MarkdownOutputNode, MarkdownOutputManifest) {
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+    private func markdownOutput(catalog: Folder, path: String, configuration: DocumentationContext.Configuration = .init()) async throws -> (MarkdownOutputNode, MarkdownOutputManifest) {
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         var path = path
         if !path.hasPrefix("/") {
             path = "/documentation/MarkdownOutput/\(path)"
@@ -76,6 +76,62 @@ final class MarkdownOutputTests: XCTestCase {
         let (node, _) = try await markdownOutput(catalog: catalog, path: "RowsAndColumns")
         let expected = "I am the content of column one\n\nI am the content of column two"
         XCTAssert(node.markdown.contains(expected))
+    }
+
+    func testCardFormatting() async throws {
+        var config = DocumentationContext.Configuration()
+        let catalog = catalog(files: [
+            TextFile(name: "Cards.md", utf8Content: """
+                # Cards
+
+                Demonstrates how card directives are rendered as markdown
+
+                ## Overview
+
+                @Card {
+                    ### I am a head heading
+
+                    I am a head paragraph
+
+                    ---
+
+                    ### I am a body heading
+
+                    I am a body paragraph
+                }
+                """)
+        ])
+
+        let (defaultNode, _) = try await markdownOutput(catalog: catalog, path: "Cards", configuration: config)
+        XCTAssert(!defaultNode.markdown.contains("@Card"))
+        XCTAssert(!defaultNode.markdown.contains("""
+            ### I am a head heading
+
+            I am a head paragraph
+
+            ---
+
+            ### I am a body heading
+
+            I am a body paragraph
+            """)
+        )
+
+        config.featureFlags.isExperimentalCardDirectiveEnabled = true
+        let (nodeWithCardEnabled, _) = try await markdownOutput(catalog: catalog, path: "Cards", configuration: config)
+        XCTAssert(!nodeWithCardEnabled.markdown.contains("@Card"))
+        XCTAssert(nodeWithCardEnabled.markdown.contains("""
+            ### I am a head heading
+
+            I am a head paragraph
+
+            ---
+
+            ### I am a body heading
+
+            I am a body paragraph
+            """)
+        )
     }
     
     func testLinkArticleFormatting() async throws {

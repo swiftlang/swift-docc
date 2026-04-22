@@ -348,9 +348,26 @@ extension MarkdownOutputMarkupWalker {
             
             let code = CodeBlock(language: resolved.mixin.language, lines.joined(separator: "\n"))
             visit(code)
+        case Card.directiveName:
+            guard context.configuration.featureFlags.isExperimentalCardDirectiveEnabled else {
+                return
+            }
+            for child in blockDirective.children {
+                withRemoveIndentation(from: child) {
+                    $0.visit(child)
+                }
+            }
         default: return
         }
         
+    }
+
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) {
+        startNewParagraphIfRequired()
+        markdown.append(thematicBreak.detachedFromParent.format(options: .init(
+            thematicBreakCharacter: .dash,
+            thematicBreakLength: 3
+        )))
     }
     
     // HTML is not included in render JSON output, so is omitted here
