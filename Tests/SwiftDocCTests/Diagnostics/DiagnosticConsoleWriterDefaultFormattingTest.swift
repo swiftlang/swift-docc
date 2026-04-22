@@ -376,11 +376,11 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
 
-            let firstReplacement = Replacement(
+            let firstReplacement = Solution.Replacement(
                 range: SourceLocation(line: 44, column: 60, source: source)..<SourceLocation(line: 44, column: 64, source: source),
                 replacement: "first replacement"
             )
-            let secondReplacement = Replacement(
+            let secondReplacement = Solution.Replacement(
                 range: SourceLocation(line: 44, column: 68, source: source)..<SourceLocation(line: 44, column: 70, source: source),
                 replacement: "second replacement"
             )
@@ -531,7 +531,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         XCTAssertEqual(
             diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = "slothy"
@@ -554,14 +554,14 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         XCTAssertEqual(
             diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = "slothy"
                         var slothDiet = .vegetarian
                         """
                     ),
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = SlothGenerator().generateName()
@@ -587,7 +587,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         XCTAssertEqual(
             diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = "slothy"
@@ -596,7 +596,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                     ),
                 ]),
                 Solution(summary: "Create a bee.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var beeName = "Bee"

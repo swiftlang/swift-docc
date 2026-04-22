@@ -113,7 +113,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 identifier: "org.swift.docc.\(Metadata.directiveName).NoConfiguration",
                 summary: "\(Metadata.directiveName.singleQuoted) doesn't configure anything and has no effect",
                 solutions: originalMarkup.range.map {
-                    [Solution(summary: "Remove this \(Metadata.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
+                    [Solution(summary: "Remove this \(Metadata.directiveName.singleQuoted) directive.", replacements: [.init(range: $0, replacement: "")])]
                 } ?? []
             )
             diagnostics.append(diagnostic)
@@ -146,9 +146,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 if let range = extraPageImage.originalMarkup.range {
                     diagnostic.solutions.append(Solution(
                         summary: "Remove extraneous \(extraPageImage.purpose.rawValue.singleQuoted) \(PageImage.directiveName.singleQuoted) directive",
-                        replacements: [
-                            Replacement(range: range, replacement: "")
-                        ])
+                        replacements: [.init(range: range, replacement: "")])
                     )
                 }
                 
@@ -178,9 +176,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 if let range = availability.originalMarkup.range {
                     diagnostic.solutions.append(Solution(
                         summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
-                        replacements: [
-                            Replacement(range: range, replacement: "")
-                        ]
+                        replacements: [.init(range: range, replacement: "")]
                     ))
                 }
 
@@ -220,9 +216,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 solutions: range.map { range in
                     [Solution(
                         summary: "Remove invalid \(name.singleQuoted) directive",
-                        replacements: [
-                            Replacement(range: range, replacement: "")
-                        ]
+                        replacements: [.init(range: range, replacement: "")]
                     )]
                 } ?? []
             ))

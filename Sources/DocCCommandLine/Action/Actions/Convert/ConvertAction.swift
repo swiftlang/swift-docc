@@ -373,10 +373,10 @@ public struct ConvertAction: AsyncAction {
         if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
-            var replacements = [SwiftDocC.Replacement]()
+            var replacements = [Solution.Replacement]()
             if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(inputs.displayName)[tableOfContentsFilename] {
                 replacements.append(
-                    Replacement(
+                    .init(
                         range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
                         replacement: tableOfContentsTemplate
                     )

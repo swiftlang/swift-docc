@@ -48,13 +48,13 @@ public struct InvalidAdditionalTitle: Checker {
         
         var solutions = [
             Solution(summary: "Remove heading", replacements: heading.range.map { range in
-                [Replacement(range: range, replacement: "")]
+                [.init(range: range, replacement: "")]
             } ?? [])
         ]
         if !isExtensionFile {
             solutions.append(
                 Solution(summary: "Change to second-level heading", replacements: heading.range.map { range in
-                    [Replacement(range: range, replacement: "## \(heading.title)")]
+                    [.init(range: range, replacement: "## \(heading.title)")]
                 } ?? [])
             )
         }

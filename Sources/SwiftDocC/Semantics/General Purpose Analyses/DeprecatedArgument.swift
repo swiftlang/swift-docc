@@ -46,7 +46,7 @@ extension Semantic.Analyses {
                         guard let range = argument.valueRange else {
                             return nil
                         }
-                        return Solution(summary: "Use allowed value \(allowedValue.singleQuoted)", replacements: [Replacement(range: range, replacement: allowedValue)])
+                        return Solution(summary: "Use allowed value \(allowedValue.singleQuoted)", replacements: [.init(range: range, replacement: allowedValue)])
                     }
                 }
                 let diagnostic = Diagnostic(source: source, severity: .warning, range: argument.valueRange, identifier: "org.swift.docc.DeprecatedArgument.\(Converter.argumentName).ConversionFailed", summary: "Can't convert \(argument.value.singleQuoted) to type \(Converter.ArgumentValue.self)", solutions: solutions ?? [])

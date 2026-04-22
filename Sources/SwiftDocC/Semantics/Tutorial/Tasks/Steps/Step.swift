@@ -77,7 +77,7 @@ public final class Step: Semantic, DirectiveConvertible {
         
         func diagnoseExtraneousContent(element: any Markup) -> Diagnostic {
             let solutions = element.range.map {
-                return [Solution(summary: "Remove extraneous element", replacements: [Replacement(range: $0, replacement: "")])]
+                return [Solution(summary: "Remove extraneous element", replacements: [.init(range: $0, replacement: "")])]
             } ?? []
             return Diagnostic(source: source, severity: .warning, range: element.range, identifier: "org.swift.docc.\(Step.self).ExtraneousContent", summary: "Extraneous element: \(Step.directiveName.singleQuoted) directive should only have a single paragraph for its instructional content and an optional paragraph to serve as a caption", solutions: solutions)
         }

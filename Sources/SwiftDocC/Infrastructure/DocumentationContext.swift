@@ -2097,7 +2097,7 @@ public class DocumentationContext {
                     diagnostic.solutions.append(Solution(
                         summary: "Remove extraneous \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
                         replacements: [
-                            Replacement(range: range, replacement: "")
+                            .init(range: range, replacement: "")
                         ]
                     ))
                     
@@ -2650,11 +2650,9 @@ public class DocumentationContext {
     }
 
     private func makeRemoveTechnologyRootSolutions(_ technologyRoot: TechnologyRoot) -> [Solution] {
-        let replacements = technologyRoot.originalMarkup.range.map { range in
-            [Replacement(range: range, replacement: "")]
-        } ?? []
-        
-        return [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: replacements)]
+        [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: technologyRoot.originalMarkup.range.map { range in
+            [.init(range: range, replacement: "")]
+        } ?? [])]
     }
     
     private func warnAboutMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
@@ -3128,7 +3126,7 @@ extension DocumentationContext {
         func removeAlternateRepresentationSolution(_ alternateRepresentation: AlternateRepresentation) -> [Solution] {
             [Solution(
                 summary: "Remove this alternate representation",
-                replacements: alternateRepresentation.originalMarkup.range.map { [Replacement(range: $0, replacement: "")] } ?? [])]
+                replacements: alternateRepresentation.originalMarkup.range.map { [.init(range: $0, replacement: "")] } ?? [])]
         }
 
         for reference in knownPages {

@@ -107,9 +107,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         let codeBlocks = remainder.compactMap { $0 as? CodeBlock }
         
         func removeExtraneous(_ elementName: String, range: SourceRange) -> Solution {
-            return Solution(summary: "Remove extraneous code", replacements: [
-                Replacement(range: range, replacement: "")
-            ])
+            Solution(summary: "Remove extraneous code", replacements: [.init(range: range, replacement: "")])
         }
         
         if codeBlocks.count > 1 {

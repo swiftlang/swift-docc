@@ -79,7 +79,7 @@ final class SnippetResolver {
             let nearMisses = NearMiss.bestMatches(for: snippets.keys, against: path)
             let solutions = nearMisses.map { candidate in
                 Solution(summary: "\(Self.replacementOperationDescription(from: path, to: candidate))", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
+                    .init(range: replacementRange, replacement: candidate)
                 ])
             }
             
@@ -96,7 +96,7 @@ final class SnippetResolver {
         let nearMisses = NearMiss.bestMatches(for: resolvedSnippet.mixin.slices.keys, against: slice)
         let solutions = nearMisses.map { candidate in
             Solution(summary: "\(Self.replacementOperationDescription(from: slice, to: candidate))", replacements: [
-                Replacement(range: replacementRange, replacement: candidate)
+                .init(range: replacementRange, replacement: candidate)
             ])
         }
         

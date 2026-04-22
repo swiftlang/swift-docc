@@ -26,7 +26,7 @@ class ProblemTests: XCTestCase {
         let expectedFixit = "/path/to/file.md:1:8-1:24: fixit: Replacement text"
 
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
-        let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
+        let replacement = Solution.Replacement(range: replacementRange, replacement: "Replacement text")
         let solution = Solution(summary: solutionSummary, replacements: [replacement])
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
 
@@ -47,7 +47,7 @@ class ProblemTests: XCTestCase {
         let expectedLocation = "/path/to/file.md:1:8"
 
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
-        let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
+        let replacement = Solution.Replacement(range: replacementRange, replacement: "Replacement text")
         let solution = Solution(summary: solutionSummary, replacements: [replacement])
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
 

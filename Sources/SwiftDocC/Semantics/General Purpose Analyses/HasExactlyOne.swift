@@ -225,8 +225,7 @@ extension Semantic.Analyses {
                     var diagnostic = Diagnostic(source: source, severity: .warning, range: duplicate.range, identifier: "org.swift.docc.HasExactlyOneMedia<\(Parent.self)>.Duplicate", summary: "The \(Parent.directiveName.singleQuoted) directive can only have one Media element")
                     
                     if let range = duplicate.range {
-                        let replacement = Replacement(range: range, replacement: "")
-                        let solution = Solution(summary: "Remove duplicate media element", replacements: [replacement])
+                        let solution = Solution(summary: "Remove duplicate media element", replacements: [.init(range: range, replacement: "")])
                         diagnostic.solutions = [solution]
                     }
                     diagnostics.append(diagnostic)

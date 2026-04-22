@@ -118,7 +118,7 @@ extension Semantic.Analyses {
                         guard let range = argument.valueRange else {
                             return nil
                         }
-                        return Solution(summary: "Use allowed value \(allowedValue.singleQuoted)", replacements: [Replacement(range: range, replacement: allowedValue)])
+                        return Solution(summary: "Use allowed value \(allowedValue.singleQuoted)", replacements: [.init(range: range, replacement: allowedValue)])
                     }
                 }
                 diagnostics.append(Diagnostic(

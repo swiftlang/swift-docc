@@ -51,7 +51,7 @@ extension BlockDirective {
                     explanation: "Arguments that use special characters or spaces should be wrapped in '\"' quotes",
                     solutions: [
                         Solution(summary: "Insert a '\(character) character", replacements: [
-                            Replacement(range: location..<location, replacement: String(character))
+                            .init(range: location..<location, replacement: String(character))
                         ])
                     ])
             case let .unexpectedCharacter(character, location):
@@ -70,7 +70,7 @@ extension BlockDirective {
                     explanation: "Arguments that use special characters or spaces should be wrapped in '\"' quotes",
                     solutions: [
                     Solution(summary: "Remove the '\(character) character", replacements: [
-                        Replacement(range: location..<SourceLocation(line: location.line, column: location.column+1, source: location.source), replacement: "")
+                        .init(range: location..<SourceLocation(line: location.line, column: location.column+1, source: location.source), replacement: "")
                     ])
                 ])
             }

@@ -27,13 +27,14 @@ public struct NonOverviewHeadingChecker: Checker {
                 []
             }
 
-            let solution: Solution
-            if overviewHeading == nil {
-                let replacement = Replacement(range: headingRange, replacement: "## Overview")
-                solution = Solution(summary: #"Change the title to "Overview""#, replacements: [replacement])
+            let solution = if overviewHeading == nil {
+                Solution(summary: #"Change the title to "Overview""#, replacements: [
+                    .init(range: headingRange, replacement: "## Overview")
+                ])
             } else {
-                let replacement = Replacement(range: headingRange, replacement: "### \(heading.title)")
-                solution = Solution(summary: "Change the heading to a level-3 heading", replacements: [replacement])
+                Solution(summary: "Change the heading to a level-3 heading", replacements: [
+                    .init(range: headingRange, replacement: "### \(heading.title)")
+                ])
             }
 
             return Diagnostic(

@@ -512,7 +512,7 @@ struct ParametersAndReturnValidator {
             solutions: [
                 Solution(
                     summary: "Remove return value documentation",
-                    replacements: returns.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
+                    replacements: returns.range.map { [.init(range: adjusted($0), replacement: "")] } ?? []
                 )
             ]
         )
@@ -549,7 +549,7 @@ struct ParametersAndReturnValidator {
             return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.range), identifier: identifier, summary: summary, solutions: [
                 Solution(
                     summary: "Remove \(parameter.name.singleQuoted) parameter documentation",
-                    replacements: parameter.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
+                    replacements: parameter.range.map { [.init(range: adjusted($0), replacement: "")] } ?? []
                 )
             ])
         }
@@ -558,7 +558,7 @@ struct ParametersAndReturnValidator {
         return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.nameRange), identifier: identifier, summary: summary, solutions: nearMisses.map { candidate in
             Solution(
                 summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
-                replacements: parameter.nameRange.map { [Replacement(range: adjusted($0), replacement: candidate)] } ?? []
+                replacements: parameter.nameRange.map { [.init(range: adjusted($0), replacement: candidate)] } ?? []
             )
         })
     }
@@ -590,7 +590,7 @@ struct ParametersAndReturnValidator {
             solutions: knownParameterNamesWithSameExternalName.map { candidate in
                 Solution(
                     summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
-                    replacements: parameter.nameRange.map { [Replacement(range: adjusted($0), replacement: candidate)] } ?? []
+                    replacements: parameter.nameRange.map { [.init(range: adjusted($0), replacement: candidate)] } ?? []
                 )
             }
         )
@@ -630,7 +630,7 @@ struct ParametersAndReturnValidator {
             solutions: [
                 Solution(
                     summary: "Remove duplicate parameter documentation",
-                    replacements: parameter.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
+                    replacements: parameter.range.map { [.init(range: adjusted($0), replacement: "")] } ?? []
                 )
             ]
         )
@@ -718,12 +718,9 @@ struct ParametersAndReturnValidator {
                 replacement = extraWhitespace + replacementText
             }
             solutions = [
-                Solution(
-                    summary: solutionText,
-                    replacements: [
-                        Replacement(range: adjusted(insertLocation ..< insertLocation), replacement: replacement)
-                    ]
-                )
+                Solution(summary: solutionText, replacements: [
+                    .init(range: adjusted(insertLocation ..< insertLocation), replacement: replacement)
+                ])
             ]
         } else {
             solutions = []

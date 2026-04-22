@@ -77,7 +77,7 @@ public struct PropertyListPossibleValuesSection {
                 return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary, solutions: [
                     Solution(
                         summary: solutionSummary,
-                        replacements: unknownPossibleValue.range.map { [Replacement(range: $0, replacement: "")] } ?? []
+                        replacements: unknownPossibleValue.range.map { [.init(range: $0, replacement: "")] } ?? []
                     )
                 ])
             }
@@ -85,7 +85,7 @@ public struct PropertyListPossibleValuesSection {
             return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.nameRange, identifier: identifier, summary: summary, solutions: nearMisses.map { candidate in
                 Solution(
                     summary: "Replace \(unknownPossibleValue.value.singleQuoted) with \(candidate.singleQuoted)",
-                    replacements: unknownPossibleValue.nameRange.map { [Replacement(range: $0, replacement: candidate)] } ?? []
+                    replacements: unknownPossibleValue.nameRange.map { [.init(range: $0, replacement: candidate)] } ?? []
                 )
             })
         }

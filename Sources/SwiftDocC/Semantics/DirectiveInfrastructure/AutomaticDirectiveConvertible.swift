@@ -312,11 +312,7 @@ extension AutomaticDirectiveConvertible {
                     summary: "The \(Self.directiveName.singleQuoted) directive does not support inner content",
                     explanation: "Elements inside this directive will be ignored",
                     solutions: directive.children.range.map {
-                        [
-                            Solution(summary: "Remove inner content", replacements: [
-                                Replacement(range: $0, replacement: "")
-                            ])
-                        ]
+                        [Solution(summary: "Remove inner content", replacements: [.init(range: $0, replacement: "")])]
                     } ?? []
                 )
             )

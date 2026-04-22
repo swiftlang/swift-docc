@@ -253,7 +253,7 @@ struct DocumentationCurator {
                     }
                     return [Solution(
                         summary: "Remove \(listItem.format().trimmingCharacters(in: .whitespacesAndNewlines).singleQuoted)",
-                        replacements: [Replacement(range: listItemRange, replacement: "")]
+                        replacements: [.init(range: listItemRange, replacement: "")]
                     )]
                 }
                 let topicSectionBaseExplanation = "Links in a \"Topics section\" are used to organize documentation into a hierarchy"

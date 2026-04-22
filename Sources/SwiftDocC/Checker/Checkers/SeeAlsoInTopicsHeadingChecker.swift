@@ -30,11 +30,11 @@ public struct SeeAlsoInTopicsHeadingChecker: Checker {
                 solutions: [
                     Solution(
                         summary: "Change to level-2 heading",
-                        replacements: [Replacement(range: headingRange, replacement: "## \(heading.plainText)")]
+                        replacements: [.init(range: headingRange, replacement: "## \(heading.plainText)")]
                     ),
                     Solution(
                         summary: "Change heading name",
-                        replacements: [Replacement(range: headingRange, replacement: "### <#name#>" )]
+                        replacements: [.init(range: headingRange, replacement: "### <#name#>" )]
                     ),
                 ]
             )

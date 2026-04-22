@@ -29,7 +29,7 @@ struct ExtractLinks: MarkupRewriter {
         let range = paragraph.range ?? paragraph.firstChildRange()
         // An unexpected non-link list item found, suggest to remove it
         let trailingContent = Document(Paragraph(paragraph.inlineChildren.dropFirst()))
-        let replacements = trailingContent.children.range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
+        let replacements = trailingContent.children.range.map({ [Solution.Replacement(range: $0, replacement: "")] }) ?? []
         let solutions = [Solution(summary: "Remove extraneous content", replacements: replacements)]
         
         switch mode {
@@ -57,7 +57,7 @@ struct ExtractLinks: MarkupRewriter {
     
     private func makeNonLinkContentDiagnostic(_ item: ListItem) -> Diagnostic {
         let range = item.range ?? item.firstChildRange()
-        let replacements = range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
+        let replacements = range.map({ [Solution.Replacement(range: $0, replacement: "")] }) ?? []
         let solutions = [Solution(summary: "Remove non-link item", replacements: replacements)]
         
         switch mode {

@@ -88,7 +88,7 @@ struct DiagnosticFile: Codable {
 // MARK: Initialization
 
 extension DiagnosticFile.Diagnostic {
-    init(_ diagnostic: SwiftDocC.Diagnostic) {
+    init(_ diagnostic: Diagnostic) {
         self.id          = diagnostic.identifier
         self.groupID     = diagnostic.groupIdentifier
         self.source      = diagnostic.source
@@ -123,7 +123,7 @@ extension DiagnosticFile.Diagnostic.Solution {
 }
 
 extension DiagnosticFile.Diagnostic.Solution.Replacement {
-    init(_ replacement: Replacement) {
+    init(_ replacement: Solution.Replacement) {
         self.range = .init(replacement.range)
         self.text  = replacement.replacement
     }

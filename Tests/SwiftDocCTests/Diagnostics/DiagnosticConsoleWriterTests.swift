@@ -87,7 +87,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         let expectedLocation = "/path/to/file.md:1:8"
         
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
-        let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
+        let replacement = Solution.Replacement(range: replacementRange, replacement: "Replacement text")
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
@@ -125,8 +125,8 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         do {
             let firstInsertRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 8, source: source)
             let secondInsertRange = SourceLocation(line: 1, column: 14, source: source)..<SourceLocation(line: 1, column: 14, source: source)
-            let firstReplacement = Replacement(range: firstInsertRange, replacement: "ABC")
-            let secondReplacement = Replacement(range: secondInsertRange, replacement: "abc")
+            let firstReplacement = Solution.Replacement(range: firstInsertRange, replacement: "ABC")
+            let secondReplacement = Solution.Replacement(range: secondInsertRange, replacement: "abc")
             
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
             

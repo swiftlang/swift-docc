@@ -132,7 +132,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                      """
             }
 
-            let replacement = Replacement(range: range, replacement: replacementText)
+            let replacement = Solution.Replacement(range: range, replacement: replacementText)
             let solution = Solution(summary: "Add a title", replacements: [replacement])
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title", solutions: [solution])
             diagnostics.append(diagnostic)
@@ -208,7 +208,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 let solution = Solution(
                     summary: "Remove extraneous \(scope) \(Options.directiveName.singleQuoted) directive",
                     replacements: [
-                        Replacement(range: range, replacement: "")
+                        Solution.Replacement(range: range, replacement: "")
                     ]
                 )
                 diagnostic.solutions = [solution]
@@ -228,8 +228,8 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
 
             let solutions: [Solution]
             if let displayNameRange = displayName.originalMarkup.range, let titleRange = title.range {
-                let removeDisplayNameReplacement = Replacement(range: displayNameRange, replacement: "")
-                let changeTitleReplacement = Replacement(range: titleRange, replacement: "# \(displayName.name)")
+                let removeDisplayNameReplacement = Solution.Replacement(range: displayNameRange, replacement: "")
+                let changeTitleReplacement = Solution.Replacement(range: titleRange, replacement: "# \(displayName.name)")
                 
                 solutions = [Solution(summary: "Change the title", replacements: [removeDisplayNameReplacement, changeTitleReplacement])]
             } else {

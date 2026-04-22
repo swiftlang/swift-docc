@@ -71,9 +71,7 @@ extension Semantic.Analyses {
                         let solutions: [Solution] = if let childRange = child.range {
                             [Solution(
                                 summary: "Remove unsupported child content",
-                                replacements: [
-                                    Replacement(range: childRange, replacement: "")
-                                ]
+                                replacements: [.init(range: childRange, replacement: "")]
                             )]
                         } else {
                             []

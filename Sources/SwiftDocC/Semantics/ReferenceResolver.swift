@@ -228,7 +228,7 @@ struct ReferenceResolver: SemanticVisitor {
                             solutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
                                     // FIXME: The resolved reference path isn't the same as the authorable link.
-                                    Replacement(range: range, replacement: "<doc:\(resolved.path)>")
+                                    .init(range: range, replacement: "<doc:\(resolved.path)>")
                                 ])
                             ])
                     default: break
@@ -291,7 +291,7 @@ struct ReferenceResolver: SemanticVisitor {
             guard !uniqueReferences.contains(newTutorialReference.topic) else {
                 let solutions = newTutorialReference.originalMarkup.range.map {
                     return [Solution(summary: "Remove duplicate \(TutorialReference.directiveName.singleQuoted) directive", replacements: [
-                        Replacement(range: $0, replacement: "")
+                        .init(range: $0, replacement: "")
                     ])]
                 } ?? []
                 let diagnostic = Diagnostic(source: chapter.originalMarkup.range?.source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)", solutions: solutions)

@@ -102,7 +102,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard !seenTileDirectiveNames.contains(tile.title) else {
                 if !tileName.isEmpty,
                     let range = tile.originalMarkup.range {
-                    let solution = Solution.init(summary: "Remove extraneous \(tileName.singleQuoted) directive", replacements: [Replacement(range: range, replacement: "")])
+                    let solution = Solution.init(summary: "Remove extraneous \(tileName.singleQuoted) directive", replacements: [.init(range: range, replacement: "")])
                     let diagnostic = Diagnostic(source: source, severity: .warning, range: tile.originalMarkup.range, identifier: "org.swift.docc.Resources.DuplicateTile", summary: "Duplicate child directive \(tileName.singleQuoted) in \(Resources.directiveName.singleQuoted)", solutions: [solution])
                     diagnostics.append(diagnostic)
                 }
@@ -115,7 +115,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         
         for extraneousElement in remainder {
             let solutions: [Solution] = if let range = extraneousElement.range {
-                [Solution(summary: "Remove extraneous element", replacements: [Replacement(range: range, replacement: "")])]
+                [Solution(summary: "Remove extraneous element", replacements: [.init(range: range, replacement: "")])]
             } else {
                 []
             }
