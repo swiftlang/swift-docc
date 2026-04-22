@@ -451,8 +451,8 @@ class ReferenceResolverTests: XCTestCase {
 
         // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
         let diagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
         let replacement = try XCTUnwrap(solution.replacements.first)
         XCTAssertEqual(replacement.replacement, "`Swift/Array`")
@@ -491,8 +491,8 @@ class ReferenceResolverTests: XCTestCase {
 
         // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
         let diagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination" }))
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
         let replacement = try XCTUnwrap(solution.replacements.first)
         XCTAssertEqual(replacement.replacement, "`Swift/Array`")

@@ -112,7 +112,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(Metadata.directiveName).NoConfiguration",
                 summary: "\(Metadata.directiveName.singleQuoted) doesn't configure anything and has no effect",
-                possibleSolutions: originalMarkup.range.map {
+                solutions: originalMarkup.range.map {
                     [Solution(summary: "Remove this \(Metadata.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
                 } ?? []
             )
@@ -144,7 +144,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 )
                 
                 if let range = extraPageImage.originalMarkup.range {
-                    diagnostic.possibleSolutions.append(Solution(
+                    diagnostic.solutions.append(Solution(
                         summary: "Remove extraneous \(extraPageImage.purpose.rawValue.singleQuoted) \(PageImage.directiveName.singleQuoted) directive",
                         replacements: [
                             Replacement(range: range, replacement: "")
@@ -176,7 +176,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 )
 
                 if let range = availability.originalMarkup.range {
-                    diagnostic.possibleSolutions.append(Solution(
+                    diagnostic.solutions.append(Solution(
                         summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
                         replacements: [
                             Replacement(range: range, replacement: "")
@@ -217,7 +217,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
                 summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
                 explanation: "Specify this configuration in a documentation extension file",
-                possibleSolutions: range.map { range in
+                solutions: range.map { range in
                     [Solution(
                         summary: "Remove invalid \(name.singleQuoted) directive",
                         replacements: [

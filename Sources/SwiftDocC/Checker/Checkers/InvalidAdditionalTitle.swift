@@ -68,7 +68,7 @@ public struct InvalidAdditionalTitle: Checker {
                 summary: "Documentation extension file can only extend one symbol",
                 explanation: "A first-level heading with a symbol link is reserved for defining which symbol a documentation extension file is associated with.",
                 notes: makeNote(message: "Previously extending '\(documentTitle.title.trimmingCharacters(in: CharacterSet(charactersIn: "`")))' here"),
-                possibleSolutions: solutions
+                solutions: solutions
             )
         } else {
             Diagnostic(
@@ -79,7 +79,7 @@ public struct InvalidAdditionalTitle: Checker {
                 summary: "Page title can only be specified once",
                 explanation: "A first-level heading is reserved for specifying the title of an article.",
                 notes: makeNote(message: "Previously specified title '\(documentTitle.title)' here"),
-                possibleSolutions: solutions
+                solutions: solutions
             )
         }
         

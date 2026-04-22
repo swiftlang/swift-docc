@@ -57,7 +57,7 @@ public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertib
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(Self.directiveName).NoConfiguration",
                 summary: "\(Self.directiveName.singleQuoted) doesn't change default configuration and has no effect",
-                possibleSolutions: originalMarkup.range.map {
+                solutions: originalMarkup.range.map {
                     [Solution(summary: "Remove this \(Self.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
                 } ?? []
             )

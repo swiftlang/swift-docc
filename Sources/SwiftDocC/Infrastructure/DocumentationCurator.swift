@@ -272,7 +272,7 @@ struct DocumentationCurator {
                             source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration",
                             summary: "Organizing the module \(childReference.lastPathComponent.singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) isn't allowed",
                             explanation: "\(topicSectionBaseExplanation). Modules should be roots in the documentation hierarchy.",
-                            possibleSolutions: removeListItemSolutions))
+                            solutions: removeListItemSolutions))
                         continue
                     }
                 }
@@ -283,7 +283,7 @@ struct DocumentationCurator {
                         source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
                         summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cycle",
                         explanation: "\(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.",
-                        possibleSolutions: removeListItemSolutions
+                        solutions: removeListItemSolutions
                     ))
                     continue
                 }
@@ -308,7 +308,7 @@ struct DocumentationCurator {
                         If this link contributed to the documentation hierarchy it would introduce \(cycleDescriptions.count == 1 ? "this cycle" : "these \(cycleDescriptions.count) cycles"):
                         \(cycleDescriptions.joined(separator: "\n"))
                         """,
-                        possibleSolutions: removeListItemSolutions
+                        solutions: removeListItemSolutions
                     ))
                     continue
                 }

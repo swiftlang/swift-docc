@@ -96,7 +96,7 @@ class SnippetTests: XCTestCase {
             let diagnostic = try XCTUnwrap(resolver.diagnostics.first)
             XCTAssertEqual(diagnostic.identifier, "org.swift.docc.unresolvedSnippetPath")
             XCTAssertEqual(diagnostic.summary, "Snippet named 'DoesNotExist' couldn't be found")
-            XCTAssertEqual(diagnostic.possibleSolutions.count, 0)
+            XCTAssertEqual(diagnostic.solutions.count, 0)
         }
     }
     

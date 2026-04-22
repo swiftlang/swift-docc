@@ -92,7 +92,7 @@ struct SemanticAnalyzer: MarkupVisitor {
             if let directiveConvertible = extraneousTopLevelChild as? (any DirectiveConvertible),
                 let range = directiveConvertible.originalMarkup.range {
                 let solution = Solution(summary: "Remove this extraneous directive", replacements: [Replacement(range: range, replacement: "")])
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.extraneousTopLevelChild", summary: "Only one top-level directive from \(topLevelDirectives) may exist in a document; this directive will be ignored", possibleSolutions: [solution])
+                let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.extraneousTopLevelChild", summary: "Only one top-level directive from \(topLevelDirectives) may exist in a document; this directive will be ignored", solutions: [solution])
                 diagnostics.append(diagnostic)
             }
         }

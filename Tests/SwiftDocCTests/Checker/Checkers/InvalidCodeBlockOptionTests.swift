@@ -56,7 +56,7 @@ let c = 3
         for diagnostic in checker.diagnostics {
             XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
             XCTAssertEqual(diagnostic.summary, "Unknown option 'nocoy' in code block.")
-            XCTAssertEqual(diagnostic.possibleSolutions.map(\.summary), ["Replace 'nocoy' with 'nocopy'."])
+            XCTAssertEqual(diagnostic.solutions.map(\.summary), ["Replace 'nocoy' with 'nocopy'."])
         }
     }
 
@@ -94,8 +94,8 @@ let g = 7
         for diagnostic in checker.diagnostics {
             XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
 
-            XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-            let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+            XCTAssertEqual(diagnostic.solutions.count, 1)
+            let solution = try XCTUnwrap(diagnostic.solutions.first)
             XCTAssert(solution.summary.hasSuffix("with 'nocopy'."))
 
         }
@@ -115,7 +115,7 @@ let b = 2
         for diagnostic in checker.diagnostics {
             XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
             XCTAssertEqual(diagnostic.summary, "Unknown option 'swift' in code block.")
-            XCTAssertEqual(diagnostic.possibleSolutions.map(\.summary), ["If 'swift' is the language for this code block, then write 'swift' as the first option."])
+            XCTAssertEqual(diagnostic.solutions.map(\.summary), ["If 'swift' is the language for this code block, then write 'swift' as the first option."])
         }
     }
 
@@ -133,7 +133,7 @@ let b = 2
 
         XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
         XCTAssertEqual(diagnostic.summary, "Invalid 'highlight' index in '[2]' for a code block with 1 line. Valid range is 1...1.")
-        XCTAssertEqual(diagnostic.possibleSolutions.map(\.summary), ["If you intended the last line, change '2' to 1."])
+        XCTAssertEqual(diagnostic.solutions.map(\.summary), ["If you intended the last line, change '2' to 1."])
     }
 
     func testInvalidHighlightAndStrikeoutIndex() throws {
@@ -152,7 +152,7 @@ let c = 3
         XCTAssertEqual(checker.diagnostics.first?.identifier, "org.swift.docc.InvalidCodeBlockOption")
         XCTAssertEqual(checker.diagnostics.first?.summary, "Invalid 'highlight' index in '[0]' for a code block with 3 lines. Valid range is 1...3.")
         XCTAssertEqual(checker.diagnostics.last?.summary, "Invalid 'strikeout' indexes in '[-1, 4]' for a code block with 3 lines. Valid range is 1...3.")
-        XCTAssertEqual(checker.diagnostics.last?.possibleSolutions.map(\.summary), ["If you intended the last line, change '4' to 3."])
+        XCTAssertEqual(checker.diagnostics.last?.solutions.map(\.summary), ["If you intended the last line, change '4' to 3."])
     }
 }
 

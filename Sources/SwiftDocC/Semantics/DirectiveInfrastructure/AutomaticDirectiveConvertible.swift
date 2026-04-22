@@ -311,7 +311,7 @@ extension AutomaticDirectiveConvertible {
                     identifier: "org.swift.docc.\(Self.directiveName).NoInnerContentAllowed",
                     summary: "The \(Self.directiveName.singleQuoted) directive does not support inner content",
                     explanation: "Elements inside this directive will be ignored",
-                    possibleSolutions: directive.children.range.map {
+                    solutions: directive.children.range.map {
                         [
                             Solution(summary: "Remove inner content", replacements: [
                                 Replacement(range: $0, replacement: "")

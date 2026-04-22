@@ -509,7 +509,7 @@ struct ParametersAndReturnValidator {
             range: adjusted(returns.range),
             identifier: "org.swift.docc.VoidReturnDocumented",
             summary: "Return value documented for \(symbolKind?.displayName.lowercased() ?? "symbol") returning void",
-            possibleSolutions: [
+            solutions: [
                 Solution(
                     summary: "Remove return value documentation",
                     replacements: returns.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
@@ -546,7 +546,7 @@ struct ParametersAndReturnValidator {
         
         if nearMisses.isEmpty {
             // If this parameter doesn't resemble any of this symbols parameters, suggest to remove it.
-            return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.range), identifier: identifier, summary: summary, possibleSolutions: [
+            return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.range), identifier: identifier, summary: summary, solutions: [
                 Solution(
                     summary: "Remove \(parameter.name.singleQuoted) parameter documentation",
                     replacements: parameter.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
@@ -555,7 +555,7 @@ struct ParametersAndReturnValidator {
         }
         
         // Otherwise, suggest to replace the documented parameter name with the one of the similarly named parameters.
-        return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.nameRange), identifier: identifier, summary: summary, possibleSolutions: nearMisses.map { candidate in
+        return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.nameRange), identifier: identifier, summary: summary, solutions: nearMisses.map { candidate in
             Solution(
                 summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
                 replacements: parameter.nameRange.map { [Replacement(range: adjusted($0), replacement: candidate)] } ?? []
@@ -587,7 +587,7 @@ struct ParametersAndReturnValidator {
             identifier: "org.swift.docc.DocumentedExternalName",
             summary: "External name \(parameter.name.singleQuoted) used to document parameter",
             // Suggest to replace the documented argument label with the one of the parameter names.
-            possibleSolutions: knownParameterNamesWithSameExternalName.map { candidate in
+            solutions: knownParameterNamesWithSameExternalName.map { candidate in
                 Solution(
                     summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
                     replacements: parameter.nameRange.map { [Replacement(range: adjusted($0), replacement: candidate)] } ?? []
@@ -628,7 +628,7 @@ struct ParametersAndReturnValidator {
             identifier: "org.swift.docc.DuplicateParameterDocumentation",
             summary: "Parameter \(parameter.name.singleQuoted) is already documented",
             notes: notes,
-            possibleSolutions: [
+            solutions: [
                 Solution(
                     summary: "Remove duplicate parameter documentation",
                     replacements: parameter.range.map { [Replacement(range: adjusted($0), replacement: "")] } ?? []
@@ -736,7 +736,7 @@ struct ParametersAndReturnValidator {
             range: adjusted(lastParameterEndLocation.map { $0 ..< $0 }),
             identifier: "org.swift.docc.MissingParameterDocumentation",
             summary: diagnosticSummary,
-            possibleSolutions: solutions
+            solutions: solutions
         )
     }
     

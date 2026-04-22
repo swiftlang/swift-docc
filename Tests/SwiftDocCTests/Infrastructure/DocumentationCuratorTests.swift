@@ -480,13 +480,13 @@ class DocumentationCuratorTests: XCTestCase {
         // Verify we emit a fix-it to remove the non link items
         XCTAssertTrue(crawler.diagnostics
             .filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
-            .allSatisfy({ $0.possibleSolutions.first?.replacements.first?.replacement == "" })
+            .allSatisfy({ $0.solutions.first?.replacements.first?.replacement == "" })
         )
         // Verify we emit the correct ranges
         XCTAssertEqual(
             crawler.diagnostics
                 .filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
-                .compactMap({ $0.possibleSolutions.first?.replacements.first?.range })
+                .compactMap({ $0.solutions.first?.replacements.first?.range })
                 .map({ "\($0.lowerBound.line):\($0.lowerBound.column)..<\($0.upperBound.line):\($0.upperBound.column)" }),
             ["6:1..<6:13", "9:1..<9:20", "19:1..<19:13", "5:1..<5:13", "8:1..<8:20", "11:1..<11:13"]
         )
@@ -502,7 +502,7 @@ class DocumentationCuratorTests: XCTestCase {
         // Verify we emit a fix-it to remove the trailing content
         XCTAssertTrue(crawler.diagnostics
             .filter({ $0.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" })
-            .allSatisfy({ $0.possibleSolutions.first != nil })
+            .allSatisfy({ $0.solutions.first != nil })
         )
     }
     
@@ -648,7 +648,7 @@ struct DocumentationCuratorTests_New {
             ╰─────────────────────────────╯
             """)
         
-        #expect(curationDiagnostic.possibleSolutions.map(\.summary) == ["Remove '- <doc:First>'"])
+        #expect(curationDiagnostic.solutions.map(\.summary) == ["Remove '- <doc:First>'"])
     }
     
     @Test(arguments: [true, false])

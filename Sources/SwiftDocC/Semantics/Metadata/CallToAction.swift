@@ -162,7 +162,7 @@ extension CallToAction {
                     range: originalMarkup.range,
                     identifier: "org.swift.docc.Project.ProjectFilesNotFound",
                     summary: "\(file.path) file reference not found in \(CallToAction.directiveName.singleQuoted) directive",
-                    possibleSolutions: [
+                    solutions: [
                         Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
                     ]
                 ))

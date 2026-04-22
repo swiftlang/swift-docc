@@ -93,8 +93,8 @@ struct DocumentationContext_RootPageTests {
             let modulePage = try #require(context.soleRootModuleReference.flatMap { context.documentationCache[$0] })
             #expect(diagnostic.range == modulePage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
             
-            #expect(diagnostic.possibleSolutions.count == 1)
-            let solution = try #require(diagnostic.possibleSolutions.first)
+            #expect(diagnostic.solutions.count == 1)
+            let solution = try #require(diagnostic.solutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == modulePage.metadata?.technologyRoot?.originalMarkup.range)
@@ -115,8 +115,8 @@ struct DocumentationContext_RootPageTests {
             let classPage = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }).flatMap { context.documentationCache[$0] })
             #expect(diagnostic.range == classPage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
             
-            #expect(diagnostic.possibleSolutions.count == 1)
-            let solution = try #require(diagnostic.possibleSolutions.first)
+            #expect(diagnostic.solutions.count == 1)
+            let solution = try #require(diagnostic.solutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == classPage.metadata?.technologyRoot?.originalMarkup.range)
@@ -262,8 +262,8 @@ struct DocumentationContext_RootPageTests {
             #expect(diagnostic.notes.map(\.message) == ["Root page also defined here", "Root page also defined here"])
             #expect(diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
             
-            #expect(diagnostic.possibleSolutions.count == 1)
-            let solution = try #require(diagnostic.possibleSolutions.first)
+            #expect(diagnostic.solutions.count == 1)
+            let solution = try #require(diagnostic.solutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == page.metadata?.technologyRoot?.originalMarkup.range)
@@ -319,8 +319,8 @@ struct DocumentationContext_RootPageTests {
             #expect(diagnostic.notes.map(\.message) == ["Root page also defined here"])
             #expect(diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
             
-            #expect(diagnostic.possibleSolutions.count == 1)
-            let solution = try #require(diagnostic.possibleSolutions.first)
+            #expect(diagnostic.solutions.count == 1)
+            let solution = try #require(diagnostic.solutions.first)
             #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
             #expect(solution.replacements.first?.range == page.metadata?.technologyRoot?.originalMarkup.range)

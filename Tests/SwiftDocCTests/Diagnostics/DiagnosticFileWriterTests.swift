@@ -39,7 +39,7 @@ struct DiagnosticFileWriterTests {
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, groupIdentifier: groupIdentifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, groupIdentifier: groupIdentifier, summary: summary, explanation: explanation, solutions: [solution])
             
             writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
@@ -51,7 +51,7 @@ struct DiagnosticFileWriterTests {
             let firstSolution = Solution(summary: firstSolutionSummary, replacements: [replacement])
             let secondSolution = Solution(summary: secondSolutionSummary, replacements: [])
             
-            let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [firstSolution, secondSolution])
+            let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [firstSolution, secondSolution])
             
             writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
@@ -65,7 +65,7 @@ struct DiagnosticFileWriterTests {
         do {
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
             
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
             
             writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)

@@ -40,7 +40,7 @@ struct ExtractLinks: MarkupRewriter {
                 range: range,
                 identifier: "org.swift.docc.ExtraneousTaskGroupItemContent",
                 summary: "Extraneous content found after a link in task group list item",
-                possibleSolutions: solutions
+                solutions: solutions
             )
         case .linksDirective:
             return Diagnostic(
@@ -50,7 +50,7 @@ struct ExtractLinks: MarkupRewriter {
                 identifier: "org.swift.docc.ExtraneousLinksDirectiveItemContent",
                 summary: "Extraneous content found after a link",
                 explanation: "\(Links.directiveName.singleQuoted) can only contain a bulleted list of documentation links",
-                possibleSolutions: solutions
+                solutions: solutions
             )
         }
     }
@@ -68,7 +68,7 @@ struct ExtractLinks: MarkupRewriter {
                 range: range,
                 identifier: "org.swift.docc.UnexpectedTaskGroupItem",
                 summary: "Only links are allowed in task group list items",
-                possibleSolutions: solutions
+                solutions: solutions
             )
         case .linksDirective:
             return Diagnostic(
@@ -77,7 +77,7 @@ struct ExtractLinks: MarkupRewriter {
                 range: range,
                 identifier: "org.swift.docc.UnexpectedLinksDirectiveListItem",
                 summary: "Only documentation links are allowed in \(Links.directiveName.singleQuoted) list items",
-                possibleSolutions: solutions
+                solutions: solutions
             )
         }
     }

@@ -27,7 +27,7 @@ public struct SeeAlsoInTopicsHeadingChecker: Checker {
                 identifier: "org.swift.docc.SeeAlsoInTopicsHeadings",
                 summary: #"Level-3 heading "See Also" can't form a See Also section. Did you mean to use a level-2 heading?"#,
                 explanation: #"A level-2 heading with the name "See Also" is a reserved heading name you use to begin a section to groups related symbols or links. To resolve this issue, change the heading level to a level-2 heading to form a See Also section or change the name of this heading to form a task group."#,
-                possibleSolutions: [
+                solutions: [
                     Solution(
                         summary: "Change to level-2 heading",
                         replacements: [Replacement(range: headingRange, replacement: "## \(heading.plainText)")]

@@ -26,7 +26,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", diagnostics.first?.identifier)
         XCTAssertEqual(.information, diagnostics.first?.severity)
-        XCTAssertNotNil(diagnostics.first?.possibleSolutions.first)
+        XCTAssertNotNil(diagnostics.first?.solutions.first)
     }
     
     func testUnexpectedArgument() async throws {
@@ -256,8 +256,8 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(diagnostic.identifier, "org.swift.docc.Article.DisplayName.NotSupported")
         XCTAssertEqual(diagnostic.summary, "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.")
         
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         
         XCTAssertEqual(solution.summary, "Change the title")
         XCTAssertEqual(solution.replacements.count, 2)

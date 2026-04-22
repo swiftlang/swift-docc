@@ -128,7 +128,7 @@ extension Semantic.Analyses {
                     identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed",
                     summary: "Cannot convert \(argument.value.singleQuoted) to type \(valueTypeDiagnosticName.singleQuoted)",
                     explanation: diagnosticExplanation,
-                    possibleSolutions: solutions ?? []
+                    solutions: solutions ?? []
                 ))
                 return nil
             }

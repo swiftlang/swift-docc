@@ -140,7 +140,7 @@ extension SnippetResolver {
             diagnosticRange = range
         }
         
-        return Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: id, summary: errorInfo.message, notes: notes, possibleSolutions: solutions)
+        return Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: id, summary: errorInfo.message, notes: notes, solutions: solutions)
     }
     
     private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol) -> String {

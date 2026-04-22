@@ -42,7 +42,7 @@ public struct Diagnostic {
     public var notes: [DiagnosticNote]
     
     /// A list of possible solutions that the end-use can take to resolve the problem or issue.
-    public var possibleSolutions: [Solution]
+    public var solutions: [Solution]
     
     public init(
         source: URL? = nil,
@@ -53,7 +53,7 @@ public struct Diagnostic {
         summary: String,
         explanation: String? = nil,
         notes: [DiagnosticNote] = [],
-        possibleSolutions: [Solution] = []
+        solutions: [Solution] = []
     ) {
         self.source = source
         self.severity = severity
@@ -63,7 +63,7 @@ public struct Diagnostic {
         self.summary = summary
         self.explanation = explanation
         self.notes = notes
-        self.possibleSolutions = possibleSolutions
+        self.solutions = solutions
     }
 }
 
@@ -76,9 +76,9 @@ public extension Diagnostic {
         // If there is no location information in the source diagnostic, the diagnostic might be removed for safety reasons.
         range?.offsetWithRange(docRange)
         
-        for solutionIndex in possibleSolutions.indices {
-            for replacementIndex in possibleSolutions[solutionIndex].replacements.indices {
-                possibleSolutions[solutionIndex].replacements[replacementIndex].offsetWithRange(docRange)
+        for solutionIndex in solutions.indices {
+            for replacementIndex in solutions[solutionIndex].replacements.indices {
+                solutions[solutionIndex].replacements[replacementIndex].offsetWithRange(docRange)
             }
         }
     }

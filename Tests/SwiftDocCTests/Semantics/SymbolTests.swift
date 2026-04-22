@@ -608,28 +608,28 @@ class SymbolTests: XCTestCase {
         var diagnostic: Diagnostic
         diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'UnresolvableSymbolLinkInMyClassOverview<>(_:))' doesn't exist at '/MyKit/MyClass'" }))
         XCTAssertEqual(diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 0)
+        XCTAssertEqual(diagnostic.solutions.count, 0)
         
         
         diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'UnresolvableClassInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
         XCTAssertEqual(diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 0)
+        XCTAssertEqual(diagnostic.solutions.count, 0)
 
         
         diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'unresolvablePropertyInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
         XCTAssertEqual(diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 0)
+        XCTAssertEqual(diagnostic.solutions.count, 0)
 
         
         diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'init()' is ambiguous at '/MyKit/MyClass'" }))
         XCTAssert(diagnostic.notes.isEmpty)
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 2)
-        XCTAssert(diagnostic.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(diagnostic.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.solutions.count, 2)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Insert '-33vaw' for \n'init()'", "-33vaw"],
             ["Insert '-3743d' for \n'init()'", "-3743d"],
         ])
-        XCTAssertEqual(try diagnostic.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -671,13 +671,13 @@ class SymbolTests: XCTestCase {
             $0.range?.lowerBound.line == 33 && $0.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
         }))
         XCTAssert(diagnostic.notes.isEmpty)
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 2)
-        XCTAssert(diagnostic.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(diagnostic.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.solutions.count, 2)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'swift.init' with '33vaw' for \n'init()'", "-33vaw"],
             ["Replace 'swift.init' with '3743d' for \n'init()'", "-3743d"],
         ])
-        XCTAssertEqual(try diagnostic.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -719,13 +719,13 @@ class SymbolTests: XCTestCase {
             $0.range?.lowerBound.line == 34 && $0.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
         }))
         XCTAssert(diagnostic.notes.isEmpty)
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 2)
-        XCTAssert(diagnostic.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(diagnostic.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.solutions.count, 2)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'swift.init' with '33vaw' for \n'init()'", "-33vaw"],
             ["Replace 'swift.init' with '3743d' for \n'init()'", "-3743d"],
         ])
-        XCTAssertEqual(try diagnostic.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -765,12 +765,12 @@ class SymbolTests: XCTestCase {
         
         diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'otherFunction()' doesn't exist at '/MyKit/MyClass'" }))
         XCTAssertEqual(diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        XCTAssert(diagnostic.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(diagnostic.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'otherFunction()' with 'myFunction()'", "myFunction()"],
         ])
-        XCTAssertEqual(try diagnostic.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -812,12 +812,12 @@ class SymbolTests: XCTestCase {
             $0.range?.lowerBound.line == 26 && $0.summary == "'MyClas' doesn't exist at '/MyKit'"
         }))
         XCTAssertEqual(diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        XCTAssert(diagnostic.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(diagnostic.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'MyClas' with 'MyClass'", "MyClass"],
         ])
-        XCTAssertEqual(try diagnostic.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -859,12 +859,12 @@ class SymbolTests: XCTestCase {
             $0.range?.lowerBound.line == 27 && $0.summary == "'MyClas' doesn't exist at '/MyKit'"
         }))
         XCTAssertEqual(diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        XCTAssert(diagnostic.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(diagnostic.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'MyClas' with 'MyClass'", "MyClass"],
         ])
-        XCTAssertEqual(try diagnostic.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -906,12 +906,12 @@ class SymbolTests: XCTestCase {
             $0.range?.lowerBound.line == 28 && $0.summary == "'MyClas' doesn't exist at '/MyKit'"
         }))
         XCTAssertEqual(diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        XCTAssert(diagnostic.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(diagnostic.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'MyClas' with 'MyClass'", "MyClass"],
         ])
-        XCTAssertEqual(try diagnostic.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -1242,9 +1242,9 @@ class SymbolTests: XCTestCase {
         
         // Verify that each diagnostic has exactly one solution to remove the directive
         for diagnostic in diagnostics where diagnostic.identifier.hasPrefix("org.swift.docc.Metadata.") {
-            XCTAssertEqual(diagnostic.possibleSolutions.count, 1, "Each invalid metadata directive should have exactly one solution")
+            XCTAssertEqual(diagnostic.solutions.count, 1, "Each invalid metadata directive should have exactly one solution")
             
-            let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+            let solution = try XCTUnwrap(diagnostic.solutions.first)
             XCTAssertTrue(solution.summary.hasPrefix("Remove invalid"), "Solution summary should start with 'Remove invalid'")
             XCTAssertEqual(solution.replacements.count, 1, "Solution should have exactly one replacement")
             
@@ -1309,9 +1309,9 @@ class SymbolTests: XCTestCase {
         let diagnostic = try XCTUnwrap(diagnostics.first)
         
         XCTAssertEqual(diagnostic.identifier, "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment")
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
         
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Remove invalid 'DisplayName' directive")
         XCTAssertEqual(solution.replacements.count, 1)
         

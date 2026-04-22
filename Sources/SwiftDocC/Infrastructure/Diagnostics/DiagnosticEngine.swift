@@ -67,7 +67,7 @@ public final class DiagnosticEngine {
     @available(*, deprecated, renamed: "diagnostics", message: "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.")
     public var problems: [Problem] {
         _diagnostics.sync { diagnostics in
-            diagnostics.map { Problem(diagnostic: $0, possibleSolutions: $0.possibleSolutions) }
+            diagnostics.map { Problem(diagnostic: $0) }
         }
     }
     

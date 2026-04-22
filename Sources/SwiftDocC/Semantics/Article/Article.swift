@@ -134,7 +134,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
 
             let replacement = Replacement(range: range, replacement: replacementText)
             let solution = Solution(summary: "Add a title", replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title", possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title", solutions: [solution])
             diagnostics.append(diagnostic)
 
             return nil
@@ -211,7 +211,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                         Replacement(range: range, replacement: "")
                     ]
                 )
-                diagnostic.possibleSolutions = [solution]
+                diagnostic.solutions = [solution]
                 return diagnostic
             }
             
@@ -236,7 +236,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 solutions = []
             }
             
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, possibleSolutions: solutions)
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, solutions: solutions)
             diagnostics.append(diagnostic)
             
             metadata.displayName = nil

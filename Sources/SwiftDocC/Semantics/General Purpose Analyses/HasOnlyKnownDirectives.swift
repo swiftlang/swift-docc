@@ -79,7 +79,7 @@ extension Semantic.Analyses {
                             []
                         }
                         
-                        let diagnostic = Diagnostic(source: source, severity: severity, range: child.range, identifier: "org.swift.docc.HasOnlyKnownDirectives", summary: summary, explanation: "These directives are allowed: \(allowedDirectivesList)", possibleSolutions: solutions)
+                        let diagnostic = Diagnostic(source: source, severity: severity, range: child.range, identifier: "org.swift.docc.HasOnlyKnownDirectives", summary: summary, explanation: "These directives are allowed: \(allowedDirectivesList)", solutions: solutions)
                         diagnostics.append(diagnostic)
                     }
                 }

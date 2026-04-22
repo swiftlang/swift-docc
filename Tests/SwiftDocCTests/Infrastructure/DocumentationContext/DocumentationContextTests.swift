@@ -655,7 +655,7 @@ class DocumentationContextTests: XCTestCase {
         DocC can only create a web page for one of them; deterministically keeping 'First/Something.tutorial' and dropping 'path/to/Second/something.tutorial'.
         """)
         
-        XCTAssertEqual(diagnostic.possibleSolutions.map(\.summary), [
+        XCTAssertEqual(diagnostic.solutions.map(\.summary), [
             "Rename 'path/to/Second/something.tutorial'", // The file that the warning is about; which DocC deterministically skips
             "Rename 'First/Something.tutorial'"           // The other file; which DocC deterministically keeps
         ])
@@ -693,7 +693,7 @@ class DocumentationContextTests: XCTestCase {
         DocC can only create a web page for one of them; deterministically keeping 'First/Something.md' and dropping 'path/to/Second/Something.md'.
         """)
         
-        XCTAssertEqual(diagnostic.possibleSolutions.map(\.summary), [
+        XCTAssertEqual(diagnostic.solutions.map(\.summary), [
             "Rename 'path/to/Second/Something.md'", // The file that the warning is about; which DocC deterministically skips
             "Rename 'First/Something.md'"           // The other file; which DocC deterministically keeps
         ])
@@ -734,7 +734,7 @@ class DocumentationContextTests: XCTestCase {
         DocC can only create a web page for one of them; deterministically keeping 'Something/FileName.md' and dropping 'Something Else/Subdirectory/FileName.md'.
         """)
         
-        XCTAssertEqual(diagnostic.possibleSolutions.map(\.summary), [
+        XCTAssertEqual(diagnostic.solutions.map(\.summary), [
             "Rename 'Something Else/Subdirectory/FileName.md'", // The file that the warning is about; which DocC deterministically skips
             "Rename 'Something/FileName.md'",                   // The other file; which DocC deterministically keeps (in this case because it has a shallower path)
         ])
@@ -1929,7 +1929,7 @@ let expected = """
         
         let diagnostic = try XCTUnwrap(context.diagnostics.first)
         XCTAssertEqual(diagnostic.summary, "Multiple articles with output path '/documentation/unit-test/hello-world'; this article will be skipped")
-        XCTAssertEqual(diagnostic.possibleSolutions.map(\.summary), [
+        XCTAssertEqual(diagnostic.solutions.map(\.summary), [
             "Rename 'Hello-world.md'",
             "Rename 'Hello world.md'",
         ])
@@ -4435,9 +4435,9 @@ let expected = """
         XCTAssertEqual(range.upperBound.column, 49)
 
         // Verify the replacement range is at the expected location.
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        XCTAssertEqual(diagnostic.possibleSolutions.first?.replacements.count, 1)
-        let replacementRange = try XCTUnwrap(diagnostic.possibleSolutions.first?.replacements.first?.range)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.first?.replacements.count, 1)
+        let replacementRange = try XCTUnwrap(diagnostic.solutions.first?.replacements.first?.range)
         
         XCTAssertEqual(replacementRange.lowerBound.line, 4)
         XCTAssertEqual(replacementRange.lowerBound.column, 29)
@@ -4445,7 +4445,7 @@ let expected = """
         XCTAssertEqual(replacementRange.upperBound.column, 49)
 
         // Verify the solution proposes the expected absolute link replacement.
-        XCTAssertEqual(diagnostic.possibleSolutions.first?.replacements.first?.replacement, "<doc:/documentation/Minimal_docs/A/method(_:)-7mctk>")
+        XCTAssertEqual(diagnostic.solutions.first?.replacements.first?.replacement, "<doc:/documentation/Minimal_docs/A/method(_:)-7mctk>")
     }
     
     func testCustomModuleKind() async throws {
@@ -4844,7 +4844,7 @@ let expected = """
         ])
         
         let diagnostic = try XCTUnwrap(context.diagnostics.first)
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Rename 'SoMeClAsS.md'")
     }
     
@@ -5402,9 +5402,9 @@ let expected = """
 
             XCTAssertEqual(diagnostic.summary, "'SymbolName-\(symbolKindID.identifier)' is ambiguous at '/ModuleName'")
 
-            XCTAssertEqual(diagnostic.possibleSolutions.count, 4)
+            XCTAssertEqual(diagnostic.solutions.count, 4)
 
-            for solution in diagnostic.possibleSolutions {
+            for solution in diagnostic.solutions {
                 XCTAssertEqual(solution.replacements.count, 1)
                 let replacement = try XCTUnwrap(solution.replacements.first)
 
@@ -5456,9 +5456,9 @@ let expected = """
 
             XCTAssertEqual(diagnostic.summary, "'abc123' isn't a disambiguation for 'SymbolName' at '/ModuleName'")
 
-            XCTAssertEqual(diagnostic.possibleSolutions.count, 4)
+            XCTAssertEqual(diagnostic.solutions.count, 4)
 
-            for solution in diagnostic.possibleSolutions {
+            for solution in diagnostic.solutions {
                 XCTAssertEqual(solution.replacements.count, 1)
                 let replacement = try XCTUnwrap(solution.replacements.first)
 
@@ -5508,8 +5508,8 @@ let expected = """
 
             XCTAssertEqual(diagnostic.summary, "'Symbol' doesn't exist at '/ModuleName'")
 
-            XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-            let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+            XCTAssertEqual(diagnostic.solutions.count, 1)
+            let solution = try XCTUnwrap(diagnostic.solutions.first)
 
             XCTAssertEqual(solution.summary, "Replace 'Symbol' with 'SymbolName'")
 
@@ -5740,10 +5740,10 @@ let expected = """
         XCTAssertEqual(diagnostic.severity, .warning)
         XCTAssertEqual(diagnostic.summary, "'SwiftSymbol' already has a representation in Swift")
         XCTAssertEqual(diagnostic.explanation, "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.")
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
     
         // Verify solutions provide context, but no replacements
-        var solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        var solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Replace this alternate language representation with a symbol which isn't available in Swift")
         XCTAssertEqual(solution.replacements.count, 0)
 
@@ -5752,10 +5752,10 @@ let expected = """
         XCTAssertEqual(diagnostic.severity, .warning)
         XCTAssertEqual(diagnostic.summary, "A custom alternate language representation for Objective-C has already been specified")
         XCTAssertEqual(diagnostic.explanation, "Only one custom alternate language representation can be specified per language.")
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
                 
         // Verify solutions provide context and suggest to remove the duplicate directive
-        solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Remove this alternate representation")
         XCTAssertEqual(solution.replacements.count, 1)
         XCTAssertEqual(solution.replacements.first?.replacement, "")
@@ -5799,10 +5799,10 @@ let expected = """
         XCTAssertEqual(diagnostic.severity, .warning)
         XCTAssertEqual(diagnostic.summary, "Custom alternate representations are not supported for page kind 'Article'")
         XCTAssertEqual(diagnostic.explanation, "Alternate representations are only supported for symbols.")
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
     
         // Verify that solutions provide context and suggest to remove the invalid directive
-        var solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        var solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Remove this alternate representation")
         XCTAssertEqual(solution.replacements.count, 1)
         XCTAssertEqual(solution.replacements.first?.replacement, "")
@@ -5812,10 +5812,10 @@ let expected = """
         XCTAssertEqual(diagnostic.severity, .warning)
         XCTAssertEqual(diagnostic.summary, "Page kind 'Article' is not allowed as a custom alternate language representation")
         XCTAssertEqual(diagnostic.explanation, "Symbols can only specify other symbols as custom language representations.")
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
                 
         // Verify solutions provide context and suggest to remove the invalid directive
-        solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Remove this alternate representation")
         XCTAssertEqual(solution.replacements.count, 1)
         XCTAssertEqual(solution.replacements.first?.replacement, "")

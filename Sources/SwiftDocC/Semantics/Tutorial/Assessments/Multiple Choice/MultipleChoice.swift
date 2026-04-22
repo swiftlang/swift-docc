@@ -118,7 +118,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
                 guard let range = extraneousCode.range else {
                     continue
                 }
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).ExtraneousCode", summary: "`\(MultipleChoice.directiveName)` may contain only one markup code block following the question's phrasing.", possibleSolutions: [removeExtraneous("code block", range: range)])
+                let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).ExtraneousCode", summary: "`\(MultipleChoice.directiveName)` may contain only one markup code block following the question's phrasing.", solutions: [removeExtraneous("code block", range: range)])
                 diagnostics.append(diagnostic)
             }
         }
@@ -131,7 +131,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
                 guard let range = extraneousImage.originalMarkup.range else {
                     continue
                 }
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).ExtraneousImage", summary: "`\(MultipleChoice.directiveName)` may contain only one '\(ImageMedia.directiveName)' directive following the question's phrasing", possibleSolutions: [removeExtraneous(ImageMedia.directiveName, range: range)])
+                let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).ExtraneousImage", summary: "`\(MultipleChoice.directiveName)` may contain only one '\(ImageMedia.directiveName)' directive following the question's phrasing", solutions: [removeExtraneous(ImageMedia.directiveName, range: range)])
                 diagnostics.append(diagnostic)
             }
         }
@@ -147,7 +147,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
                     removeExtraneous(ImageMedia.directiveName, range: range)
                 },
             ].compactMap { $0 }
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).CodeOrImage", summary: "`\(MultipleChoice.directiveName)` may contain an `\(ImageMedia.directiveName)` or markup code block following the question's phrasing", possibleSolutions: solutions)
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).CodeOrImage", summary: "`\(MultipleChoice.directiveName)` may contain an `\(ImageMedia.directiveName)` or markup code block following the question's phrasing", solutions: solutions)
             diagnostics.append(diagnostic)
         }
         

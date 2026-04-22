@@ -389,7 +389,7 @@ public struct ConvertAction: AsyncAction {
                     identifier: "MissingTableOfContentsPage",
                     summary: "Missing tutorial table of contents (`@Tutorials`) page",
                     explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order.",
-                    possibleSolutions: [
+                    solutions: [
                         Solution(
                             summary: "Create a `@Tutorials` table of contents page",
                             replacements: replacements

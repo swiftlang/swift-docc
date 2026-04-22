@@ -91,7 +91,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
             
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
@@ -110,7 +110,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let firstSolution = Solution(summary: firstSolutionSummary, replacements: [replacement])
             let secondSolution = Solution(summary: secondSolutionSummary, replacements: [])
             
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [firstSolution, secondSolution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [firstSolution, secondSolution])
             
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
@@ -130,7 +130,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
             
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
             
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])

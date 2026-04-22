@@ -169,13 +169,13 @@ class SnippetResolverTests: XCTestCase {
             """
             do {
                 let snippetPathDiagnostic = try XCTUnwrap(diagnostics.first)
-                let solution = try XCTUnwrap(snippetPathDiagnostic.possibleSolutions.first)
+                let solution = try XCTUnwrap(snippetPathDiagnostic.solutions.first)
                 let modifiedLines = try solution.applyTo(rootMarkupContent).components(separatedBy: "\n")
                 XCTAssertEqual(modifiedLines[6], "@Snippet(path: \(pathPrefix)First)")
             }
             do {
                 let snippetSliceDiagnostic = try XCTUnwrap(diagnostics.last)
-                let solution = try XCTUnwrap(snippetSliceDiagnostic.possibleSolutions.first)
+                let solution = try XCTUnwrap(snippetSliceDiagnostic.solutions.first)
                 let modifiedLines = try solution.applyTo(rootMarkupContent).components(separatedBy: "\n")
                 XCTAssertEqual(modifiedLines[8], "@Snippet(path: \(pathPrefix)First, slice: comment)")
             }

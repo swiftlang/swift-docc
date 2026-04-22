@@ -146,10 +146,10 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         // Since solution summaries aren't included in the fixit string we include them in the diagnostic
         // summary so that the solution information isn't dropped.
         
-        if !diagnostic.possibleSolutions.isEmpty, description.last?.isPunctuation == false {
+        if !diagnostic.solutions.isEmpty, description.last?.isPunctuation == false {
             description += "."
         }
-        for solution in diagnostic.possibleSolutions {
+        for solution in diagnostic.solutions {
             description += " \(solution.summary)"
             if description.last?.isPunctuation == false {
                 description += "."
@@ -160,7 +160,7 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         description += formattedDiagnosticDetails(diagnostic)
         
         // Only one fixit (but multiple related replacements) can be a presented with each diagnostic
-        if diagnostic.possibleSolutions.count == 1, let solution = diagnostic.possibleSolutions.first {
+        if diagnostic.solutions.count == 1, let solution = diagnostic.solutions.first {
             description += solution.replacements.reduce(into: "") { accumulation, replacement in
                 let range = replacement.range
                 accumulation +=  "\n\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)-\(range.upperBound.line):\(range.upperBound.column): fixit: \(replacement.replacement)"
@@ -262,7 +262,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     func formattedDescription(for diagnostic: Diagnostic) -> String {
         formattedDiagnosticsSummary(for: diagnostic) +
         formattedDiagnosticDetails(for: diagnostic) +
-        formattedDiagnosticSource(for: diagnostic, with: diagnostic.possibleSolutions)
+        formattedDiagnosticSource(for: diagnostic, with: diagnostic.solutions)
     }
 
     func finalize() {

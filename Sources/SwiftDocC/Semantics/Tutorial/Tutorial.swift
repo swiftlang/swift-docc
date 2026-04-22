@@ -135,7 +135,7 @@ extension Tutorial {
             if context.resolveAsset(named: projectFiles.url.lastPathComponent, in: node.reference) == nil {
                 // The project download file is not found.
                 engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Project.ProjectFilesNotFound",
-                    summary: "\(projectFiles.path) file reference not found in \(Tutorial.directiveName.singleQuoted) directive", possibleSolutions: [
+                    summary: "\(projectFiles.path) file reference not found in \(Tutorial.directiveName.singleQuoted) directive", solutions: [
                         Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
                     ]
                 ))
@@ -146,7 +146,7 @@ extension Tutorial {
             .compactMap({ context.topicGraph.nodeWithReference($0) })
             .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
         guard tutorialTableOfContentsParent != nil else {
-            engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents", possibleSolutions: [
+            engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents", solutions: [
                     Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
                 ]
             ))

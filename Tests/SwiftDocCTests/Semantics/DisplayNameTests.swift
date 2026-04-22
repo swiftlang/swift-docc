@@ -123,6 +123,6 @@ class DisplayNameTests: XCTestCase {
         XCTAssertFalse(diagnostics.containsError)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", diagnostics.first?.identifier)
-        XCTAssertNotNil(diagnostics.first?.possibleSolutions.first)
+        XCTAssertNotNil(diagnostics.first?.solutions.first)
     }
 }

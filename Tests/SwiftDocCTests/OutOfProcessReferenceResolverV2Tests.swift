@@ -471,8 +471,8 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         XCTAssertEqual(diagnostic.range?.lowerBound, .init(line: 3, column: 69, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
         XCTAssertEqual(diagnostic.range?.upperBound, .init(line: 3, column: 97, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
         
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Some external solution")
         XCTAssertEqual(solution.replacements.count, 1)
         XCTAssertEqual(solution.replacements.first?.range.lowerBound, .init(line: 3, column: 87, source: nil))

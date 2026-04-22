@@ -42,7 +42,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             XCTAssertEqual(possibleValueDiagnostic.range?.lowerBound.column, 3)
             XCTAssertEqual(possibleValueDiagnostic.range?.upperBound.line, 9)
             XCTAssertEqual(possibleValueDiagnostic.range?.upperBound.column, 18)
-            XCTAssertNotNil(possibleValueDiagnostic.possibleSolutions.first(where: { $0.summary == "Remove \'April\' possible value documentation or replace it with a known value." }))
+            XCTAssertNotNil(possibleValueDiagnostic.solutions.first(where: { $0.summary == "Remove \'April\' possible value documentation or replace it with a known value." }))
         }
         
         // Check that no diagnostics are emitted if no extra possible values are documented.
@@ -78,8 +78,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         do {
             XCTAssertEqual(context.diagnostics.count, 1)
             let possibleValueDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "\'Marc\' is not a known possible value for \'Month\'." }))
-            XCTAssertEqual(possibleValueDiagnostic.possibleSolutions.count, 1)
-            XCTAssertNotNil(possibleValueDiagnostic.possibleSolutions.first(where: { $0.summary == "Remove \'Marc\' possible value documentation or replace it with a known value." }))
+            XCTAssertEqual(possibleValueDiagnostic.solutions.count, 1)
+            XCTAssertNotNil(possibleValueDiagnostic.solutions.first(where: { $0.summary == "Remove \'Marc\' possible value documentation or replace it with a known value." }))
         }
     }
     

@@ -103,7 +103,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
                 if !tileName.isEmpty,
                     let range = tile.originalMarkup.range {
                     let solution = Solution.init(summary: "Remove extraneous \(tileName.singleQuoted) directive", replacements: [Replacement(range: range, replacement: "")])
-                    let diagnostic = Diagnostic(source: source, severity: .warning, range: tile.originalMarkup.range, identifier: "org.swift.docc.Resources.DuplicateTile", summary: "Duplicate child directive \(tileName.singleQuoted) in \(Resources.directiveName.singleQuoted)", possibleSolutions: [solution])
+                    let diagnostic = Diagnostic(source: source, severity: .warning, range: tile.originalMarkup.range, identifier: "org.swift.docc.Resources.DuplicateTile", summary: "Duplicate child directive \(tileName.singleQuoted) in \(Resources.directiveName.singleQuoted)", solutions: [solution])
                     diagnostics.append(diagnostic)
                 }
                 return false
@@ -120,7 +120,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
                 []
             }
             diagnostics.append(
-                Diagnostic(source: source, severity: .warning, range: extraneousElement.range, identifier: "org.swift.docc.Resources.ExtraneousContent", summary: "Extraneous child element of \(Resources.directiveName.singleQuoted) directive", possibleSolutions: solutions)
+                Diagnostic(source: source, severity: .warning, range: extraneousElement.range, identifier: "org.swift.docc.Resources.ExtraneousContent", summary: "Extraneous child element of \(Resources.directiveName.singleQuoted) directive", solutions: solutions)
             )
         }
         

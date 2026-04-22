@@ -29,7 +29,7 @@ private func removedLinkDestinationDiagnostic(reference: ResolvedTopicReference,
             .init(range: range, replacement: "`\(pathRemainder.joined(separator: "/"))`")
         ]))
     }
-    return Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.", possibleSolutions: solutions)
+    return Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.", solutions: solutions)
 }
 
 /**

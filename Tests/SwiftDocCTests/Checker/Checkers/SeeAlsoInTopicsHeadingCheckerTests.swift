@@ -42,7 +42,7 @@ A discussion
         XCTAssertEqual(diagnosticRange.upperBound.line, 10)
         XCTAssertEqual(diagnosticRange.upperBound.column, 13)
 
-        let solutions = diagnostic.possibleSolutions
+        let solutions = diagnostic.solutions
         XCTAssertEqual(solutions.count, 2)
         
         let levelSolution = solutions[0]

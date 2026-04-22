@@ -74,16 +74,16 @@ struct InvalidAdditionalTitleTests {
         #expect(note.range == firstHeading.range, "The note points to the first level-1 heading")
         
         // Verify the solutions
-        #expect(diagnostic.possibleSolutions.count == (isDocumentationExtensionFile ? 1 : 2))
+        #expect(diagnostic.solutions.count == (isDocumentationExtensionFile ? 1 : 2))
         
-        let firstSolution = try #require(diagnostic.possibleSolutions.first)
+        let firstSolution = try #require(diagnostic.solutions.first)
         #expect(firstSolution.summary == "Remove heading")
         #expect(firstSolution.replacements.count == 1)
         #expect(firstSolution.replacements.first?.range == secondHeading.range, "The replacement modifies the second heading")
         #expect(firstSolution.replacements.first?.replacement == "", "The solution removes the heading completely")
         
         if !isDocumentationExtensionFile {
-            let secondSolution = try #require(diagnostic.possibleSolutions.last)
+            let secondSolution = try #require(diagnostic.solutions.last)
             #expect(secondSolution.summary == "Change to second-level heading")
             #expect(secondSolution.replacements.count == 1)
             #expect(secondSolution.replacements.first?.range == secondHeading.range, "The replacement modifies the second heading")

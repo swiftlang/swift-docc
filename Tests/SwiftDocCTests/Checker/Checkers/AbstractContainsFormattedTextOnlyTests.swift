@@ -51,7 +51,7 @@ This paragraph isn't [analyzed](http://example.com/image.jpg).
 
         
         let diagnostic = checker.diagnostics[0]
-        XCTAssertTrue(diagnostic.possibleSolutions.isEmpty)
+        XCTAssertTrue(diagnostic.solutions.isEmpty)
         
         let image = document.child(at: 1)!.child(at: 0)! as! Image
         verifyDiagnostic(diagnostic: diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
@@ -71,7 +71,7 @@ More info [here](http://example.com/image.jpg).
         }
         
         let diagnostic = checker.diagnostics[0]
-        XCTAssertTrue(diagnostic.possibleSolutions.isEmpty)
+        XCTAssertTrue(diagnostic.solutions.isEmpty)
         
         let link = document.child(at: 1)!.child(at: 1)! as! Link
         verifyDiagnostic(diagnostic: diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)

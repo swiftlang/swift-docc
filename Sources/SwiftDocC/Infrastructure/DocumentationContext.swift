@@ -826,7 +826,7 @@ public class DocumentationContext {
                             message: "Other \(fileDescription) with same output path here"
                         )
                     ],
-                    possibleSolutions: [
+                    solutions: [
                         Solution(summary: "Rename '\(thisRelativePath)'", replacements: []),
                         Solution(summary: "Rename '\(otherRelativePath)'", replacements: []),
                     ]
@@ -1240,7 +1240,7 @@ public class DocumentationContext {
                     let unresolvedLinkDiagnostic = unresolvedReferenceDiagnostic(source: documentationExtension.source, range: link.range, severity: .warning, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
                     
                     diagnosticEngine.emit(
-                        Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(destination.singleQuoted). \(errorInfo.message).", notes: unresolvedLinkDiagnostic.notes, possibleSolutions: unresolvedLinkDiagnostic.possibleSolutions)
+                        Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(destination.singleQuoted). \(errorInfo.message).", notes: unresolvedLinkDiagnostic.notes, solutions: unresolvedLinkDiagnostic.solutions)
                     )
                 }
             }
@@ -1779,7 +1779,7 @@ public class DocumentationContext {
                         DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
                         Until rdar://79745455 (issue #593) is fixed, DocC favors the symbol in this collision and drops the article to have deterministic behavior.
                         """,
-                        possibleSolutions: [
+                        solutions: [
                             Solution(summary: "Rename '\(article.source.lastPathComponent)'", replacements: [ /* Renaming a file isn't something that we can represent with a replacement */ ])
                         ]
                     )
@@ -2094,7 +2094,7 @@ public class DocumentationContext {
                 )
                 
                 if let range = extraOptionsDirective.originalMarkup.range {
-                    diagnostic.possibleSolutions.append(Solution(
+                    diagnostic.solutions.append(Solution(
                         summary: "Remove extraneous \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
                         replacements: [
                             Replacement(range: range, replacement: "")
@@ -2644,7 +2644,7 @@ public class DocumentationContext {
             A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages\(symbolDescription.map { " (in this case \($0))" } ?? "").
             \(explanationDetails)
             """,
-            possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)
+            solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
         )
         diagnosticEngine.emit(diagnostic)
     }
@@ -2718,7 +2718,7 @@ public class DocumentationContext {
                     To resolve this issue; remove all \(TechnologyRoot.directiveName) directives except for one to use that as the root of your documentation hierarchy.
                     """,
                     notes: allNotes.filter({ $0.source != article.source }),
-                    possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)
+                    solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
                 )
                 diagnosticEngine.emit(diagnostic)
             }
@@ -2747,7 +2747,7 @@ public class DocumentationContext {
                     To resolve this issue; remove all \(TechnologyRoot.directiveName) directives to use \(modulesList) as the root page.
                     """,
                     notes: allNotes.filter({ $0.source != article.source }),
-                    possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)
+                    solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
                 )
                 diagnosticEngine.emit(diagnostic)
             }
@@ -3114,7 +3114,7 @@ extension DocumentationContext {
             case .range(_, let url): source = url
             case .external: return nil
             }
-            return Diagnostic(source: source, severity: .information, range: nil, identifier: "org.swift.docc.SymbolNotCurated", summary: "You haven't curated \(node.reference.absoluteString.singleQuoted)", possibleSolutions: [Solution(summary: "Add a link to \(node.reference.absoluteString.singleQuoted) from a Topics group of another documentation node.", replacements: [])])
+            return Diagnostic(source: source, severity: .information, range: nil, identifier: "org.swift.docc.SymbolNotCurated", summary: "You haven't curated \(node.reference.absoluteString.singleQuoted)", solutions: [Solution(summary: "Add a link to \(node.reference.absoluteString.singleQuoted) from a Topics group of another documentation node.", replacements: [])])
         }
         diagnosticEngine.emit(diagnostics)
     }
@@ -3145,7 +3145,7 @@ extension DocumentationContext {
                         identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
                         summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
                         explanation: "Alternate representations are only supported for symbols.",
-                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
                     ))
                     continue
                 }
@@ -3164,7 +3164,7 @@ extension DocumentationContext {
                         identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
                         summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
                         explanation: "Symbols can only specify other symbols as custom language representations.",
-                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
                     ))
                     continue
                 }
@@ -3179,7 +3179,7 @@ extension DocumentationContext {
                         identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
                         summary: "\(entity.name.plainText.singleQuoted) already has a representation in \(listSourceLanguages(duplicateSourceLanguages))",
                         explanation: "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.",
-                        possibleSolutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
+                        solutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
                     ))
                 }
                 
@@ -3202,7 +3202,7 @@ extension DocumentationContext {
                         summary: "A custom alternate language representation for \(listSourceLanguages(duplicateAlternateLanguages)) has already been specified",
                         explanation: "Only one custom alternate language representation can be specified per language.",
                         notes: notes,
-                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
                     ))
                 }
                 

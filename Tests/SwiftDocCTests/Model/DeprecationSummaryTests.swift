@@ -301,11 +301,11 @@ struct DeprecationSummaryTests {
             case .objectiveC: "'API_AVAILABLE\' macros"
             default:          nil
         }
-        #expect(diagnostic.possibleSolutions.count == (expectedSourceAttribute != nil ? 2 : 1))
+        #expect(diagnostic.solutions.count == (expectedSourceAttribute != nil ? 2 : 1))
         if let expectedSourceAttribute {
-            #expect(diagnostic.possibleSolutions.first?.summary == "Add \(expectedSourceAttribute) marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated API")
+            #expect(diagnostic.solutions.first?.summary == "Add \(expectedSourceAttribute) marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated API")
         }
-        #expect(diagnostic.possibleSolutions.last?.summary == "Add Available directives marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated only in documentation")
+        #expect(diagnostic.solutions.last?.summary == "Add Available directives marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated only in documentation")
         // Verify that DocC still displays the deprecation text, despite the symbol being available.
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationNodeConverter(context: context)
@@ -356,8 +356,8 @@ struct DeprecationSummaryTests {
         #expect(diagnostic.notes.map(\.message) == [], "Only deprecated platforms, not available ones, are defined in Available directives")
         
         // Verify that the solutions suggest modifying the wildcard availability attribute
-        #expect(diagnostic.possibleSolutions.count == 1)
-        let solution = try #require(diagnostic.possibleSolutions.first)
+        #expect(diagnostic.solutions.count == 1)
+        let solution = try #require(diagnostic.solutions.first)
         #expect(solution.summary == "Update wildcard '@available()' attribute with a deprecated version or unconditional deprecation")
     }
     

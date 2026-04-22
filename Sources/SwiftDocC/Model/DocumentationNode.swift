@@ -1035,7 +1035,7 @@ public struct DocumentationNode {
                 summary: "\(symbol.kind.displayName.lowercased().capitalizingFirstWord()) '\(symbol.names.title)' is \(shortAvailabilityDescription)",
                 explanation: explanation,
                 notes: notes,
-                possibleSolutions: solutions
+                solutions: solutions
             )
         )
     }

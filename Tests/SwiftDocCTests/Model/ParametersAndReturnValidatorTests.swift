@@ -250,8 +250,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(parameterNearMissDiagnostic.range?.upperBound.line, 12)
             XCTAssertEqual(parameterNearMissDiagnostic.range?.upperBound.column, 14)
             
-            XCTAssertEqual(parameterNearMissDiagnostic.possibleSolutions.first?.summary, "Replace 'somevalue' with 'someValue'")
-            XCTAssertEqual(parameterNearMissDiagnostic.possibleSolutions.first?.replacements.first?.range, parameterNearMissDiagnostic.range)
+            XCTAssertEqual(parameterNearMissDiagnostic.solutions.first?.summary, "Replace 'somevalue' with 'someValue'")
+            XCTAssertEqual(parameterNearMissDiagnostic.solutions.first?.replacements.first?.range, parameterNearMissDiagnostic.range)
             
             let parameterNotFoundDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "Parameter 'somethingElse' not found in instance method declaration" }))
             XCTAssertEqual(parameterNotFoundDiagnostic.source, url.appendingPathComponent("extension.md"))
@@ -260,8 +260,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(parameterNotFoundDiagnostic.range?.upperBound.line, 13)
             XCTAssertEqual(parameterNotFoundDiagnostic.range?.upperBound.column, 79)
             
-            XCTAssertEqual(parameterNotFoundDiagnostic.possibleSolutions.first?.summary, "Remove 'somethingElse' parameter documentation")
-            XCTAssertEqual(parameterNotFoundDiagnostic.possibleSolutions.first?.replacements.first?.range, parameterNotFoundDiagnostic.range)
+            XCTAssertEqual(parameterNotFoundDiagnostic.solutions.first?.summary, "Remove 'somethingElse' parameter documentation")
+            XCTAssertEqual(parameterNotFoundDiagnostic.solutions.first?.replacements.first?.range, parameterNotFoundDiagnostic.range)
             
             let duplicateParameterDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "Parameter 'someValue' is already documented" }))
             XCTAssertEqual(duplicateParameterDiagnostic.source, url.appendingPathComponent("extension.md"))
@@ -270,8 +270,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(duplicateParameterDiagnostic.range?.upperBound.line, 11)
             XCTAssertEqual(duplicateParameterDiagnostic.range?.upperBound.column, 34)
             
-            XCTAssertEqual(duplicateParameterDiagnostic.possibleSolutions.first?.summary, "Remove duplicate parameter documentation")
-            XCTAssertEqual(duplicateParameterDiagnostic.possibleSolutions.first?.replacements.first?.range, duplicateParameterDiagnostic.range)
+            XCTAssertEqual(duplicateParameterDiagnostic.solutions.first?.summary, "Remove duplicate parameter documentation")
+            XCTAssertEqual(duplicateParameterDiagnostic.solutions.first?.replacements.first?.range, duplicateParameterDiagnostic.range)
             
             XCTAssertEqual(duplicateParameterDiagnostic.notes.first?.message, "Previously documented here")
             XCTAssertEqual(duplicateParameterDiagnostic.notes.first?.source, duplicateParameterDiagnostic.source)
@@ -287,9 +287,9 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(argumentLabelDiagnostic.range?.upperBound.line, 9)
             XCTAssertEqual(argumentLabelDiagnostic.range?.upperBound.column, 17)
             
-            XCTAssertEqual(argumentLabelDiagnostic.possibleSolutions.first?.summary, "Replace 'with' with 'someValue'")
-            XCTAssertEqual(argumentLabelDiagnostic.possibleSolutions.first?.replacements.first?.range, argumentLabelDiagnostic.range)
-            XCTAssertEqual(argumentLabelDiagnostic.possibleSolutions.first?.replacements.first?.replacement, "someValue")
+            XCTAssertEqual(argumentLabelDiagnostic.solutions.first?.summary, "Replace 'with' with 'someValue'")
+            XCTAssertEqual(argumentLabelDiagnostic.solutions.first?.replacements.first?.range, argumentLabelDiagnostic.range)
+            XCTAssertEqual(argumentLabelDiagnostic.solutions.first?.replacements.first?.replacement, "someValue")
         }
     }
     
@@ -408,11 +408,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(oneMissingParameterDiagnostic.range?.upperBound, endOfParameterSectionLocation)
         
         // The missing `firstParameter` should be added before 'secondParameter'
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.summary, "Document 'firstParameter' parameter")
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.summary, "Document 'firstParameter' parameter")
         let startOfParameterTwoLocation = SourceLocation(line: start.line + 4, column: start.character + 3, source: symbolURL)
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.lowerBound, startOfParameterTwoLocation)
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.upperBound, startOfParameterTwoLocation)
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.replacement, "- firstParameter: <#parameter description#>\n///  ")
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.replacements.first?.range.lowerBound, startOfParameterTwoLocation)
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.replacements.first?.range.upperBound, startOfParameterTwoLocation)
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.replacements.first?.replacement, "- firstParameter: <#parameter description#>\n///  ")
         
         let otherMissingParameterDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "Parameter 'fourthParameter' is missing documentation" }))
         XCTAssertEqual(otherMissingParameterDiagnostic.source, symbolURL)
@@ -420,10 +420,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(otherMissingParameterDiagnostic.range?.upperBound, endOfParameterSectionLocation)
         
         // The missing 'fourthParameter' should be added after the 'thirdParameter'
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.summary, "Document 'fourthParameter' parameter")
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.lowerBound, endOfParameterSectionLocation)
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.upperBound, endOfParameterSectionLocation)
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.replacement, "\n///  - fourthParameter: <#parameter description#>")
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.summary, "Document 'fourthParameter' parameter")
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.replacements.first?.range.lowerBound, endOfParameterSectionLocation)
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.replacements.first?.range.upperBound, endOfParameterSectionLocation)
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.replacements.first?.replacement, "\n///  - fourthParameter: <#parameter description#>")
     }
     
     func testMissingSeparateParametersInDocCommentDiagnostics() async throws {
@@ -447,11 +447,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(oneMissingParameterDiagnostic.range?.upperBound, endOfParameterSectionLocation)
         
         // The missing `firstParameter` should be added before 'secondParameter'
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.summary, "Document 'firstParameter' parameter")
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.summary, "Document 'firstParameter' parameter")
         let startOfParameterTwoLocation = SourceLocation(line: start.line + 3, column: start.character + 1, source: symbolURL)
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.lowerBound, startOfParameterTwoLocation)
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.upperBound, startOfParameterTwoLocation)
-        XCTAssertEqual(oneMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.replacement, "- Parameter firstParameter: <#parameter description#>\n///")
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.replacements.first?.range.lowerBound, startOfParameterTwoLocation)
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.replacements.first?.range.upperBound, startOfParameterTwoLocation)
+        XCTAssertEqual(oneMissingParameterDiagnostic.solutions.first?.replacements.first?.replacement, "- Parameter firstParameter: <#parameter description#>\n///")
         
         let otherMissingParameterDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "Parameter 'fourthParameter' is missing documentation" }))
         XCTAssertEqual(otherMissingParameterDiagnostic.source, symbolURL)
@@ -459,10 +459,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(otherMissingParameterDiagnostic.range?.upperBound, endOfParameterSectionLocation)
         
         // The missing 'fourthParameter' should be added after the 'thirdParameter'
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.summary, "Document 'fourthParameter' parameter")
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.lowerBound, endOfParameterSectionLocation)
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.range.upperBound, endOfParameterSectionLocation)
-        XCTAssertEqual(otherMissingParameterDiagnostic.possibleSolutions.first?.replacements.first?.replacement, "\n///- Parameter fourthParameter: <#parameter description#>")
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.summary, "Document 'fourthParameter' parameter")
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.replacements.first?.range.lowerBound, endOfParameterSectionLocation)
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.replacements.first?.range.upperBound, endOfParameterSectionLocation)
+        XCTAssertEqual(otherMissingParameterDiagnostic.solutions.first?.replacements.first?.replacement, "\n///- Parameter fourthParameter: <#parameter description#>")
     }
     
     func testFunctionWithOnlyErrorParameter() async throws {

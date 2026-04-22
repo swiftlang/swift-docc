@@ -47,9 +47,9 @@ A subsection
 
         let range = diagnostic.range
         XCTAssertEqual(range?.lowerBound.line, 7)
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
 
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
 
         let replacement = try XCTUnwrap(solution.replacements.first)
@@ -79,9 +79,9 @@ A discussion
 
         let range = diagnostic.range
         XCTAssertEqual(range?.lowerBound.line, 4)
-        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
 
-        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
 
         let replacement = try XCTUnwrap(solution.replacements.first)

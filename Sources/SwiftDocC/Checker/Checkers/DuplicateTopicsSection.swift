@@ -53,7 +53,7 @@ public struct DuplicateTopicsSections: Checker {
                 Each page can only have a single Topics section.
                 """,
                 notes: notes,
-                possibleSolutions: [
+                solutions: [
                     Solution(summary: "Change heading name", replacements: [
                         .init(range: range, replacement: "## <#New heading name#>")
                     ]),

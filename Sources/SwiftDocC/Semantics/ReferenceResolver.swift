@@ -53,7 +53,7 @@ func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: 
         diagnosticRange = referenceSourceRange
     }
     
-    return Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: errorInfo.message, notes: notes, possibleSolutions: solutions)
+    return Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: errorInfo.message, notes: notes, solutions: solutions)
 }
 
 func unresolvedResourceDiagnostic(
@@ -225,7 +225,7 @@ struct ReferenceResolver: SemanticVisitor {
                             severity: .warning, range: range,
                             identifier: "org.swift.docc.UnresolvableLinkWhenInherited",
                             summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve.",
-                            possibleSolutions: [
+                            solutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
                                     // FIXME: The resolved reference path isn't the same as the authorable link.
                                     Replacement(range: range, replacement: "<doc:\(resolved.path)>")
@@ -294,7 +294,7 @@ struct ReferenceResolver: SemanticVisitor {
                         Replacement(range: $0, replacement: "")
                     ])]
                 } ?? []
-                let diagnostic = Diagnostic(source: chapter.originalMarkup.range?.source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)", possibleSolutions: solutions)
+                let diagnostic = Diagnostic(source: chapter.originalMarkup.range?.source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)", solutions: solutions)
                 diagnostics.append(diagnostic)
                 return false
             }

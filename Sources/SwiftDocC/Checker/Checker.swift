@@ -24,7 +24,7 @@ public protocol Checker: MarkupWalker {
 public extension Checker {
     @available(*, deprecated, renamed: "diagnostics", message: "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.")
     var problems: [Problem] {
-        diagnostics.map { Problem(diagnostic: $0, possibleSolutions: $0.possibleSolutions) }
+        diagnostics.map { Problem(diagnostic: $0) }
     }
 }
 

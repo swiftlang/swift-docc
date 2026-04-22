@@ -189,7 +189,7 @@ extension TutorialArticle {
             .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
         guard tutorialTableOfContentsParent != nil else {
             let url = context.documentURL(for: node.reference)
-            engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(TutorialArticle.self)", summary: "The article \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents", possibleSolutions: [
+            engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(TutorialArticle.self)", summary: "The article \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents", solutions: [
                 Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the article.", replacements: [])
             ]))
             return

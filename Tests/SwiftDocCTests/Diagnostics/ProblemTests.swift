@@ -28,7 +28,7 @@ class ProblemTests: XCTestCase {
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
         let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
         let solution = Solution(summary: solutionSummary, replacements: [replacement])
-        let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+        let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
 
         XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: .formatConsoleOutputForTools), """
         \(expectedLocation): error: \(summary). \(solutionSummary).
@@ -49,7 +49,7 @@ class ProblemTests: XCTestCase {
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
         let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
         let solution = Solution(summary: solutionSummary, replacements: [replacement])
-        let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+        let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
 
         XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: [.formatConsoleOutputForTools]), """
         \(expectedLocation): error: \(summary). \(solutionSummary).

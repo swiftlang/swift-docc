@@ -129,9 +129,9 @@ class ChoiceTests: XCTestCase {
             let diagnostic = try XCTUnwrap(diagnostics.first)
             
             XCTAssertEqual("org.swift.docc.HasArgument.isCorrect.ConversionFailed", diagnostic.identifier)
-            XCTAssertEqual(2, diagnostic.possibleSolutions.count)
-            XCTAssertEqual("Use allowed value 'true'", diagnostic.possibleSolutions[0].summary)
-            XCTAssertEqual("Use allowed value 'false'", diagnostic.possibleSolutions[1].summary)
+            XCTAssertEqual(2, diagnostic.solutions.count)
+            XCTAssertEqual("Use allowed value 'true'", diagnostic.solutions[0].summary)
+            XCTAssertEqual("Use allowed value 'false'", diagnostic.solutions[1].summary)
         }
     }
     

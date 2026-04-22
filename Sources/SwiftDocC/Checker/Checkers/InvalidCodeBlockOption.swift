@@ -43,12 +43,12 @@ struct InvalidCodeBlockOption: Checker {
                     Solution(summary: "Replace \(value.singleQuoted) with \(candidate.singleQuoted).", replacements: [])
                 }
                 diagnostics.append(
-                    Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.", possibleSolutions: solutions)
+                    Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.", solutions: solutions)
                 )
             } else if lang == nil {
                 let solution = Solution(summary: "If \(value.singleQuoted) is the language for this code block, then write \(value.singleQuoted) as the first option.", replacements: [])
                 diagnostics.append(
-                    Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.", possibleSolutions: [solution])
+                    Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.", solutions: [solution])
                 )
             }
         }
@@ -79,7 +79,7 @@ struct InvalidCodeBlockOption: Checker {
                 []
             }
             diagnostics.append(
-                Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Invalid \(token.rawValue.singleQuoted) index\(invalid.count == 1 ? "" : "es") in \(value.singleQuoted) for a code block with \(lineCount) line\(lineCount == 1 ? "" : "s"). Valid range is 1...\(lineCount).", possibleSolutions: solutions)
+                Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Invalid \(token.rawValue.singleQuoted) index\(invalid.count == 1 ? "" : "es") in \(value.singleQuoted) for a code block with \(lineCount) line\(lineCount == 1 ? "" : "s"). Valid range is 1...\(lineCount).", solutions: solutions)
             )
         }
 

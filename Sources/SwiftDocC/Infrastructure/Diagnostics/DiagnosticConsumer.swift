@@ -33,7 +33,7 @@ public extension DiagnosticConsumer {
 public extension DiagnosticConsumer {
     @available(*, deprecated) // This needs to be marked deprecated because it calls deprecated API.
     func receive(_ diagnostics: [Diagnostic]) {
-        receive(diagnostics.map { Problem(diagnostic: $0, possibleSolutions: $0.possibleSolutions)})
+        receive(diagnostics.map { Problem(diagnostic: $0) })
     }
 }
 

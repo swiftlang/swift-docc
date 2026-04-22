@@ -227,7 +227,7 @@ extension Semantic.Analyses {
                     if let range = duplicate.range {
                         let replacement = Replacement(range: range, replacement: "")
                         let solution = Solution(summary: "Remove duplicate media element", replacements: [replacement])
-                        diagnostic.possibleSolutions = [solution]
+                        diagnostic.solutions = [solution]
                     }
                     diagnostics.append(diagnostic)
                 }

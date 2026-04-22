@@ -68,14 +68,14 @@ struct DuplicateTopicsSectionsTests {
             #expect(diagnostics.explanation == "A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. Each page can only have a single Topics section.")
             
             
-            #expect(diagnostics.possibleSolutions.count == 2)
-            let firstSolution = try #require(diagnostics.possibleSolutions.first)
+            #expect(diagnostics.solutions.count == 2)
+            let firstSolution = try #require(diagnostics.solutions.first)
             #expect(firstSolution.summary == "Change heading name")
             #expect(firstSolution.replacements.count == 1)
             #expect(firstSolution.replacements.first?.range == expectedDiagnosticRange)
             #expect(firstSolution.replacements.first?.replacement == "## <#New heading name#>")
             
-            let secondSolution = try #require(diagnostics.possibleSolutions.last)
+            let secondSolution = try #require(diagnostics.solutions.last)
             #expect(secondSolution.summary == "Move this section's content under the first Topics section")
             #expect(secondSolution.replacements.count == 0)
             

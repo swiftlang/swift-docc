@@ -93,7 +93,7 @@ public struct NonInclusiveLanguageChecker: Checker {
                 identifier: "NonInclusiveLanguage",
                 summary: "Documentation should use inclusive language",
                 explanation: term.message,
-                possibleSolutions: [Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [
+                solutions: [Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [
                     Replacement(range: range, replacement: term.replacement)
                 ])]
             )

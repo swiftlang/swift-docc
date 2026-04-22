@@ -20,8 +20,8 @@ public struct Problem {
     
     /// The possible solutions to the problem if there are any.
     public var possibleSolutions: [Solution] {
-        get { diagnostic.possibleSolutions }
-        set { diagnostic.possibleSolutions = newValue }
+        get { diagnostic.solutions }
+        set { diagnostic.solutions = newValue }
     }
     public init(diagnostic: Diagnostic, possibleSolutions: some Sequence<Solution>) {
         self.diagnostic = diagnostic
@@ -29,7 +29,7 @@ public struct Problem {
     }
 
     public init(diagnostic: Diagnostic) {
-        self.init(diagnostic: diagnostic, possibleSolutions: diagnostic.possibleSolutions)
+        self.init(diagnostic: diagnostic, possibleSolutions: diagnostic.solutions)
     }
 }
 

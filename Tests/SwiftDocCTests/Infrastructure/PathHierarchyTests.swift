@@ -2335,7 +2335,7 @@ class PathHierarchyTests: XCTestCase {
         }
         
         let linkDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "No symbol matched 'ModuleNaem'. Can't resolve 'ModuleNaem'."}))
-        XCTAssertEqual(linkDiagnostic.possibleSolutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+        XCTAssertEqual(linkDiagnostic.solutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
     }
         
     func testSymbolsWithSameNameAsModule() async throws {

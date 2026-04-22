@@ -74,7 +74,7 @@ public struct PropertyListPossibleValuesSection {
             
             if nearMisses.isEmpty {
                 // If this possible value doesn't resemble any of this symbols possible values, suggest to remove it.
-                return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary, possibleSolutions: [
+                return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary, solutions: [
                     Solution(
                         summary: solutionSummary,
                         replacements: unknownPossibleValue.range.map { [Replacement(range: $0, replacement: "")] } ?? []
@@ -82,7 +82,7 @@ public struct PropertyListPossibleValuesSection {
                 ])
             }
             // Otherwise, suggest to replace the documented possible value name with the one of the similarly named possible values.
-            return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.nameRange, identifier: identifier, summary: summary, possibleSolutions: nearMisses.map { candidate in
+            return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.nameRange, identifier: identifier, summary: summary, solutions: nearMisses.map { candidate in
                 Solution(
                     summary: "Replace \(unknownPossibleValue.value.singleQuoted) with \(candidate.singleQuoted)",
                     replacements: unknownPossibleValue.nameRange.map { [Replacement(range: $0, replacement: candidate)] } ?? []

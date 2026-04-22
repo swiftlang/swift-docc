@@ -329,7 +329,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                 replacements: [.init(range: otherSolutionRange, replacement: "replacement")]
             )
 
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution, otherSolution])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution, otherSolution])
             consumer.receive([diagnostic])
             try? consumer.flush()
 
@@ -354,7 +354,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
             let solution = Solution(summary: "Solution summary", replacements: [])
             
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
             consumer.receive([diagnostic])
             try? consumer.flush()
 
@@ -386,7 +386,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             )
             let solution = Solution(summary: "Solution summary", replacements: [firstReplacement, secondReplacement])
 
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
             consumer.receive([diagnostic])
             try? consumer.flush()
 
@@ -518,10 +518,10 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
     
     func testEmitAdditionReplacementSolution() throws {
-        func diagnosticLoggerOutput(possibleSolutions: [Solution]) -> String {
+        func diagnosticLoggerOutput(solutions: [Solution]) -> String {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, highlight: true)
-            let diagnostic = Diagnostic(source: URL(fileURLWithPath: "/path/to/file.md"), severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic", possibleSolutions: possibleSolutions)
+            let diagnostic = Diagnostic(source: URL(fileURLWithPath: "/path/to/file.md"), severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic", solutions: solutions)
             consumer.receive([diagnostic])
             try? consumer.flush()
             return logger.output
@@ -529,7 +529,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let sourceLocation = SourceLocation(line: 1, column: 1, source: nil)
         let range = sourceLocation..<sourceLocation
         XCTAssertEqual(
-            diagnosticLoggerOutput(possibleSolutions: [
+            diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
                     Replacement(
                         range: range,
@@ -552,7 +552,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         )
         
         XCTAssertEqual(
-            diagnosticLoggerOutput(possibleSolutions: [
+            diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
                     Replacement(
                         range: range,
@@ -585,7 +585,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         )
         
         XCTAssertEqual(
-            diagnosticLoggerOutput(possibleSolutions: [
+            diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
                     Replacement(
                         range: range,

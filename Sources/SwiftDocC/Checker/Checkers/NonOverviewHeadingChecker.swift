@@ -45,7 +45,7 @@ public struct NonOverviewHeadingChecker: Checker {
                 summary: #"The majority of content should be under level-3 headers under the "Overview" section"#,
                 explanation: nil,
                 notes: notes,
-                possibleSolutions: [solution]
+                solutions: [solution]
             )
         }
     }

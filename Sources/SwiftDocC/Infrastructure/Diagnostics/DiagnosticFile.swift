@@ -96,7 +96,7 @@ extension DiagnosticFile.Diagnostic {
         self.severity    = .init(diagnostic.severity)
         self.summary     = diagnostic.summary
         self.explanation = diagnostic.explanation
-        self.solutions   = diagnostic.possibleSolutions.map { .init($0) }
+        self.solutions   = diagnostic.solutions.map { .init($0) }
         self.notes       = diagnostic.notes.map { .init($0) }
     }
 }
