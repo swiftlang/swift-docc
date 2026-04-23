@@ -227,14 +227,18 @@ struct RenderContentCompiler: MarkupVisitor {
             collectedTopicReferences.append(cached)
             return cached
         }
-        
-        // FIXME: Links from this build already exist in the reference index and don't need to be resolved again.
-        // https://github.com/swiftlang/swift-docc/issues/581
 
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil
         }
-        
+
+        // Avoid re-resolving absolute doc links during rendering.
+        // They should already be present in `referenceIndex` from the link resolution phase.
+        // https://github.com/swiftlang/swift-docc/issues/581
+        if validatedURL.components.scheme == ResolvedTopicReference.urlScheme, validatedURL.components.host != nil {
+            return nil
+        }
+
         let unresolved = UnresolvedTopicReference(topicURL: validatedURL)
         
         // Try to resolve in the local context
