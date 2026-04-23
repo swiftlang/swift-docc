@@ -183,6 +183,23 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(0, problems.count)
         XCTAssertEqual(metadata?.redirects?.first?.oldPath.relativePath, "some/other/path")
     }
+    
+    func testEditLinkSupport() async throws {
+        let source = """
+        @Metadata {
+           @EditLink(url: "https://example.com/docs/edit/main/MyArticle.md")
+        }
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let context = try await makeEmptyContext()
+        var problems = [Problem]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        XCTAssertNotNil(metadata)
+        XCTAssertEqual(0, problems.count)
+        XCTAssertEqual(metadata?.editLink?.url?.absoluteString, "https://example.com/docs/edit/main/MyArticle.md")
+        XCTAssertEqual(metadata?.editLink?.isDisabled, false)
+    }
 
     // MARK: - Metadata Support
     
