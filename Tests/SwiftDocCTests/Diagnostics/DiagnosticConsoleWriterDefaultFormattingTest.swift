@@ -203,7 +203,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             range: nil,
             identifier: identifier,
             summary: "Third diagnostic summary",
-            explanation: "Third diagnostic explanation",
+            explanation: "Third diagnostic explanation"
         )
 
         let logger = Logger()
