@@ -687,6 +687,53 @@ struct MarkdownRenderer_PageElementsTests {
             """)
         }
     }
+
+    @Test(arguments: RenderGoal.allCases)
+    func testDiscussionSectionWithCard(goal: RenderGoal) {
+        let renderer = makeRenderer(goal: goal)
+        let discussion = renderer.discussion(parseMarkup(string: """
+        ## Some Heading
+
+        @Card {
+          ### This is a head heading
+
+          This is a head paragraph
+
+          ---
+
+          ### This is a body heading
+
+          This is a body paragraph
+        }
+        """), fallbackSectionName: "Fallback")
+
+        switch goal {
+        case .richness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Some-Heading">
+              <h2>
+                <a href="#Some-Heading">Some Heading</a>
+              </h2>
+              <article class="card">
+                <header class="card-head">
+                  <h3 id="This-is-a-head-heading">
+                    <a href="#This-is-a-head-heading">This is a head heading</a>
+                  </h3>
+                  <p>This is a head paragraph</p>
+                </header>
+                <div class="card-body">
+                  <h3 id="This-is-a-body-heading">
+                    <a href="#This-is-a-body-heading">This is a body heading</a>
+                  </h3>
+                  <p>This is a body paragraph</p>
+                </div>
+              </article>
+            </section>
+            """)
+        default:
+            _ = goal
+        }
+    }
     
     // MARK: -
     

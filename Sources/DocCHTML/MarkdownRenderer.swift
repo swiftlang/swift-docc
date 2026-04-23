@@ -741,8 +741,51 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     
     // MARK: Directives
     
-    func visit(_: BlockDirective) -> XMLNode {
-        .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
+    func visit(_ blockDirective: BlockDirective) -> XMLNode {
+        return switch (blockDirective.name) {
+        case "Card":
+            visit(card: blockDirective)
+        default:
+            .text("") // TODO: Support other block directives that appear as in-page content (rdar://165755944)
+        }
+    }
+
+    private func visit(card blockDirective: BlockDirective) -> XMLNode {
+        let children = blockDirective.children.map { visit($0) }
+
+        if let thematicBreakIndex = children.firstIndex(where: { $0.name == "hr" }) {
+            let rangeBeforeBreak = 0..<thematicBreakIndex
+            let rangeAfterBreak = thematicBreakIndex.advanced(by: 1)...
+
+            return .element(
+                named: "article",
+                children: [
+                    .element(
+                        named: "header",
+                        children: Array(children[rangeBeforeBreak]),
+                        attributes: ["class": "card-head"]
+                    ),
+                    .element(
+                        named: "div",
+                        children: Array(children[rangeAfterBreak]),
+                        attributes: ["class": "card-body"]
+                    ),
+                ],
+                attributes: ["class": "card"]
+            )
+        } else {
+            return .element(
+                named: "article",
+                children: [
+                    .element(
+                        named: "div",
+                        children: children,
+                        attributes: ["class": "card-body"]
+                    ),
+                ],
+                attributes: ["class": "card"]
+            )
+        }
     }
     
     // TODO: Support rendering Doxygen tags. (rdar://165755750)
