@@ -310,23 +310,11 @@ extension RenderIndex {
 
 extension RenderIndex.Node {
     static func fromNavigatorTreeNode(_ node: NavigatorTree.Node, in navigatorIndex: NavigatorIndex, with builder: NavigatorIndex.Builder) -> RenderIndex.Node {
-        // If this node was deprecated on any platform version mark it as deprecated.
-        let isDeprecated: Bool
-        
-        let availabilityIndexEntryIDsForNode = builder.availabilityEntryIDs(for: node.item.availabilityID)
-        if let entryIDs = availabilityIndexEntryIDsForNode {
-            let availabilityInfosForNode = entryIDs.map { ID in navigatorIndex.availabilityIndex.info(for: ID) }
-            // Mark node as deprecated if we have an explicit deprecation version
-            isDeprecated = availabilityInfosForNode.contains { $0?.deprecated != nil }
-        } else {
-            isDeprecated = false
-        }
-        
         return RenderIndex.Node(
             title: node.item.title,
             path: node.item.path,
             pageType: NavigatorIndex.PageType(rawValue: node.item.pageType),
-            isDeprecated: isDeprecated,
+            isDeprecated: node.item.isDeprecated,
             isExternal: node.item.isExternal,
             isBeta: node.item.isBeta,
             children: node.children.map {
