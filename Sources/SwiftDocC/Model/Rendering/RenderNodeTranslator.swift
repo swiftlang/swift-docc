@@ -706,6 +706,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -746,6 +748,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -1018,15 +1022,59 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return nil
     }
 
+    /// Returns whether the given reference is available in one of the given allowed traits.
+    ///
+    /// This is used by both manually authored and automatically generated task groups to filter
+    /// topic references based on the current language variant being rendered.
+    private func isReferenceAvailable(
+        _ reference: ResolvedTopicReference,
+        allowedTraits: Set<DocumentationDataVariantsTrait>,
+        availableTraits: Set<DocumentationDataVariantsTrait>
+    ) -> Bool {
+        // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
+        // and is external to the bundle, then curate the topic irrespective of the source
+        // language of the page or reference, since non-symbol kinds are not tied to a language.
+        // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+        // FIXME: This should ideally be solved by making the article language-agnostic rather
+        // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+        if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
+            return true
+        }
+
+        let referenceSourceLanguages = SmallSourceLanguageSet(context.sourceLanguages(for: reference))
+
+        let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
+        if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
+            // The set of available source language traits has no members in common with
+            // the set of source languages the given reference is available in.
+            // Since there are no overlapping traits, this reference is made available
+            // in order to prevent dropping it entirely.
+            return true
+        }
+
+        return allowedTraits.contains { trait in
+            trait.sourceLanguage.map { referenceSourceLanguages.contains($0) } ?? false
+        }
+    }
+
     /// Renders automatically generated task groups
-    private mutating func renderAutomaticTaskGroupsSection(_ taskGroups: [AutomaticTaskGroupSection], contentCompiler: inout RenderContentCompiler) -> [TaskGroupRenderSection] {
-        return taskGroups.map { group in
-            contentCompiler.collectedTopicReferences.append(contentsOf: group.references)
+    private mutating func renderAutomaticTaskGroupsSection(
+        _ taskGroups: [AutomaticTaskGroupSection],
+        allowedTraits: Set<DocumentationDataVariantsTrait>,
+        availableTraits: Set<DocumentationDataVariantsTrait>,
+        contentCompiler: inout RenderContentCompiler
+    ) -> [TaskGroupRenderSection] {
+        return taskGroups.compactMap { group in
+            let filteredReferences = group.references.filter { reference in
+                isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits)
+            }
+            guard !filteredReferences.isEmpty else { return nil }
+            contentCompiler.collectedTopicReferences.append(contentsOf: filteredReferences)
             return TaskGroupRenderSection(
                 title: group.title,
                 abstract: nil,
                 discussion: nil,
-                identifiers: group.references.map(\.url.absoluteString),
+                identifiers: filteredReferences.map(\.url.absoluteString),
                 generated: true,
                 anchor: urlReadableFragment(group.title)
             )
@@ -1097,32 +1145,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     // a non-documentation URL (e.g., 'https://' URL), in which case it is available in all traits.
                     return true
                 }
-                
-                // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
-                // and is external to the bundle, then curate the topic irrespective of the source
-                // language of the page or reference, since non-symbol kinds are not tied to a language.
-                // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
-                // FIXME: This should ideally be solved by making the article language-agnostic rather
-                // than accomodating the "Swift" language and special-casing for non-symbol nodes.
-                if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
-                    return true
-                }
-                
-                let referenceSourceLanguages = SmallSourceLanguageSet(context.sourceLanguages(for: reference))
-                
-                let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
-                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
-                    // The set of available source language traits has no members in common with the
-                    // set of source languages the given reference is available in.
-                    //
-                    // Since we should only filter for traits that are available in the parent page,
-                    // just return true. (See the documentation of this method for more details).
-                    return true
-                }
-                
-                return allowedTraits.contains { trait in
-                    trait.sourceLanguage.map { referenceSourceLanguages.contains($0) } ?? false
-                }
+
+                return isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits)
             }
             
             let taskGroupRenderSection = TaskGroupRenderSection(
@@ -1628,6 +1652,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .top }),
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1659,6 +1685,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }),
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
