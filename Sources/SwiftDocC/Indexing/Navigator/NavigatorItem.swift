@@ -76,6 +76,9 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - availabilityID:  The identifier of the availability information of the page.
         - path: The path to load the content.
         - icon: A reference to a custom image for this navigator item.
+        - isExternal: A flag indicating whether the navigator item belongs to an external documentation archive.
+        - isBeta: A flag indicating whether the navigator item is in beta.
+        - isDeprecated: A flag indicating whether the navigator item is deprecated.
      */
     init(
         pageType: UInt8,
@@ -113,6 +116,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - icon: A reference to a custom image for this navigator item.
         - isExternal: A flag indicating whether the navigator item belongs to an external documentation archive.
         - isBeta: A flag indicating whether the navigator item is in beta.
+        - isDeprecated: A flag indicating whether the navigator item is deprecated.
      */
     public init(
         pageType: UInt8,
