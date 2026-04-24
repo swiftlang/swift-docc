@@ -788,7 +788,8 @@ extension NavigatorIndex {
                 availabilityID: UInt64(availabilityID),
                 icon: renderNode.icon,
                 isExternal: external,
-                isBeta: renderNode.metadata.isBeta
+                isBeta: renderNode.metadata.isBeta,
+                isDeprecated: renderNode.isDeprecated
             )
             navigationItem.path = identifierPath
             
