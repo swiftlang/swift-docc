@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,7 +26,7 @@ protocol AutomaticDirectiveConvertible: DirectiveConvertible, Semantic {
     ///
     /// Return false if a serious enough error is encountered such that the directive
     /// should not be initialized.
-    func validate(source: URL?, problems: inout [Problem], featureFlags: FeatureFlags) -> Bool
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags: FeatureFlags) -> Bool
     
     /// The key paths to any property wrapped directive arguments, child directives,
     /// or child markup properties.
@@ -75,7 +75,7 @@ extension AutomaticDirectiveConvertible {
         String(describing: self)
     }
     
-    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         return true
     }
     
@@ -88,8 +88,8 @@ extension AutomaticDirectiveConvertible {
     /// Performs some semantic analyses to determine whether a valid directive can be created
     /// and returns nils upon failure.
     ///
-    /// > Tip: ``DirectiveConvertible/init(from:source:for:problems:)`` performs
-    /// the same function but supports collecting an array of problems for diagnostics.
+    /// > Tip: ``DirectiveConvertible/init(from:source:for:featureFlags:diagnostics:)`` performs
+    /// the same function but supports collecting an array of diagnostics.
     ///
     /// - Parameters:
     ///   - directive: The block directive that will be parsed
@@ -102,14 +102,14 @@ extension AutomaticDirectiveConvertible {
         for bundle: DocumentationBundle,
         featureFlags: FeatureFlags
     ) {
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
         
         self.init(
             from: directive,
             source: source,
             for: bundle,
             featureFlags: featureFlags,
-            problems: &problems
+            diagnostics: &diagnostics
         )
     }
     
@@ -118,7 +118,7 @@ extension AutomaticDirectiveConvertible {
         source: URL?,
         for bundle: DocumentationBundle,
         featureFlags: FeatureFlags,
-        problems: inout [Problem]
+        diagnostics: inout [Diagnostic]
     ) {
         precondition(directive.name == Self.directiveName)
         self.init(originalMarkup: directive)
@@ -133,7 +133,7 @@ extension AutomaticDirectiveConvertible {
             directive,
             children: directive.children,
             source: source,
-            problems: &problems
+            diagnostics: &diagnostics
         )
         
         // If we encounter an unrecoverable error while parsing directives,
@@ -151,7 +151,7 @@ extension AutomaticDirectiveConvertible {
                 },
                 valueTypeDiagnosticName: reflectedArgument.typeDisplayName
             )
-            .analyze(directive, arguments: arguments, problems: &problems)
+            .analyze(directive, arguments: arguments, diagnostics: &diagnostics)
             
             if let parsedValue {
                 reflectedArgument.setValue(on: self, to: parsedValue)
@@ -169,7 +169,7 @@ extension AutomaticDirectiveConvertible {
             directive,
             children: directive.children,
             source: source,
-            problems: &problems
+            diagnostics: &diagnostics
         )
         
         var remainder = MarkupContainer(directive.children)
@@ -182,7 +182,7 @@ extension AutomaticDirectiveConvertible {
             source: source,
             for: bundle,
             featureFlags: featureFlags,
-            problems: &problems
+            diagnostics: &diagnostics
         )
         
         for childDirective in reflectedDirective.childDirectives {
@@ -196,7 +196,7 @@ extension AutomaticDirectiveConvertible {
                     source: source,
                     for: bundle,
                     featureFlags: featureFlags,
-                    problems: &problems
+                    diagnostics: &diagnostics
                 )
                 
                 guard let parsedDirective else {
@@ -221,7 +221,7 @@ extension AutomaticDirectiveConvertible {
                     source: source,
                     for: bundle,
                     featureFlags: featureFlags,
-                    problems: &problems
+                    diagnostics: &diagnostics
                 )
                 
                 guard let parsedDirective else {
@@ -245,7 +245,7 @@ extension AutomaticDirectiveConvertible {
                     source: source,
                     for: bundle,
                     featureFlags: featureFlags,
-                    problems: &problems
+                    diagnostics: &diagnostics
                 )
                 
                 if !parsedDirectives.isEmpty || !childDirective.storedAsOptional {
@@ -260,7 +260,7 @@ extension AutomaticDirectiveConvertible {
                     source: source,
                     for: bundle,
                     featureFlags: featureFlags,
-                    problems: &problems
+                    diagnostics: &diagnostics
                 )
                 
                 if !parsedDirectives.isEmpty || !childDirective.storedAsOptional {
@@ -287,7 +287,7 @@ extension AutomaticDirectiveConvertible {
                     directive,
                     children: remainder,
                     source: source,
-                    problems: &problems
+                    diagnostics: &diagnostics
                 )
             } else if !remainder.isEmpty {
                 content = MarkupContainer(remainder)
@@ -303,32 +303,20 @@ extension AutomaticDirectiveConvertible {
         }
         
         if !remainder.isEmpty && reflectedDirective.childDirectives.isEmpty && !supportsChildMarkup {
-            let removeInnerContentReplacement: [Solution] = directive.children.range.map {
-                [
-                    Solution(
-                        summary: "Remove inner content",
-                        replacements: [
-                            Replacement(range: $0, replacement: "")
-                        ]
-                    )
-                ]
-            } ?? []
-            
-            let noInnerContentDiagnostic = Diagnostic(
-                source: source,
-                severity: .warning,
-                range: directive.range,
-                identifier: "org.swift.docc.\(Self.directiveName).NoInnerContentAllowed",
-                summary: "The \(Self.directiveName.singleQuoted) directive does not support inner content",
-                explanation: "Elements inside this directive will be ignored"
-            )
-            
-            problems.append(
-                Problem(
-                    diagnostic: noInnerContentDiagnostic,
-                    possibleSolutions: removeInnerContentReplacement
+            diagnostics.append(
+                Diagnostic(
+                    source: source,
+                    severity: .warning,
+                    range: directive.range,
+                    identifier: "org.swift.docc.\(Self.directiveName).NoInnerContentAllowed",
+                    summary: "The \(Self.directiveName.singleQuoted) directive does not support inner content",
+                    explanation: "Elements inside this directive will be ignored",
+                    solutions: directive.children.range.map {
+                        [Solution(summary: "Remove inner content", replacements: [.init(range: $0, replacement: "")])]
+                    } ?? []
                 )
             )
+           
         } else if !remainder.isEmpty && !supportsChildMarkup {
             let diagnostic = Diagnostic(
                 source: source,
@@ -344,14 +332,14 @@ extension AutomaticDirectiveConvertible {
                     """
             )
             
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+            diagnostics.append(diagnostic)
         }
         
         guard !unableToCreateParentDirective else {
             return nil
         }
         
-        guard validate(source: source, problems: &problems, featureFlags: featureFlags) else {
+        guard validate(source: source, diagnostics: &diagnostics, featureFlags: featureFlags) else {
             return nil
         }
     }

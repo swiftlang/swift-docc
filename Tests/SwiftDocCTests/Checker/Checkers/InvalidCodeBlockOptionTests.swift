@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,7 +23,7 @@ let a = 1
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: nil)
         checker.visit(document)
-        XCTAssertTrue(checker.problems.isEmpty)
+        XCTAssertTrue(checker.diagnostics.isEmpty)
     }
 
     func testOption() {
@@ -35,7 +35,7 @@ let a = 1
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: nil)
         checker.visit(document)
-        XCTAssertTrue(checker.problems.isEmpty)
+        XCTAssertTrue(checker.diagnostics.isEmpty)
     }
 
     func testMultipleOptionTypos() {
@@ -51,12 +51,12 @@ let c = 3
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
-        XCTAssertEqual(2, checker.problems.count)
+        XCTAssertEqual(2, checker.diagnostics.count)
 
-        for problem in checker.problems {
-            XCTAssertEqual("org.swift.docc.InvalidCodeBlockOption", problem.diagnostic.identifier)
-            XCTAssertEqual(problem.diagnostic.summary, "Unknown option 'nocoy' in code block.")
-            XCTAssertEqual(problem.possibleSolutions.map(\.summary), ["Replace 'nocoy' with 'nocopy'."])
+        for diagnostic in checker.diagnostics {
+            XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
+            XCTAssertEqual(diagnostic.summary, "Unknown option 'nocoy' in code block.")
+            XCTAssertEqual(diagnostic.solutions.map(\.summary), ["Replace 'nocoy' with 'nocopy'."])
         }
     }
 
@@ -82,23 +82,20 @@ let g = 7
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
 
-        XCTAssertEqual(3, checker.problems.count)
+        XCTAssertEqual(3, checker.diagnostics.count)
 
-        let summaries = checker.problems.map { $0.diagnostic.summary }
+        let summaries = checker.diagnostics.map { $0.summary }
         XCTAssertEqual(summaries, [
             "Unknown option 'nocpy' in code block.",
             "Unknown option 'nocpoy' in code block.",
             "Unknown option 'ncopy' in code block.",
         ])
 
-        for problem in checker.problems {
-            XCTAssertEqual(
-                "org.swift.docc.InvalidCodeBlockOption",
-                problem.diagnostic.identifier
-            )
+        for diagnostic in checker.diagnostics {
+            XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
 
-            XCTAssertEqual(problem.possibleSolutions.count, 1)
-            let solution = try XCTUnwrap(problem.possibleSolutions.first)
+            XCTAssertEqual(diagnostic.solutions.count, 1)
+            let solution = try XCTUnwrap(diagnostic.solutions.first)
             XCTAssert(solution.summary.hasSuffix("with 'nocopy'."))
 
         }
@@ -113,12 +110,12 @@ let b = 2
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
-        XCTAssertEqual(1, checker.problems.count)
+        XCTAssertEqual(1, checker.diagnostics.count)
 
-        for problem in checker.problems {
-            XCTAssertEqual("org.swift.docc.InvalidCodeBlockOption", problem.diagnostic.identifier)
-            XCTAssertEqual(problem.diagnostic.summary, "Unknown option 'swift' in code block.")
-            XCTAssertEqual(problem.possibleSolutions.map(\.summary), ["If 'swift' is the language for this code block, then write 'swift' as the first option."])
+        for diagnostic in checker.diagnostics {
+            XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
+            XCTAssertEqual(diagnostic.summary, "Unknown option 'swift' in code block.")
+            XCTAssertEqual(diagnostic.solutions.map(\.summary), ["If 'swift' is the language for this code block, then write 'swift' as the first option."])
         }
     }
 
@@ -131,15 +128,15 @@ let b = 2
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
-        XCTAssertEqual(1, checker.problems.count)
-        let problem = try XCTUnwrap(checker.problems.first)
+        XCTAssertEqual(1, checker.diagnostics.count)
+        let diagnostic = try XCTUnwrap(checker.diagnostics.first)
 
-        XCTAssertEqual("org.swift.docc.InvalidCodeBlockOption", problem.diagnostic.identifier)
-        XCTAssertEqual(problem.diagnostic.summary, "Invalid 'highlight' index in '[2]' for a code block with 1 line. Valid range is 1...1.")
-        XCTAssertEqual(problem.possibleSolutions.map(\.summary), ["If you intended the last line, change '2' to 1."])
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
+        XCTAssertEqual(diagnostic.summary, "Invalid 'highlight' index in '[2]' for a code block with 1 line. Valid range is 1...1.")
+        XCTAssertEqual(diagnostic.solutions.map(\.summary), ["If you intended the last line, change '2' to 1."])
     }
 
-    func testInvalidHighlightandStrikeoutIndex() throws {
+    func testInvalidHighlightAndStrikeoutIndex() throws {
         let markupSource = """
 ```swift, nocopy, highlight=[0], strikeout=[-1, 4]
 let a = 1
@@ -150,12 +147,12 @@ let c = 3
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
-        XCTAssertEqual(2, checker.problems.count)
+        XCTAssertEqual(2, checker.diagnostics.count)
 
-        XCTAssertEqual("org.swift.docc.InvalidCodeBlockOption", checker.problems[0].diagnostic.identifier)
-        XCTAssertEqual(checker.problems[0].diagnostic.summary, "Invalid 'highlight' index in '[0]' for a code block with 3 lines. Valid range is 1...3.")
-        XCTAssertEqual(checker.problems[1].diagnostic.summary, "Invalid 'strikeout' indexes in '[-1, 4]' for a code block with 3 lines. Valid range is 1...3.")
-        XCTAssertEqual(checker.problems[1].possibleSolutions.map(\.summary), ["If you intended the last line, change '4' to 3."])
+        XCTAssertEqual(checker.diagnostics.first?.identifier, "org.swift.docc.InvalidCodeBlockOption")
+        XCTAssertEqual(checker.diagnostics.first?.summary, "Invalid 'highlight' index in '[0]' for a code block with 3 lines. Valid range is 1...3.")
+        XCTAssertEqual(checker.diagnostics.last?.summary, "Invalid 'strikeout' indexes in '[-1, 4]' for a code block with 3 lines. Valid range is 1...3.")
+        XCTAssertEqual(checker.diagnostics.last?.solutions.map(\.summary), ["If you intended the last line, change '4' to 3."])
     }
 }
 

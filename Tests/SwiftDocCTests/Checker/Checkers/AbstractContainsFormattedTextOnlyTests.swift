@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,7 +33,7 @@ This paragraph isn't [analyzed](http://example.com/image.jpg).
 """
         let document = Document(parsing: source, options: [])
         checker.visit(document)
-        XCTAssertTrue(checker.problems.isEmpty)
+        XCTAssertTrue(checker.diagnostics.isEmpty)
     }
     
     func testTopLevelImage() {
@@ -44,17 +44,17 @@ This paragraph isn't [analyzed](http://example.com/image.jpg).
 """
         let document = Document(parsing: source, options: [])
         checker.visit(document)
-        guard checker.problems.count == 1 else {
+        guard checker.diagnostics.count == 1 else {
             XCTFail("Expected 1 problems")
             return
         }
 
         
-        let problem = checker.problems[0]
-        XCTAssertTrue(problem.possibleSolutions.isEmpty)
+        let diagnostic = checker.diagnostics[0]
+        XCTAssertTrue(diagnostic.solutions.isEmpty)
         
         let image = document.child(at: 1)!.child(at: 0)! as! Image
-        verifyDiagnostic(diagnostic: problem.diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
+        verifyDiagnostic(diagnostic: diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
     }
     
     func testTopLevelLink() {
@@ -65,16 +65,16 @@ More info [here](http://example.com/image.jpg).
 """
         let document = Document(parsing: source, options: [])
         checker.visit(document)
-        guard checker.problems.count == 1 else {
+        guard checker.diagnostics.count == 1 else {
             XCTFail("Expected 1 problem")
             return
         }
         
-        let problem = checker.problems[0]
-        XCTAssertTrue(problem.possibleSolutions.isEmpty)
+        let diagnostic = checker.diagnostics[0]
+        XCTAssertTrue(diagnostic.solutions.isEmpty)
         
         let link = document.child(at: 1)!.child(at: 1)! as! Link
-        verifyDiagnostic(diagnostic: problem.diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
+        verifyDiagnostic(diagnostic: diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
     }
     
     func testMultipleTopLevelInvalidElements() {
@@ -86,7 +86,7 @@ More info [here](http://example.com/image.jpg).
         
         let document = Document(parsing: source, options: [])
         checker.visit(document)
-        guard checker.problems.count == 3 else {
+        guard checker.diagnostics.count == 3 else {
             XCTFail("Expected 3 problems")
             return
         }
@@ -97,9 +97,9 @@ More info [here](http://example.com/image.jpg).
         let image2 = abstract.child(at: 2)! as! Link
         let image3 = abstract.child(at: 4)! as! Image
         
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image1.range!)
-        verifyDiagnostic(diagnostic: checker.problems[1].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: image2.range!)
-        verifyDiagnostic(diagnostic: checker.problems[2].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image3.range!)
+        verifyDiagnostic(diagnostic: checker.diagnostics[0], expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image1.range!)
+        verifyDiagnostic(diagnostic: checker.diagnostics[1], expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: image2.range!)
+        verifyDiagnostic(diagnostic: checker.diagnostics[2], expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image3.range!)
     }
     
     func testLinkWithinEmphasis() {
@@ -111,13 +111,13 @@ Hello *[world](http://example.com)*.
         
         let document = Document(parsing: source, options: [])
         checker.visit(document)
-        guard checker.problems.count == 1 else {
+        guard checker.diagnostics.count == 1 else {
             XCTFail("Expected 1 problem")
             return
         }
 
         let link = document.child(at: 1)!.child(at: 1)!.child(at: 0)! as! Link
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
+        verifyDiagnostic(diagnostic: checker.diagnostics[0], expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
     }
     
     func testImagesWithinBold() {
@@ -128,13 +128,13 @@ Hello **![image](http://example.com/image1.jpg)** World
 """
         let document = Document(parsing: source, options: [])
         checker.visit(document)
-        guard checker.problems.count == 1 else {
+        guard checker.diagnostics.count == 1 else {
             XCTFail("Expected 1 problem")
             return
         }
 
         let image = document.child(at: 1)!.child(at: 1)!.child(at: 0)! as! Image
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
+        verifyDiagnostic(diagnostic: checker.diagnostics[0], expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
     }
     
     func testImageInALink() {
@@ -145,14 +145,14 @@ Hello **[![image](http://example.com/image1.jpg)](http://example.com)** World.
 """
         let document = Document(parsing: source, options: [])
         checker.visit(document)
-        guard checker.problems.count == 2 else {
+        guard checker.diagnostics.count == 2 else {
             XCTFail("Expected 2 problems")
             return
         }
         let link = document.child(at: 1)!.child(at: 1)!.child(at: 0)! as! Link
         let image = document.child(at: 1)!.child(at: 1)!.child(at: 0)!.child(at: 0)! as! Image
         
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
-        verifyDiagnostic(diagnostic: checker.problems[1].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
+        verifyDiagnostic(diagnostic: checker.diagnostics[0], expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
+        verifyDiagnostic(diagnostic: checker.diagnostics[1], expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
     }
 }

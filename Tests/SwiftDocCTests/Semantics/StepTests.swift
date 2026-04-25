@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,11 +21,11 @@ class StepTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertEqual([
             "org.swift.docc.HasContent",
-        ], problems.map { $0.diagnostic.identifier })
+        ], diagnostics.map { $0.identifier })
         XCTAssertNotNil(step)
         step.map {
             XCTAssertTrue($0.content.isEmpty)
@@ -50,9 +50,9 @@ class StepTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
             DataFile(name: "test.png", data: Data())
         ]))
-        var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
-        XCTAssertTrue(problems.isEmpty)
+        var diagnostics = [Diagnostic]()
+        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertNotNil(step)
         
         let expectedDump = """
@@ -108,14 +108,14 @@ Step @1:1-9:2
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
-        XCTAssertEqual(2, problems.count)
+        var diagnostics = [Diagnostic]()
+        let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        XCTAssertEqual(2, diagnostics.count)
         
         XCTAssertEqual([
             "org.swift.docc.Step.ExtraneousContent",
             "org.swift.docc.Step.ExtraneousContent",
-        ], problems.map { $0.diagnostic.identifier })
+        ], diagnostics.map { $0.identifier })
         
         XCTAssertNotNil(step)
         

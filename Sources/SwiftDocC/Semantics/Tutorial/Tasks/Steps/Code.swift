@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -59,30 +59,39 @@ public final class Code: Semantic, DirectiveConvertible {
         self.preview = preview
     }
     
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Code.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
-        guard let requiredFileReference = Semantic.Analyses.HasArgument<Code, Semantics.File>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
+        guard let requiredFileReference = Semantic.Analyses.HasArgument<Code, Semantics.File>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics) else { return nil }
         let fileReference = ResourceReference(bundleID: bundle.id, path: requiredFileReference)
         
-        guard let requiredFileName = Semantic.Analyses.HasArgument<Code, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
+        guard let requiredFileName = Semantic.Analyses.HasArgument<Code, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics) else { return nil }
         
         // ResetDiff is optional and defaults to false. If it exists, however, extract it using analysis so we get
         // diagnostics for type mismatches.
         let shouldResetDiff: Bool
         if arguments.keys.contains(Semantics.ResetDiff.argumentName) {
-            shouldResetDiff = Semantic.Analyses.HasArgument<Code, Semantics.ResetDiff>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems) ?? false
+            shouldResetDiff = Semantic.Analyses.HasArgument<Code, Semantics.ResetDiff>(severityIfNotFound: nil).analyze(directive, arguments: arguments, diagnostics: &diagnostics) ?? false
         } else {
             shouldResetDiff = false
         }
        
-        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
+        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
         
-        let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
+        let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, diagnostics: &diagnostics).map { argument in
             ResourceReference(bundleID: bundle.id, path: argument)
         }
         

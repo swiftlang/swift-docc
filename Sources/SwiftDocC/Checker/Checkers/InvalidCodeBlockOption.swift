@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,8 +15,8 @@ internal import Markdown
  Code blocks can have a `nocopy` option after the \`\`\`, in the language line.
 `nocopy` can be immediately after the \`\`\` or after a specified language and a comma (`,`).
  */
-internal struct InvalidCodeBlockOption: Checker {
-    var problems = [Problem]()
+struct InvalidCodeBlockOption: Checker {
+    var diagnostics = [Diagnostic]()
 
     /// Parsing options for code blocks
     private let knownOptions = RenderBlockContent.CodeBlockOptions.knownOptions
@@ -39,22 +39,17 @@ internal struct InvalidCodeBlockOption: Checker {
             let matches = NearMiss.bestMatches(for: knownOptions, against: value)
 
             if !matches.isEmpty {
-                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.")
-                let possibleSolutions = matches.map { candidate in
-                    Solution(
-                        summary: "Replace \(value.singleQuoted) with \(candidate.singleQuoted).",
-                        replacements: []
-                    )
+                let solutions = matches.map { candidate in
+                    Solution(summary: "Replace \(value.singleQuoted) with \(candidate.singleQuoted).", replacements: [])
                 }
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: possibleSolutions))
-            } else if lang == nil {
-                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.")
-                let possibleSolutions =
-                Solution(
-                    summary: "If \(value.singleQuoted) is the language for this code block, then write \(value.singleQuoted) as the first option.",
-                    replacements: []
+                diagnostics.append(
+                    Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.", solutions: solutions)
                 )
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [possibleSolutions]))
+            } else if lang == nil {
+                let solution = Solution(summary: "If \(value.singleQuoted) is the language for this code block, then write \(value.singleQuoted) as the first option.", replacements: [])
+                diagnostics.append(
+                    Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.", solutions: [solution])
+                )
             }
         }
 
@@ -66,25 +61,26 @@ internal struct InvalidCodeBlockOption: Checker {
             let indices = RenderBlockContent.CodeBlockOptions.parseCodeBlockOptionsArray(value)
 
             if !value.isEmpty, indices.isEmpty {
-                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Could not parse \(token.rawValue.singleQuoted) indices from \(value.singleQuoted). Expected an integer (e.g. 3) or an array (e.g. [1, 3, 5])")
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                diagnostics.append(
+                Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Could not parse \(token.rawValue.singleQuoted) indices from \(value.singleQuoted). Expected an integer (e.g. 3) or an array (e.g. [1, 3, 5])")
+                )
                 return
             }
 
             let invalid = indices.filter { $0 < 1 || $0 > lineCount }
             guard !invalid.isEmpty else { return }
 
-            let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Invalid \(token.rawValue.singleQuoted) index\(invalid.count == 1 ? "" : "es") in \(value.singleQuoted) for a code block with \(lineCount) line\(lineCount == 1 ? "" : "s"). Valid range is 1...\(lineCount).")
-            let solutions: [Solution] = {
-                if invalid.contains(where: {$0 == lineCount + 1}) {
-                    return [Solution(
-                        summary: "If you intended the last line, change '\(lineCount + 1)' to \(lineCount).",
-                        replacements: []
-                    )]
-                }
-                return []
-            }()
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+            let solutions: [Solution] = if invalid.contains(where: { $0 == lineCount + 1 }) {
+                [Solution(
+                    summary: "If you intended the last line, change '\(lineCount + 1)' to \(lineCount).",
+                    replacements: []
+                )]
+            } else {
+                []
+            }
+            diagnostics.append(
+                Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Invalid \(token.rawValue.singleQuoted) index\(invalid.count == 1 ? "" : "es") in \(value.singleQuoted) for a code block with \(lineCount) line\(lineCount == 1 ? "" : "s"). Valid range is 1...\(lineCount).", solutions: solutions)
+            )
         }
 
         for (token, value) in tokens {

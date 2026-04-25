@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -92,13 +92,13 @@ class DiagnosticTests: XCTestCase {
         // Resolve references
         _ = resolver.visitMarkup(markup)
         
-        XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 10, source: nil)..<SourceLocation(line: 1, column: 19, source: nil))
+        XCTAssertEqual(resolver.diagnostics.first?.range, SourceLocation(line: 1, column: 10, source: nil)..<SourceLocation(line: 1, column: 19, source: nil))
         let offset = SymbolGraph.LineList.SourceRange(start: .init(line: 10, character: 10), end: .init(line: 10, character: 20))
         
-        var problem = try XCTUnwrap(resolver.problems.first)
-        problem.offsetWithRange(offset)
+        var diagnostic = try XCTUnwrap(resolver.diagnostics.first)
+        diagnostic.offsetWithRange(offset)
         
-        XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 20, source: nil)..<SourceLocation(line: 11, column: 29, source: nil))
+        XCTAssertEqual(diagnostic.range, SourceLocation(line: 11, column: 20, source: nil)..<SourceLocation(line: 11, column: 29, source: nil))
     }
 
     func testFormattedDescription() {
@@ -129,7 +129,7 @@ class DiagnosticTests: XCTestCase {
 
         let noteSource = URL(string: "/a/file/path.md")!
         let noteRange = SourceLocation(line: 1, column: 1, source: source)..<SourceLocation(line: 9, column: 7, source: noteSource)
-        let note = DiagnosticNote(
+        let note = Diagnostic.Note(
             source: noteSource,
             range: noteRange,
             message: "The message of the note."
@@ -171,7 +171,7 @@ class DiagnosticTests: XCTestCase {
         let engine = DiagnosticEngine()
 
         let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, featureFlags: FeatureFlags(), engine: engine)
-        XCTAssertEqual(engine.problems.count, 0)
+        XCTAssertEqual(engine.diagnostics.count, 0)
 
         // testing scenario with known directive
         let commentWithKnownDirective = """
@@ -187,8 +187,8 @@ class DiagnosticTests: XCTestCase {
         
         // count should be 1 for the known directive '@TitleHeading'
         // TODO: Consider adding a diagnostic for Doxygen tags (rdar://92184094)
-        XCTAssertEqual(engine1.problems.count, 1)
-        XCTAssertEqual(engine1.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnsupportedDocCommentDirective"])
+        XCTAssertEqual(engine1.diagnostics.count, 1)
+        XCTAssertEqual(engine1.diagnostics.map { $0.identifier }, ["org.swift.docc.UnsupportedDocCommentDirective"])
     }
 }
 
@@ -222,7 +222,7 @@ fileprivate let diagnostics: [String: Diagnostic] = [
     """),
 ]
 
-enum Diagnostics {
+private enum Diagnostics {
     static func diagnostic(identifier: String) -> Diagnostic? {
         return diagnostics[identifier]
     }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,13 +20,13 @@ class TutorialReferenceTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(tutorialReference)
-        XCTAssertEqual(1, problems.count)
-        problems.first.map { problem in
-            XCTAssertEqual("org.swift.docc.HasArgument.tutorial", problem.diagnostic.identifier)
-            XCTAssertEqual(.warning, problem.diagnostic.severity)
+        XCTAssertEqual(1, diagnostics.count)
+        diagnostics.first.map { problem in
+            XCTAssertEqual("org.swift.docc.HasArgument.tutorial", problem.identifier)
+            XCTAssertEqual(.warning, problem.severity)
         }
     }
     
@@ -38,8 +38,8 @@ class TutorialReferenceTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(tutorialReference)
         tutorialReference.map { tutorialReference in
             guard case let .unresolved(unresolved) = tutorialReference.topic else {
@@ -47,7 +47,7 @@ class TutorialReferenceTests: XCTestCase {
             }
             XCTAssertEqual(ValidatedURL(parsingExact: tutorialLink), unresolved.topicURL)
         }
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
     
     func testMissingPath() async throws {
@@ -58,11 +58,11 @@ class TutorialReferenceTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let tutorialReference = TutorialReference(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(tutorialReference)
-        XCTAssertEqual(problems.count, 1)
-        let problem = try XCTUnwrap(problems.first)
-        XCTAssertEqual("org.swift.docc.HasArgument.tutorial.ConversionFailed", problem.diagnostic.identifier)
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
+        XCTAssertEqual("org.swift.docc.HasArgument.tutorial.ConversionFailed", diagnostic.identifier)
     }
 }

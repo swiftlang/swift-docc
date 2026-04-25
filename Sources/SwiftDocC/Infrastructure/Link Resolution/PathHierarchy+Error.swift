@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -120,7 +120,7 @@ extension PathHierarchy.Error {
                     // In contexts that display the solution message on a single line by removing newlines, this extra whitespace makes it look correct ─────────────╮
                     //                                                                                                                                               ▼
                     return Solution(summary: "\(Self.replacementOperationDescription(from: foundDisambiguation, to: suggestedDisambiguation, forCollision: true)) for \n\(fullName.singleQuoted)", replacements: [
-                        Replacement(range: replacementRange, replacement: suggestedDisambiguation)
+                        .init(range: replacementRange, replacement: suggestedDisambiguation)
                     ])
                 }
             return (pathPrefix, foundDisambiguation, solutions)
@@ -134,7 +134,7 @@ extension PathHierarchy.Error {
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
             let solutions = nearMisses.map { candidate in
                 Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
+                    .init(range: replacementRange, replacement: candidate)
                 ])
             }
             
@@ -155,7 +155,7 @@ extension PathHierarchy.Error {
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
             let solutions = nearMisses.map { candidate in
                 Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
+                    .init(range: replacementRange, replacement: candidate)
                 ])
             }
             
@@ -174,9 +174,9 @@ extension PathHierarchy.Error {
             return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols", solutions: [
                 Solution(summary: "Use a '<doc:>' style reference.", replacements: [
                     // the SourceRange points to the opening double-backtick
-                    Replacement(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
+                    .init(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
                     // the SourceRange points to the closing double-backtick
-                    Replacement(range: .makeRelativeRange(startColumn: path.count, endColumn: path.count+2), replacement: ">"),
+                    .init(range: .makeRelativeRange(startColumn: path.count, endColumn: path.count+2), replacement: ">"),
                 ])
             ])
             
@@ -208,7 +208,7 @@ extension PathHierarchy.Error {
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
                 solutions = nearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))", replacements: [
-                        Replacement(range: replacementRange, replacement: candidate)
+                        .init(range: replacementRange, replacement: candidate)
                     ])
                 }
             } else {
@@ -216,7 +216,7 @@ extension PathHierarchy.Error {
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.name.count)
                 solutions = filteredNearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))", replacements: [
-                        Replacement(range: replacementRange, replacement: candidate)
+                        .init(range: replacementRange, replacement: candidate)
                     ])
                 }
             }
@@ -235,7 +235,7 @@ extension PathHierarchy.Error {
             let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: anchor.count)
             let solutions = nearMisses.map { candidate in
                 Solution(summary: "\(Self.replacementOperationDescription(from: anchor, to: candidate))", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
+                    .init(range: replacementRange, replacement: candidate)
                 ])
             }
             

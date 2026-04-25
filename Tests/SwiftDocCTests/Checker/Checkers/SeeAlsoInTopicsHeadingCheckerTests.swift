@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -32,17 +32,17 @@ A discussion
         var checker = SeeAlsoInTopicsHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null"))
         checker.visit(document)
 
-        let problems = checker.problems
-        XCTAssertEqual(problems.count, 1)
-        let problem = try XCTUnwrap(problems.first)
+        let diagnostics = checker.diagnostics
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
 
-        let diagnosticRange = try XCTUnwrap(problem.diagnostic.range)
+        let diagnosticRange = try XCTUnwrap(diagnostic.range)
         XCTAssertEqual(diagnosticRange.lowerBound.line, 10)
         XCTAssertEqual(diagnosticRange.lowerBound.column, 1)
         XCTAssertEqual(diagnosticRange.upperBound.line, 10)
         XCTAssertEqual(diagnosticRange.upperBound.column, 13)
 
-        let solutions = problem.possibleSolutions
+        let solutions = diagnostic.solutions
         XCTAssertEqual(solutions.count, 2)
         
         let levelSolution = solutions[0]

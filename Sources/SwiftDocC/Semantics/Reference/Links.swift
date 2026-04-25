@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -80,14 +80,14 @@ public final class Links: Semantic, AutomaticDirectiveConvertible, MarkupContain
         return content.elements
     }
     
-    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         _ = Semantic.Analyses.HasExactlyOneUnorderedList<Links, any AnyLink>(
             severityIfNotFound: .warning
         ).analyze(
             originalMarkup,
             children: originalMarkup.children,
             source: source,
-            problems: &problems
+            diagnostics: &diagnostics
         )
         
         return true
@@ -112,7 +112,7 @@ extension Links: RenderableDirectiveConvertible {
         var linksExtractor = ExtractLinks(mode: .linksDirective)
         _ = linksExtractor.visit(firstList)
         
-        contentCompiler.context.diagnosticEngine.emit(linksExtractor.problems)
+        contentCompiler.context.diagnosticEngine.emit(linksExtractor.diagnostics)
         
         let resolvedLinks = linksExtractor.links
             .compactMap(\.destination)

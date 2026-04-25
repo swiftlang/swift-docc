@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@ import Foundation
 import Markdown
 private import SymbolKit
 
-func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
+func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Diagnostic {
     let referenceSourceRange: SourceRange? = range.map { range in
         // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
         // https://github.com/apple/swift-markdown/issues/109
@@ -30,10 +30,10 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
     }
     
     var solutions: [Solution] = []
-    var notes: [DiagnosticNote] = []
+    var notes: [Diagnostic.Note] = []
     if let referenceSourceRange {
         if let note = errorInfo.note, let source {
-            notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
+            notes.append(.init(source: source, range: referenceSourceRange, message: note))
         }
         
         solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: referenceSourceRange))
@@ -53,17 +53,16 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
         diagnosticRange = referenceSourceRange
     }
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: errorInfo.message, notes: notes)
-    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+    return Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: errorInfo.message, notes: notes, solutions: solutions)
 }
 
-func unresolvedResourceProblem(
+func unresolvedResourceDiagnostic(
     resource: ResourceReference,
     expectedType: DocumentationContext.AssetType? = nil,
     source: URL?,
     range: SourceRange?,
     severity: DiagnosticSeverity
-) -> Problem {
+) -> Diagnostic {
     let summary: String
     let identifier: String
     if let expectedType {
@@ -74,14 +73,13 @@ func unresolvedResourceProblem(
         summary = "Resource \(resource.path.singleQuoted) couldn't be found"
     }
     
-    let diagnostic = Diagnostic(
+    return Diagnostic(
         source: source,
         severity: severity,
         range: range,
         identifier: identifier,
         summary: summary
     )
-    return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
 /**
@@ -94,7 +92,7 @@ struct ReferenceResolver: SemanticVisitor {
     var context: DocumentationContext
     
     /// Problems found while trying to resolve references.
-    var problems = [Problem]()
+    var diagnostics = [Diagnostic]()
     
     var rootReference: ResolvedTopicReference
     
@@ -114,9 +112,9 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, error):
             if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.documentationRootReference.appendingPathOfReference(unresolved)] {
-                problems.append(makeUnfindableArticleProblem(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
+                diagnostics.append(makeUnfindableArticleDiagnostic(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
             } else {
-                problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: false))
+                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: false))
             }
             return .failure(unresolved, error)
         }
@@ -125,9 +123,9 @@ struct ReferenceResolver: SemanticVisitor {
     /**
     Returns a ``Problem`` if the resource cannot be found; otherwise `nil`.
     */
-    func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
+    func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Diagnostic? {
         if !context.resourceExists(with: resource) {
-            return unresolvedResourceProblem(resource: resource, source: range?.source, range: range, severity: severity)
+            return unresolvedResourceDiagnostic(resource: resource, source: range?.source, range: range, severity: severity)
         } else {
             return nil
         }
@@ -145,11 +143,11 @@ struct ReferenceResolver: SemanticVisitor {
     mutating func visitStep(_ step: Step) -> Semantic {
         let newContent = visit(step.content) as! MarkupContainer
         let newCaption = visit(step.caption) as! MarkupContainer
-        if let media = step.media, let problem = resolve(resource: media.source, range: step.originalMarkup.range, severity: .warning) {
-            problems.append(problem)
+        if let media = step.media, let diagnostic = resolve(resource: media.source, range: step.originalMarkup.range, severity: .warning) {
+            diagnostics.append(diagnostic)
         }
-        if let code = step.code, let problem = resolve(resource: code.fileReference, range: step.originalMarkup.range, severity: .warning) {
-            problems.append(problem)
+        if let code = step.code, let diagnostic = resolve(resource: code.fileReference, range: step.originalMarkup.range, severity: .warning) {
+            diagnostics.append(diagnostic)
         }
         return Step(originalMarkup: step.originalMarkup, media: step.media, code: step.code, content: newContent, caption: newCaption)
     }
@@ -216,21 +214,21 @@ struct ReferenceResolver: SemanticVisitor {
         let parent = inheritanceParentReference
         let context = self.context
         
-        markupResolver.problemForUnresolvedReference = { unresolved, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
+        markupResolver.diagnosticForUnresolvedReference = { unresolved, range, fromSymbolLink, underlyingErrorMessage -> Diagnostic? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
             if let parent, let range {
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
                     case .success(let resolved):
                         // Return a warning with a suggested change that replaces the relative link with an absolute one.
-                        return Problem(diagnostic: Diagnostic(source: range.source,
+                        return Diagnostic(source: range.source,
                             severity: .warning, range: range,
                             identifier: "org.swift.docc.UnresolvableLinkWhenInherited",
-                            summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve."),
-                            possibleSolutions: [
+                            summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve.",
+                            solutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
                                     // FIXME: The resolved reference path isn't the same as the authorable link.
-                                    Replacement(range: range, replacement: "<doc:\(resolved.path)>")
+                                    .init(range: range, replacement: "<doc:\(resolved.path)>")
                                 ])
                             ])
                     default: break
@@ -240,7 +238,7 @@ struct ReferenceResolver: SemanticVisitor {
         }
         
         let newElements = markupContainer.elements.compactMap { markupResolver.visit($0) }
-        problems.append(contentsOf: markupResolver.problems)
+        diagnostics.append(contentsOf: markupResolver.diagnostics)
         return MarkupContainer(newElements)
     }
     
@@ -257,15 +255,15 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitImageMedia(_ imageMedia: ImageMedia) -> Semantic {
-        if let problem = resolve(resource: imageMedia.source, range: imageMedia.originalMarkup.range, severity: .warning) {
-            problems.append(problem)
+        if let diagnostic = resolve(resource: imageMedia.source, range: imageMedia.originalMarkup.range, severity: .warning) {
+            diagnostics.append(diagnostic)
         }
         return imageMedia
     }
     
     mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> Semantic {
-        if let problem = resolve(resource: videoMedia.source, range: videoMedia.originalMarkup.range, severity: .warning) {
-            problems.append(problem)
+        if let diagnostic = resolve(resource: videoMedia.source, range: videoMedia.originalMarkup.range, severity: .warning) {
+            diagnostics.append(diagnostic)
         }
         return videoMedia
     }
@@ -291,13 +289,13 @@ struct ReferenceResolver: SemanticVisitor {
         var uniqueReferences = Set<TopicReference>()
         let newTutorialReferencesWithoutDupes = newTutorialReferences.filter { newTutorialReference in
             guard !uniqueReferences.contains(newTutorialReference.topic) else {
-                let diagnostic = Diagnostic(source: chapter.originalMarkup.range?.source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)")
                 let solutions = newTutorialReference.originalMarkup.range.map {
                     return [Solution(summary: "Remove duplicate \(TutorialReference.directiveName.singleQuoted) directive", replacements: [
-                        Replacement(range: $0, replacement: "")
+                        .init(range: $0, replacement: "")
                     ])]
                 } ?? []
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+                let diagnostic = Diagnostic(source: chapter.originalMarkup.range?.source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)", solutions: solutions)
+                diagnostics.append(diagnostic)
                 return false
             }
             uniqueReferences.insert(newTutorialReference.topic)
@@ -366,7 +364,7 @@ struct ReferenceResolver: SemanticVisitor {
             visitMarkupContainer($0) as? MarkupContainer
         }
         // If there's a call to action with a local-file reference, change its context to `download`
-        if let downloadFile = article.metadata?.callToAction?.resolveFile(for: context.inputs, in: context, problems: &problems),
+        if let downloadFile = article.metadata?.callToAction?.resolveFile(for: context.inputs, in: context, diagnostics: &diagnostics),
             var resolvedDownload = context.resolveAsset(named: downloadFile.path, in: rootReference) {
             resolvedDownload.context = .download
             context.updateAsset(named: downloadFile.path, asset: resolvedDownload, in: rootReference)
@@ -555,14 +553,14 @@ extension Image {
 
 // MARK: Diagnostics
 
-func makeUnfindableArticleProblem(
+func makeUnfindableArticleDiagnostic(
     source: URL?,
     severity: DiagnosticSeverity,
     range: SourceRange?,
     articleNotInHierarchy: DocumentationContext.SemanticResult<Article>,
     rootPageNames: [String]
-) -> Problem {
-    Problem(diagnostic: Diagnostic(
+) -> Diagnostic {
+    Diagnostic(
         source: source,
         severity: severity,
         range: range,
@@ -573,5 +571,5 @@ func makeUnfindableArticleProblem(
             Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
             As a consequence, the '\(articleNotInHierarchy.topicGraphNode.title)' article (\(articleNotInHierarchy.source.lastPathComponent)) is not findable and has no page in the output.
             """
-    ))
+    )
 }

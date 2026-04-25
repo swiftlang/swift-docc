@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -470,12 +470,12 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
-        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
+        XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics)")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
         
-        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
+        XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics)")
         
         // These two references are equivalent and depending on the order that the symbols are processed, either one of them could be considered the canonical reference.
         let referenceAliases = [
@@ -901,7 +901,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             ])
         )
 
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let converter = DocumentationNodeConverter(context: context)
 

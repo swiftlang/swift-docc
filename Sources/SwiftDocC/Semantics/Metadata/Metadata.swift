@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -103,7 +103,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         self.originalMarkup = originalMarkup
     }
     
-    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         // Check that something is configured in the metadata block
         if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && supportedLanguages.isEmpty && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
             let diagnostic = Diagnostic(
@@ -111,13 +111,12 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 severity: .information,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(Metadata.directiveName).NoConfiguration",
-                summary: "\(Metadata.directiveName.singleQuoted) doesn't configure anything and has no effect"
+                summary: "\(Metadata.directiveName.singleQuoted) doesn't configure anything and has no effect",
+                solutions: originalMarkup.range.map {
+                    [Solution(summary: "Remove this \(Metadata.directiveName.singleQuoted) directive.", replacements: [.init(range: $0, replacement: "")])]
+                } ?? []
             )
-            
-            let solutions = originalMarkup.range.map {
-                [Solution(summary: "Remove this \(Metadata.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
-            } ?? []
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+            diagnostics.append(diagnostic)
         }
         
         // Check that there is only a single `@PageImage` directive for each supported purpose
@@ -132,7 +131,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
             }
             
             for extraPageImage in pageImages {
-                let diagnostic = Diagnostic(
+                var diagnostic = Diagnostic(
                     source: extraPageImage.originalMarkup.nameLocation?.source,
                     severity: .warning,
                     range: extraPageImage.originalMarkup.range,
@@ -144,19 +143,14 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                     """
                 )
                 
-                guard let range = extraPageImage.originalMarkup.range else {
-                    problems.append(Problem(diagnostic: diagnostic))
-                    continue
+                if let range = extraPageImage.originalMarkup.range {
+                    diagnostic.solutions.append(Solution(
+                        summary: "Remove extraneous \(extraPageImage.purpose.rawValue.singleQuoted) \(PageImage.directiveName.singleQuoted) directive",
+                        replacements: [.init(range: range, replacement: "")])
+                    )
                 }
                 
-                let solution = Solution(
-                    summary: "Remove extraneous \(extraPageImage.purpose.rawValue.singleQuoted) \(PageImage.directiveName.singleQuoted) directive",
-                    replacements: [
-                        Replacement(range: range, replacement: "")
-                    ]
-                )
-                
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+                diagnostics.append(diagnostic)
             }
         }
 
@@ -168,7 +162,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
             }
             
             for availability in duplicateIntroduced {
-                let diagnostic = Diagnostic(
+                var diagnostic = Diagnostic(
                     source: availability.originalMarkup.nameLocation?.source,
                     severity: .warning,
                     range: availability.originalMarkup.range,
@@ -179,19 +173,14 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                     """
                 )
 
-                guard let range = availability.originalMarkup.range else {
-                    problems.append(Problem(diagnostic: diagnostic))
-                    continue
+                if let range = availability.originalMarkup.range {
+                    diagnostic.solutions.append(Solution(
+                        summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
+                        replacements: [.init(range: range, replacement: "")]
+                    ))
                 }
 
-                let solution = Solution(
-                    summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
-                    replacements: [
-                        Replacement(range: range, replacement: "")
-                    ]
-                )
-
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+                diagnostics.append(diagnostic)
             }
         }
         
@@ -202,7 +191,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     ///
     /// Some configuration options of Metadata are not supported in documentation comments.
     /// This function emits warnings for unsupported uses and resets their values (to `nil` or `[]`) .
-    func validateForUseInDocumentationComment(symbolSource: URL?, problems: inout [Problem]) {
+    func validateForUseInDocumentationComment(symbolSource: URL?, diagnostics: inout [Diagnostic]) {
         func validateUnsupportedMetadataDirective<Directive: AutomaticDirectiveConvertible>(for directives: [Directive]?) {
             for directive in directives ?? [] {
                 validateUnsupportedMetadataDirective(for: directive)
@@ -217,25 +206,20 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
             let name = Directive.directiveName
             let range = directive.originalMarkup.range
             
-            let diagnostic = Diagnostic(
+            diagnostics.append(Diagnostic(
                 source: symbolSource,
                 severity: .warning,
                 range: range,
                 identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
                 summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
-                explanation: "Specify this configuration in a documentation extension file"
-            )
-            
-            let solutions: [Solution] = range.map { range in
-                [Solution(
-                    summary: "Remove invalid \(name.singleQuoted) directive",
-                    replacements: [
-                        Replacement(range: range, replacement: "")
-                    ]
-                )]
-            } ?? []
-            
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+                explanation: "Specify this configuration in a documentation extension file",
+                solutions: range.map { range in
+                    [Solution(
+                        summary: "Remove invalid \(name.singleQuoted) directive",
+                        replacements: [.init(range: range, replacement: "")]
+                    )]
+                } ?? []
+            ))
         }
         
         validateUnsupportedMetadataDirective(for: documentationOptions)

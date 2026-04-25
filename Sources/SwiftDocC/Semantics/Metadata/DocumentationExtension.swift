@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -49,20 +49,19 @@ public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertib
         case override
     }
     
-    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
+    func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         if behavior == .append {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(Self.directiveName).NoConfiguration",
-                summary: "\(Self.directiveName.singleQuoted) doesn't change default configuration and has no effect"
+                summary: "\(Self.directiveName.singleQuoted) doesn't change default configuration and has no effect",
+                solutions: originalMarkup.range.map {
+                    [Solution(summary: "Remove this \(Self.directiveName.singleQuoted) directive.", replacements: [.init(range: $0, replacement: "")])]
+                } ?? []
             )
-            
-            let solutions = originalMarkup.range.map {
-                [Solution(summary: "Remove this \(Self.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
-            } ?? []
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+            diagnostics.append(diagnostic)
         }
         
         return true
