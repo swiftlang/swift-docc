@@ -44,6 +44,7 @@ func parseDirective<Directive: DirectiveConvertible>(
 func parseDirective<Directive: RenderableDirectiveConvertible>(
     _ directive: Directive.Type,
     catalog: Folder,
+    configuration: DocumentationContext.Configuration = .init(),
     content: () -> String,
     sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) async throws -> (
@@ -52,7 +53,7 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
     directive: Directive?,
     collectedReferences: [String : any RenderReference]
 ) {
-    let context = try await load(catalog: catalog)
+    let context = try await load(catalog: catalog, configuration: configuration)
     return try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
 }
 
