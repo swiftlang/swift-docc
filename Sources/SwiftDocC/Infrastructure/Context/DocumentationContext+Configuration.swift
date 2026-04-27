@@ -95,16 +95,6 @@ extension DocumentationContext {
             package var shouldStoreManuallyCuratedReferences: Bool = false
         }
         
-        // MARK: Topic analysis
-        
-        /// Configuration related to topic analysis.
-        var topicAnalysisConfiguration = TopicAnalysisConfiguration()
-        
-        /// A collection of configuration related to topic analysis.
-        struct TopicAnalysisConfiguration {
-            var additionalChecks: [DocumentationContext.ReferenceCheck] = []
-        }
-        
         // MARK: Feature flags
         
         /// A collection of feature flags.
