@@ -1537,11 +1537,10 @@ struct AvailabilityTests {
         
         #expect(renderNode.metadata.isBeta)
         
-        // FIXME: Symbols are only considered in-beta when the introduced version is from in-source attributes (rdar://173773442)
-        if availabilitySource == .inSourceAttribute {
+        try withKnownIssue("Symbols are only considered in-beta when the introduced version is from in-source attributes (rdar://173773442)", {
             let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
             #expect(renderReference.isBeta)
-        }
+        }, when: { availabilitySource != .inSourceAttribute })
     }
     
     // FIXME: Articles don't display default availability (rdar://173688303)
