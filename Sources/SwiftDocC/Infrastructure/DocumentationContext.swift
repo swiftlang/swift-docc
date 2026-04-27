@@ -2764,7 +2764,7 @@ public class DocumentationContext {
      Analysis that runs after all nodes are successfully registered in the context.
      Useful for checks that need the complete node graph.
      */
-    func topicGraphGlobalAnalysis() {
+    private func topicGraphGlobalAnalysis() {
         // Run pre-defined global analysis.
         for node in topicGraph.nodes.values {
             switch node.kind {
@@ -3099,7 +3099,7 @@ extension DocumentationContext {
     /// The nodes that are allowed to be roots in the topic graph.
     static var allowedRootNodeKinds: [DocumentationNode.Kind] = [.tutorialTableOfContents, .module]
 
-    func analyzeTopicGraph() {
+    private func analyzeTopicGraph() {
         // Find all nodes that are loose in the graph and have no parent but aren't supposed to
         let unexpectedRoots = topicGraph.nodes.values.filter { node in
             return !DocumentationContext.allowedRootNodeKinds.contains(node.kind)
@@ -3117,7 +3117,7 @@ extension DocumentationContext {
         diagnosticEngine.emit(problems)
     }
         
-    func analyzeAlternateRepresentations() {
+    private func analyzeAlternateRepresentations() {
         var problems = [Problem]()
 
         func listSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> String {
