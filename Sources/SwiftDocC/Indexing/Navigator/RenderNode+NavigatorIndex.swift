@@ -24,6 +24,7 @@ protocol NavigatorIndexableRenderNodeRepresentation<Metadata> {
     var metadata: Metadata { get }
     var topicSections: [TaskGroupRenderSection] { get }
     var defaultImplementationsSections: [TaskGroupRenderSection] { get }
+    var isDeprecated: Bool { get }
 }
 
 /// A language specific representation of a render metadata value for building a navigator index.
@@ -51,6 +52,12 @@ extension NavigatorIndexableRenderNodeRepresentation {
 
 extension RenderNode: NavigatorIndexableRenderNodeRepresentation {}
 extension RenderMetadata: NavigatorIndexableRenderMetadataRepresentation {}
+
+extension RenderNode {
+    var isDeprecated: Bool {
+        deprecationSummary != nil || isPlatformDeprecated
+    }
+}
 
 struct RenderMetadataVariantView: NavigatorIndexableRenderMetadataRepresentation {
     var wrapped: RenderMetadata
@@ -121,6 +128,10 @@ struct RenderNodeVariantView: NavigatorIndexableRenderNodeRepresentation {
     var defaultImplementationsSections: [TaskGroupRenderSection] {
         wrapped.defaultImplementationsSectionsVariants.value(for: traits)
     }
+    var isDeprecated: Bool {
+        wrapped.deprecationSummaryVariants.value(for: traits) != nil
+            || isPlatformDeprecated
+    }
 }
 
 extension NavigatorIndexableRenderMetadataRepresentation {
@@ -130,6 +141,15 @@ extension NavigatorIndexableRenderMetadataRepresentation {
         }
         
         return platforms.allSatisfy { $0.isBeta == true }
+    }
+}
+
+extension NavigatorIndexableRenderNodeRepresentation {
+    var isPlatformDeprecated: Bool {
+        metadata.platforms?.contains { $0.deprecated != nil } == true
+    }
+    var isDeprecated: Bool {
+        isPlatformDeprecated
     }
 }
 

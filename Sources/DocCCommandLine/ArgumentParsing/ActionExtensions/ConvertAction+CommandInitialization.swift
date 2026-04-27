@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -79,6 +79,8 @@ extension ConvertAction {
             formatConsoleOutputForTools: convert.diagnosticOptions.formatConsoleOutputForTools,
             inheritDocs: convert.featureFlags.enableInheritedDocs,
             treatWarningsAsErrors: convert.diagnosticOptions.warningsAsErrors,
+            diagnosticIDsWithWarningSeverity: Set(convert.diagnosticOptions.warningGroupsWithWarningSeverity),
+            diagnosticIDsWithErrorSeverity: Set(convert.diagnosticOptions.warningGroupsWithErrorSeverity),
             experimentalEnableCustomTemplates: convert.featureFlags.experimentalEnableCustomTemplates,
             experimentalModifyCatalogWithGeneratedCuration: convert.featureFlags.experimentalModifyCatalogWithGeneratedCuration,
             featureFlags: featureFlags,

@@ -59,6 +59,12 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
     /// Used for determining whether stray navigation items should remain part of the final navigator.
     var isExternal: Bool = false
     
+    /// A value that indicates whether this item has been deprecated.
+    ///
+    /// This value is `true` if the referenced item is deprecated on any platform
+    /// or has a `@DeprecationSummary` directive.
+    var isDeprecated: Bool = false
+    
     /**
      Initialize a `NavigatorItem` with the given data.
      
@@ -70,8 +76,22 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - availabilityID:  The identifier of the availability information of the page.
         - path: The path to load the content.
         - icon: A reference to a custom image for this navigator item.
+        - isExternal: A flag indicating whether the navigator item belongs to an external documentation archive.
+        - isBeta: A flag indicating whether the navigator item is in beta.
+        - isDeprecated: A flag indicating whether the navigator item is deprecated.
      */
-    init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false, isBeta: Bool = false) {
+    init(
+        pageType: UInt8,
+        languageID: UInt8,
+        title: String,
+        platformMask: UInt64,
+        availabilityID: UInt64,
+        path: String,
+        icon: RenderReferenceIdentifier? = nil,
+        isExternal: Bool = false,
+        isBeta: Bool = false,
+        isDeprecated: Bool = false
+    ) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
@@ -81,6 +101,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         self.icon = icon
         self.isExternal = isExternal
         self.isBeta = isBeta
+        self.isDeprecated = isDeprecated
     }
     
     /**
@@ -95,8 +116,19 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - icon: A reference to a custom image for this navigator item.
         - isExternal: A flag indicating whether the navigator item belongs to an external documentation archive.
         - isBeta: A flag indicating whether the navigator item is in beta.
+        - isDeprecated: A flag indicating whether the navigator item is deprecated.
      */
-    public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false, isBeta: Bool = false) {
+    public init(
+        pageType: UInt8,
+        languageID: UInt8,
+        title: String,
+        platformMask: UInt64,
+        availabilityID: UInt64,
+        icon: RenderReferenceIdentifier? = nil,
+        isExternal: Bool = false,
+        isBeta: Bool = false,
+        isDeprecated: Bool = false
+    ) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
@@ -105,6 +137,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         self.icon = icon
         self.isExternal = isExternal
         self.isBeta = isBeta
+        self.isDeprecated = isDeprecated
     }
     
     // MARK: - Serialization and Deserialization
@@ -164,6 +197,16 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
             let externalValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
             cursor += length
             self.isExternal = externalValue != 0
+            // Encoded `isDeprecated`
+            if cursor < data.count {
+                assert(
+                    cursor + length <= data.count,
+                    "The serialized data is malformed: `isDeprecated` value should not extend past the end of the data"
+                )
+                let deprecatedValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
+                cursor += length
+                self.isDeprecated = deprecatedValue != 0
+            }
         }
 
         assert(cursor == data.count)
@@ -185,6 +228,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         
         data.append(packedDataFromValue(isBeta ? UInt8(1) : UInt8(0)))
         data.append(packedDataFromValue(isExternal ? UInt8(1) : UInt8(0)))
+        data.append(packedDataFromValue(isDeprecated ? UInt8(1) : UInt8(0)))
         
         return data
     }
@@ -200,7 +244,8 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
             platformMask: \(platformMask),
             availabilityID: \(availabilityID),
             isBeta: \(isBeta),
-            isExternal: \(isExternal)
+            isExternal: \(isExternal),
+            isDeprecated: \(isDeprecated)
         }
         """
     }
