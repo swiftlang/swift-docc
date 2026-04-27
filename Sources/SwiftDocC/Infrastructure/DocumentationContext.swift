@@ -2792,7 +2792,7 @@ public class DocumentationContext {
      qualified path, instead of a file name, the context will fail to find that resource.
 
      - Returns: A `Foundation.Data` object with the data for the given ``ResourceReference``.
-     - Throws: ``ContextError/notFound(_:)` if a resource with the given was not found.
+     - Throws: ``ContextError/notFound(_:)`` if a resource with the given was not found.
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
         guard let asset = assetManagers[identifier.bundleID]?.allData(named: identifier.path) else {
