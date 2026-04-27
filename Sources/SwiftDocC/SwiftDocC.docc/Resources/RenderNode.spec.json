@@ -477,6 +477,9 @@
                     },
                     {
                         "$ref": "#/components/schemas/TermList"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Card"
                     }
                 ]
             },
@@ -707,6 +710,27 @@
                         "enum": [
                             "thematicBreak"
                         ]
+                    }
+                }
+            },
+            "Card": {
+                "type": "object",
+                "required": [
+                    "head",
+                    "content"
+                ],
+                "properties": {
+                    "head": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
                     }
                 }
             },
