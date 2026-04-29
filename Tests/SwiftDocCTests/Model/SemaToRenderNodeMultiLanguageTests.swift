@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -877,6 +877,34 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             ),
             languages: ["swift", "occ"],
             defaultLanguage: .swift
+        )
+
+        // Verify the root module's auto-curated topics section only contains articles available in the language (rdar://161926175).
+        let rootRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageFramework")
+
+        let swiftArticlesSection = try XCTUnwrap(
+            rootRenderNode.topicSections.first(where: { $0.title == "Articles" })
+        )
+        XCTAssertEqual(
+            swiftArticlesSection.identifiers.sorted(),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ArticleWithoutSupportedLanguages",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftAndObjCArticle",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftArticle",
+            ]
+        )
+
+        let objcRenderNode = try renderNodeApplyingObjectiveCVariantOverrides(to: rootRenderNode)
+        let objcArticlesSection = try XCTUnwrap(
+            objcRenderNode.topicSections.first(where: { $0.title == "Articles" })
+        )
+        XCTAssertEqual(
+            objcArticlesSection.identifiers.sorted(),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ArticleWithoutSupportedLanguages",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ObjCArticle",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftAndObjCArticle",
+            ]
         )
     }
 
