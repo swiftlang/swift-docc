@@ -1178,6 +1178,35 @@ struct AvailabilityTests {
         #expect(renderReference.isDeprecated)
     }
     
+    @Test
+    func symbolDisplaysInSourceDeprecationMessage() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "macOS", introduced: nil, deprecated: .init(major: 10, minor: 14, patch: 0), message: "Some message that describes why this symbol is deprecated")
+                ])
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        #expect(renderNode.deprecationSummary == [.paragraph(.init(inlineContent: [
+            .text("Some message that describes why this symbol is deprecated")
+        ]))])
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == "10.14")
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated)
+    }
+    
     // FIXME: Articles don't display or consider DeprecationSummary information (rdar://173688303)
     @Test(.bug("rdar://173688303"), arguments: [AvailabilitySource.directiveInExtensionFile])
     func articleIsConsideredDeprecatedWhenAvailableWithDeprecationSummaryDirective(_ availabilitySource: AvailabilitySource) async throws {
