@@ -1378,6 +1378,115 @@ struct AvailabilityTests {
     }
     
     @Test(arguments: AvailabilitySource.allCases)
+    func symbolIsNotConsideredInBetaWhenIntroducedBeforeCurrentVersion(_ availabilitySource: AvailabilitySource) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(macOS, introduced: "10.14")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(
+                    id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
+                    docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(availabilitySource == .directiveInDocComment ? availableDirective : "")
+                    """,
+                    availability: availabilitySource == .inSourceAttribute ? [
+                        .init(domainName: "macOS", introduced: .init(major: 10, minor: 14, patch: 0), deprecated: nil)
+                    ] : [])
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(availabilitySource == .directiveInExtensionFile ? availableDirective : "")
+            """)
+            
+            if availabilitySource == .infoPlist {
+                InfoPlist(defaultAvailability: ["ModuleName": [
+                    .init(platformName: .macOS, platformVersion: "10.14")
+                ]])
+            }
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = [
+            "macOS": .init(.init(11, 2, 0), beta: true),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+        #expect(renderPlatforms.first?.introduced == "10.14")
+        #expect(renderPlatforms.first?.isBeta     == false)
+        
+        #expect(renderNode.metadata.isBeta == false)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isBeta == false)
+    }
+    
+    // FIXME: Articles don't display default availability (rdar://173688303)
+    @Test(.bug("rdar://173688303"), arguments: [AvailabilitySource.infoPlist, .directiveInExtensionFile])
+    func articleIsConsideredInBetaWhenIntroducedBeforeCurrentVersion(_ availabilitySource: AvailabilitySource) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(macOS, introduced: "10.14")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some Article
+            
+            Some additional documentation for this class.
+            \(availabilitySource == .directiveInExtensionFile ? availableDirective : "")
+            """)
+            
+            if availabilitySource == .infoPlist {
+                InfoPlist(defaultAvailability: ["ModuleName": [
+                    .init(platformName: .macOS, platformVersion: "10.14")
+                ]])
+            }
+        }
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = [
+            "macOS": .init(.init(11, 2, 0), beta: true),
+        ]
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        try withKnownIssue("Articles don't display default availability (rdar://173688303)", {
+            let renderPlatforms = try #require(renderNode.metadata.platforms)
+            
+            #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
+            #expect(renderPlatforms.first?.introduced == "10.14")
+            #expect(renderPlatforms.first?.isBeta     == false)
+            
+            #expect(renderNode.metadata.isBeta == false)
+            
+            let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+            #expect(renderReference.isBeta == false)
+        }, when: { availabilitySource == .infoPlist })
+    }
+    
+    @Test(arguments: AvailabilitySource.allCases)
     func symbolIsNotConsideredInBetaWhenOnlySomePlatformsAreCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
         @Metadata {
