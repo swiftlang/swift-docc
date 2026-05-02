@@ -125,6 +125,15 @@ extension StaticHostableTransformer {
             }
 
             indexHTML = indexHTML.replacingOccurrences(of: HTMLTemplate.tag.rawValue, with: replacementString)
+
+            // Inject <base href="/path/"> immediately after <head> for CSP compliance.
+            // Per HTML spec, <base> must precede other URL-referencing elements like <link> and <script src>.
+            if let headTagRange = indexHTML.range(of: "<head", options: .caseInsensitive),
+               let headCloseAngle = indexHTML[headTagRange.upperBound...].firstIndex(of: ">") {
+                let insertionIndex = indexHTML.index(after: headCloseAngle)
+                indexHTML.insert(contentsOf: "<base href=\"\(replacementString)/\" />", at: insertionIndex)
+            }
+            // If no <head> is found (e.g., partial template), silently skip — graceful degradation.
         }
         
         return Data(indexHTML.utf8)

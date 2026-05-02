@@ -191,5 +191,33 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             XCTAssertEqual(testHTMLString, indexHTML, "Unexpected content in index.html at \(indexFileURL)")
         }
     }
+
+    func testIndexHTMLDataInjectsBaseTagWhenHeadPresent() throws {
+        let templateContent = """
+        <html>
+          <head>
+            <script src="{{BASE_PATH}}/js/main.js"></script>
+          </head>
+          <body><div id="app"></div></body>
+        </html>
+        """
+        let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("template")
+        try Folder(name: "template", content: [
+            TextFile(name: "index.html", utf8Content: ""),
+            TextFile(name: "index-template.html", utf8Content: templateContent),
+        ]).write(to: testTemplateURL)
+
+        let basePath = "test/base-path"
+        let result = String(decoding: try StaticHostableTransformer.indexHTMLData(
+            in: testTemplateURL, with: basePath, fileManager: FileManager.default
+        ), as: UTF8.self)
+
+        XCTAssertTrue(result.contains("<head><base href=\"/test/base-path/\" />"),
+                      "Expected <base> tag immediately after <head>")
+        XCTAssertTrue(result.contains("/test/base-path/js/main.js"),
+                      "Expected {{BASE_PATH}} substitution in script src")
+        XCTAssertFalse(result.contains("{{BASE_PATH}}"),
+                       "Expected no remaining {{BASE_PATH}} tokens")
+    }
 }
 

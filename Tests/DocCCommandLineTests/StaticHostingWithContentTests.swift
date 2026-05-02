@@ -127,6 +127,7 @@ class StaticHostingWithContentTests: XCTestCase {
             try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
             <html>
               <head>
+                <base href="/some/test/base-path/" />
                 <meta charset="utf-8" />
                 <link rel="icon" href="/some/test/base-path/favicon.ico" />
                 \(expectedTitleAndMetaContent)
