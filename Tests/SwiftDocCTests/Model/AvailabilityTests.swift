@@ -794,6 +794,60 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced ==  "6.0")
     }
     
+    @Test(arguments: [
+        SymbolGraph.Platform(operatingSystem: .init(name: "ios")),
+        SymbolGraph.Platform(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst
+        SymbolGraph.Platform(operatingSystem: .init(name: "macos")),
+    ])
+    func filtersOutUnconditionallyUnavailablePlatforms(_ unavailablePlatform: SymbolGraph.Platform) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    // In-source availability attributes for many platforms
+                    .init(domainName: "iOS",         introduced: .init(major: 1, minor: 1, patch: 0), deprecated: nil, isUnconditionallyUnavailable: unavailablePlatform.name == "iOS"),
+                    .init(domainName: "macCatalyst", introduced: .init(major: 2, minor: 2, patch: 0), deprecated: nil, isUnconditionallyUnavailable: unavailablePlatform.name == "macCatalyst"),
+                    .init(domainName: "macOS",       introduced: .init(major: 3, minor: 3, patch: 0), deprecated: nil, isUnconditionallyUnavailable: unavailablePlatform.name == "macOS"),
+                ])
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        
+        switch unavailablePlatform.name {
+        case "iOS":
+            #expect(renderPlatforms.compactMap(\.name) == [/*no iOS & iPadOS*/ "Mac Catalyst", "macOS"], "Both iOS and iPadOS should be filtered out when iOS is unconditionally unavailable")
+            
+            #expect(renderPlatforms.first(where: { $0.name == "iOS"          }) == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       }) == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "2.2")
+            #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "3.3")
+            
+        case "macCatalyst":
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", /*no Catalyst*/ "macOS"], "Mac Catalyst should be filtered out when it's unconditionally unavailable")
+            
+            #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.1")
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.1")
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
+            #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "3.3")
+            
+        case "macOS":
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst" /*no macOS*/], "macOS should be filtered out when it's unconditionally unavailable")
+            
+            #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.1")
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.1")
+            #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "2.2")
+            #expect(renderPlatforms.first(where: { $0.name == "macOS"        }) == nil)
+            
+        case let other:
+            Issue.record("Unexpected platform name \(other)")
+        }
+    }
+    
     // MARK: Deprecations
     
     @Test(arguments: Self.allMainPlatforms)
