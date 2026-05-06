@@ -1437,7 +1437,7 @@ struct AvailabilityTests {
     
     // FIXME: Articles don't display default availability (rdar://173688303)
     @Test(.bug("rdar://173688303"), arguments: [AvailabilitySource.infoPlist, .directiveInExtensionFile])
-    func articleIsConsideredInBetaWhenIntroducedBeforeCurrentVersion(_ availabilitySource: AvailabilitySource) async throws {
+    func articleIsNotConsideredInBetaWhenIntroducedBeforeCurrentVersion(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
         @Metadata {
           @Available(macOS, introduced: "10.14")
