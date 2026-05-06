@@ -1227,6 +1227,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.14")
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.unconditionallyDeprecated != true)
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated)
@@ -1256,6 +1257,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == nil)
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == "10.14")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.unconditionallyDeprecated != true)
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated)
@@ -1317,6 +1319,53 @@ struct AvailabilityTests {
             #expect(renderReference.isDeprecated)
         }
     }
+    
+    @Test
+    func unconditionallyDeprecatedSymbolIsConsideredDeprecated() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "iOS", introduced: nil, deprecated: nil, isUnconditionallyDeprecated: true)
+                ]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.unconditionallyDeprecated == true)
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.unconditionallyDeprecated == true)
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.unconditionallyDeprecated == true)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated)
+    }
+    
+    @Test
+    func unconditionallyDeprecatedSymbolWithoutSpecificPlatformAvailabilityIsConsideredDeprecated() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: nil /* not specific to any platform */, introduced: nil, deprecated: nil, isUnconditionallyDeprecated: true)
+                ]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        #expect(renderNode.metadata.platforms?.isEmpty != false, "Expecting either `nil` or empty platforms")
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated)
+    }
+    
     // MARK: Beta
     
     @Test(arguments: AvailabilitySource.allCases)
