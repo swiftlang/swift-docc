@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ import Markdown
 
 class SmallTests: XCTestCase {
     func testNoContent() async throws {
-        let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
+        let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
             """
             @Small
             """
@@ -25,7 +25,7 @@ class SmallTests: XCTestCase {
         XCTAssertNotNil(small)
         
         XCTAssertEqual(
-            problems,
+            diagnostics,
             ["1: warning – org.swift.docc.Small.HasContent"]
         )
         
@@ -34,7 +34,7 @@ class SmallTests: XCTestCase {
     
     func testHasContent() async throws {
         do {
-            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
+            let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
@@ -44,7 +44,7 @@ class SmallTests: XCTestCase {
             
             XCTAssertNotNil(small)
             
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             
             XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
@@ -56,7 +56,7 @@ class SmallTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
+            let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
@@ -68,7 +68,7 @@ class SmallTests: XCTestCase {
             
             XCTAssertNotNil(small)
             
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             
             XCTAssertEqual(renderBlockContent.count, 2)
             XCTAssertEqual(
@@ -85,7 +85,7 @@ class SmallTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
+            let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my *formatted* `copyright` **text**.
@@ -95,7 +95,7 @@ class SmallTests: XCTestCase {
             
             XCTAssertNotNil(small)
             
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             
             XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
@@ -117,7 +117,7 @@ class SmallTests: XCTestCase {
     
     func testEmitsWarningWhenContainsStructuredMarkup() async throws {
         do {
-            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
+            let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
@@ -138,14 +138,14 @@ class SmallTests: XCTestCase {
             }
             
             XCTAssertNotNil(small)
-            XCTAssertEqual(problems, ["4: warning – org.swift.docc.HasOnlyKnownDirectives"])
+            XCTAssertEqual(diagnostics, ["4: warning – org.swift.docc.HasOnlyKnownDirectives"])
             XCTAssertEqual(renderBlockContent.count, 3)
         }
     }
     
     func testSmallInsideOfColumn() async throws {
         do {
-            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
                     @Column {
@@ -164,7 +164,7 @@ class SmallTests: XCTestCase {
             }
             
             XCTAssertNotNil(row)
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
                 renderBlockContent.first,

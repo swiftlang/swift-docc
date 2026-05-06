@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -101,13 +101,13 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -124,13 +124,13 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create article from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create article from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing article markup")
+        XCTAssertEqual(diagnostics.count, 0, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing article markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -149,13 +149,13 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -201,9 +201,9 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems) else {
-            XCTFail("Couldn't create article from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create article from markup: \(diagnostics)")
             return
         }
 

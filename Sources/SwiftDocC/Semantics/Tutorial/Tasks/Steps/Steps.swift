@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -34,19 +34,28 @@ public final class Steps: Semantic, DirectiveConvertible {
         self.content = content
     }
     
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Steps.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<Steps>(severityIfFound: .warning, allowedArguments: [])
-            .analyze(directive, children: directive.children, source: source, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialSection>(severityIfFound: .warning, allowedDirectives: [Step.directiveName])
-            .analyze(directive, children: directive.children, source: source, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
             
         let stepsContent: [Semantic] = directive.children.compactMap { child -> Semantic? in
             if let directive = child as? BlockDirective,
                 directive.name == Step.directiveName {
-                return Step(from: directive, source: source, for: bundle, featureFlags: featureFlags, problems: &problems)
+                return Step(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
             } else {
                 return MarkupContainer(child)
             }

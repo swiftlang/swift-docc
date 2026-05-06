@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -247,7 +247,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
-        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
@@ -350,7 +350,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
-        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
@@ -428,7 +428,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
-        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
@@ -555,7 +555,7 @@ class ExternalRenderNodeTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
-        XCTAssert(context.problems.isEmpty, "Unexpectedly found problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpectedly found problems: \(context.diagnostics.map(\.summary))")
 
         let renderIndexFolder = try createTemporaryDirectory()
         let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)

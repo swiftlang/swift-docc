@@ -19,7 +19,7 @@ struct LinkDestinationSummaryTests {
     @Test
     func summarizeSymbolPagesWithDifferentLanguageRepresentations() async throws {
         let context = try await loadFromDisk(catalogName: "GeometricalShapes")
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let moduleReference = try #require(context.soleRootModuleReference)
         
         func summary(for reference: ResolvedTopicReference, sourceLocation: SourceLocation = #_sourceLocation) throws -> LinkDestinationSummary {
@@ -278,7 +278,7 @@ struct LinkDestinationSummaryTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
@@ -505,7 +505,7 @@ struct LinkDestinationSummaryTests {
             ))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "APICollection" }))
         let node = try context.entity(with: reference)
@@ -542,7 +542,7 @@ struct LinkDestinationSummaryTests {
         }
 
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "ExplicitArticle" }))
         let node = try context.entity(with: reference)
@@ -604,7 +604,7 @@ struct LinkDestinationSummaryTests {
         }
         
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }))
         let node = try context.entity(with: reference)
@@ -684,7 +684,7 @@ struct LinkDestinationSummaryTests {
         }
         
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let node = try context.entity(with: reference)
@@ -740,7 +740,7 @@ struct LinkDestinationSummaryTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let node = try context.entity(with: reference)
@@ -777,7 +777,7 @@ struct LinkDestinationSummaryTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let node = try context.entity(with: reference)
@@ -855,7 +855,7 @@ struct LinkDestinationSummaryTests {
         }
 
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeTutorial" }))
         let node = try context.entity(with: reference)

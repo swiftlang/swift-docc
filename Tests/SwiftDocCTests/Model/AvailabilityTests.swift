@@ -39,7 +39,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         // Verify that the symbol has filled in iPadOS and Mac Catalyst from the iOS default availability.
         do {
@@ -92,7 +92,7 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -130,7 +130,7 @@ struct AvailabilityTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         #expect(node.metadata?.availability.count == 1)
         let directiveAvailability = node.metadata?.availability.first
@@ -181,7 +181,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -215,7 +215,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -263,7 +263,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         #expect(node.metadata?.availability.count == 1)
         let directiveAvailability = node.metadata?.availability.first
@@ -302,7 +302,7 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -337,7 +337,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -369,7 +369,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -405,7 +405,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -436,7 +436,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let firstNode  = try #require(context.documentationCache["first-symbol-id"])
         let secondNode = try #require(context.documentationCache["second-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
@@ -475,7 +475,7 @@ struct AvailabilityTests {
         }
 
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["macOS-only-symbol"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -518,7 +518,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -549,7 +549,7 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -596,7 +596,7 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         #expect(context.inputs.symbolGraphURLs.count == 3)
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
@@ -645,7 +645,7 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let firstNode  = try #require(context.documentationCache["first-symbol-id"])
         let secondNode = try #require(context.documentationCache["second-symbol-id"])
         
@@ -695,7 +695,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -722,7 +722,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -773,7 +773,7 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -812,7 +812,7 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -852,7 +852,7 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -884,7 +884,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -932,7 +932,7 @@ struct AvailabilityTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         #expect(node.metadata?.availability.count == 1)
         let directiveAvailability = node.metadata?.availability.first
@@ -973,7 +973,7 @@ struct AvailabilityTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
         #expect(node.metadata?.availability.count == 1)
@@ -1027,7 +1027,7 @@ struct AvailabilityTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         #expect(node.metadata?.availability.count == 2)
         let iOSDirectiveAvailability = node.metadata?.availability.first
@@ -1075,7 +1075,7 @@ struct AvailabilityTests {
             """)
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
         #expect(node.metadata?.availability.count == 2)
@@ -1159,7 +1159,7 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -1188,7 +1188,7 @@ struct AvailabilityTests {
             ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -1239,7 +1239,7 @@ struct AvailabilityTests {
         }
         let context = try await load(catalog: catalog)
         withKnownIssue("Articles don't display or consider DeprecationSummary information (rdar://173688303)") {
-            #expect(context.problems.map(\.diagnostic.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+            #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
         }
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
@@ -1306,7 +1306,7 @@ struct AvailabilityTests {
             "macOS": .init(.init(10, 14, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -1357,7 +1357,7 @@ struct AvailabilityTests {
             "macOS": .init(.init(10, 14, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
@@ -1418,7 +1418,7 @@ struct AvailabilityTests {
             "macOS": .init(.init(11, 2, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -1466,7 +1466,7 @@ struct AvailabilityTests {
             "macOS": .init(.init(11, 2, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
@@ -1530,7 +1530,7 @@ struct AvailabilityTests {
             "macOS": .init(.init(10, 14, 0), beta: true),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -1579,7 +1579,7 @@ struct AvailabilityTests {
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -1629,7 +1629,7 @@ struct AvailabilityTests {
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         #expect(node.metadata?.availability.count == 2)
         do {
@@ -1679,7 +1679,7 @@ struct AvailabilityTests {
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
@@ -1725,7 +1725,7 @@ struct AvailabilityTests {
             "Something": .init(.init(1, 2, 3), beta: customPlatformIsBeta),
         ]
         let context = try await load(catalog: catalog, configuration: configuration)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
         let node = try #require(context.documentationCache[reference])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
@@ -1770,7 +1770,7 @@ struct AvailabilityTests {
         }
         
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
@@ -1837,7 +1837,7 @@ struct AvailabilityTests {
             ]])
         }
         let context = try await load(catalog: catalog)
-        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))

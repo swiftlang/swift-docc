@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ import Markdown
 
 class TabNavigatorTests: XCTestCase {
     func testNoTabs() async throws {
-        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
+        let (renderBlockContent, diagnostics, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator
             """
@@ -25,7 +25,7 @@ class TabNavigatorTests: XCTestCase {
         XCTAssertNotNil(tabNavigator)
         
         XCTAssertEqual(
-            problems,
+            diagnostics,
             ["1: warning – org.swift.docc.HasAtLeastOne<TabNavigator, Tab>"]
         )
         
@@ -37,7 +37,7 @@ class TabNavigatorTests: XCTestCase {
     }
     
     func testEmptyTab() async throws {
-        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
+        let (renderBlockContent, diagnostics, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator {
                 @Tab("hiya") {
@@ -49,7 +49,7 @@ class TabNavigatorTests: XCTestCase {
         
         XCTAssertNotNil(tabNavigator)
         XCTAssertEqual(
-            problems,
+            diagnostics,
             ["2: warning – org.swift.docc.Tab.HasContent"]
         )
         
@@ -64,7 +64,7 @@ class TabNavigatorTests: XCTestCase {
     }
     
     func testInvalidParametersAndContent() async throws {
-        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
+        let (renderBlockContent, diagnostics, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator(tabs: 3) {
                 @Tab("hi") {
@@ -89,7 +89,7 @@ class TabNavigatorTests: XCTestCase {
         XCTAssertNotNil(tabNavigator)
         
         XCTAssertEqual(
-            problems,
+            diagnostics,
             [
                 "1: warning – org.swift.docc.UnknownArgument",
                 "9: warning – org.swift.docc.UnknownArgument",
@@ -128,7 +128,7 @@ class TabNavigatorTests: XCTestCase {
     }
     
     func testNestedStructuredMarkup() async throws {
-        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
+        let (renderBlockContent, diagnostics, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator {
                 @Tab("hi") {
@@ -161,7 +161,7 @@ class TabNavigatorTests: XCTestCase {
         XCTAssertNotNil(tabNavigator)
 
         // One warning is expected. This empty context has no snippets so the "Snippets/Snippets/MySnippet" path should fail to resolve.
-        XCTAssertEqual(problems, [
+        XCTAssertEqual(diagnostics, [
             "23: warning – org.swift.docc.unresolvedSnippetPath"
         ])
 
