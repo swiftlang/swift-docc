@@ -28,7 +28,7 @@ public extension Checker {
     }
 }
 
-// Default implementation so that existing conformances  by the additional initializer parameter in the protocol requirements.
+// Default implementation so that existing conformances don't break because they don't have the new `diagnostics` protocol requirement.
 public extension Checker {
     @available(*, deprecated) // This needs to be marked deprecated because it calls deprecated API.
     var diagnostics: [Diagnostic] {
