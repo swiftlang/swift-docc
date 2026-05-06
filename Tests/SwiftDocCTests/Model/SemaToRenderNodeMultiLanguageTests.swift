@@ -878,6 +878,78 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             languages: ["swift", "occ"],
             defaultLanguage: .swift
         )
+
+        // Verify the root module's auto-curated topics section only contains articles available in the language (rdar://161926175).
+        let rootRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageFramework")
+
+        let swiftArticlesSection = try XCTUnwrap(
+            rootRenderNode.topicSections.first(where: { $0.title == "Articles" })
+        )
+        XCTAssertEqual(
+            swiftArticlesSection.identifiers.sorted(),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ArticleWithoutSupportedLanguages",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftAndObjCArticle",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftArticle",
+            ]
+        )
+
+        let objcRenderNode = try renderNodeApplyingObjectiveCVariantOverrides(to: rootRenderNode)
+        let objcArticlesSection = try XCTUnwrap(
+            objcRenderNode.topicSections.first(where: { $0.title == "Articles" })
+        )
+        XCTAssertEqual(
+            objcArticlesSection.identifiers.sorted(),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ArticleWithoutSupportedLanguages",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ObjCArticle",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftAndObjCArticle",
+            ]
+        )
+    }
+
+    func testEmptyAutomaticTaskGroupIsOmitted() async throws {
+        let (_, context) = try await loadBundle(catalog:
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-swift.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-class", language: .swift, kind: .class, pathComponents: ["SomeClass"]),
+                ])),
+                JSONFile(name: "ModuleName-objc.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-class", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"]),
+                ])),
+                TextFile(name: "ModuleName.md", utf8Content: """
+                # ``ModuleName``
+
+                A mixed-language framework with Swift-only articles.
+                """),
+                TextFile(name: "SwiftOnlyArticle.md", utf8Content: """
+                # SwiftOnlyArticle
+
+                @Metadata {
+                    @SupportedLanguage(swift)
+                }
+
+                This article is only available in Swift.
+                """),
+            ])
+        )
+
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        let converter = DocumentationNodeConverter(context: context)
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let swiftRenderNode = try converter.convert(context.entity(with: moduleReference))
+
+        XCTAssertNotNil(
+            swiftRenderNode.topicSections.first(where: { $0.title == "Articles" }),
+            "The Swift variant should have a topics section"
+        )
+
+        let objcRenderNode = try renderNodeApplyingObjectiveCVariantOverrides(to: swiftRenderNode)
+        XCTAssertNil(
+            objcRenderNode.topicSections.first(where: { $0.title == "Articles" }),
+            "The ObjC variant should not have a topics section as all articles are Swift-only"
+        )
     }
 
     func testAutomaticSeeAlsoSectionElementLimit() async throws {

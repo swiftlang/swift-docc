@@ -804,25 +804,6 @@ class DocumentationContextTests: XCTestCase {
         let anotherEnumSymbol = try XCTUnwrap(anotherEnumNode.semantic as? Symbol)
         XCTAssertEqual(anotherEnumSymbol.abstract?.plainText, "A documentation extension for an unrelated enum.", "The abstract should be from the symbol's documentation extension.")
     }
-
-    func testGraphChecks() async throws {
-        var configuration = DocumentationContext.Configuration()
-        configuration.topicAnalysisConfiguration.additionalChecks.append(
-            { (context, reference) -> [Diagnostic] in
-                [Diagnostic(source: reference.url, severity: DiagnosticSeverity.error, range: nil, identifier: "com.tests.testGraphChecks", summary: "test error")]
-            }
-        )
-        
-        let catalog = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "Root.md", utf8Content: """
-            # Some root page
-            """)
-        ])
-        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
-        
-        /// Verify that the custom check added diagnostics to the context.
-        XCTAssert(context.diagnostics.contains(where: { $0.identifier == "com.tests.testGraphChecks" }))
-    }
     
     func testSupportedAssetTypes() throws {
         for ext in ["jpg", "jpeg", "png", "JPG", "PNG", "PnG", "jPg", "svg", "gif"] {

@@ -2426,11 +2426,9 @@ public class DocumentationContext {
             }
         }
     }
-    @available(*, deprecated, renamed: "AdditionalTopicGraphCheck", message: "Use 'AdditionalTopicGraphCheck' instead. This deprecated API will be removed after 6.5 is released.")
+    /// A closure type getting the information about a reference in a context and returns any possible problems with it.
+    @available(*, deprecated, message: "This alias is unused. This deprecated API will be removed after 6.4 is released.")
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
-    
-    /// A closure type getting the information about a reference in a context and returns the diagnostics that describe any possible issues about the reference.
-    typealias AdditionalTopicGraphCheck = (DocumentationContext, ResolvedTopicReference) -> [Diagnostic]
     
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
     /// - Parameters:
@@ -2756,15 +2754,7 @@ public class DocumentationContext {
      Analysis that runs after all nodes are successfully registered in the context.
      Useful for checks that need the complete node graph.
      */
-    func topicGraphGlobalAnalysis() {
-        // Run any checks added to the context.
-        let diagnostics = knownIdentifiers.flatMap { reference in
-            return configuration.topicAnalysisConfiguration.additionalChecks.flatMap { check in
-                return check(self, reference)
-            }
-        }
-        diagnosticEngine.emit(diagnostics)
-        
+    private func topicGraphGlobalAnalysis() {
         // Run pre-defined global analysis.
         for node in topicGraph.nodes.values {
             switch node.kind {
@@ -2792,7 +2782,7 @@ public class DocumentationContext {
      qualified path, instead of a file name, the context will fail to find that resource.
 
      - Returns: A `Foundation.Data` object with the data for the given ``ResourceReference``.
-     - Throws: ``ContextError/notFound(_:)` if a resource with the given was not found.
+     - Throws: ``ContextError/notFound(_:)`` if a resource with the given was not found.
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
         guard let asset = assetManagers[identifier.bundleID]?.allData(named: identifier.path) else {
@@ -3099,7 +3089,7 @@ extension DocumentationContext {
     /// The nodes that are allowed to be roots in the topic graph.
     static var allowedRootNodeKinds: [DocumentationNode.Kind] = [.tutorialTableOfContents, .module]
 
-    func analyzeTopicGraph() {
+    private func analyzeTopicGraph() {
         // Find all nodes that are loose in the graph and have no parent but aren't supposed to
         let unexpectedRoots = topicGraph.nodes.values.filter { node in
             return !DocumentationContext.allowedRootNodeKinds.contains(node.kind)
@@ -3117,7 +3107,7 @@ extension DocumentationContext {
         diagnosticEngine.emit(diagnostics)
     }
         
-    func analyzeAlternateRepresentations() {
+    private func analyzeAlternateRepresentations() {
         var diagnostics = [Diagnostic]()
 
         func listSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> String {
