@@ -415,6 +415,8 @@ extension NavigatorIndex.PageType {
             return "container"
         case .groupMarker:
             return "groupMarker"
+        case ._nonFrozenEnum_useDefaultCase:
+            fatalError("Never use '_nonFrozenEnum_useDefaultCase' as a real case.")
         }
     }
 }

@@ -298,6 +298,12 @@ public class NavigatorIndex {
         case languageGroup = 127
         case container = 254
         case groupMarker = 255 // UInt8.max
+
+        // This empty-marker case is here because non-frozen enums are only available when Library Evolution is enabled,
+        // which is not available to Swift Packages without unsafe flags (rdar://78773361).
+        // This can be removed once that is available and applied to Swift-DocC (rdar://89033233).
+        @available(*, deprecated, message: "this enum is non-frozen and may be expanded in the future; add a `default` case instead of matching this one")
+        case _nonFrozenEnum_useDefaultCase = 128
                 
         /// Initialize a page type from a `symbolKind` returning the symbol type.
         init(symbolKind: String) {
@@ -358,6 +364,8 @@ public class NavigatorIndex {
                     .instanceVariable, .subscript, .typeMethod, .typeProperty, .propertyListKey,
                     .httpRequest, .dictionarySymbol, .propertyListKeyReference, .namespace:
                 return true
+            case ._nonFrozenEnum_useDefaultCase:
+                fatalError("Never use '_nonFrozenEnum_useDefaultCase' as a real case.")
             }
         }
     }
