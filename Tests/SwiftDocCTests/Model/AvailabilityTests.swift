@@ -1846,6 +1846,51 @@ struct AvailabilityTests {
         #expect(renderNode.metadata.isBeta == false)
     }
     
+    @Test
+    func displaysCustomDefaultPlatformsInAlphabeticalOrder() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
+            ]))
+            
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .init(rawValue: "CCC"), platformVersion: "1.2.3"),
+                .init(platformName: .init(rawValue: "AAA"), platformVersion: "1.2.3"),
+                .init(platformName: .init(rawValue: "BBB"), platformVersion: "1.2.3"),
+                .init(platformName: .iOS,   platformVersion:  "9.2"),
+                .init(platformName: .macOS, platformVersion: "10.14"),
+            ]])
+            
+            TextFile(name: "SomeArticle.md", utf8Content: "# Some article")
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        // Verify the symbol
+        do {
+            let node = try #require(context.documentationCache["some-symbol-id"])
+            let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+            let renderNode = try #require(converter.renderNode(for: node))
+            let renderPlatforms = try #require(renderNode.metadata.platforms)
+            
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "AAA", "BBB", "CCC"])
+        }
+        
+        // Verify the article
+        do {
+            let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+            let node = try #require(context.documentationCache[reference])
+            let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+            let renderNode = try #require(converter.renderNode(for: node))
+            withKnownIssue("Articles don't display default availability (rdar://173688303)") {
+                let renderPlatforms = try #require(renderNode.metadata.platforms)
+                
+                #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "AAA", "BBB", "CCC"])
+            }
+        }
+    }
+    
     // MARK: Multiple language representations
     
     @Test(arguments: ["7.3", nil])
