@@ -864,6 +864,48 @@ struct AvailabilityTests {
         }
     }
     
+    @Test(arguments: Self.allMainPlatforms)
+    func symbolDisplaysAppExtensionsInterspersedAmongPlatforms(_ platform: SymbolGraph.Platform) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability:
+                    // In-source availability attributes for many platforms and their respective app extensions
+                    zip(1..., ["iOS", "macCatalyst", "macOS", "tvOS", "watchOS"]).flatMap { (version: Int, name: String) in
+                    [
+                        .init(domainName: name,                  introduced: .init(major: version, minor: version, patch: 0), deprecated: nil),
+                        .init(domainName: "\(name)AppExtension", introduced: .init(major: version, minor: version, patch: 0), deprecated: nil),
+                    ]
+                })
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == [
+            "iOS",          "iOS App Extension",
+            "iPadOS",
+            "Mac Catalyst", "Mac Catalyst App Extension",
+            "macOS",        "macOS App Extension",
+            "tvOS",         "tvOS App Extension",
+            "watchOS",      "watchOS App Extension",
+        ])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"                        })?.introduced == "1.1")
+        #expect(renderPlatforms.first(where: { $0.name == "iOS App Extension"          })?.introduced == "1.1")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst"               })?.introduced == "2.2")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst App Extension" })?.introduced == "2.2")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"                      })?.introduced == "3.3")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS App Extension"        })?.introduced == "3.3")
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS"                       })?.introduced == "4.4")
+        #expect(renderPlatforms.first(where: { $0.name == "tvOS App Extension"         })?.introduced == "4.4")
+        #expect(renderPlatforms.first(where: { $0.name == "watchOS"                    })?.introduced == "5.5")
+        #expect(renderPlatforms.first(where: { $0.name == "watchOS App Extension"      })?.introduced == "5.5")
+    }
+    
     // MARK: Deprecations
     
     @Test(arguments: Self.allMainPlatforms)
