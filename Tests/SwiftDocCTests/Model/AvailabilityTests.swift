@@ -534,6 +534,22 @@ struct AvailabilityTests {
     // MARK: In-Source Availability
     
     @Test(arguments: Self.allMainPlatforms)
+    func symbolWithoutAvailabilityAttributesDoesNotDisplayAnyPlatforms(_ platform: SymbolGraph.Platform) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [])
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        #expect(renderNode.metadata.platforms?.isEmpty != false, "Expecting either `nil` or empty platforms")
+    }
+    
+    @Test(arguments: Self.allMainPlatforms)
     func displaysInSourceAvailabilityForAllPlatformsWhenThereIsOnlyOneSymbolGraph(_ platform: SymbolGraph.Platform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
