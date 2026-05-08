@@ -351,6 +351,8 @@ extension NavigatorIndex.PageType {
             return RenderNode.Kind.overview.rawValue
         case .resources:
             return "resources"
+        case .collection:
+            return "collection"
         case .symbol:
             return  RenderNode.Kind.symbol.rawValue
         case .framework:
@@ -413,6 +415,8 @@ extension NavigatorIndex.PageType {
             return "container"
         case .groupMarker:
             return "groupMarker"
+        case ._nonFrozenEnum_useDefaultCase:
+            fatalError("Never use '_nonFrozenEnum_useDefaultCase' as a real case.")
         }
     }
 }
