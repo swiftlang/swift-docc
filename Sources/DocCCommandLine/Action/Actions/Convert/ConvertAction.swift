@@ -252,9 +252,9 @@ public struct ConvertAction: AsyncAction {
             )
         }
         
-        // The converter has already emitted its problems to the diagnostic engine.
-        // Track additional problems separately to avoid repeating the converter's problems.
-        var postConversionProblems: [Problem] = []
+        // The converter has already emitted its diagnostics to the diagnostic engine.
+        // Track additional diagnostics separately to avoid repeating the converter's diagnostics.
+        var postConversionDiagnostics: [Diagnostic] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
         // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
@@ -364,35 +364,32 @@ public struct ConvertAction: AsyncAction {
             signposter.endInterval("Process", processInterval)
         }
 
-        var didEncounterError = context.problems.containsErrors
+        var didEncounterError = context.diagnosticEngine.diagnostics.containsAnyError
         let hasTutorial = context.knownPages.contains(where: {
             guard let kind = try? context.entity(with: $0).kind else { return false }
             return kind == .tutorial || kind == .tutorialArticle
         })
-        // Warn the user if the catalog is a tutorial but does not contains a table of contents
-        // and provide template content to fix this problem.
+        // Warn the user if the catalog is a tutorial but does not contains a table of contents and provide template content to fix this issue.
         if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
-            var replacements = [SwiftDocC.Replacement]()
+            var replacements = [Solution.Replacement]()
             if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(inputs.displayName)[tableOfContentsFilename] {
                 replacements.append(
-                    Replacement(
+                    .init(
                         range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
                         replacement: tableOfContentsTemplate
                     )
                 )
             }
-            postConversionProblems.append(
-                Problem(
-                    diagnostic: Diagnostic(
-                        source: source,
-                        severity: .warning,
-                        identifier: "MissingTableOfContentsPage",
-                        summary: "Missing tutorial table of contents (`@Tutorials`) page",
-                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order."
-                    ),
-                    possibleSolutions: [
+            postConversionDiagnostics.append(
+                Diagnostic(
+                    source: source,
+                    severity: .warning,
+                    identifier: "MissingTableOfContentsPage",
+                    summary: "Missing tutorial table of contents (`@Tutorials`) page",
+                    explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order.",
+                    solutions: [
                         Solution(
                             summary: "Create a `@Tutorials` table of contents page",
                             replacements: replacements
@@ -402,7 +399,7 @@ public struct ConvertAction: AsyncAction {
             )
         }
         
-        // If we're building a navigation index, finalize the process and collect encountered problems.
+        // If we're building a navigation index, finalize the process and collect encountered diagnostics.
         if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
             
@@ -411,13 +408,13 @@ public struct ConvertAction: AsyncAction {
             let indexerProblems = signposter.withIntervalSignpost("Finalize navigator index") {
                 indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             }
-            postConversionProblems.append(contentsOf: indexerProblems)
+            postConversionDiagnostics.append(contentsOf: indexerProblems)
             
             benchmark(end: finalizeNavigationIndexMetric)
         }
         
-        // Output to the user the problems encountered during the convert process
-        diagnosticEngine.emit(postConversionProblems)
+        // Output the diagnostics encountered during the convert process to the user.
+        diagnosticEngine.emit(postConversionDiagnostics)
 
         // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
         // New tasks and computations should be added above this line so that they're included in the benchmark.
@@ -425,14 +422,14 @@ public struct ConvertAction: AsyncAction {
         
         if !didEncounterError {
             let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
-            postConversionProblems.append(contentsOf: coverageResults.problems)
+            postConversionDiagnostics.append(contentsOf: coverageResults.diagnostics)
         }
         
-        didEncounterError = didEncounterError || postConversionProblems.containsErrors
+        didEncounterError = didEncounterError || postConversionDiagnostics.containsAnyError
         
-        // We should generally only replace the current build output if we didn't encounter errors
-        // during conversion. However, if the `emitDigest` flag is true,
-        // we should replace the current output with our digest of problems.
+        // We should generally only replace the current build output if we didn't encounter errors during conversion.
+        // However, if the `emitDigest` flag is true, we should replace the current output with our digest of diagnostics.
+        // FIXME: We no longer output a diagnostics file in the output. We can remove the `emitDigest` check below.
         if !didEncounterError || emitDigest {
             try moveOutput(from: temporaryFolder, to: targetDirectory)
         }

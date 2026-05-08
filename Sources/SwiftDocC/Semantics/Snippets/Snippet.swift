@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -62,9 +62,9 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
         super.init()
     }
     
-    func validate(problems: inout [Problem], source: URL?) -> Bool {
+    func validate(diagnostics: inout [Diagnostic], source: URL?) -> Bool {
         if path.isEmpty {
-            problems.append(Problem(diagnostic: Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.EmptySnippetLink", summary: "No path provided to snippet; use a symbol link path to a known snippet"), possibleSolutions: []))
+            diagnostics.append(Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.EmptySnippetLink", summary: "No path provided to snippet; use a symbol link path to a known snippet"))
             return false
         }
         

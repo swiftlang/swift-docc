@@ -19,7 +19,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     var outputStream: any TextOutputStream
     public var formattingOptions: DiagnosticFormattingOptions
     private var diagnosticFormatter: any DiagnosticConsoleFormatter
-    private var problems: [Problem] = []
+    private var diagnostics: [Diagnostic] = []
 
     /// Creates a new instance of this class with the provided output stream.
     /// - Parameters:
@@ -53,13 +53,13 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         )
     }
 
-    public func receive(_ problems: [Problem]) {
+    public func receive(_ diagnostics: [Diagnostic]) {
         if formattingOptions.contains(.formatConsoleOutputForTools) {
             // Add a newline after each formatter description, including the last one.
-            let text = problems.map { diagnosticFormatter.formattedDescription(for: $0).appending("\n") }.joined()
+            let text = diagnostics.map { diagnosticFormatter.formattedDescription(for: $0).appending("\n") }.joined()
             outputStream.write(text)
         } else {
-            self.problems.append(contentsOf: problems)
+            self.diagnostics.append(contentsOf: diagnostics)
         }
     }
     
@@ -67,11 +67,11 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         if formattingOptions.contains(.formatConsoleOutputForTools) {
             // For tools, the console writer writes each diagnostic as they are received.
         } else {
-            let text = self.diagnosticFormatter.formattedDescription(for: problems)
+            let text = self.diagnosticFormatter.formattedDescription(for: diagnostics)
             outputStream.write(text)
             outputStream.write("\n")
         }
-        problems = [] // `flush()` is called more than once. Don't emit the same problems again.
+        diagnostics = [] // `flush()` is called more than once. Don't emit the same diagnostics again.
         self.diagnosticFormatter.finalize()
     }
     
@@ -92,21 +92,21 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 // MARK: Formatted descriptions
 
 extension DiagnosticConsoleWriter {
+    @available(*, deprecated, message: "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.")
     public static func formattedDescription(for problems: some Sequence<Problem>, options: DiagnosticFormattingOptions = []) -> String {
-        formattedDescription(for: problems, options: options, fileManager: FileManager.default)
+        formattedDescription(for: problems.map(\.diagnostic), options: options, fileManager: FileManager.default)
     }
-    package static func formattedDescription(for problems: some Sequence<Problem>, options: DiagnosticFormattingOptions = [], fileManager: any FileManagerProtocol) -> String {
-        return problems.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
+    public static func formattedDescription(for diagnostics: some Sequence<Diagnostic>, options: DiagnosticFormattingOptions = []) -> String {
+        formattedDescription(for: diagnostics, options: options, fileManager: FileManager.default)
+    }
+    package static func formattedDescription(for diagnostics: some Sequence<Diagnostic>, options: DiagnosticFormattingOptions = [], fileManager: any FileManagerProtocol) -> String {
+        diagnostics.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
     }
     
+    @available(*, deprecated, message: "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.")
     public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
-        formattedDescription(for: problem, options: options, fileManager: FileManager.default)
+        formattedDescription(for: problem.diagnostic, options: options, fileManager: FileManager.default)
     }
-    package static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: any FileManagerProtocol = FileManager.default) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, dataProvider: fileManager)
-        return diagnosticFormatter.formattedDescription(for: problem)
-    }
-    
     public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: diagnostic, options: options, fileManager: FileManager.default)
     }
@@ -119,15 +119,14 @@ extension DiagnosticConsoleWriter {
 protocol DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions { get set }
     
-    func formattedDescription(for problems: some Sequence<Problem>) -> String
-    func formattedDescription(for problem: Problem) -> String
+    func formattedDescription(for diagnostics: some Sequence<Diagnostic>) -> String
     func formattedDescription(for diagnostic: Diagnostic) -> String
     func finalize()
 }
 
 extension DiagnosticConsoleFormatter {
-    func formattedDescription(for problems: some Sequence<Problem>) -> String {
-        return problems.map { formattedDescription(for: $0) }.joined(separator: "\n")
+    func formattedDescription(for diagnostics: some Sequence<Diagnostic>) -> String {
+        diagnostics.map { formattedDescription(for: $0) }.joined(separator: "\n")
     }
 }
 
@@ -136,20 +135,21 @@ extension DiagnosticConsoleFormatter {
 struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions
     
-    func formattedDescription(for problem: Problem) -> String {
-        guard let source = problem.diagnostic.source else {
-            return formattedDescription(for: problem.diagnostic)
-        }
+    func formattedDescription(for diagnostic: Diagnostic) -> String {
+        var description = formattedDiagnosticSummary(diagnostic)
         
-        var description = formattedDiagnosticSummary(problem.diagnostic)
+        guard let source = diagnostic.source else {
+            description += formattedDiagnosticDetails(diagnostic)
+            return description
+        }
         
         // Since solution summaries aren't included in the fixit string we include them in the diagnostic
         // summary so that the solution information isn't dropped.
         
-        if !problem.possibleSolutions.isEmpty, description.last?.isPunctuation == false {
+        if !diagnostic.solutions.isEmpty, description.last?.isPunctuation == false {
             description += "."
         }
-        for solution in problem.possibleSolutions {
+        for solution in diagnostic.solutions {
             description += " \(solution.summary)"
             if description.last?.isPunctuation == false {
                 description += "."
@@ -157,10 +157,10 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         }
         
         // Add explanations and notes
-        description += formattedDiagnosticDetails(problem.diagnostic)
+        description += formattedDiagnosticDetails(diagnostic)
         
         // Only one fixit (but multiple related replacements) can be a presented with each diagnostic
-        if problem.possibleSolutions.count == 1, let solution = problem.possibleSolutions.first {
+        if diagnostic.solutions.count == 1, let solution = diagnostic.solutions.first {
             description += solution.replacements.reduce(into: "") { accumulation, replacement in
                 let range = replacement.range
                 accumulation +=  "\n\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)-\(range.upperBound.line):\(range.upperBound.column): fixit: \(replacement.replacement)"
@@ -172,10 +172,6 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 
     func finalize() {
         // Nothing to do after all diagnostics have been formatted.
-    }
-    
-    public func formattedDescription(for diagnostic: Diagnostic) -> String {
-        return formattedDiagnosticSummary(diagnostic) + formattedDiagnosticDetails(diagnostic)
     }
     
     private func formattedDiagnosticSummary(_ diagnostic: Diagnostic) -> String {
@@ -213,7 +209,7 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         return result
     }
     
-    private func formattedDescription(for note: DiagnosticNote) -> String {
+    private func formattedDescription(for note: Diagnostic.Note) -> String {
         let location = "\(note.source.path):\(note.range.lowerBound.line):\(note.range.lowerBound.column)"
         return "\(location): note: \(note.message)"
     }
@@ -243,14 +239,14 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         self.dataProvider = dataProvider
     }
     
-    func formattedDescription(for problems: some Sequence<Problem>) -> String {
-        let sortedProblems = problems.sorted { lhs, rhs in
-            guard let lhsSource = lhs.diagnostic.source,
-                  let rhsSource = rhs.diagnostic.source
-            else { return lhs.diagnostic.source  == nil }
+    func formattedDescription(for diagnostics: some Sequence<Diagnostic>) -> String {
+        let sortedProblems = diagnostics.sorted { lhs, rhs in
+            guard let lhsSource = lhs.source,
+                  let rhsSource = rhs.source
+            else { return lhs.source  == nil }
             
-            guard let lhsRange = lhs.diagnostic.range,
-                  let rhsRange = rhs.diagnostic.range
+            guard let lhsRange = lhs.range,
+                  let rhsRange = rhs.range
             else { return lhsSource.path < rhsSource.path }
             
             if lhsSource.path == rhsSource.path {
@@ -263,14 +259,10 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         return sortedProblems.map { formattedDescription(for: $0) }.joined(separator: "\n\n")
     }
 
-    func formattedDescription(for problem: Problem) -> String {
-        formattedDiagnosticsSummary(for: problem.diagnostic) +
-        formattedDiagnosticDetails(for: problem.diagnostic) +
-        formattedDiagnosticSource(for: problem.diagnostic, with: problem.possibleSolutions)
-    }
-
     func formattedDescription(for diagnostic: Diagnostic) -> String {
-        formattedDescription(for: Problem(diagnostic: diagnostic))
+        formattedDiagnosticsSummary(for: diagnostic) +
+        formattedDiagnosticDetails(for: diagnostic) +
+        formattedDiagnosticSource(for: diagnostic, with: diagnostic.solutions)
     }
 
     func finalize() {

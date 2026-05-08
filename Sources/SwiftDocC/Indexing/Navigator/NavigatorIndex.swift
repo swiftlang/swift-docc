@@ -507,8 +507,13 @@ extension NavigatorIndex {
         /// The navigator index.
         public private(set) var navigatorIndex: NavigatorIndex?
         
-        /// An array holding all problems encountered during the index build.
-        public private(set) var problems = [Problem]()
+        @available(*, deprecated, message: "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.")
+        public var problems: [Problem] {
+            diagnostics.map { Problem(diagnostic: $0) }
+        }
+        
+        /// An array holding all diagnostics encountered during the index build.
+        public private(set) var diagnostics = [Diagnostic]()
         
         /// The number of items processed during a build.
         public private(set) var counter = 0
@@ -606,9 +611,9 @@ extension NavigatorIndex {
                 navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, bundleIdentifier: bundleIdentifier)
             } catch {
                 // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                problems.append(error.problem(source: outputURL,
-                                              severity: .error,
-                                              summaryPrefix: "The folder couldn't be processed correctly."))
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .error,
+                                                        summaryPrefix: "The folder couldn't be processed correctly."))
             }
             
             // Setup the default known values for Platforms and Languages
@@ -1049,11 +1054,8 @@ extension NavigatorIndex {
                     try renderIndexData.write(to: jsonNavigatorIndexURL)
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    self.problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to write render index JSON to '\(jsonNavigatorIndexURL)': "
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to write render index JSON to '\(jsonNavigatorIndexURL)': "
                         )
                     )
                 }
@@ -1077,11 +1079,8 @@ extension NavigatorIndex {
                     navigatorIndex.environment = environment
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to create navigator index LMDB environment: "
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to create navigator index LMDB environment: "
                         )
                     )
                     
@@ -1100,12 +1099,8 @@ extension NavigatorIndex {
                     navigatorIndex.database = database
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to create navigator index LMDB database: "
-                        )
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to create navigator index LMDB database: ")
                     )
                     
                     return
@@ -1121,12 +1116,8 @@ extension NavigatorIndex {
                     navigatorIndex.information = information
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to create navigator index LMDB information database: "
-                        )
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to create navigator index LMDB information database: ")
                     )
                     
                     return
@@ -1142,12 +1133,8 @@ extension NavigatorIndex {
                     navigatorIndex.availability = availability
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to navigator index LMDB availability database: "
-                        )
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to navigator index LMDB availability database: ")
                     )
                     
                     return
@@ -1160,12 +1147,8 @@ extension NavigatorIndex {
                 }
             } catch {
                 // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                problems.append(
-                    error.problem(
-                        source: nil,
-                        severity: .error,
-                        summaryPrefix: "Failed to write navigator index availability information: "
-                    )
+                diagnostics.append(
+                    error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to write navigator index availability information: ")
                 )
             }
             
@@ -1207,22 +1190,22 @@ extension NavigatorIndex {
                 catch LMDB.Database.NodeError.errorForPath(let path, let error) {
                     if (error as? LMDB.Error) == LMDB.Error.keyExists {
                         // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                        self.problems.append(error.problem(source: self.outputURL,
-                                                           severity: .information,
-                                                           summaryPrefix: "Duplicated path found for \(path)"))
+                        diagnostics.append(error.makeDiagnostic(source: self.outputURL,
+                                                                severity: .information,
+                                                                summaryPrefix: "Duplicated path found for \(path)"))
                     } else {
                         // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                        self.problems.append(error.problem(source: self.outputURL,
-                                                           severity: .warning,
-                                                           summaryPrefix: "The navigator index failed to map the data: \(error.localizedDescription)"))
+                        diagnostics.append(error.makeDiagnostic(source: self.outputURL,
+                                                                severity: .warning,
+                                                                summaryPrefix: "The navigator index failed to map the data: \(error.localizedDescription)"))
                     }
                 }
 
             } catch {
                 // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                problems.append(error.problem(source: outputURL,
-                                              severity: .warning,
-                                              summaryPrefix: "Couldn't write the navigator tree to the disk"))
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .warning,
+                                                        summaryPrefix: "Couldn't write the navigator tree to the disk"))
             }
             
             // Write the availability index to the disk
@@ -1232,9 +1215,9 @@ extension NavigatorIndex {
                 try encoded.write(to: outputURL.appendingPathComponent("availability.index"))
             } catch {
                 // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                problems.append(error.problem(source: outputURL,
-                                              severity: .warning,
-                                              summaryPrefix: "Couldn't write the availability index to the disk"))
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .warning,
+                                                        summaryPrefix: "Couldn't write the availability index to the disk"))
             }
             
             // Insert the data about bundle identifier and items processed.
@@ -1247,38 +1230,38 @@ extension NavigatorIndex {
                 try txn.commit()
             } catch {
                 // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                problems.append(error.problem(source: outputURL,
-                                              severity: .error,
-                                              summaryPrefix: "LMDB failed to store the content"))
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .error,
+                                                        summaryPrefix: "LMDB failed to store the content"))
             }
                         
             // FIXME: These aren't about issues with the developer's documentation. We should either remove these or find a different means to pass this information.
-            var diagnostic = Diagnostic(source: outputURL,
-                                             severity: .information,
-                                             range: nil,
-                                             identifier: "org.swift.docc.index",
-                                             summary: "Indexed \(counter) entities")
-            var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            problems.append(problem)
+            diagnostics.append(Diagnostic(
+                source: outputURL,
+                severity: .information,
+                range: nil,
+                identifier: "org.swift.docc.index",
+                summary: "Indexed \(counter) entities"
+            ))
             
             let availabilities = navigatorIndex.availabilityIndex.indexed
-            diagnostic = Diagnostic(source: outputURL,
-                                         severity: .information,
-                                         range: nil,
-                                         identifier: "org.swift.docc.index",
-                                         summary: "Created index with \(availabilities)")
-            problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            problems.append(problem)
+            diagnostics.append(Diagnostic(
+                source: outputURL,
+                severity: .information,
+                range: nil,
+                identifier: "org.swift.docc.index",
+                summary: "Created index with \(availabilities)"
+            ))
             
             // FIXME: This could be somewhat slow to compute and won't be displayed with the default diagnostic level.
             let treeString = root.dumpTree()
-            diagnostic = Diagnostic(source: outputURL,
-                                         severity: .information,
-                                         range: nil,
-                                         identifier: "org.swift.docc.index",
-                                         summary: "Index tree:\n\(treeString)")
-            problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            problems.append(problem)
+            diagnostics.append(Diagnostic(
+                source: outputURL,
+                severity: .information,
+                range: nil,
+                identifier: "org.swift.docc.index",
+                summary: "Index tree:\n\(treeString)"
+            ))
         }
 
         /// Find an external node for the reference that is not of a symbol kind. The source language
@@ -1287,7 +1270,7 @@ extension NavigatorIndex {
         /// since non-symbol kinds (articles, tutorials, etc.) are not tied to a language.
         // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
         // FIXME: This should ideally be solved by making the article language-agnostic rather
-        // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+        // than accommodating the "Swift" language and special-casing for non-symbol nodes.
         func externalNonSymbolNode(for reference: NavigatorIndex.Identifier) -> NavigatorTree.Node? {
             identifierToNode
             .first { identifier, node in
@@ -1297,10 +1280,18 @@ extension NavigatorIndex {
             }?.value
         }
         
+        @available(*, deprecated, message: "Use 'build()' instead. This deprecated API will be removed after 6.5 is released.")
+        @_disfavoredOverload
+        public func build() -> [Problem] {
+            build().map { (diagnostic: Diagnostic) in
+                Problem(diagnostic: diagnostic)
+            }
+        }
+        
         /// Build the index using the render nodes files in the provided documentation archive.
         /// - Returns: A list containing all the errors encountered during indexing.
         /// - Precondition: ``archiveURL`` is set.
-        public func build() -> [Problem] {
+        public func build() -> [Diagnostic] {
             guard let archiveURL else {
                 fatalError("Calling `build()` requires that `archiveURL` is set.")
             }
@@ -1315,15 +1306,15 @@ extension NavigatorIndex {
                     try index(renderNode: renderNode)
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    problems.append(error.problem(source: file,
-                                                  severity: .warning,
-                                                  summaryPrefix: "RenderNode indexing process failed"))
+                    diagnostics.append(error.makeDiagnostic(source: file,
+                                                            severity: .warning,
+                                                            summaryPrefix: "RenderNode indexing process failed"))
                 }
             }
             
             finalize()
             
-            return problems
+            return diagnostics
         }
         
         func availabilityEntryIDs(for availabilityID: UInt64) -> [Int]? {
@@ -1332,16 +1323,16 @@ extension NavigatorIndex {
     }
 }
 
-fileprivate extension Error {
-    
-    /// Returns a problem from an `Error`.
-    func problem(source: URL?, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Problem {
-        let diagnostic = Diagnostic(source: source,
-                                         severity: severity,
-                                         range: nil,
-                                         identifier: "org.swift.docc.index",
-                                         summary: "\(summaryPrefix) \(localizedDescription)")
-        return Problem(diagnostic: diagnostic, possibleSolutions: [])
+private extension Error {
+    // FIXME: This isn't used to create user-actionable diagnostics. We should throw a Swift.Error instead.
+    func makeDiagnostic(source: URL?, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Diagnostic {
+        Diagnostic(
+            source: source,
+            severity: severity,
+            range: nil,
+            identifier: "org.swift.docc.index",
+            summary: "\(summaryPrefix) \(localizedDescription)"
+        )
     }
 }
 

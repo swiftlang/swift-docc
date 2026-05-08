@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ import Markdown
 
 class RowTests: XCTestCase {
     func testNoColumns() async throws {
-        let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row
             """
@@ -25,7 +25,7 @@ class RowTests: XCTestCase {
         XCTAssertNotNil(row)
         
         XCTAssertEqual(
-            problems,
+            diagnostics,
             ["1: warning – org.swift.docc.HasAtLeastOne<Row, Column>"]
         )
         
@@ -38,7 +38,7 @@ class RowTests: XCTestCase {
     
     func testInvalidParameters() async throws {
         do {
-            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
                 """
                 @Row(columns: 3) {
                     @Column(what: true) {
@@ -58,7 +58,7 @@ class RowTests: XCTestCase {
             
             XCTAssertNotNil(row)
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "1: warning – org.swift.docc.UnknownArgument",
                     "2: warning – org.swift.docc.UnknownArgument",
@@ -81,7 +81,7 @@ class RowTests: XCTestCase {
         }
         
         do {
-            let (_, problems, row) = try await parseDirective(Row.self) {
+            let (_, diagnostics, row) = try await parseDirective(Row.self) {
                 """
                 @Row(numberOfColumns: 3) {
                     @Column(size: 3) {
@@ -99,7 +99,7 @@ class RowTests: XCTestCase {
             
             XCTAssertNotNil(row)
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "6: warning – org.swift.docc.UnknownArgument",
                 ]
@@ -109,7 +109,7 @@ class RowTests: XCTestCase {
     
     func testInvalidChildren() async throws {
         do {
-            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
                     @Row {
@@ -123,7 +123,7 @@ class RowTests: XCTestCase {
             
             XCTAssertNotNil(row)
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "1: warning – org.swift.docc.HasAtLeastOne<Row, Column>",
                     "1: warning – org.swift.docc.Row.UnexpectedContent",
@@ -142,7 +142,7 @@ class RowTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
                     @Column {
@@ -156,7 +156,7 @@ class RowTests: XCTestCase {
             
             XCTAssertNotNil(row)
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "3: warning – org.swift.docc.HasOnlyKnownDirectives",
                 ]
@@ -175,7 +175,7 @@ class RowTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
 
@@ -185,7 +185,7 @@ class RowTests: XCTestCase {
             
             XCTAssertNotNil(row)
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "1: warning – org.swift.docc.HasAtLeastOne<Row, Column>",
                 ]
@@ -200,7 +200,7 @@ class RowTests: XCTestCase {
     }
     
     func testEmptyColumn() async throws {
-        let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
                 @Column
@@ -215,7 +215,7 @@ class RowTests: XCTestCase {
         }
         
         XCTAssertNotNil(row)
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(diagnostics, [])
         
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
@@ -237,7 +237,7 @@ class RowTests: XCTestCase {
     }
     
     func testNestedRowAndColumns() async throws {
-        let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
                 @Column {
@@ -256,7 +256,7 @@ class RowTests: XCTestCase {
         }
         
         XCTAssertNotNil(row)
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(diagnostics, [])
         
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(

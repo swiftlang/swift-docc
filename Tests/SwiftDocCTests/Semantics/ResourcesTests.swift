@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,19 +18,16 @@ class ResourcesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(resources)
-        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual(1, diagnostics.count)
       
-        XCTAssertEqual(
-            [
-                "org.swift.docc.Resources.HasContent",
-            ],
-            Set(problems.map { $0.diagnostic.identifier })
-        )
+        XCTAssertEqual(diagnostics.map(\.identifier),[
+            "org.swift.docc.Resources.HasContent",
+        ])
         
-        XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
+        XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
     }
     
     func testValid() async throws {
@@ -68,10 +65,10 @@ class ResourcesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(resources)
-        XCTAssertTrue(problems.isEmpty, "Unexpected problems: \(problems)")
+        XCTAssertTrue(diagnostics.isEmpty, "Unexpected diagnostics: \(diagnostics)")
         
         let expectedDump = """
 Resources @1:1-29:2
@@ -121,19 +118,19 @@ Resources @1:1-29:2
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let resources = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(resources)
-        XCTAssertFalse(problems.containsErrors)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
         // Two directives are supposed to have at least one link
-        XCTAssertEqual(2, problems.count)
+        XCTAssertEqual(2, diagnostics.count)
       
         // The two warnings have the same id
         XCTAssertEqual(Set([
             "org.swift.docc.Resources.SampleCode.HasLinks", 
             "org.swift.docc.Resources.Documentation.HasLinks",
             ]),
-            Set(problems.map { $0.diagnostic.identifier }))
+            Set(diagnostics.map { $0.identifier }))
     }
 }

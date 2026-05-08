@@ -20,8 +20,8 @@ extension ConvertAction {
     /// > Warning: Call ``finalize()`` at most once.
     /// > Note: The index is always created on disk in the given output folder.
     class Indexer {
-        /// A list of problems encountered during indexing.
-        private var problems = [Problem]()
+        /// A list of diagnostics encountered during indexing.
+        private var diagnostics = [Diagnostic]()
         
         /// The count of nodes indexed.
         private var nodeCount = 0
@@ -46,7 +46,7 @@ extension ConvertAction {
             indexBuilder.sync({ $0.setup() })
         }
 
-        /// Indexes the given render node and collects any encountered problems.
+        /// Indexes the given render node and collects any encountered diagnostics.
         /// - Parameter renderNode: A ``RenderNode`` value.
         func index(_ renderNode: RenderNode) {
             // Synchronously index the render node.
@@ -56,14 +56,14 @@ extension ConvertAction {
                     nodeCount += 1
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    self.problems.append(error.problem(source: renderNode.identifier.url,
-                                                  severity: .warning,
-                                                  summaryPrefix: "RenderNode indexing process failed"))
+                    self.diagnostics.append(error.makeDiagnostic(source: renderNode.identifier.url,
+                                                              severity: .warning,
+                                                              summaryPrefix: "RenderNode indexing process failed"))
                 }
             })
         }
         
-        /// Indexes the given external render node and collects any encountered problems.
+        /// Indexes the given external render node and collects any encountered diagnostics.
         /// - Parameter renderNode: A ``ExternalRenderNode`` value.
         func index(_ renderNode: ExternalRenderNode) {
             // Synchronously index the render node.
@@ -73,16 +73,16 @@ extension ConvertAction {
                     nodeCount += 1
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                    self.problems.append(error.problem(source: renderNode.identifier.url,
-                                                  severity: .warning,
-                                                  summaryPrefix: "External render node indexing process failed"))
+                    self.diagnostics.append(error.makeDiagnostic(source: renderNode.identifier.url,
+                                                              severity: .warning,
+                                                              summaryPrefix: "External render node indexing process failed"))
                 }
             })
         }
         
         /// Finalizes the index and writes it on disk.
-        /// - Returns: Returns a list of problems if any were encountered during indexing.
-        func finalize(emitJSON: Bool, emitLMDB: Bool) -> [Problem] {
+        /// - Returns: Returns a list of diagnostics if any were encountered during indexing.
+        func finalize(emitJSON: Bool, emitLMDB: Bool) -> [Diagnostic] {
             indexBuilder.sync { indexBuilder in
                 indexBuilder.finalize(
                     estimatedCount: nodeCount,
@@ -90,7 +90,7 @@ extension ConvertAction {
                     emitLMDBRepresentation: emitLMDB
                 )
             }
-            return problems
+            return diagnostics
         }
         
         /// Returns a string representation of the index hierarchy.
@@ -100,15 +100,14 @@ extension ConvertAction {
     }
 }
 
-fileprivate extension Error {
-    
-    /// Returns a problem from an `Error`.
-    func problem(source: URL, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Problem {
-        let diagnostic = Diagnostic(source: source,
-                                         severity: severity,
-                                         range: nil,
-                                         identifier: "org.swift.docc.index",
-                                         summary: "\(summaryPrefix) \(localizedDescription)")
-        return Problem(diagnostic: diagnostic, possibleSolutions: [])
+private extension Error {
+    func makeDiagnostic(source: URL, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Diagnostic {
+        Diagnostic(
+            source: source,
+            severity: severity,
+            range: nil,
+            identifier: "org.swift.docc.index",
+            summary: "\(summaryPrefix) \(localizedDescription)"
+        )
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,16 +30,16 @@ class MarkupReferenceResolverTests: XCTestCase {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         var resolver = MarkupReferenceResolver(context: context, rootReference: context.rootModules[0])
         _ = resolver.visit(document)
-        XCTAssertEqual(0, resolver.problems.count)
+        XCTAssertEqual(0, resolver.diagnostics.count)
     }
 
     func testDuplicatedDiagnosticForExtensionFile() async throws {
         let (_, context) = try await testBundleAndContext(named: "ExtensionArticleBundle")
-        // Before #733, symbols with documentation extension files emitted duplicated problems:
+        // Before #733, symbols with documentation extension files emitted duplicated diagnostics:
         // - one with a source location in the in-source documentation comment
         // - one with a source location in the documentation extension file.
-        // The source range was only valid for one of these diagnostics. This resulted in an index out of range crash in DefaultDiagnosticConsoleFormatter when displaying line that caused the problem to the user
-        XCTAssertEqual(1, context.problems.count)
-        XCTAssertEqual("Server.md", context.problems.first?.diagnostic.source?.lastPathComponent)
+        // The source range was only valid for one of these diagnostics. This resulted in an index out of range crash in DefaultDiagnosticConsoleFormatter when displaying the specifies source line to the user.
+        XCTAssertEqual(1, context.diagnostics.count)
+        XCTAssertEqual("Server.md", context.diagnostics.first?.source?.lastPathComponent)
     }
 }
