@@ -251,6 +251,7 @@ public class NavigatorIndex {
         case overview = 5
         case resources = 6
         case symbol = 7 // This indicates a generic symbol
+        case collection = 8
         
         // Symbol specialization
         case framework = 10
@@ -297,6 +298,12 @@ public class NavigatorIndex {
         case languageGroup = 127
         case container = 254
         case groupMarker = 255 // UInt8.max
+
+        // This empty-marker case is here because non-frozen enums are only available when Library Evolution is enabled,
+        // which is not available to Swift Packages without unsafe flags (rdar://78773361).
+        // This can be removed once that is available and applied to Swift-DocC (rdar://89033233).
+        @available(*, deprecated, message: "this enum is non-frozen and may be expanded in the future; add a `default` case instead of matching this one")
+        case _nonFrozenEnum_useDefaultCase = 128
                 
         /// Initialize a page type from a `symbolKind` returning the symbol type.
         init(symbolKind: String) {
@@ -335,8 +342,10 @@ public class NavigatorIndex {
             case "dictionarysymbol": self = .dictionarySymbol
             case "pseudosymbol": self = .symbol
             case "pseudocollection": self = .framework
+            // This maps to the "module" render type
             case "collection": self = .framework
-            case "collectiongroup": self = .article
+            // This maps to the "collection" render type which represents API collections
+            case "collectiongroup": self = .collection
             case "article": self = .article
             case "samplecode": self = .sampleCode
             default: self = .article
@@ -346,8 +355,8 @@ public class NavigatorIndex {
         /// Whether this page kind references a symbol.
         var isSymbolKind: Bool {
             switch self {
-            case .root, .article, .tutorial, .section, .learn, .overview, .resources, .framework,
-                    .buildSetting, .sampleCode, .languageGroup, .container, .groupMarker:
+            case .root, .article, .tutorial, .section, .learn, .overview, .resources, .collection,
+                    .framework, .buildSetting, .sampleCode, .languageGroup, .container, .groupMarker:
                 return false
             case .symbol, .class, .structure, .protocol, .enumeration, .function, .extension,
                     .localVariable, .globalVariable, .typeAlias, .associatedType, .operator, .macro,
@@ -355,6 +364,8 @@ public class NavigatorIndex {
                     .instanceVariable, .subscript, .typeMethod, .typeProperty, .propertyListKey,
                     .httpRequest, .dictionarySymbol, .propertyListKeyReference, .namespace:
                 return true
+            case ._nonFrozenEnum_useDefaultCase:
+                fatalError("Never use '_nonFrozenEnum_useDefaultCase' as a real case.")
             }
         }
     }

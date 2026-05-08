@@ -610,7 +610,7 @@ class ExternalRenderNodeTests: XCTestCase {
                             ],
                             "path": "/documentation/unit-test/article",
                             "title": "Article",
-                            "type": "article"
+                            "type": "collection"
                           }
                         ],
                         "path": "/documentation/testbundle",

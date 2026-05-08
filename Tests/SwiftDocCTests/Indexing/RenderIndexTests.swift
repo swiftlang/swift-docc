@@ -166,7 +166,7 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "title": "APICollection",
                         "path": "/documentation/mixedlanguageframework/apicollection",
-                        "type": "article",
+                        "type": "collection",
                         "children": [
                             {
                               "title": "Objective-C–only APIs",
@@ -204,7 +204,7 @@ final class RenderIndexTests: XCTestCase {
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
                             "title": "MixedLanguageProtocol Implementations",
-                            "type": "article",
+                            "type": "collection",
                             "children": [
                               {
                                 "title": "Instance Methods",
@@ -391,7 +391,7 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "path": "/documentation/mixedlanguageframework/apicollection",
                         "title": "APICollection",
-                        "type": "article",
+                        "type": "collection",
                         "children": [
                           {
                             "title": "Swift-only APIs",
@@ -449,7 +449,7 @@ final class RenderIndexTests: XCTestCase {
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
                             "title": "MixedLanguageProtocol Implementations",
-                            "type": "article",
+                            "type": "collection",
                             "children": [
                               {
                                 "title": "Instance Methods",
