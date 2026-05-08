@@ -102,7 +102,7 @@ struct FastSymbolGraphJSONDecoderTest {
     @Test
     func decodingVersion() throws {
         // The key "major" has all the bits of "minor" set (with a couple extra bit).
-        // Verify that this doesn't cause any decoding problems (which would cause the version to decode as "2.0.3")
+        // Verify that this doesn't cause any decoding issues (which would cause the version to decode as "2.0.3")
         let json = #"""
         {
           "major" : 1,

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,14 +27,14 @@ class TileTests: XCTestCase {
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
                 let context = try await makeEmptyContext()
-                var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+                var diagnostics = [Diagnostic]()
+                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
                 XCTAssertNotNil(tile)
-                XCTAssertEqual(2, problems.count)
-                XCTAssertEqual([
+                XCTAssertEqual(2, diagnostics.count)
+                XCTAssertEqual(diagnostics.map(\.identifier), [
                     "org.swift.docc.Resources.\(directiveName).HasContent",
                     "org.swift.docc.Resources.\(directiveName).HasLinks",
-                ],problems.map { $0.diagnostic.identifier })
+                ])
             }
             
             do {
@@ -50,10 +50,10 @@ class TileTests: XCTestCase {
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
                 let context = try await makeEmptyContext()
-                var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+                var diagnostics = [Diagnostic]()
+                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
                 XCTAssertNotNil(tile)
-                XCTAssertTrue(problems.isEmpty)
+                XCTAssertTrue(diagnostics.isEmpty)
                 tile.map { tile in
                     XCTAssertEqual(title, tile.title)
                     XCTAssertEqual(destination, tile.destination)
@@ -76,13 +76,13 @@ class TileTests: XCTestCase {
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
                 let context = try await makeEmptyContext()
-                var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+                var diagnostics = [Diagnostic]()
+                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
                 XCTAssertNotNil(tile)
-                XCTAssertEqual(1, problems.count)
-                XCTAssertEqual([
+                XCTAssertEqual(1, diagnostics.count)
+                XCTAssertEqual(diagnostics.map(\.identifier), [
                     "org.swift.docc.Resources.\(directiveName).HasContent",
-                ],problems.map { $0.diagnostic.identifier })
+                ])
             }
             
             do {
@@ -98,10 +98,10 @@ class TileTests: XCTestCase {
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
                 let context = try await makeEmptyContext()
-                var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+                var diagnostics = [Diagnostic]()
+                let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
                 XCTAssertNotNil(tile)
-                XCTAssertTrue(problems.isEmpty)
+                XCTAssertTrue(diagnostics.isEmpty)
                 tile.map { tile in
                     XCTAssertEqual(title, tile.title)
                     XCTAssertEqual(destination, tile.destination)
@@ -121,8 +121,8 @@ class TileTests: XCTestCase {
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
             let context = try await makeEmptyContext()
-            var problems = [Problem]()
-            let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+            var diagnostics = [Diagnostic]()
+            let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             // Destination is set.
             XCTAssertEqual(destination, tile?.destination)
         }
@@ -137,8 +137,8 @@ class TileTests: XCTestCase {
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
             let context = try await makeEmptyContext()
-            var problems = [Problem]()
-            let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+            var diagnostics = [Diagnostic]()
+            let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             // Destination is nil.
             XCTAssertNotNil(tile)
             XCTAssertEqual(nil, tile?.destination)
@@ -150,12 +150,12 @@ class TileTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(tile)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.Resources.UnknownTile")
-        XCTAssertEqual(problems.first?.diagnostic.severity, .warning)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.Resources.UnknownTile")
+        XCTAssertEqual(diagnostics.first?.severity, .warning)
     }
 
 }

@@ -16,7 +16,7 @@ public import Markdown
  */
 @available(*, deprecated, message: "This check is no longer applicable. This deprecated API will be removed after 6.4 is released")
 public struct AbstractContainsFormattedTextOnly: Checker {
-    public var problems: [Problem] = [Problem]()
+    public var diagnostics = [Diagnostic]()
     private var sourceFile: URL?
     
     /// Creates a new checker that detects non-text elements in abstracts.
@@ -52,9 +52,9 @@ public struct AbstractContainsFormattedTextOnly: Checker {
         let explanation = """
             Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
             """
-        let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: markup.range, identifier: invalidContent.diagnosticIdentifier, summary: "\(invalidContent.description.capitalized) in document summary will not be displayed", explanation: explanation)
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-        problems.append(problem)
+        diagnostics.append(
+            Diagnostic(source: sourceFile, severity: .warning, range: markup.range, identifier: invalidContent.diagnosticIdentifier, summary: "\(invalidContent.description.capitalized) in document summary will not be displayed", explanation: explanation)
+        )
     }
     
     public mutating func visitDocument(_ document: Document) -> () {

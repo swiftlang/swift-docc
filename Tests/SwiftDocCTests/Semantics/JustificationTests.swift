@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,13 +21,13 @@ class JustificationTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(directive.name, Justification.directiveName)
-            let justification = Justification(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+            let justification = Justification(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(justification)
             XCTAssertNil(justification?.reaction)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             justification.map { justification in
                 
             }
@@ -46,11 +46,11 @@ class JustificationTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(directive.name, Justification.directiveName)
-            let justification = Justification(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
-            XCTAssertTrue(problems.isEmpty)
+            let justification = Justification(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            XCTAssertTrue(diagnostics.isEmpty)
             XCTAssertNotNil(justification)
             XCTAssertEqual(justification?.reaction, "Correct!")
             justification.map { justification in

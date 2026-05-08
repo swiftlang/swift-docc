@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,11 +22,11 @@ class SnippetTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
-        var problems = [Problem]()
-        XCTAssertNil(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual(.warning, problems[0].diagnostic.severity)
-        XCTAssertEqual("org.swift.docc.HasArgument.path", problems[0].diagnostic.identifier)
+        var diagnostics = [Diagnostic]()
+        XCTAssertNil(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual(diagnostics.first?.severity, .warning)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.path")
     }
 
     func testWarningAboutInnerContent() async throws {
@@ -38,11 +38,11 @@ class SnippetTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
-        var problems = [Problem]()
-        XCTAssertNotNil(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual(.warning, problems[0].diagnostic.severity)
-        XCTAssertEqual("org.swift.docc.Snippet.NoInnerContentAllowed", problems[0].diagnostic.identifier)
+        var diagnostics = [Diagnostic]()
+        XCTAssertNotNil(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual(diagnostics.first?.severity, .warning)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.Snippet.NoInnerContentAllowed")
     }
 
     func testParsesPath() async throws {
@@ -52,11 +52,11 @@ class SnippetTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
-        var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
+        var diagnostics = [Diagnostic]()
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
         XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
         XCTAssertNotNil(snippet)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
     func testLinkResolvesWithoutOptionalPrefix() async throws {
         let (_, context) = try await testBundleAndContext(named: "Snippets")
@@ -73,7 +73,7 @@ class SnippetTests: XCTestCase {
             let document = Document(parsing: source, options: .parseBlockDirectives)
             var resolver = MarkupReferenceResolver(context: context, rootReference: try XCTUnwrap(context.soleRootModuleReference))
             _ = resolver.visit(document)
-            XCTAssertTrue(resolver.problems.isEmpty, "Unexpected problems: \(resolver.problems.map(\.diagnostic.summary))")
+            XCTAssertTrue(resolver.diagnostics.isEmpty, "Unexpected diagnostics: \(resolver.diagnostics.map(\.summary))")
         }
     }
     
@@ -92,11 +92,11 @@ class SnippetTests: XCTestCase {
             let document = Document(parsing: source, options: .parseBlockDirectives)
             var resolver = MarkupReferenceResolver(context: context, rootReference: try XCTUnwrap(context.soleRootModuleReference))
             _ = resolver.visit(document)
-            XCTAssertEqual(1, resolver.problems.count)
-            let problem = try XCTUnwrap(resolver.problems.first)
-            XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.unresolvedSnippetPath")
-            XCTAssertEqual(problem.diagnostic.summary, "Snippet named 'DoesNotExist' couldn't be found")
-            XCTAssertEqual(problem.possibleSolutions.count, 0)
+            XCTAssertEqual(1, resolver.diagnostics.count)
+            let diagnostic = try XCTUnwrap(resolver.diagnostics.first)
+            XCTAssertEqual(diagnostic.identifier, "org.swift.docc.unresolvedSnippetPath")
+            XCTAssertEqual(diagnostic.summary, "Snippet named 'DoesNotExist' couldn't be found")
+            XCTAssertEqual(diagnostic.solutions.count, 0)
         }
     }
     
@@ -107,11 +107,11 @@ class SnippetTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
-        var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
+        var diagnostics = [Diagnostic]()
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
         XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
         XCTAssertEqual("foo", snippet.slice)
         XCTAssertNotNil(snippet)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
 }

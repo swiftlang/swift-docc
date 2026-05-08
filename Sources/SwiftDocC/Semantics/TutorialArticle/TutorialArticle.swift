@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -102,34 +102,43 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         self.redirects = redirects
     }
     
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == TutorialArticle.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialArticle>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName])
-            .analyze(directive, children: directive.children, source: source, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
             
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialArticle>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Stack.directiveName, ContentAndMedia.directiveName, Assessments.directiveName, ImageMedia.directiveName, Redirect.directiveName])
-            .analyze(directive, children: directive.children, source: source, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
         let optionalTime = Semantic.Analyses.HasArgument<TutorialArticle, Semantics.Time>(severityIfNotFound: .warning)
-            .analyze(directive, arguments: arguments, problems: &problems)
+            .analyze(directive, arguments: arguments, diagnostics: &diagnostics)
             
         var remainder: MarkupContainer
         let optionalIntro: Intro?
-        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
+        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
         
-        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         
-        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, featureFlags: featureFlags, problems: &problems)
+        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         
         let optionalAssessments: Assessments?
-        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         
         let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         
         let redirects: [Redirect]
-        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         
         self.init(originalMarkup: directive, durationMinutes: optionalTime, intro: optionalIntro, content: content, assessments: optionalAssessments, callToActionImage: optionalCallToActionImage, landmarks: headings, redirects: redirects.isEmpty ? nil : redirects)
     }
@@ -152,14 +161,14 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) -> [MarkupLayout] {
+    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,
-                   let stack = Stack(from: directive, source: source, for: bundle, featureFlags: featureFlags, problems: &problems) {
+                   let stack = Stack(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) {
                     accumulation.append(.stack(stack))
                 } else if directive.name == ContentAndMedia.directiveName,
-                          let contentAndMedia = ContentAndMedia(from: directive, source: source, for: bundle, featureFlags: featureFlags, problems: &problems) {
+                          let contentAndMedia = ContentAndMedia(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) {
                     accumulation.append(.contentAndMedia(contentAndMedia))
                 }
             } else {
@@ -180,12 +189,9 @@ extension TutorialArticle {
             .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
         guard tutorialTableOfContentsParent != nil else {
             let url = context.documentURL(for: node.reference)
-            engine.emit(.init(
-                diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(TutorialArticle.self)", summary: "The article \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents"),
-                possibleSolutions: [
-                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the article.", replacements: [])
-                ]
-            ))
+            engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(TutorialArticle.self)", summary: "The article \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents", solutions: [
+                Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the article.", replacements: [])
+            ]))
             return
         }
     }
