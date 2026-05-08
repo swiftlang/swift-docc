@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -404,13 +404,13 @@ class ListItemExtractorTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        let expectedLinkProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
-        XCTAssert(expectedLinkProblems.allSatisfy { $0.diagnostic.source != nil }, "Diagnostics are missing source information.", file: file, line: line)
-        XCTAssert(expectedLinkProblems.allSatisfy { $0.diagnostic.range != nil }, "Diagnostics are missing range information.", file: file, line: line)
+        let expectedLinkDiagnostics = context.diagnostics.filter { $0.identifier == "org.swift.docc.unresolvedTopicReference" }
+        XCTAssert(expectedLinkDiagnostics.allSatisfy { $0.source != nil }, "Diagnostics are missing source information.", file: file, line: line)
+        XCTAssert(expectedLinkDiagnostics.allSatisfy { $0.range != nil }, "Diagnostics are missing range information.", file: file, line: line)
         
         let logStorage = LogHandle.LogStorage()
         let diagnosticWriter = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], highlight: true, dataProvider: context.linkResolver.dataProvider)
-        diagnosticWriter.receive(expectedLinkProblems)
+        diagnosticWriter.receive(expectedLinkDiagnostics)
         try diagnosticWriter.flush()
         XCTAssertEqual(logStorage.text, expectedLogText, file: file, line: line)
         

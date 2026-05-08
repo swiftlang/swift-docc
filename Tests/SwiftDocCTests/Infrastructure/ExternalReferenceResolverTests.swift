@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -690,8 +690,8 @@ class ExternalReferenceResolverTests: XCTestCase {
             TopicReferenceResolutionResult.success(ResolvedTopicReference(bundleID: "com.external.testbundle", path: "/resolved", fragment: nil, sourceLanguage: .swift))
         )
         
-        XCTAssert(context.problems.contains(where: { $0.diagnostic.summary.contains("Unit test: External resolve error.")}),
-                  "The external reference resolver error message is included in that problem's error summary.")
+        XCTAssert(context.diagnostics.contains(where: { $0.summary.contains("Unit test: External resolve error.")}),
+                  "The external reference resolver error message is included in that diagnostic's summary message.")
         
         // Get MyKit symbol
         let entity = try context.entity(with: .init(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift))
@@ -891,7 +891,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems:\n\(context.diagnostics.map(\.summary).joined(separator: "\n"))")
         
         do {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
@@ -948,7 +948,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         // Check the curation on the root page
         let rootNode = try context.entity(with: XCTUnwrap(context.soleRootModuleReference))
@@ -1016,7 +1016,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         
         // Check the curation on the root page
@@ -1102,7 +1102,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
-        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems:\n\(context.diagnostics.map(\.summary).joined(separator: "\n"))")
 
         // Load the DocumentationNode for the artist dictionary keys symbol.
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
@@ -1141,7 +1141,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                 encoding: .utf8
             )
         }
-        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems:\n\(context.diagnostics.map(\.summary).joined(separator: "\n"))", file: file, line: line)
 
         // Load the DocumentationNode for the artist dictionary keys symbol.
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
@@ -1431,7 +1431,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         // Check the curation on the root page
         let rootNode = try context.entity(with: XCTUnwrap(context.soleRootModuleReference))

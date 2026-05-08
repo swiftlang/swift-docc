@@ -17,14 +17,14 @@ struct InvalidAdditionalTitleTests {
     
     @Test
     func doesNotWarnForSingleArticlePageTitle() {
-        let (problems, _) = check(content: "# Title")
-        #expect(problems.isEmpty)
+        let (diagnostics, _) = check(content: "# Title")
+        #expect(diagnostics.isEmpty)
     }
     
     @Test
     func doesNotWarnForSingleDocumentationExtensionAssociation() {
-        let (problems, _) = check(content:  "# ``SomeSymbol``")
-        #expect(problems.isEmpty)
+        let (diagnostics, _) = check(content:  "# ``SomeSymbol``")
+        #expect(diagnostics.isEmpty)
     }
     
     @Test(arguments: [
@@ -35,7 +35,7 @@ struct InvalidAdditionalTitleTests {
         "``Second``", // An association with a symbol for a documentation extension
     ])
     func warnsAboutSecondHeading(firstHeadingRawContent: String, secondHeadingRawContent: String) throws {
-        let (problems, document) = check(content:  """
+        let (diagnostics, document) = check(content:  """
             # \(firstHeadingRawContent)
             
             After this abstract there's another first-level heading
@@ -43,14 +43,13 @@ struct InvalidAdditionalTitleTests {
             # \(secondHeadingRawContent)
             """)
         
-        #expect(problems.count == 1)
+        #expect(diagnostics.count == 1)
         
         let firstHeading  = try #require(document.child(at: 0) as? Heading)
         let secondHeading = try #require(document.child(at: 2) as? Heading)
         
         let isDocumentationExtensionFile = firstHeading.startsWithAnyLink
-        let problem = try #require(problems.first)
-        let diagnostic = problem.diagnostic
+        let diagnostic = try #require(diagnostics.first)
         
         // Verify the diagnostic
         if isDocumentationExtensionFile {
@@ -75,16 +74,16 @@ struct InvalidAdditionalTitleTests {
         #expect(note.range == firstHeading.range, "The note points to the first level-1 heading")
         
         // Verify the solutions
-        #expect(problem.possibleSolutions.count == (isDocumentationExtensionFile ? 1 : 2))
+        #expect(diagnostic.solutions.count == (isDocumentationExtensionFile ? 1 : 2))
         
-        let firstSolution = try #require(problem.possibleSolutions.first)
+        let firstSolution = try #require(diagnostic.solutions.first)
         #expect(firstSolution.summary == "Remove heading")
         #expect(firstSolution.replacements.count == 1)
         #expect(firstSolution.replacements.first?.range == secondHeading.range, "The replacement modifies the second heading")
         #expect(firstSolution.replacements.first?.replacement == "", "The solution removes the heading completely")
         
         if !isDocumentationExtensionFile {
-            let secondSolution = try #require(problem.possibleSolutions.last)
+            let secondSolution = try #require(diagnostic.solutions.last)
             #expect(secondSolution.summary == "Change to second-level heading")
             #expect(secondSolution.replacements.count == 1)
             #expect(secondSolution.replacements.first?.range == secondHeading.range, "The replacement modifies the second heading")
@@ -97,7 +96,7 @@ struct InvalidAdditionalTitleTests {
         "``First``", // A symbol association for a documentation extension
     ])
     func eachAdditionalHeadingRefersBackToTheFirstHeading(firstHeadingRawContent: String) throws {
-        let (problems, document) = check(content:  """
+        let (diagnostics, document) = check(content:  """
             # \(firstHeadingRawContent)
             
             After this abstract there are 3 additional first-level headings
@@ -106,15 +105,14 @@ struct InvalidAdditionalTitleTests {
             # ``Third``
             # Fourth
             """)
-        #expect(problems.count == 3)
+        #expect(diagnostics.count == 3)
         
         let firstHeading  = try #require(document.child(at: 0) as? Heading)
         
         let additionalHeadings = document.children.dropFirst().compactMap { $0 as? Heading }
         #expect(additionalHeadings.count == 3)
         
-        for (problem, additionalHeading) in zip(problems, additionalHeadings) {
-            let diagnostic = problem.diagnostic
+        for (diagnostic, additionalHeading) in zip(diagnostics, additionalHeadings) {
             #expect(diagnostic.range == additionalHeading.range, "The warning highlights each heading")
             
             // Verify the note
@@ -125,11 +123,11 @@ struct InvalidAdditionalTitleTests {
         }
     }
     
-    private func check(content: String) -> ([Problem], Document) {
+    private func check(content: String) -> ([Diagnostic], Document) {
         // This file is never read, it's only used as the source of diagnostics and notes
         var checker = InvalidAdditionalTitle(sourceFile: URL(fileURLWithPath: "/path/to/some-fake-file.md"))
         let document = Document(parsing: content, options: [.parseSymbolLinks])
         checker.visit(document)
-        return (checker.problems, document)
+        return (checker.diagnostics, document)
     }
 }
