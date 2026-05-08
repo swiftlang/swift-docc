@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,17 +22,16 @@ class ChoiceTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNil(choice)
-            XCTAssertEqual(2, diagnostics.count)
-            XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
-                "org.swift.docc.HasArgument.isCorrect",
-                "org.swift.docc.HasExactlyOne<\(Choice.self), \(Justification.self)>.Missing",
-            ])
-            XCTAssertTrue(diagnostics.allSatisfy { $0.severity == .warning })
+            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            XCTAssertEqual(2, problems.count)
+            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.HasExactlyOne<\(Choice.self), \(Justification.self)>.Missing"))
+            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.HasArgument.isCorrect"))
+            XCTAssertTrue(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
         }
     }
     
@@ -50,13 +49,14 @@ class ChoiceTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(choice)
-            XCTAssertEqual(1, diagnostics.count)
-            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.\(Choice.self).Empty")
+            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            XCTAssertEqual(1, problems.count)
+            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(Choice.self).Empty"))
         }
     }
     
@@ -72,13 +72,15 @@ class ChoiceTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNil(choice)
-            XCTAssertEqual(1, diagnostics.count)
-            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasExactlyOne<Choice, Justification>.Missing")
+            XCTAssertEqual(1, problems.count)
+            problems.first.map { problem in
+                XCTAssertEqual("org.swift.docc.HasExactlyOne<Choice, Justification>.Missing", problem.diagnostic.identifier)
+            }
         }
     }
     
@@ -96,13 +98,15 @@ class ChoiceTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNil(choice)
-            XCTAssertEqual(1, diagnostics.count)
-            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.isCorrect")
+            XCTAssertEqual(1, problems.count)
+            problems.first.map { problem in
+                XCTAssertEqual("org.swift.docc.HasArgument.isCorrect", problem.diagnostic.identifier)
+            }
         }
     }
     
@@ -120,18 +124,18 @@ class ChoiceTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNil(choice)
-            XCTAssertEqual(1, diagnostics.count)
-            let diagnostic = try XCTUnwrap(diagnostics.first)
-            
-            XCTAssertEqual("org.swift.docc.HasArgument.isCorrect.ConversionFailed", diagnostic.identifier)
-            XCTAssertEqual(2, diagnostic.solutions.count)
-            XCTAssertEqual("Use allowed value 'true'", diagnostic.solutions[0].summary)
-            XCTAssertEqual("Use allowed value 'false'", diagnostic.solutions[1].summary)
+            XCTAssertEqual(1, problems.count)
+            problems.first.map { problem in
+                XCTAssertEqual("org.swift.docc.HasArgument.isCorrect.ConversionFailed", problem.diagnostic.identifier)
+                XCTAssertEqual(2, problem.possibleSolutions.count)
+                XCTAssertEqual("Use allowed value 'true'", problem.possibleSolutions[0].summary)
+                XCTAssertEqual("Use allowed value 'false'", problem.possibleSolutions[1].summary)
+            }
         }
     }
     
@@ -150,12 +154,12 @@ class ChoiceTests: XCTestCase {
         
         let context = try await makeEmptyContext()
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(choice)
-            XCTAssertTrue(diagnostics.isEmpty)
+            XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
                 let expectedDump = """
 Choice @1:1-6:2 isCorrect: true
@@ -186,12 +190,12 @@ Choice @1:1-6:2 isCorrect: true
         
         let context = try await makeEmptyContext()
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(choice)
-            XCTAssertTrue(diagnostics.isEmpty)
+            XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
                 let expectedDump = """
 Choice @1:1-9:2 isCorrect: true
@@ -223,12 +227,12 @@ Choice @1:1-9:2 isCorrect: true
             DataFile(name: "blah.png", data: Data()),
         ]))
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(choice)
-            XCTAssertTrue(diagnostics.isEmpty)
+            XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
                 let expectedDump = """
 Choice @1:1-7:2 isCorrect: true

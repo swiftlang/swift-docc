@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -161,23 +161,23 @@ extension XCTestCase {
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var diagnostics = [Diagnostic]()
+        var problems = [Problem]()
         let directive = directive.init(
             from: blockDirectiveContainer,
             source: source,
             for: context.inputs,
             featureFlags: context.configuration.featureFlags,
-            diagnostics: &diagnostics
+            problems: &problems
         )
         
-        let diagnosticDescriptions = diagnostics.map { diagnostic -> String in
-            XCTAssertNotNil(diagnostic.source, "Diagnostic \(diagnostic.identifier) is missing a source URL.", file: file, line: line)
-            let line = diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+        let problemIDs = problems.map { problem -> String in
+            XCTAssertNotNil(problem.diagnostic.source, "Problem \(problem.diagnostic.identifier) is missing a source URL.", file: file, line: line)
+            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
             
-            return "\(line): \(diagnostic.severity) – \(diagnostic.identifier)"
+            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
         }.sorted()
         
-        return (diagnosticDescriptions, directive)
+        return (problemIDs, directive)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
@@ -204,8 +204,15 @@ extension XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
-        let (renderedContent, diagnostics, directive, _) = try await parseDirective(directive, in: bundleName, content: content, file: file, line: line)
-        return (renderedContent, diagnostics, directive)
+        let (renderedContent, problems, directive, _) = try await parseDirective(
+            directive,
+            in: bundleName,
+            content: content,
+            file: file,
+            line: line
+        )
+        
+        return (renderedContent, problems, directive)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
@@ -266,18 +273,18 @@ extension XCTestCase {
         
         var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         let result = analyzer.visit(blockDirectiveContainer)
-        context.diagnosticEngine.emit(analyzer.diagnostics)
+        context.diagnosticEngine.emit(analyzer.problems)
         
         var referenceResolver = MarkupReferenceResolver(context: context, rootReference: context.inputs.rootReference)
         
         _ = referenceResolver.visit(blockDirectiveContainer)
-        context.diagnosticEngine.emit(referenceResolver.diagnostics)
+        context.diagnosticEngine.emit(referenceResolver.problems)
         
         func problemIDs() throws -> [String] {
-            try context.diagnostics.map { problem -> (line: Int, severity: String, id: String) in
-                XCTAssertNotNil(problem.source, "Diagnostic \(problem.identifier) is missing a source URL.", file: file, line: line)
-                let line = try XCTUnwrap(problem.range, file: file, line: line).lowerBound.line
-                return (line, problem.severity.description, problem.identifier)
+            try context.problems.map { problem -> (line: Int, severity: String, id: String) in
+                XCTAssertNotNil(problem.diagnostic.source, "Problem \(problem.diagnostic.identifier) is missing a source URL.", file: file, line: line)
+                let line = try XCTUnwrap(problem.diagnostic.range, file: file, line: line).lowerBound.line
+                return (line, problem.diagnostic.severity.description, problem.diagnostic.identifier)
             }
             .sorted { lhs, rhs in
                 let (lhsLine, _, lhsID) = lhs

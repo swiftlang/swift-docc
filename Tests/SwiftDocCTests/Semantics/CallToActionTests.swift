@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,16 +23,15 @@ class CallToActionTests: XCTestCase {
 
         let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNil(callToAction)
-            XCTAssertEqual(2, diagnostics.count)
-            XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
-                "org.swift.docc.\(CallToAction.self).missingLabel",
-                "org.swift.docc.\(CallToAction.self).missingLink",
-            ])
+            XCTAssertEqual(2, problems.count)
+            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(CallToAction.self).missingLink"))
+            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(CallToAction.self).missingLabel"))
         }
     }
 
@@ -44,13 +43,14 @@ class CallToActionTests: XCTestCase {
 
             let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-            if let directive {
-                var diagnostics = [Diagnostic]()
+            directive.map { directive in
+                var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+                let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
                 XCTAssertNil(callToAction)
-                XCTAssertEqual(1, diagnostics.count)
-                XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.\(CallToAction.self).missingLink")
+                XCTAssertEqual(1, problems.count)
+                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+                XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(CallToAction.self).missingLink"))
             }
         }
         try await assertMissingLink(source: "@CallToAction(label: \"Button\")")
@@ -65,13 +65,14 @@ class CallToActionTests: XCTestCase {
 
             let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-            if let directive {
-                var diagnostics = [Diagnostic]()
+            directive.map { directive in
+                var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+                let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
                 XCTAssertNil(callToAction)
-                XCTAssertEqual(1, diagnostics.count)
-                XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.\(CallToAction.self).missingLabel")
+                XCTAssertEqual(1, problems.count)
+                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+                XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(CallToAction.self).missingLabel"))
             }
         }
         try await assertMissingLabel(source: "@CallToAction(url: \"https://example.com/sample.zip\"")
@@ -86,13 +87,14 @@ class CallToActionTests: XCTestCase {
 
         let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNil(callToAction)
-            XCTAssertEqual(1, diagnostics.count)
-            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.\(CallToAction.self).tooManyLinks")
+            XCTAssertEqual(1, problems.count)
+            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(CallToAction.self).tooManyLinks"))
         }
     }
 
@@ -104,12 +106,12 @@ class CallToActionTests: XCTestCase {
 
             let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-            if let directive {
-                var diagnostics = [Diagnostic]()
+            directive.map { directive in
+                var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+                let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
                 XCTAssertNotNil(callToAction)
-                XCTAssert(diagnostics.isEmpty)
+                XCTAssert(problems.isEmpty)
             }
         }
 
@@ -141,10 +143,10 @@ class CallToActionTests: XCTestCase {
 
             let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-            var diagnostics = [Diagnostic]()
+            var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = try XCTUnwrap(CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
-            XCTAssert(diagnostics.isEmpty)
+            let callToAction = try XCTUnwrap(CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems))
+            XCTAssert(problems.isEmpty)
             
             XCTAssertEqual(callToAction.buttonLabel(for: nil), expectedDefaultLabel)
             XCTAssertEqual(callToAction.buttonLabel(for: .article), expectedDefaultLabel)

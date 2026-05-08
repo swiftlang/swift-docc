@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -101,25 +101,17 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     /// Any automatically created task groups.
     var automaticTaskGroups: [AutomaticTaskGroupSection]
 
-    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
-    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
-        var diagnostics = [Diagnostic]()
-        defer {
-            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
-        }
-        self.init(from: markup, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
-    }
-    
     /// Initializes a new article with a given markup and source for a given documentation bundle and documentation context.
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
     ///   - source: The location of the file that this article's content comes from.
     ///   - bundle: The documentation bundle that the source file belongs to.
-    ///   - diagnostics: A mutable collection of diagnostics to update with any additional issues encountered while initializing the article.
-    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
             let range = markup.child(at: 0)?.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil)
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
 
             let replacementText: String
             if let firstChild = markup.child(at: 0) as? Paragraph {
@@ -132,10 +124,9 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                      """
             }
 
-            let replacement = Solution.Replacement(range: range, replacement: replacementText)
+            let replacement = Replacement(range: range, replacement: replacementText)
             let solution = Solution(summary: "Add a title", replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title", solutions: [solution])
-            diagnostics.append(diagnostic)
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
 
             return nil
         }
@@ -146,7 +137,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+            return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, problems: &problems)
         }
         
         var optionalMetadata = DirectiveParser()
@@ -157,7 +148,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 source: source,
                 bundle: bundle,
                 featureFlags: featureFlags,
-                diagnostics: &diagnostics
+                problems: &problems
             )
 
         // Append any redirects found in the metadata to the redirects
@@ -176,7 +167,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 source: source,
                 for: bundle,
                 featureFlags: featureFlags,
-                diagnostics: &diagnostics
+                problems: &problems
             )
         }
         
@@ -188,8 +179,8 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 continue
             }
             
-            let extraOptionsProblems = extraOptions.map { extraOptionsDirective -> Diagnostic in
-                var diagnostic = Diagnostic(
+            let extraOptionsProblems = extraOptions.map { extraOptionsDirective -> Problem in
+                let diagnostic = Diagnostic(
                     source: source,
                     severity: .warning,
                     range: extraOptionsDirective.originalMarkup.range,
@@ -202,20 +193,20 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 )
                 
                 guard let range = extraOptionsDirective.originalMarkup.range else {
-                    return diagnostic
+                    return Problem(diagnostic: diagnostic)
                 }
                 
                 let solution = Solution(
                     summary: "Remove extraneous \(scope) \(Options.directiveName.singleQuoted) directive",
                     replacements: [
-                        Solution.Replacement(range: range, replacement: "")
+                        Replacement(range: range, replacement: "")
                     ]
                 )
-                diagnostic.solutions = [solution]
-                return diagnostic
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             }
             
-            diagnostics.append(contentsOf: extraOptionsProblems)
+            problems.append(contentsOf: extraOptionsProblems)
         }
         
         let relevantCategorizedOptions = allCategorizedOptions.compactMapValues(\.first)
@@ -226,18 +217,19 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
             A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.
             """
 
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, explanation: nil, notes: [])
+            
             let solutions: [Solution]
             if let displayNameRange = displayName.originalMarkup.range, let titleRange = title.range {
-                let removeDisplayNameReplacement = Solution.Replacement(range: displayNameRange, replacement: "")
-                let changeTitleReplacement = Solution.Replacement(range: titleRange, replacement: "# \(displayName.name)")
+                let removeDisplayNameReplacement = Replacement(range: displayNameRange, replacement: "")
+                let changeTitleReplacement = Replacement(range: titleRange, replacement: "# \(displayName.name)")
                 
                 solutions = [Solution(summary: "Change the title", replacements: [removeDisplayNameReplacement, changeTitleReplacement])]
             } else {
                 solutions = []
             }
             
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, solutions: solutions)
-            diagnostics.append(diagnostic)
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
             
             metadata.displayName = nil
             optionalMetadata = metadata

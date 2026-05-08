@@ -24,35 +24,38 @@ public struct DuplicateTopicsSections: Checker {
         self.sourceFile = sourceFile
     }
 
-    public var diagnostics: [Diagnostic] {
+    public var problems: [Problem] {
         guard foundTopicsHeadings.count > 1 else {
             return []
         }
         
-        // The notes are the same for all diagnostics, so only create them once.
+        // The notes are the same for all problems, so only create them once.
         let first = foundTopicsHeadings[0]
-        let notes: [Diagnostic.Note] = if let sourceFile, let range = first.range {
-            [.init(source: sourceFile, range: range, message: "Topics section starts here")]
+        let notes: [DiagnosticNote]
+        if let sourceFile, let range = first.range {
+            notes = [DiagnosticNote(source: sourceFile, range: range, message: "Topics section starts here")]
         } else {
-            []
+            notes = []
         }
         
         let duplicates = foundTopicsHeadings[1...]
         return duplicates.map { duplicateHeading in
             let range = duplicateHeading.range!
             
-            return Diagnostic(
-                source: sourceFile,
-                severity: .warning,
-                range: range,
-                identifier: "MultipleTopicsSections",
-                summary: "Topics section can only appear once per page",
-                explanation: """
-                A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. \
-                Each page can only have a single Topics section.
-                """,
-                notes: notes,
-                solutions: [
+            return Problem(
+                diagnostic: Diagnostic(
+                    source: sourceFile,
+                    severity: .warning,
+                    range: range,
+                    identifier: "MultipleTopicsSections",
+                    summary: "Topics section can only appear once per page",
+                    explanation: """
+                    A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. \
+                    Each page can only have a single Topics section.
+                    """,
+                    notes: notes
+                ),
+                possibleSolutions: [
                     Solution(summary: "Change heading name", replacements: [
                         .init(range: range, replacement: "## <#New heading name#>")
                     ]),

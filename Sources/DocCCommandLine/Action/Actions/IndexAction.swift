@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,13 +33,13 @@ public struct IndexAction: AsyncAction {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
-        let diagnostics = try buildIndex()
-        diagnosticEngine.emit(diagnostics)
+        let problems = try buildIndex()
+        diagnosticEngine.emit(problems)
         
-        return ActionResult(didEncounterError: diagnostics.containsAnyError, outputs: [outputURL])
+        return ActionResult(didEncounterError: !diagnosticEngine.problems.isEmpty, outputs: [outputURL])
     }
     
-    private func buildIndex() throws -> [Diagnostic] {
+    private func buildIndex() throws -> [Problem] {
         let indexBuilder = NavigatorIndex.Builder(archiveURL: archiveURL,
                                                   outputURL: outputURL,
                                                   bundleIdentifier: bundleIdentifier,

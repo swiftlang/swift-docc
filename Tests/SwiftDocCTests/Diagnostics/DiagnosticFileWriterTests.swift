@@ -35,13 +35,14 @@ struct DiagnosticFileWriterTests {
         let explanation = "Test diagnostic explanation."
         
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
-        let replacement = Solution.Replacement(range: replacementRange, replacement: "Replacement text")
+        let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, groupIdentifier: groupIdentifier, summary: summary, explanation: explanation, solutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, groupIdentifier: groupIdentifier, summary: summary, explanation: explanation)
+            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             
-            writer.receive([diagnostic])
+            writer.receive([problem])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
@@ -51,23 +52,25 @@ struct DiagnosticFileWriterTests {
             let firstSolution = Solution(summary: firstSolutionSummary, replacements: [replacement])
             let secondSolution = Solution(summary: secondSolutionSummary, replacements: [])
             
-            let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [firstSolution, secondSolution])
+            let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
+            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [firstSolution, secondSolution])
             
-            writer.receive([diagnostic])
+            writer.receive([problem])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
         let firstInsertRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 8, source: source)
         let secondInsertRange = SourceLocation(line: 1, column: 14, source: source)..<SourceLocation(line: 1, column: 14, source: source)
-        let firstReplacement = Solution.Replacement(range: firstInsertRange, replacement: "ABC")
-        let secondReplacement = Solution.Replacement(range: secondInsertRange, replacement: "abc")
+        let firstReplacement = Replacement(range: firstInsertRange, replacement: "ABC")
+        let secondReplacement = Replacement(range: secondInsertRange, replacement: "abc")
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
             
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
+            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             
-            writer.receive([diagnostic])
+            writer.receive([problem])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         

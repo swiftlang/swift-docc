@@ -155,17 +155,12 @@ public class DocumentationContext {
         documentationCache.reference(symbolID: symbolID) ?? externalCache.reference(symbolID: symbolID)
     }
     
-    @available(*, deprecated, message: "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.")
+    /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
     public var problems: [Problem] {
         return diagnosticEngine.problems
     }
-    
-    /// A convenient accessor for the diagnostic engine's list of diagnostics.
-    package var diagnostics: [Diagnostic] {
-        diagnosticEngine.diagnostics
-    }
 
-    /// The engine that collects diagnostics encountered while registering and processing the documentation bundles in this context.
+    /// The engine that collects problems encountered while registering and processing the documentation bundles in this context.
     public var diagnosticEngine: DiagnosticEngine
     
     /// All the link references that have been resolved from external sources, either successfully or not.
@@ -212,7 +207,7 @@ public class DocumentationContext {
     /// - Parameters:
     ///   - bundle: The bundle to register with the context.
     ///   - fileManager: The file manager that the context uses to read files from the bundle.
-    ///   - diagnosticEngine: The pre-configured engine that will collect diagnostics encountered during compilation.
+    ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
     /// - Throws: If an error is encountered while registering a documentation bundle.
     package init(
@@ -237,17 +232,17 @@ public class DocumentationContext {
         try await register()
     }
         
-    /// Performs semantic analysis on a given document at a given source location and reports any encountered issues to the given diagnostic engine.
+    /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
     ///
     /// - Parameters:
     ///   - document: The document to analyze.
     ///   - source: The location of the document.
-    ///   - engine: The diagnostic engine to report about any issue encountered during analysis.
+    ///   - problems: A mutable collection of problems to update with any problem encountered during the semantic analysis.
     /// - Returns: The result of the semantic analysis.
     private func analyze(_ document: Document, at source: URL, engine: DiagnosticEngine) -> Semantic? {
         var analyzer = SemanticAnalyzer(source: source, bundle: inputs, featureFlags: configuration.featureFlags)
         let result = analyzer.visit(document)
-        engine.emit(analyzer.diagnostics)
+        engine.emit(analyzer.problems)
         return result
     }
     
@@ -278,7 +273,7 @@ public class DocumentationContext {
             InvalidCodeBlockOption(sourceFile: source).any(),
         ])
         checker.visit(document)
-        diagnosticEngine.emit(checker.diagnostics)
+        diagnosticEngine.emit(checker.problems)
     }
     
     /// A cache of plain string module names, keyed by the module node reference.
@@ -393,8 +388,8 @@ public class DocumentationContext {
         }
     }
     
-    /// A resolved documentation node along with any relevant diagnostics.
-    private typealias LinkResolveResult = (reference: ResolvedTopicReference, node: DocumentationNode, diagnostics: [Diagnostic])
+    /// A resolved documentation node along with any relevant problems.
+    private typealias LinkResolveResult = (reference: ResolvedTopicReference, node: DocumentationNode, problems: [Problem])
 
     /**
      Attempt to resolve links in curation-only documentation, converting any ``TopicReferences`` from `.unresolved` to `.resolved` where possible.
@@ -467,10 +462,10 @@ public class DocumentationContext {
                 }
             }
 
-            let diagnostics: [Diagnostic]
+            let problems: [Problem]
             if documentationNode.semantic is Article {
                 // Diagnostics for articles have correct source ranges and don't need to be modified.
-                diagnostics = resolver.diagnostics
+                problems = resolver.problems
             } else {
                 // Diagnostics for in-source documentation comments need to be offset based on the start location of the comment in the source file.
                 
@@ -478,26 +473,26 @@ public class DocumentationContext {
                 let inSourceDocumentationCommentInfo = documentationNode.inSourceDocumentationChunk
                 
                 // Post-process and filter out unwanted diagnostics (for example from inherited documentation comments)
-                diagnostics = resolver.diagnostics.compactMap { diagnostic in
-                    guard let source = diagnostic.source else {
+                problems = resolver.problems.compactMap { problem in
+                    guard let source = problem.diagnostic.source else {
                         // Ignore any diagnostic without a source location. These can't be meaningfully presented to the user.
                         return nil
                     }
                     
                     if source == inSourceDocumentationCommentInfo?.url, let offset = inSourceDocumentationCommentInfo?.offset {
                         // Diagnostics from an in-source documentation comment need to be offset based on the location of that documentation comment.
-                        var modifiedProblem = diagnostic
+                        var modifiedProblem = problem
                         modifiedProblem.offsetWithRange(offset)
                         return modifiedProblem
                     } 
                     
                     // Diagnostics from documentation extension files have correct source ranges and don't need to be modified.
-                    return diagnostic
+                    return problem
                 }
             }
             
             // Also resolve the node's page images. This isn't part of the node's 'semantic' value (resolved above).
-            let pageImageDiagnostics = documentationNode.metadata?.pageImages.compactMap { pageImage in
+            let pageImageProblems = documentationNode.metadata?.pageImages.compactMap { pageImage in
                 return resolver.resolve(
                     resource: pageImage.source,
                     range: pageImage.originalMarkup.range,
@@ -505,7 +500,7 @@ public class DocumentationContext {
                 )
             } ?? []
             
-            let result: LinkResolveResult = (reference: reference, node: documentationNode, diagnostics: diagnostics + pageImageDiagnostics)
+            let result: LinkResolveResult = (reference: reference, node: documentationNode, problems: problems + pageImageProblems)
             results.sync({ $0.append(result) })
         }
 
@@ -540,7 +535,7 @@ public class DocumentationContext {
                 ?? true, // Nothing to check for non-symbols
                 "Previous versions stored symbolIndex and documentationCache separately and updated both. This assert verifies that that's no longer necessary."
             )
-            diagnosticEngine.emit(result.diagnostics)
+            diagnosticEngine.emit(result.problems)
         }
         
         mergeFallbackLinkResolutionResults()
@@ -575,7 +570,7 @@ public class DocumentationContext {
                 let url = tableOfContentsResult.source
                 var resolver = ReferenceResolver(context: self)
                 let tableOfContents = resolver.visit(tableOfContentsResult.value) as! TutorialTableOfContents
-                diagnosticEngine.emit(resolver.diagnostics)
+                diagnosticEngine.emit(resolver.problems)
                 
                 // Add to document map
                 documentLocationMap[url] = tableOfContentsResult.topicGraphNode.reference
@@ -647,7 +642,7 @@ public class DocumentationContext {
                 let unresolvedTutorial = tutorialResult.value
                 var resolver = ReferenceResolver(context: self)
                 let tutorial = resolver.visit(unresolvedTutorial) as! Tutorial
-                diagnosticEngine.emit(resolver.diagnostics)
+                diagnosticEngine.emit(resolver.problems)
                 
                 // Add to document map
                 documentLocationMap[url] = tutorialResult.topicGraphNode.reference
@@ -681,7 +676,7 @@ public class DocumentationContext {
                 let unresolvedTutorialArticle = articleResult.value
                 var resolver = ReferenceResolver(context: self)
                 let article = resolver.visit(unresolvedTutorialArticle) as! TutorialArticle
-                diagnosticEngine.emit(resolver.diagnostics)
+                diagnosticEngine.emit(resolver.problems)
                             
                 // Add to document map
                 documentLocationMap[url] = articleResult.topicGraphNode.reference
@@ -742,7 +737,7 @@ public class DocumentationContext {
                 if configuration.externalMetadata.diagnosticLevel >= NonInclusiveLanguageChecker.severity {
                     var langChecker = NonInclusiveLanguageChecker(sourceFile: url)
                     langChecker.visit(document)
-                    diagnosticEngine.emit(langChecker.diagnostics)
+                    diagnosticEngine.emit(langChecker.problems)
                 }
 
                 guard let analyzed = analyze(document, at: url, engine: diagnosticEngine) else {
@@ -808,30 +803,32 @@ public class DocumentationContext {
                 let webURLPathComponent = urlReadablePath(url.deletingPathExtension().lastPathComponent).lowercased()
                 assert(webURLPathComponent == urlReadablePath(firstFoundAtURL.deletingPathExtension().lastPathComponent).lowercased(), "The two files didn't collide")
                 
-                let diagnostic = Diagnostic(
-                    source: url,
-                    severity: .warning,
-                    range: nil,
-                    identifier: "OutputPathCollision",
-                    summary: "Multiple \(fileDescription)s with output path '\(path.lowercased())'; this \(fileDescription) will be skipped",
-                    explanation: """
-                    The relative path of \(isArticle ? "an article" : "a tutorial") in the rendered documentation is the name of its markup file, without the '.\(url.pathExtension)' extension, \
-                    replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case '\(webURLPathComponent)'.
-                    Because the pages for '\(thisRelativePath)' and '\(otherRelativePath)' would have the same web URL, DocC can only create a web page for one of them; deterministically keeping '\(otherRelativePath)' and dropping '\(thisRelativePath)'.
-                    """,
-                    notes: [
-                        .init(
-                            source: firstFoundAtURL,
-                            range: SourceLocation(line: 1, column: 1, source: nil) ..<  SourceLocation(line: 1, column: 1, source: nil),
-                            message: "Other \(fileDescription) with same output path here"
-                        )
-                    ],
-                    solutions: [
+                let problem = Problem(
+                    diagnostic: Diagnostic(
+                        source: url,
+                        severity: .warning,
+                        range: nil,
+                        identifier: "OutputPathCollision",
+                        summary: "Multiple \(fileDescription)s with output path '\(path.lowercased())'; this \(fileDescription) will be skipped",
+                        explanation: """
+                        The relative path of \(isArticle ? "an article" : "a tutorial") in the rendered documentation is the name of its markup file, without the '.\(url.pathExtension)' extension, \
+                        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case '\(webURLPathComponent)'.
+                        Because the pages for '\(thisRelativePath)' and '\(otherRelativePath)' would have the same web URL, DocC can only create a web page for one of them; deterministically keeping '\(otherRelativePath)' and dropping '\(thisRelativePath)'.
+                        """,
+                        notes: [
+                            DiagnosticNote(
+                                source: firstFoundAtURL,
+                                range: SourceLocation(line: 1, column: 1, source: nil) ..<  SourceLocation(line: 1, column: 1, source: nil),
+                                message: "Other \(fileDescription) with same output path here"
+                            )
+                        ]
+                    ),
+                    possibleSolutions: [
                         Solution(summary: "Rename '\(thisRelativePath)'", replacements: []),
                         Solution(summary: "Rename '\(otherRelativePath)'", replacements: []),
                     ]
                 )
-                diagnosticEngine.emit(diagnostic)
+                diagnosticEngine.emit(problem)
                 continue
             }
             
@@ -891,7 +888,8 @@ public class DocumentationContext {
                     """
                 let zeroLocation = SourceLocation(line: 1, column: 1, source: nil)
                 let diagnostic = Diagnostic(source: url, severity: .warning, range: zeroLocation..<zeroLocation, identifier: "org.swift.docc.UnexpectedTopLevelMarkup", summary: explanation)
-                diagnosticEngine.emit(diagnostic)
+                let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
+                diagnosticEngine.emit(problem)
             }
         }
         
@@ -940,7 +938,7 @@ public class DocumentationContext {
     }
     
     /// Creates a topic graph node and a documentation node for the given symbol.
-    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithDiagnostics {
+    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, moduleData: module, moduleReference: moduleReference)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
         if let symbolGraphURL {
@@ -955,8 +953,8 @@ public class DocumentationContext {
 
     /// The result of converting a symbol into a documentation node.
     private typealias AddSymbolResult = (reference: ResolvedTopicReference, preciseIdentifier: String, topicGraphNode: TopicGraph.Node, node: DocumentationNode)
-    /// An optional result of converting a symbol into a documentation along with any related diagnostics.
-    private typealias AddSymbolResultWithDiagnostics = (AddSymbolResult, diagnostics: [Diagnostic])
+    /// An optional result of converting a symbol into a documentation along with any related problems.
+    private typealias AddSymbolResultWithProblems = (AddSymbolResult, problems: [Problem])
     
     /// Concurrently adds a symbol to the graph, index, and cache, or replaces an existing symbol with the same precise identifier
     /// (for light updates to symbols already in the graph).
@@ -979,7 +977,7 @@ public class DocumentationContext {
     /// ```
     private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], moduleReference: ResolvedTopicReference) {
         let symbols = Array(symbolGraph.symbols.values)
-        let results: [AddSymbolResultWithDiagnostics] = symbols.concurrentPerform { symbol, results in
+        let results: [AddSymbolResultWithProblems] = symbols.concurrentPerform { symbol, results in
             if let selector = symbol.defaultSelector, let module = symbol.modules[selector] {
                 guard let reference = symbolReferences[symbol.defaultIdentifier] else {
                     fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
@@ -1000,7 +998,7 @@ public class DocumentationContext {
     }
 
     /// Adds a prepared symbol data including a topic graph node and documentation node to the context.
-    private func addPreparedSymbolToContext(_ result: AddSymbolResultWithDiagnostics) {
+    private func addPreparedSymbolToContext(_ result: AddSymbolResultWithProblems) {
         let symbolData = result.0
         topicGraph.addNode(symbolData.topicGraphNode)
         documentationCache.add(symbolData.node, reference: symbolData.reference, symbolID: symbolData.preciseIdentifier)
@@ -1009,7 +1007,7 @@ public class DocumentationContext {
             nodeAnchorSections[anchor.reference] = anchor
         }
         
-        diagnosticEngine.emit(result.diagnostics)
+        diagnosticEngine.emit(result.problems)
     }
     
     /// Loads all graph files from the context's inputs and merges them together while building the symbol relationships and loading any available markdown documentation for those symbols.
@@ -1178,14 +1176,14 @@ public class DocumentationContext {
                     let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.emptyLinkDestination", summary: """
                         Documentation extension with an empty link doesn't correspond to any symbol.
                         """, explanation: nil, notes: [])
-                    diagnosticEngine.emit(diagnostic)
+                    diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
                 }
                 guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
                     let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination", summary: """
                         \(destination.singleQuoted) is not a valid RFC 3986 URL.
                         """, explanation: nil, notes: [])
-                    diagnosticEngine.emit(diagnostic)
+                    diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
                 }
                 
@@ -1237,10 +1235,13 @@ public class DocumentationContext {
                     }
                     
                     // Present a diagnostic specific to documentation extension files but get the solutions and notes from the general unresolved link problem.
-                    let unresolvedLinkDiagnostic = unresolvedReferenceDiagnostic(source: documentationExtension.source, range: link.range, severity: .warning, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
+                    let unresolvedLinkProblem = unresolvedReferenceProblem(source: documentationExtension.source, range: link.range, severity: .warning, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
                     
                     diagnosticEngine.emit(
-                        Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(destination.singleQuoted). \(errorInfo.message).", notes: unresolvedLinkDiagnostic.notes, solutions: unresolvedLinkDiagnostic.solutions)
+                        Problem(
+                            diagnostic: Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(destination.singleQuoted). \(errorInfo.message).", notes: unresolvedLinkProblem.diagnostic.notes),
+                            possibleSolutions: unresolvedLinkProblem.possibleSolutions
+                        )
                     )
                 }
             }
@@ -1563,7 +1564,7 @@ public class DocumentationContext {
     func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], moduleReference: ResolvedTopicReference, fileURL otherSymbolGraphURL: URL?) throws {
         let mergeError = Synchronized<(any Error)?>(nil)
         
-        let results: [AddSymbolResultWithDiagnostics] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
+        let results: [AddSymbolResultWithProblems] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
             guard let defaultSymbol = symbol.defaultSymbol, let swiftSelector = symbol.defaultSelector, let module = symbol.modules[swiftSelector] else {
                 fatalError("""
                     Only Swift symbols are currently supported. \
@@ -1573,7 +1574,7 @@ public class DocumentationContext {
             }
             guard defaultSymbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self] != nil else {
                 // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
-                diagnosticEngine.emit(Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"))
+                diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"), possibleSolutions: []))
                 return
             }
             
@@ -1773,13 +1774,14 @@ public class DocumentationContext {
                 // By the time we get here it's already to late to fix the collision. All we can do is make the author aware of it and handle the collision deterministically.
                 // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
                 diagnosticEngine.emit(
-                    Diagnostic(source: article.source, severity: .warning, identifier: "ArticleCollideWithSymbol", summary: """
-                        Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
-                        """, explanation: """
-                        DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
-                        Until rdar://79745455 (issue #593) is fixed, DocC favors the symbol in this collision and drops the article to have deterministic behavior.
-                        """,
-                        solutions: [
+                    Problem(
+                        diagnostic: Diagnostic(source: article.source, severity: .warning, identifier: "ArticleCollideWithSymbol", summary: """
+                            Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
+                            """, explanation: """
+                            DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
+                            Until rdar://79745455 (issue #593) is fixed, DocC favors the symbol in this collision and drops the article to have deterministic behavior.
+                            """),
+                        possibleSolutions: [
                             Solution(summary: "Rename '\(article.source.lastPathComponent)'", replacements: [ /* Renaming a file isn't something that we can represent with a replacement */ ])
                         ]
                     )
@@ -2010,9 +2012,12 @@ public class DocumentationContext {
                 if !suggestions.isEmpty {
                     summary += ". Possible suggestions: \(suggestions.map(\.singleQuoted).joined(separator: ", "))"
                 }
-                diagnosticEngine.emit(
-                    .init(severity: .warning, identifier: "org.swift.docc.UnknownBundleFeatureFlag", summary: summary)
-                )
+                diagnosticEngine.emit(.init(diagnostic:
+                        .init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.UnknownBundleFeatureFlag",
+                            summary: summary
+                        )))
             }
         }
 
@@ -2080,8 +2085,8 @@ public class DocumentationContext {
         }
         
         if globalOptions.count > 1 {
-            let extraGlobalOptionsDiagnostics = globalOptions.map { extraOptionsDirective -> Diagnostic in
-                var diagnostic = Diagnostic(
+            let extraGlobalOptionsProblems = globalOptions.map { extraOptionsDirective -> Problem in
+                let diagnostic = Diagnostic(
                     source: extraOptionsDirective.originalMarkup.nameLocation?.source,
                     severity: .warning,
                     range: extraOptionsDirective.originalMarkup.range,
@@ -2093,20 +2098,21 @@ public class DocumentationContext {
                     """
                 )
                 
-                if let range = extraOptionsDirective.originalMarkup.range {
-                    diagnostic.solutions.append(Solution(
-                        summary: "Remove extraneous \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
-                        replacements: [
-                            .init(range: range, replacement: "")
-                        ]
-                    ))
-                    
+                guard let range = extraOptionsDirective.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
                 }
                 
-                return diagnostic
+                let solution = Solution(
+                    summary: "Remove extraneous \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             }
             
-            diagnosticEngine.emit(extraGlobalOptionsDiagnostics)
+            diagnosticEngine.emit(extraGlobalOptionsProblems)
         } else {
             options = globalOptions.first
         }
@@ -2544,7 +2550,7 @@ public class DocumentationContext {
             )
         }
         
-        diagnosticEngine.emit(crawler.diagnostics)
+        diagnosticEngine.emit(crawler.problems)
         
         return crawler.curatedNodes
     }
@@ -2558,38 +2564,42 @@ public class DocumentationContext {
             guard let link = firstExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                 fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(firstExtension.source.absoluteString.singleQuoted)")
             }
-            let notes: [Diagnostic.Note] = documentationExtensions.dropFirst().map { documentationExtension in
+            let notes: [DiagnosticNote] = documentationExtensions.dropFirst().map { documentationExtension in
                 guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
-                return .init(source: documentationExtension.source, range: link.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil), message: "\(symbolPath.singleQuoted) is also documented here.")
+                return DiagnosticNote(source: documentationExtension.source, range: link.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil), message: "\(symbolPath.singleQuoted) is also documented here.")
             }
             
-            diagnosticEngine.emit(Diagnostic(source: firstExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.DuplicateMarkdownTitleSymbolReferences", summary: "Multiple documentation extensions matched \(symbolPath.singleQuoted).", notes: notes))
+            diagnosticEngine.emit(
+                Problem(diagnostic: Diagnostic(source: firstExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.DuplicateMarkdownTitleSymbolReferences", summary: "Multiple documentation extensions matched \(symbolPath.singleQuoted).", notes: notes), possibleSolutions: [])
+            )
         }
     }
     
     private func warnAboutArticlesOutsideTheDocumentationHierarchy() {
         let diagnosticID = "ArticleNotInDocumentationHierarchy"
-        guard diagnosticEngine.willEmitDiagnostic(id: diagnosticID, defaultSeverity: .information) else {
-            // Don't create a collection of diagnostics that the engine won't report to the developer.
+        guard diagnosticEngine.willEmitProblem(diagnosticID: diagnosticID, defaultSeverity: .information) else {
+            // Don't create a collection of problems that the engine won't report to the developer.
             return
         }
         
         let rootPageNames = sortedRootPageNames()
         
         for article in uncuratedArticles.values {
-            diagnosticEngine.emit(Diagnostic(
-                source: article.source,
-                severity: .information,
-                identifier: diagnosticID,
-                summary: "Article '\(article.source.lastPathComponent)' has no default location in invalid documentation hierarchy with \(rootPageNames.count) roots",
-                explanation: """
-                A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
-                Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
-                Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
-                As a consequence, DocC cannot create a page for the '\(article.topicGraphNode.title)' article (\(article.source.lastPathComponent)).
-                """
+            diagnosticEngine.emit(Problem(
+                diagnostic: Diagnostic(
+                    source: article.source,
+                    severity: .information,
+                    identifier: diagnosticID,
+                    summary: "Article '\(article.source.lastPathComponent)' has no default location in invalid documentation hierarchy with \(rootPageNames.count) roots",
+                    explanation: """
+                    A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
+                    Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
+                    Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
+                    As a consequence, DocC cannot create a page for the '\(article.topicGraphNode.title)' article (\(article.source.lastPathComponent)).
+                    """
+                )
             ))
         }
     }
@@ -2641,16 +2651,18 @@ public class DocumentationContext {
             Symbols inherently belong to a module \(moduleName.map { "(in this case '\($0)') " } ?? "")which is already the root of the documentation hierarchy.
             A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages\(symbolDescription.map { " (in this case \($0))" } ?? "").
             \(explanationDetails)
-            """,
-            solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
+            """
         )
-        diagnosticEngine.emit(diagnostic)
+        
+        diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)))
     }
 
     private func makeRemoveTechnologyRootSolutions(_ technologyRoot: TechnologyRoot) -> [Solution] {
-        [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: technologyRoot.originalMarkup.range.map { range in
-            [.init(range: range, replacement: "")]
-        } ?? [])]
+        let replacements = technologyRoot.originalMarkup.range.map { range in
+            [Replacement(range: range, replacement: "")]
+        } ?? []
+        
+        return [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: replacements)]
     }
     
     private func warnAboutMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
@@ -2683,12 +2695,12 @@ public class DocumentationContext {
                 For more information, see the `docc merge --help` text.
                 """
             )
-            diagnosticEngine.emit(diagnostic)
+            diagnosticEngine.emit(Problem(diagnostic: diagnostic))
         }
 
         let allNotes = rootPageArticles.compactMap { article in
             article.value.metadata?.technologyRoot?.originalMarkup.range.map { range in
-                Diagnostic.Note(source: article.source, range: range, message: "Root page also defined here")
+                DiagnosticNote(source: article.source, range: range, message: "Root page also defined here")
             }
         }
         
@@ -2713,10 +2725,9 @@ public class DocumentationContext {
                     resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
                     To resolve this issue; remove all \(TechnologyRoot.directiveName) directives except for one to use that as the root of your documentation hierarchy.
                     """,
-                    notes: allNotes.filter({ $0.source != article.source }),
-                    solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
+                    notes: allNotes.filter({ $0.source != article.source })
                 )
-                diagnosticEngine.emit(diagnostic)
+                diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)))
             }
         } else {
             // There's a mix of symbol roots (modules) and authored TechnologyRoot pages
@@ -2742,10 +2753,9 @@ public class DocumentationContext {
                     resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
                     To resolve this issue; remove all \(TechnologyRoot.directiveName) directives to use \(modulesList) as the root page.
                     """,
-                    notes: allNotes.filter({ $0.source != article.source }),
-                    solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
+                    notes: allNotes.filter({ $0.source != article.source })
                 )
-                diagnosticEngine.emit(diagnostic)
+                diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)))
             }
         }
     }
@@ -3095,20 +3105,20 @@ extension DocumentationContext {
             return !DocumentationContext.allowedRootNodeKinds.contains(node.kind)
                 && parents(of: node.reference).isEmpty
         }
-        let diagnostics = unexpectedRoots.compactMap { node -> Diagnostic? in
+        let problems = unexpectedRoots.compactMap { node -> Problem? in
             let source: URL
             switch node.source {
             case .file(url: let url): source = url
             case .range(_, let url): source = url
             case .external: return nil
             }
-            return Diagnostic(source: source, severity: .information, range: nil, identifier: "org.swift.docc.SymbolNotCurated", summary: "You haven't curated \(node.reference.absoluteString.singleQuoted)", solutions: [Solution(summary: "Add a link to \(node.reference.absoluteString.singleQuoted) from a Topics group of another documentation node.", replacements: [])])
+            return Problem(diagnostic: Diagnostic(source: source, severity: .information, range: nil, identifier: "org.swift.docc.SymbolNotCurated", summary: "You haven't curated \(node.reference.absoluteString.singleQuoted)"), possibleSolutions: [Solution(summary: "Add a link to \(node.reference.absoluteString.singleQuoted) from a Topics group of another documentation node.", replacements: [])])
         }
-        diagnosticEngine.emit(diagnostics)
+        diagnosticEngine.emit(problems)
     }
         
     private func analyzeAlternateRepresentations() {
-        var diagnostics = [Diagnostic]()
+        var problems = [Problem]()
 
         func listSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> String {
             sourceLanguages.sorted().map(\.name).list(finalConjunction: .and)
@@ -3116,7 +3126,7 @@ extension DocumentationContext {
         func removeAlternateRepresentationSolution(_ alternateRepresentation: AlternateRepresentation) -> [Solution] {
             [Solution(
                 summary: "Remove this alternate representation",
-                replacements: alternateRepresentation.originalMarkup.range.map { [.init(range: $0, replacement: "")] } ?? [])]
+                replacements: alternateRepresentation.originalMarkup.range.map { [Replacement(range: $0, replacement: "")] } ?? [])]
         }
 
         for reference in knownPages {
@@ -3126,14 +3136,16 @@ extension DocumentationContext {
             for alternateRepresentation in alternateRepresentations {
                 // Check if the entity is not a symbol, as only symbols are allowed to specify custom alternate representations
                 guard entity.symbol != nil else {
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
-                        summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
-                        explanation: "Alternate representations are only supported for symbols.",
-                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
+                            explanation: "Alternate representations are only supported for symbols."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
                     ))
                     continue
                 }
@@ -3145,14 +3157,16 @@ extension DocumentationContext {
                 
                 // Check if the resolved entity is not a symbol, as only symbols are allowed as custom alternate representations
                 guard alternateRepresentationEntity.symbol != nil else {
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
-                        summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
-                        explanation: "Symbols can only specify other symbols as custom language representations.",
-                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
+                            explanation: "Symbols can only specify other symbols as custom language representations."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
                     ))
                     continue
                 }
@@ -3160,37 +3174,41 @@ extension DocumentationContext {
                 // Check if the documented symbol already has alternate representations from in-source annotations.
                 let duplicateSourceLanguages = alternateRepresentationEntity.availableSourceLanguages.intersection(entity.availableSourceLanguages)
                 if !duplicateSourceLanguages.isEmpty {
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
-                        summary: "\(entity.name.plainText.singleQuoted) already has a representation in \(listSourceLanguages(duplicateSourceLanguages))",
-                        explanation: "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.",
-                        solutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "\(entity.name.plainText.singleQuoted) already has a representation in \(listSourceLanguages(duplicateSourceLanguages))",
+                            explanation: "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for."
+                        ),
+                        possibleSolutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
                     ))
                 }
                 
                 let duplicateAlternateLanguages = Set(sourceLanguageToReference.keys).intersection(alternateRepresentationEntity.availableSourceLanguages)
                 if !duplicateAlternateLanguages.isEmpty {
-                    let notes: [Diagnostic.Note] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
+                    let notes: [DiagnosticNote] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
                         guard let alreadyExistingRepresentation = sourceLanguageToReference[duplicateAlternateLanguage],
                               let range = alreadyExistingRepresentation.originalMarkup.range,
                               let source = range.source else {
                             return nil
                         }
                         
-                        return .init(source: source, range: range, message: "This directive already specifies an alternate \(duplicateAlternateLanguage.name) representation.")
+                        return DiagnosticNote(source: source, range: range, message: "This directive already specifies an alternate \(duplicateAlternateLanguage.name) representation.")
                     }
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
-                        summary: "A custom alternate language representation for \(listSourceLanguages(duplicateAlternateLanguages)) has already been specified",
-                        explanation: "Only one custom alternate language representation can be specified per language.",
-                        notes: notes,
-                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "A custom alternate language representation for \(listSourceLanguages(duplicateAlternateLanguages)) has already been specified",
+                            explanation: "Only one custom alternate language representation can be specified per language.",
+                            notes: notes
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
                     ))
                 }
                 
@@ -3201,7 +3219,7 @@ extension DocumentationContext {
             }
         }
         
-        diagnosticEngine.emit(diagnostics)
+        diagnosticEngine.emit(problems)
     }
 }
 
