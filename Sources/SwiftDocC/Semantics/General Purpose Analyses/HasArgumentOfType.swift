@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -54,7 +54,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        func analyze(_ directive: BlockDirective, arguments: [String: Markdown.DirectiveArgument], problems: inout [Problem]) -> Converter.ArgumentValue? {
+        func analyze(_ directive: BlockDirective, arguments: [String: Markdown.DirectiveArgument], diagnostics: inout [Diagnostic]) -> Converter.ArgumentValue? {
             return ArgumentValueParser<Parent>.init(
                 severityIfNotFound: severityIfNotFound,
                 argumentName: Converter.argumentName,
@@ -62,7 +62,7 @@ extension Semantic.Analyses {
                 expectedFormat: Converter.expectedFormat(),
                 convert: Converter.convert(_:),
                 valueTypeDiagnosticName: String(describing: Converter.ArgumentValue.self)
-            ).analyze(directive, arguments: arguments, problems: &problems) as? Converter.ArgumentValue
+            ).analyze(directive, arguments: arguments, diagnostics: &diagnostics) as? Converter.ArgumentValue
         }
     }
     
@@ -77,9 +77,9 @@ extension Semantic.Analyses {
         func analyze(
             _ directive: BlockDirective,
             arguments: [String: Markdown.DirectiveArgument],
-            problems: inout [Problem]
+            diagnostics: inout [Diagnostic]
         ) -> Any? {
-            let arguments = directive.arguments(problems: &problems)
+            let arguments = directive.arguments(diagnostics: &diagnostics)
             let source = directive.range?.lowerBound.source
             let diagnosticArgumentName = argumentName.isEmpty ? "unlabeled" : argumentName
             let diagnosticArgumentDescription = if argumentName.isEmpty {
@@ -108,28 +108,28 @@ extension Semantic.Analyses {
                         summary: "Missing argument for \(diagnosticArgumentName) parameter",
                         explanation: diagnosticExplanation
                     )
-                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                    diagnostics.append(diagnostic)
                 }
                 return nil
             }
             guard let value = convert(argument.value) else {
-                let diagnostic = Diagnostic(
-                    source: source,
-                    severity: .warning,
-                    range: argument.valueRange,
-                    identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed",
-                    summary: "Cannot convert \(argument.value.singleQuoted) to type \(valueTypeDiagnosticName.singleQuoted)",
-                    explanation: diagnosticExplanation
-                )
                 let solutions = allowedValues.map { allowedValues -> [Solution] in
                     return allowedValues.compactMap { allowedValue -> Solution? in
                         guard let range = argument.valueRange else {
                             return nil
                         }
-                        return Solution(summary: "Use allowed value \(allowedValue.singleQuoted)", replacements: [Replacement(range: range, replacement: allowedValue)])
+                        return Solution(summary: "Use allowed value \(allowedValue.singleQuoted)", replacements: [.init(range: range, replacement: allowedValue)])
                     }
                 }
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions ?? []))
+                diagnostics.append(Diagnostic(
+                    source: source,
+                    severity: .warning,
+                    range: argument.valueRange,
+                    identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed",
+                    summary: "Cannot convert \(argument.value.singleQuoted) to type \(valueTypeDiagnosticName.singleQuoted)",
+                    explanation: diagnosticExplanation,
+                    solutions: solutions ?? []
+                ))
                 return nil
             }
             return value

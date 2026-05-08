@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ public import Markdown
  */
 @available(*, deprecated, message: "This check is no longer applicable. This deprecated API will be removed after 6.4 is released")
 public struct AbstractContainsFormattedTextOnly: Checker {
-    public var problems: [Problem] = [Problem]()
+    public var diagnostics = [Diagnostic]()
     private var sourceFile: URL?
     
     /// Creates a new checker that detects non-text elements in abstracts.
@@ -30,6 +30,8 @@ public struct AbstractContainsFormattedTextOnly: Checker {
         case image, link
         
         var diagnosticIdentifier: String {
+            // Don't use this diagnostic as inspiration for future diagnostics summaries or explanations.
+            // This Checker is no longer used and its diagnostic has not been updated to follow the guidelines and recommendations in <doc:Adding-Diagnostics>.
             switch self {
             case .image: return "org.swift.docc.SummaryContainsImage"
             case .link: return "org.swift.docc.SummaryContainsLink"
@@ -45,12 +47,14 @@ public struct AbstractContainsFormattedTextOnly: Checker {
     }
     
     private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: any Markup) {
+        // Don't use this diagnostic as inspiration for how to phrase future diagnostics summaries or explanations.
+        // This Checker is no longer used and its diagnostic has not been updated to follow the guidelines and recommendations in <doc:Adding-Diagnostics>.
         let explanation = """
             Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
             """
-        let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: markup.range, identifier: invalidContent.diagnosticIdentifier, summary: "\(invalidContent.description.capitalized) in document summary will not be displayed", explanation: explanation)
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-        problems.append(problem)
+        diagnostics.append(
+            Diagnostic(source: sourceFile, severity: .warning, range: markup.range, identifier: invalidContent.diagnosticIdentifier, summary: "\(invalidContent.description.capitalized) in document summary will not be displayed", explanation: explanation)
+        )
     }
     
     public mutating func visitDocument(_ document: Document) -> () {

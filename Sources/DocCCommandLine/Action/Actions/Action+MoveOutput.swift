@@ -21,7 +21,7 @@ extension AsyncAction {
     /// - Returns: The URL of the new unique directory.
     static func createUniqueDirectory(inside container: URL, template: URL?, fileManager: any FileManagerProtocol) throws -> URL {
         let targetURL = container.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
+
         if let template {
             // If a template directory has been provided, create the temporary build folder with its contents
             // Ensure that the container exists

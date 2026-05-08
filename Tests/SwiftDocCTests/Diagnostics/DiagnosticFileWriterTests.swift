@@ -28,20 +28,20 @@ struct DiagnosticFileWriterTests {
         
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
+        let groupIdentifier = "test-group-identifier"
         let summary = "Test diagnostic summary"
         let solutionSummary = "Test solution summary"
         let explanation = "Test diagnostic explanation."
         
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
-        let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
+        let replacement = Solution.Replacement(range: replacementRange, replacement: "Replacement text")
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, groupIdentifier: groupIdentifier, summary: summary, explanation: explanation, solutions: [solution])
             
-            writer.receive([problem])
+            writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
@@ -51,25 +51,23 @@ struct DiagnosticFileWriterTests {
             let firstSolution = Solution(summary: firstSolutionSummary, replacements: [replacement])
             let secondSolution = Solution(summary: secondSolutionSummary, replacements: [])
             
-            let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [firstSolution, secondSolution])
+            let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [firstSolution, secondSolution])
             
-            writer.receive([problem])
+            writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
         let firstInsertRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 8, source: source)
         let secondInsertRange = SourceLocation(line: 1, column: 14, source: source)..<SourceLocation(line: 1, column: 14, source: source)
-        let firstReplacement = Replacement(range: firstInsertRange, replacement: "ABC")
-        let secondReplacement = Replacement(range: secondInsertRange, replacement: "abc")
+        let firstReplacement = Solution.Replacement(range: firstInsertRange, replacement: "ABC")
+        let secondReplacement = Solution.Replacement(range: secondInsertRange, replacement: "abc")
         
         do {
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
             
-            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
             
-            writer.receive([problem])
+            writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
@@ -83,6 +81,8 @@ struct DiagnosticFileWriterTests {
         
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.first)
+            #expect(diagnostic.id == identifier)
+            #expect(diagnostic.groupID == groupIdentifier)
             #expect(diagnostic.source == source)
             #expect(diagnostic.range?.start.line == 1)
             #expect(diagnostic.range?.start.column == 8)
@@ -106,6 +106,8 @@ struct DiagnosticFileWriterTests {
         
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst().first)
+            #expect(diagnostic.id == identifier)
+            #expect(diagnostic.groupID == nil)
             #expect(diagnostic.source == source)
             #expect(diagnostic.range?.start.line == 1)
             #expect(diagnostic.range?.start.column == 8)
@@ -136,6 +138,8 @@ struct DiagnosticFileWriterTests {
         
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst(2).first)
+            #expect(diagnostic.id == identifier)
+            #expect(diagnostic.groupID == nil)
             #expect(diagnostic.source == source)
             #expect(diagnostic.range?.start.line == 1)
             #expect(diagnostic.range?.start.column == 8)
