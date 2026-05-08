@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,15 +12,16 @@ import Foundation
 import Markdown
 private import SymbolKit
 
-private func invalidLinkDestinationDiagnostic(destination: String, range: SourceRange?, severity: DiagnosticSeverity) -> Diagnostic {
-    Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.invalidLinkDestination", summary: "Link destination \(destination.singleQuoted) is not a valid URL")
+private func invalidLinkDestinationProblem(destination: String, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+    let diagnostic = Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.invalidLinkDestination", summary: "Link destination \(destination.singleQuoted) is not a valid URL")
+    return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
-private func disabledLinkDestinationDiagnostic(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Diagnostic {
-    Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to.")
+private func disabledLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+    return Problem(diagnostic: Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to."), possibleSolutions: [])
 }
 
-private func removedLinkDestinationDiagnostic(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Diagnostic {
+private func removedLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     var solutions = [Solution]()
     if let range, reference.pathComponents.count > 3 {
         // The first three path components are "/", "documentation", and the module name, so drop those
@@ -29,7 +30,8 @@ private func removedLinkDestinationDiagnostic(reference: ResolvedTopicReference,
             .init(range: range, replacement: "`\(pathRemainder.joined(separator: "/"))`")
         ]))
     }
-    return Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.", solutions: solutions)
+    let diagnostic = Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.")
+    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
 /**
@@ -37,7 +39,7 @@ private func removedLinkDestinationDiagnostic(reference: ResolvedTopicReference,
  */
 struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
-    var diagnostics = [Diagnostic]()
+    var problems = [Problem]()
     var rootReference: ResolvedTopicReference
     
     init(context: DocumentationContext, rootReference: ResolvedTopicReference) {
@@ -45,9 +47,12 @@ struct MarkupReferenceResolver: MarkupRewriter {
         self.rootReference = rootReference
     }
 
-    // If the property is set and returns a custom diagnostic, that diagnostic will be emitted instead of the default "unresolved topic" diagnostic.
-    // This property offers a customization point for when we need to try resolving links in other contexts than the current one to provide more precise diagnostics.
-    var diagnosticForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Diagnostic?)? = nil
+    // If the property is set and returns a problem, that problem will be
+    // emitted instead of the default "unresolved topic" problem.
+    // This property offers a customization point for when we need to try
+    // resolving links in other contexts than the current one to provide more
+    // precise diagnostics.
+    var problemForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Problem?)? = nil
 
     private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false) -> ResolvedTopicReference? {
         switch context.resolve(reference, in: rootReference, fromSymbolLink: fromSymbolLink) {
@@ -56,25 +61,25 @@ struct MarkupReferenceResolver: MarkupRewriter {
             // verify that linking to it is enabled, else return `nil`.
             if let node = context.topicGraph.nodeWithReference(resolved) {
                 if node.isEmptyExtension {
-                    diagnostics.append(removedLinkDestinationDiagnostic(reference: resolved, range: range, severity: severity))
+                    problems.append(removedLinkDestinationProblem(reference: resolved, range: range, severity: severity))
                     return nil
                 } else if !context.topicGraph.isLinkable(node.reference) {
-                    diagnostics.append(disabledLinkDestinationDiagnostic(reference: resolved, range: range, severity: severity))
+                    problems.append(disabledLinkDestinationProblem(reference: resolved, range: range, severity: severity))
                     return nil
                 }
             }
             return resolved
             
         case .failure(let unresolved, let error):
-            if let diagnostic = diagnosticForUnresolvedReference?(unresolved, range, fromSymbolLink, error.message) {
-                diagnostics.append(diagnostic)
+            if let problem = problemForUnresolvedReference?(unresolved, range, fromSymbolLink, error.message) {
+                problems.append(problem)
                 return nil
             }
             
             if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)] {
-                diagnostics.append(makeUnfindableArticleDiagnostic(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
+                problems.append(makeUnfindableArticleProblem(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
             } else {
-                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: fromSymbolLink))
+                problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: fromSymbolLink))
             }
             return nil
         }
@@ -82,7 +87,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
 
     mutating func visitImage(_ image: Image) -> (any Markup)? {
         if let reference = image.reference(in: context.inputs), !context.resourceExists(with: reference) {
-            diagnostics.append(unresolvedResourceDiagnostic(resource: reference, source: image.range?.source, range: image.range, severity: .warning))
+            problems.append(unresolvedResourceProblem(resource: reference, source: image.range?.source, range: image.range, severity: .warning))
         }
 
         var image = image
@@ -106,7 +111,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link
         }
         guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
-            diagnostics.append(invalidLinkDestinationDiagnostic(destination: destination, range: link.range, severity: .warning))
+            problems.append(invalidLinkDestinationProblem(destination: destination, range: link.range, severity: .warning))
             return link
         }
         guard url.components.scheme == ResolvedTopicReference.urlScheme else {
@@ -129,7 +134,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> ResolvedTopicReference? {
         if let cached = context.referenceIndex[unresolvedDestination] {
             guard context.topicGraph.isLinkable(cached) == true else {
-                diagnostics.append(disabledLinkDestinationDiagnostic(reference: cached, range: range, severity: .warning))
+                problems.append(disabledLinkDestinationProblem(reference: cached, range: range, severity: .warning))
                 return nil
             }
             return cached
@@ -161,8 +166,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
         let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:
-            var ignoredParsingDiagnostics = [Diagnostic]() // Any argument parsing issues have already been reported elsewhere
-            guard let snippet = Snippet(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &ignoredParsingDiagnostics) else {
+            var ignoredParsingProblems = [Problem]() // Any argument parsing problems have already been reported elsewhere
+            guard let snippet = Snippet(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &ignoredParsingProblems) else {
                 return blockDirective
             }
             
@@ -171,11 +176,11 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 if let requestedSlice = snippet.slice,
                    let errorInfo = context.snippetResolver.validate(slice: requestedSlice, for: resolvedSnippet)
                 {
-                    diagnostics.append(SnippetResolver.unknownSnippetSliceDiagnostic(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
+                    problems.append(SnippetResolver.unknownSnippetSliceProblem(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
                 }
                 return blockDirective
             case .failure(let errorInfo):
-                diagnostics.append(SnippetResolver.unresolvedSnippetPathDiagnostic(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
+                problems.append(SnippetResolver.unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
                 return blockDirective
             }
         case ImageMedia.directiveName:
@@ -184,8 +189,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
             }
             
             if !context.resourceExists(with: imageMedia.source, ofType: .image) {
-                diagnostics.append(
-                    unresolvedResourceDiagnostic(
+                problems.append(
+                    unresolvedResourceProblem(
                         resource: imageMedia.source,
                         expectedType: .image,
                         source: blockDirective.range?.source,
@@ -202,8 +207,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
             }
             
             if !context.resourceExists(with: videoMedia.source, ofType: .video) {
-                diagnostics.append(
-                    unresolvedResourceDiagnostic(
+                problems.append(
+                    unresolvedResourceProblem(
                         resource: videoMedia.source,
                         expectedType: .video,
                         source: source,
@@ -216,8 +221,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
             if let posterReference = videoMedia.poster,
                 !context.resourceExists(with: posterReference, ofType: .image)
             {
-                diagnostics.append(
-                    unresolvedResourceDiagnostic(
+                problems.append(
+                    unresolvedResourceProblem(
                         resource: posterReference,
                         expectedType: .image,
                         source: source,

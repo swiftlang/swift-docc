@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -62,7 +62,7 @@ class SemanticAnalyzerTests: XCTestCase {
     }
     
     func testWarningsAboutDirectiveSupport() async throws {
-        func diagnosticsFromConvertingTestContent(withFileExtension fileExtension: String) async throws -> (unsupportedTopLevelChildDiagnostic: [Diagnostic], missingTopLevelChildDiagnostic: [Diagnostic]) {
+        func problemsConvertingTestContent(withFileExtension fileExtension: String) async throws -> (unsupportedTopLevelChildProblems: [Problem], missingTopLevelChildProblems: [Problem]) {
             let catalogHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
                 TextFile(name: "FileWithDirective.\(fileExtension)", utf8Content: """
                 @Article
@@ -77,18 +77,18 @@ class SemanticAnalyzerTests: XCTestCase {
             let (_, context) = try await loadBundle(catalog: catalogHierarchy)
             
             return (
-                context.diagnostics.filter { $0.identifier == "org.swift.docc.unsupportedTopLevelChild" },
-                context.diagnostics.filter { $0.identifier == "org.swift.docc.missingTopLevelChild" }
+                context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unsupportedTopLevelChild" }),
+                context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.missingTopLevelChild" })
             )
         }
         
         do {
-            let diagnostics = try await diagnosticsFromConvertingTestContent(withFileExtension: "md")
+            let problems = try await problemsConvertingTestContent(withFileExtension: "md")
             
-            XCTAssertEqual(diagnostics.missingTopLevelChildDiagnostic.count, 0)
-            XCTAssertEqual(diagnostics.unsupportedTopLevelChildDiagnostic.count, 1)
+            XCTAssertEqual(problems.missingTopLevelChildProblems.count, 0)
+            XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 1)
             
-            if let diagnostic = diagnostics.unsupportedTopLevelChildDiagnostic.first {
+            if let diagnostic = problems.unsupportedTopLevelChildProblems.first?.diagnostic {
                 XCTAssertEqual(diagnostic.summary, "Found unsupported 'Article' directive in '.md' file")
                 XCTAssertEqual(diagnostic.severity, .warning)
                 XCTAssertEqual(diagnostic.source?.lastPathComponent, "FileWithDirective.md")
@@ -96,12 +96,12 @@ class SemanticAnalyzerTests: XCTestCase {
         }
         
         do {
-            let diagnostics = try await diagnosticsFromConvertingTestContent(withFileExtension: "tutorial")
+            let problems = try await problemsConvertingTestContent(withFileExtension: "tutorial")
             
-            XCTAssertEqual(diagnostics.missingTopLevelChildDiagnostic.count, 1)
-            XCTAssertEqual(diagnostics.unsupportedTopLevelChildDiagnostic.count, 0)
+            XCTAssertEqual(problems.missingTopLevelChildProblems.count, 1)
+            XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 0)
             
-            if let diagnostic = diagnostics.missingTopLevelChildDiagnostic.first {
+            if let diagnostic = problems.missingTopLevelChildProblems.first?.diagnostic {
                 XCTAssertEqual(diagnostic.summary, "No valid content was found in this file")
                 XCTAssertEqual(diagnostic.explanation, "A '.tutorial' file should contain a top-level directive ('Tutorials', 'Tutorial', or 'Article') and valid child content. Only '.md' files support content without a top-level directive")
                 XCTAssertEqual(diagnostic.severity, .warning)
@@ -117,6 +117,6 @@ class SemanticAnalyzerTests: XCTestCase {
         var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         let semantic = analyzer.visitDocument(document)
         XCTAssertNil(semantic)
-        XCTAssert(analyzer.diagnostics.isEmpty)
+        XCTAssert(analyzer.problems.isEmpty)
     }
 }

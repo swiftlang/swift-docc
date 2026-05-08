@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,18 +27,18 @@ func parseDirective<Directive: DirectiveConvertible>(
     
     let blockDirectiveContainer = try #require(document.child(at: 0) as? BlockDirective, sourceLocation: sourceLocation)
     
-    var diagnostics = [Diagnostic]()
+    var problems = [Problem]()
     let context = try await makeEmptyContext()
-    let directive = directive.init(from: blockDirectiveContainer, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+    let directive = directive.init(from: blockDirectiveContainer, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
     
-    let diagnosticDescriptions = diagnostics.map { diagnostic -> String in
-        #expect(diagnostic.source != nil, "Diagnostic \(diagnostic.identifier) is missing a source URL.", sourceLocation: sourceLocation)
-        let line = diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+    let problemIDs = problems.map { problem -> String in
+        #expect(problem.diagnostic.source != nil, "Problem \(problem.diagnostic.identifier) is missing a source URL.", sourceLocation: sourceLocation)
+        let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
         
-        return "\(line): \(diagnostic.severity) – \(diagnostic.identifier)"
+        return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
     }.sorted()
     
-    return (diagnosticDescriptions, directive)
+    return (problemIDs, directive)
 }
 
 func parseDirective<Directive: RenderableDirectiveConvertible>(
@@ -66,8 +66,8 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
         DataFile(name: $0, data: Data())
     }))
     
-    let (renderedContent, diagnostics, directive, _) = try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
-    return (renderedContent, diagnostics, directive)
+    let (renderedContent, problems, directive, _) = try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
+    return (renderedContent, problems, directive)
 }
 
 // MARK: Using the real file system
@@ -82,8 +82,8 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
     problemIdentifiers: [String],
     directive: Directive?
 ) {
-    let (renderedContent, diagnostics, directive, _) = try await parseDirective(directive, loadingOnDiskCatalogNamed: catalogName, content: content, sourceLocation: sourceLocation)
-    return (renderedContent, diagnostics, directive)
+    let (renderedContent, problems, directive, _) = try await parseDirective(directive, loadingOnDiskCatalogNamed: catalogName, content: content, sourceLocation: sourceLocation)
+    return (renderedContent, problems, directive)
 }
 
 func parseDirective<Directive: RenderableDirectiveConvertible>(
@@ -127,18 +127,18 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
     
     var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
     let result = analyzer.visit(blockDirectiveContainer)
-    context.diagnosticEngine.emit(analyzer.diagnostics)
+    context.diagnosticEngine.emit(analyzer.problems)
     
     var referenceResolver = MarkupReferenceResolver(context: context, rootReference: context.inputs.rootReference)
     
     _ = referenceResolver.visit(blockDirectiveContainer)
-    context.diagnosticEngine.emit(referenceResolver.diagnostics)
+    context.diagnosticEngine.emit(referenceResolver.problems)
     
-    func diagnosticDescriptions() throws -> [String] {
-        try context.diagnostics.map { problem -> (line: Int, severity: String, id: String) in
-            #expect(problem.source != nil, "Diagnostic \(problem.identifier) is missing a source URL.", sourceLocation: sourceLocation)
-            let line = try #require(problem.range, sourceLocation: sourceLocation).lowerBound.line
-            return (line, problem.severity.description, problem.identifier)
+    func problemIDs() throws -> [String] {
+        try context.problems.map { problem -> (line: Int, severity: String, id: String) in
+            #expect(problem.diagnostic.source != nil, "Problem \(problem.diagnostic.identifier) is missing a source URL.", sourceLocation: sourceLocation)
+            let line = try #require(problem.diagnostic.range, sourceLocation: sourceLocation).lowerBound.line
+            return (line, problem.diagnostic.severity.description, problem.diagnostic.identifier)
         }
         .sorted { lhs, rhs in
             let (lhsLine, _, lhsID) = lhs
@@ -156,7 +156,7 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
     }
     
     guard let directive = result as? Directive else {
-        return ([], try diagnosticDescriptions(), nil, [:])
+        return ([], try problemIDs(), nil, [:])
     }
     
     var contentCompiler = RenderContentCompiler(
@@ -180,5 +180,5 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
             }
         )
     
-    return (renderedContent, try diagnosticDescriptions(), directive, collectedReferences)
+    return (renderedContent, try problemIDs(), directive, collectedReferences)
 }

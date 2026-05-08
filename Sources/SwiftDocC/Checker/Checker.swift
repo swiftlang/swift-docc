@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,25 +17,8 @@ public import Markdown
  */
 public protocol Checker: MarkupWalker {
     /// Problems found while walking.
-    var diagnostics: [Diagnostic] { get }
+    var problems: [Problem] { get }
 }
-
-// Default implementation so that conforming types don't need to implement deprecated API.
-public extension Checker {
-    @available(*, deprecated, renamed: "diagnostics", message: "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.")
-    var problems: [Problem] {
-        diagnostics.map { Problem(diagnostic: $0) }
-    }
-}
-
-// Default implementation so that existing conformances don't break because they don't have the new `diagnostics` protocol requirement.
-public extension Checker {
-    @available(*, deprecated) // This needs to be marked deprecated because it calls deprecated API.
-    var diagnostics: [Diagnostic] {
-        problems.map(\.diagnostic)
-    }
-}
-
 
 /**
  An internal base class box for checkers.
@@ -43,7 +26,7 @@ public extension Checker {
  This is used to type-erase a `Checker`, which have an associated type constraint, so they cannot be stored verbatim.
  */
 fileprivate class AnyCheckerBox: Checker {
-    var diagnostics: [Diagnostic] {
+    var problems: [Problem] {
         fatalError()
     }
     public func visitBlockQuote(_ blockQuote: BlockQuote) {
@@ -122,8 +105,8 @@ fileprivate class CheckerBox<Base: Checker>: AnyCheckerBox {
         self.base = base
     }
     
-    override var diagnostics: [Diagnostic] {
-        return base.diagnostics
+    override var problems: [Problem] {
+        return base.problems
     }
     
     public override func visitBlockQuote(_ blockQuote: BlockQuote) {
@@ -202,8 +185,8 @@ public struct AnyChecker: Checker {
         self.box = CheckerBox(checker)
     }
     
-    public var diagnostics: [Diagnostic] {
-        return box.diagnostics
+    public var problems: [Problem] {
+        return box.problems
     }
     
     public mutating func visitBlockQuote(_ blockQuote: BlockQuote) {
@@ -291,8 +274,10 @@ public struct CompositeChecker: Checker {
         self.checkers = checkers.map { $0.any() }
     }
     
-    public var diagnostics: [Diagnostic] {
-        checkers.flatMap(\.diagnostics)
+    public var problems: [Problem] {
+        return checkers.flatMap { checker -> [Problem] in
+            return checker.problems
+        }
     }
     
     public mutating func visit(_ markup: any Markup) -> () {

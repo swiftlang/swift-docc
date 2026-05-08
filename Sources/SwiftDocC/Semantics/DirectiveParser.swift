@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,7 +25,7 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
         source: URL?,
         bundle: DocumentationBundle,
         featureFlags: FeatureFlags,
-        diagnostics: inout [Diagnostic]
+        problems: inout [Problem]
     ) -> Directive? {
         let (directiveElements, remainder) = markupElements.categorize { markup -> Directive? in
             guard let childDirective = markup as? BlockDirective,
@@ -38,21 +38,25 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
                 source: source,
                 for: bundle,
                 featureFlags: featureFlags,
-                diagnostics: &diagnostics
+                problems: &problems
             )
         }
         
         let directive = directiveElements.first
         
         for extraDirective in directiveElements.dropFirst() {
-            diagnostics.append(
-                Diagnostic(
-                    source: source,
-                    severity: .warning,
-                    range: extraDirective.originalMarkup.range,
-                    identifier: "org.swift.docc.HasAtMostOne<\(parentType), \(Directive.self)>.DuplicateChildren",
-                    summary: "Duplicate \(Metadata.directiveName.singleQuoted) child directive",
-                    explanation: nil
+            problems.append(
+                Problem(
+                    diagnostic: Diagnostic(
+                        source: source,
+                        severity: .warning,
+                        range: extraDirective.originalMarkup.range,
+                        identifier: "org.swift.docc.HasAtMostOne<\(parentType), \(Directive.self)>.DuplicateChildren",
+                        summary: "Duplicate \(Metadata.directiveName.singleQuoted) child directive",
+                        explanation: nil,
+                        notes: []
+                    ),
+                    possibleSolutions: []
                 )
             )
         }

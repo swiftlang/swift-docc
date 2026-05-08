@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -38,17 +38,7 @@ extension Semantic.Analyses {
             self.allowsMarkup = allowsMarkup
         }
         
-        
-        @available(*, deprecated, renamed: "analyze(_:children:source:diagnostics:)", message: "Use 'analyze(_:children:source:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) {
-            var diagnostics = [Diagnostic]()
-            defer {
-                problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
-            }
-            analyze(directive, children: children, source: source, diagnostics: &diagnostics)
-        }
-        
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, diagnostics: inout [Diagnostic]) {
             if let severity = severityIfFound {
                 let allowedDirectivesList = allowedDirectives.sorted().map { "'\($0)'" }.joined(separator: ", ")
                 
@@ -67,18 +57,20 @@ extension Semantic.Analyses {
                     }
                     
                     if let summary {
+                        let diagnostic = Diagnostic(source: source, severity: severity, range: child.range, identifier: "org.swift.docc.HasOnlyKnownDirectives", summary: summary, explanation: "These directives are allowed: \(allowedDirectivesList)")
                         
-                        let solutions: [Solution] = if let childRange = child.range {
-                            [Solution(
+                        var solution: Solution?
+                        if let childRange = child.range {
+                            solution = Solution(
                                 summary: "Remove unsupported child content",
-                                replacements: [.init(range: childRange, replacement: "")]
-                            )]
-                        } else {
-                            []
+                                replacements: [
+                                    Replacement(range: childRange, replacement: "")
+                                ]
+                            )
                         }
                         
-                        let diagnostic = Diagnostic(source: source, severity: severity, range: child.range, identifier: "org.swift.docc.HasOnlyKnownDirectives", summary: summary, explanation: "These directives are allowed: \(allowedDirectivesList)", solutions: solutions)
-                        diagnostics.append(diagnostic)
+                        
+                        problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solution.map { [$0] } ?? []))
                     }
                 }
             }

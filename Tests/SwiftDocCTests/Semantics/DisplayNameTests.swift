@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,12 +20,12 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(displayName)
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(1, diagnostics.count)
-        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.unlabeled")
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual("org.swift.docc.HasArgument.unlabeled", problems.first?.diagnostic.identifier)
     }
     
     func testUnlabeledArgumentValue() async throws {
@@ -33,10 +33,10 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(displayName)
-        XCTAssertTrue(diagnostics.isEmpty)
+        XCTAssertTrue(problems.isEmpty)
         XCTAssertEqual(displayName?.style, .conceptual)
     }
     
@@ -45,10 +45,10 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(displayName)
-        XCTAssertTrue(diagnostics.isEmpty)
+        XCTAssertTrue(problems.isEmpty)
         XCTAssertEqual(displayName?.style, .conceptual)
     }
     
@@ -57,10 +57,10 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(displayName)
-        XCTAssertTrue(diagnostics.isEmpty)
+        XCTAssertTrue(problems.isEmpty)
         XCTAssertEqual(displayName?.style, .symbol)
     }
     
@@ -69,12 +69,12 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(displayName)
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(1, diagnostics.count)
-        XCTAssertEqual("org.swift.docc.HasArgument.style.ConversionFailed", diagnostics.first?.identifier)
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual("org.swift.docc.HasArgument.style.ConversionFailed", problems.first?.diagnostic.identifier)
     }
     
     func testExtraArguments() async throws {
@@ -82,12 +82,12 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a displayName value")
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(1, diagnostics.count)
-        XCTAssertEqual("org.swift.docc.UnknownArgument", diagnostics.first?.identifier)
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual("org.swift.docc.UnknownArgument", problems.first?.diagnostic.identifier)
     }
     
     func testExtraDirective() async throws {
@@ -99,13 +99,13 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a DisplayName value")
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(2, diagnostics.count)
-        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", diagnostics.first?.identifier)
-        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", diagnostics.last?.identifier)
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(2, problems.count)
+        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", problems.last?.diagnostic.identifier)
     }
     
     func testExtraContent() async throws {
@@ -117,12 +117,12 @@ class DisplayNameTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var diagnostics = [Diagnostic]()
-        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a DisplayName value")
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(1, diagnostics.count)
-        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", diagnostics.first?.identifier)
-        XCTAssertNotNil(diagnostics.first?.solutions.first)
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", problems.first?.diagnostic.identifier)
+        XCTAssertNotNil(problems.first?.possibleSolutions.first)
     }
 }

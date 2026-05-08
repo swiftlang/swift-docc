@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -29,10 +29,10 @@ some more *stuff*
 
         let (bundle, _) = try await testBundleAndContext()
         
-        var diagnostics = [Diagnostic]()
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, diagnostics: &diagnostics)
+        var problems: [Problem] = []
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
         
-        XCTAssertTrue(diagnostics.isEmpty)
+        XCTAssertTrue(problems.isEmpty)
     }
     
     func testValidHeadings() async throws {
@@ -52,10 +52,10 @@ some more *stuff*
 
         let (bundle, _) = try await testBundleAndContext()
         
-        var diagnostics = [Diagnostic]()
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, diagnostics: &diagnostics)
+        var problems: [Problem] = []
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
         
-        XCTAssertTrue(diagnostics.isEmpty)
+        XCTAssertTrue(problems.isEmpty)
     }
     
     func testHeadingLevelTooLow() async throws {
@@ -67,13 +67,14 @@ some more *stuff*
 
         let (bundle, _) = try await testBundleAndContext()
         
-        var diagnostics = [Diagnostic]()
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, diagnostics: &diagnostics)
+        var problems: [Problem] = []
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
         
-        XCTAssertEqual(diagnostics.map(\.summary),[
-            "This heading doesn't meet or exceed the minimum allowed heading level (2)",
-            "This heading doesn't meet or exceed the minimum allowed heading level (2)",
-        ])
+        XCTAssertEqual(problems.map { $0.diagnostic.summary },
+                       [
+                        "This heading doesn't meet or exceed the minimum allowed heading level (2)",
+                        "This heading doesn't meet or exceed the minimum allowed heading level (2)",
+                       ])
     }
     
     func testHeadingSkipsLevel() async throws {
@@ -87,13 +88,14 @@ some more *stuff*
 
         let (bundle, _) = try await testBundleAndContext()
         
-        var diagnostics = [Diagnostic]()
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, diagnostics: &diagnostics)
+        var problems: [Problem] = []
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
         
-        XCTAssertEqual(diagnostics.map(\.summary), [
-            "This heading doesn't sequentially follow the previous heading",
-            "This heading doesn't sequentially follow the previous heading",
-            "This heading doesn't sequentially follow the previous heading",
-        ])
+        XCTAssertEqual(problems.map { $0.diagnostic.summary },
+                       [
+                        "This heading doesn't sequentially follow the previous heading",
+                        "This heading doesn't sequentially follow the previous heading",
+                        "This heading doesn't sequentially follow the previous heading",
+        				])
     }
 }

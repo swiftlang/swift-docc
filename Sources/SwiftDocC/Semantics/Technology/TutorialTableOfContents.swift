@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -59,39 +59,30 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
         }
     }
     
-    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
-        var diagnostics = [Diagnostic]()
-        defer {
-            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
-        }
-        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
-    }
-    
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == TutorialTableOfContents.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialTableOfContents>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialTableOfContents>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<TutorialTableOfContents>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
+        Semantic.Analyses.HasOnlyKnownDirectives<TutorialTableOfContents>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
     
-        let requiredName = Semantic.Analyses.HasArgument<TutorialTableOfContents, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
-        let requiredIntro = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Intro>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics).0
+        let requiredName = Semantic.Analyses.HasArgument<TutorialTableOfContents, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
+        let requiredIntro = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Intro>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems).0
         
         var volumes: [Volume]
         var remainder: MarkupContainer
-        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Volume>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
+        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Volume>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
 
         // Retrieve chapters outside volumes.
         let chapters: [Chapter]
-        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Chapter>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
+        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Chapter>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
 
         if !chapters.isEmpty {
             if !volumes.isEmpty {
                 // If there are Volumes, diagnose isolated chapters.
-                diagnostics.append(contentsOf:
+                problems.append(contentsOf:
                     chapters.map { chapter in
-                        TutorialTableOfContents.isolatedChapterDiagnostic(isolatedChapter: chapter, source: source, range: chapter.originalMarkup.range)
+                        Problem(diagnostic: TutorialTableOfContents.isolatedChapterDiagnostic(isolatedChapter: chapter, source: source, range: chapter.originalMarkup.range), possibleSolutions: [])
                     }
                 )
             } else {
@@ -103,10 +94,10 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
         }
         
         let resources: Resources?
-        (resources, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Resources>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (resources, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Resources>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
 
         let redirects: [Redirect]
-        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         guard let name = requiredName,
             let intro = requiredIntro else {

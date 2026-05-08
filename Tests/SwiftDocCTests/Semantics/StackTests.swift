@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,15 +22,15 @@ class StackTests: XCTestCase {
         
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(stack)
-            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(1, problems.count)
             XCTAssertEqual(
                 ["org.swift.docc.HasAtLeastOne<\(Stack.self), \(ContentAndMedia.self)>"],
-                diagnostics.map { $0.identifier }
+                problems.map { $0.diagnostic.identifier }
             )
         }
     }
@@ -51,12 +51,12 @@ class StackTests: XCTestCase {
         
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(stack)
-            XCTAssertEqual(0, diagnostics.count)
+            XCTAssertEqual(0, problems.count)
         }
     }
 
@@ -83,15 +83,15 @@ class StackTests: XCTestCase {
             DataFile(name: "code4.png", data: Data())
         ]))
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(stack)
-            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(1, problems.count)
             XCTAssertEqual(
                 ["org.swift.docc.HasAtMost<\(Stack.self), \(ContentAndMedia.self)>(\(Stack.childrenLimit))"],
-                diagnostics.map { $0.identifier }
+                problems.map { $0.diagnostic.identifier }
             )
         }
     }

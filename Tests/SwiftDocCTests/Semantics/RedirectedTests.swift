@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,12 +20,12 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(redirected)
-        XCTAssertEqual(1, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.from")
+        XCTAssertEqual(1, problems.count)
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual("org.swift.docc.HasArgument.from", problems.first?.diagnostic.identifier)
     }
     
     func testValid() async throws {
@@ -34,10 +34,10 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(redirected)
-        XCTAssertTrue(diagnostics.isEmpty)
+        XCTAssertTrue(problems.isEmpty)
         XCTAssertEqual(redirected?.oldPath.path, oldPath)
     }
     
@@ -47,12 +47,12 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(1, diagnostics.count)
-        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.UnknownArgument")
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual("org.swift.docc.UnknownArgument", problems.first?.diagnostic.identifier)
     }
     
     func testExtraDirective() async throws {
@@ -65,13 +65,13 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
-        XCTAssertEqual(2, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasOnlyKnownDirectives")
-        XCTAssertEqual(diagnostics.last?.identifier,  "org.swift.docc.Redirected.NoInnerContentAllowed")
+        XCTAssertEqual(2, problems.count)
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.Redirected.NoInnerContentAllowed", problems.last?.diagnostic.identifier)
     }
     
     func testExtraContent() async throws {
@@ -84,12 +84,12 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
-        XCTAssertFalse(diagnostics.containsAnyError)
-        XCTAssertEqual(1, diagnostics.count)
-        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.Redirected.NoInnerContentAllowed")
+        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual("org.swift.docc.Redirected.NoInnerContentAllowed", problems.first?.diagnostic.identifier)
     }
     
     // MARK: - Redirect support
@@ -108,14 +108,14 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let tutorialTableOfContents = TutorialTableOfContents(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let tutorialTableOfContents = TutorialTableOfContents(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(tutorialTableOfContents, "A tutorial table-of-contents value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got\n\(analyzer.diagnostics.map(\.summary))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
     }
     
     func testVolumeAndChapterSupportsRedirect() async throws {
@@ -140,10 +140,10 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let volume = Volume(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let volume = Volume(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(volume, "A Volume value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
     }
     
     func testTutorialAndSectionsSupportsRedirect() async throws {
@@ -205,14 +205,14 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(tutorial, "A Tutorial value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got \(analyzer.diagnostics.map(\.summary))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
     }
     
     func testTutorialArticleSupportsRedirect() async throws {
@@ -233,14 +233,14 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(article, "A TutorialArticle value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got\n\(analyzer.diagnostics.map(\.summary))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
     }
     
     func testResourcesSupportsRedirect() async throws {
@@ -282,10 +282,10 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let article = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let article = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(article, "A Resources value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
     }
     
     func testArticleSupportsRedirect() async throws {
@@ -303,14 +303,14 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
 
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
 
         let redirects = try XCTUnwrap(article?.redirects)
         XCTAssertEqual(2, redirects.count)
@@ -338,14 +338,14 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
 
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
 
         let redirects = try XCTUnwrap(article?.redirects)
         XCTAssertEqual(2, redirects.count)
@@ -375,14 +375,14 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
-        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
                 
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
 
         let redirects = try XCTUnwrap(article?.redirects)
         XCTAssertEqual(3, redirects.count)
@@ -399,15 +399,21 @@ class RedirectedTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var diagnostics = [Diagnostic]()
-        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        var problems = [Problem]()
+        let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(redirected)
-        XCTAssertEqual(2, diagnostics.count)
-        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(2, problems.count)
+        XCTAssertFalse(problems.containsErrors)
         
-        XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
-            "org.swift.docc.HasArgument.from",
+        let expectedIds = [
             "org.swift.docc.UnknownArgument",
-        ])
+            "org.swift.docc.HasArgument.from",
+        ]
+        
+        let problemIds = problems.map(\.diagnostic.identifier)
+        
+        for id in expectedIds {
+            XCTAssertTrue(problemIds.contains(id))
+        }
     }
 }

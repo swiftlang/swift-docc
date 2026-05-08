@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ public import Markdown
  If the first element after the title (if there is one) is not a paragraph, a warning is produced.
  */
 public struct MissingAbstract: Checker {
-    public var diagnostics = [Diagnostic]()
+    public var problems = [Problem]()
     
     private var sourceFile: URL?
     
@@ -51,14 +51,14 @@ public struct MissingAbstract: Checker {
         
         let titleHeadingRange = document.child(at: 0)?.range
         let titleRange = titleHeadingRange ?? zeroLocation..<zeroLocation
-        diagnostics.append(Diagnostic(
-            source: sourceFile,
-            severity: .information,
-            range: titleRange,
-            identifier: "org.swift.docc.DocumentHasNoAbstract",
-            summary: "This document does not have a summary.",
-            explanation: explanation
-        ))
+        let diagnostic = Diagnostic(source: sourceFile,
+                                         severity: .information,
+                                         range: titleRange,
+                                         identifier: "org.swift.docc.DocumentHasNoAbstract",
+                                         summary: "This document does not have a summary.",
+                                         explanation: explanation)
+
+        problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
     }
 }
 

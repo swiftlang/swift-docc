@@ -39,10 +39,7 @@ public struct Diagnostic {
     ///
     /// For example, if you're diagnosing the fact that there are multiple *X* in a document, you might diagnose on
     /// the second *X* while adding a note on the first *X* to note that it was the first occurrence.
-    public var notes: [Note]
-    
-    /// A list of possible solutions that the end-use can take to resolve the problem or issue.
-    public var solutions: [Solution]
+    public var notes = [DiagnosticNote]()
     
     public init(
         source: URL? = nil,
@@ -52,8 +49,7 @@ public struct Diagnostic {
         groupIdentifier: String? = nil,
         summary: String,
         explanation: String? = nil,
-        notes: [Note] = [],
-        solutions: [Solution] = []
+        notes: [DiagnosticNote] = []
     ) {
         self.source = source
         self.severity = severity
@@ -63,7 +59,6 @@ public struct Diagnostic {
         self.summary = summary
         self.explanation = explanation
         self.notes = notes
-        self.solutions = solutions
     }
 }
 
@@ -75,25 +70,12 @@ public extension Diagnostic {
     mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
         // If there is no location information in the source diagnostic, the diagnostic might be removed for safety reasons.
         range?.offsetWithRange(docRange)
-        
-        for solutionIndex in solutions.indices {
-            for replacementIndex in solutions[solutionIndex].replacements.indices {
-                solutions[solutionIndex].replacements[replacementIndex].offsetWithRange(docRange)
-            }
-        }
     }
     
     /// Returns the diagnostic with its range offset by the given documentation comment range.
     func withRangeOffset(by docRange: SymbolGraph.LineList.SourceRange) -> Self {
         var diagnostic = self
-        diagnostic.offsetWithRange(docRange)
+        diagnostic.range?.offsetWithRange(docRange)
         return diagnostic
-    }
-}
-
-extension Sequence<Diagnostic> {
-    /// A Boolean value that indicates if any of the diagnostics has an`error` severity.
-    package var containsAnyError: Bool {
-        contains { $0.severity == .error }
     }
 }

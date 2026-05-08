@@ -238,7 +238,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
-        XCTAssertEqual(result.diagnostics.count, 0)
+        XCTAssertEqual(result.problems.count, 0)
     }
     
     func testConvertWithoutBundle() async throws {
@@ -276,7 +276,7 @@ class ConvertActionTests: XCTestCase {
         )
         
         let result = try await action.perform(logHandle: .none)
-        XCTAssertEqual(result.diagnostics.count, 0)
+        XCTAssertEqual(result.problems.count, 0)
         XCTAssertEqual(result.outputs, [outputLocation.absoluteURL])
         
         let outputFiles = testDataProvider._allFilePaths().filter { $0.hasPrefix("/output/data/documentation/") }
@@ -1496,7 +1496,7 @@ class ConvertActionTests: XCTestCase {
     }
 
     func testIgnoresAnalyzerHintsByDefault() async throws {
-        func runCompiler(analyze: Bool) async throws -> [Diagnostic] {
+        func runCompiler(analyze: Bool) async throws -> [Problem] {
             // This bundle has both non-analyze and analyze style warnings.
             let testBundleURL = Bundle.module.url(
                 forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -1520,19 +1520,21 @@ class ConvertActionTests: XCTestCase {
                 diagnosticEngine: engine)
             let result = try await action.perform(logHandle: .none)
             XCTAssertFalse(result.didEncounterError)
-            return engine.diagnostics
+            return engine.problems
         }
 
         let analyzeDiagnostics = try await runCompiler(analyze: true)
         let noAnalyzeDiagnostics = try await runCompiler(analyze: false)
         
-        XCTAssertTrue(analyzeDiagnostics.contains { $0.severity == .information })
-        XCTAssertFalse(noAnalyzeDiagnostics.contains { $0.severity == .information })
+        XCTAssertTrue(analyzeDiagnostics.contains { $0.diagnostic.severity == .information })
+        XCTAssertFalse(noAnalyzeDiagnostics.contains { $0.diagnostic.severity == .information })
 
-        XCTAssertTrue(analyzeDiagnostics.count > noAnalyzeDiagnostics.count, """
-            The number of diagnostics with '--analyze' should be more than without '--analyze' \
-            (\(analyzeDiagnostics.count) vs \(noAnalyzeDiagnostics.count))
+        XCTAssertTrue(
+            analyzeDiagnostics.count > noAnalyzeDiagnostics.count,
             """
+                The number of diagnostics with '--analyze' should be more than without '--analyze' \
+                (\(analyzeDiagnostics.count) vs \(noAnalyzeDiagnostics.count))
+                """
         )
     }
     
@@ -1590,8 +1592,8 @@ class ConvertActionTests: XCTestCase {
             
             // Compare the results
             XCTAssertEqual(
-                uniformlyPrintDiagnosticMessages(serialResult.diagnostics),
-                uniformlyPrintDiagnosticMessages(parallelResult.diagnostics)
+                uniformlyPrintDiagnosticMessages(serialResult.problems),
+                uniformlyPrintDiagnosticMessages(parallelResult.problems)
             )
             
             XCTAssertEqual(parallelResult.outputs.count, 1)
@@ -1984,7 +1986,7 @@ class ConvertActionTests: XCTestCase {
         )
         let result = try await action.perform(logHandle: .none)
 
-        XCTAssertEqual(engine.diagnostics.count, 0, "\(ConvertAction.self) didn't filter out diagnostics at-or-above the 'error' level.")
+        XCTAssertEqual(engine.problems.count, 0, "\(ConvertAction.self) didn't filter out diagnostics at-or-above the 'error' level.")
         XCTAssertFalse(result.didEncounterError, "The issues with this test bundle are not severe enough to fail the build.")
     }
 
@@ -2020,10 +2022,10 @@ class ConvertActionTests: XCTestCase {
         )
         let result = try await action.perform(logHandle: .none)
 
-        XCTAssertEqual(engine.diagnostics.count, 1, "\(ConvertAction.self) shouldn't filter out diagnostics when the '--analyze' flag is passed")
-        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.Article.Title.NotFound"])
+        XCTAssertEqual(engine.problems.count, 1, "\(ConvertAction.self) shouldn't filter out diagnostics when the '--analyze' flag is passed")
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.Article.Title.NotFound"])
         XCTAssertFalse(result.didEncounterError, "The issues with this test bundle are not severe enough to fail the build.")
-        XCTAssert(engine.diagnostics.contains(where: { $0.severity == .warning }))
+        XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
     }
 
     func testDoesNotIncludeDiagnosticsInThrownError() async throws {
@@ -2536,8 +2538,8 @@ class ConvertActionTests: XCTestCase {
                 diagnosticEngine: engine
             )
             let result = try await action.perform(logHandle: .none)
-            XCTAssertEqual(engine.diagnostics.count, 1)
-            XCTAssertTrue(engine.diagnostics.contains(where: { $0.severity == .warning }))
+            XCTAssertEqual(engine.problems.count, 1)
+            XCTAssertTrue(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
             XCTAssertFalse(result.didEncounterError)
         }
         
@@ -2557,7 +2559,7 @@ class ConvertActionTests: XCTestCase {
                 diagnosticEngine: engine
             )
             let result = try await action.perform(logHandle: .none)
-            XCTAssertEqual(engine.diagnostics.count, 1)
+            XCTAssertEqual(engine.problems.count, 1)
             XCTAssertTrue(result.didEncounterError)
         }
         
@@ -2693,18 +2695,18 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(bundle.id, "com.example.test")
     }
 
-    private func uniformlyPrintDiagnosticMessages(_ diagnostics: [Diagnostic]) -> String {
-        return diagnostics.sorted(by: { (lhs, rhs) -> Bool in
-            guard lhs.identifier != rhs.identifier else {
-                return lhs.summary < rhs.summary
+    private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
+        return problems.sorted(by: { (lhs, rhs) -> Bool in
+            guard lhs.diagnostic.identifier != rhs.diagnostic.identifier else {
+                return lhs.diagnostic.summary < rhs.diagnostic.summary
             }
-            return lhs.identifier < rhs.identifier
-        }) .map { DiagnosticConsoleWriter.formattedDescription(for: $0) }.sorted().joined(separator: "\n")
+            return lhs.diagnostic.identifier < rhs.diagnostic.identifier
+        }) .map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }.sorted().joined(separator: "\n")
     }
     
     // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
     func testWarnsWhenTutorialsTableOfContentsPageIsMissing() async throws {
-        func diagnosticsFromConverting(_ catalogContent: [any File]) async throws -> [Diagnostic] {
+        func problemsFromConverting(_ catalogContent: [any File]) async throws -> [Problem] {
             let catalog = Folder(name: "unit-test.docc", content: catalogContent)
             let testDataProvider = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
             let engine = DiagnosticEngine()
@@ -2721,10 +2723,10 @@ class ConvertActionTests: XCTestCase {
                 diagnosticEngine: engine
             )
             _ = try await action.perform(logHandle: .none)
-            return engine.diagnostics
+            return engine.problems
         }
         
-        let onlyTutorialArticleDiagnostics = try await diagnosticsFromConverting([
+        let onlyTutorialArticleProblems = try await problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "Article.tutorial", utf8Content: """
                 @Article(time: 20) {
@@ -2735,11 +2737,11 @@ class ConvertActionTests: XCTestCase {
                 """
             ),
         ])
-        XCTAssert(onlyTutorialArticleDiagnostics.contains(where: {
-            $0.identifier == "MissingTableOfContentsPage"
+        XCTAssert(onlyTutorialArticleProblems.contains(where: {
+            $0.diagnostic.identifier == "MissingTableOfContentsPage"
         }))
         
-        let tutorialTableOfContentDiagnostics = try await diagnosticsFromConverting([
+        let tutorialTableOfContentProblem = try await problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "table-of-contents.tutorial", utf8Content: """
                 """
@@ -2753,11 +2755,11 @@ class ConvertActionTests: XCTestCase {
                 """
             ),
         ])
-        XCTAssert(tutorialTableOfContentDiagnostics.contains(where: {
-            $0.identifier == "MissingTableOfContentsPage"
+        XCTAssert(tutorialTableOfContentProblem.contains(where: {
+            $0.diagnostic.identifier == "MissingTableOfContentsPage"
         }))
         
-        let incompleteTutorialFile = try await diagnosticsFromConverting([
+        let incompleteTutorialFile = try await problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "article.tutorial", utf8Content: """
                 @Chapter(name: "SlothCreator Essentials") {
@@ -2771,10 +2773,10 @@ class ConvertActionTests: XCTestCase {
             ),
         ])
         XCTAssert(incompleteTutorialFile.contains(where: {
-            $0.identifier == "org.swift.docc.missingTopLevelChild"
+            $0.diagnostic.identifier == "org.swift.docc.missingTopLevelChild"
         }))
         XCTAssertFalse(incompleteTutorialFile.contains(where: {
-            $0.identifier == "MissingTableOfContentsPage"
+            $0.diagnostic.identifier == "MissingTableOfContentsPage"
         }))
     }
     
@@ -2819,7 +2821,7 @@ class ConvertActionTests: XCTestCase {
         )
         
         _ = try await action.perform(logHandle: .none)
-        XCTAssertEqual(engine.diagnostics.count, 1)
+        XCTAssertEqual(engine.problems.count, 1)
         
         XCTAssert(testDataProvider.fileExists(atPath: diagnosticOutputFile.path))
         

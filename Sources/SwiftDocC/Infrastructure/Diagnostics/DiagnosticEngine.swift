@@ -19,12 +19,12 @@ public final class DiagnosticEngine {
     /// The diagnostic consumers currently subscribed to this engine.
     let consumers: Synchronized<[ObjectIdentifier: any DiagnosticConsumer]> = .init([:])
     /// The diagnostics encountered by this engine.
-    let _diagnostics: Synchronized<[Diagnostic]> = .init([])
+    let diagnostics: Synchronized<[Problem]> = .init([])
     /// A flag that indicates whether this engine has emitted a diagnostics with a severity level of ``DiagnosticSeverity/error``.
     var didEncounterError: Synchronized<Bool> = .init(false)
 
-    /// Determines which diagnostics will be reported to consumers.
-    ///
+    /// Determines which problems will be emitted to consumers.
+    /// 
     /// This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified,
     /// diagnostics with a severity up to and including `.information` will be printed.
     public var filterLevel: DiagnosticSeverity
@@ -45,11 +45,11 @@ public final class DiagnosticEngine {
     /// A list of diagnostic identifiers that are explicitly raised to an "error" severity.
     package var diagnosticIDsWithErrorSeverity: Set<String>
     
-    /// Determines whether or not the diagnostics engine will emit a diagnostic with the given ID or group ID.
-    package func willEmitDiagnostic(id: String, defaultSeverity: DiagnosticSeverity) -> Bool {
-        if diagnosticIDsWithErrorSeverity.contains(id) {
+    /// Determines whether or not the diagnostics engine will emit a problem with the given diagnostic ID or diagnostic group ID.
+    package func willEmitProblem(diagnosticID: String, defaultSeverity: DiagnosticSeverity) -> Bool {
+        if diagnosticIDsWithErrorSeverity.contains(diagnosticID) {
             true // Errors are always emitted
-        } else if diagnosticIDsWithWarningSeverity.contains(id) {
+        } else if diagnosticIDsWithWarningSeverity.contains(diagnosticID) {
             // `--Wwarning` can be used to lower severity even when `--warnings-as-errors` is passed to is needs to be checked first
             filterLevel <= .warning
         } else if treatWarningsAsErrors {
@@ -59,21 +59,14 @@ public final class DiagnosticEngine {
         }
     }
 
-    /// Determines whether or not the diagnostics engine should report the given diagnostic, that the caller already passed to ``emit(_:)-(Diagnostic)``.
-    private func shouldReport(_ diagnostic: Diagnostic) -> Bool {
-        diagnostic.severity.rawValue <= filterLevel.rawValue
+    /// Determines which problems should be emitted.
+    private func shouldEmit(_ problem: Problem) -> Bool {
+        problem.diagnostic.severity.rawValue <= filterLevel.rawValue
     }
 
-    @available(*, deprecated, renamed: "diagnostics", message: "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.")
-    public var problems: [Problem] {
-        _diagnostics.sync { diagnostics in
-            diagnostics.map { Problem(diagnostic: $0) }
-        }
-    }
-    
     /// A convenience accessor for retrieving all of the diagnostics this engine currently holds.
-    public var diagnostics: [Diagnostic] {
-        _diagnostics.sync { $0 }
+    public var problems: [Problem] {
+        return diagnostics.sync { $0 }
     }
 
     /// Creates a new diagnostic engine instance with no consumers.
@@ -96,45 +89,35 @@ public final class DiagnosticEngine {
 
     /// Removes all of the encountered diagnostics from this engine.
     public func clearDiagnostics() {
-        _diagnostics.sync {
+        diagnostics.sync {
             $0.removeAll()
         }
         didEncounterError.sync { $0 = false }
     }
 
-    @available(*, deprecated, renamed: "emit(_:)", message: "Use 'emit(_:)' instead. This deprecated API will be removed after 6.5 is released.")
-    public func emit(_ problem: Problem) {
-        emit(problem.diagnostic)
-    }
-    
     /// Dispatches a diagnostic to all subscribed consumers.
-    /// - Parameter diagnostic: The diagnostic to dispatch to this engine's currently subscribed consumers.
-    public func emit(_ diagnostic: Diagnostic) {
-        emit([diagnostic])
+    /// - Parameter problem: The diagnostic to dispatch to this engine's currently subscribed consumers.
+    public func emit(_ problem: Problem) {
+        emit([problem])
     }
 
-    @available(*, deprecated, renamed: "emit(_:)", message: "Use 'emit(_:)' instead. This deprecated API will be removed after 6.5 is released.")
-    public func emit(_ problems: [Problem]) {
-        emit(problems.map(\.diagnostic))
-    }
-    
     /// Dispatches multiple diagnostics to consumers.
-    /// - Parameter diagnostics: The sequence of diagnostics to dispatch to this engine's currently subscribed consumers.
-    /// - Note: The diagnostics are dispatched asynchronously.
-    public func emit(_ diagnostics: some Sequence<Diagnostic>) {
-        let mappedProblems = diagnostics.map { diagnostic -> Diagnostic in
-            var diagnostic = diagnostic
-            updateDiagnosticSeverity(&diagnostic)
-            return diagnostic
+    /// - Parameter problems: The array of diagnostics to dispatch to this engine's currently subscribed consumers.
+    /// > Note: Diagnostics are dispatched asynchronously.
+    public func emit(_ problems: [Problem]) {
+        let mappedProblems = problems.map { problem -> Problem in
+            var problem = problem
+            updateDiagnosticSeverity(&problem.diagnostic)
+            return problem
         }
-        let filteredProblems = mappedProblems.filter(shouldReport)
+        let filteredProblems = mappedProblems.filter(shouldEmit)
         guard !filteredProblems.isEmpty else { return }
 
-        if filteredProblems.containsAnyError {
+        if filteredProblems.containsErrors {
             didEncounterError.sync { $0 = true }
         }
         
-        _diagnostics.sync {
+        diagnostics.sync {
             $0.append(contentsOf: filteredProblems)
         }
 

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,13 +13,14 @@ import XCTest
 import Markdown
 
 struct NullChecker: Checker {
-    let diagnostics = [Diagnostic]()
+    let problems = [Problem]()
 }
 
 struct DiagnoseEveryParagraph: Checker {
-    var diagnostics = [Diagnostic]()
+    static let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "blah", summary: "blah"), possibleSolutions: [])
+    var problems = [Problem]()
     mutating func visitParagraph(_ paragraph: Paragraph) {
-        diagnostics.append(Diagnostic(source: nil, severity: .error, range: nil, identifier: "some-identifier", summary: "Some summary of this issue"))
+        problems.append(DiagnoseEveryParagraph.problem)
     }
 }
 
@@ -27,7 +28,7 @@ class CheckerTests: XCTestCase {
     func testNullChecker() {
         var nullChecker = NullChecker()
         nullChecker.visit(Document())
-        XCTAssertTrue(nullChecker.diagnostics.isEmpty)
+        XCTAssertTrue(nullChecker.problems.isEmpty)
     }
     
     func testDiagnoseEverything() {
@@ -35,7 +36,7 @@ class CheckerTests: XCTestCase {
         let node = Paragraph(Text("Hello world!"))
         checker.visit(node)
         
-        XCTAssertEqual(1, checker.diagnostics.count)
+        XCTAssertEqual(1, checker.problems.count)
     }
 }
 
@@ -43,13 +44,13 @@ class CompositeCheckerTests: XCTestCase {
     func testNoCheckers() {
         var checker = CompositeChecker([AnyChecker]())
         checker.visit(Paragraph())
-        XCTAssertTrue(checker.diagnostics.isEmpty)
+        XCTAssertTrue(checker.problems.isEmpty)
     }
     
     func testOneChecker() {
         var checker = CompositeChecker([DiagnoseEveryParagraph()])
         checker.visit(Paragraph())
-        XCTAssertEqual(1, checker.diagnostics.count)
+        XCTAssertEqual(1, checker.problems.count)
     }
     
     func testMultipleCheckers() {
@@ -58,6 +59,6 @@ class CompositeCheckerTests: XCTestCase {
             DiagnoseEveryParagraph(),
         ])
         checker.visit(Paragraph())
-        XCTAssertEqual(2, checker.diagnostics.count)
+        XCTAssertEqual(2, checker.problems.count)
     }
 }

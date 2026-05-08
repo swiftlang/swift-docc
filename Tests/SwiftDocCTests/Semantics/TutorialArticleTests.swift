@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,16 +23,17 @@ class TutorialArticleTests: XCTestCase {
         
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
-            XCTAssertEqual(2, diagnostics.count)
-            XCTAssertEqual(diagnostics.map(\.identifier), [
+            XCTAssertEqual(2, problems.count)
+            XCTAssertEqual([
                 "org.swift.docc.HasArgument.time",
                 "org.swift.docc.HasExactlyOne<Article, \(Intro.self)>.Missing",
-            ])
+                ],
+                           problems.map { $0.diagnostic.identifier })
         }
     }
     
@@ -59,12 +60,12 @@ class TutorialArticleTests: XCTestCase {
         
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
-            XCTAssertEqual(2, diagnostics.count)
+            XCTAssertEqual(2, problems.count)
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-13:2
@@ -109,12 +110,12 @@ TutorialArticle @1:1-13:2
         
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
-            XCTAssertEqual(4, diagnostics.count)
+            XCTAssertEqual(4, problems.count)
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-23:2
@@ -161,12 +162,12 @@ TutorialArticle @1:1-23:2
             DataFile(name: "myimage.png", data: Data())
         ]))
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
-            XCTAssertEqual(0, diagnostics.count)
+            XCTAssertEqual(0, problems.count)
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
@@ -277,16 +278,16 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
             DataFile(name: "this-is-still-trailing.png", data: Data())
         ]))
         
-        if let directive {
-            var diagnostics = [Diagnostic]()
+        directive.map { directive in
+            var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(article)
-            XCTAssertEqual(3, diagnostics.count)
-            let arbitraryMarkupDiagnostic = diagnostics.first(where: { $0.identifier == "org.swift.docc.Stack.UnexpectedContent" })
-            XCTAssertNotNil(arbitraryMarkupDiagnostic)
-            XCTAssertEqual(arbitraryMarkupDiagnostic?.summary, "'Stack' contains unexpected content")
-            XCTAssertEqual(arbitraryMarkupDiagnostic?.explanation, "Arbitrary markup content is not allowed as a child of the 'Stack' directive.")
+            XCTAssertEqual(3, problems.count)
+            let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.Stack.UnexpectedContent" })
+            XCTAssertNotNil(arbitraryMarkupProblem)
+            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.summary, "'Stack' contains unexpected content")
+            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.explanation, "Arbitrary markup content is not allowed as a child of the 'Stack' directive.")
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-81:2
@@ -376,12 +377,12 @@ TutorialArticle @1:1-81:2
                 DataFile(name: "myimage.png", data: Data())
             ]))
             
-            if let directive {
-                var diagnostics = [Diagnostic]()
+            directive.map { directive in
+                var problems = [Problem]()
                 XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-                let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+                let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
                 XCTAssertNotNil(article)
-                XCTAssertEqual(0, diagnostics.count)
+                XCTAssertEqual(0, problems.count)
                 article.map { article in
                     let expectedDump = """
 TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
@@ -417,11 +418,11 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         let engine = DiagnosticEngine()
         TutorialArticle.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.diagnostics.count, 1)
-        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
-        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
-        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
-        let source = try XCTUnwrap(diagnostic.source)
+        XCTAssertEqual(engine.problems.count, 1)
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
+        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
+        let problem = try XCTUnwrap(engine.problems.first)
+        let source = try XCTUnwrap(problem.diagnostic.source)
         XCTAssertTrue(source.isFileURL)
     }
 
@@ -436,11 +437,11 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         let engine = DiagnosticEngine()
         TutorialArticle.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.diagnostics.count, 1)
-        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
-        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
-        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
-        XCTAssertNil(diagnostic.source)
+        XCTAssertEqual(engine.problems.count, 1)
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
+        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
+        let problem = try XCTUnwrap(engine.problems.first)
+        XCTAssertNil(problem.diagnostic.source)
     }
 
     func testAnalyzeFragmentNode() async throws {
@@ -456,11 +457,11 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         let engine = DiagnosticEngine()
         TutorialArticle.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.diagnostics.count, 1)
-        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
-        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
-        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
-        XCTAssertNil(diagnostic.source)
+        XCTAssertEqual(engine.problems.count, 1)
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
+        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
+        let problem = try XCTUnwrap(engine.problems.first)
+        XCTAssertNil(problem.diagnostic.source)
     }
 
     /// Verify that a `TutorialArticle` only recognizes chapter, volume, or tutorial table-of-contents nodes as valid parents.
@@ -485,7 +486,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
             let engine = DiagnosticEngine()
             TutorialArticle.analyze(tutorialArticleNode, completedContext: context, engine: engine)
-            XCTAssertEqual(engine.diagnostics.count, 0)
+            XCTAssertEqual(engine.problems.count, 0)
 
             context.topicGraph.removeEdges(from: parentNode)
             context.topicGraph.nodes.removeValue(forKey: parentNode.reference)
@@ -498,10 +499,10 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
             let engine = DiagnosticEngine()
             TutorialArticle.analyze(tutorialArticleNode, completedContext: context, engine: engine)
-            XCTAssertEqual(engine.diagnostics.count, 1)
-            XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
-            let diagnostic = try XCTUnwrap(engine.diagnostics.first)
-            XCTAssertEqual(diagnostic.identifier, "org.swift.docc.UnreferencedTutorialArticle")
+            XCTAssertEqual(engine.problems.count, 1)
+            XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
+            let problem = try XCTUnwrap(engine.problems.first)
+            XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.UnreferencedTutorialArticle")
 
             context.topicGraph.removeEdges(from: parentNode)
             context.topicGraph.nodes.removeValue(forKey: parentNode.reference)

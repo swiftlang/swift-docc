@@ -100,14 +100,16 @@ public struct InitAction: AsyncAction {
             )
         } catch CocoaError.fileWriteFileExists {
             diagnosticEngine.emit(
-                Diagnostic(
-                    severity: .error,
-                    identifier: "org.swift.DocumentationCatalogAlreadyExists",
-                    summary: Error.catalogAlreadyExists.errorDescription
+                Problem(
+                    diagnostic: Diagnostic(
+                        severity: .error,
+                        identifier: "org.swift.DocumentationCatalogAlreadyExists",
+                        summary: Error.catalogAlreadyExists.errorDescription
+                    )
                 )
             )
             return ActionResult(
-                didEncounterError: diagnosticEngine.diagnostics.containsAnyError,
+                didEncounterError: !diagnosticEngine.problems.isEmpty,
                 outputs: []
             )
         }
@@ -165,16 +167,18 @@ public struct InitAction: AsyncAction {
             }
             // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
             diagnosticEngine.emit(
-                Diagnostic(
-                    severity: .error,
-                    identifier: "org.swift.InitActionUnexpectedError",
-                    summary: error.localizedDescription
+                Problem(
+                    diagnostic: Diagnostic(
+                        severity: .error,
+                        identifier: "org.swift.InitActionUnexpectedError",
+                        summary: error.localizedDescription
+                    )
                 )
             )
         }
         
         return ActionResult(
-            didEncounterError: diagnosticEngine.diagnostics.containsAnyError,
+            didEncounterError: !diagnosticEngine.problems.isEmpty,
             outputs: [catalogOutputURL]
         )
     }
