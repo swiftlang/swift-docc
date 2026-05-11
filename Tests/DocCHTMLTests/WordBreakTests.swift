@@ -17,7 +17,7 @@ import Foundation
 #endif
 
 import Testing
-import DocCHTML
+@testable import DocCHTML
 
 struct WordBreakTests {
     @Test

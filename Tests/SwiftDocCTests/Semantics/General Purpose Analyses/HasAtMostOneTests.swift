@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,14 +19,14 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>(featureFlags: context.configuration.featureFlags).analyze(directive, children: directive.children, source: nil, for: context.inputs, diagnostics: &diagnostics)
             XCTAssertNil(match)
             XCTAssertTrue(remainder.isEmpty)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
         }
     }
     
@@ -40,14 +40,14 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>(featureFlags: context.configuration.featureFlags).analyze(directive, children: directive.children, source: nil, for: context.inputs, diagnostics: &diagnostics)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
         }
     }
     
@@ -63,20 +63,21 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>(featureFlags: context.configuration.featureFlags).analyze(directive, children: directive.children, source: nil, for: context.inputs, diagnostics: &diagnostics)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
-            XCTAssertEqual(2, problems.count)
-            XCTAssertEqual("org.swift.docc.HasAtMostOne<Parent, \(TestChild.self)>.DuplicateChildren", problems[0].diagnostic.identifier)
-            XCTAssertEqual("org.swift.docc.HasAtMostOne<Parent, \(TestChild.self)>.DuplicateChildren", problems[1].diagnostic.identifier)
+            XCTAssertEqual(2, diagnostics.count)
+            XCTAssertEqual("org.swift.docc.HasAtMostOne<Parent, \(TestChild.self)>.DuplicateChildren", diagnostics.first?.identifier)
+            XCTAssertEqual("org.swift.docc.HasAtMostOne<Parent, \(TestChild.self)>.DuplicateChildren", diagnostics.last?.identifier)
             XCTAssertEqual("""
                  warning: Duplicate 'Child' child directive
                  The 'Parent' directive must have at most one 'Child' child directive
-                 """, DiagnosticConsoleWriter.formattedDescription(for: problems[0].diagnostic, options: .formatConsoleOutputForTools))
+                 """, diagnostics.first.map { DiagnosticConsoleWriter.formattedDescription(for: $0, options: .formatConsoleOutputForTools) }
+            )
         }
     }
     
@@ -90,14 +91,14 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>(featureFlags: context.configuration.featureFlags).analyze(directive, children: directive.children, source: nil, for: context.inputs, diagnostics: &diagnostics)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
         }
     }
 }

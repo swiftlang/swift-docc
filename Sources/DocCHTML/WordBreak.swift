@@ -10,14 +10,14 @@
 
 #if canImport(FoundationXML)
 // TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-package import FoundationXML
+import FoundationXML
 #else
-package import Foundation
+import Foundation
 #endif
 
-package import DocCCommon
+import DocCCommon
 
-package enum RenderHelpers {
+enum RenderHelpers {
     /// Inserts `<wbr/>` elements into a symbol name so that it can wrap better on the rendered page.
     ///
     /// For example, a method call like this (below), inserts line break elements at the highlighted locations:
@@ -26,7 +26,7 @@ package enum RenderHelpers {
     ///       △          ▲         ▲    △      ▲   △
     ///       │          ╰─────────┴───╴│╶─────┴──╴│╶─── after syntax
     ///       ╰─────────────────────────┴──────────┴──── between words
-    package static func wordBreak(symbolName: String) -> [XMLNode] {
+    static func wordBreak(symbolName: String) -> [XMLNode] {
         var result: [XMLNode] = []
         
         let utf8View = symbolName.utf8
@@ -58,7 +58,7 @@ package enum RenderHelpers {
     }
     
     /// Returns the language specific symbol names sorted by the language.
-    package static func sortedLanguageSpecificValues<Value>(_ valuesByLanguageID: [SourceLanguage: Value]) -> [(key: SourceLanguage, value: Value)] {
+    static func sortedLanguageSpecificValues<Value>(_ valuesByLanguageID: [SourceLanguage: Value]) -> [(key: SourceLanguage, value: Value)] {
         valuesByLanguageID.sorted(by: { lhs, rhs in lhs.key < rhs.key })
     }
 }

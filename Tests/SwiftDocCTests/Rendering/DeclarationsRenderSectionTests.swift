@@ -237,7 +237,8 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 
     func testHighlightDiff() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let symbolGraphFile = Bundle.module.url(
             forResource: "FancyOverloads",
@@ -250,7 +251,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
         // Make sure that type decorators like arrays, dictionaries, and optionals are correctly highlighted.
         do {
@@ -400,7 +401,8 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 
     func testInconsistentHighlightDiff() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         // Generate a symbol graph with many overload groups that share declarations.
         // The overloaded declarations have two legitimate solutions for their longest common subsequence:
@@ -459,7 +461,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
         func assertDeclarations(for USR: String, file: StaticString = #filePath, line: UInt = #line) throws {
             let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: USR), file: file, line: line)
@@ -516,7 +518,8 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 
     func testOverloadConformanceDataIsSavedWithDeclarations() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let symbolGraphFile = Bundle.module.url(
             forResource: "ConformanceOverloads",
@@ -529,7 +532,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
         // MyClass<T>
         // - myFunc() where T: Equatable

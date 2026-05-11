@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -61,8 +61,8 @@ class IndexActionTests: XCTestCase {
             let index = try NavigatorIndex.readNavigatorIndex(url: indexURL)
             
             resultIndexDumps.insert(index.navigatorTree.root.dumpTree())
-            XCTAssert(engine.problems.isEmpty, "Unexpected problems:\n\(engine.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
-            XCTAssertTrue(engine.problems.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
+            XCTAssert(engine.diagnostics.isEmpty, "Unexpected problems:\n\(engine.diagnostics.map(\.summary).joined(separator: "\n"))")
+            XCTAssertTrue(engine.diagnostics.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
         }
         
         // All dumps should be the same, so there should only be one unique index dump

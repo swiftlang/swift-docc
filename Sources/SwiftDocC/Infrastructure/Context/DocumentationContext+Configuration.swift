@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -95,14 +95,9 @@ extension DocumentationContext {
             package var shouldStoreManuallyCuratedReferences: Bool = false
         }
         
-        // MARK: Topic analysis
+        // MARK: Feature flags
         
-        /// Configuration related to topic analysis.
-        var topicAnalysisConfiguration = TopicAnalysisConfiguration()
-        
-        /// A collection of configuration related to topic analysis.
-        struct TopicAnalysisConfiguration {
-            var additionalChecks: [DocumentationContext.ReferenceCheck] = []
-        }
+        /// A collection of feature flags.
+        package var featureFlags = FeatureFlags()
     }
 }

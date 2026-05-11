@@ -91,13 +91,13 @@ class DocumentationNodeTests: XCTestCase {
 
         // Test if symbols contain all available source languages
         let symbol = makeSymbol(id: "blah", kind: .class, pathComponents: ["blah"])
+        
+        let module = SymbolGraph.Module(name: "SomeModuleName", platform: .init(operatingSystem: .init(name: "macosx")))
         let symbolNode = DocumentationNode(
-            reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguages: sourceLanguages),
-            symbol: symbol,
-            platformName: nil,
-            moduleReference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguages: sourceLanguages),
-            article: nil,
-            engine: DiagnosticEngine()
+            reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/SomeModuleName/blah", sourceLanguages: sourceLanguages),
+            unifiedSymbol: .init(fromSingleSymbol: symbol, module: module, isMainGraph: true),
+            moduleData: module,
+            moduleReference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/SomeModuleName", sourceLanguages: sourceLanguages)
         )
         XCTAssertEqual(symbolNode.availableSourceLanguages, sourceLanguages)
     }

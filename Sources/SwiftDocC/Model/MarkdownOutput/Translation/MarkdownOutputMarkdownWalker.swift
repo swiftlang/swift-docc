@@ -270,19 +270,19 @@ extension MarkdownOutputMarkupWalker {
         let bundle = context.inputs
         switch blockDirective.name {
         case VideoMedia.directiveName:
-            guard let video = VideoMedia(from: blockDirective, for: bundle) else {
+            guard let video = VideoMedia(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             visit(video)
                         
         case ImageMedia.directiveName:
-            guard let image = ImageMedia(from: blockDirective, for: bundle) else {
+            guard let image = ImageMedia(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             visit(image)
             
         case Row.directiveName:
-            guard let row = Row(from: blockDirective, for: bundle) else {
+            guard let row = Row(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             for column in row.columns {
@@ -292,7 +292,7 @@ extension MarkdownOutputMarkupWalker {
                 }
             }
         case TabNavigator.directiveName:
-            guard let tabs = TabNavigator(from: blockDirective, for: bundle) else {
+            guard let tabs = TabNavigator(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             if let defaultLanguage = context.sourceLanguages(for: identifier).first?.name,
@@ -319,7 +319,7 @@ extension MarkdownOutputMarkupWalker {
                 }
             }
         case Snippet.directiveName:
-            guard let snippet = Snippet(from: blockDirective, for: bundle) else {
+            guard let snippet = Snippet(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             guard case .success(let resolved) = context.snippetResolver.resolveSnippet(path: snippet.path) else {
@@ -352,6 +352,17 @@ extension MarkdownOutputMarkupWalker {
         }
         
     }
+    
+    // HTML is not included in render JSON output, so is omitted here
+    mutating func visitHTMLBlock(_ html: HTMLBlock) {
+        return
+    }
+    
+    // Inline HTML is stripped of any tags, but its content is included in render JSON output, so the same path is followed here
+    mutating func visitInlineHTML(_ inlineHTML: InlineHTML)  {
+        return
+    }
+
 }
 
 // Semantic handling

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -79,7 +79,7 @@ final class SnippetResolver {
             let nearMisses = NearMiss.bestMatches(for: snippets.keys, against: path)
             let solutions = nearMisses.map { candidate in
                 Solution(summary: "\(Self.replacementOperationDescription(from: path, to: candidate))", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
+                    .init(range: replacementRange, replacement: candidate)
                 ])
             }
             
@@ -96,7 +96,7 @@ final class SnippetResolver {
         let nearMisses = NearMiss.bestMatches(for: resolvedSnippet.mixin.slices.keys, against: slice)
         let solutions = nearMisses.map { candidate in
             Solution(summary: "\(Self.replacementOperationDescription(from: slice, to: candidate))", replacements: [
-                Replacement(range: replacementRange, replacement: candidate)
+                .init(range: replacementRange, replacement: candidate)
             ])
         }
         
@@ -107,20 +107,20 @@ final class SnippetResolver {
 // MARK: Diagnostics
 
 extension SnippetResolver {
-    static func unknownSnippetSliceProblem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Problem {
-        _problem(source: source, range: range, errorInfo: errorInfo, id: "org.swift.docc.unknownSnippetPath")
+    static func unknownSnippetSliceDiagnostic(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {
+        _diagnostic(source: source, range: range, errorInfo: errorInfo, id: "org.swift.docc.unknownSnippetPath")
     }
 
-    static func unresolvedSnippetPathProblem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Problem {
-        _problem(source: source, range: range, errorInfo: errorInfo, id: "org.swift.docc.unresolvedSnippetPath")
+    static func unresolvedSnippetPathDiagnostic(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {
+        _diagnostic(source: source, range: range, errorInfo: errorInfo, id: "org.swift.docc.unresolvedSnippetPath")
     }
     
-    private static func _problem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo, id: String) -> Problem {
+    private static func _diagnostic(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo, id: String) -> Diagnostic {
         var solutions: [Solution] = []
-        var notes: [DiagnosticNote] = []
+        var notes: [Diagnostic.Note] = []
         if let range {
             if let note = errorInfo.note, let source {
-                notes.append(DiagnosticNote(source: source, range: range, message: note))
+                notes.append(.init(source: source, range: range, message: note))
             }
             
             solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: range))
@@ -140,8 +140,7 @@ extension SnippetResolver {
             diagnosticRange = range
         }
         
-        let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: id, summary: errorInfo.message, notes: notes)
-        return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+        return Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: id, summary: errorInfo.message, notes: notes, solutions: solutions)
     }
     
     private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol) -> String {

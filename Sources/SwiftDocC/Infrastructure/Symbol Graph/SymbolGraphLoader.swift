@@ -28,20 +28,24 @@ struct SymbolGraphLoader {
     private let dataProvider: any DataProvider
     private let bundle: DocumentationBundle
     private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
+    private let shouldCreateOverloadGroups: Bool
     
     /// Creates a new symbol graph loader
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
     ///   - dataProvider: A provider that the loader uses to read symbol graph data.
+    ///   - shouldCreateOverloadGroups: Whether or not experimental support for combining overloaded symbol pages is enabled.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
         bundle: DocumentationBundle,
         dataProvider: any DataProvider,
+        shouldCreateOverloadGroups: Bool,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
         self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
+        self.shouldCreateOverloadGroups = shouldCreateOverloadGroups
     }
 
     /// Loads all symbol graphs in the given bundle.
@@ -128,7 +132,7 @@ struct SymbolGraphLoader {
         self.symbolGraphs        = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? nil   : graph })
         self.snippetSymbolGraphs = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? graph : nil   })
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
-            createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
+            createOverloadGroups: shouldCreateOverloadGroups
         )
         signposter.endInterval("Build unified symbol graph", mergeSignpostHandle)
 

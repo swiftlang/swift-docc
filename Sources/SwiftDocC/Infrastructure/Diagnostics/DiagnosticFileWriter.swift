@@ -32,15 +32,15 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
         self.fileManager = fileManager
     }
     
-    private var receivedProblems: [Problem] = []
+    private var receivedDiagnostics: [Diagnostic] = []
     
-    public func receive(_ problems: [Problem]) {
-        receivedProblems.append(contentsOf: problems)
+    public func receive(_ diagnostics: [Diagnostic]) {
+        receivedDiagnostics.append(contentsOf: diagnostics)
     }
     
     public func flush() throws {
-        let fileContent = DiagnosticFile(problems: receivedProblems)
-        // Don't clear the received problems, `flush()` is called more than once.
+        let fileContent = DiagnosticFile(receivedDiagnostics)
+        // Don't clear the received diagnostics, `flush()` is called more than once.
         let encoder = RenderJSONEncoder.makeEncoder(emitVariantOverrides: false)
         let data = try encoder.encode(fileContent)
         try fileManager.createFile(at: outputLocation, contents: data, options: .atomic)

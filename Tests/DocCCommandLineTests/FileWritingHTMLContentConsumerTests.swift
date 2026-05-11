@@ -230,14 +230,14 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <li>
                     <a href="somearticle/index.html">
                       <p>Some article</p>
-                      <p>This is a <i>formatted</i> article.</p>
                     </a>
+                    <p>This is a <i>formatted</i> article.</p>
                   </li>
                   <li>
                     <a href="someclass/index.html">
                       <code>class SomeClass</code>
-                      <p>Some in-source description of this class.</p>
                     </a>
+                    <p>Some in-source description of this class.</p>
                   </li>
                 </ul>
                 <h3>Protocols</h3>
@@ -245,8 +245,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <li>
                     <a href="someprotocol/index.html">
                       <code>protocol SomeProtocol</code>
-                      <p>Some in-source description of this protocol.</p>
                     </a>
+                    <p>Some in-source description of this protocol.</p>
                   </li>
                 </ul>
               </article>
@@ -294,8 +294,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <li>
                     <a href="somemethod(with:and:)/index.html">
                       <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
-                      <p>Some in-source description of this method.</p>
                     </a>
+                    <p>Some in-source description of this method.</p>
                   </li>
                 </ul>
                 <h2>Relationships</h2>
@@ -368,8 +368,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <li>
                   <a href="../../somearticle/index.html">
                     <p>Some article</p>
-                    <p>This is a <i>formatted</i> article.</p>
                   </a>
+                  <p>This is a <i>formatted</i> article.</p>
                 </li>
               </ul>
               </article>
@@ -416,8 +416,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <li>
                     <a href="../someclass/index.html">
                       <code>class SomeClass</code>
-                      <p>Some in-source description of this class.</p>
                     </a>
+                    <p>Some in-source description of this class.</p>
                   </li>
                 </ul>
               </article>

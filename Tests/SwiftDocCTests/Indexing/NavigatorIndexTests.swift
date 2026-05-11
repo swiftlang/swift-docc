@@ -174,6 +174,16 @@ Root
         item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1025)
         XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(
+            pageType: 1, languageID: 4, title: "My Title",
+            platformMask: 256, availabilityID: 1024, isDeprecated: true
+        )
+        item2 = NavigatorItem(
+            pageType: 1, languageID: 4, title: "My Title",
+            platformMask: 256, availabilityID: 1024, isDeprecated: false
+        )
+        XCTAssertNotEqual(item1, item2)
     }
     
     func testNavigatorItemRawDumpWithExtraProperties() {
@@ -198,6 +208,43 @@ Root
 
         let fromData = NavigatorItem(rawValue: data)
         XCTAssertEqual(item, fromData)
+    }
+    
+    func testNavigatorItemRawDumpWithIsDeprecated() {
+        let item = NavigatorItem(
+            pageType: 1, languageID: 4, title: "My Title",
+            platformMask: 256, availabilityID: 1024,
+            isExternal: true, isBeta: true, isDeprecated: true
+        )
+        let data = item.rawValue
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertEqual(item, fromData)
+        XCTAssertEqual(fromData?.isDeprecated, true)
+    }
+    
+    func testNavigatorItemRawDumpBackwardCompatibilityWithoutIsDeprecated() {
+        // Simulate data serialized before isDeprecated was added.
+        // This data has isBeta and isExternal but NOT isDeprecated.
+        var data = Data()
+        data.append(packedDataFromValue(UInt8(1)))   // pageType
+        data.append(packedDataFromValue(UInt8(4)))   // languageID
+        data.append(packedDataFromValue(UInt64(256))) // platformMask
+        data.append(packedDataFromValue(UInt64(1024)))// availabilityID
+        let title = "My Title"
+        let path = ""
+        data.append(packedDataFromValue(UInt64(title.utf8.count))) // titleLength
+        data.append(packedDataFromValue(UInt64(path.utf8.count)))  // pathLength
+        data.append(Data(title.utf8))
+        data.append(Data(path.utf8))
+        data.append(packedDataFromValue(UInt8(1))) // isBeta = true
+        data.append(packedDataFromValue(UInt8(0))) // isExternal = false
+        // Note: NOT adding isDeprecated byte
+
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertNotNil(fromData)
+        XCTAssertEqual(fromData?.isBeta, true)
+        XCTAssertEqual(fromData?.isExternal, false)
+        XCTAssertEqual(fromData?.isDeprecated, false)
     }
     
     func testObjCLanguage() {
@@ -1659,7 +1706,7 @@ Root
         XCTAssertEqual(PageType(role: "pseudosymbol"), .symbol)
         XCTAssertEqual(PageType(role: "pseudocollection"), .framework)
         XCTAssertEqual(PageType(role: "collection"), .framework)
-        XCTAssertEqual(PageType(role: "collectiongroup"), .article)
+        XCTAssertEqual(PageType(role: "collectiongroup"), .collection)
         XCTAssertEqual(PageType(role: "article"), .article)
         XCTAssertEqual(PageType(role: "samplecode"), .sampleCode)
         
@@ -2042,11 +2089,11 @@ Root
     }
 
     func testNavigatorDoesNotContainOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
         let navigatorIndex = try await generatedNavigatorIndex(
             for: "OverloadedSymbols",
-            bundleIdentifier: "com.shapes.ShapeKit")
+            bundleIdentifier: "com.shapes.ShapeKit",
+            isExperimentalOverloadedSymbolPresentationEnabled: true
+        )
 
         XCTAssertEqual(
             navigatorIndex.navigatorTree.root.dumpTree(),
@@ -2201,8 +2248,10 @@ Root
         return betaNodes
     }
 
-    func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {
-        let (_, context) = try await testBundleAndContext(named: testBundleName)
+    private func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String, isExperimentalOverloadedSymbolPresentationEnabled: Bool = false) async throws -> NavigatorIndex {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = isExperimentalOverloadedSymbolPresentationEnabled
+        let (_, _, context) = try await testBundleAndContext(named: testBundleName, configuration: configuration)
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
 

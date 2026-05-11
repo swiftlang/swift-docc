@@ -145,6 +145,7 @@ enum GeneratedDocumentationTopics {
         // Curate all inherited symbols under the collection node
         for childReference in identifiers {
             if let childTopicGraphNode = context.topicGraph.nodeWithReference(childReference) {
+                assert(childReference != parent, "Parent type '\(parent.path)' is unexpectedly included among its members: [\(identifiers.map(\.path).sorted().joined(separator: ", "))]")
                 context.topicGraph.addEdge(from: collectionTopicGraphNode, to: childTopicGraphNode)
             }
         }
@@ -242,7 +243,9 @@ enum GeneratedDocumentationTopics {
                // Get the child symbol
                let childSymbol = child.symbol,
                // Check that there is Swift extension information
-               childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self] != nil
+               childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self] != nil,
+               // Ignore any faulty relationships
+               relationship.source != relationship.target
             {
                 let originSymbol = context.documentationCache[origin.identifier]?.symbol
                 
@@ -255,6 +258,8 @@ enum GeneratedDocumentationTopics {
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols
+                assert(!collection.identifiers.contains(typeReference), "Parent type '\(typeReference.path)' is unexpectedly included among its members: [\(collection.identifiers.map(\.path).sorted().joined(separator: ", "))]")
+                
                 try createCollectionNode(parent: typeReference, title: collection.title, identifiers: collection.identifiers, context: context)
             }
         }
