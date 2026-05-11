@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ import Markdown
 class LinksTests: XCTestCase {
     func testMissingBasicRequirements() async throws {
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self) {
+            let (renderedContent, diagnostics, links) = try await parseDirective(Links.self) {
                 """
                 @Links(visualStyle: compactGrid)
                 """
@@ -26,7 +26,7 @@ class LinksTests: XCTestCase {
             XCTAssertNotNil(links)
             
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 ["1: warning – org.swift.docc.HasExactlyOneUnorderedList<Links, AnyLink>.InvalidContent"]
             )
             
@@ -34,7 +34,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, diagnostics, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links {
                     - <doc:MyArticle>
@@ -45,7 +45,7 @@ class LinksTests: XCTestCase {
             XCTAssertNil(links)
             
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "1: warning – org.swift.docc.HasArgument.visualStyle",
                 ]
@@ -57,7 +57,7 @@ class LinksTests: XCTestCase {
     
     func testInvalidBodyContent() async throws {
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self) {
+            let (renderedContent, diagnostics, links) = try await parseDirective(Links.self) {
                 """
                 @Links(visualStyle: compactGrid) {
                     This is a paragraph of text in 'Links' directive.
@@ -70,7 +70,7 @@ class LinksTests: XCTestCase {
             XCTAssertNotNil(links)
             
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "1: warning – org.swift.docc.HasExactlyOneUnorderedList<Links, AnyLink>.InvalidContent",
                     "2: warning – org.swift.docc.HasExactlyOneUnorderedList<Links, AnyLink>.ExtraneousContent",
@@ -82,7 +82,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, diagnostics, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid) {
                     This is a paragraph of text in 'Links' directive.
@@ -97,7 +97,7 @@ class LinksTests: XCTestCase {
             XCTAssertNotNil(links)
             
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "2: warning – org.swift.docc.HasExactlyOneUnorderedList<Links, AnyLink>.ExtraneousContent",
                     "4: warning – org.swift.docc.HasExactlyOneUnorderedList<Links, AnyLink>.ExtraneousContent",
@@ -116,7 +116,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, diagnostics, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid) {
                     - <doc:MyArticle> Link with some trailing content.
@@ -127,7 +127,7 @@ class LinksTests: XCTestCase {
             XCTAssertNotNil(links)
             
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 [
                     "2: warning – org.swift.docc.ExtraneousLinksDirectiveItemContent"
                 ]
@@ -149,7 +149,7 @@ class LinksTests: XCTestCase {
     
     func testLinkResolution() async throws {
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, diagnostics, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid) {
                     - <doc:MyArticle>
@@ -164,7 +164,7 @@ class LinksTests: XCTestCase {
             XCTAssertNotNil(links)
             
             XCTAssertEqual(
-                problems,
+                diagnostics,
                 ["5: warning – org.swift.docc.unresolvedTopicReference"]
             )
             
@@ -185,7 +185,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "LegacyBundle_DoNotUseInNewTests") {
+            let (renderedContent, diagnostics, links) = try await parseDirective(Links.self, in: "LegacyBundle_DoNotUseInNewTests") {
                 """
                 @Links(visualStyle: compactGrid) {
                     - ``MyKit/MyClass``
@@ -198,7 +198,7 @@ class LinksTests: XCTestCase {
             
             XCTAssertNotNil(links)
             
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             
             XCTAssertEqual(
                 renderedContent,

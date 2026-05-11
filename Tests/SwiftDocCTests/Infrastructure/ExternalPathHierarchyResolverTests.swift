@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1033,7 +1033,7 @@ struct ExternalPathHierarchyResolverTests_new {
             ]))
         }
         let dependencyContext = try await load(catalog: dependencyCatalog)
-        #expect(dependencyContext.problems.isEmpty, "Unexpected problems: \(dependencyContext.problems.map(\.diagnostic.summary))")
+        #expect(dependencyContext.diagnostics.isEmpty, "Unexpected problems: \(dependencyContext.diagnostics.map(\.summary))")
         
         // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
         let dependencyConverter = DocumentationContextConverter(context: dependencyContext, renderContext: .init(documentationContext: dependencyContext))
@@ -1095,8 +1095,8 @@ struct ExternalPathHierarchyResolverTests_new {
             ],
             configuration: configuration
         )
-        #expect(mainContext.problems.isEmpty, "Unexpected problems: \(mainContext.problems.map(\.diagnostic.summary))")
-        #expect(mainContext.knownPages.count == 2 /* 1 symbol & 1 module*/)
+        #expect(mainContext.diagnostics.isEmpty, "Unexpected problems: \(mainContext.diagnostics.map(\.summary))")
+        #expect(mainContext.knownPages.count == 2 /* 1 symbol & 1 module */)
         
         // Check the reference
         do {

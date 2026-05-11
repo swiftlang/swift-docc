@@ -94,7 +94,7 @@ extension Collection where Index == Int, Self: SendableMetatype {
     ///
     /// The difference in behavior compared to ``concurrentMap(batches:block:)`` is that with this API you
     /// can freely mutate the returned results from each block. For example use `concurrentPerform(batches:block:)`
-    /// to process a collection of inputs and add any encountered problems (if any) to the results to handle
+    /// to process a collection of inputs and add any encountered issues (if any) to the results to handle
     /// synchronously after the concurrent work is completed.
     ///
     /// > Warning: As multiple copies of `block` are executed concurrently, mutating shared state outside the closure is not safe.

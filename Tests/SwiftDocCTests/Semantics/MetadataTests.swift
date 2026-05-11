@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,13 +20,13 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata, "Even if a Metadata directive is empty we can create it")
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", problems.first?.diagnostic.identifier)
-        XCTAssertEqual(.information, problems.first?.diagnostic.severity)
-        XCTAssertNotNil(problems.first?.possibleSolutions.first)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", diagnostics.first?.identifier)
+        XCTAssertEqual(.information, diagnostics.first?.severity)
+        XCTAssertNotNil(diagnostics.first?.solutions.first)
     }
     
     func testUnexpectedArgument() async throws {
@@ -34,12 +34,12 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a metadata value")
-        XCTAssertEqual(2, problems.count)
-        XCTAssertEqual("org.swift.docc.UnknownArgument", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", problems.last?.diagnostic.identifier)
+        XCTAssertEqual(2, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.UnknownArgument", diagnostics.first?.identifier)
+        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", diagnostics.last?.identifier)
     }
     
     func testUnexpectedDirective() async throws {
@@ -51,13 +51,13 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
-        XCTAssertEqual(3, problems.count)
-        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.Metadata.UnexpectedContent", problems.dropFirst().first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", problems.last?.diagnostic.identifier)
+        XCTAssertEqual(3, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", diagnostics.first?.identifier)
+        XCTAssertEqual("org.swift.docc.Metadata.UnexpectedContent", diagnostics.dropFirst().first?.identifier)
+        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", diagnostics.last?.identifier)
 
     }
     
@@ -70,12 +70,12 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
-        XCTAssertEqual(2, problems.count)
-        XCTAssertEqual("org.swift.docc.Metadata.UnexpectedContent", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", problems.last?.diagnostic.identifier)
+        XCTAssertEqual(2, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.Metadata.UnexpectedContent", diagnostics.first?.identifier)
+        XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", diagnostics.last?.identifier)
     }
     
     // MARK: - Supported metadata directives
@@ -89,10 +89,10 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata)
-        XCTAssertEqual(0, problems.count)
+        XCTAssertEqual(0, diagnostics.count)
         XCTAssertEqual(metadata?.documentationOptions?.behavior, .override)
     }
     
@@ -106,11 +106,11 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata)
-        XCTAssertEqual(2, problems.count)
-        XCTAssertEqual(problems.map(\.diagnostic.identifier).sorted(), [
+        XCTAssertEqual(2, diagnostics.count)
+        XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
             "org.swift.docc.DocumentationExtension.NoConfiguration",
             "org.swift.docc.HasAtMostOne<Metadata, DocumentationExtension>.DuplicateChildren",
         ])
@@ -126,10 +126,10 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata)
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map { $0.summary })")
         
         XCTAssertEqual(metadata?.displayName?.name, "Custom Name")
     }
@@ -143,10 +143,10 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata)
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map { $0.summary })")
         
         XCTAssertEqual(metadata?.titleHeading?.heading, "Custom Heading")
     }
@@ -161,11 +161,11 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata)
         XCTAssertEqual(metadata?.customMetadata.count, 2)
-        XCTAssertEqual(problems.count, 0)
+        XCTAssertEqual(diagnostics.count, 0)
     }
 
     func testRedirectSupport() async throws {
@@ -177,10 +177,10 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(metadata)
-        XCTAssertEqual(0, problems.count)
+        XCTAssertEqual(0, diagnostics.count)
         XCTAssertEqual(metadata?.redirects?.first?.oldPath.relativePath, "some/other/path")
     }
 
@@ -198,14 +198,14 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
         
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
+        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
     }
     
     func testSymbolArticleSupportsMetadataDisplayName() async throws {
@@ -220,16 +220,16 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata?.displayName, "The Article has the parsed DisplayName metadata.")
         
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map { $0.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
+        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
     }
     
     func testArticleDoesNotSupportsMetadataDisplayName() async throws {
@@ -244,20 +244,20 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata, "The Article has the parsed Metadata")
         XCTAssertNil(article?.metadata?.displayName, "The Article doesn't have the DisplayName")
         
-        XCTAssertEqual(problems.count, 1)
-        let problem = try XCTUnwrap(problems.first)
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         
-        XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.Article.DisplayName.NotSupported")
-        XCTAssertEqual(problem.diagnostic.summary, "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.")
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.Article.DisplayName.NotSupported")
+        XCTAssertEqual(diagnostic.summary, "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.")
         
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         
         XCTAssertEqual(solution.summary, "Change the title")
         XCTAssertEqual(solution.replacements.count, 2)
@@ -280,17 +280,17 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
         XCTAssertNotNil(article?.metadata?.titleHeading, "The Article has the parsed TitleHeading metadata.")
         XCTAssertEqual(article?.metadata?.titleHeading?.heading, "Custom Heading")
         
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+        XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
         
         var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
+        XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
     }
     
     func testDuplicateMetadata() async throws {
@@ -308,23 +308,20 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let context = try await makeEmptyContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata, "The Article has the parsed Metadata")
         XCTAssertNil(article?.metadata?.displayName, "The Article doesn't have the DisplayName")
         
-        XCTAssertEqual(
-            problems.map(\.diagnostic.identifier),
-            [
-                "org.swift.docc.DocumentationExtension.NoConfiguration",
-                "org.swift.docc.HasAtMostOne<Article, Metadata>.DuplicateChildren",
-            ]
-        )
+        XCTAssertEqual(diagnostics.map(\.identifier), [
+            "org.swift.docc.DocumentationExtension.NoConfiguration",
+            "org.swift.docc.HasAtMostOne<Article, Metadata>.DuplicateChildren",
+        ])
     }
     
     func testPageImageSupport() async throws {
-        let (problems, metadata) = try await parseMetadataFromSource(
+        let (diagnostics, metadata) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -337,7 +334,7 @@ class MetadataTests: XCTestCase {
             """
         )
         
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(diagnostics, [])
         XCTAssertEqual(metadata.pageImages.count, 2)
         
         let plusImage = metadata.pageImages.first { pageImage in
@@ -354,7 +351,7 @@ class MetadataTests: XCTestCase {
     }
     
     func testDuplicatePageImage() async throws {
-        let (problems, _) = try await parseMetadataFromSource(
+        let (diagnostics, _) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -368,7 +365,7 @@ class MetadataTests: XCTestCase {
         )
         
         XCTAssertEqual(
-            problems,
+            diagnostics,
             [
                 "4: warning – org.swift.docc.DuplicatePageImage",
                 "5: warning – org.swift.docc.DuplicatePageImage",
@@ -378,7 +375,7 @@ class MetadataTests: XCTestCase {
     
     func testPageColorSupport() async throws {
         do {
-            let (problems, metadata) = try await parseMetadataFromSource(
+            let (diagnostics, metadata) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -390,12 +387,12 @@ class MetadataTests: XCTestCase {
             """
             )
             
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             XCTAssertEqual(metadata.pageColor, .blue)
         }
         
         do {
-            let (problems, metadata) = try await parseMetadataFromSource(
+            let (diagnostics, metadata) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -407,31 +404,31 @@ class MetadataTests: XCTestCase {
             """
             )
             
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             XCTAssertEqual(metadata.pageColor, .green)
         }
     }
     
-    func parseMetadataFromSource(
+    private func parseMetadataFromSource(
         _ source: String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) async throws -> (problems: [String], metadata: Metadata) {
+    ) async throws -> (diagnosticDescriptions: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let context = try await makeEmptyContext()
         
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         
-        let problemIDs = problems.map { problem -> String in
-            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+        let diagnosticDescriptions = diagnostics.map { problem -> String in
+            let line = problem.range?.lowerBound.line.description ?? "unknown-line"
             
-            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
+            return "\(line): \(problem.severity) – \(problem.identifier)"
         }.sorted()
         
         let metadata = try XCTUnwrap(article?.metadata, file: file, line: line)
         
-        return (problemIDs, metadata)
+        return (diagnosticDescriptions, metadata)
     }
 }
  

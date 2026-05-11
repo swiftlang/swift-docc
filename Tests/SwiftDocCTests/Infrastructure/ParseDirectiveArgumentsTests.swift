@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,10 +25,10 @@ struct ParseDirectiveArgumentsTests {
     ])
     func emitsWarningsForInvalidMarkup(_ invalidMarkup: String, expectedDiagnosticID: String) throws {
         let document = Document(parsing: invalidMarkup, options: .parseBlockDirectives)
-        var problems = [Problem]()
-        _ = (document.child(at: 0) as? BlockDirective)?.arguments(problems: &problems)
+        var diagnostics = [Diagnostic]()
+        _ = (document.child(at: 0) as? BlockDirective)?.arguments(diagnostics: &diagnostics)
         
-        let diagnostic = try #require(problems.first?.diagnostic)
+        let diagnostic = try #require(diagnostics.first)
         
         #expect(diagnostic.identifier == expectedDiagnosticID)
         #expect(diagnostic.severity == .warning)
