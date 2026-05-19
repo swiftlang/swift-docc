@@ -24,7 +24,7 @@ Signal.on(Signal.all) { _ in
 }
 
 DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-    kill(getpid(), SIGABRT) # ignore-unacceptable-language
+    kill(getpid(), SIGABRT)
 }
 
 print("Signal test app running.")

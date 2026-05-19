@@ -140,7 +140,7 @@ public final class PreviewAction: AsyncAction {
             #if !os(Linux) && !os(Android)
             try watch()
             #endif
-            // This will wait until the server is manually terminated.
+            // This will wait until the server is manually killed.
             try servers[serverIdentifier]!.start()
             previewResult = ActionResult(didEncounterError: false)
         } catch {
