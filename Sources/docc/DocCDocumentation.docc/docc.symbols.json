@@ -1983,6 +1983,26 @@
         },
         {
           "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ColumnAlignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = leading"
+        },
+        {
+          "kind" : "text",
           "spelling" : ")"
         },
         {
@@ -2021,6 +2041,12 @@
           },
           {
             "text" : "     in the parent ``Row``."
+          },
+          {
+            "text" : "  - alignment: The alignment of this column's content."
+          },
+          {
+            "text" : "     **(optional)**"
           }
         ]
       },
@@ -2068,6 +2094,22 @@
           {
             "kind" : "typeIdentifier",
             "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "alignment"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ColumnAlignment"
           },
           {
             "kind" : "text",
@@ -2993,12 +3035,6 @@
           },
           {
             "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - source: A reference to the source file for the media item."
-          },
-          {
-            "text" : "     **(required)**"
           },
           {
             "text" : "  - alt: Optional alternate text for an image."
@@ -4809,6 +4845,26 @@
         {
           "kind" : "text",
           "spelling" : " = 1"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ColumnAlignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = leading"
         },
         {
           "kind" : "text",
@@ -7193,12 +7249,6 @@
           },
           {
             "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - source: A reference to the source file for the media item."
-          },
-          {
-            "text" : "     **(required)**"
           },
           {
             "text" : "  - alt: Alternate text describing the video."
