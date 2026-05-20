@@ -72,9 +72,9 @@ class RowTests: XCTestCase {
                 .row(RenderBlockContent.Row(
                     numberOfColumns: 6,
                     columns: [
-                        RenderBlockContent.Row.Column(size: 1, content: ["Hello there."]),
-                        RenderBlockContent.Row.Column(size: 1, content: ["Hello there."]),
-                        RenderBlockContent.Row.Column(size: 4, content: ["Hello there."])
+                        RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["Hello there."]),
+                        RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["Hello there."]),
+                        RenderBlockContent.Row.Column(size: 4, alignment: nil, content: ["Hello there."])
                     ]
                 ))
             )
@@ -168,7 +168,7 @@ class RowTests: XCTestCase {
                 .row(RenderBlockContent.Row(
                     numberOfColumns: 1,
                     columns: [
-                        RenderBlockContent.Row.Column(size: 1, content: [])
+                        RenderBlockContent.Row.Column(size: 1, alignment: nil, content: [])
                     ]
                 ))
             )
@@ -204,33 +204,34 @@ class RowTests: XCTestCase {
             """
             @Row {
                 @Column
-            
+
                 @Column(size: 3) {
                     This is a wiiiiddde column.
                 }
-            
+
                 @Column
             }
             """
         }
-        
+
         XCTAssertNotNil(row)
         XCTAssertEqual(diagnostics, [])
-        
+
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
             renderBlockContent.first,
             .row(RenderBlockContent.Row(
                 numberOfColumns: 5,
                 columns: [
-                    RenderBlockContent.Row.Column(size: 1, content: []),
-                    
+                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: []),
+
                     RenderBlockContent.Row.Column(
                         size: 3,
+                        alignment: nil,
                         content: ["This is a wiiiiddde column."]
                     ),
-                    
-                    RenderBlockContent.Row.Column(size: 1, content: []),
+
+                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: []),
                 ]
             ))
         )
@@ -245,7 +246,7 @@ class RowTests: XCTestCase {
                         @Column {
                             Hello
                         }
-            
+
                         @Column {
                             There
                         }
@@ -254,10 +255,10 @@ class RowTests: XCTestCase {
             }
             """
         }
-        
+
         XCTAssertNotNil(row)
         XCTAssertEqual(diagnostics, [])
-        
+
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
             renderBlockContent.first,
@@ -266,15 +267,327 @@ class RowTests: XCTestCase {
                 columns: [
                     RenderBlockContent.Row.Column(
                         size: 1,
+                        alignment: nil,
                         content: [
                             .row(RenderBlockContent.Row(
                                 numberOfColumns: 2,
                                 columns: [
-                                    RenderBlockContent.Row.Column(size: 1, content: ["Hello"]),
-                                    RenderBlockContent.Row.Column(size: 1, content: ["There"]),
+                                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["Hello"]),
+                                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["There"]),
                                 ]
                             ))
                         ]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testColumnWithAlignmentOnly() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(alignment: center) {
+                    Centered content
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 1,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: .center,
+                        content: ["Centered content"]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testColumnWithSizeAndAlignment() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(size: 2, alignment: trailing) {
+                    Trailing aligned
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 2,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 2,
+                        alignment: .trailing,
+                        content: ["Trailing aligned"]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testColumnWithoutAlignment() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(size: 2) {
+                    Default alignment
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 2,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 2,
+                        alignment: nil,
+                        content: ["Default alignment"]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testInvalidAlignmentValue() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(alignment: invalid) {
+                    Content
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        // Optional parameters silently default to nil when conversion fails
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 1,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: nil,
+                        content: ["Content"]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testAllAlignmentValues() async throws {
+        let alignmentValues: [(String, RenderBlockContent.Row.ColumnAlignment)] = [
+            ("leading", .leading),
+            ("center", .center),
+            ("trailing", .trailing)
+        ]
+
+        for (stringValue, expectedAlignment) in alignmentValues {
+            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+                """
+                @Row {
+                    @Column(alignment: \(stringValue)) {
+                        Content
+                    }
+                }
+                """
+            }
+
+            XCTAssertNotNil(row)
+            XCTAssertEqual(diagnostics, [])
+            XCTAssertEqual(renderBlockContent.count, 1)
+
+            if case let .row(row) = renderBlockContent.first {
+                XCTAssertEqual(row.columns.count, 1)
+                XCTAssertEqual(row.columns.first?.alignment, expectedAlignment)
+            } else {
+                XCTFail("Expected row but got \(String(describing: renderBlockContent.first))")
+            }
+        }
+    }
+
+    func testMultipleColumnsWithMixedAlignment() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(size: 1, alignment: leading) {
+                    Left aligned
+                }
+
+                @Column(size: 1, alignment: center) {
+                    Center aligned
+                }
+
+                @Column(size: 1) {
+                    Default aligned
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 3,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: .leading,
+                        content: ["Left aligned"]
+                    ),
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: .center,
+                        content: ["Center aligned"]
+                    ),
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: nil,
+                        content: ["Default aligned"]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testAlignmentWithInvalidType() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(alignment: true) {
+                    Content
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        // Optional parameters silently default to nil on invalid values
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 1,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: nil,
+                        content: ["Content"]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testAlignmentWithSizeInvalidType() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(size: 2, alignment: 123) {
+                    Content
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        // Optional parameters silently default to nil on invalid values
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 2,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 2,
+                        alignment: nil,
+                        content: ["Content"]
+                    )
+                ]
+            ))
+        )
+    }
+
+    func testMultipleColumnsWithInvalidAlignment() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(alignment: leading) {
+                    Valid
+                }
+
+                @Column(alignment: badvalue) {
+                    Invalid
+                }
+
+                @Column(alignment: trailing) {
+                    Valid
+                }
+            }
+            """
+        }
+
+        XCTAssertNotNil(row)
+        // Optional parameters silently default to nil on invalid values
+        XCTAssertEqual(diagnostics, [])
+
+        XCTAssertEqual(renderBlockContent.count, 1)
+        XCTAssertEqual(
+            renderBlockContent.first,
+            .row(RenderBlockContent.Row(
+                numberOfColumns: 3,
+                columns: [
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: .leading,
+                        content: ["Valid"]
+                    ),
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: nil,
+                        content: ["Invalid"]
+                    ),
+                    RenderBlockContent.Row.Column(
+                        size: 1,
+                        alignment: .trailing,
+                        content: ["Valid"]
                     )
                 ]
             ))

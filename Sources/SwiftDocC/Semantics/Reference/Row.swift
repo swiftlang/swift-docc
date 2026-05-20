@@ -50,6 +50,22 @@ public import Markdown
 public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
     public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
+
+    /// The alignment of content within a column.
+    public enum ColumnAlignment: String, CaseIterable, DirectiveArgumentValueConvertible {
+        /// Align to the leading edge.
+        case leading
+
+        /// Align to the center.
+        case center
+
+        /// Align to the trailing edge.
+        case trailing
+
+        public init?(rawDirectiveArgumentValue: String) {
+            self.init(rawValue: rawDirectiveArgumentValue)
+        }
+    }
     
     /// The number of columns available in this row.
     @DirectiveArgumentWrapped(name: .custom("numberOfColumns"))
@@ -103,13 +119,18 @@ extension Row {
         /// in the parent ``Row``.
         @DirectiveArgumentWrapped
         public private(set) var size: Int = 1
-        
+
+        /// The alignment of this column's content.
+        @DirectiveArgumentWrapped
+        public private(set) var alignment: Row.ColumnAlignment? = nil
+
         /// The markup content in this column.
         @ChildMarkup(numberOfParagraphs: .zeroOrMore, supportsStructure: true)
         public private(set) var content: MarkupContainer
         
         static var keyPaths: [String : AnyKeyPath] = [
             "size"      : \Column._size,
+            "alignment" : \Column._alignment,
             "content"   : \Column._content,
         ]
         
@@ -133,8 +154,12 @@ extension Row {
 extension Row: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         let renderedColumns = columns.map { column in
+            let alignment = column.alignment.flatMap { semanticAlignment in
+                RenderBlockContent.Row.ColumnAlignment(rawValue: semanticAlignment.rawValue)
+            }
             return RenderBlockContent.Row.Column(
                 size: column.size,
+                alignment: alignment,
                 content: column.content.elements.flatMap { markupElement in
                     return contentCompiler.visit(markupElement) as! [RenderBlockContent]
                 }
