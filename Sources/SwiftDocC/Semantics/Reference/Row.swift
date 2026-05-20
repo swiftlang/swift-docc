@@ -171,7 +171,7 @@ extension Row {
 extension Row: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         let renderedColumns = columns.map { column in
-            let alignment = RenderBlockContent.Row.ColumnAlignment(rawValue: column.alignment.rawValue)!
+            let alignment = RenderBlockContent.Row.ColumnAlignment(rawValue: column.alignment.rawValue) ?? .leading
             return RenderBlockContent.Row.Column(
                 size: column.size,
                 alignment: alignment,
