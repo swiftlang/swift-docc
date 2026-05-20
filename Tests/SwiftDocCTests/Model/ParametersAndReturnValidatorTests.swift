@@ -751,6 +751,167 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         )
         XCTAssertEqual(warningOutput, "")
     }
+
+    func testTupleReturnOutlineElementCountMismatchWarnings() async throws {
+        func warningsForDocumentedElementCount(_ documentedElementCount: Int) async throws -> [String] {
+            let tupleReturnValue = SymbolGraph.Symbol.DeclarationFragments.Fragment(
+                kind: .typeIdentifier,
+                spelling: "(quotient: Int, remainder: Int)",
+                preciseIdentifier: "tuple-return-id"
+            )
+
+            let returnItems: String = switch documentedElementCount {
+            case 1:
+                """
+                  - quotient: Documented only one element
+                """
+            case 2:
+                """
+                  - quotient: Documented element 1
+                  - remainder: Documented element 2
+                """
+            case 3:
+                """
+                  - quotient: Documented element 1
+                  - remainder: Documented element 2
+                  - extra: Documented element 3
+                """
+            default:
+                throw XCTSkip("Unsupported documented element count for this test helper")
+            }
+
+            let catalog = Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Returns:
+                        \(returnItems)
+                        """,
+                        docCommentModuleName: "ModuleName",
+                        sourceLanguage: .swift,
+                        parameters: [],
+                        returnValue: tupleReturnValue
+                    ))
+                ])
+            ])
+
+            let (_, context) = try await loadBundle(catalog: catalog)
+            return context.problems.map(\.diagnostic.summary)
+        }
+
+        // Too few documented elements (doc: 1, tuple: 2)
+        do {
+            let summaries = try await warningsForDocumentedElementCount(1)
+            XCTAssertEqual(summaries.count, 1)
+            XCTAssertEqual(
+                summaries.first,
+                "Tuple return value documentation describes 1 element(s) but the return value tuple has 2 element(s)"
+            )
+        }
+
+        // Exact match (doc: 2, tuple: 2)
+        do {
+            let summaries = try await warningsForDocumentedElementCount(2)
+            XCTAssertEqual(summaries, [])
+        }
+
+        // Too many documented elements (doc: 3, tuple: 2)
+        do {
+            let summaries = try await warningsForDocumentedElementCount(3)
+            XCTAssertEqual(summaries.count, 1)
+            XCTAssertEqual(
+                summaries.first,
+                "Tuple return value documentation describes 3 element(s) but the return value tuple has 2 element(s)"
+            )
+        }
+    }
+
+    func testTupleReturnOutlineElementCountDoesNotWarnForNonTupleOrParagraphReturns() async throws {
+        // Non-tuple return type + outline form should not warn.
+        do {
+            let nonTupleReturnValue = SymbolGraph.Symbol.DeclarationFragments.Fragment(
+                kind: .typeIdentifier,
+                spelling: "Int",
+                preciseIdentifier: "non-tuple-return-id"
+            )
+            let catalog = Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Returns:
+                          - quotient: Documented element
+                        """,
+                        docCommentModuleName: "ModuleName",
+                        sourceLanguage: .swift,
+                        parameters: [],
+                        returnValue: nonTupleReturnValue
+                    ))
+                ])
+            ])
+
+            let (_, context) = try await loadBundle(catalog: catalog)
+            XCTAssertTrue(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        }
+
+        // Tuple return type + paragraph-form `- Returns:` should not warn.
+        do {
+            let tupleReturnValue = SymbolGraph.Symbol.DeclarationFragments.Fragment(
+                kind: .typeIdentifier,
+                spelling: "(quotient: Int, remainder: Int)",
+                preciseIdentifier: "tuple-return-id"
+            )
+            let catalog = Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Returns: A single paragraph return description.
+                        """,
+                        docCommentModuleName: "ModuleName",
+                        sourceLanguage: .swift,
+                        parameters: [],
+                        returnValue: tupleReturnValue
+                    ))
+                ])
+            ])
+
+            let (_, context) = try await loadBundle(catalog: catalog)
+            XCTAssertTrue(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        }
+    }
+
+    func testTupleReturnOutlineElementCountDoesNotWarnForInheritedDocumentation() async throws {
+        let tupleReturnValue = SymbolGraph.Symbol.DeclarationFragments.Fragment(
+            kind: .typeIdentifier,
+            spelling: "(quotient: Int, remainder: Int)",
+            preciseIdentifier: "tuple-return-id"
+        )
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    docComment: """
+                    Some function description
+                    
+                    - Returns:
+                      - quotient: Documented only one element
+                    """,
+                    docCommentModuleName: "SomeOtherModule",
+                    sourceLanguage: .swift,
+                    parameters: [],
+                    returnValue: tupleReturnValue
+                ))
+            ])
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssertTrue(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+    }
     
     func testDocumentingTwoUnnamedParameters() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [

@@ -39,9 +39,16 @@ package extension MarkdownRenderer {
     /// If all language representations of the symbol have the _same_ parameters, only pass the parameter information for one language.
     /// This produces a "parameters" section that doesn't hide any parameters for any of the languages (same as if the symbol only had one language representation)
     func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> [XMLNode] {
+        _definitionListSection(named: "Parameters", info)
+    }
+
+    /// Renders a definition-list section (dl/dt/dd) for parameters-like data.
+    ///
+    /// Used by both the Parameters and Return-value renderers to keep markup consistent.
+    func _definitionListSection(named sectionTitle: String, _ info: [SourceLanguage: [ParameterInfo]]) -> [XMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
         guard info.contains(where: { _, parameters in !parameters.isEmpty }) else {
-            // Don't create a section if there are no parameters to describe.
+            // Don't create a section if there's nothing to describe.
             return []
         }
         
@@ -54,7 +61,7 @@ package extension MarkdownRenderer {
             
         default:
             // In practice DocC only encounters one or two different languages. If there would be a third one,
-            // produce correct looking pages that may include duplicated markup by not trying to share parameters across languages.
+            // produce correct looking pages that may include duplicated markup by not trying to share markup across languages.
             info.map { language, info in
                 .element(
                     named: "dl",
@@ -64,14 +71,14 @@ package extension MarkdownRenderer {
             }
         }
         
-        return selfReferencingSection(named: "Parameters", content: items)
+        return selfReferencingSection(named: sectionTitle, content: items)
     }
     
-    private func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {
+    func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {
         .element(named: "dl", children: _singleLanguageParameterItems(parameterInfo))
     }
     
-    private func _singleLanguageParameterItems(_ parameterInfo: [ParameterInfo]) -> [XMLElement] {
+    func _singleLanguageParameterItems(_ parameterInfo: [ParameterInfo]) -> [XMLElement] {
         // When there's only a single language representation, create a list of `<dt>` and `<dd>` HTML elements ("terms" and "definitions" in a "description list" (`<dl> HTML element`)
         var items: [XMLElement] = []
         items.reserveCapacity(parameterInfo.count * 2)
@@ -89,7 +96,7 @@ package extension MarkdownRenderer {
         return items
     }
     
-    private func _dualLanguageParameters(
+    func _dualLanguageParameters(
         primary:   (key: SourceLanguage, value: [ParameterInfo]),
         secondary: (key: SourceLanguage, value: [ParameterInfo])
     ) -> XMLElement {
