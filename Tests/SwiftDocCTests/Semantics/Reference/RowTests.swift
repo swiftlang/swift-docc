@@ -72,9 +72,9 @@ class RowTests: XCTestCase {
                 .row(RenderBlockContent.Row(
                     numberOfColumns: 6,
                     columns: [
-                        RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["Hello there."]),
-                        RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["Hello there."]),
-                        RenderBlockContent.Row.Column(size: 4, alignment: nil, content: ["Hello there."])
+                        RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
+                        RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
+                        RenderBlockContent.Row.Column(size: 4, alignment: .leading, content: ["Hello there."])
                     ]
                 ))
             )
@@ -168,7 +168,7 @@ class RowTests: XCTestCase {
                 .row(RenderBlockContent.Row(
                     numberOfColumns: 1,
                     columns: [
-                        RenderBlockContent.Row.Column(size: 1, alignment: nil, content: [])
+                        RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: [])
                     ]
                 ))
             )
@@ -223,15 +223,15 @@ class RowTests: XCTestCase {
             .row(RenderBlockContent.Row(
                 numberOfColumns: 5,
                 columns: [
-                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: []),
+                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
 
                     RenderBlockContent.Row.Column(
                         size: 3,
-                        alignment: nil,
+                        alignment: .leading,
                         content: ["This is a wiiiiddde column."]
                     ),
 
-                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: []),
+                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
                 ]
             ))
         )
@@ -267,13 +267,13 @@ class RowTests: XCTestCase {
                 columns: [
                     RenderBlockContent.Row.Column(
                         size: 1,
-                        alignment: nil,
+                        alignment: .leading,
                         content: [
                             .row(RenderBlockContent.Row(
                                 numberOfColumns: 2,
                                 columns: [
-                                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["Hello"]),
-                                    RenderBlockContent.Row.Column(size: 1, alignment: nil, content: ["There"]),
+                                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello"]),
+                                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["There"]),
                                 ]
                             ))
                         ]
@@ -365,7 +365,7 @@ class RowTests: XCTestCase {
                 columns: [
                     RenderBlockContent.Row.Column(
                         size: 2,
-                        alignment: nil,
+                        alignment: .leading,
                         content: ["Default alignment"]
                     )
                 ]
@@ -385,8 +385,10 @@ class RowTests: XCTestCase {
         }
 
         XCTAssertNotNil(row)
-        // Optional parameters silently default to nil when conversion fails
-        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(
+            diagnostics,
+            ["2: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
+        )
 
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
@@ -396,7 +398,7 @@ class RowTests: XCTestCase {
                 columns: [
                     RenderBlockContent.Row.Column(
                         size: 1,
-                        alignment: nil,
+                        alignment: .leading,
                         content: ["Content"]
                     )
                 ]
@@ -475,7 +477,7 @@ class RowTests: XCTestCase {
                     ),
                     RenderBlockContent.Row.Column(
                         size: 1,
-                        alignment: nil,
+                        alignment: .leading,
                         content: ["Default aligned"]
                     )
                 ]
@@ -495,8 +497,10 @@ class RowTests: XCTestCase {
         }
 
         XCTAssertNotNil(row)
-        // Optional parameters silently default to nil on invalid values
-        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(
+            diagnostics,
+            ["2: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
+        )
 
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
@@ -506,7 +510,7 @@ class RowTests: XCTestCase {
                 columns: [
                     RenderBlockContent.Row.Column(
                         size: 1,
-                        alignment: nil,
+                        alignment: .leading,
                         content: ["Content"]
                     )
                 ]
@@ -526,8 +530,10 @@ class RowTests: XCTestCase {
         }
 
         XCTAssertNotNil(row)
-        // Optional parameters silently default to nil on invalid values
-        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(
+            diagnostics,
+            ["2: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
+        )
 
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
@@ -537,7 +543,7 @@ class RowTests: XCTestCase {
                 columns: [
                     RenderBlockContent.Row.Column(
                         size: 2,
-                        alignment: nil,
+                        alignment: .leading,
                         content: ["Content"]
                     )
                 ]
@@ -565,8 +571,10 @@ class RowTests: XCTestCase {
         }
 
         XCTAssertNotNil(row)
-        // Optional parameters silently default to nil on invalid values
-        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(
+            diagnostics,
+            ["6: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
+        )
 
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
@@ -581,7 +589,7 @@ class RowTests: XCTestCase {
                     ),
                     RenderBlockContent.Row.Column(
                         size: 1,
-                        alignment: nil,
+                        alignment: .leading,
                         content: ["Invalid"]
                     ),
                     RenderBlockContent.Row.Column(

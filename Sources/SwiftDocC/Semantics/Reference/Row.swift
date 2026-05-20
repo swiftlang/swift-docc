@@ -122,7 +122,7 @@ extension Row {
 
         /// The alignment of this column's content.
         @DirectiveArgumentWrapped
-        public private(set) var alignment: Row.ColumnAlignment? = nil
+        public private(set) var alignment: Row.ColumnAlignment = .leading
 
         /// The markup content in this column.
         @ChildMarkup(numberOfParagraphs: .zeroOrMore, supportsStructure: true)
@@ -154,9 +154,7 @@ extension Row {
 extension Row: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         let renderedColumns = columns.map { column in
-            let alignment = column.alignment.flatMap { semanticAlignment in
-                RenderBlockContent.Row.ColumnAlignment(rawValue: semanticAlignment.rawValue)
-            }
+            let alignment = RenderBlockContent.Row.ColumnAlignment(rawValue: column.alignment.rawValue)!
             return RenderBlockContent.Row.Column(
                 size: column.size,
                 alignment: alignment,

@@ -818,7 +818,7 @@ public enum RenderBlockContent: Equatable {
             public var size: Int
 
             /// The alignment of this column's content.
-            public var alignment: ColumnAlignment?
+            public var alignment: ColumnAlignment = .leading
 
             /// The content that should be rendered in this column.
             public var content: [RenderBlockContent]
