@@ -195,7 +195,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     ///   - byteOffset: The byte offset from the decoder's current state where the decoder checks for the key.
     /// - Returns: `true` if the decoder matched this key, `false` otherwise.
     @inlinable
-    mutating func matchKey(_ jsonKey: StaticString, byteOffset: Int = 0) -> Bool {
+    package mutating func matchKey(_ jsonKey: StaticString, byteOffset: Int = 0) -> Bool {
         guard pointer.hasASCIIPrefix(jsonKey, byteOffset: byteOffset) else {
             return false
         }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,10 +23,10 @@ class HasArgumentOfTypeTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let arguments = directive.arguments(problems: &problems)
-            let x = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, problems: &problems)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let arguments = directive.arguments(diagnostics: &diagnostics)
+            let x = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
             XCTAssertNotNil(x)
             x.map { x in
                 XCTAssertEqual("x", x)
@@ -46,10 +46,10 @@ class HasArgumentOfTypeTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-            directive.map { directive in
-                var problems = [Problem]()
-                let arguments = directive.arguments(problems: &problems)
-                let x = Semantic.Analyses.HasArgument<Intro, IntArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, problems: &problems)
+            if let directive {
+                var diagnostics = [Diagnostic]()
+                let arguments = directive.arguments(diagnostics: &diagnostics)
+                let x = Semantic.Analyses.HasArgument<Intro, IntArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
                 XCTAssertNotNil(x)
                 x.map { x in
                     XCTAssertEqual(1, x)
@@ -63,15 +63,13 @@ class HasArgumentOfTypeTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-            directive.map { directive in
-                var problems = [Problem]()
-                let arguments = directive.arguments(problems: &problems)
-                let x = Semantic.Analyses.HasArgument<Intro, IntArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, problems: &problems)
+            if let directive {
+                var diagnostics = [Diagnostic]()
+                let arguments = directive.arguments(diagnostics: &diagnostics)
+                let x = Semantic.Analyses.HasArgument<Intro, IntArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
                 XCTAssertNil(x)
-                XCTAssertEqual(1, problems.count)
-                problems.first.map { problem in
-                    XCTAssertEqual("org.swift.docc.HasArgument.x.ConversionFailed", problem.diagnostic.identifier)
-                }
+                XCTAssertEqual(1, diagnostics.count)
+                XCTAssertEqual("org.swift.docc.HasArgument.x.ConversionFailed", diagnostics.first?.identifier)
             }
         }
     }
@@ -88,10 +86,10 @@ class HasArgumentOfTypeTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-            directive.map { directive in
-                var problems = [Problem]()
-                let arguments = directive.arguments(problems: &problems)
-                let x = Semantic.Analyses.HasArgument<Intro, BoolArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, problems: &problems)
+            if let directive {
+                var diagnostics = [Diagnostic]()
+                let arguments = directive.arguments(diagnostics: &diagnostics)
+                let x = Semantic.Analyses.HasArgument<Intro, BoolArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
                 XCTAssertNotNil(x)
                 x.map { x in
                     XCTAssertTrue(x)
@@ -105,11 +103,11 @@ class HasArgumentOfTypeTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-            directive.map { directive in
-                var problems = [Problem]()
-                let arguments = directive.arguments(problems: &problems)
-                let x = Semantic.Analyses.HasArgument<Intro, BoolArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, problems: &problems)
-                XCTAssertTrue(problems.isEmpty)
+            if let directive {
+                var diagnostics = [Diagnostic]()
+                let arguments = directive.arguments(diagnostics: &diagnostics)
+                let x = Semantic.Analyses.HasArgument<Intro, BoolArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
+                XCTAssertTrue(diagnostics.isEmpty)
                 XCTAssertNotNil(x)
                 x.map { x in
                     XCTAssertFalse(x)
@@ -123,16 +121,15 @@ class HasArgumentOfTypeTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-            directive.map { directive in
-                var problems = [Problem]()
-                let arguments = directive.arguments(problems: &problems)
-                let x = Semantic.Analyses.HasArgument<Intro, BoolArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, problems: &problems)
-                XCTAssertEqual(1, problems.count)
+            if let directive {
+                var diagnostics = [Diagnostic]()
+                let arguments = directive.arguments(diagnostics: &diagnostics)
+                let x = Semantic.Analyses.HasArgument<Intro, BoolArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
+                XCTAssertEqual(1, diagnostics.count)
                 XCTAssertNil(x)
-                problems.first.map { problem in
-                    XCTAssertEqual("org.swift.docc.HasArgument.x.ConversionFailed", problem.diagnostic.identifier)
-                    XCTAssertEqual(.warning, problem.diagnostic.severity)
-                }
+                
+                XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.x.ConversionFailed")
+                XCTAssertEqual(diagnostics.first?.severity, .warning)
             }
         }
     }
@@ -148,11 +145,11 @@ class HasArgumentOfTypeTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let arguments = directive.arguments(problems: &problems)
-            let x = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems)
-            XCTAssertTrue(problems.isEmpty)
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let arguments = directive.arguments(diagnostics: &diagnostics)
+            let x = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: nil).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
+            XCTAssertTrue(diagnostics.isEmpty)
             XCTAssertNil(x)
         }
     }
@@ -168,12 +165,12 @@ class HasArgumentOfTypeTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        directive.map { directive in
-            var problems = [Problem]()
-            let arguments = directive.arguments(problems: &problems)
-            _ = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, problems: &problems)
-            _ = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
-            XCTAssertEqual([.error, .warning], problems.map { $0.diagnostic.severity })
+        if let directive {
+            var diagnostics = [Diagnostic]()
+            let arguments = directive.arguments(diagnostics: &diagnostics)
+            _ = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: .error).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
+            _ = Semantic.Analyses.HasArgument<Intro, StringArgument>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
+            XCTAssertEqual([.error, .warning], diagnostics.map(\.severity))
         }
     }
 }
