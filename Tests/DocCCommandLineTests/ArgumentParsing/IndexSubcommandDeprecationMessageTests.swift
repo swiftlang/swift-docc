@@ -41,7 +41,7 @@ class IndexSubcommandDeprecationMessageTests: XCTestCase {
             let logStorage = LogHandle.LogStorage()
             Docc.Index._errorLogHandle = .memory(logStorage)
             
-            // Verify that running the `` command prints the deprecation message.
+            // Verify that running the `index` command prints the deprecation message.
             var command = try indexCommandType.parse([
                 archiveInput.path,
                 "--bundle-identifier", "org.swift.example",
