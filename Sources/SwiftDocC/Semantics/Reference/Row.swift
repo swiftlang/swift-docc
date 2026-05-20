@@ -109,6 +109,23 @@ extension Row {
     /// with a row in a grid-based layout.
     ///
     /// Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive.
+    /// Use `size` to span multiple columns and `alignment` to control content positioning.
+    ///
+    /// ```md
+    /// @Row {
+    ///     @Column {
+    ///         Default (leading) alignment
+    ///     }
+    ///
+    ///     @Column(alignment: center) {
+    ///         Centered content
+    ///     }
+    ///
+    ///     @Column(size: 2, alignment: trailing) {
+    ///         Trailing alignment
+    ///     }
+    /// }
+    /// ```
     public final class Column: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
         public static let introducedVersion = "5.8"
         public let originalMarkup: BlockDirective

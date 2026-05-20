@@ -2025,6 +2025,57 @@
             "text" : "Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive."
           },
           {
+            "text" : "Use `size` to span multiple columns and `alignment` to control content positioning."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Row {"
+          },
+          {
+            "text" : "    @Column {"
+          },
+          {
+            "text" : "        Default (leading) alignment"
+          },
+          {
+            "text" : "    }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "    @Column(alignment: center) {"
+          },
+          {
+            "text" : "        Centered content"
+          },
+          {
+            "text" : "    }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "    @Column(size: 2, alignment: trailing) {"
+          },
+          {
+            "text" : "        Trailing alignment"
+          },
+          {
+            "text" : "    }"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
             "text" : "- Parameters:"
           },
           {
