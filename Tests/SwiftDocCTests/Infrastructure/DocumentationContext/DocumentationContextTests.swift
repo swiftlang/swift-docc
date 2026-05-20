@@ -5503,9 +5503,6 @@ let expected = """
     }
 
     func testResolveExternalLinkFromTechnologyRoot() async throws {
-        var configuration = DocumentationContext.Configuration()
-        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
-        
         let externalModuleName = "ExternalModuleName"
         
         func makeExternalDependencyFiles() async throws -> (SerializableLinkResolutionInformation, [LinkDestinationSummary]) {
@@ -5517,8 +5514,7 @@ let expected = """
                     
                     Some description of this module.
                     """)
-                ]),
-                configuration: configuration
+                ])
             )
             
             // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
@@ -5529,7 +5525,7 @@ let expected = """
                 
                 return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
             }
-            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
+            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(documentationID: context.inputs.id)
             
             return (linkResolutionInformation, linkSummaries)
         }
@@ -5546,6 +5542,7 @@ let expected = """
         
         let (linkResolutionInformation, linkSummaries) = try await makeExternalDependencyFiles()
         
+        var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.dependencyArchives = [
             URL(fileURLWithPath: "/path/to/SomeDependency.doccarchive")
         ]
