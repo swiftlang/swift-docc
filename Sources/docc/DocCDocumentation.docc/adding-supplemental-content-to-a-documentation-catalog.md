@@ -131,7 +131,7 @@ For example, to add a section about the sleeping habits of sloths to the `Sloth`
 
 ## Sleeping Habits
 
-Sloths sleep in trees by curling into a ball and hanging by their claws.
+Sloths sleep in trees by curling into a ball and dangling by their claws.
 ```
 
 If the symbol's existing source documentation focuses on implementation and isn't appropriate for external documentation, you can completely replace the documentation comment's content with the extension file's content by adding a ``DocumentationExtension`` directive. 
