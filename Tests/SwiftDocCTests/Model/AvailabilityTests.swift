@@ -546,7 +546,7 @@ struct AvailabilityTests {
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
         
-        #expect(renderNode.metadata.platforms?.isEmpty != false, "Expecting either `nil` or empty platforms")
+        #expect(renderNode.metadata.platforms == nil)
     }
     
     @Test(arguments: Self.allMainPlatforms)
@@ -1418,7 +1418,7 @@ struct AvailabilityTests {
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
-        #expect(renderNode.metadata.platforms?.isEmpty != false, "Expecting either `nil` or empty platforms")
+        #expect(renderNode.metadata.platforms == nil)
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated)
