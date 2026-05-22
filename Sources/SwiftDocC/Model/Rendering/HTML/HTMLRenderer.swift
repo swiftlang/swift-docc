@@ -450,8 +450,6 @@ struct HTMLRenderer {
             ])
         )
     }
-    
-    // TODO: As a future enhancement, add another layer on top of this that creates complete HTML pages (both `<head>` and `<body>`) (rdar://165912669)
 }
 
 // MARK: Helpers
