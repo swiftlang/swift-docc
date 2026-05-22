@@ -196,7 +196,7 @@ package func makeSymbolKind(_ kindID: SymbolGraph.Symbol.KindIdentifier) -> Symb
 
 package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     init(
-        domainName: String,
+        domainName: String?,
         introduced: SymbolGraph.SemanticVersion?,
         deprecated: SymbolGraph.SemanticVersion?,
         obsoleted: SymbolGraph.SemanticVersion? = nil,
@@ -207,7 +207,7 @@ package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
         willEventuallyBeDeprecated:   Bool = false
     ) {
         self.init(
-            domain: .init(rawValue: domainName),
+            domain: domainName.map { .init(rawValue: $0) },
             introducedVersion: introduced,
             deprecatedVersion: deprecated,
             obsoletedVersion: obsoleted,
