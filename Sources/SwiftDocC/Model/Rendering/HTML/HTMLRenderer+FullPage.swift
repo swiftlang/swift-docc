@@ -10,15 +10,15 @@
 
 #if canImport(FoundationXML)
 // TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-import FoundationXML
-import FoundationEssentials
+package import FoundationXML
+package import FoundationEssentials
 #else
-import Foundation
+package import Foundation
 #endif
 
 private import DocCHTML
 
-extension HTMLRenderer {
+package extension HTMLRenderer {
     /// Wraps the unique rendered documentation content and its metadata into a full-page document.
     ///
     /// - Parameters:
@@ -112,5 +112,28 @@ extension HTMLRenderer {
         page.dtd = documentTypeDefinition
         
         return page
+    }
+    
+    /// Prepares the provided custom header and footer files to be included in the full-page structure.
+    ///
+    /// - Parameters:
+    ///   - customHeader: A custom HTML file that the renderer will include as a header in the full-page output.
+    ///   - customFooter: A custom HTML file that the renderer will include as a footer in the full-page output.
+    ///   - fileManager: The file manager that the HTML renderer uses to read the custom header and footer files.
+    /// - Returns: The parsed custom header and parsed custom footer, ready to be included in the full-page output.
+    static func prepareForFullPage(
+        customHeader: URL?,
+        customFooter: URL?,
+        fileManager: some FileManagerProtocol
+    ) throws -> (customHeader: XMLNode?, customFooter: XMLNode?) {
+        func parse(contentsOf url: URL) throws -> XMLNode {
+            let content = String(decoding: try fileManager.contents(of: url), as: UTF8.self)
+            return try XMLElement(xmlString: content)
+        }
+        
+        return (
+            customHeader: try customHeader.map(parse(contentsOf:)),
+            customFooter: try customFooter.map(parse(contentsOf:))
+        )
     }
 }

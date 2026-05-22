@@ -57,6 +57,7 @@ package enum ConvertActionConverter {
             return
         }
         
+        // FIXME: Don't create a (JSON) RenderContext when the output format is static HTML. (rdar://177867282)
         // Precompute the render context
         let renderContext = signposter.withIntervalSignpost("Build RenderContext", id: signposter.makeSignpostID()) {
             RenderContext(documentationContext: context)
@@ -87,7 +88,9 @@ package enum ConvertActionConverter {
                         let entity = try context.entity(with: identifier)
 
                         if let htmlContentConsumer {
-                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness, featureFlags: featureFlags)
+                            // TODO: Design a better way to indicate a primary output format and which "render" steps does and doesn't need (rdar://177867282)
+                            let isStaticHTMLOutput = htmlContentConsumer._isPrimaryOutputFormat
+                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: isStaticHTMLOutput ? .richness : .conciseness, featureFlags: featureFlags)
                             
                             if let symbol = entity.semantic as? Symbol {
                                 let renderedPageInfo = renderer.renderSymbol(symbol)
@@ -95,6 +98,10 @@ package enum ConvertActionConverter {
                             } else if let article = entity.semantic as? Article {
                                 let renderedPageInfo = renderer.renderArticle(article)
                                 try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                            }
+                            
+                            if isStaticHTMLOutput {
+                                return // Don't create a (JSON) render node for this page
                             }
                         }
 
@@ -128,6 +135,7 @@ package enum ConvertActionConverter {
                             break
                         }
                         
+                        // FIXME: Read all linkable entity information from the documentation node rather than the JSON render node. (rdar://177867335)
                         if emitDigest {
                             let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)

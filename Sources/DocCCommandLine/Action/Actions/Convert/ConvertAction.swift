@@ -343,8 +343,15 @@ public struct ConvertAction: AsyncAction {
             bundleID: inputs.id
         )
         
-        let htmlConsumer: FileWritingHTMLContentConsumer?
-        if includeContentInEachHTMLFile, let indexHTML {
+        let htmlConsumer: (any HTMLContentConsumer)?
+        if outputFormat == .experimentalHTML {
+            htmlConsumer = try FullPageHTMLContentConsumer(
+                targetFolder: temporaryFolder,
+                fileManager: fileManager,
+                customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
+                customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil,
+            )
+        } else if includeContentInEachHTMLFile, let indexHTML {
             htmlConsumer = try FileWritingHTMLContentConsumer(
                 targetFolder: temporaryFolder,
                 fileManager: fileManager,

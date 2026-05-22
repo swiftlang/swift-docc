@@ -21,6 +21,7 @@ private import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool
+    let _isPrimaryOutputFormat = false
     
     private struct HTMLTemplate {
         var original: String

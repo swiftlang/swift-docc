@@ -119,7 +119,7 @@ private struct ContextLinkProvider: LinkProvider {
 // MARK: HTML Renderer
 
 /// A type that renders documentation pages into semantic HTML elements.
-struct HTMLRenderer {
+package struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
     let goal: RenderGoal
