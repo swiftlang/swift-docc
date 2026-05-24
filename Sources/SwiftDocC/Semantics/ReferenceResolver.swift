@@ -20,15 +20,28 @@ func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: 
             // Inset the range by 2 at the start and end to skip both "``".
             return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
         } else {
-            // FIXME: This assumes that the link uses the `<doc:my/reference>` syntax.
-            // Links that use the [link text](doc:my/reference) syntax will have incorrect suggestion replacements.
-            // https://github.com/swiftlang/swift-docc/issues/470
-            
+            // This assumes that the link uses the `<doc:my/reference>` autolink syntax. Links that use the
+            // `[link text](doc:my/reference)` syntax are handled by `unresolvedReferenceDiagnostic(source:link:...)`
+            // which computes the destination's range from the parsed markup.
+
             // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
             return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
         }
     }
-    
+    return unresolvedReferenceDiagnostic(source: source, referenceSourceRange: referenceSourceRange, severity: severity, errorInfo: errorInfo)
+}
+
+/// Creates a diagnostic for an unresolved topic reference, anchoring any suggested replacements and notes to the source
+/// range of the link's destination computed from its parsed markup.
+///
+/// Use this overload when the original ``Markup`` link is available so that the destination's range can be computed
+/// regardless of whether the link uses the `<doc:my/reference>` autolink syntax or the `[link text](doc:my/reference)`
+/// markdown syntax.
+func unresolvedReferenceDiagnostic(source: URL?, link: any Markup, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {
+    return unresolvedReferenceDiagnostic(source: source, referenceSourceRange: link.referenceBodySourceRange, severity: severity, errorInfo: errorInfo)
+}
+
+private func unresolvedReferenceDiagnostic(source: URL?, referenceSourceRange: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {
     var solutions: [Solution] = []
     var notes: [Diagnostic.Note] = []
     if let referenceSourceRange {

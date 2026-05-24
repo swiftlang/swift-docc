@@ -1237,7 +1237,7 @@ public class DocumentationContext {
                     }
                     
                     // Present a diagnostic specific to documentation extension files but get the solutions and notes from the general unresolved link problem.
-                    let unresolvedLinkDiagnostic = unresolvedReferenceDiagnostic(source: documentationExtension.source, range: link.range, severity: .warning, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
+                    let unresolvedLinkDiagnostic = unresolvedReferenceDiagnostic(source: documentationExtension.source, link: link, severity: .warning, errorInfo: errorInfo)
                     
                     diagnosticEngine.emit(
                         Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(destination.singleQuoted). \(errorInfo.message).", notes: unresolvedLinkDiagnostic.notes, solutions: unresolvedLinkDiagnostic.solutions)
