@@ -13,6 +13,7 @@ package import Foundation
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
 public import SwiftDocC
 private import Markdown
+private import DocCHTML
 
 #if canImport(os)
 private import os
@@ -225,7 +226,17 @@ public struct ConvertAction: AsyncAction {
     
     func perform(logHandle: inout LogHandle) async throws -> (ActionResult, DocumentationContext) {
         // FIXME: Use `defer` again when the asynchronous defer-statement miscompilation (rdar://137774949) is fixed.
-        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        let temporaryFolder: URL
+        switch outputFormat {
+        case .json:
+            temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        case .experimentalHTML:
+            temporaryFolder = try createTempFolder(with: nil)
+            for file in DocCHTML.StaticResources.allFiles {
+                try fileManager.createFile(at: temporaryFolder.appendingPathComponent(file.filename), contents: file.data)
+            }
+        }
+        
         do {
             let result = try await _perform(logHandle: &logHandle, temporaryFolder: temporaryFolder)
             diagnosticEngine.flush()
@@ -276,7 +287,7 @@ public struct ConvertAction: AsyncAction {
 //        }
 
         let indexHTML: URL?
-        if let htmlTemplateDirectory {
+        if let htmlTemplateDirectory, outputFormat == .json {
             let indexHTMLUrl = temporaryFolder.appendingPathComponent(
                 HTMLTemplate.indexFileName.rawValue,
                 isDirectory: false
