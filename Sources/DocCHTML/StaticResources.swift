@@ -363,18 +363,17 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 40px;
   
   position: relative;
-  overflow: clip;
+  clip-path: inset(0 -50%);
   
   /* Draw the background in a pseudo element so that it can move behind the icon */
-  &::after {
+  &:before {
     content: "";
     background: #f0f0f0;
     
     position: absolute;
     top: 0;
-    left: 0;
-    
-    width: 100%;
+    left: -50%;
+    width: 200%;
     height: 100%;
     z-index: -2;
   }
@@ -382,19 +381,19 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Add background icons for articles, API collections, and module pages */
 
-#hero.article:before {
+#hero.article:after {
   background: url(article.svg);
 }
 
-#hero.api-collection:before {
+#hero.api-collection:after {
   background: url(api-collection.svg);
 }
 
-#hero.module:before {
+#hero.module:after {
   background: url(module.svg);
 }
 
-#hero.article:before, #hero.api-collection:before, #hero.module:before {
+#hero.article:after, #hero.api-collection:after, #hero.module:after {
   content: "";
   --icon-size: 250px;
   
