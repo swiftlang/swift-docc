@@ -37,20 +37,23 @@ private struct ContextLinkProvider: LinkProvider {
         
         // A helper function that transforms SymbolKit fragments into renderable identifier/decorator fragments
         func convert(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [LinkedElement.SymbolNameFragment] {
-            func convert(kind: SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind) -> LinkedElement.SymbolNameFragment.Kind {
-                switch kind {
-                    case .identifier, .externalParameter: .identifier
-                    default:                              .decorator
+            func convert(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> LinkedElement.SymbolNameFragment.Kind {
+                switch fragment.kind {
+                    case .identifier, .externalParameter,
+                         .keyword where fragment.spelling == "init":
+                            .identifier
+                    default:
+                            .decorator
                 }
             }
-            guard var current = fragments.first.map({ LinkedElement.SymbolNameFragment(text: $0.spelling, kind: convert(kind: $0.kind)) }) else {
+            guard var current = fragments.first.map({ LinkedElement.SymbolNameFragment(text: $0.spelling, kind: convert($0)) }) else {
                 return []
             }
             
             // Join together multiple fragments of the same identifier/decorator kind to produce a smaller output.
             var result: [LinkedElement.SymbolNameFragment] = []
             for fragment in fragments.dropFirst() {
-                let kind = convert(kind: fragment.kind)
+                let kind = convert(fragment)
                 if kind == current.kind  {
                     current.text += fragment.spelling
                 } else {
