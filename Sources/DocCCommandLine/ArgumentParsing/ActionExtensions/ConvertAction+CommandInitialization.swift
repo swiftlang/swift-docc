@@ -69,6 +69,7 @@ extension ConvertAction {
             currentPlatforms: parsedPlatforms,
             buildIndex: convert.featureFlags.emitLMDBIndex,
             temporaryDirectory: FileManager.default.temporaryDirectory,
+            outputFormat: convert.inputsAndOutputs.outputFormat,
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
