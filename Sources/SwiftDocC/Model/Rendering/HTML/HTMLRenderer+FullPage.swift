@@ -85,15 +85,15 @@ package extension HTMLRenderer {
                 .element(named: "legend", children: [.text("Select a color scheme preference")]),
                 
                 .element(named: "label", children: [
-                    .element(named: "input", attributes: ["type": "radio", "value": "light"]),
+                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "light"]),
                     .text("Light"),
                 ]),
                 .element(named: "label", children: [
-                    .element(named: "input", attributes: ["type": "radio", "value": "dark"]),
+                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "dark"]),
                     .text("Dark"),
                 ]),
                 .element(named: "label", children: [
-                    .element(named: "input", attributes: ["type": "radio", "value": "auto", "checked": "true"]),
+                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "auto", "checked": "true"]),
                     .text("Auto"),
                 ]),
             ], attributes: ["role": "radiogroup"])

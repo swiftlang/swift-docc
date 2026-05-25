@@ -59,13 +59,13 @@ struct HTMLRenderFullPageTests {
               <fieldset role="radiogroup">
                 <legend>Select a color scheme preference</legend>
                 <label>
-                  <input type="radio" value="light">
+                  <input name="color-scheme" type="radio" value="light">
                   Light</label>
               <label>
-                <input type="radio" value="dark">
+                <input name="color-scheme" type="radio" value="dark">
                 Dark</label>
               <label>
-                <input checked type="radio" value="auto">
+                <input checked name="color-scheme" type="radio" value="auto">
                 Auto</label>
               </fieldset>
             </footer>
@@ -119,13 +119,13 @@ struct HTMLRenderFullPageTests {
               <fieldset role="radiogroup">
                 <legend>Select a color scheme preference</legend>
                 <label>
-                  <input type="radio" value="light">
+                  <input name="color-scheme" type="radio" value="light">
                   Light</label>
               <label>
-                <input type="radio" value="dark">
+                <input name="color-scheme" type="radio" value="dark">
                 Dark</label>
               <label>
-                <input checked type="radio" value="auto">
+                <input checked name="color-scheme" type="radio" value="auto">
                 Auto</label>
               </fieldset>
             </footer>
