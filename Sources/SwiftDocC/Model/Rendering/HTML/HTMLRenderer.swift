@@ -164,7 +164,11 @@ package struct HTMLRenderer {
         let node = context.documentationCache[reference]!
         
         let articleElement = XMLElement(name: "article")
-        let hero = XMLElement(name: "section")
+        let hero = XMLNode.element(named: "section")
+        if goal == .richness {
+            // Draw a background color for the hero section and an article/collection glyph
+            hero.addAttributes(["id": "hero", "class": article.topics == nil ? "article" : "api-collection"])
+        }
         articleElement.addChild(hero)
         
         // Breadcrumbs and Eyebrow
@@ -234,12 +238,20 @@ package struct HTMLRenderer {
         let articleElement = XMLElement(name: "article")
         let hero = XMLElement(name: "section")
         articleElement.addChild(hero)
+        let isModule = symbol.kind.identifier == .module
         
-        // Breadcrumbs and Eyebrow
-        hero.addChild(renderer.breadcrumbs(
-            references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
-            currentPageNames: node.makeNames(goal: goal)
-        ))
+        if isModule {
+            if goal == .richness {
+                // Draw a background color for the hero section and a module glyph
+                hero.addAttributes(["id": "hero", "class": "module"])
+            }
+        } else {
+            // Breadcrumbs and Eyebrow
+            hero.addChild(renderer.breadcrumbs(
+                references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
+                currentPageNames: node.makeNames(goal: goal)
+            ))
+        }
         addEyebrow(text: symbol.roleHeading, to: hero)
         
         // Title
@@ -297,6 +309,8 @@ package struct HTMLRenderer {
             }
         }
         
+        // TODO: Constraints
+        
         // Deprecation message
         if let deprecationMessage = symbol.deprecatedSummary?.content {
             addDeprecationSummary(markup: deprecationMessage, to: hero)
@@ -307,6 +321,8 @@ package struct HTMLRenderer {
             .values(goal: goal, by: { $0.parameters.elementsEqual($1.parameters, by: { $0.name == $1.name }) })
             .valuesByLanguage()
         {
+            separateSectionsIfNeeded(in: articleElement)
+            
             articleElement.addChildren(renderer.parameters(
                 parameterSections.mapValues { section in
                     section.parameters.map {
@@ -433,7 +449,11 @@ package struct HTMLRenderer {
     }
     
     private func separateSectionsIfNeeded(in element: XMLElement) {
-        guard goal == .richness, ((element.children ?? []).last as? XMLElement)?.name == "section" else {
+        guard goal == .richness,
+              let previous = (element.children ?? []).last as? XMLElement,
+              previous.name == "section",
+              previous.attribute(forName: "id")?.stringValue != "hero" // Avoid adding a `<hr>` element between then hero (with background) and the next section
+        else {
             return
         }
         
