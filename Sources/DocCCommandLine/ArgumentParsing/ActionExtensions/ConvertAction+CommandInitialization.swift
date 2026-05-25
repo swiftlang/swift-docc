@@ -22,7 +22,7 @@ extension ConvertAction {
         var featureFlags = FeatureFlags()
         featureFlags.isExperimentalCodeBlockAnnotationsEnabled = convert.featureFlags.enableExperimentalCodeBlockAnnotations
         featureFlags.isExperimentalDeviceFrameSupportEnabled = convert.featureFlags.enableExperimentalDeviceFrameSupport
-        featureFlags.isExperimentalLinkHierarchySerializationEnabled = convert.featureFlags.enableExperimentalLinkHierarchySerialization
+        featureFlags.isLinkHierarchySerializationEnabled = convert.featureFlags.enableLinkHierarchySerialization
         featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = convert.featureFlags.enableExperimentalOverloadedSymbolPresentation
         featureFlags.isMentionedInEnabled = convert.featureFlags.enableMentionedIn
         featureFlags.isParametersAndReturnsValidationEnabled = convert.featureFlags.enableParametersAndReturnsValidation

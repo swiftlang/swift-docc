@@ -17,13 +17,6 @@ import DocCCommon
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
-    private var configuration = DocumentationContext.Configuration()
-    
-    override func setUp() {
-        super.setUp()
-        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
-    }
-    
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
     
     func testUnambiguousAbsolutePaths() async throws {
@@ -718,7 +711,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyContext.inputs.id)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(documentationID: dependencyContext.inputs.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -855,9 +848,10 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     }
 
     func testOverloadGroupSymbolsResolveWithoutHash() async throws {
+        var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let linkResolvers = try await makeLinkResolversForTestBundle(named: "OverloadedSymbols")
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "OverloadedSymbols", configuration: configuration)
 
         // The enum case should continue to resolve by kind, since it has no hash collision
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.enum.case")
@@ -884,9 +878,10 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
             "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
         ]
+        var configuration = DocumentationContext.Configuration()
 
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        let linkResolvers = try await makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle")
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
         
         // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)
         try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyClass", isBeta: true)
@@ -991,13 +986,13 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-    private func makeLinkResolversForTestBundle(named testBundleName: String) async throws -> LinkResolvers {
+    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: context.inputs.id)
+        let resolverInfo = try localResolver.prepareForSerialization(documentationID: context.inputs.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
@@ -1044,7 +1039,7 @@ struct ExternalPathHierarchyResolverTests_new {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyContext.inputs.id)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(documentationID: dependencyContext.inputs.id)
         
         #expect(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count == 3 /* 2 symbols & 1 module */)
         #expect(linkSummaries.count == 3 /* 2 symbols & 1 module */)
@@ -1073,7 +1068,7 @@ struct ExternalPathHierarchyResolverTests_new {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
-        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
+        configuration.featureFlags.isLinkHierarchySerializationEnabled = true
         
         let mainContext = try await load(
             catalog: Folder(name: "Main.docc") {
