@@ -1212,7 +1212,6 @@ class SymbolTests: XCTestCase {
                   @DocumentationExtension(mergeBehavior: override)
                   @TechnologyRoot
                   @DisplayName(Title)
-                  @PageImage(source: test, purpose: icon)
                   @CallToAction(url: "https://example.com/sample.zip", purpose: download)
                   @PageKind(sampleCode)
                   @SupportedLanguage(swift)
@@ -1230,7 +1229,6 @@ class SymbolTests: XCTestCase {
                 "org.swift.docc.Metadata.InvalidDocumentationExtensionInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidTechnologyRootInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment",
-                "org.swift.docc.Metadata.InvalidPageImageInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidCallToActionInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidPageKindInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidSupportedLanguageInDocumentationComment",
