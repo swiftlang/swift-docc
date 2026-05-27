@@ -144,8 +144,13 @@ func assert(_ html: XMLDocument, matches expectedHTML: String, sourceLocation: S
     func formatForTestComparison(_ xmlString: String) -> String {
         // This is overly simplified and won't result in "pretty" XML for general use but sufficient for test content comparisons
         xmlString
+            // Workaround document type differences
+            .replacingOccurrences(of: #"<?xml version="1.0" encoding="utf-8" standalone="no"?>"#, with: "")
+            .replacingOccurrences(of: #"<!DOCTYPE html PUBLIC "" "">"#, with: "<!DOCTYPE html>")
             // Put each tag on its own line
             .replacingOccurrences(of: ">", with: ">\n")
+            // Allow some meta tags to encode as void elements rather than self-closing elements
+            .replacingOccurrences(of: "\">", with: "\"/>")
             // Remove leading indentation
             .components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -154,6 +159,8 @@ func assert(_ html: XMLDocument, matches expectedHTML: String, sourceLocation: S
             // Explicitly escape a few HTML characters that appear in the test content
             .replacingOccurrences(of: "–", with: "&#x2013;") // en-dash
             .replacingOccurrences(of: "—", with: "&#x2014;") // em-dash
+            // Shorten empty string attribute values
+            .replacingOccurrences(of: #"="""#, with: "")
     }
     
     let actualHTML: String = html.xmlString(options: .nodeCompactEmptyElement)

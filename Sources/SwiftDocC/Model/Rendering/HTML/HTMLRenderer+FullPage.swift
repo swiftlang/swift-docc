@@ -93,7 +93,7 @@ package extension HTMLRenderer {
                     .text("Dark"),
                 ]),
                 .element(named: "label", children: [
-                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "auto", "checked": "true"]),
+                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "auto", "checked": ""]),
                     .text("Auto"),
                 ]),
             ], attributes: ["role": "radiogroup"])
