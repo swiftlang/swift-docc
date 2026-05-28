@@ -1995,7 +1995,7 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "ColumnAlignment"
+          "spelling" : "Alignment"
         },
         {
           "kind" : "text",
@@ -2098,6 +2098,15 @@
           },
           {
             "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     - term `leading`: Align to the leading edge."
+          },
+          {
+            "text" : "     - term `center`: Align to the center."
+          },
+          {
+            "text" : "     - term `trailing`: Align to the trailing edge."
           }
         ]
       },
@@ -2160,7 +2169,7 @@
           },
           {
             "kind" : "typeIdentifier",
-            "spelling" : "ColumnAlignment"
+            "spelling" : "Alignment"
           },
           {
             "kind" : "text",
@@ -4911,7 +4920,7 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "ColumnAlignment"
+          "spelling" : "Alignment"
         },
         {
           "kind" : "text",

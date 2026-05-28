@@ -204,16 +204,16 @@ class RowTests: XCTestCase {
             """
             @Row {
                 @Column
-
+            
                 @Column(size: 3) {
                     This is a wiiiiddde column.
                 }
-
+            
                 @Column
             }
             """
         }
-
+        
         XCTAssertNotNil(row)
         XCTAssertEqual(diagnostics, [])
 
@@ -224,13 +224,13 @@ class RowTests: XCTestCase {
                 numberOfColumns: 5,
                 columns: [
                     RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
-
+                    
                     RenderBlockContent.Row.Column(
                         size: 3,
                         alignment: .leading,
                         content: ["This is a wiiiiddde column."]
                     ),
-
+                    
                     RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
                 ]
             ))
@@ -246,7 +246,7 @@ class RowTests: XCTestCase {
                         @Column {
                             Hello
                         }
-
+            
                         @Column {
                             There
                         }
@@ -255,10 +255,10 @@ class RowTests: XCTestCase {
             }
             """
         }
-
+        
         XCTAssertNotNil(row)
         XCTAssertEqual(diagnostics, [])
-
+        
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
             renderBlockContent.first,
@@ -407,7 +407,7 @@ class RowTests: XCTestCase {
     }
 
     func testAllAlignmentValues() async throws {
-        let alignmentValues: [(String, RenderBlockContent.Row.ColumnAlignment)] = [
+        let alignmentValues: [(String, RenderBlockContent.Row.Column.Alignment)] = [
             ("leading", .leading),
             ("center", .center),
             ("trailing", .trailing)

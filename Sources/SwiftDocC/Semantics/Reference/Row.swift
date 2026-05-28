@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,22 +50,6 @@ public import Markdown
 public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
     public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
-
-    /// The alignment of content within a column.
-    public enum ColumnAlignment: String, CaseIterable, DirectiveArgumentValueConvertible {
-        /// Align to the leading edge.
-        case leading
-
-        /// Align to the center.
-        case center
-
-        /// Align to the trailing edge.
-        case trailing
-
-        public init?(rawDirectiveArgumentValue: String) {
-            self.init(rawValue: rawDirectiveArgumentValue)
-        }
-    }
     
     /// The number of columns available in this row.
     @DirectiveArgumentWrapped(name: .custom("numberOfColumns"))
@@ -139,7 +123,7 @@ extension Row {
 
         /// The alignment of this column's content.
         @DirectiveArgumentWrapped
-        public private(set) var alignment: Row.ColumnAlignment = .leading
+        public private(set) var alignment: Alignment = .leading
 
         /// The markup content in this column.
         @ChildMarkup(numberOfParagraphs: .zeroOrMore, supportsStructure: true)
@@ -165,13 +149,29 @@ extension Row {
         init(originalMarkup: BlockDirective) {
             self.originalMarkup = originalMarkup
         }
+
+        /// The alignment of content within a column.
+        public enum Alignment: String, CaseIterable, DirectiveArgumentValueConvertible {
+            /// Align to the leading edge.
+            case leading
+
+            /// Align to the center.
+            case center
+
+            /// Align to the trailing edge.
+            case trailing
+
+            public init?(rawDirectiveArgumentValue: String) {
+                self.init(rawValue: rawDirectiveArgumentValue)
+            }
+        }
     }
 }
 
 extension Row: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         let renderedColumns = columns.map { column in
-            let alignment = RenderBlockContent.Row.ColumnAlignment(rawValue: column.alignment.rawValue) ?? .leading
+            let alignment = RenderBlockContent.Row.Column.Alignment(rawValue: column.alignment.rawValue) ?? .leading
             return RenderBlockContent.Row.Column(
                 size: column.size,
                 alignment: alignment,

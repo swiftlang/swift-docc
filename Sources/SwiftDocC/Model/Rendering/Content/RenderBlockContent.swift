@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -798,19 +798,9 @@ public enum RenderBlockContent: Equatable {
         /// individual columns that span multiple columns (specified with the column's
         /// ``Column/size`` property) or the row could be not fully filled with columns.
         public var numberOfColumns: Int
-
+        
         /// The columns that should be rendered in this row.
         public var columns: [Column]
-
-        /// The alignment of content within a column.
-        public enum ColumnAlignment: String, Codable, Equatable {
-            /// Align to the leading edge.
-            case leading
-            /// Align to the center.
-            case center
-            /// Align to the trailing edge.
-            case trailing
-        }
 
         /// A column with a row in a grid-based layout system.
         public struct Column: Codable, Equatable {
@@ -818,10 +808,20 @@ public enum RenderBlockContent: Equatable {
             public var size: Int
 
             /// The alignment of this column's content.
-            public var alignment: ColumnAlignment = .leading
+            public var alignment: Alignment = .leading
 
             /// The content that should be rendered in this column.
             public var content: [RenderBlockContent]
+
+            /// The alignment of content within a column.
+            public enum Alignment: String, Codable, Equatable {
+                /// Align to the leading edge.
+                case leading
+                /// Align to the center.
+                case center
+                /// Align to the trailing edge.
+                case trailing
+            }
         }
     }
     
