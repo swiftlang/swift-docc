@@ -10,196 +10,153 @@
 
 import Foundation
 
-import XCTest
+import Testing
 @testable public import SwiftDocC
 import Markdown
 
-class RowTests: XCTestCase {
-    func testNoColumns() async throws {
+struct RowTests {
+    @Test func noColumns() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row
             """
         }
-        
-        XCTAssertNotNil(row)
-        
-        XCTAssertEqual(
-            diagnostics,
-            ["1: warning – org.swift.docc.HasAtLeastOne<Row, Column>"]
-        )
-        
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(.init(numberOfColumns: 0, columns: []))
-        )
+
+        #expect(row != nil)
+
+        #expect(diagnostics == ["1: warning – org.swift.docc.HasAtLeastOne<Row, Column>"])
+
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(.init(numberOfColumns: 0, columns: [])))
     }
     
-    func testInvalidParameters() async throws {
-        do {
-            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-                """
-                @Row(columns: 3) {
-                    @Column(what: true) {
-                        Hello there.
-                    }
-                
-                    @Column(size: true) {
-                        Hello there.
-                    }
-                
-                    @Column(size: 4) {
-                        Hello there.
-                    }
+    @Test func unknownArguments() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row(columns: 3) {
+                @Column(what: true) {
+                    Hello there.
                 }
-                """
+
+                @Column(size: true) {
+                    Hello there.
+                }
+
+                @Column(size: 4) {
+                    Hello there.
+                }
             }
-            
-            XCTAssertNotNil(row)
-            XCTAssertEqual(
-                diagnostics,
-                [
-                    "1: warning – org.swift.docc.UnknownArgument",
-                    "2: warning – org.swift.docc.UnknownArgument",
-                    "6: warning – org.swift.docc.HasArgument.size.ConversionFailed",
-                ]
-            )
-            
-            XCTAssertEqual(renderBlockContent.count, 1)
-            XCTAssertEqual(
-                renderBlockContent.first,
-                .row(RenderBlockContent.Row(
-                    numberOfColumns: 6,
-                    columns: [
-                        RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
-                        RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
-                        RenderBlockContent.Row.Column(size: 4, alignment: .leading, content: ["Hello there."])
-                    ]
-                ))
-            )
+            """
         }
-        
-        do {
-            let (_, diagnostics, row) = try await parseDirective(Row.self) {
-                """
-                @Row(numberOfColumns: 3) {
-                    @Column(size: 3) {
-                        @Row {
-                            @Column {
-                                @Row {
-                                    @Column(weird: false)
-                                }
+
+        #expect(row != nil)
+        #expect(diagnostics == [
+            "1: warning – org.swift.docc.UnknownArgument",
+            "2: warning – org.swift.docc.UnknownArgument",
+            "6: warning – org.swift.docc.HasArgument.size.ConversionFailed",
+        ])
+
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 6,
+            columns: [
+                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
+                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
+                RenderBlockContent.Row.Column(size: 4, alignment: .leading, content: ["Hello there."])
+            ]
+        )))
+    }
+
+    @Test func unknownArgumentInNestedRow() async throws {
+        let (_, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row(numberOfColumns: 3) {
+                @Column(size: 3) {
+                    @Row {
+                        @Column {
+                            @Row {
+                                @Column(weird: false)
                             }
                         }
                     }
                 }
-                """
             }
-            
-            XCTAssertNotNil(row)
-            XCTAssertEqual(
-                diagnostics,
-                [
-                    "6: warning – org.swift.docc.UnknownArgument",
-                ]
-            )
+            """
         }
+
+        #expect(row != nil)
+        #expect(diagnostics == ["6: warning – org.swift.docc.UnknownArgument"])
     }
     
-    func testInvalidChildren() async throws {
-        do {
-            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-                """
-                @Row {
-                    @Row {
-                        @Column {
-                            Hello there.
-                        }
-                    }
-                }
-                """
-            }
-            
-            XCTAssertNotNil(row)
-            XCTAssertEqual(
-                diagnostics,
-                [
-                    "1: warning – org.swift.docc.HasAtLeastOne<Row, Column>",
-                    "1: warning – org.swift.docc.Row.UnexpectedContent",
-                    "2: warning – org.swift.docc.HasOnlyKnownDirectives",
-                ]
-            )
-            
-            XCTAssertEqual(renderBlockContent.count, 1)
-            XCTAssertEqual(
-                renderBlockContent.first,
-                .row(RenderBlockContent.Row(
-                    numberOfColumns: 0,
-                    columns: []
-                ))
-            )
-        }
-        
-        do {
-            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-                """
+    @Test func invalidChildrenNestedRow() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
                 @Row {
                     @Column {
-                        @Column {
-                            Hello there.
-                        }
+                        Hello there.
                     }
                 }
-                """
             }
-            
-            XCTAssertNotNil(row)
-            XCTAssertEqual(
-                diagnostics,
-                [
-                    "3: warning – org.swift.docc.HasOnlyKnownDirectives",
-                ]
-            )
-            
-            XCTAssertEqual(renderBlockContent.count, 1)
-            XCTAssertEqual(
-                renderBlockContent.first,
-                .row(RenderBlockContent.Row(
-                    numberOfColumns: 1,
-                    columns: [
-                        RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: [])
-                    ]
-                ))
-            )
+            """
         }
-        
-        do {
-            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-                """
-                @Row {
 
+        #expect(row != nil)
+        #expect(diagnostics == [
+            "1: warning – org.swift.docc.HasAtLeastOne<Row, Column>",
+            "1: warning – org.swift.docc.Row.UnexpectedContent",
+            "2: warning – org.swift.docc.HasOnlyKnownDirectives",
+        ])
+
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 0,
+            columns: []
+        )))
+    }
+
+    @Test func invalidChildrenNestedColumn() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column {
+                    @Column {
+                        Hello there.
+                    }
                 }
-                """
             }
-            
-            XCTAssertNotNil(row)
-            XCTAssertEqual(
-                diagnostics,
-                [
-                    "1: warning – org.swift.docc.HasAtLeastOne<Row, Column>",
-                ]
-            )
-            
-            XCTAssertEqual(renderBlockContent.count, 1)
-            XCTAssertEqual(
-                renderBlockContent.first,
-                .row(RenderBlockContent.Row(numberOfColumns: 0, columns: []))
-            )
+            """
         }
+
+        #expect(row != nil)
+        #expect(diagnostics == ["3: warning – org.swift.docc.HasOnlyKnownDirectives"])
+
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 1,
+            columns: [
+                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: [])
+            ]
+        )))
+    }
+
+    @Test func emptyRowBody() async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+
+            }
+            """
+        }
+
+        #expect(row != nil)
+        #expect(diagnostics == ["1: warning – org.swift.docc.HasAtLeastOne<Row, Column>"])
+
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(numberOfColumns: 0, columns: [])))
     }
     
-    func testEmptyColumn() async throws {
+    @Test func emptyColumn() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
@@ -213,31 +170,28 @@ class RowTests: XCTestCase {
             }
             """
         }
-        
-        XCTAssertNotNil(row)
-        XCTAssertEqual(diagnostics, [])
 
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 5,
-                columns: [
-                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
-                    
-                    RenderBlockContent.Row.Column(
-                        size: 3,
-                        alignment: .leading,
-                        content: ["This is a wiiiiddde column."]
-                    ),
-                    
-                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
-                ]
-            ))
-        )
+        #expect(row != nil)
+        #expect(diagnostics == [])
+
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 5,
+            columns: [
+                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
+
+                RenderBlockContent.Row.Column(
+                    size: 3,
+                    alignment: .leading,
+                    content: ["This is a wiiiiddde column."]
+                ),
+
+                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
+            ]
+        )))
     }
     
-    func testNestedRowAndColumns() async throws {
+    @Test func nestedRowAndColumns() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
@@ -255,35 +209,32 @@ class RowTests: XCTestCase {
             }
             """
         }
-        
-        XCTAssertNotNil(row)
-        XCTAssertEqual(diagnostics, [])
-        
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 1,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .leading,
-                        content: [
-                            .row(RenderBlockContent.Row(
-                                numberOfColumns: 2,
-                                columns: [
-                                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello"]),
-                                    RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["There"]),
-                                ]
-                            ))
-                        ]
-                    )
-                ]
-            ))
-        )
+
+        #expect(row != nil)
+        #expect(diagnostics == [])
+
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 1,
+            columns: [
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .leading,
+                    content: [
+                        .row(RenderBlockContent.Row(
+                            numberOfColumns: 2,
+                            columns: [
+                                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello"]),
+                                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["There"]),
+                            ]
+                        ))
+                    ]
+                )
+            ]
+        )))
     }
 
-    func testColumnWithAlignmentOnly() async throws {
+    @Test func columnWithAlignmentOnly() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
@@ -294,26 +245,23 @@ class RowTests: XCTestCase {
             """
         }
 
-        XCTAssertNotNil(row)
-        XCTAssertEqual(diagnostics, [])
+        #expect(row != nil)
+        #expect(diagnostics == [])
 
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 1,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .center,
-                        content: ["Centered content"]
-                    )
-                ]
-            ))
-        )
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 1,
+            columns: [
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .center,
+                    content: ["Centered content"]
+                )
+            ]
+        )))
     }
 
-    func testColumnWithSizeAndAlignment() async throws {
+    @Test func columnWithSizeAndAlignment() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
@@ -324,26 +272,23 @@ class RowTests: XCTestCase {
             """
         }
 
-        XCTAssertNotNil(row)
-        XCTAssertEqual(diagnostics, [])
+        #expect(row != nil)
+        #expect(diagnostics == [])
 
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 2,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 2,
-                        alignment: .trailing,
-                        content: ["Trailing aligned"]
-                    )
-                ]
-            ))
-        )
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 2,
+            columns: [
+                RenderBlockContent.Row.Column(
+                    size: 2,
+                    alignment: .trailing,
+                    content: ["Trailing aligned"]
+                )
+            ]
+        )))
     }
 
-    func testColumnWithoutAlignment() async throws {
+    @Test func columnWithoutAlignment() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
@@ -354,90 +299,80 @@ class RowTests: XCTestCase {
             """
         }
 
-        XCTAssertNotNil(row)
-        XCTAssertEqual(diagnostics, [])
+        #expect(row != nil)
+        #expect(diagnostics == [])
 
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 2,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 2,
-                        alignment: .leading,
-                        content: ["Default alignment"]
-                    )
-                ]
-            ))
-        )
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 2,
+            columns: [
+                RenderBlockContent.Row.Column(
+                    size: 2,
+                    alignment: .leading,
+                    content: ["Default alignment"]
+                )
+            ]
+        )))
     }
 
-    func testInvalidAlignmentValue() async throws {
+    @Test(arguments: [
+        ("alignment: invalid", 1),
+        ("alignment: true", 1),
+        ("size: 2, alignment: 123", 2),
+    ])
+    func columnWithUnparseableAlignment(columnArgs: String, expectedColumnSize: Int) async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
-                @Column(alignment: invalid) {
+                @Column(\(columnArgs)) {
                     Content
                 }
             }
             """
         }
 
-        XCTAssertNotNil(row)
-        XCTAssertEqual(
-            diagnostics,
-            ["2: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
-        )
+        #expect(row != nil)
+        #expect(diagnostics == ["2: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"])
 
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 1,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .leading,
-                        content: ["Content"]
-                    )
-                ]
-            ))
-        )
-    }
-
-    func testAllAlignmentValues() async throws {
-        let alignmentValues: [(String, RenderBlockContent.Row.Column.Alignment)] = [
-            ("leading", .leading),
-            ("center", .center),
-            ("trailing", .trailing)
-        ]
-
-        for (stringValue, expectedAlignment) in alignmentValues {
-            let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-                """
-                @Row {
-                    @Column(alignment: \(stringValue)) {
-                        Content
-                    }
-                }
-                """
-            }
-
-            XCTAssertNotNil(row)
-            XCTAssertEqual(diagnostics, [])
-            XCTAssertEqual(renderBlockContent.count, 1)
-
-            if case let .row(row) = renderBlockContent.first {
-                XCTAssertEqual(row.columns.count, 1)
-                XCTAssertEqual(row.columns.first?.alignment, expectedAlignment)
-            } else {
-                XCTFail("Expected row but got \(String(describing: renderBlockContent.first))")
-            }
+        #expect(renderBlockContent.count == 1)
+        if case let .row(row) = renderBlockContent.first {
+            #expect(row.columns.count == 1)
+            #expect(row.columns.first?.size == expectedColumnSize)
+            #expect(row.columns.first?.alignment == .leading)
+        } else {
+            Issue.record("Expected row but got \(String(describing: renderBlockContent.first))")
         }
     }
 
-    func testMultipleColumnsWithMixedAlignment() async throws {
+    @Test(arguments: [
+        ("leading", RenderBlockContent.Row.Column.Alignment.leading),
+        ("center", .center),
+        ("trailing", .trailing),
+    ])
+    func columnAlignment(alignmentString: String, expectedAlignment: RenderBlockContent.Row.Column.Alignment) async throws {
+        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
+            """
+            @Row {
+                @Column(alignment: \(alignmentString)) {
+                    Content
+                }
+            }
+            """
+        }
+
+        #expect(row != nil)
+        #expect(diagnostics == [])
+        #expect(renderBlockContent.count == 1)
+
+        if case let .row(row) = renderBlockContent.first {
+            #expect(row.columns.count == 1)
+            #expect(row.columns.first?.alignment == expectedAlignment)
+        } else {
+            Issue.record("Expected row but got \(String(describing: renderBlockContent.first))")
+        }
+    }
+
+    @Test func multipleColumnsWithMixedAlignment() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
@@ -456,102 +391,33 @@ class RowTests: XCTestCase {
             """
         }
 
-        XCTAssertNotNil(row)
-        XCTAssertEqual(diagnostics, [])
+        #expect(row != nil)
+        #expect(diagnostics == [])
 
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 3,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .leading,
-                        content: ["Left aligned"]
-                    ),
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .center,
-                        content: ["Center aligned"]
-                    ),
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .leading,
-                        content: ["Default aligned"]
-                    )
-                ]
-            ))
-        )
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 3,
+            columns: [
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .leading,
+                    content: ["Left aligned"]
+                ),
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .center,
+                    content: ["Center aligned"]
+                ),
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .leading,
+                    content: ["Default aligned"]
+                )
+            ]
+        )))
     }
 
-    func testAlignmentWithInvalidType() async throws {
-        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-            """
-            @Row {
-                @Column(alignment: true) {
-                    Content
-                }
-            }
-            """
-        }
-
-        XCTAssertNotNil(row)
-        XCTAssertEqual(
-            diagnostics,
-            ["2: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
-        )
-
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 1,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .leading,
-                        content: ["Content"]
-                    )
-                ]
-            ))
-        )
-    }
-
-    func testAlignmentWithSizeInvalidType() async throws {
-        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-            """
-            @Row {
-                @Column(size: 2, alignment: 123) {
-                    Content
-                }
-            }
-            """
-        }
-
-        XCTAssertNotNil(row)
-        XCTAssertEqual(
-            diagnostics,
-            ["2: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
-        )
-
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 2,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 2,
-                        alignment: .leading,
-                        content: ["Content"]
-                    )
-                ]
-            ))
-        )
-    }
-
-    func testMultipleColumnsWithInvalidAlignment() async throws {
+    @Test func multipleColumnsWithInvalidAlignment() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
             @Row {
@@ -570,36 +436,30 @@ class RowTests: XCTestCase {
             """
         }
 
-        XCTAssertNotNil(row)
-        XCTAssertEqual(
-            diagnostics,
-            ["6: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"]
-        )
+        #expect(row != nil)
+        #expect(diagnostics == ["6: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"])
 
-        XCTAssertEqual(renderBlockContent.count, 1)
-        XCTAssertEqual(
-            renderBlockContent.first,
-            .row(RenderBlockContent.Row(
-                numberOfColumns: 3,
-                columns: [
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .leading,
-                        content: ["Valid"]
-                    ),
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .leading,
-                        content: ["Invalid"]
-                    ),
-                    RenderBlockContent.Row.Column(
-                        size: 1,
-                        alignment: .trailing,
-                        content: ["Valid"]
-                    )
-                ]
-            ))
-        )
+        #expect(renderBlockContent.count == 1)
+        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
+            numberOfColumns: 3,
+            columns: [
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .leading,
+                    content: ["Valid"]
+                ),
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .leading,
+                    content: ["Invalid"]
+                ),
+                RenderBlockContent.Row.Column(
+                    size: 1,
+                    alignment: .trailing,
+                    content: ["Valid"]
+                )
+            ]
+        )))
     }
 
 }
