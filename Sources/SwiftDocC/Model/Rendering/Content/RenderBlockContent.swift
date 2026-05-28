@@ -803,12 +803,12 @@ public enum RenderBlockContent: Equatable {
         public var columns: [Column]
 
         /// A column with a row in a grid-based layout system.
-        public struct Column: Codable, Equatable {
+        public struct Column: Equatable {
             /// The number of columns in the parent row this column should span.
             public var size: Int
 
             /// The alignment of this column's content.
-            public var alignment: Alignment = .leading
+            public var alignment: Alignment
 
             /// The content that should be rendered in this column.
             public var content: [RenderBlockContent]
@@ -1004,6 +1004,26 @@ extension RenderBlockContent.Table: Codable {
                 try cellContainer.encode(data.rowspan, forKey: .rowspan)
             }
         }
+    }
+}
+
+extension RenderBlockContent.Row.Column: Codable {
+    enum CodingKeys: String, CodingKey {
+        case size, alignment, content
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        size = try container.decode(Int.self, forKey: .size)
+        alignment = try container.decodeIfPresent(Alignment.self, forKey: .alignment) ?? .leading
+        content = try container.decode([RenderBlockContent].self, forKey: .content)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(size, forKey: .size)
+        try container.encode(alignment, forKey: .alignment)
+        try container.encode(content, forKey: .content)
     }
 }
 
