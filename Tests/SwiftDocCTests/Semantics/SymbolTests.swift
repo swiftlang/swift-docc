@@ -948,7 +948,7 @@ class SymbolTests: XCTestCase {
         - <doc:MyClass/init()-swift.init>
         """)
     }
-
+    
     func testTopicSectionInDocComment() async throws {
         let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """

@@ -12,33 +12,35 @@ import Foundation
 import Markdown
 private import SymbolKit
 
-func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Diagnostic {
-    let referenceSourceRange: SourceRange? = range.map { range in
-        // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
-        // https://github.com/apple/swift-markdown/issues/109
-        if fromSymbolLink {
-            // Inset the range by 2 at the start and end to skip both "``".
-            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
-        } else {
-            // This assumes that the link uses the `<doc:my/reference>` autolink syntax. Links that use the
-            // `[link text](doc:my/reference)` syntax are handled by `unresolvedReferenceDiagnostic(source:link:...)`
-            // which computes the destination's range from the parsed markup.
-
-            // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
-            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
-        }
-    }
-    return unresolvedReferenceDiagnostic(source: source, referenceSourceRange: referenceSourceRange, severity: severity, errorInfo: errorInfo)
-}
-
 /// Creates a diagnostic for an unresolved topic reference, anchoring any suggested replacements and notes to the source
 /// range of the link's destination computed from its parsed markup.
 ///
-/// Use this overload when the original ``Markup`` link is available so that the destination's range can be computed
-/// regardless of whether the link uses the `<doc:my/reference>` autolink syntax or the `[link text](doc:my/reference)`
-/// markdown syntax.
-func unresolvedReferenceDiagnostic(source: URL?, link: any Markup, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {
+/// This is the entry point for the unresolved-reference diagnostic whenever the original link markup is available. It
+/// computes the destination's source range from the parsed ``AnyLink`` so that the suggested replacements land on the
+/// reference's path regardless of whether the link uses the `<doc:my/reference>` autolink syntax, the
+/// `[link text](doc:my/reference)` markdown syntax, or the `` ``my/reference`` `` symbol link syntax.
+func unresolvedReferenceDiagnostic(source: URL?, link: any AnyLink, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {
     return unresolvedReferenceDiagnostic(source: source, referenceSourceRange: link.referenceBodySourceRange, severity: severity, errorInfo: errorInfo)
+}
+
+/// Creates a diagnostic for an unresolved topic reference from an already-computed reference source range.
+///
+/// Prefer ``unresolvedReferenceDiagnostic(source:link:severity:errorInfo:)`` whenever the link markup is available so
+/// that the reference's source range is computed from the parsed markup. This range-based fallback exists for the few
+/// callers that don't have link markup to compute a range from (for example a `@TutorialReference` directive), so it's
+/// kept private to this file to prevent link-bearing callers from accidentally passing a range that doesn't account for
+/// the authored link syntax.
+private func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Diagnostic {
+    let referenceSourceRange: SourceRange? = range.map { range in
+        if fromSymbolLink {
+            // Inset the range by 2 at the start and end to skip both "``".
+            return range.inset(startColumns: 2, endColumns: 2)
+        } else {
+            // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
+            return range.inset(startColumns: 5, endColumns: 1)
+        }
+    }
+    return unresolvedReferenceDiagnostic(source: source, referenceSourceRange: referenceSourceRange, severity: severity, errorInfo: errorInfo)
 }
 
 private func unresolvedReferenceDiagnostic(source: URL?, referenceSourceRange: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {

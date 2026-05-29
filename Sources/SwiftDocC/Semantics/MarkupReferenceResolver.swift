@@ -49,7 +49,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     // This property offers a customization point for when we need to try resolving links in other contexts than the current one to provide more precise diagnostics.
     var diagnosticForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Diagnostic?)? = nil
 
-    private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false, originalMarkup: (any Markup)? = nil) -> ResolvedTopicReference? {
+    private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false, originalMarkup: any AnyLink) -> ResolvedTopicReference? {
         switch context.resolve(reference, in: rootReference, fromSymbolLink: fromSymbolLink) {
         case .success(let resolved):
             // If the linked node is part of the topic graph,
@@ -73,12 +73,10 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
             if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)] {
                 diagnostics.append(makeUnfindableArticleDiagnostic(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
-            } else if let originalMarkup {
-                // When the original markup is available, compute the reference's source range from the parsed link so
-                // that suggested replacements are anchored correctly regardless of the authored link syntax.
-                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, link: originalMarkup, severity: severity, errorInfo: error))
             } else {
-                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: fromSymbolLink))
+                // Compute the reference's source range from the parsed link so that suggested replacements are anchored
+                // correctly regardless of whether the link uses the autolink, markdown link, or symbol link syntax.
+                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, link: originalMarkup, severity: severity, errorInfo: error))
             }
             return nil
         }
@@ -130,7 +128,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         return link
     }
 
-    mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?, originalMarkup: (any Markup)? = nil) -> ResolvedTopicReference? {
+    mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?, originalMarkup: any AnyLink) -> ResolvedTopicReference? {
         if let cached = context.referenceIndex[unresolvedDestination] {
             guard context.topicGraph.isLinkable(cached) == true else {
                 diagnostics.append(disabledLinkDestinationDiagnostic(reference: cached, range: range, severity: .warning))
