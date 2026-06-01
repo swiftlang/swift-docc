@@ -164,6 +164,20 @@ struct LinkCompletionToolsTests {
     }
     
     @Test
+    func suggestsProvidedHashesAsDisambiguationEvenWhenInvalidHashes() {
+        let invalidHashes = [
+            "1+2+3",         // "+" is not allowed in a symbol ID hash
+            "ABCDE",         // uppercase letters are not allowed in a symbol ID hash
+            "somelongstring" // symbol ID hashes cannot be longer than 5 characters
+        ]
+        
+        let collidingSymbols = invalidHashes.map {
+            LinkCompletionTools.SymbolInformation(kind: "class", symbolIDHash: $0, parameterTypes: nil, returnTypes: nil)
+        }
+        #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: collidingSymbols) == invalidHashes.map { "-\($0)" })
+    }
+    
+    @Test
     func formattingDisambiguationSuffixStrings() {
         typealias Disambiguation = LinkCompletionTools.ParsedDisambiguation
         
