@@ -60,7 +60,7 @@ package extension HTMLRenderer {
         let body = XMLNode.element(named: "body")
         // 1. An optional custom header
         if let customHeader {
-            body.addChild(customHeader)
+            body.addChild(customHeader.copy() as! XMLNode)
         }
         
         // 2. The default header
@@ -101,7 +101,7 @@ package extension HTMLRenderer {
         
         // 5. An optional custom footer
         if let customFooter {
-            body.addChild(customFooter)
+            body.addChild(customFooter.copy() as! XMLNode)
         }
         
         // Specify the "html" doctype for the document
