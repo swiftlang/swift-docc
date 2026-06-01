@@ -25,8 +25,9 @@ private import DocCHTML
 struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     let _isPrimaryOutputFormat = true
     
-    private var customHeader: XMLNode?
-    private var customFooter: XMLNode?
+    private let customHeader: XMLNode?
+    private let customFooter: XMLNode?
+    // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
     private let fileWriter: JSONEncodingRenderNodeWriter
     
     init(

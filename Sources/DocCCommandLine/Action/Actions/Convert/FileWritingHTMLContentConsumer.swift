@@ -98,6 +98,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         }
     }
     private var htmlTemplate: HTMLTemplate
+    // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
     private let fileWriter: JSONEncodingRenderNodeWriter
     
     init(
