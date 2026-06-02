@@ -97,7 +97,12 @@ package extension MarkdownRenderer {
         let items: [XMLNode]
         switch element.subheadings {
         case .single(.conceptual(let title)):
-            items = [.element(named: "p", children: [.text(title)])]
+            let item = XMLNode.element(named: "p", children: [.text(title)])
+            if goal == .richness {
+                // TODO: Pass information about the type of icon that the conceptual element should display.
+                item.addAttributes(["class": "api-collection"])
+            }
+            items = [item]
             
         case .single(.symbol(let fragments)):
             items = switch goal {
