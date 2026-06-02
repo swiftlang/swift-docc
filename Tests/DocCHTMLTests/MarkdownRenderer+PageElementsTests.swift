@@ -741,7 +741,7 @@ struct MarkdownRenderer_PageElementsTests {
                 </li>
                 <li>
                   <a href="../../somearticle/index.html">
-                    <p>Some Article</p>
+                    <p class="api-collection">Some Article</p>
                   </a>
                   <p>Some <b>formatted</b>description of this <i>article</i>.</p>
                 </li>

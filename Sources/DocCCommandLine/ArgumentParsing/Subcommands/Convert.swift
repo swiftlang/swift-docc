@@ -83,6 +83,10 @@ extension Docc {
                     }
                 }
             }
+            
+            /// The format that the convert action will output the documentation in when writing to the specific output location.
+            @Option(name: .long, help: .hidden)
+            var outputFormat: OutputFormat = .json
         }
         
         /// The path to the directory that all build output should be placed in.
@@ -612,6 +616,32 @@ extension Docc {
                 DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: _diagnosticFormattingOptions),
                 to: &_errorLogHandle
             )
+        }
+        
+        /// The possible output (file) formats that the convert action can use for the documentation output.
+        package enum OutputFormat: ExpressibleByArgument {
+            /// Output each page as a JSON file---in the format described in RenderNode.spec.json---to be consumed by Swift-DocC Render.
+            case json
+            /// Output each page as a static HTML file.
+            case experimentalHTML
+            
+            package init?(argument: String) {
+                switch argument {
+                    case "json": self = .json
+                    
+                    // This spelling is meant to indicate that this feature is not suitable for general use.
+                    // As this start to approach being complete enough to a viable alternative output format,
+                    // the plan is to rename this to only "experimental-html" and post a pitch about the broader feature to the Swift Forums.
+                    case "experimental-html-for-development":
+                        self = .experimentalHTML
+                    
+                    default: return nil
+                }
+            }
+            
+            package static var allValueStrings: [String] {
+                ["json", "experimental-html-for-development"]
+            }
         }
     }
 }

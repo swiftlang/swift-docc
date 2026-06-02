@@ -619,6 +619,29 @@ class ConvertSubcommandFlagParsingTests {
         #expect(conflictingSeverity.diagnosticOptions.warningGroupsWithWarningSeverity == [],         "'First' is excluded from both lists")
     }
     
+    @Test
+    func parsingOutputFormat() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.inputsAndOutputs.outputFormat == .json)
+        
+        // It's allowed (but redundant) to explicitly specify "json" as the output format
+        let redundantJSONOutput = try Docc.Convert.parse(["--output-format", "json"])
+        #expect(redundantJSONOutput.inputsAndOutputs.outputFormat == .json)
+        
+        // At this stage, the static HTML output format is spelled very verbosely and explicitly to dissuade general usage (in addition to the option is hidden)
+        let htmlOutput = try Docc.Convert.parse(["--output-format", "experimental-html-for-development"])
+        #expect(htmlOutput.inputsAndOutputs.outputFormat == .experimentalHTML)
+        
+        // Any shorter and less explicit spelling raises an error.
+        #expect(throws: (any Error).self) {
+            try Docc.Convert.parse(["--output-format", "experimental-html"])
+        }
+        #expect(throws: (any Error).self) {
+            try Docc.Convert.parse(["--output-format", "html"])
+        }
+    }
+    
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated) // We'll probably keep this deprecated property for a long time for backwards compatibility.

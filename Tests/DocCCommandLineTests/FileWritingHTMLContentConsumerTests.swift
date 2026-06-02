@@ -216,9 +216,6 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <noscript>
               <article>
                 <section>
-                  <ul>
-                    <li>ModuleName</li>
-                  </ul>
                   <p>Framework</p>
                   <h1>ModuleName</h1>
                   <p>Some <b>formatted</b> description of this module</p>
