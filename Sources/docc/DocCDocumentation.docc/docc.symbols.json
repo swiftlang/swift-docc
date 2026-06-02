@@ -2064,7 +2064,7 @@
             "text" : "    @Column(size: 2, alignment: trailing) {"
           },
           {
-            "text" : "        Trailing alignment"
+            "text" : "        Trailing alignment; twice as wide"
           },
           {
             "text" : "    }"

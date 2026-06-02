@@ -106,7 +106,7 @@ extension Row {
     ///     }
     ///
     ///     @Column(size: 2, alignment: trailing) {
-    ///         Trailing alignment
+    ///         Trailing alignment; twice as wide
     ///     }
     /// }
     /// ```
