@@ -2076,6 +2076,15 @@
             "text" : "```"
           },
           {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier Versions:"
+          },
+          {
+            "text" : "> Before Swift-DocC 6.4, the `alignment` parameter wasn't supported for `@Column`."
+          },
+          {
             "text" : "- Parameters:"
           },
           {
