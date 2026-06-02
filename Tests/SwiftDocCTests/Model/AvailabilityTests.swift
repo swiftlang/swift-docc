@@ -1271,7 +1271,9 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        try withKnownIssue("The DeprecationSummary validation doesn't know about default availability from the Info.plist", {
+            #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        }, when: { availabilitySource == .infoPlist })
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))

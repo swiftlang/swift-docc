@@ -930,7 +930,7 @@ public struct DocumentationNode {
             .union(availabilityFromDirectives.available.map(\.platform.rawValue))
             .subtracting(deprecatedDomainNames)
         
-        guard isUnconditionallyAvailable || !availableDomainNames.isEmpty || deprecatedDomainNames.isEmpty else {
+        guard deprecatedDomainNames.isEmpty, isUnconditionallyAvailable || !availableDomainNames.isEmpty else {
             return
         }
         
@@ -1022,7 +1022,7 @@ public struct DocumentationNode {
                 // Not sure what solution we can offer for unconditional available symbols in languages other than Swift and C-family languages.
             }
         } else {
-            let platformNamesDescription = availableDomainNames.sorted().map(\.singleQuoted).list(finalConjunction: .and)
+            let platformNamesDescription = availableDomainNames.sorted().map(\.singleQuoted).list(finalConjunction: .or)
             if let inSourceAttributeDescription {
                 solutions.append(Solution(
                     summary: "Add \(inSourceAttributeDescription)\(availableDomainNames.count > 1 ? "s" : "") marking \(platformNamesDescription) as deprecated API",

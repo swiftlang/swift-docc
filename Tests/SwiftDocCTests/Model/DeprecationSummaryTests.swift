@@ -128,7 +128,9 @@ struct DeprecationSummaryTests {
                     Some in-source documentation with a deprecation summary for this type alias
                     
                     \(directiveLocation == .inSourceComment ? Self.deprecationSummaryDirective : "")
-                    """, availability: []) // No availability attributes for this symbol
+                    """, availability: [
+                        .init(domainName: nil, introduced: nil, deprecated: nil) // Unconditionally available for all versions of all platforms
+                    ])
             ])),
             
             TextFile(name: "SomeTypeAlias.md", utf8Content: """
@@ -168,7 +170,7 @@ struct DeprecationSummaryTests {
     }
     
     @Test(arguments: DirectiveLocation.allCases)
-    func warnsAboutDeprecationSummaryIfSymbolIsOnlyPartiallyDeprecated(_ directiveLocation: DirectiveLocation) async throws {
+    func warnsAboutDeprecationSummaryIfSymbolIsExplicitlyAvailable(_ directiveLocation: DirectiveLocation) async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .typealias, pathComponents: ["SomeTypeAlias"], docComment: """
@@ -176,9 +178,8 @@ struct DeprecationSummaryTests {
                     
                     \(directiveLocation == .inSourceComment ? Self.deprecationSummaryDirective : "")
                     """, availability: [
-                        Self.makeInSourceAvailabilityInfo(domain: "FirstPlatform",                                                   deprecated: .init(major: 4, minor: 5, patch: 6)),
-                        Self.makeInSourceAvailabilityInfo(domain: "SecondPlatform", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: nil),
-                        Self.makeInSourceAvailabilityInfo(domain: "ThirdPlatform",  introduced: nil,                                 deprecated: nil),
+                        Self.makeInSourceAvailabilityInfo(domain: "FirstPlatform",  introduced: .init(major: 1, minor: 2, patch: 3), deprecated: nil),
+                        Self.makeInSourceAvailabilityInfo(domain: "SecondPlatform", introduced: nil,                                 deprecated: nil),
                     ])
             ])),
             
@@ -197,8 +198,8 @@ struct DeprecationSummaryTests {
                 "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let diagnostic = try #require(context.diagnostics.first)
-        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for SecondPlatform and ThirdPlatform")
-        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for 'SecondPlatform' 1.2.3 onwards and all versions of 'ThirdPlatform'.")
+        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for FirstPlatform and SecondPlatform")
+        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for 'FirstPlatform' 1.2.3 onwards and all versions of 'SecondPlatform'.")
         
         // Verify that DocC still displays the deprecation text, despite the symbol being available.
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -206,6 +207,33 @@ struct DeprecationSummaryTests {
         let renderNode = converter.convert(node)
         
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
+    }
+    
+    @Test(arguments: DirectiveLocation.allCases)
+    func doesNotWarnAboutDeprecationSummaryIfSymbolIsPartiallyDeprecated(_ directiveLocation: DirectiveLocation) async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .typealias, pathComponents: ["SomeTypeAlias"], docComment: """
+                    Some in-source documentation with a deprecation summary for this type alias
+                    
+                    \(directiveLocation == .inSourceComment ? Self.deprecationSummaryDirective : "")
+                    """, availability: [
+                        Self.makeInSourceAvailabilityInfo(domain: "FirstPlatform",  introduced: nil,                                 deprecated: .init(major: 4, minor: 5, patch: 6)),
+                        Self.makeInSourceAvailabilityInfo(domain: "SecondPlatform", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: nil),
+                    ])
+            ])),
+            
+            TextFile(name: "SomeTypeAlias.md", utf8Content: """
+            # ``SomeTypeAlias``
+            
+            Some additional documentation for this type alias.
+            
+            \(directiveLocation == .extensionFile ? Self.deprecationSummaryDirective : "")
+            """)
+        ])
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.map(\.identifier) == [], "Unexpected problems: \(context.diagnostics.map(\.summary))")
     }
     
     @Test(arguments: DirectiveLocation.allCases, [
@@ -259,7 +287,7 @@ struct DeprecationSummaryTests {
         \(Self.deprecationSummaryDirective)
         @Metadata {
           @Available(PlatformB, introduced: "2.3.4")
-          @Available(PlatformD, introduced: "3.4.5")
+          @Available(PlatformC, introduced: "3.4.5")
         }
         """
         
@@ -270,9 +298,8 @@ struct DeprecationSummaryTests {
                     
                     \(directiveLocation == .inSourceComment ? directives : "")
                     """, availability: [
-                        Self.makeInSourceAvailabilityInfo(domain: "PlatformA",                                                  deprecated: .init(major: 4, minor: 5, patch: 6)),
+                        Self.makeInSourceAvailabilityInfo(domain: "PlatformA",                                                  deprecated: nil),
                         Self.makeInSourceAvailabilityInfo(domain: "PlatformB", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: nil),
-                        Self.makeInSourceAvailabilityInfo(domain: "PlatformC", introduced: nil,                                 deprecated: nil),
                     ])
             ])),
             
@@ -291,8 +318,8 @@ struct DeprecationSummaryTests {
                 "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let diagnostic = try #require(context.diagnostics.first)
-        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for PlatformB, PlatformC, and PlatformD")
-        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for 'PlatformB' 2.3.4 onwards, all versions of 'PlatformC', and 'PlatformD' 3.4.5 onwards.")
+        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for PlatformA, PlatformB, and PlatformC")
+        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for 'PlatformA' 1.2.3 onwards, 'PlatformB' 2.3.4 onwards, and 'PlatformC' 3.4.5 onwards.")
         
         // Verify that the notes refer to the Available directives
         let expectedSource = switch directiveLocation {
@@ -302,7 +329,7 @@ struct DeprecationSummaryTests {
         #expect(diagnostic.notes.map(\.source.path) == [expectedSource, expectedSource])
         #expect(diagnostic.notes.map(\.message) == [
             "Marked available for 'PlatformB' here",
-            "Marked available for 'PlatformD' here",
+            "Marked available for 'PlatformC' here",
         ])
         
         // Verify that the solutions suggest marking the available platforms as deprecated using both attributes (preferred) and directives
@@ -313,62 +340,15 @@ struct DeprecationSummaryTests {
         }
         #expect(diagnostic.solutions.count == (expectedSourceAttribute != nil ? 2 : 1))
         if let expectedSourceAttribute {
-            #expect(diagnostic.solutions.first?.summary == "Add \(expectedSourceAttribute) marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated API")
+            #expect(diagnostic.solutions.first?.summary == "Add \(expectedSourceAttribute) marking 'PlatformA', 'PlatformB', or 'PlatformC' as deprecated API")
         }
-        #expect(diagnostic.solutions.last?.summary == "Add Available directives marking 'PlatformB', 'PlatformC', and 'PlatformD' as deprecated only in documentation")
+        #expect(diagnostic.solutions.last?.summary == "Add Available directives marking 'PlatformA', 'PlatformB', or 'PlatformC' as deprecated only in documentation")
         // Verify that DocC still displays the deprecation text, despite the symbol being available.
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
         
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
-    }
-    
-    @Test(arguments: DirectiveLocation.allCases)
-    func warningListsDeprecatedPlatformWhenSymbolHasUnconditionalAvailability(_ directiveLocation: DirectiveLocation) async throws {
-        let directives = """
-        \(Self.deprecationSummaryDirective)
-        @Metadata {
-          @Available(PlatformB, introduced: "2.3.4", deprecated: "4.5.6")
-        }
-        """
-        
-        let catalog = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .typealias,  pathComponents: ["SomeTypeAlias"], docComment: """
-                    Some in-source documentation with a deprecation summary for this type alias
-                    
-                    \(directiveLocation == .inSourceComment ? directives : "")
-                    """, availability: [
-                        Self.makeInSourceAvailabilityInfo(domain: nil,         introduced: nil, deprecated: nil), // Available on all platforms except where explicitly marked as deprecated
-                        Self.makeInSourceAvailabilityInfo(domain: "PlatformA", introduced: nil, deprecated: .init(major: 3, minor: 4, patch: 5)),
-                    ])
-            ])),
-            
-            TextFile(name: "SomeTypeAlias.md", utf8Content: """
-            # ``SomeTypeAlias``
-            
-            Some additional documentation for this type alias.
-               
-            \(directiveLocation == .extensionFile ? directives : "")
-            """)
-        ])
-        
-        let context = try await load(catalog: catalog)
-        // Verify the warning
-        #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"],
-                "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
-        let diagnostic = try #require(context.diagnostics.first)
-        #expect(diagnostic.summary == "Type alias 'SomeTypeAlias' is available for all platforms, except PlatformA and PlatformB")
-        #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for all platforms, except PlatformA and PlatformB.")
-        
-        #expect(diagnostic.notes.map(\.message) == [], "Only deprecated platforms, not available ones, are defined in Available directives")
-        
-        // Verify that the solutions suggest modifying the wildcard availability attribute
-        #expect(diagnostic.solutions.count == 1)
-        let solution = try #require(diagnostic.solutions.first)
-        #expect(solution.summary == "Update wildcard '@available()' attribute with a deprecated version or unconditional deprecation")
     }
     
     @Test
