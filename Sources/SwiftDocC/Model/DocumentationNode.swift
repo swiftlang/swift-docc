@@ -987,11 +987,21 @@ public struct DocumentationNode {
             explanation = makeExplanation(availabilityDescription: longAvailabilityDescription)
         }
         
+        func offsetIfNeeded(_ range: SourceRange) -> SourceRange {
+            guard range.source == inSourceDocumentationChunk?.url, let offset = inSourceDocumentationChunk?.offset else {
+                return range
+            }
+            // Diagnostics from an in-source documentation comment need to be offset based on the location of that documentation comment.
+            var range = range
+            range.offsetWithRange(offset)
+            return range
+        }
+        
         let notes: [Diagnostic.Note] = metadata?.availability.compactMap { availability -> Diagnostic.Note? in
             guard availability.deprecated == nil, let range = availability.originalMarkup.range, let source = range.source else {
                 return nil
             }
-            return .init(source: source, range: range, message: "Marked available for '\(availability.platform.rawValue)' here")
+            return .init(source: source, range: offsetIfNeeded(range), message: "Marked available for '\(availability.platform.rawValue)' here")
         } ?? []
         
         
@@ -1025,7 +1035,7 @@ public struct DocumentationNode {
             ))
         }
         
-        let range = deprecationSummaryDirective.range
+        let range = deprecationSummaryDirective.range.map(offsetIfNeeded)
         engine.emit(
             Diagnostic(
                 source: range?.source,

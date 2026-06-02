@@ -155,6 +155,16 @@ struct DeprecationSummaryTests {
         let renderNode = converter.convert(node)
         
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
+        
+        let range  = try #require(diagnostic.range)
+        switch directiveLocation {
+        case .extensionFile:
+            #expect(range.lowerBound.line   ==  5)
+            #expect(range.lowerBound.column ==  1)
+        case .inSourceComment:
+            #expect(range.lowerBound.line   == 14)
+            #expect(range.lowerBound.column == 18)
+        }
     }
     
     @Test(arguments: DirectiveLocation.allCases)
