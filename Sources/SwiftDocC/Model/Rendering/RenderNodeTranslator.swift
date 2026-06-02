@@ -1376,7 +1376,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 
                 func addFallbackIfNeeded(named name: String) {
-                    guard information[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                    guard information[name]?.introduced == nil, !unavailableDefaultPlatformNames.contains(name) else {
                         return
                     }
                     var copy = iOSAvailability
