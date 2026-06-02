@@ -15,11 +15,20 @@ import Testing
 import Markdown
 
 struct RowTests {
-    @Test func noColumns() async throws {
+    @Test(arguments: [
+        """
+        @Row
+        """,
+
+        """
+        @Row {
+
+        }
+        """,
+    ])
+    func warnsAboutRowWithoutColumns(directive: String) async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-            """
-            @Row
-            """
+            directive
         }
 
         #expect(row != nil)
@@ -140,22 +149,6 @@ struct RowTests {
         )))
     }
 
-    @Test func emptyRowBody() async throws {
-        let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
-            """
-            @Row {
-
-            }
-            """
-        }
-
-        #expect(row != nil)
-        #expect(diagnostics == ["1: warning – org.swift.docc.HasAtLeastOne<Row, Column>"])
-
-        #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(numberOfColumns: 0, columns: [])))
-    }
-    
     @Test func emptyColumn() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
