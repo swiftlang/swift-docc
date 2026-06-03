@@ -1384,7 +1384,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     information[name] = copy
                 }
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+                let symbolAvailabilityContainsMacCatalyst = inSourceAvailability.availability.contains(where: {
+                    $0.domain?.rawValue == SymbolGraph.Symbol.Availability.Domain.macCatalyst
+                })
+                let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
+                
+                // Only inherit iOS if the Catalyst SGF don't define availability
+                // or if there's no catalyst SGF at all.
+                if symbolAvailabilityContainsMacCatalyst || !catalystSGFExists {
+                    addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+                }
             }
             
             // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.

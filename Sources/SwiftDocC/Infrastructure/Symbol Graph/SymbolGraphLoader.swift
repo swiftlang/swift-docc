@@ -25,6 +25,7 @@ struct SymbolGraphLoader {
     private(set) var snippetSymbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
+    private(set) var platformsFoundInSymbolGraphsByModule: [String: Set<PlatformName>] = [:]
     private let dataProvider: any DataProvider
     private let bundle: DocumentationBundle
     private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
@@ -148,11 +149,12 @@ struct SymbolGraphLoader {
                 defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
                 defaultAvailableInformation = availablePlatforms
             }
-            
             let platformsFoundInSymbolGraphs: [PlatformName] = unifiedGraph.moduleData.compactMap {
                 guard let platformName = $0.value.platform.name else { return nil }
                 return PlatformName(operatingSystemName: platformName)
             }
+            
+            platformsFoundInSymbolGraphsByModule[unifiedGraph.moduleName] = Set(platformsFoundInSymbolGraphs)
 
             addMissingAvailability(
                 unifiedGraph: &unifiedGraph,
