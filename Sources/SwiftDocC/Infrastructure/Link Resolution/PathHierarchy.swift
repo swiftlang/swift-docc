@@ -79,7 +79,12 @@ struct PathHierarchy {
                 (url: url, graph: graph, language: graph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }))
             }
             .sorted(by: { lhs, rhs in
-                return !lhs.url.lastPathComponent.contains("@")
+                let lhsIsExt = lhs.url.lastPathComponent.contains("@")
+                let rhsIsExt = rhs.url.lastPathComponent.contains("@")
+                // Sort extension files after main symbol graph files
+                if lhsIsExt != rhsIsExt { return !lhsIsExt }
+                // Sort lexicographically between symbol graph files of the same type using the full paths.
+                return lhs.url.path < rhs.url.path
             })
                 
         // To try to handle certain invalid symbol graph files gracefully, we track symbols that don't have a place in the hierarchy so that we can look for a place for those symbols.
