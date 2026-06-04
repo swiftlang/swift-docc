@@ -1384,6 +1384,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     information[name] = copy
                 }
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+                
+                // FIXME: Move this logic out of the rendering code (rdar://172280267)
                 let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
                 let symbolExistsInCatalystSymbolGraph = information[PlatformName.catalyst.displayName] != nil
                 
