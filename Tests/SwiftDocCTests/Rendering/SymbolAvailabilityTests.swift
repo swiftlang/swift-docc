@@ -115,5 +115,4 @@ class SymbolAvailabilityTests: XCTestCase {
             // The availability items that are obsolete are not rendered in the final documentation.
         ])
     }
-    
 }
