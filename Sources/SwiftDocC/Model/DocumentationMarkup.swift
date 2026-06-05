@@ -175,21 +175,6 @@ struct DocumentationMarkup {
                 }
             }
             
-            // Parse content into a discussion section and assorted tags
-            let parseDiscussion: ([any Markup])-> (discussion: DiscussionSection, tags: TaggedListItemExtractor) = { children in
-                // Extract tags
-                var extractor = TaggedListItemExtractor()
-                let content: [any Markup]
-                
-                if let remainder = extractor.visit(markup.withUncheckedChildren(children)) {
-                    content = Array(remainder.children)
-                } else {
-                    content = []
-                }
-                
-                return (discussion: DiscussionSection(content: content), tags: extractor)
-            }
-            
             // Parse a discussion, if found
             if currentSection == .discussion {
                 // Scanning for the first discussion content child
@@ -296,6 +281,21 @@ struct DocumentationMarkup {
                 }
             }
         }
+    }
+
+    /// Parses content into a discussion section and assorted tags.
+    private func parseDiscussion(_ children: [any Markup]) -> (discussion: DiscussionSection, tags: TaggedListItemExtractor) {
+        // Extract tags
+        var extractor = TaggedListItemExtractor()
+        let content: [any Markup]
+
+        if let remainder = extractor.visit(markup.withUncheckedChildren(children)) {
+            content = Array(remainder.children)
+        } else {
+            content = []
+        }
+
+        return (discussion: DiscussionSection(content: content), tags: extractor)
     }
 }
 
