@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -32,8 +32,8 @@ extension UnifiedSymbolGraph.Symbol {
                 let rhsMatchingPlatformsCount = nonSwiftSelectors.filter { $0.platform == rhsSelector.platform }.count
                 
                 if lhsMatchingPlatformsCount == rhsMatchingPlatformsCount {
-                    // If they have the same number of matching platforms, return the alphabetically smallest platform.
-                    return arePlatformsInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
+                    // If they have the same number of matching platforms, use the hierarchical platform order.
+                    return PlatformName.isInOrder(lhsSelector.platform, rhsSelector.platform)
                 }
                 
                 return lhsMatchingPlatformsCount > rhsMatchingPlatformsCount
@@ -42,21 +42,10 @@ extension UnifiedSymbolGraph.Symbol {
             case (_, "swift"):
                 return false
             default:
-                // Return the alphabetically smallest platform.
-                return arePlatformsInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
+                // Use the hierarchical platform order
+                return PlatformName.isInOrder(lhsSelector.platform, rhsSelector.platform)
             }
         }.first
-    }
-    
-    private func arePlatformsInIncreasingOrder(_ platform1: String?, _ platform2: String?) -> Bool {
-        switch (platform1, platform2) {
-        case (nil, _):
-            return true
-        case (_, nil):
-            return false
-        case (let platform1?, let platform2?):
-            return platform1 < platform2
-        }
     }
 
     func symbol(forSelector selector: UnifiedSymbolGraph.Selector?) -> SymbolGraph.Symbol? {
