@@ -149,6 +149,9 @@ struct DocumentationMarkup {
                Self.allowedSectionsForDeprecationSummary.contains(currentSection)
             {
                 deprecation = MarkupContainer(directive.children)
+                if isLastChild, currentSection == .discussion, let discussionIndex {
+                    finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
+                }
                 continue
             }
             
