@@ -1264,7 +1264,7 @@ class SymbolTests: XCTestCase {
             extensionFileContent: nil
         )
         
-        XCTAssertEqual(diagnostics.map(\.identifier), ["DeprecationSummaryForAvailableSymbol"], "Unexpected diagnostics: \(diagnostics.map(\.summary))")
+        XCTAssert(diagnostics.isEmpty, "Unexpected diagnostics: \(diagnostics.map(\.summary))")
         
         XCTAssertEqual(
             (node.semantic as? Symbol)?
