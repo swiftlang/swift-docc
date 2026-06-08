@@ -896,7 +896,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             
             if !directiveAvailabilityByPlatform.isEmpty {
-                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderOrder.compare))
+                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder))
             }
         }
         
@@ -1396,7 +1396,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 return nil
             }
             
-            return information.values.sorted(by: AvailabilityRenderOrder.compare)
+            return information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
         } ?? .init(defaultValue: {
             assertionFailure("This default value is never used")
             return nil
@@ -1424,7 +1424,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
             }
             
-            node.metadata.platforms = information.values.sorted(by: AvailabilityRenderOrder.compare)
+            node.metadata.platforms = information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
         }
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
