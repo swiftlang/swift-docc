@@ -173,6 +173,9 @@ public class DocumentationContext {
     /// The unsuccessful links are tracked so that the context doesn't attempt to re-resolve the unsuccessful links during rendering which runs concurrently for each page.
     var externallyResolvedLinks = [ValidatedURL: TopicReferenceResolutionResult]()
     
+    /// The set of symbol graph platforms registered for each module.
+    private(set) var registeredPlatformsPerModule: [String: Set<PlatformName>] = [:]
+    
     /// A temporary structure to hold a semantic value that hasn't yet had its links resolved.
     ///
     /// These temporary values are only expected to exist while the documentation is being built. Once the documentation bundles have been fully registered and the topic graph
@@ -2030,6 +2033,7 @@ public class DocumentationContext {
             try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
                 try autoreleasepool {
                     try symbolGraphLoader.loadAll()
+                    registeredPlatformsPerModule = symbolGraphLoader.platformsFoundInSymbolGraphsByModule
                 }
             }
             try shouldContinueRegistration()
