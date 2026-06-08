@@ -1376,7 +1376,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 
                 func addFallbackIfNeeded(named name: String) {
-                    guard information[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                    guard information[name]?.introduced == nil, !unavailableDefaultPlatformNames.contains(name) else {
                         return
                     }
                     var copy = iOSAvailability
@@ -1384,7 +1384,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     information[name] = copy
                 }
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+                
+                // FIXME: Move this logic out of the rendering code (rdar://172280267)
+                let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
+                let symbolExistsInCatalystSymbolGraph = information[PlatformName.catalyst.displayName] != nil
+                
+                // Catalyst only inherits iOS availability if the symbol don't specify in-source
+                // availability or if there's none Mac Catalyst symbol graph.
+                // If the symbol is not present in the Catalyst SGF then is not availble for this
+                // platform.
+                if (catalystSGFExists && symbolExistsInCatalystSymbolGraph) || !catalystSGFExists  {
+                    addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+                }
             }
             
             // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.
