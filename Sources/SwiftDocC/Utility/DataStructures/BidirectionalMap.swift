@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A bi-directional dictionary to store 1:1 relationships that need to be looked up
 /// in both directions.
 ///

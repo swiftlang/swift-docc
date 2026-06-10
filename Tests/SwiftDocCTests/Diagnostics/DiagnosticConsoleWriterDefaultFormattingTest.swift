@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
@@ -26,7 +26,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     func testSeverityHighlight() {
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         let expectedPath = "--> /path/to/file.md:1:8-10:21"
@@ -35,11 +35,10 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, highlight: true)
             let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            consumer.receive([problem])
+            consumer.receive([diagnostic])
             try? consumer.flush()
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;31merror: \(summary)\u{001B}[0;0m
+            \u{001B}[1;31merror: \(summary)\u{001B}[0;0m [\(identifier)]
             \(explanation)
             \(expectedPath)
             
@@ -50,26 +49,10 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, highlight: true)
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            consumer.receive([problem])
+            consumer.receive([diagnostic])
             try? consumer.flush()
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
-            \(explanation)
-            \(expectedPath)
-            
-            """)
-        }
-
-        do {
-            let logger = Logger()
-            let consumer = DiagnosticConsoleWriter(logger, highlight: true)
-            let diagnostic = Diagnostic(source: source, severity: .hint, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            consumer.receive([problem])
-            try? consumer.flush()
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;39mnotice: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
             \(explanation)
             \(expectedPath)
             
@@ -80,11 +63,10 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, highlight: true)
             let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            consumer.receive([problem])
+            consumer.receive([diagnostic])
             try? consumer.flush()
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;39mnote: \(summary)\u{001B}[0;0m
+            \u{001B}[1;39mnote: \(summary)\u{001B}[0;0m [\(identifier)]
             \(explanation)
             \(expectedPath)
             
@@ -96,20 +78,57 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let baseURL = URL(fileURLWithPath: "/path/to")
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-        consumer.receive([problem])
+        consumer.receive([diagnostic])
+        try? consumer.flush()
+        XCTAssertEqual(logger.output, """
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+        \(explanation)
+        --> file.md:1:8-10:21
+        
+        """)
+    }
+    
+    func testDisplaysGroupIdentifier() {
+        let source = URL(fileURLWithPath: "/path/to/file.md")
+        let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
+        let summary = "Test diagnostic summary"
+        let explanation = "Test diagnostic explanation."
+
+        let logger = Logger()
+        let consumer = DiagnosticConsoleWriter(logger, highlight: true)
+        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "test-identifier", groupIdentifier: "test-group-identifier", summary: summary, explanation: explanation)
+        consumer.receive([diagnostic])
+        try? consumer.flush()
+        XCTAssertEqual(logger.output, """
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-group-identifier]
+        \(explanation)
+        --> /path/to/file.md:1:8-10:21
+        
+        """)
+    }
+    
+    func testDoesNotDisplayNotYetModernizedIdentifier() {
+        let source = URL(fileURLWithPath: "/path/to/file.md")
+        let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
+        let summary = "Test diagnostic summary"
+        let explanation = "Test diagnostic explanation."
+
+        let logger = Logger()
+        let consumer = DiagnosticConsoleWriter(logger, highlight: true)
+        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
+        consumer.receive([diagnostic])
         try? consumer.flush()
         XCTAssertEqual(logger.output, """
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
-        --> file.md:1:8-10:21
+        --> /path/to/file.md:1:8-10:21
         
         """)
     }
@@ -117,7 +136,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     func testDisplaysNotes() {
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
 
@@ -134,14 +153,13 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             identifier: identifier,
             summary: summary,
             explanation: explanation,
-            notes: [DiagnosticNote(source: noteSource, range: noteRange, message: "This is a note")]
+            notes: [.init(source: noteSource, range: noteRange, message: "This is a note")]
         )
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-        consumer.receive([problem])
+        consumer.receive([diagnostic])
         try? consumer.flush()
 
         XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
         \(explanation)
         /path/to/other/file.md:1:1: This is a note
         --> /path/to/file.md:1:8-10:21
@@ -150,74 +168,59 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
 
     func testDisplaysMultipleDiagnosticsSorted() {
-        let identifier = "org.swift.docc.test-identifier"
-        let firstProblem = {
+        let identifier = "test-identifier"
+        let firstDiagnostic = {
             let source = URL(fileURLWithPath: "/path/to/file.md")
             let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
 
-            return Problem(
-                diagnostic: Diagnostic(
-                    source: source,
-                    severity: .warning,
-                    range: range,
-                    identifier: identifier,
-                    summary: "First diagnostic summary",
-                    explanation: "First diagnostic explanation",
-                    notes: []
-                ),
-                possibleSolutions: []
+            return Diagnostic(
+                source: source,
+                severity: .warning,
+                range: range,
+                identifier: identifier,
+                summary: "First diagnostic summary",
+                explanation: "First diagnostic explanation"
             )
         }()
-        let secondProblem = {
+        let secondDiagnostic = {
             let source = URL(fileURLWithPath: "/path/to/file.md")
             let range = SourceLocation(line: 12, column: 1, source: source)..<SourceLocation(line: 12, column: 10, source: source)
 
-            return Problem(
-                diagnostic: Diagnostic(
-                    source: source,
-                    severity: .warning,
-                    range: range,
-                    identifier: identifier,
-                    summary: "Second diagnostic summary",
-                    explanation: "Second diagnostic explanation",
-                    notes: []
-                ),
-                possibleSolutions: []
+            return Diagnostic(
+                source: source,
+                severity: .warning,
+                range: range,
+                identifier: identifier,
+                groupIdentifier: "test-group-identifier",
+                summary: "Second diagnostic summary",
+                explanation: "Second diagnostic explanation"
             )
         }()
-
-        let thirdProblem = {
-            let source = URL(fileURLWithPath: "/path/to/other/file.md")
-
-            return Problem(
-                diagnostic: Diagnostic(
-                    source: source,
-                    severity: .warning,
-                    range: nil,
-                    identifier: identifier,
-                    summary: "Third diagnostic summary",
-                    explanation: "Third diagnostic explanation",
-                    notes: []
-                ),
-                possibleSolutions: []
-            )
-        }()
+        
+        let thirdDiagnostic = Diagnostic(
+            source: URL(fileURLWithPath: "/path/to/other/file.md"),
+            severity: .warning,
+            range: nil,
+            identifier: identifier,
+            summary: "Third diagnostic summary",
+            explanation: "Third diagnostic explanation"
+        )
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, highlight: true)
 
-        consumer.receive([firstProblem, secondProblem, thirdProblem])
+        consumer.receive([firstDiagnostic, secondDiagnostic, thirdDiagnostic])
         try? consumer.flush()
         XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: First diagnostic summary\u{001B}[0;0m
+        \u{001B}[1;33mwarning: First diagnostic summary\u{001B}[0;0m [test-identifier]
         First diagnostic explanation
         --> /path/to/file.md:1:8-10:21
 
-        \u{001B}[1;33mwarning: Second diagnostic summary\u{001B}[0;0m
+        \u{001B}[1;33mwarning: Second diagnostic summary\u{001B}[0;0m [test-group-identifier]
         Second diagnostic explanation
         --> /path/to/file.md:12:1-12:10
 
-        \u{001B}[1;33mwarning: Third diagnostic summary\u{001B}[0;0m
+        \u{001B}[1;33mwarning: Third diagnostic summary\u{001B}[0;0m [test-identifier]
         Third diagnostic explanation
         --> /path/to/other/file.md
         
@@ -225,7 +228,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
 
     func testDisplaysSource() {
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         let baseURL =  Bundle.module.url(
@@ -237,12 +240,11 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
 
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-        consumer.receive([problem])
+        consumer.receive([diagnostic])
         try? consumer.flush()
         
         XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
         \(explanation)
           --> TestTutorial.tutorial:44:59-44:138
         42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
@@ -286,7 +288,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, dataProvider: fs)
 
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
-        consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])
+        consumer.receive([diagnostic])
         try consumer.flush()
         
         XCTAssertEqual(logStorage.text, """
@@ -303,14 +305,13 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
 
     func testDisplaysPossibleSolutionsSummary() {
-        let identifier = "org.swift.docc.test-identifier"
+        let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         let baseURL =  Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
         let diagnosticRange = SourceLocation(line: 44, column: 59, source: source)..<SourceLocation(line: 44, column: 138, source: source)
-        let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation)
 
         do { // Displays solutions with single replacement at the replacement's source.
             let logger = Logger()
@@ -328,12 +329,12 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                 replacements: [.init(range: otherSolutionRange, replacement: "replacement")]
             )
 
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution, otherSolution])
-            consumer.receive([problem])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution, otherSolution])
+            consumer.receive([diagnostic])
             try? consumer.flush()
 
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
             42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
@@ -352,13 +353,13 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
 
             let solution = Solution(summary: "Solution summary", replacements: [])
-
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
-            consumer.receive([problem])
+            
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
+            consumer.receive([diagnostic])
             try? consumer.flush()
 
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
             42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
@@ -375,22 +376,22 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
 
-            let firstReplacement = Replacement(
+            let firstReplacement = Solution.Replacement(
                 range: SourceLocation(line: 44, column: 60, source: source)..<SourceLocation(line: 44, column: 64, source: source),
                 replacement: "first replacement"
             )
-            let secondReplacement = Replacement(
+            let secondReplacement = Solution.Replacement(
                 range: SourceLocation(line: 44, column: 68, source: source)..<SourceLocation(line: 44, column: 70, source: source),
                 replacement: "second replacement"
             )
             let solution = Solution(summary: "Solution summary", replacements: [firstReplacement, secondReplacement])
 
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
-            consumer.receive([problem])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
+            consumer.receive([diagnostic])
             try? consumer.flush()
 
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
             42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
@@ -431,8 +432,8 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let logStorage = LogHandle.LogStorage()
             let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, dataProvider: fs)
             
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
-            consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "test-identifier", summary: summary, explanation: explanation)
+            consumer.receive([diagnostic])
             try consumer.flush()
             
             // There are no lines before line 1
@@ -441,7 +442,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         
         // Highlight the "Title" word on line 1
         XCTAssertEqual(try logMessageFor(start: (line: 1, column: 3), end: (line: 1, column: 8)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:1:3-1:8
             1 + # \u{001B}[1;32mTitle\u{001B}[0;0m
@@ -452,7 +453,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                        
         // Highlight the "short" word on line 3
         XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 13)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:3:8-3:13
             1 | # Title
@@ -463,7 +464,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         
         // Extend the highlight beyond the end of that line
         XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 100)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:3:8-3:100
             1 | # Title
@@ -474,7 +475,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         
         // Extend the highlight beyond the start of that line
         XCTAssertEqual(try logMessageFor(start: (line: 3, column: -4), end: (line: 3, column: 13)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:3:1-3:13
             1 | # Title
@@ -485,7 +486,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         
         // Highlight a line before the start of the file
         XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: -4, column: 5)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:1:1-1:5
             
@@ -493,7 +494,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         
         // Highlight a line after the end of the file
         XCTAssertEqual(try logMessageFor(start: (line: 100, column: 1), end: (line: 100, column: 5)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:100:1-100:5
             
@@ -501,7 +502,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         
         // Extended the highlighted lines before the start of the file
         XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: 1, column: 5)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:1:1-1:5
             
@@ -509,7 +510,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         
         // Extended the highlighted lines after the end of the file
         XCTAssertEqual(try logMessageFor(start: (line: 1, column: 1), end: (line: 100, column: 5)), """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:1:1-100:5
             
@@ -517,20 +518,20 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
     
     func testEmitAdditionReplacementSolution() throws {
-        func problemsLoggerOutput(possibleSolutions: [Solution]) -> String {
+        func diagnosticLoggerOutput(solutions: [Solution]) -> String {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, highlight: true)
-            let problem = Problem(diagnostic: Diagnostic(source: URL(fileURLWithPath: "/path/to/file.md"), severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: possibleSolutions)
-            consumer.receive([problem])
+            let diagnostic = Diagnostic(source: URL(fileURLWithPath: "/path/to/file.md"), severity: .warning, range: nil, identifier: "test-identifier", summary: "Test diagnostic", solutions: solutions)
+            consumer.receive([diagnostic])
             try? consumer.flush()
             return logger.output
         }
         let sourceLocation = SourceLocation(line: 1, column: 1, source: nil)
         let range = sourceLocation..<sourceLocation
         XCTAssertEqual(
-            problemsLoggerOutput(possibleSolutions: [
+            diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = "slothy"
@@ -540,7 +541,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                 ])
             ]),
             """
-            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m [test-identifier]
             --> /path/to/file.md
             Create a sloth.
             suggestion:
@@ -551,16 +552,16 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         )
         
         XCTAssertEqual(
-            problemsLoggerOutput(possibleSolutions: [
+            diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = "slothy"
                         var slothDiet = .vegetarian
                         """
                     ),
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = SlothGenerator().generateName()
@@ -570,7 +571,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                 ])
             ]),
             """
-            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m [test-identifier]
             --> /path/to/file.md
             Create a sloth.
             suggestion:
@@ -584,9 +585,9 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         )
         
         XCTAssertEqual(
-            problemsLoggerOutput(possibleSolutions: [
+            diagnosticLoggerOutput(solutions: [
                 Solution(summary: "Create a sloth.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var slothName = "slothy"
@@ -595,7 +596,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                     ),
                 ]),
                 Solution(summary: "Create a bee.", replacements: [
-                    Replacement(
+                    Solution.Replacement(
                         range: range,
                         replacement: """
                         var beeName = "Bee"
@@ -605,7 +606,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                 ])
             ]),
             """
-            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m [test-identifier]
             --> /path/to/file.md
             Create a sloth.
             suggestion:

@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /**
  This shim exists to allow rdar://70891131 to be implemented before rdar://72911560 without
  breaking tools that depend on SwiftDocC.

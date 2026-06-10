@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -93,6 +93,26 @@ extension Row {
     /// with a row in a grid-based layout.
     ///
     /// Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive.
+    /// Use `size` to span multiple columns and `alignment` to control content positioning.
+    ///
+    /// ```md
+    /// @Row {
+    ///     @Column {
+    ///         Default (leading) alignment
+    ///     }
+    ///
+    ///     @Column(alignment: center) {
+    ///         Centered content
+    ///     }
+    ///
+    ///     @Column(size: 2, alignment: trailing) {
+    ///         Trailing alignment; twice as wide
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// > Earlier Versions:
+    /// > Before Swift-DocC 6.4, the `alignment` parameter wasn't supported for `@Column`.
     public final class Column: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
         public static let introducedVersion = "5.8"
         public let originalMarkup: BlockDirective
@@ -103,13 +123,18 @@ extension Row {
         /// in the parent ``Row``.
         @DirectiveArgumentWrapped
         public private(set) var size: Int = 1
-        
+
+        /// The alignment of this column's content.
+        @DirectiveArgumentWrapped
+        public private(set) var alignment: Alignment = .leading
+
         /// The markup content in this column.
         @ChildMarkup(numberOfParagraphs: .zeroOrMore, supportsStructure: true)
         public private(set) var content: MarkupContainer
         
         static var keyPaths: [String : AnyKeyPath] = [
             "size"      : \Column._size,
+            "alignment" : \Column._alignment,
             "content"   : \Column._content,
         ]
         
@@ -127,14 +152,32 @@ extension Row {
         init(originalMarkup: BlockDirective) {
             self.originalMarkup = originalMarkup
         }
+
+        /// The alignment of content within a column.
+        public enum Alignment: String, CaseIterable, DirectiveArgumentValueConvertible {
+            /// Align to the leading edge.
+            case leading
+
+            /// Align to the center.
+            case center
+
+            /// Align to the trailing edge.
+            case trailing
+
+            public init?(rawDirectiveArgumentValue: String) {
+                self.init(rawValue: rawDirectiveArgumentValue)
+            }
+        }
     }
 }
 
 extension Row: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         let renderedColumns = columns.map { column in
+            let alignment = RenderBlockContent.Row.Column.Alignment(rawValue: column.alignment.rawValue) ?? .leading
             return RenderBlockContent.Row.Column(
                 size: column.size,
+                alignment: alignment,
                 content: column.content.elements.flatMap { markupElement in
                     return contentCompiler.visit(markupElement) as! [RenderBlockContent]
                 }

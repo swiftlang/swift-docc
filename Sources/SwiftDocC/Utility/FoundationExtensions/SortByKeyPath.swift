@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension Array {
     mutating func sort(by propertyKeyPath: KeyPath<Element, some Comparable>) {
         sort { (first, second) in

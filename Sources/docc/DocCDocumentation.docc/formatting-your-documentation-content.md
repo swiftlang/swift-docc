@@ -180,6 +180,7 @@ have one or more aliases.
 | scss        |                                                        |
 | shell       | console, shellsession                                  |
 | swift       |                                                        |
+| typescript  | ts, tsx, mts, cts                                      |
 | xml         | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
 | yaml        | yml                                                    |
 

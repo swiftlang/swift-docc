@@ -12,6 +12,7 @@ import Foundation
 @testable import SwiftDocC
 import SymbolKit
 import XCTest
+import DocCCommon
 
 class SemaToRenderNodeHTTPRequestTests: XCTestCase {
     func testBaseRenderNodeFromHTTPRequest() async throws {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,9 @@
 
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import SymbolKit
+import DocCCommon
 
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType
@@ -172,6 +174,16 @@ Root
         item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1025)
         XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(
+            pageType: 1, languageID: 4, title: "My Title",
+            platformMask: 256, availabilityID: 1024, isDeprecated: true
+        )
+        item2 = NavigatorItem(
+            pageType: 1, languageID: 4, title: "My Title",
+            platformMask: 256, availabilityID: 1024, isDeprecated: false
+        )
+        XCTAssertNotEqual(item1, item2)
     }
     
     func testNavigatorItemRawDumpWithExtraProperties() {
@@ -196,6 +208,43 @@ Root
 
         let fromData = NavigatorItem(rawValue: data)
         XCTAssertEqual(item, fromData)
+    }
+    
+    func testNavigatorItemRawDumpWithIsDeprecated() {
+        let item = NavigatorItem(
+            pageType: 1, languageID: 4, title: "My Title",
+            platformMask: 256, availabilityID: 1024,
+            isExternal: true, isBeta: true, isDeprecated: true
+        )
+        let data = item.rawValue
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertEqual(item, fromData)
+        XCTAssertEqual(fromData?.isDeprecated, true)
+    }
+    
+    func testNavigatorItemRawDumpBackwardCompatibilityWithoutIsDeprecated() {
+        // Simulate data serialized before isDeprecated was added.
+        // This data has isBeta and isExternal but NOT isDeprecated.
+        var data = Data()
+        data.append(packedDataFromValue(UInt8(1)))   // pageType
+        data.append(packedDataFromValue(UInt8(4)))   // languageID
+        data.append(packedDataFromValue(UInt64(256))) // platformMask
+        data.append(packedDataFromValue(UInt64(1024)))// availabilityID
+        let title = "My Title"
+        let path = ""
+        data.append(packedDataFromValue(UInt64(title.utf8.count))) // titleLength
+        data.append(packedDataFromValue(UInt64(path.utf8.count)))  // pathLength
+        data.append(Data(title.utf8))
+        data.append(Data(path.utf8))
+        data.append(packedDataFromValue(UInt8(1))) // isBeta = true
+        data.append(packedDataFromValue(UInt8(0))) // isExternal = false
+        // Note: NOT adding isDeprecated byte
+
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertNotNil(fromData)
+        XCTAssertEqual(fromData?.isBeta, true)
+        XCTAssertEqual(fromData?.isExternal, false)
+        XCTAssertEqual(fromData?.isDeprecated, false)
     }
     
     func testObjCLanguage() {
@@ -500,11 +549,6 @@ Root
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
                 return node.bundleIdentifier == testBundleIdentifier
             }))
-            
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
             
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
@@ -1060,11 +1104,6 @@ Root
                 return node.bundleIdentifier == testBundleIdentifier
             }))
             
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
-            
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
             try FileManager.default.removeItem(at: targetURL)
@@ -1108,11 +1147,6 @@ Root
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
                 return node.bundleIdentifier == testBundleIdentifier
             }))
-            
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
             
             // Test path persistence
             XCTAssertNil(navigatorIndex.path(for: 0)) // Root should have not path persisted.
@@ -1672,7 +1706,7 @@ Root
         XCTAssertEqual(PageType(role: "pseudosymbol"), .symbol)
         XCTAssertEqual(PageType(role: "pseudocollection"), .framework)
         XCTAssertEqual(PageType(role: "collection"), .framework)
-        XCTAssertEqual(PageType(role: "collectiongroup"), .symbol)
+        XCTAssertEqual(PageType(role: "collectiongroup"), .collection)
         XCTAssertEqual(PageType(role: "article"), .article)
         XCTAssertEqual(PageType(role: "samplecode"), .sampleCode)
         
@@ -1713,7 +1747,7 @@ Root
         verifySymbolKind(["enumdata", "structdata", "cldata", "clconst", "intfdata"], .instanceVariable)
         verifySymbolKind(["enumsub", "structsub", "instsub", "intfsub"], .subscript)
         verifySymbolKind(["enumcm", "structcm", "clm", "intfcm"], .typeMethod)
-        verifySymbolKind(["httpget", "httpput", "httppost", "httppatch", "httpdelete"], .httpRequest)
+        verifySymbolKind(["httpget", "httpput", "httppost", "httppatch", "httpdelete", "httprequest"], .httpRequest)
         
         // Verify mappings provided from Delphi to SymbolKit
         
@@ -1972,7 +2006,7 @@ Root
     func testPathHasher() throws {
         let pathHasher = try XCTUnwrap(PathHasher(rawValue: "MD5"))
         // Test that the results are stable for the given inputs
-        (0...100).forEach { _ in
+        for _ in (0...100) {
             XCTAssertEqual("41dc6c05a0b5", pathHasher.hash("/documentation/foundation/nsurlsessionwebsockettask"))
             XCTAssertEqual("ffdc704430d3", pathHasher.hash("/documentation/foundation/urlsessionwebsockettask/3281790-send"))
             XCTAssertEqual("1161063e700c", pathHasher.hash("/documentation/swiftui/texteditor/disableautocorrection(_:)"))
@@ -2055,11 +2089,11 @@ Root
     }
 
     func testNavigatorDoesNotContainOverloads() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
         let navigatorIndex = try await generatedNavigatorIndex(
             for: "OverloadedSymbols",
-            bundleIdentifier: "com.shapes.ShapeKit")
+            bundleIdentifier: "com.shapes.ShapeKit",
+            isExperimentalOverloadedSymbolPresentationEnabled: true
+        )
 
         XCTAssertEqual(
             navigatorIndex.navigatorTree.root.dumpTree(),
@@ -2147,6 +2181,57 @@ Root
         XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Sanity check
     }
     
+    func testNavigatorUsesCustomDisplayName() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                // There's special logic for common Swift symbols, so use another kind of symbol here.
+                makeSymbol(id: "some-symbol-id", language: .data, kind: .dictionary, pathComponents: ["SomeDictionary"])
+            ])),
+            TextFile(name: "SomeDictionary.md", utf8Content: """
+            # ``SomeDictionary``    
+            
+            Customize the display name of this dictionary (for some reason)
+            
+            @Metadata {
+              @DisplayName("Some custom name")
+            }
+            """)
+        ])
+        let (_, context) = try await loadBundle(catalog: catalog)
+        
+        // Navigator Index / Builder can only use real file systems
+        let targetURL = try createTemporaryDirectory()
+        
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
+        builder.setup()
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+            
+            if identifier.lastPathComponent == "SomeDictionary" {
+                XCTAssertEqual(renderNode.metadata.title, "Some custom name")
+                XCTAssertEqual(renderNode.metadata.navigatorTitle?.map(\.text).joined(), "Some custom name")
+            }
+        }
+        builder.finalize()
+        
+        XCTAssertEqual(builder.navigatorIndex?.navigatorTree.root.dumpTree(), """
+        [Root]
+        ┗╸ModuleName
+          ┣╸Dictionaries
+          ┗╸Some custom name
+        """)
+        
+        let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+        XCTAssertEqual(renderIndex.interfaceLanguages["data"]?.map(\.title), [
+            "Dictionaries",
+            "Some custom name",
+        ])
+    }
+    
     private func findNodesWithBetaStatus(in nodes: [RenderIndex.Node], isBeta: Bool) -> [RenderIndex.Node] {
         var betaNodes: [RenderIndex.Node] = []
         
@@ -2163,8 +2248,10 @@ Root
         return betaNodes
     }
 
-    func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {
-        let (_, context) = try await testBundleAndContext(named: testBundleName)
+    private func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String, isExperimentalOverloadedSymbolPresentationEnabled: Bool = false) async throws -> NavigatorIndex {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = isExperimentalOverloadedSymbolPresentationEnabled
+        let (_, _, context) = try await testBundleAndContext(named: testBundleName, configuration: configuration)
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
 

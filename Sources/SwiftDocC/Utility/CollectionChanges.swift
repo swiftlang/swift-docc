@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A collection of sparse segments that describe the subsequences that are common or different between two collections.
 struct CollectionChanges {
     /// The segments of common elements, removed elements, and inserted elements.

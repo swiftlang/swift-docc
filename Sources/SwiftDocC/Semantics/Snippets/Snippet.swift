@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,7 @@
 
 import Foundation
 public import Markdown
-import SymbolKit
+private import SymbolKit
 
 /// Embeds a code example from the project's code snippets.
 ///
@@ -62,9 +62,9 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
         super.init()
     }
     
-    func validate(problems: inout [Problem], source: URL?) -> Bool {
+    func validate(diagnostics: inout [Diagnostic], source: URL?) -> Bool {
         if path.isEmpty {
-            problems.append(Problem(diagnostic: Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.EmptySnippetLink", summary: "No path provided to snippet; use a symbol link path to a known snippet"), possibleSolutions: []))
+            diagnostics.append(Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.EmptySnippetLink", summary: "No path provided to snippet; use a symbol link path to a known snippet"))
             return false
         }
         
@@ -79,6 +79,12 @@ extension Snippet: RenderableDirectiveConvertible {
         }
         let mixin = resolvedSnippet.mixin
         
+        let options = RenderBlockContent.CodeBlockOptions(
+            copyToClipboard: contentCompiler.context.configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled,
+            showLineNumbers: false,
+            wrap: 0,
+            lineAnnotations: []
+        )
         if let slice {
             guard let sliceRange = mixin.slices[slice] else {
                 // The warning says that unrecognized snippet slices will ignore the entire snippet.
@@ -93,12 +99,10 @@ extension Snippet: RenderableDirectiveConvertible {
                 // Make dedicated copies of each line because the RenderBlockContent.codeListing requires it.
                 .map { String($0) }
 
-            let options = RenderBlockContent.CodeBlockOptions()
             
             return [RenderBlockContent.codeListing(.init(syntax: mixin.language, code: lines, metadata: nil, options: options))]
         } else {
             // Render the full snippet and its explanatory content.
-            let options = RenderBlockContent.CodeBlockOptions()
             let fullCode = RenderBlockContent.codeListing(.init(syntax: mixin.language, code: mixin.lines, metadata: nil, options: options))
             
             var content: [any RenderContent] = resolvedSnippet.explanation?.children.flatMap { contentCompiler.visit($0) } ?? []

@@ -55,4 +55,17 @@ class DocumentationBundleFileTypesTests: XCTestCase {
         XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
             URL(fileURLWithPath: "/a/theme-settings.json/bar")))
     }
+
+    func testIsCustomFavicon() {
+        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFavicon(
+            URL(fileURLWithPath: "favicon.ico")))
+        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFavicon(
+            URL(fileURLWithPath: "/favicon.ico")))
+        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFavicon(
+            URL(fileURLWithPath: "DocC.docc/favicon.ico")))
+        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFavicon(
+            URL(fileURLWithPath: "favicon")))
+        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFavicon(
+            URL(fileURLWithPath: "/favicon.ico/foo")))
+    }
 }

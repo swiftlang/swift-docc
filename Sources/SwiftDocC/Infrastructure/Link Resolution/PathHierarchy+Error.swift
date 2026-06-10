@@ -1,17 +1,16 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 import struct Markdown.SourceRange
 import struct Markdown.SourceLocation
-import SymbolKit
+private import SymbolKit
 
 extension PathHierarchy {
     /// An error finding an entry in the path hierarchy.
@@ -65,6 +64,14 @@ extension PathHierarchy {
         /// - A list of the names for the children of the partial result.
         case unknownName(partialResult: PartialResult, remaining: [PathComponent], availableChildren: Set<String>)
         
+        /// Encountered an unknown anchor at the end of the path.
+        ///
+        /// Includes information about:
+        /// - The partial result for as much of the path that could be found.
+        /// - The name of the unknown anchor.
+        /// - A list of the names for the anchors of the partial result.
+        case unknownAnchor(partialResult: PartialResult, anchor: String, availableAnchors: Set<String>)
+        
         /// Multiple matches are found partway through the path.
         ///
         /// Includes information about:
@@ -113,7 +120,7 @@ extension PathHierarchy.Error {
                     // In contexts that display the solution message on a single line by removing newlines, this extra whitespace makes it look correct ─────────────╮
                     //                                                                                                                                               ▼
                     return Solution(summary: "\(Self.replacementOperationDescription(from: foundDisambiguation, to: suggestedDisambiguation, forCollision: true)) for \n\(fullName.singleQuoted)", replacements: [
-                        Replacement(range: replacementRange, replacement: suggestedDisambiguation)
+                        .init(range: replacementRange, replacement: suggestedDisambiguation)
                     ])
                 }
             return (pathPrefix, foundDisambiguation, solutions)
@@ -127,7 +134,7 @@ extension PathHierarchy.Error {
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
             let solutions = nearMisses.map { candidate in
                 Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
+                    .init(range: replacementRange, replacement: candidate)
                 ])
             }
             
@@ -148,7 +155,7 @@ extension PathHierarchy.Error {
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
             let solutions = nearMisses.map { candidate in
                 Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
+                    .init(range: replacementRange, replacement: candidate)
                 ])
             }
             
@@ -167,9 +174,9 @@ extension PathHierarchy.Error {
             return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols", solutions: [
                 Solution(summary: "Use a '<doc:>' style reference.", replacements: [
                     // the SourceRange points to the opening double-backtick
-                    Replacement(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
+                    .init(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
                     // the SourceRange points to the closing double-backtick
-                    Replacement(range: .makeRelativeRange(startColumn: path.count, endColumn: path.count+2), replacement: ">"),
+                    .init(range: .makeRelativeRange(startColumn: path.count, endColumn: path.count+2), replacement: ">"),
                 ])
             ])
             
@@ -201,7 +208,7 @@ extension PathHierarchy.Error {
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
                 solutions = nearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))", replacements: [
-                        Replacement(range: replacementRange, replacement: candidate)
+                        .init(range: replacementRange, replacement: candidate)
                     ])
                 }
             } else {
@@ -209,7 +216,7 @@ extension PathHierarchy.Error {
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.name.count)
                 solutions = filteredNearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))", replacements: [
-                        Replacement(range: replacementRange, replacement: candidate)
+                        .init(range: replacementRange, replacement: candidate)
                     ])
                 }
             }
@@ -219,6 +226,24 @@ extension PathHierarchy.Error {
                 """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
+            )
+            
+        case .unknownAnchor(partialResult: let partialResult, anchor: let anchor, availableAnchors: let availableAnchors):
+            let nearMisses = NearMiss.bestMatches(for: availableAnchors, against: anchor)
+            
+            let pathPrefix = partialResult.pathPrefix
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: anchor.count)
+            let solutions = nearMisses.map { candidate in
+                Solution(summary: "\(Self.replacementOperationDescription(from: anchor, to: candidate))", replacements: [
+                    .init(range: replacementRange, replacement: candidate)
+                ])
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                \(anchor.singleQuoted) is not an anchor of \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                """,
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: anchor.count)
             )
             
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):

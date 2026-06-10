@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 struct ANSIAnnotation {
     enum Color: UInt8 {
         case normal = 0

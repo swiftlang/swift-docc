@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import CLMDB
+private import CLMDB
 
 extension LMDB {
     

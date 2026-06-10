@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 import SymbolKit
 import DocCCommon
 
@@ -48,6 +48,8 @@ struct PathHierarchy {
     
     /// A map of known documentation nodes based on their unique identifiers.
     private(set) var lookup: [ResolvedIdentifier: Node]
+    /// Whether or not the link resolver should raise module-not-found errors if it can't find the first component of an absolute link.
+    let isModuleNotFoundErrorsEnabled: Bool
     
     // MARK: Creating a path hierarchy
     
@@ -58,12 +60,16 @@ struct PathHierarchy {
     ///   - bundleName: The name of the documentation bundle, used as a container for articles and tutorials.
     ///   - moduleKindDisplayName: The display name for the "module" kind of symbol.
     ///   - knownDisambiguatedPathComponents: A list of path components with known required disambiguations.
+    ///   - isModuleNotFoundErrorsEnabled: Whether or not the link resolver should raise module-not-found errors if it can't find the first component of an absolute link.
     init(
         symbolGraphLoader loader: SymbolGraphLoader,
         bundleName: String,
         moduleKindDisplayName: String = "Framework",
-        knownDisambiguatedPathComponents: [String: [String]]? = nil
+        knownDisambiguatedPathComponents: [String: [String]]? = nil,
+        isModuleNotFoundErrorsEnabled: Bool
     ) {
+        self.isModuleNotFoundErrorsEnabled = isModuleNotFoundErrorsEnabled
+        
         var roots: [String: Node] = [:]
         var allNodes: [String: [Node]] = [:]
         
@@ -73,7 +79,12 @@ struct PathHierarchy {
                 (url: url, graph: graph, language: graph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }))
             }
             .sorted(by: { lhs, rhs in
-                return !lhs.url.lastPathComponent.contains("@")
+                let lhsIsExt = lhs.url.lastPathComponent.contains("@")
+                let rhsIsExt = rhs.url.lastPathComponent.contains("@")
+                // Sort extension files after main symbol graph files
+                if lhsIsExt != rhsIsExt { return !lhsIsExt }
+                // Sort lexicographically between symbol graph files of the same type using the full paths.
+                return lhs.url.path < rhs.url.path
             })
                 
         // To try to handle certain invalid symbol graph files gracefully, we track symbols that don't have a place in the hierarchy so that we can look for a place for those symbols.
@@ -132,8 +143,7 @@ struct PathHierarchy {
 
                     let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
-                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
-                    if symbol.identifier.precise.contains("::SYNTHESIZED::") {
+                    if symbol.identifier.isSynthesized {
                         node.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
                     }
                     nodes[id] = node
@@ -467,9 +477,9 @@ struct PathHierarchy {
     /// - Parameters:
     ///   - parent: The unique identifier of the existing element to add the new child element to.
     ///   - name: The path component name of the new element.
-    ///   - kind: The kind of the new element
+    ///   - kind: The kind of the new element.
     /// - Returns: The new unique identifier that represent this element.
-    mutating func addNonSymbolChild(parent: ResolvedIdentifier, name: String, kind: String) -> ResolvedIdentifier {
+    private mutating func addNonSymbolChild(parent: ResolvedIdentifier, name: String, kind: String) -> ResolvedIdentifier {
         let parent = lookup[parent]!
         
         let newReference = ResolvedIdentifier()
@@ -477,6 +487,27 @@ struct PathHierarchy {
         newNode.identifier = newReference
         self.lookup[newReference] = newNode
         parent.add(child: newNode, kind: kind, hash: nil)
+        
+        return newReference
+    }
+    
+    /// Adds an anchor to an existing element in the path hierarchy.
+    /// - Parameters:
+    ///   - parent: The unique identifier of the existing element to add the new child element to.
+    ///   - name: The name of the new anchor.
+    /// - Returns: The new unique identifier that represent this element.
+    mutating func addAnchor(parent: ResolvedIdentifier, name: String) -> ResolvedIdentifier {
+        let parent = lookup[parent]!
+        // It's rather easy to author the same heading more than once. Only add the anchor once.
+        if let existing = parent.anchors[name] {
+            return existing.identifier
+        }
+        
+        let newReference = ResolvedIdentifier()
+        let newNode = Node(name: name)
+        newNode.identifier = newReference
+        self.lookup[newReference] = newNode
+        parent.anchors[name] = newNode
         
         return newReference
     }
@@ -511,17 +542,22 @@ extension PathHierarchy {
         private(set) var name: String
         
         /// The descendants of this node in the hierarchy.
-        /// Each name maps to a disambiguation tree that handles
+        ///
+        /// Each name maps to a disambiguation tree that handles disambiguating matches and identifying collisions
         private(set) var children: [String: DisambiguationContainer]
         
+        /// The anchors of this node.
+        ///
+        /// An anchor represents a heading or on-page landmark and is always a leaf node in the hierarchy.
+        fileprivate(set) var anchors: [String: Node] // ???: Should this be just the ID?
         fileprivate(set) unowned var parent: Node?
-        /// The symbol, if a node has one.
+        /// The symbol, if the node has one.
         fileprivate(set) var symbol: SymbolGraph.Symbol?
         /// The languages where this node's symbol is represented.
         fileprivate(set) var languages = SmallSourceLanguageSet()
         /// The other language representation of this symbol.
         ///
-        /// > Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
+        /// - Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
         fileprivate(set) unowned var counterpart: Node?
         
         /// A set of non-standard behaviors that apply to this node.
@@ -531,7 +567,7 @@ extension PathHierarchy {
         struct SpecialBehaviors: OptionSet {
             let rawValue: Int
             
-            /// This node is disfavored in the the case of a link collision.
+            /// This node is disfavored in the case of a link collision.
             ///
             /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
             /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
@@ -562,6 +598,7 @@ extension PathHierarchy {
             self.symbol = symbol
             self.name = name
             self.children = [:]
+            self.anchors = [:]
             self.specialBehaviors = []
             self.languages = [SourceLanguage(id: symbol.identifier.interfaceLanguage)]
         }
@@ -571,6 +608,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
+            self.anchors = [:]
             self.specialBehaviors = []
         }
         
@@ -667,7 +705,7 @@ extension PathHierarchy {
         
         /// Adds a descendant of this node.
         fileprivate func add(child: Node, kind: String?, hash: String?, parameterTypes: [String]? = nil, returnTypes: [String]? = nil) {
-            guard child.parent !== self else { 
+            guard child.parent !== self else {
                 assert(
                     children.keys.contains(child.name) &&
                     (try? children[child.name]?.find(.kindAndHash(kind: kind?[...], hash: hash?[...]))) === child,
@@ -706,17 +744,18 @@ extension PathHierarchy {
 
 extension PathHierarchy {
     /// Returns the list of top level symbols
-    func topLevelSymbols() -> [ResolvedIdentifier] {
+    func topLevelSymbols() -> Set<ResolvedIdentifier> {
         var result: Set<ResolvedIdentifier> = []
         // Roots represent modules and only have direct symbol descendants.
         for root in modules {
+            result.insert(root.identifier)
             for (_, tree) in root.children {
                 for element in tree.storage where element.node.symbol != nil {
                     result.insert(element.node.identifier)
                 }
             }
         }
-        return Array(result) + modules.map { $0.identifier }
+        return result
     }
 }
 
@@ -891,6 +930,9 @@ extension PathHierarchy {
         self.tutorialContainer = lookup[identifiers[fileRepresentation.tutorialContainer]]!
         self.tutorialOverviewContainer = lookup[identifiers[fileRepresentation.tutorialOverviewContainer]]!
         
+        // If we're decoding another path hierarchy from a file, then we want to raise module-not-found errors for that hierarchy.
+        self.isModuleNotFoundErrorsEnabled = true
+        
         mapCreatedIdentifiers(identifiers)
     }
 }
@@ -957,4 +999,40 @@ private func assertAllNodes(
         file: file,
         line: line
     )
+}
+
+private extension SymbolGraph.Symbol.Identifier {
+    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
+    var isSynthesized: Bool {
+        return precise.withCString {
+            // This is a rather quick way to check if the symbol's unique identifier string contains the "::SYNTHESIZED::" string or not.
+            // Because this check is performed for every symbol once per language representation and platforms, it's good if it can be fast.
+            
+            // Only Swift types use the "::SYNTHESIZED::" separator, so if this unique identifier doesn't have a "s:" prefix, then we can exit early.
+            let pointer = UnsafeRawPointer($0)
+            guard pointer.hasASCIIPrefix("s:") else {
+                return false
+            }
+            
+            // We know that _if_ the symbol's unique identifier contains this separator, then it also contains another unique identifier afterwards.
+            // Because the "::SYNTHESIZED::" separator is 15 characters and the following unique identifier has to be _at least_ 1 character long,
+            // we know that there's less than 16 characters left in the symbol's unique identifier, we can't find a valid "::SYNTHESIZED::" separator anymore.
+            let lengthToCheck = precise.utf8.count &- 16
+            // We know that the first 2 characters are "s:" so there's no reason to check them again. That colon can't be part of a valid "::SYNTHESIZED::" separator.
+            var offset = 2
+            while offset < lengthToCheck {
+                // Because there will always be at more than 8 characters remaining in the, we can safely check 8 characters at a time when looking for the first ":" without risking reading out-of-bounds.
+                defer { offset += 8 }
+                // Our `ByteMatches` reads 8 bytes and uses bitwise operations to determine if any of the next 8 bytes is a ":"
+                let match = ByteMatches(pointer.loadUnaligned(fromByteOffset: offset, as: UInt64.self), ByteMatches.colonSearchPattern)
+                // If _any_ of the next 8 bytes is a ":", we make larger reads and check if the 15 bytes that starts at that ":" is exactly that separator.
+                if match.hasMatches, pointer.hasASCIIPrefix("::SYNTHESIZED::", byteOffset: offset + match.numberOfLeadingNonMatches) {
+                    return true
+                }
+            }
+            // If we reached the last 16 bytes without finding the separator, then we won't find it.
+            assert(!precise.contains("::SYNTHESIZED::"), "The custom implementation didn't produce the same result as a 'String.contains(_:)' check.")
+            return false
+        }
+    }
 }

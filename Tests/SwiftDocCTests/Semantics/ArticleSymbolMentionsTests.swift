@@ -11,8 +11,9 @@
 import XCTest
 @testable @preconcurrency import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import SymbolKit
+import DocCCommon
 
 class ArticleSymbolMentionsTests: XCTestCase {
     /// Test that the recording abstraction for ``ArticleSymbolMentions`` works as expected.
@@ -109,14 +110,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
     }
 
     func testSymbolLinkCollectorDisabled() async throws {
-        let currentFeatureFlags = FeatureFlags.current
-        addTeardownBlock {
-            FeatureFlags.current = currentFeatureFlags
-        }
-        FeatureFlags.current.isMentionedInEnabled = false
-        
-        
-        let (bundle, context) = try await createMentionedInTestBundle()
+        let (bundle, context) = try await createMentionedInTestBundle(isFeatureFlagEnabled: false)
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(

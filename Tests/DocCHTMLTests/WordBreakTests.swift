@@ -17,11 +17,11 @@ import Foundation
 #endif
 
 import Testing
-import DocCHTML
+@testable import DocCHTML
 
 struct WordBreakTests {
     @Test
-    func testWordBreaks() {
+    func insertsWordBreaks() {
         assertWordBreaks(for: "doSomething<Generic>(withFirst:andSecond:)", matches: """
         do
         <wbr/>

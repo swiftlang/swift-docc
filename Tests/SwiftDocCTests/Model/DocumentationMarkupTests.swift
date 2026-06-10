@@ -353,6 +353,15 @@ class DocumentationMarkupTests: XCTestCase {
             """
             let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
             XCTAssertEqual(expected, model.deprecation?.elements.map({ $0.format() }).joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines))
+            XCTAssertEqual(
+                """
+                Paragraph
+                └─ Text "My discussion content."
+                """,
+                model.discussionSection?.content
+                    .map({ $0.detachedFromParent.debugDescription() })
+                    .joined(separator: "\n")
+            )
         }
         
         // Deprecation in the topics

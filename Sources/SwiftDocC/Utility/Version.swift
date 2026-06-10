@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+private import Foundation
+
 /// An arbitrary-length version tuple.
 public struct Version: Codable, RandomAccessCollection, ExpressibleByArrayLiteral, CustomStringConvertible, Equatable {
     private var elements: [Int]

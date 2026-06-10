@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -37,4 +37,8 @@ package protocol HTMLContentConsumer {
         ),
         forPage reference: ResolvedTopicReference
     ) throws
+    
+    // This is not intended to be a long term design for determining which is the primary output format (rdar://177867282)
+    // We need to make sure that this short-term workaround isn't surfaced in any `public` API so that we retain the ability to make large design changes.
+    var _isPrimaryOutputFormat: Bool { get }
 }

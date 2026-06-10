@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,14 +12,15 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class AutoCapitalizationTests: XCTestCase {
     
     // MARK: Test helpers
     
     private func makeSymbolGraph(docComment: String, parameters: [String]) -> SymbolGraph {
-        makeSymbolGraph(
+        DocCTestUtilities.makeSymbolGraph(
             moduleName: "ModuleName",
             symbols: [
                 makeSymbol(
@@ -62,7 +63,7 @@ class AutoCapitalizationTests: XCTestCase {
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0)
+        XCTAssertEqual(context.diagnostics.count, 0)
         
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
@@ -107,7 +108,7 @@ class AutoCapitalizationTests: XCTestCase {
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0)
+        XCTAssertEqual(context.diagnostics.count, 0)
         
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
@@ -148,7 +149,7 @@ class AutoCapitalizationTests: XCTestCase {
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0)
+        XCTAssertEqual(context.diagnostics.count, 0)
         
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)

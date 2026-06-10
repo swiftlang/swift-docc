@@ -152,8 +152,8 @@
   ┃ ┣╸SideProtocol
   ┃ ┃ ┣╸Instance Methods
   ┃ ┃ ┗╸func1()
-  ┃ ┃   ┗╸SideProtocol Implementations
-  ┃ ┃     ┗╸func1()
+  ┃ ┃   ┣╸SideProtocol Implementations
+  ┃ ┃   ┗╸func1()
   ┃ ┣╸Classes
   ┃ ┗╸UncuratedClass
   ┃   ┣╸Variables

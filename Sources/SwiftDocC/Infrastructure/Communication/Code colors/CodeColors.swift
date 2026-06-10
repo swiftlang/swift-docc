@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A collection of colors that a renderer uses to highlight code.
 public struct CodeColors: Equatable {
 

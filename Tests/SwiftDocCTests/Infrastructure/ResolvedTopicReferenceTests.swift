@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 
 @testable import SwiftDocC
+import DocCCommon
 
 class ResolvedTopicReferenceTests: XCTestCase {
     func testReferenceURL() {

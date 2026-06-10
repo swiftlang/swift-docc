@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A resolver that attempts to resolve local references to content that wasn't included in the catalog or symbol input.
 ///
 /// The ``ConvertService`` builds documentation for a single page, which doesn't have to be a top-level page. If this page's content contains references to other local

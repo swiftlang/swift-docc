@@ -13,6 +13,7 @@ import Foundation
 @testable import SwiftDocC
 import Markdown
 import XCTest
+import DocCCommon
 
 class RenderContentMetadataTests: XCTestCase {
     func testImageMetadata() throws {

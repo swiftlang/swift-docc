@@ -9,7 +9,7 @@
 */
 
 public import Foundation
-import SymbolKit
+private import SymbolKit
 
 /// A type that generates URLs that you use to link to rendered pages.
 /// 

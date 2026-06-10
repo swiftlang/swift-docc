@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,7 @@ import Foundation
 import Markdown
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class PageKindTests: XCTestCase {
     
@@ -75,16 +76,16 @@ class PageKindTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+        let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Metadata.directiveName, directive.name)
-            let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+            let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(metadata)
             XCTAssertNotNil(metadata?.pageKind)
             XCTAssertEqual(metadata?.pageKind?.kind, .article)
-            XCTAssert(problems.isEmpty)
+            XCTAssert(diagnostics.isEmpty)
         }
     }
     

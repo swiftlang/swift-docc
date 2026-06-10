@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 ///A metric value which is either a duration, a number of bytes, or a checksum.
 public typealias MetricValue = BenchmarkResults.Metric.Value

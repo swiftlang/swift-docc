@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension Sequence {
     /// Maps the sequence using the given closure and returns the first non-nil value.
     ///

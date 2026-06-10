@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A type that resolves symbol identifiers for symbols in all non-local modules.
 ///
 /// Use this protocol to integrate symbol documentation content from other sources. Your implementation needs to be able to:

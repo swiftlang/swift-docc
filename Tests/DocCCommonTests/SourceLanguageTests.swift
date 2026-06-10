@@ -14,7 +14,7 @@ import Foundation
 
 struct SourceLanguageTests {
     @Test(arguments: SourceLanguage.knownLanguages)
-    func testUsesIDAliasesWhenQueryingFirstKnownLanguage(_ language: SourceLanguage) {
+    func usesIDAliasesWhenQueryingFirstKnownLanguage(_ language: SourceLanguage) {
         #expect(SourceLanguage(id: language.id) == language)
         for alias in language.idAliases {
             #expect(SourceLanguage(id: alias) == language, "Unexpectedly found different language for id alias '\(alias)'")
@@ -25,7 +25,7 @@ struct SourceLanguageTests {
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated)
     @Test
-    func testHasValueSemanticsForBothKnownAndUnknownLanguages() throws {
+    func hasValueSemanticsForBothKnownAndUnknownLanguages() throws {
         var original = SourceLanguage.swift
         var copy = original
         copy.name = "First"
@@ -46,7 +46,7 @@ struct SourceLanguageTests {
     }
     
     @Test
-    func testReusesExistingValuesWhenCreatingLanguages() throws {
+    func reusesExistingValuesWhenCreatingLanguages() throws {
         // Creating more than 256 languages would fail if SourceLanguage initializer didn't reuse existing values
         let numberOfIterations = 300 // anything more than `UInt8.max`
         
@@ -88,7 +88,7 @@ struct SourceLanguageTests {
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated)
     @Test
-    func testReusesExistingValuesModifyingProperties() {
+    func reusesExistingValuesModifyingProperties() {
         // Creating more than 256 languages would fail if SourceLanguage initializer didn't reuse existing values
         let numberOfIterations = 300 // anything more than `UInt8.max`
         
@@ -105,13 +105,13 @@ struct SourceLanguageTests {
         (SourceLanguage.javaScript, "JavaScript"),
         (SourceLanguage.metal,      "Metal"),
     ])
-    func testNameOfKnownLanguage(language: SourceLanguage, matches expectedName: String) {
+    func nameOfKnownLanguage(_ language: SourceLanguage, matches expectedName: String) {
         // Known languages have their own dedicated implementation that requires two implementation detail values to be consistent.
         #expect(language.name == expectedName)
     }
     
     @Test
-    func testSortsSwiftFirstAndThenByID() throws {
+    func sortsSwiftFirstAndThenByID() throws {
         var languages = SourceLanguage.knownLanguages
         #expect(languages.min()?.name == "Swift")
         #expect(languages.sorted().map(\.name) == [

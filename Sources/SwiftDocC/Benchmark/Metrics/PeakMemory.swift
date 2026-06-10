@@ -8,9 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 #if os(Windows)
-import WinSDK
+private import WinSDK
 #endif
 
 extension Benchmark {

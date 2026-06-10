@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ public import Markdown
 /// An article is written using markdown headers and paragraphs. There is an implicit meaning to the structure of an article that's parsed from its markup
 /// when the article is instantiated. For example, the leading level 1 heading is considered the article's title, the first paragraph of text is considered the
 /// article's abstract, and following paragraphs up to the next heading is considered the article's discussion.
-public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected, AutomaticTaskGroupsProviding {
+public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
     /// The markup that makes up this article's content.
     let markup: (any Markup)?
     /// An optional container for metadata that's unrelated to the article's content.
@@ -101,17 +101,25 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     /// Any automatically created task groups.
     var automaticTaskGroups: [AutomaticTaskGroupSection]
 
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: markup, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
     /// Initializes a new article with a given markup and source for a given documentation bundle and documentation context.
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
     ///   - source: The location of the file that this article's content comes from.
     ///   - bundle: The documentation bundle that the source file belongs to.
-    ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
-    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    ///   - diagnostics: A mutable collection of diagnostics to update with any additional issues encountered while initializing the article.
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
-            let range = markup.child(at: 0)?.range ?? SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
+            let range = markup.child(at: 0)?.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil)
 
             let replacementText: String
             if let firstChild = markup.child(at: 0) as? Paragraph {
@@ -124,9 +132,10 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                      """
             }
 
-            let replacement = Replacement(range: range, replacement: replacementText)
+            let replacement = Solution.Replacement(range: range, replacement: replacementText)
             let solution = Solution(summary: "Add a title", replacements: [replacement])
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title", solutions: [solution])
+            diagnostics.append(diagnostic)
 
             return nil
         }
@@ -137,7 +146,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
         
         var optionalMetadata = DirectiveParser()
@@ -147,7 +156,8 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 parentType: Article.self,
                 source: source,
                 bundle: bundle,
-                problems: &problems
+                featureFlags: featureFlags,
+                diagnostics: &diagnostics
             )
 
         // Append any redirects found in the metadata to the redirects
@@ -165,7 +175,8 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 from: childDirective,
                 source: source,
                 for: bundle,
-                problems: &problems
+                featureFlags: featureFlags,
+                diagnostics: &diagnostics
             )
         }
         
@@ -177,8 +188,8 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 continue
             }
             
-            let extraOptionsProblems = extraOptions.map { extraOptionsDirective -> Problem in
-                let diagnostic = Diagnostic(
+            let extraOptionsProblems = extraOptions.map { extraOptionsDirective -> Diagnostic in
+                var diagnostic = Diagnostic(
                     source: source,
                     severity: .warning,
                     range: extraOptionsDirective.originalMarkup.range,
@@ -191,43 +202,42 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 )
                 
                 guard let range = extraOptionsDirective.originalMarkup.range else {
-                    return Problem(diagnostic: diagnostic)
+                    return diagnostic
                 }
                 
                 let solution = Solution(
                     summary: "Remove extraneous \(scope) \(Options.directiveName.singleQuoted) directive",
                     replacements: [
-                        Replacement(range: range, replacement: "")
+                        Solution.Replacement(range: range, replacement: "")
                     ]
                 )
-                
-                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+                diagnostic.solutions = [solution]
+                return diagnostic
             }
             
-            problems.append(contentsOf: extraOptionsProblems)
+            diagnostics.append(contentsOf: extraOptionsProblems)
         }
         
         let relevantCategorizedOptions = allCategorizedOptions.compactMapValues(\.first)
         
-        let isDocumentationExtension = title.child(at: 0) is (any AnyLink)
+        let isDocumentationExtension = title.startsWithAnyLink
         if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
             let diagnosticSummary = """
             A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.
             """
 
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, explanation: nil, notes: [])
-            
             let solutions: [Solution]
             if let displayNameRange = displayName.originalMarkup.range, let titleRange = title.range {
-                let removeDisplayNameReplacement = Replacement(range: displayNameRange, replacement: "")
-                let changeTitleReplacement = Replacement(range: titleRange, replacement: "# \(displayName.name)")
+                let removeDisplayNameReplacement = Solution.Replacement(range: displayNameRange, replacement: "")
+                let changeTitleReplacement = Solution.Replacement(range: titleRange, replacement: "# \(displayName.name)")
                 
                 solutions = [Solution(summary: "Change the title", replacements: [removeDisplayNameReplacement, changeTitleReplacement])]
             } else {
                 solutions = []
             }
             
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, solutions: solutions)
+            diagnostics.append(diagnostic)
             
             metadata.displayName = nil
             optionalMetadata = metadata
@@ -250,3 +260,9 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.5 is released.")
+extension Article: MarkupConvertible {
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+        self.init(from: markup, source: source, for: bundle, featureFlags: FeatureFlags(), problems: &problems)
+    }
+}

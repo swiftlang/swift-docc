@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+private import SymbolKit
 
 /// Translates a symbol's discussion into a render node's Discussion section.
 struct DiscussionSectionTranslator: RenderSectionTranslator {

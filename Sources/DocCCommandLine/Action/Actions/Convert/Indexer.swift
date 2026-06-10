@@ -1,0 +1,113 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+import Foundation
+import SwiftDocC
+
+extension ConvertAction {
+    
+    /// An index builder to be used when performing a ``ConvertAction``.
+    ///
+    /// Add render nodes to the navigation index by passing them to ``index(_:)``;
+    /// finally call ``finalize()`` to write the index on disk.
+    /// > Warning: Call ``finalize()`` at most once.
+    /// > Note: The index is always created on disk in the given output folder.
+    class Indexer {
+        /// A list of diagnostics encountered during indexing.
+        private var diagnostics = [Diagnostic]()
+        
+        /// The count of nodes indexed.
+        private var nodeCount = 0
+        
+        /// An index builder that creates the navigation index on disk.
+        private var indexBuilder: Synchronized<NavigatorIndex.Builder>!
+        
+        /// Creates an indexer that asynchronously indexes nodes and creates the index file on disk.
+        /// - Parameters:
+        ///   - outputURL: The target directory to create the index file.
+        ///   - bundleID: The identifier of the bundle being indexed.
+        init(outputURL: URL, bundleID: DocumentationBundle.Identifier) throws {
+            let indexURL = outputURL.appendingPathComponent("index", isDirectory: true)
+            indexBuilder = Synchronized<NavigatorIndex.Builder>(
+                NavigatorIndex.Builder(
+                    outputURL: indexURL,
+                    bundleIdentifier: bundleID.rawValue,
+                    sortRootChildrenByName: true,
+                    groupByLanguage: true
+                )
+            )
+            indexBuilder.sync({ $0.setup() })
+        }
+
+        /// Indexes the given render node and collects any encountered diagnostics.
+        /// - Parameter renderNode: A ``RenderNode`` value.
+        func index(_ renderNode: RenderNode) {
+            // Synchronously index the render node.
+            indexBuilder.sync({
+                do {
+                    try $0.index(renderNode: renderNode)
+                    nodeCount += 1
+                } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    self.diagnostics.append(error.makeDiagnostic(source: renderNode.identifier.url,
+                                                              severity: .warning,
+                                                              summaryPrefix: "RenderNode indexing process failed"))
+                }
+            })
+        }
+        
+        /// Indexes the given external render node and collects any encountered diagnostics.
+        /// - Parameter renderNode: A ``ExternalRenderNode`` value.
+        func index(_ renderNode: ExternalRenderNode) {
+            // Synchronously index the render node.
+            indexBuilder.sync({
+                do {
+                    try $0.index(renderNode: renderNode)
+                    nodeCount += 1
+                } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    self.diagnostics.append(error.makeDiagnostic(source: renderNode.identifier.url,
+                                                              severity: .warning,
+                                                              summaryPrefix: "External render node indexing process failed"))
+                }
+            })
+        }
+        
+        /// Finalizes the index and writes it on disk.
+        /// - Returns: Returns a list of diagnostics if any were encountered during indexing.
+        func finalize(emitJSON: Bool, emitLMDB: Bool) -> [Diagnostic] {
+            indexBuilder.sync { indexBuilder in
+                indexBuilder.finalize(
+                    estimatedCount: nodeCount,
+                    emitJSONRepresentation: emitJSON,
+                    emitLMDBRepresentation: emitLMDB
+                )
+            }
+            return diagnostics
+        }
+        
+        /// Returns a string representation of the index hierarchy.
+        func dumpTree() -> String? {
+            return indexBuilder!.sync({ $0.navigatorIndex?.navigatorTree.root.dumpTree() })
+        }
+    }
+}
+
+private extension Error {
+    func makeDiagnostic(source: URL, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Diagnostic {
+        Diagnostic(
+            source: source,
+            severity: severity,
+            range: nil,
+            identifier: "org.swift.docc.index",
+            summary: "\(summaryPrefix) \(localizedDescription)"
+        )
+    }
+}

@@ -1,69 +1,91 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 @testable import SwiftDocC
 import Markdown
 
-class DuplicateTopicsSectionsTests: XCTestCase {
-    func testNoTopicsSections() {
-        var checker = DuplicateTopicsSections(sourceFile: nil)
+struct DuplicateTopicsSectionsTests {
+    // This file is never read, it's only used as the source of diagnostics and notes
+    private let sourceFileForDiagnosticMessages = URL(fileURLWithPath: "/path/to/some-fake-file.md")
+    
+    @Test
+    func doesNotWarnForEmptyDocument() {
+        var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(Document())
-        XCTAssertTrue(checker.problems.isEmpty)
+        #expect(checker.diagnostics.isEmpty)
     }
     
-    func testOneTopicsSection() {
+    @Test
+    func doesNotWarnForSingleTopicsSection() {
         let markupSource = """
-# Title
+        # Title
 
-Blah
+        Blah
 
-## Topics
-"""
+        ## Topics
+        """
         let document = Document(parsing: markupSource, options: [])
-        var checker = DuplicateTopicsSections(sourceFile: nil)
+        var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(document)
-        XCTAssertTrue(checker.problems.isEmpty)
+        #expect(checker.diagnostics.isEmpty)
     }
     
-    func testMultipleTopicsSections() {
+    @Test
+    func warnsAboutMultipleTopicsSection() throws {
         let markupSource = """
-# Title
+        # Title
 
-Abstract.
+        ## Topics
+        ### Topic A
 
-## Topics
-
-### Topic A
-
-## Topics
-
-### Topic B
-
-"""
+        ## Topics
+        ### Topic B
+        
+        ## Topics
+        ### Topic C
+        """
         let document = Document(parsing: markupSource, options: [])
-        var checker = DuplicateTopicsSections(sourceFile: URL(fileURLWithPath: #file))
+        var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(document)
-        XCTAssertEqual(2, checker.foundTopicsHeadings.count)
-        XCTAssertEqual(1, checker.problems.count)
         
-        let problem = checker.problems[0]
-        XCTAssertTrue(problem.possibleSolutions.isEmpty)
+        #expect(checker.foundTopicsHeadings.count == 3)
+        let firstTopicsHeading  = try #require(document.child(at: 1) as? Heading)
+        let secondTopicsHeading = try #require(document.child(at: 3) as? Heading)
+        let thirdTopicsHeading  = try #require(document.child(at: 5) as? Heading)
         
-        let duplicateHeading = document.child(at: 4)! as! Heading
-        let diagnostic = problem.diagnostic
-        XCTAssertEqual("org.swift.docc.MultipleTopicsSections", diagnostic.identifier)
-        XCTAssertEqual(duplicateHeading.range, problem.diagnostic.range)
-        
-        let originalTopicsHeading = document.child(at: 2)! as! Heading
-        let note = diagnostic.notes[0]
-        XCTAssertEqual(originalTopicsHeading.range, note.range)
+        #expect(checker.diagnostics.count == 2)
+        for (diagnostics, expectedDiagnosticRange) in zip(checker.diagnostics, [secondTopicsHeading.range, thirdTopicsHeading.range]) {
+            #expect(diagnostics.summary == "Topics section can only appear once per page")
+            #expect(diagnostics.explanation == "A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. Each page can only have a single Topics section.")
+            
+            
+            #expect(diagnostics.solutions.count == 2)
+            let firstSolution = try #require(diagnostics.solutions.first)
+            #expect(firstSolution.summary == "Change heading name")
+            #expect(firstSolution.replacements.count == 1)
+            #expect(firstSolution.replacements.first?.range == expectedDiagnosticRange)
+            #expect(firstSolution.replacements.first?.replacement == "## <#New heading name#>")
+            
+            let secondSolution = try #require(diagnostics.solutions.last)
+            #expect(secondSolution.summary == "Move this section's content under the first Topics section")
+            #expect(secondSolution.replacements.count == 0)
+            
+            let diagnostic = diagnostics
+            #expect(diagnostic.identifier == "MultipleTopicsSections")
+            #expect(diagnostics.range == expectedDiagnosticRange)
+            
+            let note = try #require(diagnostic.notes.first)
+            #expect(note.range == firstTopicsHeading.range)
+            #expect(note.message == "Topics section starts here")
+        }
     }
 }

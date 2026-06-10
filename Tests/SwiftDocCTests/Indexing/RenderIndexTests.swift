@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 @testable import SwiftDocC
 
@@ -166,7 +166,7 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "title": "APICollection",
                         "path": "/documentation/mixedlanguageframework/apicollection",
-                        "type": "symbol",
+                        "type": "collection",
                         "children": [
                             {
                               "title": "Objective-C–only APIs",
@@ -204,7 +204,7 @@ final class RenderIndexTests: XCTestCase {
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
                             "title": "MixedLanguageProtocol Implementations",
-                            "type": "symbol",
+                            "type": "collection",
                             "children": [
                               {
                                 "title": "Instance Methods",
@@ -391,7 +391,7 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "path": "/documentation/mixedlanguageframework/apicollection",
                         "title": "APICollection",
-                        "type": "symbol",
+                        "type": "collection",
                         "children": [
                           {
                             "title": "Swift-only APIs",
@@ -449,7 +449,7 @@ final class RenderIndexTests: XCTestCase {
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
                             "title": "MixedLanguageProtocol Implementations",
-                            "type": "symbol",
+                            "type": "collection",
                             "children": [
                               {
                                 "title": "Instance Methods",
@@ -680,6 +680,56 @@ final class RenderIndexTests: XCTestCase {
             """#))
     }
     
+    func testRenderIndexGenerationWithDeprecationSummaryOnly() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "SomeModule",
+                symbols: [
+                    makeSymbol(
+                        id: "some-symbol-id",
+                        kind: .typealias,
+                        pathComponents: ["SomeTypeAlias"]
+                    )
+                ]
+            )),
+            TextFile(name: "SomeTypeAlias.md", utf8Content: """
+            # ``SomeTypeAlias``
+            
+            @DeprecationSummary {
+              Use SomeOtherTypeAlias instead.
+            }
+            """),
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let renderIndex = try generatedRenderIndex(
+            forIdentifier: "com.test.example",
+            inContext: context
+        )
+
+        let swiftNodes = try XCTUnwrap(renderIndex.interfaceLanguages["swift"])
+        let symbolNode = try XCTUnwrap(
+            findNode(titled: "SomeTypeAlias", in: swiftNodes)
+        )
+        XCTAssertTrue(
+            symbolNode.isDeprecated,
+            "A symbol with @DeprecationSummary but no platform deprecation should appear deprecated in the navigator index."
+        )
+    }
+
+    private func findNode(titled title: String, in nodes: [RenderIndex.Node]) -> RenderIndex.Node? {
+        for node in nodes {
+            if node.title == title {
+                return node
+            }
+            if let children = node.children, let found = findNode(titled: title, in: children) {
+                return found
+            }
+        }
+        return nil
+    }
+
     func testRenderIndexGenerationWithCustomIcon() async throws {
         let renderIndex = try await generatedRenderIndex(for: "BookLikeContent", with: "org.swift.docc.Book")
         try XCTAssertEqual(
@@ -707,7 +757,7 @@ final class RenderIndexTests: XCTestCase {
                   },
                   "references" : {
                     "plus.svg" : {
-                      "alt" : null,
+                      "alt" : "A plus icon.",
                       "type" : "image",
                       "identifier" : "plus.svg",
                       "variants" : [

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,8 @@
 import Markdown
 import XCTest
 import SymbolKit
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() async throws {
@@ -24,13 +25,13 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map(\.summary)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -411,9 +412,9 @@ class SemaToRenderNodeTests: XCTestCase {
                 return
             }
             
-            var problems = [Problem]()
-            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
-                XCTFail("Couldn't create tutorial from markup: \(problems)")
+            var diagnostics = [Diagnostic]()
+            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+                XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
                 return
             }
             
@@ -564,12 +565,12 @@ class SemaToRenderNodeTests: XCTestCase {
         try assertCompileOverviewWithNoVolumes(
             bundle: bundle,
             context: context,
-            // Expect one problem for the empty chapter.
-            expectedProblemsCount: 1
+            // Expect one diagnostic for the empty chapter.
+            expectedDiagnosticsCount: 1
         )
     }
     
-    private func assertCompileOverviewWithNoVolumes(bundle: DocumentationBundle, context: DocumentationContext, expectedProblemsCount: Int = 0) throws {
+    private func assertCompileOverviewWithNoVolumes(bundle: DocumentationBundle, context: DocumentationContext, expectedDiagnosticsCount: Int = 0) throws {
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
@@ -577,14 +578,14 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
         // Verify we emit a diagnostic for the chapter with no tutorial references.
-        XCTAssertEqual(problems.count, expectedProblemsCount, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, expectedDiagnosticsCount, "Found diagnostics \(diagnostics.map(\.summary)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -651,8 +652,8 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(firstTutorialReference.abstract.isEmpty)
         XCTAssertEqual(firstTutorialReference.estimatedTime, "20min")
         
-        renderNode.references.compactMap { $0.value as? TopicRenderReference } .forEach {
-            XCTAssertFalse($0.abstract.isEmpty)
+        for case let renderReference as TopicRenderReference in renderNode.references.values {
+            XCTAssertFalse(renderReference.abstract.isEmpty)
         }
         
         XCTAssertEqual(renderNode.metadata.estimatedTime, "1hr 20min")
@@ -814,13 +815,13 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 0, "Found diagnostics \(diagnostics.map(\.summary)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -907,8 +908,8 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(firstTutorialReference.abstract.isEmpty)
         XCTAssertEqual(firstTutorialReference.estimatedTime, "20min")
         
-        renderNode.references.compactMap { $0.value as? TopicRenderReference } .forEach {
-            XCTAssertFalse($0.abstract.isEmpty)
+        for case let renderReference as TopicRenderReference in renderNode.references.values {
+            XCTAssertFalse(renderReference.abstract.isEmpty)
         }
 
         XCTAssertEqual(renderNode.metadata.estimatedTime, "1hr 20min")
@@ -1587,13 +1588,13 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -1910,10 +1911,10 @@ Document
         
         let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink" }).count, 1)
-        XCTAssertNotNil(context.problems.first(where: { problem -> Bool in
-            return problem.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink"
-                && problem.diagnostic.summary.contains("https://example.com/link")
+        XCTAssertEqual(context.diagnostics.filter { $0.identifier == "org.swift.docc.InvalidDocumentationLink" }.count, 1)
+        XCTAssertNotNil(context.diagnostics.first(where: { problem -> Bool in
+            return problem.identifier == "org.swift.docc.InvalidDocumentationLink"
+                && problem.summary.contains("https://example.com/link")
         }))
     }
     
@@ -2444,34 +2445,6 @@ Document
         XCTAssertNotNil(renderReference.navigatorTitle)
     }
 
-    let asidesStressTest: [RenderBlockContent] = [
-        .aside(.init(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("This is a note.")]))])),
-        .aside(.init(style: .init(rawValue: "Tip"), content: [.paragraph(.init(inlineContent: [.text("Here’s a tip.")]))])),
-        .aside(.init(style: .init(rawValue: "Important"), content: [.paragraph(.init(inlineContent: [.text("Keep this in mind.")]))])),
-        .aside(.init(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Try this out.")]))])),
-        .aside(.init(style: .init(rawValue: "Warning"), content: [.paragraph(.init(inlineContent: [.text("Watch out for this.")]))])),
-        .aside(.init(style: .init(rawValue: "Attention"), content: [.paragraph(.init(inlineContent: [.text("Head’s up!")]))])),
-        .aside(.init(style: .init(rawValue: "Author"), content: [.paragraph(.init(inlineContent: [.text("I wrote this.")]))])),
-        .aside(.init(style: .init(rawValue: "Authors"), content: [.paragraph(.init(inlineContent: [.text("We wrote this.")]))])),
-        .aside(.init(style: .init(rawValue: "Bug"), content: [.paragraph(.init(inlineContent: [.text("This is wrong.")]))])),
-        .aside(.init(style: .init(rawValue: "Complexity"), content: [.paragraph(.init(inlineContent: [.text("This takes time.")]))])),
-        .aside(.init(style: .init(rawValue: "Copyright"), content: [.paragraph(.init(inlineContent: [.text("2021 Apple Inc.")]))])),
-        .aside(.init(style: .init(rawValue: "Date"), content: [.paragraph(.init(inlineContent: [.text("1 January 1970")]))])),
-        .aside(.init(style: .init(rawValue: "Invariant"), content: [.paragraph(.init(inlineContent: [.text("This shouldn’t change.")]))])),
-        .aside(.init(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This will change.")]))])),
-        .aside(.init(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This changes, but not in the data.")]))])),
-        .aside(.init(style: .init(rawValue: "Postcondition"), content: [.paragraph(.init(inlineContent: [.text("After calling, this should be true.")]))])),
-        .aside(.init(style: .init(rawValue: "Precondition"), content: [.paragraph(.init(inlineContent: [.text("Before calling, this should be true.")]))])),
-        .aside(.init(style: .init(rawValue: "Remark"), content: [.paragraph(.init(inlineContent: [.text("Something you should know.")]))])),
-        .aside(.init(style: .init(rawValue: "Requires"), content: [.paragraph(.init(inlineContent: [.text("This needs something.")]))])),
-        .aside(.init(style: .init(rawValue: "Since"), content: [.paragraph(.init(inlineContent: [.text("The beginning of time.")]))])),
-        .aside(.init(style: .init(rawValue: "Todo"), content: [.paragraph(.init(inlineContent: [.text("This needs work.")]))])),
-        .aside(.init(style: .init(rawValue: "Version"), content: [.paragraph(.init(inlineContent: [.text("3.1.4")]))])),
-        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("This other thing.")]))])),
-        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("And this other thing.")]))])),
-        .aside(.init(style: .init(rawValue: "Throws"), content: [.paragraph(.init(inlineContent: [.text("A serious error.")]))])),
-    ]
-    
     func testBareTechnology() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try """
@@ -2496,13 +2469,13 @@ Document
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssert(problems.filter { $0.diagnostic.severity == .error }.isEmpty, "Found errors when analyzing Tutorials overview.")
+        XCTAssert(diagnostics.filter { $0.severity == .error }.isEmpty, "Found errors when analyzing Tutorials overview.")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -2517,8 +2490,8 @@ Document
                 return
             }
             
-            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, problems: &problems) else {
-                XCTFail("Couldn't create tutorial from markup: \(problems)")
+            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+                XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
                 return
             }
         
@@ -2588,13 +2561,13 @@ Document
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssert(problems.filter { $0.diagnostic.severity == .error }.isEmpty, "Found errors when analyzing tutorial.")
+        XCTAssert(diagnostics.filter { $0.severity == .error }.isEmpty, "Found errors when analyzing tutorial.")
         
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
@@ -2604,29 +2577,86 @@ Document
     
     /// Ensures we render our supported asides from symbol-graph content correctly, whether as a blockquote or as a list item.
     func testRenderAsides() async throws {
-        let asidesSGFURL = Bundle.module.url(
-            forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
-            try? FileManager.default.copyItem(at: asidesSGFURL, to: url.appendingPathComponent("Asides.symbols.json"))
-        }
-        
-        // Both of these symbols have the same content; one just has its asides as list items and the other has blockquotes.
-        let testReference: (ResolvedTopicReference) throws -> () = { myFuncReference in
+        let asidesSGFURL = Bundle.module.url(forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
+        let catalog = Folder(name: "unit-test.docc", content: [
+            CopyOfFile(original: asidesSGFURL, newName: "Asides.symbols.json"),
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+
+        func testReference(
+            myFuncReference: ResolvedTopicReference,
+            expectedAsides: [RenderBlockContent.Aside],
+            file: StaticString = #filePath,
+            line: UInt = #line
+        ) throws {
             let node = try context.entity(with: myFuncReference)
             let symbol = node.semantic as! Symbol
             
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
-            let asides = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
-            
-            XCTAssertEqual(Array(asides.content.dropFirst()), self.asidesStressTest)
+            let contentSection = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+            let blockContent = contentSection.content.dropFirst()
+            let asides: [RenderBlockContent.Aside] = blockContent.compactMap { block in
+                guard case let .aside(aside) = block else {
+                    XCTFail("Unexpected block content in Asides.symbols.json")
+                    return nil
+                }
+                return aside
+            }
+            XCTAssertEqual(expectedAsides.count, asides.count)
+
+            for (expectedAside, aside) in zip(expectedAsides, asides) {
+                XCTAssertEqual(expectedAside.style, aside.style, file: file, line: line)
+                XCTAssertEqual(expectedAside.name, aside.name, file: file, line: line)
+                XCTAssertEqual(expectedAside.content, aside.content, file: file, line: line)
+            }
         }
-        
-        let dashReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/dashAsides()", sourceLanguage: .swift)
+
+        func testContent(_ text: String) -> [RenderBlockContent] {
+            return [.paragraph(
+                .init(
+                    inlineContent: [
+                        .text(text)
+                    ]
+                )
+            )]
+        }
+
+        // Aside blocks from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
+        let expectedAsides: [RenderBlockContent.Aside] = [
+            .init(name: "Note",                 content: testContent("This is a note.")),
+            .init(name: "Tip",                  content: testContent("Here’s a tip.")),
+            .init(name: "Important",            content: testContent("Keep this in mind.")),
+            .init(name: "Experiment",           content: testContent("Try this out.")),
+            .init(name: "Warning",              content: testContent("Watch out for this.")),
+            .init(name: "Attention",            content: testContent("Head’s up!")),
+            .init(name: "Author",               content: testContent("I wrote this.")),
+            .init(name: "Authors",              content: testContent("We wrote this.")),
+            .init(name: "Bug",                  content: testContent("This is wrong.")),
+            .init(name: "Complexity",           content: testContent("This takes time.")),
+            .init(name: "Copyright",            content: testContent("2021 Apple Inc.")),
+            .init(name: "Date",                 content: testContent("1 January 1970")),
+            .init(name: "Invariant",            content: testContent("This shouldn’t change.")),
+            .init(name: "Mutating Variant",     content: testContent("This will change.")),
+            .init(name: "Non-Mutating Variant", content: testContent("This changes, but not in the data.")),
+            .init(name: "Postcondition",        content: testContent("After calling, this should be true.")),
+            .init(name: "Precondition",         content: testContent("Before calling, this should be true.")),
+            .init(name: "Remark",               content: testContent("Something you should know.")),
+            .init(name: "Requires",             content: testContent("This needs something.")),
+            .init(name: "Since",                content: testContent("The beginning of time.")),
+            .init(name: "To Do",                content: testContent("This needs work.")),
+            .init(name: "Version",              content: testContent("3.1.4")),
+            .init(name: "See Also",             content: testContent("This other thing.")),
+            .init(name: "See Also",             content: testContent("And this other thing.")),
+            .init(name: "Throws",               content: testContent("A serious error.")),
+        ]
+
         let quoteReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/quoteAsides()", sourceLanguage: .swift)
-        
-        try testReference(dashReference)
-        try testReference(quoteReference)
+        try testReference(myFuncReference: quoteReference, expectedAsides: expectedAsides)
+
+        let dashReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/dashAsides()", sourceLanguage: .swift)
+        try testReference(myFuncReference: dashReference, expectedAsides: expectedAsides)
     }
 
     /// Tests parsing origin data from symbol graph.
@@ -2700,12 +2730,12 @@ Document
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Verify that the inherited docs which should be ignored are not reference resolved.
-        // Verify inherited docs are reference resolved and their problems are recorded.
-        let missingResources = context.diagnosticEngine.problems.filter { p -> Bool in
-            return p.diagnostic.identifier == "org.swift.docc.unresolvedResource"
+        // Verify inherited docs are reference resolved and their diagnostics are recorded.
+        let missingResources = context.diagnosticEngine.diagnostics.filter { p -> Bool in
+            return p.identifier == "org.swift.docc.unresolvedResource"
         }
         XCTAssertFalse(missingResources.contains(where: { p -> Bool in
-            return p.diagnostic.summary == "Resource 'my-inherited-image.png' couldn't be found"
+            return p.summary == "Resource 'my-inherited-image.png' couldn't be found"
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
@@ -2908,8 +2938,8 @@ Document
         let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
 
         // Verify that we don't reference resolve inherited docs.
-        XCTAssertFalse(context.diagnosticEngine.problems.contains(where: { problem in
-            problem.diagnostic.summary.contains("my-inherited-image.png")
+        XCTAssertFalse(context.diagnosticEngine.diagnostics.contains(where: { problem in
+            problem.summary.contains("my-inherited-image.png")
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
@@ -2958,96 +2988,174 @@ Document
         XCTAssertNil(renderNode.abstract)
     }
 
-    func testAsidesDecoding() throws {
-        try assertRoundTripCoding(asidesStressTest)
+    // The 5 standard styles are encoded and decoded. The names are set to the capitalized style name.
+    func testEncodingAsidesStandardStyles() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let styles = [
+            "note",
+            "important",
+            "warning",
+            "experiment",
+            "tip",
+        ]
+        for style in styles {
+            let aside: RenderBlockContent = .aside(
+                .init(style: .init(rawValue: style), content: expectedContent)
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(style.capitalized)","style":"\(style)","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
 
-        try assertJSONRepresentation(
-            asidesStressTest,
-            """
-            [
-            {"type":"aside", "style":"note", "name":"Note",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This is a note."}]}]},
-            {"type":"aside", "style":"tip", "name":"Tip",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Here’s a tip."}]}]},
-            {"type":"aside", "style":"important", "name":"Important",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Keep this in mind."}]}]},
-            {"type":"aside", "style":"experiment","name":"Experiment",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Try this out."}]}]},
-            {"type":"aside", "style":"warning", "name":"Warning",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Watch out for this."}]}]},
-            {"type":"aside", "style":"note", "name":"Attention",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Head’s up!"}]}]},
-            {"type":"aside", "style":"note", "name":"Author",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"I wrote this."}]}]},
-            {"type":"aside", "style":"note", "name":"Authors",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"We wrote this."}]}]},
-            {"type":"aside", "style":"note", "name":"Bug",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This is wrong."}]}]},
-            {"type":"aside", "style":"note", "name":"Complexity",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This takes time."}]}]},
-            {"type":"aside", "style":"note", "name":"Copyright",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"2021 Apple Inc."}]}]},
-            {"type":"aside", "style":"note", "name":"Date",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"1 January 1970"}]}]},
-            {"type":"aside", "style":"note", "name":"Invariant",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This shouldn’t change."}]}]},
-            {"type":"aside", "style":"note", "name":"Mutating Variant",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This will change."}]}]},
-            {"type":"aside", "style":"note", "name":"Non-Mutating Variant",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This changes, but not in the data."}]}]},
-            {"type":"aside", "style":"note", "name":"Postcondition",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"After calling, this should be true."}]}]},
-            {"type":"aside", "style":"note", "name":"Precondition",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Before calling, this should be true."}]}]},
-            {"type":"aside", "style":"note", "name":"Remark",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Something you should know."}]}]},
-            {"type":"aside", "style":"note", "name":"Requires",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This needs something."}]}]},
-            {"type":"aside", "style":"note", "name":"Since",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"The beginning of time."}]}]},
-            {"type":"aside", "style":"note", "name":"To Do",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This needs work."}]}]},
-            {"type":"aside", "style":"note", "name":"Version",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"3.1.4"}]}]},
-            {"type":"aside", "style":"note", "name":"See Also",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This other thing."}]}]},
-            {"type":"aside", "style":"note", "name":"See Also",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"And this other thing."}]}]},
-            {"type":"aside", "style":"note", "name":"Throws",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]},
-            ]
-            """)
+    // The 5 standard styles can also be specified by name. The capitalization of the name is retained.
+    // The style is always lowercase.
+    func testEncodingAsidesStandardNames() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let names = [
+            "note",
+            "important",
+            "warning",
+            "experiment",
+            "tip",
+            "Note",
+            "Important",
+            "Warning",
+            "Experiment",
+            "Tip",
+        ]
+        for name in names {
+            let aside: RenderBlockContent = .aside(
+                .init(name: name, content: expectedContent)
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(name)","style":"\(name.lowercased())","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
 
-        // While decoding, overwrite the style with the name, if both are specified. We expect the style's raw value
-        // to be "Custom Title", not "important" in this example.
-        try assertJSONRepresentation(
-            RenderBlockContent.aside(
+    // Unknown, custom styles are ignored and coerced to style="note" and name="Note"
+    func testEncodingAsideCustomStyles() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let styles = [
+            "custom",
+            "other",
+            "something-else",
+        ]
+        for style in styles {
+
+            let aside: RenderBlockContent = .aside(
+                .init(style: .init(rawValue: style), content: expectedContent)
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"Note","style":"note","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Custom names are supported using style="note"
+    func testEncodingAsideCustomNames() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let names = [
+            "Custom",
+            "Other",
+            "Something Else",
+        ]
+        for name in names {
+            let aside: RenderBlockContent = .aside(
+                .init(name: name, content: expectedContent)
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(name)","style":"note","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Custom names are supported using style="tip", by specifying both the style and name
+    func testEncodingTipAsideCustomNames() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let names = [
+            "Custom",
+            "Other",
+            "Something Else",
+        ]
+        for name in names {
+            let aside: RenderBlockContent = .aside(
                 .init(
-                    style: .init(rawValue: "Custom Title"),
-                    content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))]
+                    style: .init(rawValue: "tip"),
+                    name: name,
+                    content: expectedContent
                 )
-            ),
-            """
-            {
-              "type": "aside",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "inlineContent": [
-                    {
-                      "type": "text",
-                      "text": "This is a custom title..."
-                    }
-                  ]
-                }
-              ],
-              "style": "important",
-              "name": "Custom Title"
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(name)","style":"tip","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Asides with a style matching a known kind of Swift Markdown aside are rendered using the display name of the
+    // Swift Markdown aside kind.
+    func testEncodingAsideKnownMarkdownKind() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        for kind in Aside.Kind.allCases {
+            let aside: RenderBlockContent = .aside(
+                .init(asideKind: kind, content: expectedContent)
+            )
+            // This will return one of the DocC Render supported styles, or rawValue="note"
+            let style = RenderBlockContent.AsideStyle(asideKind: kind)
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(kind.displayName)","style":"\(style.rawValue)","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Asides with a custom/unknown Swift Markdown aside kind
+    func testEncodingAsideUnknownMarkdownKind() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        for kind in [
+            "Something Special",
+            "No Idea What This Is",
+        ] {
+            guard let asideKind = Markdown.Aside.Kind.init(rawValue: kind) else {
+                XCTFail("Unexpected Markdown.Aside.Kind.rawValue: \(kind)")
+                return
             }
-            """)
-            
-        for style in Aside.Kind.allCases.map({ RenderBlockContent.AsideStyle(asideKind: $0) }) + [.init(displayName: "Custom Title")] {
-            try assertRoundTripCoding(RenderBlockContent.aside(.init(style: style, content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))])))
+            let aside: RenderBlockContent = .aside(
+                .init(asideKind: asideKind, content: expectedContent)
+            )
+            // This will return one of the DocC Render supported styles, or rawValue="note"
+            let style = RenderBlockContent.AsideStyle(asideKind: asideKind)
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(asideKind.displayName)","style":"\(style.rawValue)","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
         }
     }
 
@@ -3230,9 +3338,9 @@ Document
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
         }
-        var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: context.inputs, problems: &problems) else {
-            XCTFail("Couldn't create technology from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create technology from markup: \(diagnostics)")
             return
         }
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
@@ -3369,7 +3477,7 @@ Document
             """.write(to: url.appendingPathComponent("MyObjectiveCClassObjectiveCName.md"), atomically: true, encoding: .utf8)
         }
         
-        XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "\(context.diagnostics.map(\.summary))")
         
         let reference = try XCTUnwrap(context.knownIdentifiers.first { $0.path.hasSuffix("MixedFramework/MyObjectiveCClassSwiftName") })
         
@@ -3431,7 +3539,7 @@ Document
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "\(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let reference = moduleReference.appendingPath("SomeClass3")
@@ -3473,7 +3581,7 @@ Document
     }
     
     func testTopicSectionWithUnsupportedDirectives() async throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "root.md", utf8Content: """
                 # Main article
                 
@@ -3494,17 +3602,15 @@ Document
                 @SomeUnknownDirective()
                 
                 - <doc:article>
-                """),
+                """)
             
             TextFile(name: "article.md", utf8Content: """
                 # An article
-                """),
-        ])
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
-        
-        let (_, _, context) = try await loadBundle(from: bundleURL, diagnosticEngine: .init() /* no diagnostic consumers */)
-        
+                """)
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssertEqual(context.diagnostics.map(\.identifier), ["org.swift.docc.unknownDirective"], "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
+            
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         
         let documentationNode = try context.entity(with: reference)
@@ -3618,46 +3724,5 @@ Document
         ]
         
         XCTAssertEqual(expectedContent, renderContent)
-    }
-    
-    func testSymbolWithEmptyName() async throws {
-        // Symbols _should_ have names, but due to bugs there's cases when anonymous C structs don't.
-        let catalog = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                moduleName: "ModuleName",
-                symbols: [
-                    makeSymbol(id: "some-container",      language: .objectiveC, kind: .class,  pathComponents: ["SomeContainer"]),
-                    makeSymbol(id: "some-unnamed-struct", language: .objectiveC, kind: .struct, pathComponents: ["SomeContainer", ""]),
-                    makeSymbol(id: "some-inner-member",   language: .objectiveC, kind: .var,    pathComponents: ["SomeContainer", "", "someMember"]),
-                    
-                    makeSymbol(id: "some-named-struct",   language: .objectiveC, kind: .struct, pathComponents: ["SomeContainer", "NamedInnerContainer"]),
-                ],
-                relationships: [
-                    .init(source: "some-unnamed-struct", target: "some-container",      kind: .memberOf, targetFallback: nil),
-                    .init(source: "some-inner-member",   target: "some-unnamed-struct", kind: .memberOf, targetFallback: nil),
-                    
-                    .init(source: "some-named-struct",   target: "some-container",      kind: .memberOf, targetFallback: nil),
-                ]
-            ))
-        ])
-        
-        let (_, context) = try await loadBundle(catalog: catalog)
-        
-        XCTAssertEqual(context.knownPages.map(\.path).sorted(), [
-            "/documentation/ModuleName",
-            "/documentation/ModuleName/SomeContainer",
-            "/documentation/ModuleName/SomeContainer/NamedInnerContainer",
-            "/documentation/ModuleName/SomeContainer/struct_(unnamed)",
-            "/documentation/ModuleName/SomeContainer/struct_(unnamed)/someMember"
-        ], "The reference paths shouldn't have any empty components")
-        
-        let unnamedStructReference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SomeContainer/struct_(unnamed)")
-        let node = try context.entity(with: unnamedStructReference)
-        
-        let converter = DocumentationNodeConverter(context: context)
-        let renderNode = converter.convert(node)
-        
-        XCTAssertEqual(renderNode.metadata.title, "struct (unnamed)")
-        XCTAssertEqual(renderNode.metadata.navigatorTitle?.map(\.text).joined(), "struct (unnamed)")
     }
 }

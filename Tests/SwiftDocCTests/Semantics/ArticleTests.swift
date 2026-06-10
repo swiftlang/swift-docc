@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class ArticleTests: XCTestCase {
     func testValid() async throws {
@@ -22,11 +23,11 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+        XCTAssert(diagnostics.isEmpty, "Unexpectedly found diagnostics: \(diagnostics.map(\.summary))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertEqual(article?.abstract?.plainText, "This is an abstract.")
@@ -44,11 +45,11 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+        XCTAssert(diagnostics.isEmpty, "Unexpectedly found diagnostics: \(diagnostics.map(\.summary))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertEqual(article?.abstract?.plainText, "This is an abstract.")
@@ -73,11 +74,11 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+        XCTAssert(diagnostics.isEmpty, "Unexpectedly found diagnostics: \(diagnostics.map(\.summary))")
         
         XCTAssertEqual(article?.title?.detachedFromParent.format(), "# This is my article")
         XCTAssertEqual(article?.abstract?.detachedFromParent.format(), "This is an abstract.")
@@ -97,11 +98,11 @@ class ArticleTests: XCTestCase {
         # This is my article
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+        XCTAssert(diagnostics.isEmpty, "Unexpectedly found diagnostics: \(diagnostics.map(\.summary))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertNil(article?.abstract)
@@ -115,11 +116,11 @@ class ArticleTests: XCTestCase {
         - This is not an abstract.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+        XCTAssert(diagnostics.isEmpty, "Unexpectedly found diagnostics: \(diagnostics.map(\.summary))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertNil(article?.abstract)
@@ -133,16 +134,16 @@ class ArticleTests: XCTestCase {
          This is my article
          """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
 
         XCTAssertNil(article)
-        XCTAssertEqual(problems.count, 1)
-        let problem = try XCTUnwrap(problems.first)
-        XCTAssertEqual(problem.diagnostic.severity, .warning)
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
+        XCTAssertEqual(diagnostic.severity, .warning)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
         let replacement = try XCTUnwrap(solution.replacements.first)
         XCTAssertEqual(replacement.replacement, "# My article")
@@ -153,16 +154,16 @@ class ArticleTests: XCTestCase {
          
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
 
         XCTAssertNil(article)
-        XCTAssertEqual(problems.count, 1)
-        let problem = try XCTUnwrap(problems.first)
-        XCTAssertEqual(problem.diagnostic.severity, .warning)
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
+        XCTAssertEqual(diagnostic.severity, .warning)
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
         let replacement = try XCTUnwrap(solution.replacements.first)
         XCTAssertEqual(replacement.replacement, "# <#Title#>")
@@ -185,26 +186,17 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article)
-        XCTAssertEqual(
-            problems.map(\.diagnostic.identifier),
-            [
-                "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren",
-            ]
-        )
+        XCTAssertEqual(diagnostics.map(\.identifier), [
+            "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren",
+        ])
         
-        XCTAssertEqual(problems.count, 1)
-        XCTAssertEqual(
-            problems.first?.diagnostic.identifier,
-            "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren"
-        )
-        XCTAssertEqual(
-            problems.first?.diagnostic.range?.lowerBound.line,
-            9
-        )
+        XCTAssertEqual(diagnostics.count, 1)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren")
+        XCTAssertEqual(diagnostics.first?.range?.lowerBound.line, 9)
         
         XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoEnabled, false)
     }
@@ -222,11 +214,11 @@ class ArticleTests: XCTestCase {
         Adding @DisplayName to an article will result in a warning.
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         
-        XCTAssertEqual(problems.map(\.diagnostic.summary), [
+        XCTAssertEqual(diagnostics.map(\.summary), [
             "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading."
         ])
         
@@ -261,11 +253,11 @@ class ArticleTests: XCTestCase {
         }
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives])
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
 
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+        XCTAssert(diagnostics.isEmpty, "Unexpectedly found diagnostics: \(diagnostics.map(\.summary))")
 
         XCTAssertNotNil(article)
         XCTAssertNotNil(article?.metadata, "Article should have a metadata container since the markup has a @Metadata directive")

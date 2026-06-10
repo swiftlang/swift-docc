@@ -142,7 +142,6 @@ add_library(SwiftDocC
   "Infrastructure/Symbol Graph/ExtendedTypeFormatTransformation.swift"
   "Infrastructure/Symbol Graph/GeneratedDocumentationTopics.swift"
   "Infrastructure/Symbol Graph/ResolvedTopicReference+Symbol.swift"
-  "Infrastructure/Symbol Graph/SymbolGraphConcurrentDecoder.swift"
   "Infrastructure/Symbol Graph/SymbolGraphLoader.swift"
   "Infrastructure/Symbol Graph/SymbolGraphRelationshipsBuilder.swift"
   "Infrastructure/Symbol Graph/SymbolReference.swift"
@@ -161,6 +160,8 @@ add_library(SwiftDocC
   Model/DocumentationNode.swift
   Model/Identifier.swift
   Model/Kind.swift
+  Model/MarkdownOutput/Translation/MarkdownOutputSemanticVisitor.swift
+  Model/MarkdownOutput/Translation/MarkdownOutputMarkdownWalker.swift
   Model/Markup+parsing.swift
   Model/Name.swift
   Model/ParametersAndReturnValidator.swift
@@ -177,6 +178,7 @@ add_library(SwiftDocC
   Model/Rendering/DocumentationContentRenderer.swift
   Model/Rendering/HTML/HTMLContentConsumer.swift
   Model/Rendering/HTML/HTMLRenderer.swift
+  Model/Rendering/HTML/HTMLRenderer+FullPage.swift
   Model/Rendering/LinkTitleResolver.swift
   "Model/Rendering/Navigation Tree/RenderHierarchy.swift"
   "Model/Rendering/Navigation Tree/RenderHierarchyChapter.swift"
@@ -229,7 +231,6 @@ add_library(SwiftDocC
   Model/Rendering/SemanticVersion.swift
   Model/Rendering/Symbol/AttributesRenderSection.swift
   Model/Rendering/Symbol/AvailabilityRenderMetadataItem.swift
-  Model/Rendering/Symbol/AvailabilitySortOrder.swift
   Model/Rendering/Symbol/ConformanceSection.swift
   Model/Rendering/Symbol/ContentRenderSection.swift
   Model/Rendering/Symbol/DeclarationRenderSection+SymbolGraph.swift
@@ -400,6 +401,8 @@ add_library(SwiftDocC
   Servers/DocumentationSchemeHandler.swift
   Servers/FileServer.swift
   SourceRepository/SourceRepository.swift
+  SwiftDocCMarkdownOutput/MarkdownOutputManifest.swift
+  SwiftDocCMarkdownOutput/MarkdownOutputNode.swift
   Utility/Checksum.swift
   Utility/Collection+ConcurrentPerform.swift
   Utility/CollectionChanges.swift
@@ -454,6 +457,7 @@ add_library(SwiftDocC
   Utility/MarkupExtensions/AnyLink.swift
   Utility/MarkupExtensions/BlockDirectiveExtensions.swift
   Utility/MarkupExtensions/DocumentExtensions.swift
+  Utility/MarkupExtensions/Heading+StartsWithAnyLink.swift
   Utility/MarkupExtensions/ImageExtensions.swift
   Utility/MarkupExtensions/ListItemExtractor.swift
   Utility/MarkupExtensions/MarkupChildrenExtensions.swift
@@ -478,6 +482,9 @@ target_link_libraries(SwiftDocC PUBLIC
 target_link_libraries(SwiftDocC PUBLIC
   libcmark-gfm
   libcmark-gfm-extensions)
+
+set_target_properties(SwiftDocC PROPERTIES
+  Swift_LANGUAGE_VERSION 5)
 
 if(BUILD_SHARED_LIBS)
   install(TARGETS SwiftDocC

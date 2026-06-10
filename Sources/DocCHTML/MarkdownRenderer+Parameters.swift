@@ -78,9 +78,7 @@ package extension MarkdownRenderer {
         for parameter in parameterInfo {
             // name
             items.append(
-                .element(named: "dt", children: [
-                    .element(named: "code", children: [.text(parameter.name)])
-                ])
+                .element(named: "dt", children: [.text(parameter.name)])
             )
             // description
             items.append(
@@ -131,9 +129,7 @@ package extension MarkdownRenderer {
             let index = (offset + primaryOnlyIndices.count(where: { $0 < offset })) * 2
             items.insert(contentsOf: [
                 // Name
-                .element(named: "dt", children: [
-                    .element(named: "code", children: [.text(parameter.name)])
-                ], attributes: ["class": "\(secondary.language.id)-only"]),
+                .element(named: "dt", children: [.text(parameter.name)], attributes: ["class": "\(secondary.language.id)-only"]),
                 // Description
                 .element(named: "dd", children: parameter.content.map { visit($0) }, attributes: ["class": "\(secondary.language.id)-only"])
             ], at: index)

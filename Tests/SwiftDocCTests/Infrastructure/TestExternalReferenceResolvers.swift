@@ -12,6 +12,7 @@ import Foundation
 @_spi(ExternalLinks) @testable import SwiftDocC
 import SymbolKit
 import Markdown
+import DocCCommon
 
 // Most tests use a simpler test resolver that always returns the same value. For some of them there could be value in using this test resolver
 // instead to verify a mix of successes and failures in the same test.

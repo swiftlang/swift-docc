@@ -8,8 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 public import SymbolKit
+public import DocCCommon
 
 extension String {
     /// Returns a copy of the string with an appended hash of the given identifier.

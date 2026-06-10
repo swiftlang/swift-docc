@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 public import SymbolKit
 
 // Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).

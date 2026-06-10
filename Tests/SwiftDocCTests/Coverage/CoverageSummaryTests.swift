@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 // Creates a formatted string in the form of "X/Y% (X/Y)"
 func ratio(_ x: Int, _ y: Int, length: Int? = nil) -> String {

@@ -8,8 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import DocCCommon
+private import DocCCommon
 
 extension PathHierarchy.DisambiguationContainer {
     
@@ -271,11 +270,9 @@ extension PathHierarchy.DisambiguationContainer {
 /// A fixed-size grid of elements.
 private struct Table<Element>: ~Copyable {
     typealias Size = (width: Int, height: Int)
-    @usableFromInline
     let size: Size
     private let storage: ContiguousArray<Element>
 
-    @inlinable
     init(width: Int, height: Int, initializingWith initializer: (_ buffer: inout UnsafeMutableTableBufferPointer) throws -> Void) rethrows {
         size = (width, height)
         let capacity = width * height
@@ -295,7 +292,6 @@ private struct Table<Element>: ~Copyable {
             self.wrapping = wrapping
         }
 
-        @inlinable
         func initializeElementAt(row: Int, column: Int, to element: Element) {
             wrapping.initializeElement(at: index(row: row, column: column), to: element)
         }
@@ -306,7 +302,6 @@ private struct Table<Element>: ~Copyable {
         }
     }
 
-    @inlinable
     subscript(row: Int, column: Int) -> Element {
         _read { yield storage[index(row: row, column: column)] }
     }
@@ -319,12 +314,10 @@ private struct Table<Element>: ~Copyable {
         return row * size.width + column
     }
     
-    @inlinable
     var rowIndices: Range<Int> {
         0 ..< size.height
     }
     
-    @inlinable
     var columnIndices: Range<Int> {
         0 ..< size.width
     }

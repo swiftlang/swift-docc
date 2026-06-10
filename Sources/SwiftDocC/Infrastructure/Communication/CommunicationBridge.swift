@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A bridge that provides bi-directional communication with a documentation renderer.
 ///
 /// Use a communication bridge to send and receive messages between an IDE and an embedded documentation renderer.

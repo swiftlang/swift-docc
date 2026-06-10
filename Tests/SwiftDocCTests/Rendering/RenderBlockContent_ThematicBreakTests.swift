@@ -13,6 +13,7 @@ import Foundation
 @testable import SwiftDocC
 import Markdown
 import XCTest
+import DocCCommon
 
 class RenderBlockContent_ThematicBreakTests: XCTestCase {
     func testThematicBreakCodability() throws {

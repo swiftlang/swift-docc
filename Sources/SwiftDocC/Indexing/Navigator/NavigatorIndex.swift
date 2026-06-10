@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,8 @@
 */
 
 public import Foundation
-import Crypto
+private import Crypto
+import DocCCommon
 
 /**
  A `NavigatorIndex` contains all the necessary information to display the data inside a navigator.
@@ -54,6 +55,7 @@ public class NavigatorIndex {
         case missingBundleIdentifier
         
         /// A RenderNode has no title and won't be indexed.
+        @available(*, deprecated, message: "This error type is no longer used. This deprecated API will be removed after 6.5 is released.")
         case missingTitle(description: String)
         
         /// The navigator index has not been initialized.
@@ -249,6 +251,7 @@ public class NavigatorIndex {
         case overview = 5
         case resources = 6
         case symbol = 7 // This indicates a generic symbol
+        case collection = 8
         
         // Symbol specialization
         case framework = 10
@@ -295,10 +298,15 @@ public class NavigatorIndex {
         case languageGroup = 127
         case container = 254
         case groupMarker = 255 // UInt8.max
+
+        // This empty-marker case is here because non-frozen enums are only available when Library Evolution is enabled,
+        // which is not available to Swift Packages without unsafe flags (rdar://78773361).
+        // This can be removed once that is available and applied to Swift-DocC (rdar://89033233).
+        @available(*, deprecated, message: "this enum is non-frozen and may be expanded in the future; add a `default` case instead of matching this one")
+        case _nonFrozenEnum_useDefaultCase = 128
                 
-        /// Initialize a page type from a `role` and a `symbolKind` returning the Symbol type.
+        /// Initialize a page type from a `symbolKind` returning the symbol type.
         init(symbolKind: String) {
-            // Prioritize the SymbolKind first
             switch symbolKind.lowercased() {
             case "module": self = .framework
             case "cl", "class": self = .class
@@ -320,13 +328,13 @@ public class NavigatorIndex {
             case "enumdata", "structdata", "cldata", "clconst", "intfdata", "type.property", "typeConstant": self = .instanceVariable
             case "enumsub", "structsub", "instsub", "intfsub", "subscript": self = .subscript
             case "enumcm", "structcm", "clm", "intfcm", "type.method": self = .typeMethod
-            case "httpget", "httpput", "httppost", "httppatch", "httpdelete": self = .httpRequest
-            case "dict": self = .dictionarySymbol
+            case "httpget", "httpput", "httppost", "httppatch", "httpdelete", "httprequest": self = .httpRequest
+            case "dict", "dictionary": self = .dictionarySymbol
             case "namespace": self = .namespace
             default: self = .symbol
             }
         }
-        
+        /// Initialize a page type from a `role` returning the document type.
         init(role: String) {
             switch role.lowercased() {
             case "symbol", "containersymbol": self = .symbol
@@ -334,8 +342,10 @@ public class NavigatorIndex {
             case "dictionarysymbol": self = .dictionarySymbol
             case "pseudosymbol": self = .symbol
             case "pseudocollection": self = .framework
+            // This maps to the "module" render type
             case "collection": self = .framework
-            case "collectiongroup": self = .symbol
+            // This maps to the "collection" render type which represents API collections
+            case "collectiongroup": self = .collection
             case "article": self = .article
             case "samplecode": self = .sampleCode
             default: self = .article
@@ -345,8 +355,8 @@ public class NavigatorIndex {
         /// Whether this page kind references a symbol.
         var isSymbolKind: Bool {
             switch self {
-            case .root, .article, .tutorial, .section, .learn, .overview, .resources, .framework,
-                    .buildSetting, .sampleCode, .languageGroup, .container, .groupMarker:
+            case .root, .article, .tutorial, .section, .learn, .overview, .resources, .collection,
+                    .framework, .buildSetting, .sampleCode, .languageGroup, .container, .groupMarker:
                 return false
             case .symbol, .class, .structure, .protocol, .enumeration, .function, .extension,
                     .localVariable, .globalVariable, .typeAlias, .associatedType, .operator, .macro,
@@ -354,6 +364,8 @@ public class NavigatorIndex {
                     .instanceVariable, .subscript, .typeMethod, .typeProperty, .propertyListKey,
                     .httpRequest, .dictionarySymbol, .propertyListKeyReference, .namespace:
                 return true
+            case ._nonFrozenEnum_useDefaultCase:
+                fatalError("Never use '_nonFrozenEnum_useDefaultCase' as a real case.")
             }
         }
     }
@@ -495,8 +507,13 @@ extension NavigatorIndex {
         /// The navigator index.
         public private(set) var navigatorIndex: NavigatorIndex?
         
-        /// An array holding all problems encountered during the index build.
-        public private(set) var problems = [Problem]()
+        @available(*, deprecated, message: "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.")
+        public var problems: [Problem] {
+            diagnostics.map { Problem(diagnostic: $0) }
+        }
+        
+        /// An array holding all diagnostics encountered during the index build.
+        public private(set) var diagnostics = [Diagnostic]()
         
         /// The number of items processed during a build.
         public private(set) var counter = 0
@@ -593,9 +610,10 @@ extension NavigatorIndex {
                 
                 navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, bundleIdentifier: bundleIdentifier)
             } catch {
-                problems.append(error.problem(source: outputURL,
-                                              severity: .error,
-                                              summaryPrefix: "The folder couldn't be processed correctly."))
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .error,
+                                                        summaryPrefix: "The folder couldn't be processed correctly."))
             }
             
             // Setup the default known values for Platforms and Languages
@@ -712,8 +730,11 @@ extension NavigatorIndex {
                 return nil // skip as item exists already.
             }
             
-            guard let title = usePageTitle ? renderNode.metadata.title : renderNode.navigatorTitle() else {
-                throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
+            guard let title = usePageTitle ? renderNode.metadata.title : renderNode.navigatorTitle(), !title.isEmpty else {
+                // Nodes without a title are erroneous entries in the symbol graph.
+                // An index entry cannot be constructed without a title, so the node is skipped.
+                assertionFailure("\(renderNode.identifier.absoluteString.singleQuoted) has an empty title, and cannot have a usable index entry")
+                return nil
             }
             
             // Get the identifier path
@@ -783,7 +804,8 @@ extension NavigatorIndex {
                 availabilityID: UInt64(availabilityID),
                 icon: renderNode.icon,
                 isExternal: external,
-                isBeta: renderNode.metadata.isBeta
+                isBeta: renderNode.metadata.isBeta,
+                isDeprecated: renderNode.isDeprecated
             )
             navigationItem.path = identifierPath
             
@@ -797,8 +819,6 @@ extension NavigatorIndex {
             // Process the children
             var children = [Identifier]()
             for (index, child) in renderNode.navigatorChildren(for: traits).enumerated() {
-                let groupIdentifier: Identifier?
-                
                 if let title = child.name {
                     let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
                     
@@ -824,10 +844,6 @@ extension NavigatorIndex {
                     
                     identifierToNode[identifier] = navigatorGroup
                     children.append(identifier)
-                    
-                    groupIdentifier = identifier
-                } else {
-                    groupIdentifier = nil
                 }
                 
                 let identifiers = child.references.map { reference in
@@ -838,14 +854,8 @@ extension NavigatorIndex {
                     )
                 }
                 
-                var nestedChildren = [Identifier]()
                 for identifier in identifiers {
-                    if child.referencesAreNested {
-                        nestedChildren.append(identifier)
-                    } else {
-                        children.append(identifier)
-                    }
-                    
+                    children.append(identifier)
                     // If a topic has been already curated and has a valid node processed, flag it as multi-curated.
                     if curatedIdentifiers.contains(identifier) && pendingUncuratedReferences.contains(identifier) {
                         multiCurated[identifier] = identifierToNode[identifier]
@@ -854,10 +864,6 @@ extension NavigatorIndex {
                     } else { // Otherwise keep track for later.
                         curatedIdentifiers.insert(identifier)
                     }
-                }
-                
-                if let groupIdentifier, !nestedChildren.isEmpty {
-                    identifierToChildren[groupIdentifier] = nestedChildren
                 }
             }
             
@@ -1005,7 +1011,7 @@ extension NavigatorIndex {
             if sortRootChildrenByName {
                 root.children.sort(by: \.item.title)
                 if groupByLanguage {
-                    root.children.forEach { (languageGroup) in
+                    for languageGroup in root.children {
                         languageGroup.children.sort(by: \.item.title)
                     }
                 }
@@ -1023,9 +1029,11 @@ extension NavigatorIndex {
                                                                            path: ""),
                                                                            bundleIdentifier: bundleIdentifier)
                     languageMaskToNode[InterfaceLanguage.any.mask] = otherNode
-                    fallouts.forEach { (node) in
-                        root.children.removeAll(where: { $0 == node})
-                        node.children.forEach { otherNode.add(child: $0) }
+                    for node in fallouts {
+                        root.children.removeAll(where: { $0 == node })
+                        for child in node.children {
+                            otherNode.add(child: child)
+                        }
                     }
                     root.add(child: otherNode)
                 }
@@ -1045,11 +1053,9 @@ extension NavigatorIndex {
                     let renderIndexData = try jsonEncoder.encode(renderIndex)
                     try renderIndexData.write(to: jsonNavigatorIndexURL)
                 } catch {
-                    self.problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to write render index JSON to '\(jsonNavigatorIndexURL)': "
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to write render index JSON to '\(jsonNavigatorIndexURL)': "
                         )
                     )
                 }
@@ -1072,11 +1078,9 @@ extension NavigatorIndex {
                     )
                     navigatorIndex.environment = environment
                 } catch {
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to create navigator index LMDB environment: "
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to create navigator index LMDB environment: "
                         )
                     )
                     
@@ -1094,12 +1098,9 @@ extension NavigatorIndex {
                     database = try environment.openDatabase(named: "index", flags: [.create])
                     navigatorIndex.database = database
                 } catch {
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to create navigator index LMDB database: "
-                        )
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to create navigator index LMDB database: ")
                     )
                     
                     return
@@ -1114,12 +1115,9 @@ extension NavigatorIndex {
                     information = try environment.openDatabase(named: "information", flags: [.create])
                     navigatorIndex.information = information
                 } catch {
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to create navigator index LMDB information database: "
-                        )
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to create navigator index LMDB information database: ")
                     )
                     
                     return
@@ -1134,12 +1132,9 @@ extension NavigatorIndex {
                     availability = try environment.openDatabase(named: "availability", flags: [.create])
                     navigatorIndex.availability = availability
                 } catch {
-                    problems.append(
-                        error.problem(
-                            source: nil,
-                            severity: .error,
-                            summaryPrefix: "Failed to navigator index LMDB availability database: "
-                        )
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    diagnostics.append(
+                        error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to navigator index LMDB availability database: ")
                     )
                     
                     return
@@ -1151,12 +1146,9 @@ extension NavigatorIndex {
                     try availability.put(key: newID, value: entryIDs)
                 }
             } catch {
-                problems.append(
-                    error.problem(
-                        source: nil,
-                        severity: .error,
-                        summaryPrefix: "Failed to write navigator index availability information: "
-                    )
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                diagnostics.append(
+                    error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to write navigator index availability information: ")
                 )
             }
             
@@ -1197,20 +1189,23 @@ extension NavigatorIndex {
                 // `put(records:)` throws only `LMDB.Database.NodeError.errorForPath`
                 catch LMDB.Database.NodeError.errorForPath(let path, let error) {
                     if (error as? LMDB.Error) == LMDB.Error.keyExists {
-                        self.problems.append(error.problem(source: self.outputURL,
-                                                           severity: .information,
-                                                           summaryPrefix: "Duplicated path found for \(path)"))
+                        // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                        diagnostics.append(error.makeDiagnostic(source: self.outputURL,
+                                                                severity: .information,
+                                                                summaryPrefix: "Duplicated path found for \(path)"))
                     } else {
-                        self.problems.append(error.problem(source: self.outputURL,
-                                                           severity: .warning,
-                                                           summaryPrefix: "The navigator index failed to map the data: \(error.localizedDescription)"))
+                        // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                        diagnostics.append(error.makeDiagnostic(source: self.outputURL,
+                                                                severity: .warning,
+                                                                summaryPrefix: "The navigator index failed to map the data: \(error.localizedDescription)"))
                     }
                 }
 
             } catch {
-                problems.append(error.problem(source: outputURL,
-                                              severity: .warning,
-                                              summaryPrefix: "Couldn't write the navigator tree to the disk"))
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .warning,
+                                                        summaryPrefix: "Couldn't write the navigator tree to the disk"))
             }
             
             // Write the availability index to the disk
@@ -1219,9 +1214,10 @@ extension NavigatorIndex {
                 let encoded = try plistEncoder.encode(navigatorIndex.availabilityIndex)
                 try encoded.write(to: outputURL.appendingPathComponent("availability.index"))
             } catch {
-                problems.append(error.problem(source: outputURL,
-                                              severity: .warning,
-                                              summaryPrefix: "Couldn't write the availability index to the disk"))
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .warning,
+                                                        summaryPrefix: "Couldn't write the availability index to the disk"))
             }
             
             // Insert the data about bundle identifier and items processed.
@@ -1233,36 +1229,39 @@ extension NavigatorIndex {
                 try txn.put(key: NavigatorIndex.itemsIndexKey, value: counter, in: information)
                 try txn.commit()
             } catch {
-                problems.append(error.problem(source: outputURL,
-                                              severity: .error,
-                                              summaryPrefix: "LMDB failed to store the content"))
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                diagnostics.append(error.makeDiagnostic(source: outputURL,
+                                                        severity: .error,
+                                                        summaryPrefix: "LMDB failed to store the content"))
             }
                         
-            var diagnostic = Diagnostic(source: outputURL,
-                                             severity: .information,
-                                             range: nil,
-                                             identifier: "org.swift.docc.index",
-                                             summary: "Indexed \(counter) entities")
-            var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            problems.append(problem)
+            // FIXME: These aren't about issues with the developer's documentation. We should either remove these or find a different means to pass this information.
+            diagnostics.append(Diagnostic(
+                source: outputURL,
+                severity: .information,
+                range: nil,
+                identifier: "org.swift.docc.index",
+                summary: "Indexed \(counter) entities"
+            ))
             
             let availabilities = navigatorIndex.availabilityIndex.indexed
-            diagnostic = Diagnostic(source: outputURL,
-                                         severity: .information,
-                                         range: nil,
-                                         identifier: "org.swift.docc.index",
-                                         summary: "Created index with \(availabilities)")
-            problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            problems.append(problem)
+            diagnostics.append(Diagnostic(
+                source: outputURL,
+                severity: .information,
+                range: nil,
+                identifier: "org.swift.docc.index",
+                summary: "Created index with \(availabilities)"
+            ))
             
+            // FIXME: This could be somewhat slow to compute and won't be displayed with the default diagnostic level.
             let treeString = root.dumpTree()
-            diagnostic = Diagnostic(source: outputURL,
-                                         severity: .information,
-                                         range: nil,
-                                         identifier: "org.swift.docc.index",
-                                         summary: "Index tree:\n\(treeString)")
-            problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            problems.append(problem)
+            diagnostics.append(Diagnostic(
+                source: outputURL,
+                severity: .information,
+                range: nil,
+                identifier: "org.swift.docc.index",
+                summary: "Index tree:\n\(treeString)"
+            ))
         }
 
         /// Find an external node for the reference that is not of a symbol kind. The source language
@@ -1271,7 +1270,7 @@ extension NavigatorIndex {
         /// since non-symbol kinds (articles, tutorials, etc.) are not tied to a language.
         // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
         // FIXME: This should ideally be solved by making the article language-agnostic rather
-        // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+        // than accommodating the "Swift" language and special-casing for non-symbol nodes.
         func externalNonSymbolNode(for reference: NavigatorIndex.Identifier) -> NavigatorTree.Node? {
             identifierToNode
             .first { identifier, node in
@@ -1281,10 +1280,18 @@ extension NavigatorIndex {
             }?.value
         }
         
+        @available(*, deprecated, message: "Use 'build()' instead. This deprecated API will be removed after 6.5 is released.")
+        @_disfavoredOverload
+        public func build() -> [Problem] {
+            build().map { (diagnostic: Diagnostic) in
+                Problem(diagnostic: diagnostic)
+            }
+        }
+        
         /// Build the index using the render nodes files in the provided documentation archive.
         /// - Returns: A list containing all the errors encountered during indexing.
         /// - Precondition: ``archiveURL`` is set.
-        public func build() -> [Problem] {
+        public func build() -> [Diagnostic] {
             guard let archiveURL else {
                 fatalError("Calling `build()` requires that `archiveURL` is set.")
             }
@@ -1298,15 +1305,16 @@ extension NavigatorIndex {
                     let renderNode = try RenderNode.decode(fromJSON: data)
                     try index(renderNode: renderNode)
                 } catch {
-                    problems.append(error.problem(source: file,
-                                                  severity: .warning,
-                                                  summaryPrefix: "RenderNode indexing process failed"))
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                    diagnostics.append(error.makeDiagnostic(source: file,
+                                                            severity: .warning,
+                                                            summaryPrefix: "RenderNode indexing process failed"))
                 }
             }
             
             finalize()
             
-            return problems
+            return diagnostics
         }
         
         func availabilityEntryIDs(for availabilityID: UInt64) -> [Int]? {
@@ -1315,16 +1323,16 @@ extension NavigatorIndex {
     }
 }
 
-fileprivate extension Error {
-    
-    /// Returns a problem from an `Error`.
-    func problem(source: URL?, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Problem {
-        let diagnostic = Diagnostic(source: source,
-                                         severity: severity,
-                                         range: nil,
-                                         identifier: "org.swift.docc.index",
-                                         summary: "\(summaryPrefix) \(localizedDescription)")
-        return Problem(diagnostic: diagnostic, possibleSolutions: [])
+private extension Error {
+    // FIXME: This isn't used to create user-actionable diagnostics. We should throw a Swift.Error instead.
+    func makeDiagnostic(source: URL?, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Diagnostic {
+        Diagnostic(
+            source: source,
+            severity: severity,
+            range: nil,
+            identifier: "org.swift.docc.index",
+            summary: "\(summaryPrefix) \(localizedDescription)"
+        )
     }
 }
 
@@ -1346,7 +1354,7 @@ extension LMDB.Database {
     */
     func put(records: [NavigatorIndex.Builder.Record], flags: WriteFlags = []) throws {
         try LMDB.Transaction(environment: environment).run { database in
-            try records.forEach { record in
+            for record in records {
                 do {
                     try database.put(key: record.nodeMapping.0, value: record.nodeMapping.1, in: self, flags: flags)
                     try database.put(key: record.curationMapping.0, value: record.curationMapping.1, in: self, flags: flags)

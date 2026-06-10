@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -98,6 +98,19 @@ public struct PlatformName: Codable, Hashable, Equatable {
         return result
     }()
 
+    /// A static, lazily created index to lookup the priority of a platform name in the ordering heirarchy.
+    private static let platformOrderIndex: [String: Int] = {
+        var result = [String: Int]()
+        for (offset, name) in sortedPlatforms.enumerated() {
+            result[name.rawValue.lowercased()] = offset
+            result[name.displayName.lowercased()] = offset
+            for alias in name.aliases {
+                result[alias.lowercased()] = offset
+            }
+        }
+        return result
+    }()
+
     /// Creates a new platform name with the given OS name.
     /// - Parameter operatingSystemName: An OS name like 'linux'.
     init(operatingSystemName: String) {
@@ -120,6 +133,24 @@ public struct PlatformName: Codable, Hashable, Equatable {
         } else {
             let identifier = platform.rawValue.lowercased().replacingOccurrences(of: " ", with: "")
             self.init(rawValue: identifier, displayName: platform.rawValue)
+        }
+    }
+
+    /// Compares two platform name strings using the order defined in ``sortedPlatforms``.
+    /// Unknown platforms are lexicographically sorted after known platforms.
+    static func isInOrder(_ lhs: String, _ rhs: String) -> Bool {
+        let lhsIndex = platformOrderIndex[lhs.lowercased()] ?? Int.max
+        let rhsIndex = platformOrderIndex[rhs.lowercased()] ?? Int.max
+        if lhsIndex != rhsIndex { return lhsIndex < rhsIndex }
+        return lhs < rhs
+    }
+
+    /// An overload of ``isInOrder(_:_:)`` that accepts optional values. Nil values are sorted first.
+    static func isInOrder(_ lhs: String?, _ rhs: String?) -> Bool {
+        switch (lhs, rhs) {
+        case (_, nil): false
+        case (nil, _): true
+        case (let lhs?, let rhs?):  isInOrder(lhs, rhs)
         }
     }
 }

@@ -12,6 +12,7 @@ import Foundation
 import SymbolKit
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class AvailabilityRenderOrderTests: XCTestCase {
     let availabilitySGFURL = Bundle.module.url(

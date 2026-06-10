@@ -19,10 +19,11 @@ import Foundation
 import Testing
 import DocCHTML
 import Markdown
+import DocCCommon
 
 struct MarkdownRendererTests {
     @Test
-    func testRenderParagraphsWithFormattedText() {
+    func renderingParagraphsWithFormattedText() {
         assert(
             rendering: "This is a paragraph with _emphasized_ and **strong** text.",
             matches: "<p>This is a paragraph with <i>emphasized</i> and <b>strong</b> text.</p>"
@@ -40,7 +41,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRenderHeadings() {
+    func renderingHeadings() {
         assert(
             rendering: """
             # One
@@ -112,7 +113,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRenderTables() {
+    func renderingTables() {
         assert(
             rendering: """
             First   | Second  | 
@@ -218,7 +219,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRenderLists() {
+    func renderingLists() {
         assert(
             rendering: """
             - First
@@ -269,7 +270,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRenderAsides() async throws {
+    func renderingAsides() async throws {
         assert(
             rendering: """
             > Note: Something noteworthy
@@ -291,7 +292,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRenderCodeBlocks() async throws {
+    func renderingCodeBlocks() async throws {
         assert(
             rendering: """
             ~~~
@@ -337,7 +338,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRenderMiscellaneousElements() {
+    func renderingMiscellaneousElements() {
         assert(
             rendering: "First\nSecond", // new lines usually have no special meaning in markdown...
             matches: "<p>First Second</p>"
@@ -357,7 +358,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRelativeLinksToOtherPages() throws {
+    func renderingRelativeLinksToOtherPages() throws {
         // Link to article
         assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
@@ -467,7 +468,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testRelativeLinksToImages() throws {
+    func renderingRelativeLinksToImages() throws {
         // Only a single image representation
         assert(
             rendering: "![Some alt text](some-image.png)",
@@ -549,7 +550,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func testParsesAndPreservesHTMLExceptComments() {
+    func parsesAndPreservesHTMLExceptComments() {
         assert(
             rendering: "This is a <!-- inline comment --><strong>formatted</strong> paragraph.",
             matches: "<p>This is a <strong>formatted</strong> paragraph.</p>"

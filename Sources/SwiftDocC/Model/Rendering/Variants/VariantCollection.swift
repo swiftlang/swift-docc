@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A collection of variants for a render node value.
 ///
 /// Variant collections encapsulate different values for the same piece of content. Each variant collection has a default value and optionally, trait-specific

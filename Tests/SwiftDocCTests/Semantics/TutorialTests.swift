@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,8 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class TutorialTests: XCTestCase {
     func testEmpty() async throws {
@@ -20,22 +21,19 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(tutorial)
-            XCTAssertEqual(
-                [
-                    "org.swift.docc.HasExactlyOne<\(Tutorial.self), \(Intro.self)>.Missing",
-                    "org.swift.docc.HasAtLeastOne<\(Tutorial.self), \(TutorialSection.self)>",
-                ],
-                problems.map { $0.diagnostic.identifier }
-            )
+            XCTAssertEqual(diagnostics.map(\.identifier), [
+                "org.swift.docc.HasExactlyOne<\(Tutorial.self), \(Intro.self)>.Missing",
+                "org.swift.docc.HasAtLeastOne<\(Tutorial.self), \(TutorialSection.self)>",
+            ])
             
-            XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
+            XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
         }
     }
     
@@ -210,12 +208,12 @@ class TutorialTests: XCTestCase {
             DataFile(name: "test.mp4", data: Data()),
         ]))
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(tutorial)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             tutorial.map { tutorial in
                 let expectedDump = """
 Tutorial @1:1-150:2 projectFiles: nil
@@ -375,15 +373,15 @@ Tutorial @1:1-150:2 projectFiles: nil
             DataFile(name: "test.mp4", data: Data()),
         ]))
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(tutorial)
             XCTAssertEqual(1, tutorial?.sections.count)
-            XCTAssertEqual([
+            XCTAssertEqual(diagnostics.map(\.identifier), [
                 "org.swift.docc.\(Tutorial.self).DuplicateSectionTitle",
-            ], problems.map { $0.diagnostic.identifier })
+            ])
         }
     }
 
@@ -398,11 +396,11 @@ Tutorial @1:1-150:2 projectFiles: nil
         let engine = DiagnosticEngine()
         Tutorial.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorial"])
-        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-        let problem = try XCTUnwrap(engine.problems.first)
-        let source = try XCTUnwrap(problem.diagnostic.source)
+        XCTAssertEqual(engine.diagnostics.count, 1)
+        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorial"])
+        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+        let source = try XCTUnwrap(diagnostic.source)
         XCTAssertTrue(source.isFileURL)
     }
 
@@ -417,18 +415,18 @@ Tutorial @1:1-150:2 projectFiles: nil
         let engine = DiagnosticEngine()
         Tutorial.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorial"])
-        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-        let problem = try XCTUnwrap(engine.problems.first)
-        XCTAssertNil(problem.diagnostic.source)
+        XCTAssertEqual(engine.diagnostics.count, 1)
+        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorial"])
+        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+        XCTAssertNil(diagnostic.source)
     }
 
     func testAnalyzeFragmentNode() async throws {
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
-        let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
+        let range = SourceRange.makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
         let (_, context) = try await testBundleAndContext()
@@ -437,11 +435,11 @@ Tutorial @1:1-150:2 projectFiles: nil
         let engine = DiagnosticEngine()
         Tutorial.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorial"])
-        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-        let problem = try XCTUnwrap(engine.problems.first)
-        XCTAssertNil(problem.diagnostic.source)
+        XCTAssertEqual(engine.diagnostics.count, 1)
+        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorial"])
+        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+        XCTAssertNil(diagnostic.source)
     }
 
     /// Verify that a `Tutorial` only recognizes chapter, volume, or tutorial table-of-contents nodes as valid parents.
@@ -449,7 +447,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
             let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
-            let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
+            let range = SourceRange.makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: url)
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
@@ -466,7 +464,7 @@ Tutorial @1:1-150:2 projectFiles: nil
 
             let engine = DiagnosticEngine()
             Tutorial.analyze(tutorialNode, completedContext: context, engine: engine)
-            XCTAssertEqual(engine.problems.count, 0)
+            XCTAssertEqual(engine.diagnostics.count, 0)
 
             context.topicGraph.removeEdges(from: parentNode)
             context.topicGraph.nodes.removeValue(forKey: parentNode.reference)
@@ -479,10 +477,10 @@ Tutorial @1:1-150:2 projectFiles: nil
 
             let engine = DiagnosticEngine()
             Tutorial.analyze(tutorialNode, completedContext: context, engine: engine)
-            XCTAssertEqual(engine.problems.count, 1)
-            XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-            let problem = try XCTUnwrap(engine.problems.first)
-            XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.UnreferencedTutorial")
+            XCTAssertEqual(engine.diagnostics.count, 1)
+            XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+            let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+            XCTAssertEqual(diagnostic.identifier, "org.swift.docc.UnreferencedTutorial")
 
             context.topicGraph.removeEdges(from: parentNode)
             context.topicGraph.nodes.removeValue(forKey: parentNode.reference)

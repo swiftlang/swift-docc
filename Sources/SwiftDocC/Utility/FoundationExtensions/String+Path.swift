@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 extension StringProtocol {
     /// A copy of the string prefixed with a slash ("/") if the string doesn't already start with a leading slash.

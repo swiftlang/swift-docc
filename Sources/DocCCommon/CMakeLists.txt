@@ -9,5 +9,12 @@ See https://swift.org/LICENSE.txt for license information
 
 add_library(DocCCommon STATIC
   FixedSizeBitSet.swift
+  JSONDecoding/FastSymbolGraphJSONDecoder.swift
+  JSONDecoding/SymbolGraph+FastJSONDecodable.swift
+  JSONDecoding/UnsafeRawPointer+HasASCIIPrefix.swift
   Mutex.swift
   SourceLanguage.swift)
+target_link_libraries(DocCCommon PRIVATE
+  DocC::SymbolKit)
+set_target_properties(DocCCommon PROPERTIES
+  Swift_LANGUAGE_VERSION 6)

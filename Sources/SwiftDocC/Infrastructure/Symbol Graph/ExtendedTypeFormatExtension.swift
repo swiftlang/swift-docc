@@ -88,17 +88,13 @@ extension SymbolGraph.Symbol.Kind {
     static let unknownExtendedType = Self(parsedIdentifier: .unknownExtendedType, displayName: "Extended Type")
 }
 
-
 // MARK: Swift AccessControl Levels
 
 extension SymbolGraph.Symbol.AccessControl {
-    static let `private` = Self(rawValue: "private")
-    
+    static let `private`   = Self(rawValue: "private")
     static let filePrivate = Self(rawValue: "fileprivate")
-    
-    static let `internal` = Self(rawValue: "internal")
-    
-    static let `public` = Self(rawValue: "public")
-    
-    static let open = Self(rawValue: "open")
+    static let `internal`  = Self(rawValue: "internal")
+    static let `package`   = Self(rawValue: "package")
+    static let `public`    = Self(rawValue: "public")
+    static let open        = Self(rawValue: "open")
 }

@@ -269,7 +269,7 @@ The following example shows a topic group with disambiguated symbol links to the
 
 - ``forecast(for:at:)-(DateInterval,_)``
 - ``forecast(for:at:)->MinuteByMinuteForecast``
-- ``forecast(for:at:)->(Date,_)->HourByHourForecast``
+- ``forecast(for:at:)-(Date,_)->HourByHourForecast``
 ```
 
 > Earlier Versions:

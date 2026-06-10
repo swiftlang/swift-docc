@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /**
  The `AvailabilityIndex` class stores the information about availability for SDKs of symbols.
  The information if a symbol is available for a given platform and version is stored inside this index.

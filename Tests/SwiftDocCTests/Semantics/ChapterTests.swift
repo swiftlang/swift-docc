@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,16 +19,17 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let chapter = Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(chapter)
-        XCTAssertEqual(3, problems.count)
-        XCTAssertEqual("org.swift.docc.HasArgument.name", problems[0].diagnostic.identifier)
-        XCTAssertTrue(problems.map(\.diagnostic.identifier).contains("org.swift.docc.HasAtLeastOne<\(Chapter.self), \(TutorialReference.self)>"))
-        XCTAssertTrue(problems.map(\.diagnostic.identifier).contains("org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.Missing"))
-        
-        XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
+        XCTAssertEqual(3, diagnostics.count)
+        XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
+            "org.swift.docc.HasArgument.name",
+            "org.swift.docc.HasAtLeastOne<\(Chapter.self), \(TutorialReference.self)>",
+            "org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.Missing",
+        ])
+        XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
     }
     
     func testMultipleMedia() async throws {
@@ -42,16 +43,14 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
-        XCTAssertEqual(1, problems.count)
-        problems.first.map { problem in
-            XCTAssertEqual("org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.DuplicateChildren", problem.diagnostic.identifier)
-        }
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let chapter = Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.DuplicateChildren")
         
         XCTAssertNotNil(chapter)
-        chapter.map { chapter in
+        if let chapter {
             XCTAssertEqual(chapterName, chapter.name)
             XCTAssertEqual(1, chapter.topicReferences.count)
             XCTAssertNotNil(chapter.image)
@@ -71,12 +70,12 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
-        XCTAssertTrue(problems.isEmpty)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let chapter = Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
+        XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertNotNil(chapter)
-        chapter.map { chapter in
+        if let chapter {
             XCTAssertEqual(chapterName, chapter.name)
             XCTAssertEqual(1, chapter.topicReferences.count)
         }
@@ -92,9 +91,7 @@ class ChapterTests: XCTestCase {
          
          Although these are spelled differently, they resolve to the same tutorial, so they are treated as duplicates.
          */
-        let duplicateProblems = context.problems.filter {
-            $0.diagnostic.identifier == "org.swift.docc.Chapter.Duplicate\(TutorialReference.self)"
-        }
-        XCTAssertEqual(1, duplicateProblems.count)
+        let duplicateDiagnostic = context.diagnostics.filter { $0.identifier == "org.swift.docc.Chapter.Duplicate\(TutorialReference.self)" }
+        XCTAssertEqual(1, duplicateDiagnostic.count)
     }
 }

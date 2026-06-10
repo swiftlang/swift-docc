@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,8 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class VideoMediaTests: XCTestCase {
     func testEmpty() async throws {
@@ -20,15 +21,13 @@ class VideoMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(video)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertFalse(problems.containsErrors)
-        problems.first.map { problem in
-            XCTAssertEqual("org.swift.docc.HasArgument.source", problem.diagnostic.identifier)
-        }
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.source")
     }
     
     func testValid() async throws {
@@ -39,11 +38,11 @@ class VideoMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(video)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         video.map { video in
             XCTAssertEqual(video.source.path, videoSource)
             XCTAssertEqual(video.poster?.path, poster)
@@ -58,11 +57,11 @@ class VideoMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try await testBundleAndContext()
-            var problems = [Problem]()
-            let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+            let context = try await makeEmptyContext()
+            var diagnostics = [Diagnostic]()
+            let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(video)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             video.map { video in
                 XCTAssertEqual(videoSource.removingPercentEncoding!, video.source.path)
                 XCTAssertEqual(poster.removingPercentEncoding!, video.poster?.path)
@@ -77,21 +76,18 @@ class VideoMediaTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(video)
-        XCTAssertEqual(3, problems.count)
-        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(3, diagnostics.count)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
-        XCTAssertEqual(
-            problems.map(\.diagnostic.identifier),
-            [
-                "org.swift.docc.UnknownArgument",
-                "org.swift.docc.UnknownArgument",
-                "org.swift.docc.HasArgument.source",
-            ]
-        )
+        XCTAssertEqual(diagnostics.map(\.identifier), [
+            "org.swift.docc.UnknownArgument",
+            "org.swift.docc.UnknownArgument",
+            "org.swift.docc.HasArgument.source",
+        ])
     }
     
     private let catalog = Folder(name: "unit-test.docc", content: [
@@ -103,7 +99,7 @@ class VideoMediaTests: XCTestCase {
     func testRenderVideoDirectiveInReferenceMarkup() async throws {
         
         do {
-            let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+            let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "introvideo")
                 """
@@ -111,7 +107,7 @@ class VideoMediaTests: XCTestCase {
             
             XCTAssertNotNil(video)
             
-            XCTAssertEqual(problems, [])
+            XCTAssertEqual(diagnostics, [])
             
             XCTAssertEqual(
                 renderedContent,
@@ -125,7 +121,7 @@ class VideoMediaTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+            let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "unknown-video")
                 """
@@ -133,13 +129,13 @@ class VideoMediaTests: XCTestCase {
             
             XCTAssertNotNil(video)
             
-            XCTAssertEqual(problems, ["1: warning – org.swift.docc.unresolvedResource.Video"])
+            XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.unresolvedResource.Video"])
             
             XCTAssertEqual(renderedContent, [])
         }
         
         do {
-            let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+            let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "introvideo", poster: "unknown-poster")
                 """
@@ -147,7 +143,7 @@ class VideoMediaTests: XCTestCase {
             
             XCTAssertNotNil(video)
             
-            XCTAssertEqual(problems, ["1: warning – org.swift.docc.unresolvedResource.Image"])
+            XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.unresolvedResource.Image"])
             
             XCTAssertEqual(
                 renderedContent,
@@ -162,7 +158,7 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testRenderVideoDirectiveWithCaption() async throws {
-        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo") {
                 This is my caption.
@@ -172,7 +168,7 @@ class VideoMediaTests: XCTestCase {
         
         XCTAssertNotNil(video)
         
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(diagnostics, [])
         
         XCTAssertEqual(
             renderedContent,
@@ -186,7 +182,7 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testRenderVideoDirectiveWithCaptionAndPosterImage() async throws {
-        let (renderedContent, problems, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, diagnostics, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo", alt: "An introductory video", poster: "introposter") {
                 This is my caption.
@@ -196,7 +192,7 @@ class VideoMediaTests: XCTestCase {
         
         XCTAssertNotNil(video)
         
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(diagnostics, [])
         
         XCTAssertEqual(
             renderedContent,
@@ -218,7 +214,7 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testVideoMediaDiagnosesDeviceFrameByDefault() async throws {
-        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo", deviceFrame: watch)
             """
@@ -226,7 +222,7 @@ class VideoMediaTests: XCTestCase {
         
         XCTAssertNotNil(video)
         
-        XCTAssertEqual(problems, ["1: warning – org.swift.docc.UnknownArgument"])
+        XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.UnknownArgument"])
         
         XCTAssertEqual(
             renderedContent,
@@ -240,9 +236,10 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testRenderVideoDirectiveWithDeviceFrame() async throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
-        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog, configuration: configuration) {
             """
             @Video(source: "introvideo", deviceFrame: watch)
             """
@@ -250,7 +247,7 @@ class VideoMediaTests: XCTestCase {
         
         XCTAssertNotNil(video)
         
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(diagnostics, [])
         
         XCTAssertEqual(
             renderedContent,
@@ -264,9 +261,10 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testRenderVideoDirectiveWithCaptionAndDeviceFrame() async throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
-        let (renderedContent, problems, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, diagnostics, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog, configuration: configuration) {
             """
             @Video(source: "introvideo", alt: "An introductory video", poster: "introposter", deviceFrame: laptop) {
                 This is my caption.
@@ -276,7 +274,7 @@ class VideoMediaTests: XCTestCase {
         
         XCTAssertNotNil(video)
         
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(diagnostics, [])
         
         XCTAssertEqual(
             renderedContent,
@@ -301,7 +299,7 @@ class VideoMediaTests: XCTestCase {
         // The rest of the test in this file will fail if 'introposter' and 'introvideo'
         // do not exist. We just reverse them here to make sure the reference resolving is
         // media-type specific.
-        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introposter", poster: "introvideo")
             """
@@ -310,7 +308,7 @@ class VideoMediaTests: XCTestCase {
         XCTAssertNotNil(video)
         
         XCTAssertEqual(
-            problems,
+            diagnostics,
             [
                 "1: warning – org.swift.docc.unresolvedResource.Image",
                 "1: warning – org.swift.docc.unresolvedResource.Video"
@@ -331,8 +329,8 @@ class VideoMediaTests: XCTestCase {
                 DataFile(name: "introvideo.mov", data: Data())
             ])
         )
-        var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: context.inputs, problems: &problems)
+        var diagnostics = [Diagnostic]()
+        let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         let reference = ResolvedTopicReference(
             bundleID: context.inputs.id,
             path: "",

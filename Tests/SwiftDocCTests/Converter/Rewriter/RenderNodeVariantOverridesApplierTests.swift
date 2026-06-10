@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class RenderNodeVariantOverridesApplierTests: XCTestCase {
     

@@ -12,6 +12,7 @@ import XCTest
 import SymbolKit
 import Markdown
 @testable import SwiftDocC
+import DocCCommon
 
 class DocumentationContentRendererTests: XCTestCase {
     func testReplacesTypeIdentifierSubHeadingFragmentWithIdentifierForSwift() async throws {

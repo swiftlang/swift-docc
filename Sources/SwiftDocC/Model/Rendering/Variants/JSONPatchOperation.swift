@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A patch to update a JSON value.
 public typealias JSONPatch = [JSONPatchOperation]
 
