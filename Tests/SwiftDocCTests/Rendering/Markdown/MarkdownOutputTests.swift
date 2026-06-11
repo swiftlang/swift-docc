@@ -739,36 +739,6 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(markdown.contains("Text in a code block HTML"))
         XCTAssert(markdown.contains("Inline HTML is EMPHASISED stripped of tags"))
     }
-
-    func testTermList() async throws {
-        let content = """
-        # Term Lists
-        
-        Shows how term lists are represented in markdown output
-        
-        ## Overview
-        
-        Here is some content
-        
-        - term Spring: The first season of the year 
-        - term Summer: The second season of the year
-        - term `Code`: A code voice item used as a term
-        
-        Here is some post-list content
-        """
-        let catalog = catalog(files: [
-            TextFile(name: "TermList.md", utf8Content: content)
-        ])
-
-        let (node, _) = try await markdownOutput(catalog: catalog, path: "TermList")
-        let expectedList = """
-        Spring: The first season of the year
-        Summer: The second season of the year
-        `Code`: A code voice item used as a term
-        """
-        XCTAssert(node.markdown.contains(expectedList))
-    }
-
     
     // MARK: - Metadata
     

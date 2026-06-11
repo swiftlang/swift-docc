@@ -98,16 +98,6 @@ extension MarkdownOutputMarkupWalker {
         if let indentationToRemove, output.hasPrefix(indentationToRemove) {
             output.removeFirst(indentationToRemove.count)
         }
-        
-        // Format term lists after processing other elements
-        if markup is UnorderedList {
-            // Start of line, list, term, actual term, colon
-            let termPattern = #/^\s*- term (.+:)/#.anchorsMatchLineEndings(true)
-            for match in output.matches(of: termPattern).reversed() {
-                let term = match.output.1
-                output.replaceSubrange(match.range, with: term)
-            }
-        }
         markdown.append(output)
     }
     
