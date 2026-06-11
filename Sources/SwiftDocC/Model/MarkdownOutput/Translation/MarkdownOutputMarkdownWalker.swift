@@ -17,6 +17,7 @@ import Foundation
 internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     let context: DocumentationContext
     let identifier: ResolvedTopicReference
+    let formatOptions = MarkupFormatter.Options(unorderedListMarker: .dash, orderedListNumerals: .incrementing(start: 1))
     
     init(context: DocumentationContext, identifier: ResolvedTopicReference) {
         self.context = context
@@ -43,7 +44,7 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout Self) -> Void) {
         indentationToRemove = nil
         if let toRemove = base?
-            .format()
+            .format(options: formatOptions)
             .splitByNewlines
             .first(where: { $0.isEmpty == false })?
             .prefix(while: { $0.isWhitespace && !$0.isNewline })
@@ -93,34 +94,87 @@ extension MarkdownOutputMarkupWalker {
 extension MarkdownOutputMarkupWalker {
     
     mutating func defaultVisit(_ markup: any Markup) {
-        var output = markup.format()
+        var output = markup.format(options: formatOptions)
         if let indentationToRemove, output.hasPrefix(indentationToRemove) {
             output.removeFirst(indentationToRemove.count)
         }
+        
+        // Format term lists after processing other elements
+        if markup is UnorderedList {
+            // Start of line, list, term, actual term, colon
+            let termPattern = #/^\s*- term (.+:)/#.anchorsMatchLineEndings(true)
+            for match in output.matches(of: termPattern).reversed() {
+                let term = match.output.1
+                output.replaceSubrange(match.range, with: term)
+            }
+        }
         markdown.append(output)
     }
-        
+    
     mutating func visitHeading(_ heading: Heading) {
         startNewParagraphIfRequired()
-        markdown.append(heading.detachedFromParent.format())
+        markdown.append(heading.detachedFromParent.format(options: formatOptions))
         if heading.level > 1 {
             lastHeading = heading.plainText
         }
     }
     
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) {
-        //TODO: support formatting of term lists rdar://166128254
-        guard isRenderingLinkList else {
-            return defaultVisit(unorderedList)
-        }
-        
+    mutating func visitOrderedList(_ orderedList: OrderedList) {
+        let converted = convertList(orderedList)
         startNewParagraphIfRequired()
-        for item in unorderedList.listItems {
-            for child in item.children {
-                visit(child)
-            }
+        defaultVisit(converted)
+    }
+    
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) {
+        if isRenderingLinkList {
             startNewParagraphIfRequired()
+            for item in unorderedList.listItems {
+                for child in item.children {
+                    visit(child)
+                }
+                startNewParagraphIfRequired()
+            }
+        } else {
+            let converted = convertList(unorderedList)
+            startNewParagraphIfRequired()
+            defaultVisit(converted)
         }
+    }
+    
+    mutating func convertList<List: ListItemContainer>(_ list: List) -> List {
+        var newItems: [ListItem] = []
+        for item in list.listItems {
+            newItems.append(convertListItem(item))
+        }
+        return List(newItems)
+    }
+    
+    mutating func convertListItem(_ item: ListItem) -> ListItem {
+        var newChildren: [any BlockMarkup] = []
+        for child in item.blockChildren {
+            if let nestedList = child as? any ListItemContainer {
+                let converted = convertList(nestedList)
+                newChildren.append(converted)
+            } else if let paragraph = child as? Paragraph {
+                var newComponents: [any InlineMarkup] = []
+                for inlineChild in paragraph.inlineChildren {
+                    if let link = inlineChild as? Link {
+                        let (converted, _) = convertLink(link)
+                        newComponents.append(converted)
+                    } else if let symbolLink = inlineChild as? SymbolLink {
+                        if let (converted, _) = convertSymbolLink(symbolLink) {
+                            newComponents.append(converted)
+                        }
+                    } else {
+                        newComponents.append(inlineChild)
+                    }
+                }
+                newChildren.append(Paragraph(newComponents))
+            } else {
+                newChildren.append(child)
+            }
+        }
+        return ListItem(newChildren)
     }
     
     mutating func visitImage(_ image: Image) {
@@ -135,19 +189,19 @@ extension MarkdownOutputMarkupWalker {
             let filename = first.lastPathComponent
             markdown.append("![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
         } else {
-            markdown.append(image.format())
+            markdown.append(image.format(options: formatOptions))
         }
-                    
+    
     }
        
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
         startNewParagraphIfRequired()
-        markdown.append(codeBlock.detachedFromParent.format())
+        markdown.append(codeBlock.detachedFromParent.format(options: formatOptions))
     }
     
-    mutating func visitSymbolLink(_ symbolLink: SymbolLink) {
+    mutating func convertSymbolLink(_ symbolLink: SymbolLink) -> (link: any InlineMarkup, abstract: (any Markup)?)? {
         guard let destination = symbolLink.destination else {
-            return
+            return nil
         }
         
         guard
@@ -156,10 +210,10 @@ extension MarkdownOutputMarkupWalker {
         else {
             // Unresolved symbol - use code voice, unless we're in a list, in which case, ignore it
             if isRenderingLinkList {
-                return
+                return nil
             }
             let code = InlineCode(destination)
-            return visit(code)
+            return (code, nil)
         }
         
         let linkTitle: String
@@ -180,21 +234,28 @@ extension MarkdownOutputMarkupWalker {
         } else {
             linkTitle = node.title
         }
-        let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
+        let (link, _) = convertLink(Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)]))
+        return (link, linkListAbstract)
+    }
+
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) {
+        guard let (link, abstract) = convertSymbolLink(symbolLink) else {
+            return
+        }
+        
         // Only perform the linked list rendering for the first thing you find
         withRenderingLinkList(value: false) {
             $0.visit(link)
-            $0.visit(linkListAbstract)
+            $0.visit(abstract)
         }
     }
     
-    mutating func visitLink(_ link: Link) {
-                
+    mutating func convertLink(_ link: Link) -> (link: Link, abstract: (any Markup)?) {
         guard
             let destination = link.destination,
             let resolved = context.referenceIndex[destination]
         else {
-            return defaultVisit(link)
+            return (link, nil)
         }
         
         let doc: DocumentationNode
@@ -204,7 +265,7 @@ extension MarkdownOutputMarkupWalker {
         if let fragment = resolved.fragment {
             let noFragment = resolved.withFragment(nil)
             guard let parent = try? context.entity(with: noFragment) else {
-                return defaultVisit(link)
+                return (link, nil)
             }
             doc = parent
             anchorSection = doc.anchorSections.first(where: { $0.reference == resolved })
@@ -214,7 +275,7 @@ extension MarkdownOutputMarkupWalker {
             if let found = try? context.entity(with: resolved) {
                 doc = found
             } else {
-                return defaultVisit(link)
+                return (link, nil)
             }
         }
         
@@ -245,10 +306,17 @@ extension MarkdownOutputMarkupWalker {
         }
         
         let link = Link(destination: outputDestination, title: linkTitle, [linkMarkup])
+        return (link, linkListAbstract)
+    }
+    
+    mutating func visitLink(_ link: Link) {
+                
+        let (converted, abstract) = convertLink(link)
+        
         // Only perform the linked list rendering for the first thing you find
         withRenderingLinkList(value: false) {
-            $0.defaultVisit(link)
-            $0.visit(linkListAbstract)
+            $0.defaultVisit(converted)
+            $0.visit(abstract)
         }
     }
     

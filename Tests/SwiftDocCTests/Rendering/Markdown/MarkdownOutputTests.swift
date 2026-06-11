@@ -133,7 +133,101 @@ final class MarkdownOutputTests: XCTestCase {
         let expectedLinkListAnchor = "[Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
         XCTAssert(node.markdown.contains(expectedLinkListAnchor))
     }
-       
+    
+    func testLinkArticleInListItem() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "RowsAndColumns.md", utf8Content: """
+                # Rows and Columns
+                
+                Just here for the links
+                
+                ## Overview
+                
+                I am the overview
+                
+                ## Multi-word heading
+                
+                I am here to test the url readable fragment stuff
+                """),
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                Tests the appearance of inline and linked lists
+
+                ## Overview
+
+                These are some interesting links that are in list items: 
+                
+                - This is an inline link: <doc:RowsAndColumns>
+                  - This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                - This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+
+                These are some interesting links that are in ordered list items: 
+                
+                1. This is an inline link: <doc:RowsAndColumns>
+                    1. This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                    2. Here is it again <doc:RowsAndColumns#Overview>
+                2. This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+                ## Topics
+
+                ### No more links
+                
+                Empty section
+                """)
+            ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
+        let expectedInline = "- This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
+        XCTAssert(node.markdown.contains(expectedInline))
+
+        let expectedInlineAnchor = "  - This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)"
+        XCTAssert(node.markdown.contains(expectedInlineAnchor))
+        let expectedInlineAnchorMultiWord = "- This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
+        XCTAssert(node.markdown.contains(expectedInlineAnchorMultiWord))
+
+        let expectedOrdered = """
+        1. This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)
+           1. This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+           2. Here is it again [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+        2. This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)
+        """
+        XCTAssert(node.markdown.contains(expectedOrdered))
+    }
+
+    func testNestedLists() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "NestedLists.md", utf8Content: """
+                # Nested Lists
+
+                Tests the appearance of nested lists
+
+                ## Overview
+
+                This is a list: 
+                
+                - This is a top-level list item
+                  - This is a nested list item
+                  - This is another nested list item
+                - This is back to the top-level
+                
+                ## Topics
+
+                ### No more links
+                
+                Empty section
+                """)
+            ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "NestedLists")
+        let expectedOutput = """
+        - This is a top-level list item
+          - This is a nested list item
+          - This is another nested list item
+        - This is back to the top-level
+        """
+        XCTAssert(node.markdown.contains(expectedOutput))
+    }
+    
     func testLinkSymbolFormatting() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Links.md", utf8Content: """
@@ -146,6 +240,11 @@ final class MarkdownOutputTests: XCTestCase {
                 This is an inline link: ``MarkdownSymbol``
                 
                 This is an unresolvable link: ``Unresolvable``
+                
+                This is a list of things that have links:
+                
+                - You can use ``MarkdownSymbol`` to do interesting things
+                - You can't use other things
 
                 ## Topics
 
@@ -172,7 +271,9 @@ final class MarkdownOutputTests: XCTestCase {
         let unresolvableAsCodeVoice = "unresolvable link: `Unresolvable`"
         XCTAssert(node.markdown.contains(unresolvableAsCodeVoice))
         XCTAssertFalse(node.markdown.contains("UnresolvableInList"))
-                    
+        
+        let expectedUnorderedListContent = "- You can use [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol) to do interesting things"
+        XCTAssert(node.markdown.contains(expectedUnorderedListContent))
     }
     
     func testLinkSymbolWithLinkInAbstractDoesntRecurse() async throws {
@@ -638,8 +739,36 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(markdown.contains("Text in a code block HTML"))
         XCTAssert(markdown.contains("Inline HTML is EMPHASISED stripped of tags"))
     }
-    
-    
+
+    func testTermList() async throws {
+        let content = """
+        # Term Lists
+        
+        Shows how term lists are represented in markdown output
+        
+        ## Overview
+        
+        Here is some content
+        
+        - term Spring: The first season of the year 
+        - term Summer: The second season of the year
+        - term `Code`: A code voice item used as a term
+        
+        Here is some post-list content
+        """
+        let catalog = catalog(files: [
+            TextFile(name: "TermList.md", utf8Content: content)
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "TermList")
+        let expectedList = """
+        Spring: The first season of the year
+        Summer: The second season of the year
+        `Code`: A code voice item used as a term
+        """
+        XCTAssert(node.markdown.contains(expectedList))
+    }
+
     
     // MARK: - Metadata
     
