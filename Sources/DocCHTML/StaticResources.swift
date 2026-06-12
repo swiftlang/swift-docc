@@ -689,7 +689,7 @@ table {
 
 /* Asides */
 
-blockquote {
+aside {
   background-color: rgb(245, 245, 245);
   border: 0px solid rgb(102, 102, 102);
   border-inline-start-width: 6px;
