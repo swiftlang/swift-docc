@@ -149,7 +149,7 @@ class AutomaticCurationTests: XCTestCase {
             return section.identifiers.contains("doc://org.swift.docc.example/documentation/SideKit/SideClass/Element")
         }).isEmpty)
 
-        // Verify that element `SideKit/SideClass/path` curated in sidecar under `SideKit`
+        // Verify that element `SideKit/SideClass/path` curated in a documentation extension under `SideKit`
         // is NOT automatically curated in `SideClass`'s "Topics"
         XCTAssertTrue(renderNode.topicSections.filter({ section -> Bool in
             return section.identifiers.contains("doc://org.swift.docc.example/documentation/SideKit/SideClass/path")
@@ -285,7 +285,7 @@ class AutomaticCurationTests: XCTestCase {
                     graph.relationships.append(newRelationship)
                 }
                 
-                // Add a sidecar file for this symbol
+                // Add a documentation extension file for this symbol
                 try """
                 # ``SideKit/SideClass\(suffix)``
                 
