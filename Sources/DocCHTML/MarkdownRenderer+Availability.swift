@@ -54,7 +54,6 @@ package extension MarkdownRenderer {
             }
             
             var attributes = [
-                "role": "text",
                 "aria-label": "\(text), \(description)",
                 "title": description
             ]

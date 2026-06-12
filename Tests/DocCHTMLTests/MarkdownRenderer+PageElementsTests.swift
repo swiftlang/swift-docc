@@ -96,9 +96,9 @@ struct MarkdownRenderer_PageElementsTests {
         case .richness:
             availability.assertMatches(prettyFormatted: true, expectedXMLString: """
             <ul id="availability">
-              <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" role="text" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
-              <li aria-label="Second 1.2.3+, Available on 1.2.3 and later" role="text" title="Available on 1.2.3 and later">Second 1.2.3+</li>
-              <li aria-label="Third 4.5+, Available on 4.5 and later" class="beta" role="text" title="Available on 4.5 and later">Third 4.5+</li>
+              <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
+              <li aria-label="Second 1.2.3+, Available on 1.2.3 and later" title="Available on 1.2.3 and later">Second 1.2.3+</li>
+              <li aria-label="Third 4.5+, Available on 4.5 and later" class="beta" title="Available on 4.5 and later">Third 4.5+</li>
             </ul>
             """)
         case .conciseness:
