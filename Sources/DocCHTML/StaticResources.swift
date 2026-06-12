@@ -280,7 +280,8 @@ a {
   color: var(--color-figure-blue);
 }
 
-#eyebrow {
+/* The "eyebrow" subheading */
+section:first-of-type > hgroup > p {
   font-size: 21px;
   line-height: 25px;
   margin: 0;
@@ -290,6 +291,11 @@ a {
   @media only screen and (max-width: 1250px) {
     font-size: 19px;
     line-height: 23px;
+  }
+
+  /* Workaround some margin issues with H1 elements in the authored content. */
+  &+ h1 {
+    margin-top: 0;
   }
 }
 
@@ -409,11 +415,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 section :first-child {
-  margin-top: 0;
-}
-
-/* Workaround some margin issues with H1 elements in the authored content. */
-#eyebrow + h1 {
   margin-top: 0;
 }
 
