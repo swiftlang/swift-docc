@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,48 +9,32 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 @testable import SwiftDocC
 
-class VariantPatchOperationTests: XCTestCase {
-    func testApplyingPatch() {
-        let original = [1, 2, 3]
-        let addVariant = makeVariantCollection(original, patch: [
-            .add(value: [4, 5, 6])
-        ])
-        XCTAssertEqual(addVariant.value(for: testTraits), [1, 2, 3, 4, 5, 6])
-        
-        let removeVariant = makeVariantCollection(original, patch: [
-            .remove
-        ])
-        XCTAssertEqual(removeVariant.value(for: testTraits), [])
-        
-        let replaceVariant = makeVariantCollection(original, patch: [
-            .replace(value: [4, 5, 6])
-        ])
-        XCTAssertEqual(replaceVariant.value(for: testTraits), [4, 5, 6])
-        
-        let mixVariant = makeVariantCollection(original, patch: [
-            .replace(value: [4, 5, 6]),
-            .remove,
-            .add(value: [6, 7]),
-            .add(value: [8, 9]),
-        ])
-        XCTAssertEqual(mixVariant.value(for: testTraits), [6, 7, 8, 9])
+struct VariantPatchOperationTests {
+    @Test(arguments: [
+        (patch: [VariantPatchOperation<[Int]>.add(value: [4, 5, 6])], expected: [1, 2, 3, 4, 5, 6]),
+        (patch: [.remove], expected: []),
+        (patch: [.replace(value: [4, 5, 6])], expected: [4, 5, 6]),
+        (
+            patch: [
+                .replace(value: [4, 5, 6]),
+                .remove,
+                .add(value: [6, 7]),
+                .add(value: [8, 9]),
+            ],
+            expected: [6, 7, 8, 9]
+        ),
+    ])
+    func appliesPatchOperations(patch: [VariantPatchOperation<[Int]>], expected: [Int]) {
+        let variant = makeVariantCollection([1, 2, 3], patch: patch)
+        #expect(variant.value(for: testTraits) == expected)
     }
     
-    func testApplyingSeriesOfPatchOperations() {
-        let stringPatches: [VariantPatchOperation<String>] = [
-            .replace(value: "ABC"),
-            .remove,
-            .replace(value: "DEF"),
-            .add(value: "GHI"),
-            .replace(value: "JKL"),
-            .remove,
-            .add(value: "MNO"),
-            .add(value: "PQR"),
-        ]
-        let expectedValues = [
+    @Test(arguments: zip(
+        0...8,
+        [
             "A",
             "ABC",
             "",
@@ -61,33 +45,43 @@ class VariantPatchOperationTests: XCTestCase {
             "MNO",
             "MNOPQR",
         ]
-        for (index, expectedValue) in expectedValues.enumerated() {
-            let stringVariant = makeVariantCollection("A", patch: Array(stringPatches.prefix(index)))
-            XCTAssertEqual(stringVariant.value(for: testTraits), expectedValue)
-        }
+    ))
+    func appliesPrefixOfPatchOperationsCumulatively(prefixLength: Int, expected: String) {
+        let stringPatches: [VariantPatchOperation<String>] = [
+            .replace(value: "ABC"),
+            .remove,
+            .replace(value: "DEF"),
+            .add(value: "GHI"),
+            .replace(value: "JKL"),
+            .remove,
+            .add(value: "MNO"),
+            .add(value: "PQR"),
+        ]
+        let variant = makeVariantCollection("A", patch: Array(stringPatches.prefix(prefixLength)))
+        #expect(variant.value(for: testTraits) == expected)
     }
     
-    func testMap() throws {
+    @Test
+    func mapsValueOfReplaceAndAddOperationsAndPreservesRemove() {
         let transform: (String) -> String = { "\($0) transformed" }
+        
         let replace = VariantPatchOperation<String>.replace(value: "replace")
         guard case .replace(let value) = replace.map(transform) else {
-            XCTFail("Expected replace operation")
+            Issue.record("Expected replace operation")
             return
         }
-        
-        XCTAssertEqual(value, "replace transformed")
+        #expect(value == "replace transformed")
         
         let add = VariantPatchOperation<String>.add(value: "add")
         guard case .add(let value) = add.map(transform) else {
-            XCTFail("Expected add operation")
+            Issue.record("Expected add operation")
             return
         }
-        
-        XCTAssertEqual(value, "add transformed")
+        #expect(value == "add transformed")
         
         let remove = VariantPatchOperation<String>.remove.map(transform)
         guard case .remove = remove else {
-            XCTFail("Expected remove operation")
+            Issue.record("Expected remove operation")
             return
         }
     }
