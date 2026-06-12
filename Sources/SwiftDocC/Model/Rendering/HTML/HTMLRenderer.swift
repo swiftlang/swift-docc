@@ -186,7 +186,7 @@ package struct HTMLRenderer {
         
         // Abstract
         if let abstract = article.abstract {
-            addAbstract(abstract, to: hero)
+            hero.addChild(renderer.visit(abstract))
         }
         
         // Deprecation message
@@ -279,7 +279,7 @@ package struct HTMLRenderer {
         
         // Abstract
         if let abstract = symbol.abstract {
-            addAbstract(abstract, to: hero)
+            hero.addChild(renderer.visit(abstract))
         }
         
         // Availability
@@ -423,14 +423,6 @@ package struct HTMLRenderer {
                 plainDescription: symbol.abstract?.plainText
             )
         )
-    }
-    
-    private func addAbstract(_ abstract: Paragraph, to element: XMLElement) {
-        let paragraph = renderer.visit(abstract) as! XMLElement
-        if goal == .richness {
-            paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
-        }
-        element.addChild(paragraph)
     }
     
     private func addDeprecationSummary(markup: [any Markup], to element: XMLElement) {

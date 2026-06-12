@@ -418,7 +418,8 @@ section :first-child {
   margin-top: 0;
 }
 
-#abstract {
+/* Abstract */
+section:first-of-type > p {
   font-size: 21px;
   line-height: 29px;
   
