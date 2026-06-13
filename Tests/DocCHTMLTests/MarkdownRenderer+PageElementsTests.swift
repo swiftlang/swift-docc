@@ -348,7 +348,7 @@ struct MarkdownRenderer_PageElementsTests {
                 and second: SecondParameterValue
             ) throws -> ReturnValue
             """)
-            
+            // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code>
@@ -445,7 +445,7 @@ struct MarkdownRenderer_PageElementsTests {
             _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> R
         ) throws(E) -> R where E : Error, T : ~Copyable, R : ~Copyable
         """)
-        
+        // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
         functionDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
         <pre id="declaration">
         <code>
@@ -493,7 +493,7 @@ struct MarkdownRenderer_PageElementsTests {
         @attached(accessor) @attached(peer, names: prefixed(`$`))
         macro TaskLocal()
         """)
-        
+        // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
         macroDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
         <pre id="declaration">
         <code>
@@ -527,7 +527,7 @@ struct MarkdownRenderer_PageElementsTests {
         @freestanding(declaration)
         macro warning(_ message: String)
         """)
-        
+        // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
         macroDeclaration2.assertMatches(prettyFormatted: true, expectedXMLString: """
         <pre id="declaration">
         <code>
@@ -611,7 +611,7 @@ struct MarkdownRenderer_PageElementsTests {
                                        andSecond: (SecondParameterValue) second
                                            error: (NSError **) error;
             """)
-            
+            // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
             declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code class="swift-only">
