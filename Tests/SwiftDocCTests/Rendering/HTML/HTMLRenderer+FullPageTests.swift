@@ -52,9 +52,11 @@ struct HTMLRenderFullPageTests {
               <h2>Documentation</h2>
               <span>Language: Swift</span>
             </header>
-            <article>
-              <p>Some documentation</p>
-            </article>
+            <main>
+              <article>
+                <p>Some documentation</p>
+              </article>
+            </main>
             <footer>
               <fieldset role="radiogroup">
                 <legend>Select a color scheme preference</legend>
@@ -114,9 +116,11 @@ struct HTMLRenderFullPageTests {
                   <h2>Documentation</h2>
                   <span>Language: Swift</span>
                 </header>
-                <article>
-                  <p>Some documentation</p>
-                </article>
+                <main>
+                  <article>
+                    <p>Some documentation</p>
+                  </article>
+                </main>
                 <footer>
                   <fieldset role="radiogroup">
                     <legend>Select a color scheme preference</legend>
