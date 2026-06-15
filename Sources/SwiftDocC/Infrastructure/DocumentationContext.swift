@@ -2430,9 +2430,6 @@ public class DocumentationContext {
             }
         }
     }
-    /// A closure type getting the information about a reference in a context and returns any possible problems with it.
-    @available(*, deprecated, message: "This alias is unused. This deprecated API will be removed after 6.4 is released.")
-    public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
     
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
     /// - Parameters:

@@ -114,32 +114,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
     //  Adding new required properties is considered breaking change since existing external documentation sources
     //  wouldn't necessarily meet these new requirements.
     //  Make sure to update the encoding, decoding and Equatable implementations when adding new properties.
-
-    /// A collection of identifiers that all relate to some common task, as described by the title.
-    @available(*, deprecated, message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
-    public struct TaskGroup: Codable, Equatable {
-        /// The title of this task group
-        public let title: String?
-        /// The identifiers of all the elements that are part of this task group.
-        public let identifiers: [String]
-        
-        /// Creates a new task group that lists a number of elements that relate to a common task.
-        ///
-        /// - Parameters:
-        ///   - title: The optional title for this task group.
-        ///   - identifiers: The identifiers of all the elements that are part of this task group.
-        public init(title: String?, identifiers: [String]) {
-            self.title = title
-            self.identifiers = identifiers
-        }
-    }
-    
-    /// The reference URLs of the summarized element's children, grouped by their task groups.
-    ///
-    /// - Note: It's possible for more than one task group to have the same title.
-    /// - Note: This property represents conceptual children. Since See Also sections conceptually represent siblings they should not be included.
-    @available(*, deprecated, message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
-    public let taskGroups: [TaskGroup]? = nil
     
     /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     public let usr: String?
@@ -208,12 +182,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// If the summarized element has an abstract but the variant doesn't, this property will be `Optional.some(nil)`.
         public let abstract: VariantValue<Abstract?>
         
-        /// The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
-        ///
-        /// If the summarized element has task groups but the variant doesn't, this property will be `Optional.some(nil)`.
-        @available(*, deprecated, message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
-        public let taskGroups: VariantValue<[TaskGroup]?> = nil
-        
         /// The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
         /// If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)`.
@@ -230,11 +198,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///
         /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let subheadingDeclarationFragments: VariantValue<DeclarationFragments?>
-        
-        @available(*, deprecated, renamed: "subheadingDeclarationFragments", message: "Use 'subheadingDeclarationFragments' instead. This deprecated API will be removed after 6.4 is released.")
-        public var declarationFragments: VariantValue<DeclarationFragments?> {
-            subheadingDeclarationFragments
-        }
 
         /// The simplified "navigator" declaration fragments for this symbol,  or `nil` if the navigator title is the same as the summarized element.
         ///
@@ -242,12 +205,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///
         /// If the summarized element has a navigator title but the variant doesn't, this property will be `Optional.some(nil)`.
         public let navigatorDeclarationFragments: VariantValue<DeclarationFragments?>
-
-        /// Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
-        ///
-        /// If the summarized element has an image but the variant doesn't, this property will be `Optional.some(nil)`.
-        @available(*, deprecated, message: "`TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.4 is released")
-        public let topicImages: VariantValue<[TopicImage]?> = nil
         
         /// Creates a new summary variant with the values that are different from the main summarized values.
         /// 
@@ -284,64 +241,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
             self.plainTextDeclaration = plainTextDeclaration
             self.subheadingDeclarationFragments = subheadingDeclarationFragments
             self.navigatorDeclarationFragments = navigatorDeclarationFragments
-        }
-        
-        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
-        public init(
-            traits: [RenderNode.Variant.Trait],
-            kind: VariantValue<DocumentationNode.Kind> = nil,
-            language: VariantValue<SourceLanguage> = nil,
-            relativePresentationURL: VariantValue<URL> = nil,
-            title: VariantValue<String> = nil,
-            abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
-            taskGroups _: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
-            usr: VariantValue<String?> = nil,
-            plainTextDeclaration: VariantValue<String?> = nil,
-            subheadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
-            navigatorDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil
-        ) {
-            self.init(
-                traits: traits,
-                kind: kind,
-                language: language,
-                relativePresentationURL: relativePresentationURL,
-                title: title,
-                abstract: abstract,
-                usr: usr,
-                plainTextDeclaration: plainTextDeclaration,
-                subheadingDeclarationFragments: subheadingDeclarationFragments,
-                navigatorDeclarationFragments: navigatorDeclarationFragments
-            )
-        }
-        
-        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)", message: "Use `init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)` instead. `TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.4 is released")
-        public init(
-            traits: [RenderNode.Variant.Trait],
-            kind: VariantValue<DocumentationNode.Kind> = nil,
-            language: VariantValue<SourceLanguage> = nil,
-            relativePresentationURL: VariantValue<URL> = nil,
-            title: VariantValue<String> = nil,
-            abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
-            taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
-            usr: VariantValue<String?> = nil,
-            plainTextDeclaration: VariantValue<String?> = nil,
-            declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
-            navigatorDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
-            topicImages: VariantValue<[TopicImage]?> = nil
-        ) {
-            self.init(
-                traits: traits,
-                kind: kind,
-                language: language,
-                relativePresentationURL: relativePresentationURL,
-                title: title,
-                abstract: abstract,
-                taskGroups: taskGroups,
-                usr: usr,
-                plainTextDeclaration: plainTextDeclaration,
-                subheadingDeclarationFragments: declarationFragments,
-                navigatorDeclarationFragments: navigatorDeclarationFragments
-            )
         }
     }
     
@@ -401,85 +300,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.topicImages = topicImages
         self.references = references
         self.variants = variants
-    }
-    
-    @available(*, deprecated, renamed: "iinit(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
-    public init(
-        kind: DocumentationNode.Kind,
-        language: SourceLanguage,
-        relativePresentationURL: URL,
-        referenceURL: URL, title: String,
-        abstract: LinkDestinationSummary.Abstract? = nil,
-        availableLanguages: Set<SourceLanguage>,
-        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
-        taskGroups _: [LinkDestinationSummary.TaskGroup]? = nil,
-        usr: String? = nil,
-        plainTextDeclaration: String? = nil,
-        subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
-        navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
-        redirects: [URL]? = nil,
-        topicImages: [TopicImage]? = nil,
-        references: [any RenderReference]? = nil,
-        variants: [LinkDestinationSummary.Variant]
-    ) {
-        self.init(
-            kind: kind,
-            language: language,
-            relativePresentationURL: relativePresentationURL,
-            referenceURL: referenceURL,
-            title: title,
-            abstract: abstract,
-            availableLanguages: availableLanguages,
-            platforms: platforms,
-            usr: usr,
-            plainTextDeclaration: plainTextDeclaration,
-            subheadingDeclarationFragments: subheadingDeclarationFragments,
-            navigatorDeclarationFragments: navigatorDeclarationFragments,
-            redirects: redirects,
-            topicImages: topicImages,
-            references: references,
-            variants: variants
-        )
-    }
-    
-    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use `init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)` instead. This property will be removed after 6.4 is released")
-    public init(
-        kind: DocumentationNode.Kind,
-        language: SourceLanguage,
-        relativePresentationURL: URL,
-        referenceURL: URL, title: String,
-        abstract: LinkDestinationSummary.Abstract? = nil,
-        availableLanguages: Set<SourceLanguage>,
-        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
-        taskGroups: [LinkDestinationSummary.TaskGroup]? = nil,
-        usr: String? = nil,
-        plainTextDeclaration: String? = nil,
-        declarationFragments: LinkDestinationSummary.DeclarationFragments?,
-        navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
-        redirects: [URL]? = nil,
-        topicImages: [TopicImage]? = nil,
-        references: [any RenderReference]? = nil,
-        variants: [LinkDestinationSummary.Variant]
-    ) {
-        self.init(
-            kind: kind,
-            language: language,
-            relativePresentationURL: relativePresentationURL,
-            referenceURL: referenceURL,
-            title: title,
-            abstract: abstract,
-            availableLanguages: availableLanguages,
-            platforms: platforms,
-            taskGroups: taskGroups,
-            usr: usr,
-            plainTextDeclaration: plainTextDeclaration,
-            subheadingDeclarationFragments: declarationFragments,
-            navigatorDeclarationFragments: navigatorDeclarationFragments,
-            redirects: redirects,
-            topicImages: topicImages,
-            references: references,
-            variants: variants
-        )
     }
 }
 
