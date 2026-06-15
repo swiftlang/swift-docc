@@ -83,6 +83,45 @@ struct AvailabilityTests {
     }
     
     @Test
+    func defaultAvailabilityDoesNotPropagateToVisionOS() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
+                makeSymbol( id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "iOS", introduced: nil, deprecated: .init(major: 1, minor: 2, patch: 3)),
+                    .init(domainName: "visionOS", introduced: nil, deprecated: .init(major: 1, minor: 0, patch: 0)),
+                ])
+            ]))
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .iOS, platformVersion: "1.2.3")
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        
+        // The iOS default availability fills in the iPadOS and Mac Catalyst fallback platforms,
+        // but it should not propagate to visionOS because visionOS is a distinct OS rather than an iOS variant.
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "visionOS"])
+        
+        #expect(renderPlatforms.first(where: {$0.name == "iOS"          })?.introduced == "1.2.3")
+        #expect(renderPlatforms.first(where: {$0.name == "iOS"          })?.deprecated == "1.2.3")
+        
+        #expect(renderPlatforms.first(where: {$0.name == "iPadOS"       })?.introduced == "1.2.3")
+        withKnownIssue("iPadOS availability should follow iOS availability (rdar://173704351)") {
+            #expect(renderPlatforms.first(where: {$0.name == "iPadOS"   })?.deprecated == "1.2.3")
+        }
+        
+        #expect(renderPlatforms.first(where: {$0.name == "Mac Catalyst" })?.introduced == "1.2.3")
+        #expect(renderPlatforms.first(where: {$0.name == "Mac Catalyst" })?.deprecated == "1.2.3")
+        
+        #expect(renderPlatforms.first(where: {$0.name == "visionOS"     })?.introduced == nil)
+        #expect(renderPlatforms.first(where: {$0.name == "visionOS"     })?.deprecated == "1.0")
+    }
+    
+    @Test
     func fillsInFallbackAvailabilityFromInSourceAnnotations() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
@@ -1009,6 +1048,30 @@ struct AvailabilityTests {
         case let other:
             Issue.record("Unexpected platform name \(other)")
         }
+    }
+    
+    @Test
+    func doesNotRenderObsoleteAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(
+                moduleName: "ModuleName",
+                platform: .init(operatingSystem: .init (name:"ios")), symbols: [
+                    makeSymbol( id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                            makeAvailabilityItem(
+                                domainName: "iOS",
+                                obsoleted: .init(major: 1, minor: 2, patch: 3))
+                        ])
+                ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpeceted problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        // Availability items that are obsolete are not rendered in the final documentation.
+        // So the symbol has no platforms to display at all.
+        #expect(renderNode.metadata.platforms == nil)
     }
     
     @Test(arguments: Self.allMainPlatforms)

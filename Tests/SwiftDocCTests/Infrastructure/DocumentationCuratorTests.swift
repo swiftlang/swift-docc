@@ -425,7 +425,7 @@ class DocumentationCuratorTests: XCTestCase {
     
     func testGroupLinkValidation() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
-            // Create a sidecar with invalid group links
+            // Create a documentation extension with invalid group links
             try! """
             # ``SideKit``
             ## Topics
@@ -470,7 +470,7 @@ class DocumentationCuratorTests: XCTestCase {
         try crawler.crawlChildren(of: reference, prepareForCuration: {_ in }) { (_, _) in }
 
         // Verify the crawler emitted warnings for the 3 invalid links in the sidekit Topics/See Alsos groups
-        // in both the sidecar and the api collection article
+        // in both the documentation extension and the api collection article
         XCTAssertEqual(crawler.diagnostics.filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" }).count, 6)
         XCTAssertTrue(crawler.diagnostics
             .filter({ $0.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })

@@ -147,12 +147,12 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     func testAutomaticOverviewAndDiscussionHeadings() async throws {
         guard let myFunctionDiscussion = try await findDiscussion(forSymbolPath: "/documentation/MyKit/MyClass/myFunction()", configureBundle: { url in
-            let sidecarURL = url.appendingPathComponent("/documentation/myFunction.md")
+            let documentationExtensionURL = url.appendingPathComponent("/documentation/myFunction.md")
             try """
             # ``MyKit/MyClass/myFunction()``
             
             This is the overview for myFunction.
-            """.write(to: sidecarURL, atomically: true, encoding: .utf8)
+            """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
         }) else {
             return
         }
@@ -166,15 +166,15 @@ class RenderNodeTranslatorTests: XCTestCase {
         )
         
         guard let myClassDiscussion = try await findDiscussion(forSymbolPath: "/documentation/MyKit/MyClass", configureBundle: { url in
-            let sidecarURL = url.appendingPathComponent("/documentation/myclass.md")
-            XCTAssert(FileManager.default.fileExists(atPath: sidecarURL.path), "Make sure that this overrides the existing file.")
+            let documentationExtensionURL = url.appendingPathComponent("/documentation/myclass.md")
+            XCTAssert(FileManager.default.fileExists(atPath: documentationExtensionURL.path), "Make sure that this overrides the existing file.")
             try """
             # ``MyKit/MyClass``
 
             This is the abstract (because MyClass doesn't have an in-source abstract).
 
             This is the overview for MyClass.
-            """.write(to: sidecarURL, atomically: true, encoding: .utf8)
+            """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
         }) else {
             return
         }
