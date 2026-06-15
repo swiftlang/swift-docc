@@ -141,13 +141,7 @@ public struct DocumentationDataVariantsTrait: Hashable {
     
     /// The language in which the documentation node is relevant.
     public var interfaceLanguage: String? {
-        get {
-            sourceLanguage?.id
-        }
-        @available(*, deprecated, message: "Create a new DocumentationDataVariantsTrait instead. This deprecated API will be removed after 6.4 is released.")
-        set {
-            sourceLanguage = newValue.map { SourceLanguage(id: $0) }
-        }
+        sourceLanguage?.id
     }
     
     private(set) var sourceLanguage: SourceLanguage?

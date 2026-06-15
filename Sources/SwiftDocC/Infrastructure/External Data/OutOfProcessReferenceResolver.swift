@@ -360,9 +360,8 @@ extension OutOfProcessReferenceResolver {
                 abstract: [.text(resolvedInformation.abstract)],
                 availableLanguages: resolvedInformation.availableLanguages,
                 platforms: resolvedInformation.platforms,
-                taskGroups: nil,
                 usr: nil,
-                declarationFragments: resolvedInformation.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+                subheadingDeclarationFragments: resolvedInformation.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
                 redirects: nil,
                 topicImages: resolvedInformation.topicImages,
                 references: resolvedInformation.references,
@@ -374,9 +373,8 @@ extension OutOfProcessReferenceResolver {
                         relativePresentationURL: variant.url?.withoutHostAndPortAndScheme(),
                         title: variant.title,
                         abstract: variant.abstract.map { [.text($0)] },
-                        taskGroups: nil,
                         usr: nil,
-                        declarationFragments: variant.declarationFragments.map { fragments in
+                        subheadingDeclarationFragments: variant.declarationFragments.map { fragments in
                             fragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) }
                         }
                     )

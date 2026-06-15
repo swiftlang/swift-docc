@@ -29,11 +29,6 @@ public struct RenderContext {
         createRenderedContent()
     }
     
-    @available(*, deprecated, renamed: "init(context:)", message: "Use 'init(context:)' instead. This deprecated API will be removed after 6.4 is released.")
-    public init(documentationContext: DocumentationContext, bundle _: DocumentationBundle) {
-        self.init(documentationContext: documentationContext)
-    }
-    
     /// The pre-rendered content per node reference.
     private(set) public var store = RenderReferenceStore()
     

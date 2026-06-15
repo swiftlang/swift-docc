@@ -127,19 +127,6 @@ private extension SourceLanguage {
         }
     }
     
-    private func _accessInfo(withUnlockedUnknownLanguages unknownLanguages: borrowing [_SourceLanguageInformation]) -> _SourceLanguageInformation {
-        let (unknownIndex, isKnownLanguage) = _id.subtractingReportingOverflow(SourceLanguage._numberOfKnownLanguages)
-        return if isKnownLanguage {
-            _knownLanguages[Int(_id)]
-        } else {
-            unknownLanguages[Int(unknownIndex)]
-        }
-    }
-    
-    private mutating func _addOrFindExisting(unknownLanguage: _SourceLanguageInformation, withUnlockedUnknownLanguages unknownLanguages: inout [_SourceLanguageInformation]) {
-        self._id = Self._addingOrFindingExisting(unknownLanguageInfo: unknownLanguage, withUnlockedUnknownLanguages: &unknownLanguages)
-    }
-    
     private static func _addingOrFindingExisting(unknownLanguageInfo: _SourceLanguageInformation, withUnlockedUnknownLanguages unknownLanguages: inout [_SourceLanguageInformation]) -> UInt8 {
         if let existingIndex = unknownLanguages.firstIndex(of: unknownLanguageInfo) {
             return _languageID(unknownLanguageIndex: existingIndex)
@@ -162,55 +149,19 @@ private extension SourceLanguage {
 public extension SourceLanguage {
     /// The display name of the programming language.
     var name: String {
-        get {  _accessInfo().name }
-        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
-        set {
-            // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
-            _unknownLanguages.withLock { unknownLanguages in
-                var copy = _accessInfo(withUnlockedUnknownLanguages: unknownLanguages)
-                copy.name = newValue
-                _addOrFindExisting(unknownLanguage: copy, withUnlockedUnknownLanguages: &unknownLanguages)
-            }
-        }
+        _accessInfo().name
     }
     /// A globally unique identifier for the language.
     var id: String {
-        get {  _accessInfo().id }
-        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
-        set {
-            // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
-            _unknownLanguages.withLock { unknownLanguages in
-                var copy = _accessInfo(withUnlockedUnknownLanguages: unknownLanguages)
-                copy.id = newValue
-                _addOrFindExisting(unknownLanguage: copy, withUnlockedUnknownLanguages: &unknownLanguages)
-            }
-        }
+        _accessInfo().id
     }
     /// Aliases for the language's identifier.
     var idAliases: [String] {
-        get {  _accessInfo().idAliases }
-        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
-        set {
-            // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
-            _unknownLanguages.withLock { unknownLanguages in
-                var copy = _accessInfo(withUnlockedUnknownLanguages: unknownLanguages)
-                copy.idAliases = newValue
-                _addOrFindExisting(unknownLanguage: copy, withUnlockedUnknownLanguages: &unknownLanguages)
-            }
-        }
+        _accessInfo().idAliases
     }
     /// The identifier to use for link disambiguation purposes.
     var linkDisambiguationID: String {
-        get {  _accessInfo().linkDisambiguationID }
-        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
-        set {
-            // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
-            _unknownLanguages.withLock { unknownLanguages in
-                var copy = _accessInfo(withUnlockedUnknownLanguages: unknownLanguages)
-                copy.linkDisambiguationID = newValue
-                _addOrFindExisting(unknownLanguage: copy, withUnlockedUnknownLanguages: &unknownLanguages)
-            }
-        }
+        _accessInfo().linkDisambiguationID
     }
 }
 
