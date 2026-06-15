@@ -58,11 +58,6 @@ public class DocumentationContentRenderer {
         self.urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
     }
     
-    @available(*, deprecated, renamed: "init(context:)", message: "Use 'init(context:)' instead. This deprecated API will be removed after 6.4 is released.")
-    public convenience init(documentationContext: DocumentationContext, bundle _: DocumentationBundle) {
-        self.init(context: documentationContext)
-    }
-    
     /// For symbol nodes, returns the declaration render section if any.
     func subHeadingFragments(for node: DocumentationNode) -> VariantCollection<[DeclarationRenderSection.Token]?> {
         guard let symbol = (node.semantic as? Symbol) else {
