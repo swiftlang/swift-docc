@@ -1418,7 +1418,7 @@ struct AvailabilityTests {
             }
         }
         let context = try await load(catalog: catalog)
-        try withKnownIssue("The DeprecationSummary validation doesn't know about default availability from the Info.plist", {
+        withKnownIssue("The DeprecationSummary validation doesn't know about default availability from the Info.plist", {
             #expect(context.diagnostics.map(\.identifier) == ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
         }, when: { availabilitySource == .infoPlist })
         let node = try #require(context.documentationCache["some-symbol-id"])
