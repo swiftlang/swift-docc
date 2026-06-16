@@ -76,7 +76,9 @@ package extension HTMLRenderer {
         ]))
         
         // 3. The unique documentation content for this page
-        body.addChild(mainContent)
+        body.addChild(.element(named: "main", children: [
+            mainContent
+        ]))
         
         // 4. The default footer
         body.addChild(.element(named: "footer", children: [
