@@ -434,7 +434,7 @@ package struct HTMLRenderer {
         }
         
         element.addChild(
-            .element(named: "blockquote", children: children, attributes: ["class": "aside deprecated"])
+            .element(named: "aside", children: children, attributes: ["class": "deprecated"])
         )
     }
     

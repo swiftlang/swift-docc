@@ -345,10 +345,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <pre>
                   <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
                 </pre>
-                <blockquote class="aside deprecated">
+                <aside class="deprecated">
                   <p class="label">Deprecated</p>
                   <p>Some <b>formatted</b> description of why this method is deprecated.</p>
-                </blockquote>
+                </aside>
               </section>
               <h2>Parameters</h2>
               <dl>
@@ -406,10 +406,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <h1>Some article</h1>
                   </hgroup>
                   <p>This is a <i>formatted</i> article.</p>
-                  <blockquote class="aside deprecated">
+                  <aside class="deprecated">
                     <p class="label">Deprecated</p>
                     <p>Description of why this <i>article</i> is deprecated.</p>
-                  </blockquote>
+                  </aside>
                 </section>
                 <h2>Custom discussion</h2>
                 <p>It explains how a developer can perform some task using <a href="../someclass/index.html"><code>SomeClass</code></a> in this module.</p>
