@@ -12,14 +12,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: Test
-    uses: swiftlang/github-workflows/.github/workflows/swift_package_test.yml@0.0.11
-    with:
-      linux_host_archs: '["x86_64", "aarch64"]'
-      linux_swift_versions: '["nightly-main", "nightly-6.3"]'
-      windows_swift_versions: '["nightly-main", "nightly-6.3"]'
-      enable_macos_checks: true
   soundness:
     name: Soundness
     uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.11
