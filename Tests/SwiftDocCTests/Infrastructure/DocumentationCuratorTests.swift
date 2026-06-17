@@ -584,7 +584,7 @@ class DocumentationCuratorTests: XCTestCase {
 
 import Testing
 
-struct DocumentationCuratorTests_New {
+struct DocumentationCuratorTests_new {
     @Test
     func raisesDiagnosticAboutCyclicCuration() async throws {
         let context = try await load(catalog:
