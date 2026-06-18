@@ -509,15 +509,14 @@ private extension DocumentationNode {
 
 private extension Symbol {
     func makeNames(goal: RenderGoal, fallbackTitle: String) -> LinkedElement.Names {
-        let variants = proseVariants.isEmpty ? titleVariants : proseVariants
-        switch variants.values(goal: goal) {
+        switch proseTitleVariants.values(goal: goal) {
             case .single(let title):
-                return .single(.symbol(title))
+                .single(.symbol(title))
             case .languageSpecific(let titles):
-                return .languageSpecificSymbol(titles)
+                .languageSpecificSymbol(titles)
             case .empty:
                 // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
-                return .single(.symbol(fallbackTitle))
+                .single(.symbol(fallbackTitle))
         }
     }
 }

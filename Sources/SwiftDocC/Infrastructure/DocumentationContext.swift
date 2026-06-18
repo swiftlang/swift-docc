@@ -951,8 +951,7 @@ public class DocumentationContext {
         } else {
             source = .external
         }
-        let title = symbol.defaultSymbol!.names.prose ?? symbol.defaultSymbol!.names.title
-        let graphNode = TopicGraph.Node(reference: reference, kind: documentation.kind, source: source, title: title, isVirtual: module.isVirtual)
+        let graphNode = TopicGraph.Node(reference: reference, kind: documentation.kind, source: source, title: symbol.defaultSymbol!.names.title, isVirtual: module.isVirtual)
 
         return ((reference, symbol.uniqueIdentifier, graphNode, documentation), [])
     }

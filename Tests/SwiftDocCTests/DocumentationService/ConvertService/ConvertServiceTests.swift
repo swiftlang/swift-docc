@@ -96,6 +96,35 @@ class ConvertServiceTests: XCTestCase {
             )
         }
     }
+
+    func testConvertPageUsesProseNameForInlineLinks() throws {
+        // Build a symbol graph inline with a symbol whose prose name differs from its title.
+        var method = makeSymbol(id: "method-id", kind: .func, pathComponents: ["myMethod(_:)"],
+                                docComment: "See ``myMethod(_:)`` for details.")
+        method.names = SymbolGraph.Symbol.Names(
+            title: "myMethod(_:)", navigator: method.names.navigator,
+            subHeading: method.names.subHeading, prose: "myMethod")
+        let symbolGraph = try JSONEncoder().encode(makeSymbolGraph(moduleName: "TestModule", symbols: [method]))
+
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["method-id"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+
+        try processAndAssert(request: request) { message in
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: XCTUnwrap(renderNodes.first))
+
+            // The self-reference should use the prose form, not the full title.
+            let ref = try XCTUnwrap(renderNode.references["doc://identifier/documentation/TestModule/myMethod(_:)"] as? TopicRenderReference)
+            XCTAssertEqual(ref.title, "myMethod")
+        }
+    }
     
     func testConvertSinglePageWithDocumentationExtension() throws {
         let symbolGraphFile = Bundle.module.url(

@@ -49,7 +49,7 @@ struct LinkTitleResolver {
         }
         
         if let symbol = (page.semantic as? Symbol) {
-            return symbol.proseVariants.isEmpty ? symbol.titleVariants : symbol.proseVariants
+            return symbol.proseTitleVariants
         }
 
         if let symbol = page.symbol {

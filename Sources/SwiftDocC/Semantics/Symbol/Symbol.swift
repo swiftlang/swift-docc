@@ -23,6 +23,8 @@ public import SymbolKit
 /// ### Properties
 ///
 /// - ``titleVariants``
+/// - ``proseVariants``
+/// - ``proseTitleVariants``
 /// - ``subHeadingVariants``
 /// - ``navigatorVariants``
 /// - ``roleHeadingVariants``
@@ -98,11 +100,20 @@ public import SymbolKit
 public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
     /// The title of the symbol in each language variant the symbol is available in.
     internal(set) public var titleVariants: DocumentationDataVariants<String>
-
+    
     /// The prose form of the symbol's title for use in inline links and documentation prose, in each language variant the symbol is available in.
     ///
     /// Empty when the symbol graph does not provide a prose title. See ``SymbolGraph/Symbol/Names/prose``.
     internal(set) public var proseVariants: DocumentationDataVariants<String> = .init()
+
+    /// The prose title for inline links, merged per-language: uses prose where available, falls back to title otherwise.
+    public var proseTitleVariants: DocumentationDataVariants<String> {
+        var result = titleVariants
+        for (trait, prose) in proseVariants.allValues {
+            result[trait] = prose
+        }
+        return result
+    }
 
     /// The simplified version of the symbol's declaration in each language variant the symbol is available in.
     internal(set) public var subHeadingVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
@@ -593,12 +604,8 @@ extension Symbol {
     public var kind: SymbolGraph.Symbol.Kind { kindVariants.firstValue! }
     
     /// The title of the first variant of this symbol, usually a simplified version of the declaration.
-    /// The title of the first variant of this symbol, usually a simplified version of the declaration.
     public var title: String { titleVariants.firstValue! }
-
-    /// The prose form of the first variant of this symbol's title, for use in inline links and documentation prose.
-    public var prose: String { proseVariants.firstValue ?? title }
-
+    
     /// The simplified version of the first variant of this symbol's declaration to use inside groups that may contain multiple links.
     public var subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment]? { subHeadingVariants.firstValue }
     
