@@ -218,8 +218,8 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   You can use `load(catalog:...)`, `makeSymbolGraph(...)`, and `makeSymbol(...)` to define such inputs in a virtual file system and create a `DocumentationContext` from it:
   
   ```swift
-  let catalog = Folder(name: "Something.docc", content: [
-      JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+  let catalog = Folder(name: "Something.docc") {
+      JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
           makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
           This is the in-source documentation for this class.    
           """)
@@ -228,7 +228,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
       TextFile(name: "Something.md", utf8Content: """
       # ``SomeClass``
       
-      This is additional documentation for this class
+      This is additional documentation for this class.
       """),
   ])
   let context = try await load(catalog: catalog)
@@ -256,7 +256,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   Additionally, if there's any information that you can surface right in the test failure that will save the next developer from needing to add a breakpoint and run the test again to inspect the value,
   that's a nice small little thing that you can do for the developer coming after you:
   ```swift
-  #expect(problems.isEmpty, "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+  #expect(diagnostics.isEmpty, "Unexpected problems: \(diagnostics.map(\.summary))")
   ```
   
   Similarly, code comments or `#expect` descriptions can be a way to convey information about _why_ the test is expecting a _specific_ value.
