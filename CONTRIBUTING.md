@@ -280,7 +280,28 @@ Currently there are few existing tests to draw inspiration from, so here are a f
 
   It can be easier to understand a test's implementation if its name describes the _behavior_ that the test verifies.
   A phrase that start with a verb can often help make a test's name a more readable description of what it's verifying. 
-  For example: `sortsSwiftFirstAndThenByID`, `raisesDiagnosticAboutCyclicCuration`, `isDisabledByDefault`, and `considersCurationInUncuratedAPICollection`.
+  For example: `sortsSwiftFirstAndThenByID`, `raisesDiagnosticAboutCyclicCuration`, `isDisabledByDefault`, `considersCurationInUncuratedAPICollection`, and `promotesArticleMatchingTheCatalogNameToRootPage`.
+    
+  It can make test names more descriptive if the name describes a more specific behavior rather than a general behavior.
+  For tests that verify more than one behavior; 
+  see if any of those behaviors are either more important or are more specific and consider mentioning one ore more of the more important or specific behaviors in the test name.
+  
+  If you're struggling to name a test, one approach you can try is to _imagine_ letting someone else write the test based on only the test's current name. 
+  If there are any _specific_ behaviors that you think that that person would either get wrong (without running the test) or would miss entirely, 
+  then consider mentioning one or more of those behaviors in the test's name. 
+  If you still find the updated test name to be non-descriptive then you can repeat this approach and try to imagine what someone else might miss or get wrong with the new name.
+  
+  For example: 
+  `sortsLanguagesCorrectly` is not specific about the expected order and could be interpreted differently by different people. 
+  `sortsSwiftFirst` is more specific but remains unclear about the relative sort order between other languages. 
+  `sortsSwiftFirstAndThenByID` is highly specific and the verified behavior can be understood in a fair amount of details without reading the test's implementation.
+  
+  > Note: imagining someone else writing a test based on its name is only one of the many ways to create a descriptive test name.
+  It may not be appropriate or produce good test names in all cases.
+  If you find that the test name is becoming overly verbose without making it easier to understand a test's implementation, 
+  try another approach to naming the test.
+  If you cannot decide on a test name that you're happy with, consider proactively asking the reviewer for their input on that specific test name.
+  A fresh perspective and different people's ideas and experiences can help find a test name that's clear and understandable by more people.
 
 ### Updating existing tests
 
