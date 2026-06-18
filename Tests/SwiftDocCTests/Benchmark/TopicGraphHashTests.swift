@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,11 +11,27 @@
 import XCTest
 @testable import SwiftDocC
 import DocCCommon
+import DocCTestUtilities
 
 class TopicGraphHashTests: XCTestCase {
+    /// A minimal catalog with a `MyKit` module containing a class and a function.
+    ///
+    /// The two symbols give the topic graph multiple nodes so the hash is
+    /// deterministic and `testTopicGraphChangedHash` can find an existing node
+    /// to add an edge from.
+    private var minimalCatalog: Folder {
+        Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "MyKit.symbols.json", content: makeSymbolGraph(moduleName: "MyKit", symbols: [
+                makeSymbol(id: "s:6MyKit5MyClassC", kind: .class, pathComponents: ["MyClass"]),
+                makeSymbol(id: "s:6MyKit11myFunctionFyyF", kind: .func, pathComponents: ["myFunction"]),
+            ])),
+        ])
+    }
+
     func testTopicGraphSameHash() async throws {
+        let catalog = minimalCatalog
         func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
-            let (_, context) = try await self.testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+            let (_, context) = try await self.loadBundle(catalog: catalog)
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
             
@@ -34,7 +50,7 @@ class TopicGraphHashTests: XCTestCase {
     func testTopicGraphChangedHash() async throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadBundle(catalog: minimalCatalog)
         
         do {
             let testBenchmark = Benchmark()
