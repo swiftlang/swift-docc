@@ -95,7 +95,8 @@ extension StaticHostableTransformer {
     static func indexHTMLData(
         in htmlTemplateDirectory: URL,
         with hostingBasePath: String?,
-        fileManager: any FileManagerProtocol
+        fileManager: any FileManagerProtocol,
+        preservingCustomTemplatesFrom archiveIndexHTML: URL? = nil
     ) throws -> Data {
         let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
         
@@ -127,6 +128,30 @@ extension StaticHostableTransformer {
             indexHTML = indexHTML.replacingOccurrences(of: HTMLTemplate.tag.rawValue, with: replacementString)
         }
         
+        if let archiveIndexHTML,
+           let archiveIndexData = try? fileManager.contents(of: archiveIndexHTML),
+           let archiveIndexContents = String(data: archiveIndexData, encoding: .utf8)
+        {
+            let customTemplates = Self.customTemplateHTML(in: archiveIndexContents)
+            if !customTemplates.isEmpty,
+               let bodyTagRange = indexHTML.range(of: "<body[^>]*>", options: .regularExpression)
+            {
+                indexHTML.replaceSubrange(bodyTagRange, with: indexHTML[bodyTagRange] + customTemplates)
+            }
+        }
+
         return Data(indexHTML.utf8)
+    }
+
+    private static func customTemplateHTML(in indexHTML: String) -> String {
+        let pattern = #"<template\s+id="custom-(?:header|footer)"[^>]*>[\s\S]*?</template>"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return ""
+        }
+
+        let range = NSRange(indexHTML.startIndex..<indexHTML.endIndex, in: indexHTML)
+        return regex.matches(in: indexHTML, range: range).compactMap { match in
+            Range(match.range, in: indexHTML).map { String(indexHTML[$0]) }
+        }.joined()
     }
 }
