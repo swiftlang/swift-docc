@@ -53,7 +53,7 @@ struct MarkdownOutputTests {
     
     // MARK: Directive special processing
     
-    @Test func rowsAndColumns() async throws {
+    @Test func rowsAndColumnsAreRenderedAsParagraphs() async throws {
         
         let catalog = catalog(files: [
             TextFile(name: "RowsAndColumns.md", utf8Content: """
@@ -79,7 +79,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expected))
     }
     
-    @Test func linkArticleFormatting() async throws {
+    @Test func articleLinksHaveTitlesInlineAndAbstractsInLinkLists() async throws {
         let catalog = catalog(files: [
             TextFile(name: "RowsAndColumns.md", utf8Content: """
                 # Rows and Columns
@@ -135,7 +135,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedLinkListAnchor))
     }
        
-    @Test func linkSymbolFormatting() async throws {
+    @Test func symbolLinksHaveTitlesInlineAndAbstractsInLinkLists() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -262,7 +262,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("**Right:**\n\nRight text"))
     }
     
-    @Test func tutorialCode() async throws {
+    @Test func tutorialCodeHasFinalStageOnly() async throws {
         
         let tutorial = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(time: 30) {
@@ -348,7 +348,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("struct StartCodeAgain {"), "New file reference is included")
     }
     
-    @Test func snippetInclusion() async throws {
+    @Test func snippetCodeIsIncluded() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -375,7 +375,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(asMarkdown))
     }
     
-    @Test func snippetInclusionWithSlice() async throws {
+    @Test func snippetCodeWithSliceOnlyRendersSlice() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -405,7 +405,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("// I am a code snippet") == false)
     }
     
-    @Test func snippetInclusionWithHiding() async throws {
+    @Test func snippetCodeDoesNotIncludeHiddenContent() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -434,7 +434,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("// I am hidden content") == false)
     }
     
-    @Test func snippetInclusionWithExplanation() async throws {
+    @Test func snippetExplanationIsRenderedBeforeCode() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -487,7 +487,7 @@ struct MarkdownOutputTests {
         )
     }
     
-    @Test func badlyFormattedTablesCrash() async throws {
+    @Test func tablesWithDoublePipeInBodyDoNotCrash() async throws {
         let catalog = catalog(files: [
             // It's the || that causes the problem - there is no issue if there is a space between the characters
             TextFile(name: "DodgyTables.md", utf8Content: """
@@ -525,7 +525,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown == expected)
     }
         
-    @Test func images() async throws {
+    @Test func imagesUseArchiveRelativePathsForLocalFiles() async throws {
         let catalog = catalog(files: [
             TextFile(name: "ImageArticle.md", utf8Content: """
                 # Images
@@ -553,7 +553,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("![Unresolved Image](unresolved.png)"))
     }
     
-    @Test func aside() async throws {
+    @Test func asidesAreRenderedLikeSource() async throws {
         let content = """
         # Asides
         
@@ -575,7 +575,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown == content)
     }
     
-    @Test func htmlRemoval() async throws {
+    @Test func rawHTMLBlocksAndCommentsAreRemoved() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Comments.md", utf8Content: """
                 # Comments
@@ -638,7 +638,7 @@ struct MarkdownOutputTests {
     
     // MARK: - Metadata
     
-    @Test func articleMetadata() async throws {
+    @Test func articlesHaveCorrectMetadata() async throws {
         let catalog = catalog(files: [
             TextFile(name: "ArticleRole.md", utf8Content: """
                 # Article Role
@@ -658,7 +658,7 @@ struct MarkdownOutputTests {
         #expect(node.metadata.framework == "MarkdownOutput")
     }
     
-    @Test func apiCollectionRole() async throws {
+    @Test func apiCollectionHasCollectionGroupRole() async throws {
         let catalog = catalog(files: [
             TextFile(name: "APICollection.md", utf8Content: """
                 # API Collection
@@ -689,7 +689,7 @@ struct MarkdownOutputTests {
         #expect(node.metadata.role == RenderMetadata.Role.collectionGroup.rawValue)
     }
         
-    @Test func articleAvailability() async throws {
+    @Test func articleAvailabilityIsRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
             TextFile(name: "AvailabilityArticle.md", utf8Content: """
                 # Availability Demonstration
@@ -713,7 +713,7 @@ struct MarkdownOutputTests {
         #expect(node.metadata.availability(for: "macOS")?.introduced == "13.0.0")
     }
     
-    @Test func symbolDocumentType() async throws {
+    @Test func symbolDocumentHasSymbolType() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
@@ -723,7 +723,7 @@ struct MarkdownOutputTests {
         #expect(node.metadata.documentType == .symbol)
     }
     
-    @Test func symbolMetadata() async throws {
+    @Test func symbolDocumentPopulatesMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
@@ -737,7 +737,7 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput"])
     }
         
-    @Test func symbolExtendedModule() async throws {
+    @Test func symbolExtendedModulePopulatesMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "Array_asdf", kind: .property, pathComponents: ["Swift", "Array", "asdf"], otherMixins: [SymbolGraph.Symbol.Swift.Extension(extendedModule: "Swift", constraints: [])])
@@ -748,7 +748,7 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput", "Swift"])
     }
     
-    @Test func symbolDefaultAvailabilityWhenNothingPresent() async throws {
+    @Test func symbolMetadataGetsDefaultAvailability() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
@@ -762,7 +762,7 @@ struct MarkdownOutputTests {
         #expect(availability.contains(.init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false)))
     }
     
-    @Test func symbolAvailabilityFromMetadataBlock() async throws {
+    @Test func symbolAvailabilityIsCapturedFromMetadataBlock() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
@@ -840,7 +840,7 @@ struct MarkdownOutputTests {
         #expect(availability.stringRepresentation == expected)
     }
             
-    @Test func symbolDeprecation() async throws {
+    @Test func symbolDeprecationRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
@@ -900,7 +900,7 @@ struct MarkdownOutputTests {
     }
     
     
-    @Test func symbolIdentifier() async throws {
+    @Test func symbolIdentifierMatchesSymbolGraph() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol_Identifier", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
@@ -911,7 +911,7 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.preciseIdentifier == "MarkdownSymbol_Identifier")
     }
     
-    @Test func tutorialMetadata() async throws {
+    @Test func tutorialPopulatesMetadata() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(time: 30) {
@@ -939,7 +939,7 @@ struct MarkdownOutputTests {
     }
           
     // MARK: - Encoding / Decoding
-    @Test func markdownRoundTrip() async throws {
+    @Test func markdownSurvivesCodingRoundTrip() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -969,7 +969,7 @@ struct MarkdownOutputTests {
     }
     
     // MARK: - Manifest
-    @Test func articleManifestLinks() async throws {
+    @Test func articleLinksPopulateManifest() async throws {
         
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
@@ -1026,7 +1026,7 @@ struct MarkdownOutputTests {
         #expect(manifest.relationships.contains(symbol))
     }
         
-    @Test func symbolManifestInheritance() async throws {
+    @Test func symbolInheritancePopulatesManifest() async throws {
         
         let symbols = [
             makeSymbol(id: "MO_Subclass", kind: .class, pathComponents: ["LocalSubclass"]),
@@ -1056,7 +1056,7 @@ struct MarkdownOutputTests {
         }))
     }
         
-    @Test func symbolManifestConformance() async throws {
+    @Test func symbolConformancePopulatesManifest() async throws {
         
         let symbols = [
             makeSymbol(id: "MO_Conformer", kind: .struct, pathComponents: ["LocalConformer"]),
