@@ -316,10 +316,15 @@ Currently there are few existing tests to draw inspiration from, so here are a f
 ### Updating existing tests
 
 If you're updating an existing test case with additional logic, we appreciate if you also modernize that test while updating it, but we don't expect it.
-If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing.
+If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing and leave the existing tests as-is.
 
 If you modernize an existing test case, consider not only the syntactical differences between Swift Testing and XCTest, 
 but also if there are any Swift Testing features or other changes that would make the test case easier to read, maintain, or debug.
+
+Particularly for certain older tests; we may have learnt new things or developed better ways to test things since the test was originally written.
+Having a person revisit the test---and think about it given our most up-to-date understanding of what makes a test robust, understandable, and maintainable---
+provides an opportunity to improve the test for the next person who works on the feature or other behavior that the test verifies.
+Revisiting an existing test and carefully thinking about what behaviors that test is verifying also provides an opportunity to contemplate any details or potential edge cases that the test doesn't cover but that may be worthwhile to add. 
 
 ### Testing DocC's integration with Xcode
 
