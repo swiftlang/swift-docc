@@ -246,6 +246,16 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   ```
   Such `XCTestCase` tests can sometimes be expressed more nicely as parameterized tests in Swift Testing.
   
+  > Tip: A parameterized tests with pairs of inputs values can specify its arguments as either an array of tuples or as a dictionary:  
+  > ```swift
+  > @Test(arguments: [
+  >     DiagnosticSeverity.information: true,
+  >     DiagnosticSeverity.warning:     false,
+  >     DiagnosticSeverity.error:       false,
+  > ])
+  > func raisesDiagnostics(configuredDiagnosticFilterLevel: DiagnosticSeverity, expectsToIncludeNonInclusiveDiagnostics: Bool) async throws { ... }
+  >```
+  
 - Think about what information would be helpful to someone else who might debug that test case if it fails in the future.
   
   In an open source project like Swift-DocC, it's possible that a person you've never met will continue to work on code that you wrote.
