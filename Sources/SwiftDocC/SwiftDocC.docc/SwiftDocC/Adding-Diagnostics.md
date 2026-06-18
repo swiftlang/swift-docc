@@ -182,6 +182,16 @@ If you are refining a broad or less specific diagnostic into a collection of mor
 it _can_ make sense to use the old diagnostic identifier as the group identifier.
 This way, developers' custom severity configurations for the previous diagnostic identifier continues to apply to the collection of more specific diagnostics.
 
+> Note: 
+> Both individual diagnostic identifiers and diagnostic group identifiers are considered user-facing information.
+> Use a very terse but descriptive word or phrase of uppercase words joined together, for example `MultipleTopicsSections` and avoid internal development jargon.
+> The identifier only needs to communicate which issues it's referring to so that developer's can configure the diagnostic's severity. 
+> The identifier's purpose _isn't_ to make the developer understand what the issue is about. 
+> That responsibility belongs to the ``Diagnostic/summary`` and the ``Diagnostic/explanation``.
+> 
+> Diagnostic identifiers with a "org.swift.docc." prefix _won't_ be displayed to the developer (the diagnostic is presented without its identifier). 
+> These identifiers aren't considered user-facing yet and changing those identifiers _isn't_ considered a breaking change.
+> This gives us the opportunity to go through any existing diagnostics one by one and update them to based on our most up-to-date understanding of what makes a clear and actionable diagnostic.
 
 ### Point to specific markup
 
