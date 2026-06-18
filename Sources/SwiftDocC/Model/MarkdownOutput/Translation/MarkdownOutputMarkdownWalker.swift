@@ -174,7 +174,7 @@ extension MarkdownOutputMarkupWalker {
                     .map { $0.spelling }
                     .joined(separator: " ")
             } else {
-                linkTitle = symbol.title
+                linkTitle = symbol.prose
             }
             add(source: resolved, type: .belongsToTopic, subtype: nil)
         } else {
@@ -227,7 +227,7 @@ extension MarkdownOutputMarkupWalker {
             }
             linkTitle = anchorSection?.title ?? article.title?.plainText ?? resolved.lastPathComponent
         } else if let symbol = doc.semantic as? Symbol {
-            linkTitle = anchorSection?.title ?? symbol.title
+            linkTitle = anchorSection?.title ?? symbol.prose
         } else {
             linkTitle = anchorSection?.title ?? resolved.lastPathComponent
         }

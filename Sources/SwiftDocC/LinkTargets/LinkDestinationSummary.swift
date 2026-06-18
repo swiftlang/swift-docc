@@ -411,7 +411,7 @@ extension LinkDestinationSummary {
         
         // Multi-language symbols need to access the default content via the variant accessors (rdar://86580516)
         let kind = DocumentationNode.kind(forKind: (symbol.kindVariants[summaryTrait] ?? symbol.kind).identifier)
-        let title = symbol.titleVariants[summaryTrait] ?? symbol.title
+        let title = symbol.proseVariants[summaryTrait] ?? symbol.prose
         
         func renderSymbolAbstract(_ symbolAbstract: Paragraph?) -> Abstract? {
             guard let abstractParagraph = symbolAbstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstractParagraph).first else {
@@ -460,7 +460,7 @@ extension LinkDestinationSummary {
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
                 language: nilIfEqual(main: language, variant: sourceLanguage),
                 relativePresentationURL: nil, // The symbol variant uses the same relative path
-                title: nilIfEqual(main: title, variant: symbol.titleVariants[trait]),
+                title: nilIfEqual(main: title, variant: symbol.proseVariants[trait]),
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
                 usr: nil, // The symbol variant uses the same USR
                 plainTextDeclaration: nilIfEqual(main: plainTextDeclaration, variant: plainTextDeclarationVariant),

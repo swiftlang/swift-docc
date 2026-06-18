@@ -49,11 +49,11 @@ struct LinkTitleResolver {
         }
         
         if let symbol = (page.semantic as? Symbol) {
-            return symbol.titleVariants
+            return symbol.proseVariants.isEmpty ? symbol.titleVariants : symbol.proseVariants
         }
-        
+
         if let symbol = page.symbol {
-            return .init(defaultVariantValue: symbol.names.title)
+            return .init(defaultVariantValue: symbol.names.prose ?? symbol.names.title)
         }
         
         if let article = page.semantic as? Article, let title = article.title?.plainText {
