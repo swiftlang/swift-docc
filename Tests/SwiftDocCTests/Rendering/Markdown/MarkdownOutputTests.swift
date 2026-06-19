@@ -53,7 +53,8 @@ struct MarkdownOutputTests {
     
     // MARK: Directive special processing
     
-    @Test func rowsAndColumnsAreRenderedAsParagraphs() async throws {
+    @Test
+    func rowsAndColumnsAreRenderedAsParagraphs() async throws {
         
         let catalog = catalog(files: [
             TextFile(name: "RowsAndColumns.md", utf8Content: """
@@ -79,7 +80,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expected))
     }
     
-    @Test func articleLinksHaveTitlesInlineAndAbstractsInLinkLists() async throws {
+    @Test
+    func curatedArticlesDisplayLinksAndAbstractAsSeparateParagraphs() async throws {
         let catalog = catalog(files: [
             TextFile(name: "RowsAndColumns.md", utf8Content: """
                 # Rows and Columns
@@ -210,7 +212,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedLinkList))
     }
         
-    @Test func languageTabOnlyIncludesPrimaryLanguage() async throws {
+    @Test
+    func languageTabOnlyIncludesPrimaryLanguage() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Tabs.md", utf8Content: """
                 # Tabs
@@ -239,7 +242,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("I am a Swift code block"))
     }
     
-    @Test func nonLanguageTabIncludesAllEntries() async throws {
+    @Test
+    func nonLanguageTabIncludesAllEntries() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Tabs.md", utf8Content: """
                 # Tabs
@@ -264,7 +268,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("**Right:**\n\nRight text"))
     }
     
-    @Test func tutorialCodeHasFinalStageOnly() async throws {
+    @Test
+    func tutorialCodeHasFinalStageOnly() async throws {
         
         let tutorial = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(time: 30) {
@@ -350,7 +355,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("struct StartCodeAgain {"), "New file reference is included")
     }
     
-    @Test func snippetCodeIsIncluded() async throws {
+    @Test
+    func snippetCodeIsIncluded() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -377,7 +383,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(asMarkdown))
     }
     
-    @Test func snippetCodeWithSliceOnlyRendersSlice() async throws {
+    @Test
+    func snippetCodeWithSliceOnlyRendersSlice() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -407,7 +414,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("// I am a code snippet") == false)
     }
     
-    @Test func snippetCodeDoesNotIncludeHiddenContent() async throws {
+    @Test
+    func snippetCodeDoesNotIncludeHiddenContent() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -436,7 +444,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("// I am hidden content") == false)
     }
     
-    @Test func snippetExplanationIsRenderedBeforeCode() async throws {
+    @Test
+    func snippetExplanationIsRenderedBeforeCode() async throws {
         let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
             # Snippets
             
@@ -528,7 +537,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown == expected)
     }
         
-    @Test func imagesUseArchiveRelativePathsForLocalFiles() async throws {
+    @Test
+    func imagesUseArchiveRelativePathsForLocalFiles() async throws {
         let catalog = catalog(files: [
             TextFile(name: "ImageArticle.md", utf8Content: """
                 # Images
@@ -556,7 +566,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("![Unresolved Image](unresolved.png)"))
     }
     
-    @Test func asidesAreRenderedLikeSource() async throws {
+    @Test
+    func asidesAreRenderedLikeSource() async throws {
         let content = """
         # Asides
         
@@ -578,7 +589,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown == content)
     }
     
-    @Test func rawHTMLBlocksAndCommentsAreRemoved() async throws {
+    @Test
+    func rawHTMLBlocksAndCommentsAreRemoved() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Comments.md", utf8Content: """
                 # Comments
@@ -662,7 +674,8 @@ struct MarkdownOutputTests {
         #expect(node.metadata.framework == "MarkdownOutput")
     }
     
-    @Test func apiCollectionHasCollectionGroupRole() async throws {
+    @Test
+    func apiCollectionHasCollectionGroupRole() async throws {
         let catalog = catalog(files: [
             TextFile(name: "APICollection.md", utf8Content: """
                 # API Collection
@@ -693,7 +706,8 @@ struct MarkdownOutputTests {
         #expect(node.metadata.role == RenderMetadata.Role.collectionGroup.rawValue)
     }
         
-    @Test func articleAvailabilityIsRepresentedInMetadata() async throws {
+    @Test
+    func articleAvailabilityIsRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
             TextFile(name: "AvailabilityArticle.md", utf8Content: """
                 # Availability Demonstration
@@ -717,7 +731,8 @@ struct MarkdownOutputTests {
         #expect(node.metadata.availability(for: "macOS")?.introduced == "13.0.0")
     }
     
-    @Test func symbolDocumentHasSymbolType() async throws {
+    @Test
+    func symbolDocumentHasSymbolType() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
@@ -727,7 +742,8 @@ struct MarkdownOutputTests {
         #expect(node.metadata.documentType == .symbol)
     }
     
-    @Test func symbolDocumentPopulatesMetadata() async throws {
+    @Test
+    func symbolDocumentPopulatesMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
@@ -741,7 +757,8 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput"])
     }
         
-    @Test func symbolExtendedModulePopulatesMetadata() async throws {
+    @Test
+    func symbolExtendedModulePopulatesMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "Array_asdf", kind: .property, pathComponents: ["Swift", "Array", "asdf"], otherMixins: [SymbolGraph.Symbol.Swift.Extension(extendedModule: "Swift", constraints: [])])
@@ -752,7 +769,8 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput", "Swift"])
     }
     
-    @Test func symbolMetadataGetsDefaultAvailability() async throws {
+    @Test
+    func symbolMetadataGetsDefaultAvailability() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
@@ -766,7 +784,8 @@ struct MarkdownOutputTests {
         #expect(availability.contains(.init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false)))
     }
     
-    @Test func symbolAvailabilityIsCapturedFromMetadataBlock() async throws {
+    @Test
+    func symbolAvailabilityIsCapturedFromMetadataBlock() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
@@ -790,61 +809,33 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        #expect(availability.contains(where: { $0.platform == "iPadOS" && $0.introduced == "13.1.0" }))
+        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iPadOS", introduced: "13.1.0", deprecated: nil, unavailable: false)
+        #expect(availability.contains(expected))
     }
     
-    @Test func availabilityStringRepresentationIntroduced() async throws {
-        let a = "iOS: 14.0"
-        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: a)
-        #expect(availability.platform == "iOS")
-        #expect(availability.introduced == "14.0")
-        #expect(availability.deprecated == nil)
-        #expect(availability.unavailable == false)
+    @Test(arguments: [
+        ("iOS: 14.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: nil, unavailable: false)),
+        ("iOS: 14.0 - 15.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false)),
+        ("iOS: -", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: nil, deprecated: nil, unavailable: true)),
+        ("iOS: 14.0 -", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", unavailable: false)),
+    ])
+    func availabilityFromStringRepresentation(_ representation: String, _ expected: MarkdownOutputNode.Metadata.Availability) async throws {
+        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: representation)
+        #expect(availability == expected)
     }
-    
-    @Test func availabilityStringRepresentationDeprecated() async throws {
-        let a = "iOS: 14.0 - 15.0"
-        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: a)
-        #expect(availability.platform == "iOS")
-        #expect(availability.introduced == "14.0")
-        #expect(availability.deprecated == "15.0")
-        #expect(availability.unavailable == false)
-    }
-    
-    @Test func availabilityStringRepresentationUnavailable() async throws {
-        let a = "iOS: -"
-        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: a)
-        #expect(availability.platform == "iOS")
-        #expect(availability.introduced == nil)
-        #expect(availability.deprecated == nil)
-        #expect(availability.unavailable)
-    }
-    
-    @Test func availabilityCreateStringRepresentationIntroduced() async throws {
-        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", unavailable: false)
-        let expected = "iOS: 14.0 -"
+ 
+    @Test(arguments: [
+        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", unavailable: false), "iOS: 14.0 -"),
+        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false), "iOS: 14.0 - 15.0"),
+        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", unavailable: true), "iOS: -"),
+        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "", unavailable: false), "iOS: -"),
+    ])
+    func stringRepresentationFromAvailability(_ availability: MarkdownOutputNode.Metadata.Availability, _ expected: String) async throws {
         #expect(availability.stringRepresentation == expected)
     }
     
-    @Test func availabilityCreateStringRepresentationDeprecated() async throws {
-        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false)
-        let expected = "iOS: 14.0 - 15.0"
-        #expect(availability.stringRepresentation == expected)
-    }
-    
-    @Test func availabilityCreateStringRepresentationUnavailable() async throws {
-        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", unavailable: true)
-        let expected = "iOS: -"
-        #expect(availability.stringRepresentation == expected)
-    }
-    
-    @Test func availabilityCreateStringRepresentationEmptyAvailability() async throws {
-        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "", unavailable: false)
-        let expected = "iOS: -"
-        #expect(availability.stringRepresentation == expected)
-    }
-            
-    @Test func symbolDeprecationRepresentedInMetadata() async throws {
+    @Test
+    func symbolDeprecationRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
@@ -904,7 +895,8 @@ struct MarkdownOutputTests {
     }
     
     
-    @Test func symbolIdentifierMatchesSymbolGraph() async throws {
+    @Test
+    func symbolIdentifierMatchesSymbolGraph() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol_Identifier", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
@@ -915,7 +907,8 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.preciseIdentifier == "MarkdownSymbol_Identifier")
     }
     
-    @Test func tutorialPopulatesMetadata() async throws {
+    @Test
+    func tutorialPopulatesMetadata() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(time: 30) {
@@ -943,7 +936,8 @@ struct MarkdownOutputTests {
     }
           
     // MARK: - Encoding / Decoding
-    @Test func markdownSurvivesCodingRoundTrip() async throws {
+    @Test
+    func markdownSurvivesCodingRoundTrip() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -1031,7 +1025,8 @@ struct MarkdownOutputTests {
         #expect(manifest.relationships.contains(symbol))
     }
         
-    @Test func symbolInheritancePopulatesManifest() async throws {
+    @Test
+    func symbolInheritancePopulatesManifest() async throws {
         
         let symbols = [
             makeSymbol(id: "MO_Subclass", kind: .class, pathComponents: ["LocalSubclass"]),
@@ -1061,7 +1056,8 @@ struct MarkdownOutputTests {
         }))
     }
         
-    @Test func symbolConformancePopulatesManifest() async throws {
+    @Test
+    func symbolConformancePopulatesManifest() async throws {
         
         let symbols = [
             makeSymbol(id: "MO_Conformer", kind: .struct, pathComponents: ["LocalConformer"]),
