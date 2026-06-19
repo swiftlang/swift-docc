@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,17 +15,21 @@ import FoundationNetworking
 
 import XCTest
 @testable import SwiftDocC
+import DocCTestUtilities
 
 fileprivate let baseURL = URL(string: "test://")!
 fileprivate let helloWorldHTML = "<html><header><title>Hello Title</title></header><body>Hello world</body></html>".data(using: .utf8)!
 
 class DocumentationSchemeHandlerTests: XCTestCase {
-    let templateURL = Bundle.module.url(
-        forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
     
-    func testDocumentationSchemeHandler() {
+    func testDocumentationSchemeHandler() throws {
         #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
-        let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
+        let (fileSystem, templateURL) = try makeTestFileSystemWith {
+            Folder(name: "images") {
+                DataFile(name: "figure1.jpg", data: Data())
+            }
+        }
+        let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL, fileManager: fileSystem)
         
         let request = URLRequest(url:  baseURL.appendingPathComponent("/images/figure1.jpg"))
         
@@ -49,9 +53,14 @@ class DocumentationSchemeHandlerTests: XCTestCase {
         #endif
     }
     
-    func testSetData() {
+    func testSetData() throws {
         #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
-        let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
+        let (fileSystem, templateURL) = try makeTestFileSystemWith {
+            Folder(name: "images") {
+                DataFile(name: "figure1.jpg", data: Data())
+            }
+        }
+        let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL, fileManager: fileSystem)
         
         let data = "hello!".data(using: .utf8)!
         topicSchemeHandler.setData(data: ["a.txt": data])
