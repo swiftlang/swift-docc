@@ -135,7 +135,8 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedLinkListAnchor))
     }
        
-    @Test func symbolLinksHaveTitlesInlineAndAbstractsInLinkLists() async throws {
+    @Test 
+    func curatedSymbolDisplaysLinkAndAbstractAsSeparateParagraphs() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -176,7 +177,8 @@ struct MarkdownOutputTests {
                     
     }
     
-    @Test func linkSymbolWithLinkInAbstractDoesntRecurse() async throws {
+    @Test 
+    func curatedPageWithLinkInAbstractDoesNotRecurse() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -487,7 +489,8 @@ struct MarkdownOutputTests {
         )
     }
     
-    @Test func tablesWithDoublePipeInBodyDoNotCrash() async throws {
+    @Test
+    func tableWithSpanningCellInLastColumnDoNotCrash() async throws {
         let catalog = catalog(files: [
             // It's the || that causes the problem - there is no issue if there is a space between the characters
             TextFile(name: "DodgyTables.md", utf8Content: """
@@ -638,7 +641,8 @@ struct MarkdownOutputTests {
     
     // MARK: - Metadata
     
-    @Test func articlesHaveCorrectMetadata() async throws {
+    @Test 
+    func metadataForArticleHasArticleTypeAndRole() async throws {
         let catalog = catalog(files: [
             TextFile(name: "ArticleRole.md", utf8Content: """
                 # Article Role
@@ -969,7 +973,8 @@ struct MarkdownOutputTests {
     }
     
     // MARK: - Manifest
-    @Test func articleLinksPopulateManifest() async throws {
+    @Test 
+    func manifestIncludesRelationshipsForCuratedPages() async throws {
         
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
