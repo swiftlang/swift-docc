@@ -49,6 +49,3 @@ jobs:
       #
       # https://github.com/swiftlang/github-workflows/pull/279
       python_lint_check_enabled: false
-      # The YAML issue templates are structurally valid but unformatted.
-      # This linter will be enabled in a follow-up PR.
-      yamllint_check_enabled: false
