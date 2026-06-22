@@ -1,0 +1,51 @@
+name: Pull request
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Test
+    uses: swiftlang/github-workflows/.github/workflows/swift_package_test.yml@0.0.11
+    with:
+      linux_host_archs: '["x86_64", "aarch64"]'
+      linux_swift_versions: '["nightly-main", "nightly-6.3"]'
+      windows_swift_versions: '["nightly-main", "nightly-6.3"]'
+      # The Windows CI runs are disabled due to issues with file names on Windows.
+      # The CMake build tests for Windows are also not present at the moment.
+      # They can be enabled in the future once Windows CI is fixed.
+      # Related PRs:
+      #
+      # - File names: https://github.com/swiftlang/swift-docc/pull/668
+      # - CMake: https://github.com/swiftlang/swift-docc/pull/1115
+      enable_windows_checks: false
+      enable_macos_checks: true
+  soundness:
+    name: Soundness
+    uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.11
+    with:
+      license_header_check_project_name: "Swift"
+      # The license header check is disabled as it requires a large number of changes.
+      license_header_check_enabled: false
+      # The unacceptable language check is disabled due to conflict with
+      # DocC's own unacceptable language check tests.
+      unacceptable_language_check_enabled: false
+      # The format check is disabled as this project does not conform to swift-format.
+      # More discussion is needed before enabling this check.
+      format_check_enabled: false
+      # The docs check is disabled as it requires a large number of changes.
+      docs_check_enabled: false
+      # The Python lint check is buggy due to flake8's default ignore list
+      # being overridden by the config in the workflow definition. The check
+      # needs to remain disabled until the fix is merged and released:
+      #
+      # https://github.com/swiftlang/github-workflows/pull/279
+      python_lint_check_enabled: false

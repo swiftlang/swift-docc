@@ -115,9 +115,10 @@ class StaticHostingWithContentTests: XCTestCase {
                 <ul>
                   <li>RootArticle</li>
                 </ul>
-                <p>
-                Article</p>
-                <h1>RootArticle</h1>
+                <hgroup>
+                  <p>Article</p>
+                  <h1>RootArticle</h1>
+                </hgroup>
                 <p>This is a <i> formatted</i> article that becomes the root page (because there is only one page).</p>
               </section>
             </article>

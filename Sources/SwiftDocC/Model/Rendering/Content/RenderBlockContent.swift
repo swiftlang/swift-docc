@@ -615,12 +615,6 @@ public enum RenderBlockContent: Equatable {
         /// The underlying raw string value.
         public var rawValue: String
 
-        /// The heading text to use when rendering this style of aside.
-        @available(*, deprecated, message: "Use 'Aside.name' instead. This deprecated API will be removed after 6.4 is released.")
-        public var displayName: String {
-            return rawValue.capitalized
-        }
-
         /// Creates an aside style.
         ///
         /// The new aside style's underlying raw string value will be lowercased.
@@ -656,13 +650,6 @@ public enum RenderBlockContent: Equatable {
         /// > new aside style's raw value will be set to note.
         public init(asideKind: Markdown.Aside.Kind) {
             self.init(rawValue: asideKind.rawValue)
-        }
-
-        /// Creates an aside style with the specified display name.
-        /// - Parameter displayName: The heading text to use when rendering this style of aside.
-        @available(*, deprecated, renamed: "init(rawValue:)", message: "Use 'init(rawValue:)' instead. This deprecated API will be removed after 6.4 is released.")
-        public init(displayName: String) {
-            self.init(rawValue: displayName)
         }
         
         /// Encodes the aside style into the specified encoder.
