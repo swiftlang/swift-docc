@@ -246,7 +246,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   ```
   Such `XCTestCase` tests can sometimes be expressed more nicely as parameterized tests in Swift Testing.
   
-  > Tip: A parameterized tests with pairs of inputs values can specify its arguments as either an array of tuples or as a dictionary:  
+  > Tip: A parameterized test with pairs of inputs values can specify its arguments as either an array of tuples or as a dictionary:  
   > ```swift
   > @Test(arguments: [
   >     DiagnosticSeverity.information: true,
@@ -294,7 +294,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
     
   It can make test names more descriptive if the name describes a more specific behavior rather than a general behavior.
   For tests that verify more than one behavior; 
-  see if any of those behaviors are either more important or are more specific and consider mentioning one ore more of the more important or specific behaviors in the test name.
+  see if any of those behaviors are either more important or are more specific and consider mentioning one or more of the more important or specific behaviors in the test name.
   
   If you're struggling to name a test, one approach you can try is to _imagine_ letting someone else write the test based on only the test's current name. 
   If there are any _specific_ behaviors that you think that that person would either get wrong (without running the test) or would miss entirely, 
