@@ -101,13 +101,13 @@ extension MarkdownOutputMarkupWalker {
         // Markup before:
         // - term Term: definition
         // Markup after:
-        // Term: definition
+        // - Term: definition
         if markup is UnorderedList {
-            // Start of line, list, term, actual term, colon
-            let termPattern = #/^\s*- term (.+:)/#.anchorsMatchLineEndings(true)
+            // Start of line, list indicator, term keyword
+            let termPattern = #/^(\s*- )term /#.anchorsMatchLineEndings(true)
             for match in output.matches(of: termPattern).reversed() {
-                let term = match.output.1
-                output.replaceSubrange(match.range, with: term)
+                let listIndicator = match.output.1
+                output.replaceSubrange(match.range, with: listIndicator)
             }
         }
         markdown.append(output)

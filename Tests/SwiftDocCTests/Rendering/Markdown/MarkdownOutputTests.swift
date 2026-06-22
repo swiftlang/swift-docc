@@ -650,7 +650,7 @@ struct MarkdownOutputTests {
     }
     
     @Test
-    func termListRemovesTermNotationAndListMarkers() async throws {
+    func termListRemovesTermNotation() async throws {
         let catalog = catalog(files: [
             TextFile(name: "TermList.md", utf8Content: """
                 # Term Lists
@@ -663,9 +663,9 @@ struct MarkdownOutputTests {
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "TermList")
         let expectedList = """
-        Spring: The first season of the year
-        Summer: The second season of the year
-        `Code`: A code voice item used as a term
+        - Spring: The first season of the year
+        - Summer: The second season of the year
+        - `Code`: A code voice item used as a term
         """
         #expect(node.markdown.contains(expectedList))
     }
