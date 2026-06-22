@@ -36,28 +36,20 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         }
     }
     
-    /// A small SideKit symbol graph with a `SideClass` that has two children, so
-    /// `sideclass.md` can curate just the external links and let the rest be
-    /// curated automatically.
-    private func makeSideKitCatalog(sideclassMarkdown: String) -> Folder {
-        Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "SideKit.symbols.json", content: makeSymbolGraph(
-                moduleName: "SideKit",
-                symbols: [
-                    makeSymbol(id: "s:7SideKit0A5ClassC", kind: .class, pathComponents: ["SideClass"]),
-                    makeSymbol(id: "s:7SideKit0A5ClassC10myFunctionyyF", kind: .method, pathComponents: ["SideClass", "myFunction()"]),
-                    makeSymbol(id: "s:7SideKit0A5ClassC4pathSSvp", kind: .property, pathComponents: ["SideClass", "path"]),
-                ]
-            )),
-            TextFile(name: "sideclass.md", utf8Content: sideclassMarkdown),
-        ])
+    /// A catalog with one symbol whose in-source documentation is the provided markdown.
+    private func makeExampleCatalog(markdown: String) -> Folder {
+        Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: markdown),
+            ]))
+        }
     }
     
     func testNoMetricAddedIfNoExternalTopicsAreResolved() async throws {
         // Load bundle without using external resolvers
-        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "SideKit.symbols.json", content: makeSymbolGraph(moduleName: "SideKit")),
-        ]))
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something"))
+        })
         XCTAssertTrue(context.externallyResolvedLinks.isEmpty)
         
         // Try adding external topics metrics
@@ -72,11 +64,9 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         let externalResolver = self.externalResolver
         
         // Add external links and verify the checksum is always the same
-        func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
-            let catalog = self.makeSideKitCatalog(sideclassMarkdown: """
-            # ``SideKit/SideClass``
-
-            Curate some of the children and leave the rest for automatic curation.
+        func computeTopicHash() async throws -> String {
+            let catalog = self.makeExampleCatalog(markdown: """
+            Curate some external links.
 
             ## Topics
                 
@@ -84,11 +74,9 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
             """)
-            let (_, context) = try await self.loadBundle(catalog: catalog, configuration: {
-                var configuration = DocumentationContext.Configuration()
-                configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
-                return configuration
-            }())
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
+            let (_, context) = try await self.loadBundle(catalog: catalog, configuration: configuration)
             
             // Verify that links were resolved
             XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
@@ -111,11 +99,9 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         let externalResolver = self.externalResolver
         
         // Add external links and verify the checksum is always the same
-        func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
-            let catalog = self.makeSideKitCatalog(sideclassMarkdown: """
-            # ``SideKit/SideClass``
-
-            Curate some of the children and leave the rest for automatic curation.
+        func computeTopicHash() async throws -> String {
+            let catalog = self.makeExampleCatalog(markdown: """
+            Curate some external links.
 
             ## Topics
                 
@@ -123,12 +109,10 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
             """)
-            let (_, context) = try await self.loadBundle(catalog: catalog, configuration: {
-                var configuration = DocumentationContext.Configuration()
-                configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
-                configuration.externalDocumentationConfiguration.globalSymbolResolver = self.externalSymbolResolver
-                return configuration
-            }())
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
+            configuration.externalDocumentationConfiguration.globalSymbolResolver = self.externalSymbolResolver
+            let (_, context) = try await self.loadBundle(catalog: catalog, configuration: configuration)
             
             // Verify that links and symbols were resolved
             XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
@@ -152,10 +136,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         let externalResolver = self.externalResolver
 
         // Load a bundle with external links
-        let catalog = makeSideKitCatalog(sideclassMarkdown: """
-        # ``SideKit/SideClass``
-
-        Curate some of the children and leave the rest for automatic curation.
+        let catalog = makeExampleCatalog(markdown: """
+        Curate some external links.
 
         ## Topics
             
@@ -163,11 +145,9 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
         - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
         """)
-        let (_, context) = try await loadBundle(catalog: catalog, configuration: {
-            var configuration = DocumentationContext.Configuration()
-            configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
-            return configuration
-        }())
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
     
         XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
         guard !context.externallyResolvedLinks.isEmpty else { return }
