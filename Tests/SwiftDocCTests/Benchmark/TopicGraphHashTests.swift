@@ -14,23 +14,19 @@ import DocCCommon
 import DocCTestUtilities
 
 class TopicGraphHashTests: XCTestCase {
-    /// A minimal catalog with a `MyKit` module containing a class and a function.
-    ///
-    /// The two symbols give the topic graph multiple nodes so the hash is
-    /// deterministic and `testTopicGraphChangedHash` can find an existing node
-    /// to add an edge from.
-    private var minimalCatalog: Folder {
-        Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "MyKit.symbols.json", content: makeSymbolGraph(moduleName: "MyKit", symbols: [
-                makeSymbol(id: "s:6MyKit5MyClassC", kind: .class, pathComponents: ["MyClass"]),
-                makeSymbol(id: "s:6MyKit11myFunctionFyyF", kind: .func, pathComponents: ["myFunction"]),
-            ])),
-        ])
+    /// A catalog with two pages so the topic graph hash has multiple nodes to
+    /// work with — `testTopicGraphChangedHash` adds an edge from one of them.
+    private var catalogWithTwoSymbols: Folder {
+        Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: ["First", "Second"].map { name in
+                makeSymbol(id: "\(name.lowercased())-symbol-id", kind: .class, pathComponents: [name])
+            }))
+        }
     }
 
     func testTopicGraphSameHash() async throws {
-        let catalog = minimalCatalog
-        func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
+        let catalog = catalogWithTwoSymbols
+        func computeTopicHash() async throws -> String {
             let (_, context) = try await self.loadBundle(catalog: catalog)
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
@@ -50,7 +46,7 @@ class TopicGraphHashTests: XCTestCase {
     func testTopicGraphChangedHash() async throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try await loadBundle(catalog: minimalCatalog)
+        let (_, context) = try await loadBundle(catalog: catalogWithTwoSymbols)
         
         do {
             let testBenchmark = Benchmark()
