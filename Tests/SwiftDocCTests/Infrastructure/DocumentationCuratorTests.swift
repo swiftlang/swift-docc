@@ -584,7 +584,7 @@ class DocumentationCuratorTests: XCTestCase {
 
 import Testing
 
-struct DocumentationCuratorTests_New {
+struct DocumentationCuratorTests_new {
     @Test
     func raisesDiagnosticAboutCyclicCuration() async throws {
         let context = try await load(catalog:
@@ -718,5 +718,55 @@ struct DocumentationCuratorTests_New {
         #expect(rootRenderNode.topicSections.map(\.identifiers) == [
             ["doc://unit-test/documentation/unit-test/API-Collection"],
         ], "Unexpected rendered topic sections on the module page \(assertionMessageDescription)")
+    }
+
+    // rdar://164204630
+    @Test
+    func warnsAboutCuratingPageWithoutAnyCommonLanguages() async throws {
+        let context = try await load(catalog:
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-swift.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "swift-only-class", language: .swift, kind: .class, pathComponents: ["SwiftOnlyClass"]),
+                ])),
+                JSONFile(name: "ModuleName-objc.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"]),
+                ])),
+                TextFile(name: "SwiftOnlyClass.md", utf8Content: """
+                # ``ModuleName/SwiftOnlyClass``
+
+                ## Topics
+
+                ### Cross-language curation
+
+                - ``ObjcOnlyClass``
+                """),
+            ])
+        )
+
+        #expect(context.diagnostics.map(\.identifier) == ["UnreachableCrossLanguageCuration"], "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        let diagnostic = try #require(context.diagnostics.first)
+
+        #expect(diagnostic.severity == .warning)
+        #expect(diagnostic.source?.lastPathComponent == "SwiftOnlyClass.md")
+        #expect(diagnostic.summary == "Organizing 'ModuleName/ObjcOnlyClass' under 'ModuleName/SwiftOnlyClass' would make it unreachable in the documentation hierarchy")
+        #expect(diagnostic.explanation == """
+            Links in a "Topics section" are used to organize documentation into a hierarchy. The documentation hierarchy requires a curated link and its parent to share at least one source language.
+            If this link contributed to the documentation hierarchy, 'ModuleName/ObjcOnlyClass' wouldn't be reachable from any variant of 'ModuleName/SwiftOnlyClass' because they have no source languages in common:
+
+            - 'ModuleName/ObjcOnlyClass': Objective-C
+            - 'ModuleName/SwiftOnlyClass': Swift
+            """)
+        #expect(diagnostic.solutions.map(\.summary) == ["Remove '- ``ObjcOnlyClass``'"])
+
+        // The curated page should not add an edge to the topic graph
+        let objcOnlyReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "ObjcOnlyClass" }))
+        #expect(context.finitePaths(to: objcOnlyReference).map { $0.map(\.path) } == [["/documentation/ModuleName"]], "'ObjcOnlyClass' should not be reachable via 'SwiftOnlyClass'")
+
+        // The curated page shouldn't appear in the rendered topic section of the parent page
+        let converter = DocumentationNodeConverter(context: context)
+        let swiftOnlyReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SwiftOnlyClass" }))
+        let swiftOnlyRenderNode = converter.convert(try context.entity(with: swiftOnlyReference))
+        #expect(!swiftOnlyRenderNode.topicSections.flatMap(\.identifiers).contains { $0.hasSuffix("/ObjcOnlyClass") },
+                "The cross-language reference should not be present in the parent page")
     }
 }
