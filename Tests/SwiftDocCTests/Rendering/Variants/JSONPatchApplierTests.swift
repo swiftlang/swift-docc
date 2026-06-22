@@ -104,10 +104,12 @@ struct JSONPatchApplierTests {
         ),
     ])
     func throwsErrorForInvalidPointer(input: Model, patch: JSONPatchOperation, expectedError: String) throws {
-        let error = #expect(throws: (any Error).self) {
-            try apply(patch, to: input)
+        do {
+            _ = try apply(patch, to: input)
+            Issue.record("Expected an error to be thrown")
+        } catch {
+            #expect(error.localizedDescription == expectedError)
         }
-        #expect(error?.localizedDescription == expectedError)
     }
     
     private func apply(_ patch: JSONPatchOperation..., to model: Model) throws -> Model {
