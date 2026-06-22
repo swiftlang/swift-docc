@@ -98,6 +98,10 @@ extension MarkdownOutputMarkupWalker {
             output.removeFirst(indentationToRemove.count)
         }
         // Format term lists after processing other elements
+        // Markup before:
+        // - term Term: definition
+        // Markup after:
+        // Term: definition
         if markup is UnorderedList {
             // Start of line, list, term, actual term, colon
             let termPattern = #/^\s*- term (.+:)/#.anchorsMatchLineEndings(true)

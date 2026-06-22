@@ -649,24 +649,16 @@ struct MarkdownOutputTests {
         #expect(markdown.contains("Inline HTML is EMPHASISED stripped of tags"))
     }
     
-    func testTermList() async throws {
-        let content = """
-        # Term Lists
-        
-        Shows how term lists are represented in markdown output
-        
-        ## Overview
-        
-        Here is some content
-        
-        - term Spring: The first season of the year 
-        - term Summer: The second season of the year
-        - term `Code`: A code voice item used as a term
-        
-        Here is some post-list content
-        """
+    @Test
+    func termListRemovesTermNotationAndListMarkers() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "TermList.md", utf8Content: content)
+            TextFile(name: "TermList.md", utf8Content: """
+                # Term Lists
+                                
+                - term Spring: The first season of the year 
+                - term Summer: The second season of the year
+                - term `Code`: A code voice item used as a term
+                """)
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "TermList")
@@ -675,7 +667,7 @@ struct MarkdownOutputTests {
         Summer: The second season of the year
         `Code`: A code voice item used as a term
         """
-        XCTAssert(node.markdown.contains(expectedList))
+        #expect(node.markdown.contains(expectedList))
     }
     
     // MARK: - Metadata
