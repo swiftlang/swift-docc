@@ -26,6 +26,7 @@ add_library(SwiftDocC
   Checker/Checkers/MissingAbstract.swift
   Checker/Checkers/NonInclusiveLanguageChecker.swift
   Checker/Checkers/NonOverviewHeadingChecker.swift
+  Checker/Checkers/MiscasedSectionHeading.swift
   Checker/Checkers/SeeAlsoInTopicsHeadingChecker.swift
   Converter/DocumentationContextConverter.swift
   Converter/DocumentationNodeConverter.swift

@@ -1498,7 +1498,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithUncuratedArticles() async throws {
         #if os(Linux)
-        throw XCTSkip("""
+        try XCTSkipIf(true, """
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
@@ -1627,7 +1627,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testNoRenderReferencesToNonLinkableNodes() async throws {
         #if os(Linux)
-        throw XCTSkip("""
+        try XCTSkipIf(true, """
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
@@ -1669,7 +1669,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithCuratedArticles() async throws {
         #if os(Linux)
-        throw XCTSkip("""
+        try XCTSkipIf(true, """
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)

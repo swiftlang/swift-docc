@@ -279,14 +279,14 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <blockquote class="aside note">
+            <aside class="note">
               <p class="label">Note</p>
               <p>Something noteworthy</p>
-              <blockquote class="aside important">
+              <aside class="important">
                 <p class="label">Important</p>
                 <p>Something important</p>
-              </blockquote>
-            </blockquote>
+              </aside>
+            </aside>
             """
         )
     }

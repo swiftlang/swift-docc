@@ -280,7 +280,8 @@ a {
   color: var(--color-figure-blue);
 }
 
-#eyebrow {
+/* The "eyebrow" subheading */
+section:first-of-type > hgroup > p {
   font-size: 21px;
   line-height: 25px;
   margin: 0;
@@ -290,6 +291,11 @@ a {
   @media only screen and (max-width: 1250px) {
     font-size: 19px;
     line-height: 23px;
+  }
+
+  /* Workaround some margin issues with H1 elements in the authored content. */
+  &+ h1 {
+    margin-top: 0;
   }
 }
 
@@ -412,12 +418,8 @@ section :first-child {
   margin-top: 0;
 }
 
-/* Workaround some margin issues with H1 elements in the authored content. */
-#eyebrow + h1 {
-  margin-top: 0;
-}
-
-#abstract {
+/* Abstract */
+section:first-of-type > p {
   font-size: 21px;
   line-height: 29px;
   
@@ -689,7 +691,7 @@ table {
 
 /* Asides */
 
-blockquote {
+aside {
   background-color: rgb(245, 245, 245);
   border: 0px solid rgb(102, 102, 102);
   border-inline-start-width: 6px;

@@ -216,8 +216,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <noscript>
               <article>
                 <section>
-                  <p>Framework</p>
-                  <h1>ModuleName</h1>
+                  <hgroup>
+                    <p>Framework</p>
+                    <h1>ModuleName</h1>
+                  </hgroup>
                   <p>Some <b>formatted</b> description of this module</p>
                 </section>
                 <h2>Topics</h2>
@@ -272,8 +274,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     </li>
                     <li>SomeClass</li>
                   </ul>
-                  <p>Class</p>
-                  <h1>SomeClass</h1>
+                  <hgroup>
+                    <p>Class</p>
+                    <h1>SomeClass</h1>
+                  </hgroup>
                   <p>Some in-source description of this class.</p>
                   <pre>
                     <code>class SomeClass</code>
@@ -333,16 +337,18 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   </li>
                   <li>someMethod(with:and:)</li>
                 </ul>
-                <p>Instance Method</p>
-                <h1>someMethod(with:and:)</h1>
+                <hgroup>
+                  <p>Instance Method</p>
+                  <h1>someMethod(with:and:)</h1>
+                </hgroup>
                 <p>Some in-source description of this method.</p>
                 <pre>
                   <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
                 </pre>
-                <blockquote class="aside deprecated">
+                <aside class="deprecated">
                   <p class="label">Deprecated</p>
                   <p>Some <b>formatted</b> description of why this method is deprecated.</p>
-                </blockquote>
+                </aside>
               </section>
               <h2>Parameters</h2>
               <dl>
@@ -395,13 +401,15 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     </li>
                     <li>Some article</li>
                   </ul>
-                  <p>Article</p>
-                  <h1>Some article</h1>
+                  <hgroup>
+                    <p>Article</p>
+                    <h1>Some article</h1>
+                  </hgroup>
                   <p>This is a <i>formatted</i> article.</p>
-                  <blockquote class="aside deprecated">
+                  <aside class="deprecated">
                     <p class="label">Deprecated</p>
                     <p>Description of why this <i>article</i> is deprecated.</p>
-                  </blockquote>
+                  </aside>
                 </section>
                 <h2>Custom discussion</h2>
                 <p>It explains how a developer can perform some task using <a href="../someclass/index.html"><code>SomeClass</code></a> in this module.</p>
@@ -445,8 +453,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <li>
                     SomeProtocol</li>
                   </ul>
-                  <p>Protocol</p>
-                  <h1>SomeProtocol</h1>
+                  <hgroup>
+                    <p>Protocol</p>
+                    <h1>SomeProtocol</h1>
+                  </hgroup>
                   <p>Some in-source description of this protocol.</p>
                   <pre>
                     <code>protocol SomeProtocol</code>
@@ -559,9 +569,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                           <ul>
                             <li>RootArticle</li>
                           </ul>
-                          <p>
-                          Article</p>
-                          <h1>RootArticle</h1>
+                          <hgroup>
+                            <p>Article</p>
+                            <h1>RootArticle</h1>
+                          </hgroup>
                           <p>This is a <i> formatted</i> article that becomes the root page (because there is only one page).</p>
                         </section>
                       </article>

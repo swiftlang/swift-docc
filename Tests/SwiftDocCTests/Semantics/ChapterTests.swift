@@ -8,9 +8,11 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Foundation
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCTestUtilities
 
 class ChapterTests: XCTestCase {
     func testEmpty() async throws {
@@ -82,15 +84,46 @@ class ChapterTests: XCTestCase {
     }
     
     func testDuplicateTutorialReferences() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        // The catalog contains two `@TutorialReference` directives in a single chapter
+        // that resolve to the same tutorial: "doc:TestTutorial" and "doc:/TestTutorial".
+        // Even though they're spelled differently, they should be treated as duplicates.
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "TestOverview.tutorial", utf8Content: """
+            @Tutorials(name: "Technology X") {
+               @Intro(title: "Technology X") {
+                  You'll learn all about Technology X.
+               }
+               @Volume(name: "Volume 1") {
+                  @Chapter(name: "Chapter 1") {
+                     @Image(source: image.png, alt: image)
+                     @TutorialReference(tutorial: "doc:TestTutorial")
+                     @TutorialReference(tutorial: "doc:/TestTutorial")
+                  }
+               }
+            }
+            """)
+            TextFile(name: "TestTutorial.tutorial", utf8Content: """
+            @Tutorial(time: 1) {
+               @Intro(title: "Tutorial") {
+                  An intro.
+               }
+               @Section(title: "Section") {
+                  @ContentAndMedia {
+                     Content.
+                  }
+                  @Steps {
+                     @Step {
+                        Do something.
+                        @Image(source: image.png, alt: image)
+                     }
+                  }
+               }
+            }
+            """)
+            DataFile(name: "image.png", data: Data())
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
         
-        /*
-         The test bundle contains the duplicate tutorial references in TestOverview:
-         - @TutorialReference(tutorial: "doc:TestTutorial")
-         - @TutorialReference(tutorial: "doc:/TestTutorial")
-         
-         Although these are spelled differently, they resolve to the same tutorial, so they are treated as duplicates.
-         */
         let duplicateDiagnostic = context.diagnostics.filter { $0.identifier == "org.swift.docc.Chapter.Duplicate\(TutorialReference.self)" }
         XCTAssertEqual(1, duplicateDiagnostic.count)
     }

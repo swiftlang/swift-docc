@@ -61,7 +61,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         .element(named: "p", children: visit(paragraph.children))
     }
     
-    /// Transforms a markdown block quote into a `<blockquote>` HTML element that represents an "aside".
+    /// Transforms a markdown block quote into a `<aside>` HTML element that represents an "aside".
     ///
     /// As part of transforming the paragraph, the renderer also transforms all of its content recursively.
     /// For example, the renderer transforms this markdown
@@ -70,10 +70,10 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// ```
     /// into XML nodes representing this HTML structure
     /// ```
-    /// <blockquote class="aside note">
+    /// <aside class="note">
     ///   <p class="label">Note</p>
     ///   <p>Something noteworthy</p>
-    /// </blockquote>
+    /// </aside>
     /// ```
     func visit(_ blockQuote: BlockQuote) -> XMLNode {
         let aside = Aside(blockQuote)
@@ -86,9 +86,9 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
         
         return .element(
-            named: "blockquote",
+            named: "aside",
             children: children,
-            attributes: ["class": "aside \(aside.kind.rawValue.lowercased())"]
+            attributes: ["class": aside.kind.rawValue.lowercased()]
         )
     }
     

@@ -171,21 +171,22 @@ package struct HTMLRenderer {
         }
         articleElement.addChild(hero)
         
-        // Breadcrumbs and Eyebrow
+        // Breadcrumbs
         hero.addChild(renderer.breadcrumbs(
             references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.url },
             currentPageNames: .single(.conceptual(node.name.plainText))
         ))
-        addEyebrow(text: article.topics == nil ? "Article": "API Collection", to: hero)
-        
-        // Title
+        // Eyebrow and title
         hero.addChild(
-            .element(named: "h1", children: [.text(node.name.plainText)])
+            .element(named: "hgroup", children: [
+                .element(named: "p", children: [.text(article.topics == nil ? "Article": "API Collection")]),
+                .element(named: "h1", children: [.text(node.name.plainText)]),
+            ])
         )
         
         // Abstract
         if let abstract = article.abstract {
-            addAbstract(abstract, to: hero)
+            hero.addChild(renderer.visit(abstract))
         }
         
         // Deprecation message
@@ -246,36 +247,39 @@ package struct HTMLRenderer {
                 hero.addAttributes(["id": "hero", "class": "module"])
             }
         } else {
-            // Breadcrumbs and Eyebrow
+            // Breadcrumbs
             hero.addChild(renderer.breadcrumbs(
                 references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
                 currentPageNames: node.makeNames(goal: goal)
             ))
         }
-        addEyebrow(text: symbol.roleHeading, to: hero)
         
-        // Title
+        // Eyebrow and title
+        let hgroup = XMLNode.element(named: "hgroup", children: [
+            .element(named: "p", children: [.text(symbol.roleHeading)]),
+        ])
         switch symbol.titleVariants.values(goal: goal) {
             case .single(let title):
-                hero.addChild(
+                hgroup.addChild(
                     .element(named: "h1", children: renderer.wordBreak(symbolName: title))
                 )
             case .languageSpecific(let languageSpecificTitles):
                 for (language, languageSpecificTitle) in languageSpecificTitles.sorted(by: { $0.key < $1.key }) {
-                    hero.addChild(
+                    hgroup.addChild(
                         .element(named: "h1", children: renderer.wordBreak(symbolName: languageSpecificTitle), attributes: ["class": "\(language.id)-only"])
                     )
                 }
             case .empty:
                 // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
-                hero.addChild(
+                hgroup.addChild(
                     .element(named: "h1", children: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
                 )
         }
+        hero.addChild(hgroup)
         
         // Abstract
         if let abstract = symbol.abstract {
-            addAbstract(abstract, to: hero)
+            hero.addChild(renderer.visit(abstract))
         }
         
         // Availability
@@ -420,20 +424,6 @@ package struct HTMLRenderer {
             )
         )
     }
-   
-    private func addEyebrow(text: String, to element: XMLElement) {
-        element.addChild(
-            .element(named: "p", children: [.text(text)], attributes: goal == .richness ? ["id": "eyebrow"] : [:])
-        )
-    }
-    
-    private func addAbstract(_ abstract: Paragraph, to element: XMLElement) {
-        let paragraph = renderer.visit(abstract) as! XMLElement
-        if goal == .richness {
-            paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
-        }
-        element.addChild(paragraph)
-    }
     
     private func addDeprecationSummary(markup: [any Markup], to element: XMLElement) {
         var children: [XMLNode] = [
@@ -444,7 +434,7 @@ package struct HTMLRenderer {
         }
         
         element.addChild(
-            .element(named: "blockquote", children: children, attributes: ["class": "aside deprecated"])
+            .element(named: "aside", children: children, attributes: ["class": "deprecated"])
         )
     }
     

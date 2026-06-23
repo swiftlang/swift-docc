@@ -1045,11 +1045,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
         if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
-            // The set of available source language traits has no members in common with
-            // the set of source languages the given reference is available in.
-            // Since there are no overlapping traits, this reference is made available
-            // in order to prevent dropping it entirely.
-            return true
+            // An external symbol may have no language overlap with the module being built,
+            // so filtering it out would mean it is not curated anywhere (rdar://94406023).
+            // For local references, this curation is forbidden. ``DocumentationCurator`` emits a warning,
+            // and the reference is filtered out here so it doesn't appear in the rendered topic section.
+            return context.isExternal(reference: reference)
         }
 
         return allowedTraits.contains { trait in
