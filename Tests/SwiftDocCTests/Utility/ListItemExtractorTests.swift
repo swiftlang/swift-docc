@@ -73,7 +73,32 @@ class ListItemExtractorTests: XCTestCase {
         XCTAssert(extractedTags("- DictionaryKey: Missing key name.").dictionaryKeys.isEmpty)
         XCTAssert(extractedTags("- PossibleValue: Missing value name.").possiblePropertyListValues.isEmpty)
     }
-    
+
+    func testExtractingReturnsOutlineForm() throws {
+        let testSource = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
+        let markup = """
+        - Returns:
+          - quotient: The quotient of the division.
+          - remainder: The remainder of the division.
+        """
+        let document = Document(parsing: markup, source: testSource, options: .parseSymbolLinks)
+        var extractor = TaggedListItemExtractor()
+        _ = extractor.visit(document)
+
+        XCTAssertEqual(extractor.returns.count, 1, "Expected one Return for outline form")
+        let returnValue = try XCTUnwrap(extractor.returns.first)
+        XCTAssertEqual(returnValue.contents.count, 1, "Expected Return contents to be a single element (the list)")
+        let list = try XCTUnwrap(returnValue.contents.first as? UnorderedList)
+        let listItems = list.children.compactMap { $0 as? ListItem }
+        XCTAssertEqual(listItems.count, 2, "Expected two list items (quotient and remainder)")
+
+        let firstParagraphs = listItems.compactMap { $0.child(at: 0) as? Paragraph }
+        XCTAssertEqual(firstParagraphs.count, 2)
+        let firstText = firstParagraphs.compactMap { $0.child(at: 0) as? Text }.map(\.string)
+        XCTAssertTrue(firstText[0].hasPrefix("quotient:"), "First item should be quotient")
+        XCTAssertTrue(firstText[1].hasPrefix("remainder:"), "Second item should be remainder")
+    }
+
     func testExtractingTags() async throws {
         try await assertExtractsRichContentFor(
             tagName: "Returns",
@@ -152,7 +177,7 @@ class ListItemExtractorTests: XCTestCase {
                     .map { Array($0.content) }
             })
         )
-        
+
         // Dictionary and HTTP tags are filtered out from the rendering without symbol information.
         // These test helpers can't easily set up a bundle that supports general tags, REST tags, and HTTP tags.
         
