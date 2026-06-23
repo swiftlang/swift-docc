@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,10 +9,10 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 @testable import SwiftDocC
 
-class VariantOverridesTests: XCTestCase {
+struct VariantOverridesTests {
     var overrideA = VariantOverride(
         traits: [.interfaceLanguage("language A")],
         patch: [
@@ -25,16 +25,18 @@ class VariantOverridesTests: XCTestCase {
     
     var overrideB = VariantOverride(traits: [.interfaceLanguage("language B")], patch: [])
     
-    func testRegistersNewOverrideIfNoOverridesOfTheSameTraitHaveBeenRegistered() {
+    @Test
+    func registersNewOverrideIfNoOverridesOfTheSameTraitHaveBeenRegistered() {
         let variantOverrides = VariantOverrides(values: [overrideA])
         
         variantOverrides.add(overrideB)
         
-        XCTAssertEqual(variantOverrides.values.count, 2)
-        XCTAssertEqual(variantOverrides.values[1].traits, [.interfaceLanguage("language B")])
+        #expect(variantOverrides.values.count == 2)
+        #expect(variantOverrides.values[1].traits == [.interfaceLanguage("language B")])
     }
     
-    func testRegistersPatchInExistingOverrideIfAnOverrideWithTheSameTraitHasBeenRegistered() throws {
+    @Test
+    func registersPatchInExistingOverrideIfAnOverrideWithTheSameTraitHasBeenRegistered() throws {
         let variantOverrides = VariantOverrides(values: [overrideA])
         
         variantOverrides.add(
@@ -49,71 +51,65 @@ class VariantOverridesTests: XCTestCase {
             )
         )
         
-        XCTAssertEqual(variantOverrides.values.count, 1)
-        let variantOverride = try XCTUnwrap(variantOverrides.values.first)
-        XCTAssertEqual(variantOverride.traits, [.interfaceLanguage("language A")])
+        #expect(variantOverrides.values.count == 1)
+        let variantOverride = try #require(variantOverrides.values.first)
+        #expect(variantOverride.traits == [.interfaceLanguage("language A")])
         
-        XCTAssertEqual(variantOverride.patch.count, 2)
+        #expect(variantOverride.patch.count == 2)
         
-        for (index, patchOperation) in variantOverride.patch.enumerated() {
-            let expectedPointerComponents: [String]
-            let expectedValue: String
-            
-            switch index {
-            case 0:
-                expectedPointerComponents = ["a"]
-                expectedValue = "value1"
-            case 1:
-                expectedPointerComponents = ["b", "c"]
-                expectedValue = "value2"
-            default:
-                continue
-            }
-            
-            XCTAssertEqual(patchOperation.pointer.pathComponents, expectedPointerComponents)
+        let expectedPatches = [
+            (pointerComponents: ["a"], value: "value1"),
+            (pointerComponents: ["b", "c"], value: "value2"),
+        ]
+        for (patchOperation, expected) in zip(variantOverride.patch, expectedPatches) {
+            #expect(patchOperation.pointer.pathComponents == expected.pointerComponents)
             
             guard case .replace(_, let value) = patchOperation else {
-                XCTFail("Unexpected patch operation")
+                Issue.record("Unexpected patch operation")
                 return
             }
             
-            XCTAssertEqual(value.value as! String, expectedValue)
+            let stringValue = try #require(value.value as? String)
+            #expect(stringValue == expected.value)
         }
     }
     
-    func testRegistersMultipleOverrides() {
+    @Test
+    func registersMultipleOverrides() {
         let variantOverrides = VariantOverrides()
         variantOverrides.add(contentsOf: [overrideA, overrideB])
-        XCTAssertEqual(variantOverrides.values.count, 2)
+        #expect(variantOverrides.values.count == 2)
     }
     
-    func testEncodesAsASingleValue() throws {
+    @Test
+    func encodesAsASingleValue() throws {
         let encodedVariantOverrides = try JSONEncoder().encode(VariantOverrides(values: [overrideA]))
         
-        let variantOverrides = try XCTUnwrap(
+        let variantOverrides = try #require(
             JSONSerialization.jsonObject(with: encodedVariantOverrides) as? NSArray
         )
         
-        XCTAssertEqual(
-            variantOverrides,
-            [
-                [
-                    "traits": [
-                        [ "interfaceLanguage" : "language A" ],
+        #expect(
+            variantOverrides
+                == [
+                    [
+                        "traits": [
+                            [ "interfaceLanguage" : "language A" ],
+                        ],
+                        "patch": [
+                            [
+                                "path": "/a",
+                                "value": "value1",
+                                "op": "replace",
+                            ]
+                        ],
                     ],
-                    "patch": [
-                        [
-                            "path": "/a",
-                            "value": "value1",
-                            "op": "replace",
-                        ]
-                    ],
-                ],
-            ]
+                ]
         )
     }
     
-    func testDecodesAsASingleValue() throws {
+    @Test
+    func decodesAsASingleValue() throws {
         let encoded = """
         [
             {
@@ -131,22 +127,22 @@ class VariantOverridesTests: XCTestCase {
         
         let overrides = try JSONDecoder().decode(VariantOverrides.self, from: encoded)
         
-        XCTAssertEqual(overrides.values.count, 1)
+        #expect(overrides.values.count == 1)
         
-        let variantOverride = try XCTUnwrap(overrides.values.first)
-        XCTAssertEqual(variantOverride.traits, [.interfaceLanguage("objc")])
+        let variantOverride = try #require(overrides.values.first)
+        #expect(variantOverride.traits == [.interfaceLanguage("objc")])
         
-        XCTAssertEqual(variantOverride.patch.count, 1)
-        let patchOperation = try XCTUnwrap(variantOverride.patch.first)
+        #expect(variantOverride.patch.count == 1)
+        let patchOperation = try #require(variantOverride.patch.first)
         
-        XCTAssertEqual(patchOperation.operation, .replace)
+        #expect(patchOperation.operation == .replace)
         
         guard case .replace(_, let value) = patchOperation, case .string(let stringValue) = value.value as? JSON else {
-            XCTFail()
+            Issue.record("Unexpected patch operation or JSON value")
             return
         }
         
-        XCTAssertEqual(stringValue, "value")
-        XCTAssertEqual(patchOperation.pointer.pathComponents, ["a", "b"])
+        #expect(stringValue == "value")
+        #expect(patchOperation.pointer.pathComponents == ["a", "b"])
     }
 }
