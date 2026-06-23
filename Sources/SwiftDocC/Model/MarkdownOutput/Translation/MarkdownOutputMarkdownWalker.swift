@@ -17,7 +17,7 @@ import Foundation
 internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     let context: DocumentationContext
     let identifier: ResolvedTopicReference
-    let formatOptions = MarkupFormatter.Options(unorderedListMarker: .dash, orderedListNumerals: .incrementing(start: 1))
+    private let formatOptions = MarkupFormatter.Options(unorderedListMarker: .dash, orderedListNumerals: .incrementing(start: 1))
     
     init(context: DocumentationContext, identifier: ResolvedTopicReference) {
         self.context = context
@@ -144,7 +144,9 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    mutating func convertList<List: ListItemContainer>(_ list: List) -> List {
+    // When processing a list, we have to convert the child elements of each list item so that links or nested lists are processed correctly instead of using the output of format().
+    // The function is mutating because processing a link updates the manifest contents.
+    private mutating func convertList<List: ListItemContainer>(_ list: List) -> List {
         var newItems: [ListItem] = []
         for item in list.listItems {
             newItems.append(convertListItem(item))
@@ -152,34 +154,41 @@ extension MarkdownOutputMarkupWalker {
         return List(newItems)
     }
     
-    mutating func convertListItem(_ item: ListItem) -> ListItem {
+    // Iterate over the child elements to ensure nested lists and links are processed correctly instead of using the output of format()
+    private mutating func convertListItem(_ item: ListItem) -> ListItem {
         var newChildren: [any BlockMarkup] = []
-        for child in item.blockChildren {
-            if let nestedList = child as? any ListItemContainer {
-                let converted = convertList(nestedList)
-                newChildren.append(converted)
-            } else if let paragraph = child as? Paragraph {
-                var newComponents: [any InlineMarkup] = []
-                for inlineChild in paragraph.inlineChildren {
-                    if let link = inlineChild as? Link {
-                        let (converted, _) = convertLink(link)
+        
+        func convertParagraph(_ paragraph: Paragraph) -> Paragraph {
+            var newComponents: [any InlineMarkup] = []
+            for inlineChild in paragraph.inlineChildren {
+                switch inlineChild {
+                case let link as Link:
+                    let (converted, _) = convertLink(link)
+                    newComponents.append(converted)
+                case let symbolLink as SymbolLink:
+                    if let (converted, _) = convertSymbolLink(symbolLink) {
                         newComponents.append(converted)
-                    } else if let symbolLink = inlineChild as? SymbolLink {
-                        if let (converted, _) = convertSymbolLink(symbolLink) {
-                            newComponents.append(converted)
-                        }
-                    } else {
-                        newComponents.append(inlineChild)
                     }
+                default:
+                    newComponents.append(inlineChild)
                 }
-                newChildren.append(Paragraph(newComponents))
-            } else {
+            }
+            return Paragraph(newComponents)
+        }
+        
+        for child in item.blockChildren {
+            switch child {
+            case let nestedList as any ListItemContainer:
+                newChildren.append(convertList(nestedList))
+            case let paragraph as Paragraph:
+                newChildren.append(convertParagraph(paragraph))
+            default:
                 newChildren.append(child)
             }
         }
         return ListItem(newChildren)
     }
-    
+        
     mutating func visitImage(_ image: Image) {
         guard let source = image.source else {
             return
@@ -202,7 +211,7 @@ extension MarkdownOutputMarkupWalker {
         markdown.append(codeBlock.detachedFromParent.format(options: formatOptions))
     }
     
-    mutating func convertSymbolLink(_ symbolLink: SymbolLink) -> (link: any InlineMarkup, abstract: (any Markup)?)? {
+    private mutating func convertSymbolLink(_ symbolLink: SymbolLink) -> (link: any InlineMarkup, abstract: (any Markup)?)? {
         guard let destination = symbolLink.destination else {
             return nil
         }
@@ -253,7 +262,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    mutating func convertLink(_ link: Link) -> (link: Link, abstract: (any Markup)?) {
+    private mutating func convertLink(_ link: Link) -> (link: Link, abstract: (any Markup)?) {
         guard
             let destination = link.destination,
             let resolved = context.referenceIndex[destination]

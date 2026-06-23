@@ -156,27 +156,14 @@ struct MarkdownOutputTests {
             TextFile(name: "Links.md", utf8Content: """
                 # Links
 
-                Tests the appearance of inline and linked lists
-
-                ## Overview
-
-                These are some interesting links that are in list items: 
-                
                 - This is an inline link: <doc:RowsAndColumns>
                   - This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
                 - This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
-
-                These are some interesting links that are in ordered list items: 
                 
                 1. This is an inline link: <doc:RowsAndColumns>
                     1. This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
                     2. Here is it again <doc:RowsAndColumns#Overview>
                 2. This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
-                ## Topics
-
-                ### No more links
-                
-                Empty section
                 """)
             ])
 
@@ -203,23 +190,11 @@ struct MarkdownOutputTests {
         let catalog = catalog(files: [
             TextFile(name: "NestedLists.md", utf8Content: """
                 # Nested Lists
-
-                Tests the appearance of nested lists
-
-                ## Overview
-
-                This is a list: 
                 
                 - This is a top-level list item
                   - This is a nested list item
                   - This is another nested list item
                 - This is back to the top-level
-                
-                ## Topics
-
-                ### No more links
-                
-                Empty section
                 """)
             ])
 
@@ -250,7 +225,6 @@ struct MarkdownOutputTests {
                 This is a list of things that have links:
                 
                 - You can use ``MarkdownSymbol`` to do interesting things
-                - You can't use other things
 
                 ## Topics
 
