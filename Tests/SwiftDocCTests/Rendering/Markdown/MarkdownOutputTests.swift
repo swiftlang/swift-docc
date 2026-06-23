@@ -539,13 +539,12 @@ struct MarkdownOutputTests {
         
     @Test
     func imagesUseArchiveRelativePathsForLocalFiles() async throws {
+        
+        let imageURL = try #require(Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources"), "Could not find test image")
+        
         let catalog = catalog(files: [
             TextFile(name: "ImageArticle.md", utf8Content: """
                 # Images
-                
-                Shows how images are represented in markdown output
-                
-                ## Overview
                 
                 ![Alternative Title](image.png)
                 ![](image.png)
@@ -554,7 +553,7 @@ struct MarkdownOutputTests {
                 """),
             Folder(name: "Resources", content: [
                 Folder(name: "Images", content: [
-                    CopyOfFile(original: Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources")!)
+                    CopyOfFile(original: imageURL)
                 ])
             ])
         ])
@@ -564,6 +563,32 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("![](images/MarkdownOutput/image.png"))
         #expect(node.markdown.contains("![Web Image](https://www.example.com/webimage.png)"))
         #expect(node.markdown.contains("![Unresolved Image](unresolved.png)"))
+    }
+    
+    @Test("Runs multiple times to check consistent output", arguments: 1...10)
+    func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {
+        
+        let imageURL = try #require(Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources"), "Could not find test image")
+        
+        let catalog = catalog(files: [
+            TextFile(name: "ImageVariants.md", utf8Content: """
+            # Image variants
+            
+            ![Image Title](image.png)
+            """),
+            Folder(name: "Resources", content: [
+                Folder(name: "Images", content: [
+                    CopyOfFile(original: imageURL, newName: "image.png"),
+                    CopyOfFile(original: imageURL, newName: "image@2x.png"),
+                    CopyOfFile(original: imageURL, newName: "image~dark@2x.png"),
+                    CopyOfFile(original: imageURL, newName: "image@3x.png"),
+                    CopyOfFile(original: imageURL, newName: "image~dark@2x.png")
+                ])
+            ])
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageVariants")
+        #expect(node.markdown.contains("![Image Title](images/MarkdownOutput/image.png)"), "Expected to choose the first variant matching in order of DataTraitCollection.allCases.")
     }
     
     @Test
