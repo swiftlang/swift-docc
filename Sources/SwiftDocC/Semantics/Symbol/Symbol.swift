@@ -24,7 +24,6 @@ public import SymbolKit
 ///
 /// - ``titleVariants``
 /// - ``proseVariants``
-/// - ``proseTitleVariants``
 /// - ``subHeadingVariants``
 /// - ``navigatorVariants``
 /// - ``roleHeadingVariants``
@@ -107,7 +106,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     internal(set) public var proseVariants: DocumentationDataVariants<String> = .init()
 
     /// The prose title for inline links, merged per-language: uses prose where available, falls back to title otherwise.
-    public var proseTitleVariants: DocumentationDataVariants<String> {
+    internal var proseTitleVariants: DocumentationDataVariants<String> {
         var result = titleVariants
         for (trait, prose) in proseVariants.allValues {
             result[trait] = prose
