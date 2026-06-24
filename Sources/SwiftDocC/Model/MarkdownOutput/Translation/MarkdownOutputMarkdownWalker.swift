@@ -123,7 +123,7 @@ extension MarkdownOutputMarkupWalker {
     }
     
     mutating func visitOrderedList(_ orderedList: OrderedList) {
-        let converted = convertList(orderedList)
+        let converted = convertList(orderedList, relationships: &outgoingReferences)
         startNewParagraphIfRequired()
         defaultVisit(converted)
     }
@@ -138,7 +138,7 @@ extension MarkdownOutputMarkupWalker {
                 startNewParagraphIfRequired()
             }
         } else {
-            let converted = convertList(unorderedList)
+            let converted = convertList(unorderedList, relationships: &outgoingReferences)
             startNewParagraphIfRequired()
             defaultVisit(converted)
         }
@@ -146,44 +146,40 @@ extension MarkdownOutputMarkupWalker {
     
     // When processing a list, we have to convert the child elements of each list item so that links or nested lists are processed correctly instead of using the output of format().
     // The function is mutating because processing a link updates the manifest contents.
-    private mutating func convertList<List: ListItemContainer>(_ list: List) -> List {
-        var newItems: [ListItem] = []
-        for item in list.listItems {
-            newItems.append(convertListItem(item))
+    private func convertList<List: ListItemContainer>(_ list: List, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> List {
+        let newItems: [ListItem] = list.listItems.map {
+            convertListItem($0, relationships: &relationships)
         }
         return List(newItems)
     }
     
     // Iterate over the child elements to ensure nested lists and links are processed correctly instead of using the output of format()
-    private mutating func convertListItem(_ item: ListItem) -> ListItem {
-        var newChildren: [any BlockMarkup] = []
+    private func convertListItem(_ item: ListItem, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> ListItem {
         
         func convertParagraph(_ paragraph: Paragraph) -> Paragraph {
-            var newComponents: [any InlineMarkup] = []
-            for inlineChild in paragraph.inlineChildren {
+            let newComponents: [any InlineMarkup] = paragraph.inlineChildren.compactMap { inlineChild in
                 switch inlineChild {
                 case let link as Link:
-                    let (converted, _) = convertLink(link)
-                    newComponents.append(converted)
+                    let (converted, _) = convertLink(link, relationships: &relationships)
+                    return converted
                 case let symbolLink as SymbolLink:
-                    if let (converted, _) = convertSymbolLink(symbolLink) {
-                        newComponents.append(converted)
-                    }
+                    let converted = convertSymbolLink(symbolLink, relationships: &relationships)
+                    return converted?.link
                 default:
-                    newComponents.append(inlineChild)
+                    return inlineChild
                 }
             }
             return Paragraph(newComponents)
         }
         
-        for child in item.blockChildren {
+        let newChildren: [any BlockMarkup] = item.blockChildren.map { child in
             switch child {
             case let nestedList as any ListItemContainer:
-                newChildren.append(convertList(nestedList))
+                return convertList(nestedList, relationships: &relationships)
             case let paragraph as Paragraph:
-                newChildren.append(convertParagraph(paragraph))
+                return convertParagraph(paragraph)
             default:
-                newChildren.append(child)
+                return child
             }
         }
         return ListItem(newChildren)
@@ -211,7 +207,7 @@ extension MarkdownOutputMarkupWalker {
         markdown.append(codeBlock.detachedFromParent.format(options: formatOptions))
     }
     
-    private mutating func convertSymbolLink(_ symbolLink: SymbolLink) -> (link: any InlineMarkup, abstract: (any Markup)?)? {
+    private func convertSymbolLink(_ symbolLink: SymbolLink, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> (link: any InlineMarkup, abstract: (any Markup)?)? {
         guard let destination = symbolLink.destination else {
             return nil
         }
@@ -230,6 +226,7 @@ extension MarkdownOutputMarkupWalker {
         
         let linkTitle: String
         var linkListAbstract: (any Markup)?
+                
         if isRenderingLinkList,
            let doc = try? context.entity(with: resolved),
            let symbol = doc.semantic as? Symbol
@@ -242,19 +239,18 @@ extension MarkdownOutputMarkupWalker {
             } else {
                 linkTitle = symbol.title
             }
-            add(source: resolved, type: .belongsToTopic, subtype: nil)
+            relationships.insert(relationship(source: resolved, type: .belongsToTopic, subtype: nil))
         } else {
             linkTitle = node.title
         }
-        let (link, _) = convertLink(Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)]))
+        let (link, _) = convertLink(Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)]), relationships: &relationships)
         return (link, linkListAbstract)
     }
 
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) {
-        guard let (link, abstract) = convertSymbolLink(symbolLink) else {
+        guard let (link, abstract) = convertSymbolLink(symbolLink, relationships: &outgoingReferences) else {
             return
         }
-        
         // Only perform the linked list rendering for the first thing you find
         withRenderingLinkList(value: false) {
             $0.visit(link)
@@ -262,7 +258,8 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    private mutating func convertLink(_ link: Link) -> (link: Link, abstract: (any Markup)?) {
+    private func convertLink(_ link: Link, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> (link: Link, abstract: (any Markup)?) {
+        
         guard
             let destination = link.destination,
             let resolved = context.referenceIndex[destination]
@@ -296,7 +293,7 @@ extension MarkdownOutputMarkupWalker {
         if let article = doc.semantic as? Article {
             if isRenderingLinkList {
                 linkListAbstract = article.abstract
-                add(source: resolved, type: .belongsToTopic, subtype: nil)
+                relationships.insert(relationship(source: resolved, type: .belongsToTopic, subtype: nil))
             }
             linkTitle = anchorSection?.title ?? article.title?.plainText ?? resolved.lastPathComponent
         } else if let symbol = doc.semantic as? Symbol {
@@ -322,16 +319,13 @@ extension MarkdownOutputMarkupWalker {
     }
     
     mutating func visitLink(_ link: Link) {
-                
-        let (converted, abstract) = convertLink(link)
-        
+        let (converted, abstract) = convertLink(link, relationships: &outgoingReferences)
         // Only perform the linked list rendering for the first thing you find
         withRenderingLinkList(value: false) {
             $0.defaultVisit(converted)
             $0.visit(abstract)
         }
     }
-    
     
     mutating func visitSoftBreak(_ softBreak: SoftBreak) {
         markdown.append("\n")
@@ -504,13 +498,11 @@ extension MarkdownOutputMarkupWalker {
 
 // MARK: - Manifest construction
 extension MarkdownOutputMarkupWalker {
-    mutating func add(source: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
+    func relationship(source: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) -> MarkdownOutputManifest.Relationship {
         var targetIdentifier = identifier.path
         if let lastHeading {
             targetIdentifier.append("#\(urlReadableFragment(lastHeading))")
         }
-        let relationship = MarkdownOutputManifest.Relationship(sourceIdentifier: source.path, relationshipType: type, subtype: subtype, targetIdentifier: targetIdentifier)
-        outgoingReferences.insert(relationship)
-                                                               
+        return MarkdownOutputManifest.Relationship(sourceIdentifier: source.path, relationshipType: type, subtype: subtype, targetIdentifier: targetIdentifier)
     }
 }
