@@ -553,7 +553,7 @@ struct MarkdownOutputTests {
                 """),
             Folder(name: "Resources", content: [
                 Folder(name: "Images", content: [
-                    CopyOfFile(original: imageURL)
+                    DataFile(name: "image.png", data: Data())
                 ])
             ])
         ])
@@ -565,7 +565,7 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("![Unresolved Image](unresolved.png)"))
     }
     
-    @Test("Runs multiple times to check consistent output", arguments: 1...10)
+    @Test(arguments: 1...10)
     func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {
         
         let imageURL = try #require(Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources"), "Could not find test image")
@@ -578,11 +578,11 @@ struct MarkdownOutputTests {
             """),
             Folder(name: "Resources", content: [
                 Folder(name: "Images", content: [
-                    CopyOfFile(original: imageURL, newName: "image.png"),
-                    CopyOfFile(original: imageURL, newName: "image@2x.png"),
-                    CopyOfFile(original: imageURL, newName: "image~dark@2x.png"),
-                    CopyOfFile(original: imageURL, newName: "image@3x.png"),
-                    CopyOfFile(original: imageURL, newName: "image~dark@2x.png")
+                    DataFile(name: "image.png",         data: Data()),
+                    DataFile(name: "image@2x.png",      data: Data()),
+                    DataFile(name: "image~dark@2x.png", data: Data()),
+                    DataFile(name: "image@3x.png",      data: Data()),
+                    DataFile(name: "image~dark@2x.png", data: Data()),
                 ])
             ])
         ])
