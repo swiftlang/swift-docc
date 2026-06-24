@@ -539,9 +539,6 @@ struct MarkdownOutputTests {
         
     @Test
     func imagesUseArchiveRelativePathsForLocalFiles() async throws {
-        
-        let imageURL = try #require(Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources"), "Could not find test image")
-        
         let catalog = catalog(files: [
             TextFile(name: "ImageArticle.md", utf8Content: """
                 # Images
@@ -551,11 +548,11 @@ struct MarkdownOutputTests {
                 ![Web Image](https://www.example.com/webimage.png)
                 ![Unresolved Image](unresolved.png)
                 """),
-            Folder(name: "Resources", content: [
-                Folder(name: "Images", content: [
+            Folder(name: "Resources") {
+                Folder(name: "Images") {
                     DataFile(name: "image.png", data: Data())
-                ])
-            ])
+                }
+            }
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageArticle")
@@ -566,25 +563,22 @@ struct MarkdownOutputTests {
     }
     
     @Test(arguments: 1...10)
-    func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {
-        
-        let imageURL = try #require(Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources"), "Could not find test image")
-        
+    func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {      
         let catalog = catalog(files: [
             TextFile(name: "ImageVariants.md", utf8Content: """
             # Image variants
             
             ![Image Title](image.png)
             """),
-            Folder(name: "Resources", content: [
-                Folder(name: "Images", content: [
-                    DataFile(name: "image.png",         data: Data()),
-                    DataFile(name: "image@2x.png",      data: Data()),
-                    DataFile(name: "image~dark@2x.png", data: Data()),
-                    DataFile(name: "image@3x.png",      data: Data()),
-                    DataFile(name: "image~dark@2x.png", data: Data()),
-                ])
-            ])
+            Folder(name: "Resources") {
+                Folder(name: "Images") {
+                    DataFile(name: "image.png",         data: Data())
+                    DataFile(name: "image@2x.png",      data: Data())
+                    DataFile(name: "image~dark@2x.png", data: Data())
+                    DataFile(name: "image@3x.png",      data: Data())
+                    DataFile(name: "image~dark@2x.png", data: Data())
+                }
+            }
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageVariants")
