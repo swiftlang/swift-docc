@@ -86,15 +86,15 @@ struct MarkdownOutputTests {
             TextFile(name: "RowsAndColumns.md", utf8Content: """
                 # Rows and Columns
                 
-                Just here for the links
+                Abstract rendered when curated
                 
                 ## Overview
                 
-                I am the overview
+                My section header will be specifically linked below
                 
                 ## Multi-word heading
                 
-                I am here to test the url readable fragment stuff
+                My section header is also linked below, and it has a hyphen in it and multiple words
                 """),
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -129,7 +129,7 @@ struct MarkdownOutputTests {
         let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
         #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
         
-        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nJust here for the links"
+        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nAbstract rendered when curated"
         #expect(node.markdown.contains(expectedLinkList))
         
         // No abstract
@@ -147,11 +147,11 @@ struct MarkdownOutputTests {
                 
                 ## Overview
                 
-                I am the overview
+                Section is linked below
                 
                 ## Multi-word heading
                 
-                I am here to test the url readable fragment stuff
+                Multi-word section is linked below
                 """),
             TextFile(name: "Links.md", utf8Content: """
                 # Links
