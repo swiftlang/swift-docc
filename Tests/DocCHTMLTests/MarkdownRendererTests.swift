@@ -292,6 +292,27 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func renderingSmallDirectives() async throws {
+        assert(
+            rendering: """
+            @Small {
+                Licensed under Apache License v2.0
+            }
+            """,
+            parseOptions: [.parseSymbolLinks, .parseBlockDirectives],
+            matches: "<small><p>Licensed under Apache License v2.0</p></small>")
+        
+        assert(
+            rendering: """
+            @Row {
+                empty
+            }
+            """,
+            parseOptions: [.parseSymbolLinks, .parseBlockDirectives],
+            matches: "")
+    }
+    
+    @Test
     func renderingCodeBlocks() async throws {
         assert(
             rendering: """
@@ -599,6 +620,7 @@ struct MarkdownRendererTests {
     
     private func assert(
         rendering markdownContent: String,
+        parseOptions: ParseOptions = .parseSymbolLinks,
         elementToReturn: LinkedElement? = nil,
         assetToReturn: LinkedAsset? = nil,
         fallbackLinkTextToReturn: String? = nil,
@@ -615,7 +637,7 @@ struct MarkdownRendererTests {
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
             )
         )
-        let htmlNodes = Document(parsing: markdownContent, options: .parseSymbolLinks).children.map { renderer.visit($0) }
+        let htmlNodes = Document(parsing: markdownContent, options: parseOptions).children.map { renderer.visit($0) }
         htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expectedXMLString: expectedHTML, sourceLocation: sourceLocation)
     }
     

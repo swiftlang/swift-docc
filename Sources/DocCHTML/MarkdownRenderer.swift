@@ -741,8 +741,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     
     // MARK: Directives
     
-    func visit(_: BlockDirective) -> XMLNode {
-        .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
+    func visit(_ directive: BlockDirective) -> XMLNode {
+        switch directive.name {
+        case "Small":
+            return .element(named: "small", children: visit(directive.children))
+        default:
+            return .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
+        }
     }
     
     // TODO: Support rendering Doxygen tags. (rdar://165755750)
