@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Testing
 import XCTest
 import Foundation
 @testable import SwiftDocC
@@ -174,37 +175,23 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         }
     }
 
-    func testTransformForStaticHostingPreservesCustomTemplatesInGeneratedRoutePagesForExternalOutput() async throws {
-        try await assertTransformForStaticHostingPreservesCustomTemplatesInGeneratedRoutePages(outputIsExternal: true)
-    }
+}
 
-    func testTransformForStaticHostingPreservesCustomTemplatesInGeneratedRoutePagesForInPlaceOutput() async throws {
-        try await assertTransformForStaticHostingPreservesCustomTemplatesInGeneratedRoutePages(outputIsExternal: false)
-    }
-
-    private func assertTransformForStaticHostingPreservesCustomTemplatesInGeneratedRoutePages(outputIsExternal: Bool) async throws {
+struct TransformForStaticHostingActionSwiftTests {
+    @Test(arguments: [true, false])
+    func preservesCustomTemplatesInGeneratedRoutePages(outputIsExternal: Bool) async throws {
         let displayName = "CustomTemplateStaticHosting"
-        let identifier = "com.test.custom-template-static-hosting"
         let headerContent = "<header>custom header</header>"
         let footerContent = "<footer>custom footer</footer>"
         let hostingBasePath = "custom/base/path"
 
         let bundle = Folder(name: "\(displayName).docc", content: [
-            InfoPlist(displayName: displayName, identifier: identifier),
             TextFile(name: "header.html", utf8Content: headerContent),
             TextFile(name: "footer.html", utf8Content: footerContent),
             TextFile(name: "\(displayName).md", utf8Content: """
             # \(displayName)
 
-            @Metadata {
-                @TechnologyRoot
-            }
-
-            An abstract.
-
-            ## Overview
-
-            Some discussion.
+            Some abstract for this page.
             """)
         ])
         let convertTemplate = Folder(name: "convert-template", content: [
@@ -219,15 +206,6 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             """)
         ])
         let transformTemplate = Folder(name: "transform-template", content: [
-            TextFile(name: "index.html", utf8Content: """
-            <!DOCTYPE html>
-            <html lang="en">
-                <head>
-                    <title>Static Hosting Template</title>
-                </head>
-                <body><script src="/js/app.js"></script></body>
-            </html>
-            """),
             TextFile(name: "index-template.html", utf8Content: """
             <!DOCTYPE html>
             <html lang="en">
@@ -239,31 +217,35 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             """)
         ])
 
-        let temporaryDirectory = try createTemporaryDirectory()
-        let bundleURL = try bundle.write(inside: temporaryDirectory)
-        let convertTemplateURL = try convertTemplate.write(inside: temporaryDirectory)
-        let transformTemplateURL = try transformTemplate.write(inside: temporaryDirectory)
-        let archiveURL = temporaryDirectory.appendingPathComponent("Result.doccarchive", isDirectory: true)
+        let fileSystem = try TestFileSystem(folders: [
+            bundle,
+            convertTemplate,
+            transformTemplate
+        ])
+        let archiveURL = URL(fileURLWithPath: "/Result.doccarchive", isDirectory: true)
 
-        let convertAction = try ConvertAction(
-            documentationBundleURL: bundleURL,
+        var convertAction = try ConvertAction(
+            documentationBundleURL: URL(fileURLWithPath: "/\(bundle.name)", isDirectory: true),
             outOfProcessResolver: nil,
             analyze: false,
             targetDirectory: archiveURL,
-            htmlTemplateDirectory: convertTemplateURL,
+            htmlTemplateDirectory: URL(fileURLWithPath: "/\(convertTemplate.name)", isDirectory: true),
             emitDigest: false,
             currentPlatforms: nil,
-            temporaryDirectory: try createTemporaryDirectory(),
+            fileManager: fileSystem,
+            temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
+        convertAction._completelySkipBuildingIndex = true
         _ = try await convertAction.perform(logHandle: .none)
 
-        let outputURL = outputIsExternal ? temporaryDirectory.appendingPathComponent("static-output", isDirectory: true) : nil
+        let outputURL = outputIsExternal ? URL(fileURLWithPath: "/static-output", isDirectory: true) : nil
         let transformAction = try TransformForStaticHostingAction(
             documentationBundleURL: archiveURL,
             outputURL: outputURL,
             hostingBasePath: hostingBasePath,
-            htmlTemplateDirectory: transformTemplateURL
+            htmlTemplateDirectory: URL(fileURLWithPath: "/\(transformTemplate.name)", isDirectory: true),
+            fileManager: fileSystem
         )
         _ = try await transformAction.perform(logHandle: .none)
 
@@ -272,22 +254,22 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             .appendingPathComponent(NodeURLGenerator.Path.documentationFolderName)
             .appendingPathComponent(displayName.lowercased())
             .appendingPathComponent("index.html")
-        let generatedRouteHTML = try String(contentsOf: generatedRouteIndexHTML)
+        let generatedRouteHTML = try String(decoding: fileSystem.contents(of: generatedRouteIndexHTML), as: UTF8.self)
 
-        XCTAssert(
+        #expect(
             generatedRouteHTML.contains(#"<template id="custom-header">\#(headerContent)</template>"#),
             "Generated route page didn't preserve the custom header template from the archive's root index.html."
         )
-        XCTAssert(
+        #expect(
             generatedRouteHTML.contains(#"<template id="custom-footer">\#(footerContent)</template>"#),
             "Generated route page didn't preserve the custom footer template from the archive's root index.html."
         )
-        XCTAssert(
+        #expect(
             generatedRouteHTML.contains(#"src="/\#(hostingBasePath)/js/app.js""#),
             "Generated route page didn't apply the new hosting base path."
         )
-        XCTAssertFalse(
-            generatedRouteHTML.contains(HTMLTemplate.tag.rawValue),
+        #expect(
+            generatedRouteHTML.contains(HTMLTemplate.tag.rawValue) == false,
             "Generated route page still contains the unresolved hosting base path placeholder."
         )
     }

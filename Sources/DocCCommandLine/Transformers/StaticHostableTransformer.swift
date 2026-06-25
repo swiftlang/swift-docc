@@ -145,9 +145,7 @@ extension StaticHostableTransformer {
 
     private static func customTemplateHTML(in indexHTML: String) -> String {
         let pattern = #"<template\s+id="custom-(?:header|footer)"[^>]*>[\s\S]*?</template>"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
-            return ""
-        }
+        let regex = try! NSRegularExpression(pattern: pattern)
 
         let range = NSRange(indexHTML.startIndex..<indexHTML.endIndex, in: indexHTML)
         return regex.matches(in: indexHTML, range: range).compactMap { match in
