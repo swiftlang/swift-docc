@@ -744,7 +744,12 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     func visit(_ directive: BlockDirective) -> XMLNode {
         switch directive.name {
         case "Small":
-            return .element(named: "small", children: visit(directive.children))
+            // <small> is phrasing content and should be wrapped by <p>,
+            // per the HTML spec - not the other way around
+            let content = directive.children.flatMap { child -> [XMLNode] in
+                (child as? Paragraph).map { visit($0.children) } ?? [visit(child)]
+            }
+            return .element(named: "p", children: [.element(named: "small", children: content)])
         default:
             return .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
         }
