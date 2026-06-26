@@ -218,8 +218,8 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   You can use `load(catalog:...)`, `makeSymbolGraph(...)`, and `makeSymbol(...)` to define such inputs in a virtual file system and create a `DocumentationContext` from it:
   
   ```swift
-  let catalog = Folder(name: "Something.docc", content: [
-      JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+  let catalog = Folder(name: "Something.docc") {
+      JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
           makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
           This is the in-source documentation for this class.    
           """)
@@ -228,7 +228,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
       TextFile(name: "Something.md", utf8Content: """
       # ``SomeClass``
       
-      This is additional documentation for this class
+      This is additional documentation for this class.
       """),
   ])
   let context = try await load(catalog: catalog)
@@ -246,6 +246,16 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   ```
   Such `XCTestCase` tests can sometimes be expressed more nicely as parameterized tests in Swift Testing.
   
+  > Tip: A parameterized test with pairs of inputs values can specify its arguments as either an array of tuples or as a dictionary:  
+  > ```swift
+  > @Test(arguments: [
+  >     DiagnosticSeverity.information: true,
+  >     DiagnosticSeverity.warning:     false,
+  >     DiagnosticSeverity.error:       false,
+  > ])
+  > func raisesDiagnostics(configuredDiagnosticFilterLevel: DiagnosticSeverity, expectsToIncludeNonInclusiveDiagnostics: Bool) async throws { ... }
+  >```
+  
 - Think about what information would be helpful to someone else who might debug that test case if it fails in the future.
   
   In an open source project like Swift-DocC, it's possible that a person you've never met will continue to work on code that you wrote.
@@ -256,7 +266,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   Additionally, if there's any information that you can surface right in the test failure that will save the next developer from needing to add a breakpoint and run the test again to inspect the value,
   that's a nice small little thing that you can do for the developer coming after you:
   ```swift
-  #expect(problems.isEmpty, "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+  #expect(diagnostics.isEmpty, "Unexpected problems: \(diagnostics.map(\.summary))")
   ```
   
   Similarly, code comments or `#expect` descriptions can be a way to convey information about _why_ the test is expecting a _specific_ value.
@@ -280,15 +290,41 @@ Currently there are few existing tests to draw inspiration from, so here are a f
 
   It can be easier to understand a test's implementation if its name describes the _behavior_ that the test verifies.
   A phrase that start with a verb can often help make a test's name a more readable description of what it's verifying. 
-  For example: `sortsSwiftFirstAndThenByID`, `raisesDiagnosticAboutCyclicCuration`, `isDisabledByDefault`, and `considersCurationInUncuratedAPICollection`.
+  For example: `sortsSwiftFirstAndThenByID`, `raisesDiagnosticAboutCyclicCuration`, `isDisabledByDefault`, `considersCurationInUncuratedAPICollection`, and `promotesArticleMatchingTheCatalogNameToRootPage`.
+    
+  It can make test names more descriptive if the name describes a more specific behavior rather than a general behavior.
+  For tests that verify more than one behavior; 
+  see if any of those behaviors are either more important or are more specific and consider mentioning one or more of the more important or specific behaviors in the test name.
+  
+  If you're struggling to name a test, one approach you can try is to _imagine_ letting someone else write the test based on only the test's current name. 
+  If there are any _specific_ behaviors that you think that that person would either get wrong (without running the test) or would miss entirely, 
+  then consider mentioning one or more of those behaviors in the test's name. 
+  If you still find the updated test name to be non-descriptive then you can repeat this approach and try to imagine what someone else might miss or get wrong with the new name.
+  
+  For example: 
+  `sortsLanguagesCorrectly` is not specific about the expected order and could be interpreted differently by different people. 
+  `sortsSwiftFirst` is more specific but remains unclear about the relative sort order between other languages. 
+  `sortsSwiftFirstAndThenByID` is highly specific and the verified behavior can be understood in a fair amount of details without reading the test's implementation.
+  
+  > Note: imagining someone else writing a test based on its name is only one of the many ways to create a descriptive test name.
+  It may not be appropriate or produce good test names in all cases.
+  If you find that the test name is becoming overly verbose without making it easier to understand a test's implementation, 
+  try another approach to naming the test.
+  If you cannot decide on a test name that you're happy with, consider proactively asking the reviewer for their input on that specific test name.
+  A fresh perspective and different people's ideas and experiences can help find a test name that's clear and understandable by more people.
 
 ### Updating existing tests
 
 If you're updating an existing test case with additional logic, we appreciate if you also modernize that test while updating it, but we don't expect it.
-If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing.
+If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing and leave the existing tests as-is.
 
 If you modernize an existing test case, consider not only the syntactical differences between Swift Testing and XCTest, 
 but also if there are any Swift Testing features or other changes that would make the test case easier to read, maintain, or debug.
+
+Particularly for certain older tests; we may have learnt new things or developed better ways to test things since the test was originally written.
+Having a person revisit the test---and think about it given our most up-to-date understanding of what makes a test robust, understandable, and maintainable---
+provides an opportunity to improve the test for the next person who works on the feature or other behavior that the test verifies.
+Revisiting an existing test and carefully thinking about what behaviors that test is verifying also provides an opportunity to contemplate any details or potential edge cases that the test doesn't cover but that may be worthwhile to add. 
 
 ### Testing DocC's integration with Xcode
 
