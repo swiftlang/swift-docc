@@ -10,6 +10,7 @@
 
 import XCTest
 import Foundation
+import Testing
 @testable import SwiftDocC
 import SymbolKit
 import DocCTestUtilities
@@ -2478,5 +2479,27 @@ private extension ConvertServiceTests {
             try? FileManager.default.removeItem(at: temporaryDirectory)
         }
         return temporaryDirectory
+    }
+}
+
+struct ConvertServiceProseNameTests {
+    @Test
+    func renderNodeReferenceUsesProseNameForInlineLink() async throws {
+        var method = makeSymbol(id: "method-id", kind: .func, pathComponents: ["myMethod(_:)"],
+                                docComment: "See ``myMethod(_:)`` for details.")
+        method.names.prose = "myMethod"
+
+        let context = try await load(catalog: Folder(name: "ModuleName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName", symbols: [method]
+            )),
+        ]))
+
+        let reference = try #require(context.documentationCache.reference(symbolID: "method-id"))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+
+        let topicRef = try #require(renderNode.references[reference.absoluteString] as? TopicRenderReference)
+        #expect(topicRef.title == "myMethod")
     }
 }
