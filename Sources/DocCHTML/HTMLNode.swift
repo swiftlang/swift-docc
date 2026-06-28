@@ -28,12 +28,21 @@ package struct HTMLNode: Sendable {
 
     static func _element(_ tag: _Tag, attributes: [Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
         assert(!tag.isVoid, "Cannot create an element using void tag '\(tag)'. Use `.voidElement(...)` instead.")
+        assert(attributes.count == Set(attributes.map { $0.nameForFormatting.description.lowercased() }).count, "All attribute names has to be case insensitively unique. This wasn't true for ...")
         return .init(_storage: .element(tag, attributes: attributes, contents: contents))
     }
     
     static func _voidElement(_ tag: _Tag, attributes: [Attribute] = []) -> HTMLNode {
         assert(tag.isVoid, "")
         return .init(_storage: .voidElement(tag, attributes: attributes))
+    }
+    
+    var _tag: _Tag? {
+        switch _storage {
+            case .element(let tag, _, _),
+                 .voidElement(let tag, _): tag
+            case .text:                    nil
+        }
     }
 }
 
