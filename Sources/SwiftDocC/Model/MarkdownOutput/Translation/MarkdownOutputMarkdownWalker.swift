@@ -190,16 +190,17 @@ extension MarkdownOutputMarkupWalker {
             return
         }
         let unescaped = source.removingPercentEncoding ?? source
-        if let resolved = context.resolveAsset(named: unescaped, in: identifier, withType: .image),
-           let first = resolved.variants.first?.value,
-           first.isFileURL
-        {
-            let filename = first.lastPathComponent
-            markdown.append("![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
-        } else {
-            markdown.append(image.format(options: formatOptions))
+
+        if let resolved = context.resolveAsset(named: unescaped, in: identifier, withType: .image) {
+            for traits in DataTraitCollection.allCases {
+                if let match = resolved.variants[traits], match.isFileURL {
+                    let filename = match.lastPathComponent
+                    markdown.append("![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
+                    return
+                }
+            }
         }
-    
+        markdown.append(image.format(options: formatOptions))
     }
        
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) {

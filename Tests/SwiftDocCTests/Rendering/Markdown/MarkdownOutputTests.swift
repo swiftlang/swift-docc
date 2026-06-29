@@ -620,20 +620,16 @@ struct MarkdownOutputTests {
             TextFile(name: "ImageArticle.md", utf8Content: """
                 # Images
                 
-                Shows how images are represented in markdown output
-                
-                ## Overview
-                
                 ![Alternative Title](image.png)
                 ![](image.png)
                 ![Web Image](https://www.example.com/webimage.png)
                 ![Unresolved Image](unresolved.png)
                 """),
-            Folder(name: "Resources", content: [
-                Folder(name: "Images", content: [
-                    CopyOfFile(original: Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources")!)
-                ])
-            ])
+            Folder(name: "Resources") {
+                Folder(name: "Images") {
+                    DataFile(name: "image.png", data: Data())
+                }
+            }
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageArticle")
@@ -641,6 +637,29 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("![](images/MarkdownOutput/image.png"))
         #expect(node.markdown.contains("![Web Image](https://www.example.com/webimage.png)"))
         #expect(node.markdown.contains("![Unresolved Image](unresolved.png)"))
+    }
+    
+    @Test(arguments: 1...10)
+    func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {      
+        let catalog = catalog(files: [
+            TextFile(name: "ImageVariants.md", utf8Content: """
+            # Image variants
+            
+            ![Image Title](image.png)
+            """),
+            Folder(name: "Resources") {
+                Folder(name: "Images") {
+                    DataFile(name: "image.png",         data: Data())
+                    DataFile(name: "image@2x.png",      data: Data())
+                    DataFile(name: "image~dark@2x.png", data: Data())
+                    DataFile(name: "image@3x.png",      data: Data())
+                    DataFile(name: "image~dark@2x.png", data: Data())
+                }
+            }
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageVariants")
+        #expect(node.markdown.contains("![Image Title](images/MarkdownOutput/image.png)"), "Expected to choose the first variant matching in order of DataTraitCollection.allCases.")
     }
     
     @Test
