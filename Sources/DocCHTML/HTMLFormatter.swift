@@ -159,7 +159,7 @@ package struct HTMLFormatter {
     }()
     
     /// Private state that the
-    private struct PrettyPrintingState: ~Copyable {
+    private struct PrettyPrintingState {
         /// The current depth in the HTML element hierarchy.
         var depth: UInt8 = 0
         /// A Boolean value that s `true` if the formatter should place the element on the current line or `false` if the formatter should place the element on a new line.
