@@ -151,6 +151,22 @@ let package = Package(
             swiftSettings: swiftSettings(.v6)
         ),
 
+        // Executable invoked by the GenerateVueResources build tool plugin.
+        // Reads the compiled Vue assets from Sources/DocCHTMLVue/dist/ and
+        // writes a Swift source file containing their Data literals.
+        .executableTarget(
+            name: "GenerateVueResourcesTool",
+            path: "Sources/GenerateVueResourcesTool"
+        ),
+
+        // Build tool plugin that runs GenerateVueResourcesTool at build time
+        // to generate VueApp.generated.swift in the plugin work directory.
+        .plugin(
+            name: "GenerateVueResources",
+            capability: .buildTool(),
+            dependencies: ["GenerateVueResourcesTool"]
+        ),
+
         .target(
             name: "DocCHTML",
             dependencies: [
@@ -159,7 +175,8 @@ let package = Package(
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             exclude: ["CMakeLists.txt"],
-            swiftSettings: swiftSettings(.v6)
+            swiftSettings: swiftSettings(.v6),
+            plugins: [.plugin(name: "GenerateVueResources")]
         ),
         .testTarget(
             name: "DocCHTMLTests",

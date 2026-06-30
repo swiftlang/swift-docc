@@ -47,6 +47,9 @@ package enum StaticResources {
         // UI element icons
         anchorIcon,
         sidebarIcon,
+        // Vue SPA
+        vueAppStyleSheet,
+        vueAppScript,
     ]
     
     // MARK: Stylesheets

@@ -47,6 +47,14 @@ package extension HTMLRenderer {
                 "rel": "stylesheet",
                 "href": "\(pathPrefixToArchiveRoot)reference.css",
             ]),
+            .element(named: "link", attributes: [
+                "rel": "stylesheet",
+                "href": "\(pathPrefixToArchiveRoot)app.css",
+            ]),
+            .element(named: "script", attributes: [
+                "type": "module",
+                "src": "\(pathPrefixToArchiveRoot)app.js",
+            ]),
             .element(named: "title", children: [.text(metadata.title)])
         ])
         if let description = metadata.description {
@@ -56,14 +64,19 @@ package extension HTMLRenderer {
             ]))
         }
         
-        // The full page body consists of 5 elements, in order;
+        // The full page body consists of 6 elements, in order:
         let body = XMLNode.element(named: "body")
         // 1. An optional custom header
         if let customHeader {
             body.addChild(customHeader.copy() as! XMLNode)
         }
         
-        // 2. The default header
+        // 2. The Vue app mount point.
+        //    The Vue SPA (app.js / app.css) renders the interactive header and
+        //    navigator sidebar into this element.
+        body.addChild(.element(named: "div", attributes: ["id": "vue-app"]))
+        
+        // 3. The default header
         body.addChild(.element(named: "header", children: [
             // FIXME: Make this a button that toggles the navigator sidebar (rdar://177705101)
             // This is blocked by the sidebar requiring RenderNode input
@@ -75,12 +88,12 @@ package extension HTMLRenderer {
             .element(named: "span", children: [.text("Language: Swift")])
         ]))
         
-        // 3. The unique documentation content for this page
+        // 4. The unique documentation content for this page
         body.addChild(.element(named: "main", children: [
             mainContent
         ]))
         
-        // 4. The default footer
+        // 5. The default footer
         body.addChild(.element(named: "footer", children: [
             // FIXME: Interacting with this radio group doesn't change the page's color scheme (rdar://177705056)
             .element(named: "fieldset", children: [
@@ -101,7 +114,7 @@ package extension HTMLRenderer {
             ], attributes: ["role": "radiogroup"])
         ]))
         
-        // 5. An optional custom footer
+        // 6. An optional custom footer
         if let customFooter {
             body.addChild(customFooter.copy() as! XMLNode)
         }

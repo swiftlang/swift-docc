@@ -29,3 +29,7 @@ docc-dist-build
 # It should always use the resolved dependencies for the local 
 # Swift-DocC  so we don't track its resolved package file.
 bin/benchmark/Package.resolved
+
+# Vue SPA dependencies and build output
+Sources/DocCHTMLVue/node_modules
+Sources/DocCHTMLVue/dist
