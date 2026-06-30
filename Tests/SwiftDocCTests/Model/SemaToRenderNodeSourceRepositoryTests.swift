@@ -35,26 +35,10 @@ struct SemaToRenderNodeSourceRepositoryTests {
 
     // MARK: - Symbols
 
-    private func makeSymbolCatalog() -> Folder {
-        Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                makeSymbol(
-                    id: "some-symbol-id",
-                    kind: .class,
-                    pathComponents: ["MyStruct"],
-                    location: (
-                        position: .init(line: 9, character: 14),
-                        url: URL(fileURLWithPath: "/path/to/checkout/SourceLocations/MyStruct.swift")
-                    )
-                )
-            ]))
-        }
-    }
-
     @Test
     func doesNotEmitsSourceRepositoryInformationWhenNoSourceIsGiven() async throws {
-        let context = try await load(catalog: makeSymbolCatalog())
-        let node = try #require(context.documentationCache["some-symbol-id"])
+        let context = try await loadFromDisk(catalogName: "SourceLocations")
+        let node = try #require(context.documentationCache["s:32SourceLocations8MyStructV"])
 
         let renderNode = try renderNode(for: node, in: context, sourceRepository: nil)
 
@@ -63,8 +47,8 @@ struct SemaToRenderNodeSourceRepositoryTests {
 
     @Test
     func emitsSourceRepositoryInformationForSymbolsWhenPresent() async throws {
-        let context = try await load(catalog: makeSymbolCatalog())
-        let node = try #require(context.documentationCache["some-symbol-id"])
+        let context = try await loadFromDisk(catalogName: "SourceLocations")
+        let node = try #require(context.documentationCache["s:32SourceLocations8MyStructV"])
 
         let renderNode = try renderNode(
             for: node,
