@@ -15,8 +15,8 @@ import Testing
 import DocCTestUtilities
 
 struct SemaToRenderNodeSourceRepositoryTests {
-    private func node(in context: DocumentationContext, ofKind kind: DocumentationNode.Kind) throws -> DocumentationNode {
-        let reference = try #require(context.knownPages.first { (try? context.entity(with: $0))?.kind == kind })
+    private func node(in context: DocumentationContext, withLastPathComponent lastPathComponent: String) throws -> DocumentationNode {
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == lastPathComponent }))
         return try context.entity(with: reference)
     }
 
@@ -115,7 +115,7 @@ struct SemaToRenderNodeSourceRepositoryTests {
     @Test
     func emitsRemoteSourceForArticleWhenSourceRepositoryIsConfigured() async throws {
         let context = try await load(catalog: makeArticleCatalog())
-        let article = try node(in: context, ofKind: .article)
+        let article = try node(in: context, withLastPathComponent: "Article")
 
         let renderNode = try renderNode(
             for: article,
@@ -132,7 +132,7 @@ struct SemaToRenderNodeSourceRepositoryTests {
     @Test
     func doesNotEmitRemoteSourceForArticleWhenNoSourceRepositoryIsConfigured() async throws {
         let context = try await load(catalog: makeArticleCatalog())
-        let article = try node(in: context, ofKind: .article)
+        let article = try node(in: context, withLastPathComponent: "Article")
 
         let renderNode = try renderNode(for: article, in: context, sourceRepository: nil)
 
@@ -141,9 +141,8 @@ struct SemaToRenderNodeSourceRepositoryTests {
 
     // MARK: - Tutorials
 
-    @Test
-    func emitsRemoteSourceForTutorialContent() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
+    private func makeTutorialCatalog() -> Folder {
+        Folder(name: "unit-test.docc") {
             TextFile(name: "TableOfContents.tutorial", utf8Content: """
             @Tutorials(name: "TechnologyX") {
                @Intro(title: "Technology X") {
@@ -196,30 +195,62 @@ struct SemaToRenderNodeSourceRepositoryTests {
             DataFile(name: "figure1.png", data: Data())
             DataFile(name: "step.png", data: Data())
         }
-        let context = try await load(catalog: catalog)
+    }
+
+    private func loadTutorialContext() async throws -> DocumentationContext {
+        let context = try await load(catalog: makeTutorialCatalog())
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        return context
+    }
 
-        let sourceRepository = SourceRepository.github(checkoutPath: "/", sourceServiceBaseURL: URL(string: "https://example.com/repo")!)
+    @Test
+    func emitsRemoteSourceForTutorialTableOfContents() async throws {
+        let context = try await loadTutorialContext()
+        let tableOfContents = try node(in: context, withLastPathComponent: "TableOfContents")
 
-        let tableOfContents = try node(in: context, ofKind: .tutorialTableOfContents)
-        let tableOfContentsRenderNode = try renderNode(for: tableOfContents, in: context, sourceRepository: sourceRepository)
-        #expect(tableOfContentsRenderNode.metadata.remoteSource == RenderMetadata.RemoteSource(
+        let renderNode = try renderNode(
+            for: tableOfContents,
+            in: context,
+            sourceRepository: .github(checkoutPath: "/", sourceServiceBaseURL: URL(string: "https://example.com/repo")!)
+        )
+
+        #expect(renderNode.metadata.remoteSource == RenderMetadata.RemoteSource(
             fileName: "TableOfContents.tutorial",
             url: URL(string: "https://example.com/repo/unit-test.docc/TableOfContents.tutorial")!
         ))
         // The link points at the top of the page; there's no single meaningful line to anchor to.
-        #expect(tableOfContentsRenderNode.metadata.remoteSource?.url.fragment == nil)
+        #expect(renderNode.metadata.remoteSource?.url.fragment == nil)
+    }
 
-        let tutorial = try node(in: context, ofKind: .tutorial)
-        let tutorialRenderNode = try renderNode(for: tutorial, in: context, sourceRepository: sourceRepository)
-        #expect(tutorialRenderNode.metadata.remoteSource == RenderMetadata.RemoteSource(
+    @Test
+    func emitsRemoteSourceForTutorial() async throws {
+        let context = try await loadTutorialContext()
+        let tutorial = try node(in: context, withLastPathComponent: "BasicTutorial")
+
+        let renderNode = try renderNode(
+            for: tutorial,
+            in: context,
+            sourceRepository: .github(checkoutPath: "/", sourceServiceBaseURL: URL(string: "https://example.com/repo")!)
+        )
+
+        #expect(renderNode.metadata.remoteSource == RenderMetadata.RemoteSource(
             fileName: "BasicTutorial.tutorial",
             url: URL(string: "https://example.com/repo/unit-test.docc/BasicTutorial.tutorial")!
         ))
+    }
 
-        let tutorialArticle = try node(in: context, ofKind: .tutorialArticle)
-        let tutorialArticleRenderNode = try renderNode(for: tutorialArticle, in: context, sourceRepository: sourceRepository)
-        #expect(tutorialArticleRenderNode.metadata.remoteSource == RenderMetadata.RemoteSource(
+    @Test
+    func emitsRemoteSourceForTutorialArticle() async throws {
+        let context = try await loadTutorialContext()
+        let tutorialArticle = try node(in: context, withLastPathComponent: "TutorialArticle")
+
+        let renderNode = try renderNode(
+            for: tutorialArticle,
+            in: context,
+            sourceRepository: .github(checkoutPath: "/", sourceServiceBaseURL: URL(string: "https://example.com/repo")!)
+        )
+
+        #expect(renderNode.metadata.remoteSource == RenderMetadata.RemoteSource(
             fileName: "TutorialArticle.tutorial",
             url: URL(string: "https://example.com/repo/unit-test.docc/TutorialArticle.tutorial")!
         ))
