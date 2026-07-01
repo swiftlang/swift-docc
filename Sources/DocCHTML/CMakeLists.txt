@@ -8,6 +8,10 @@ See https://swift.org/LICENSE.txt for license information
 #]]
 
 add_library(DocCHTML STATIC
+  HTMLFormatter.swift
+  HTMLNode.swift
+  HTMLNode+Attributes.swift
+  HTMLNode+Tags.swift.swift
   LinkProvider.swift
   MarkdownRenderer+Availability.swift
   MarkdownRenderer+Breadcrumbs.swift
