@@ -211,6 +211,34 @@ struct SymbolGraphLoaderTests {
         #expect(loader.unifiedGraphs.first?.value.metadata.first?.value.formatVersion.description == "9.9.9")
     }
     
+    @Test
+    func dropsSymbolsWithEmptyPathComponents() throws {
+        let validParent = makeSymbol(id: "valid-parent-id", kind: .class, pathComponents: ["ClassName"])
+        let validChild = makeSymbol(id: "valid-child-id", kind: .func, pathComponents: ["methodName"])
+        let anonParent = makeSymbol(id: "anon-parent-id", kind: .struct, pathComponents: [""])
+        let anonChild = makeSymbol(id: "anon-child-id", kind: .property, pathComponents: ["", "fieldName"])
+
+        let validRelationship = SymbolGraph.Relationship(
+            source: "valid-child-id", target: "valid-parent-id", kind: .memberOf, targetFallback: nil
+        )
+        let invalidRelationship = SymbolGraph.Relationship(
+            source: "anon-child-id", target: "anon-parent-id", kind: .memberOf, targetFallback: nil
+        )
+
+        var loader = try makeLoader {
+            JSONFile(symbolGraph: makeSymbolGraph(
+                moduleName: "TestModule",
+                symbols: [validParent, validChild, anonParent, anonChild],
+                relationships: [validRelationship, invalidRelationship]
+            ))
+        }
+        try loader.loadAll()
+
+        let graph = try #require(loader.symbolGraphs.values.first)
+        #expect(Set(graph.symbols.keys) == ["valid-parent-id", "valid-child-id"], "Symbols with empty path component segments should be dropped")
+        #expect(graph.relationships.map(\.source) == ["valid-child-id"], "Relationships referencing dropped symbols should be removed")
+    }
+
     private func makeLoader(@FileBuilder content: () -> [any File]) throws -> SymbolGraphLoader {
         let (fileSystem, folderURL) = try makeTestFileSystemWith(content: content)
         
