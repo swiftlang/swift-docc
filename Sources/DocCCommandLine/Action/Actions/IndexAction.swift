@@ -42,6 +42,7 @@ public struct IndexAction: AsyncAction {
     private func buildIndex() throws -> [Diagnostic] {
         let indexBuilder = NavigatorIndex.Builder(archiveURL: archiveURL,
                                                   outputURL: outputURL,
+                                                  fileManager: FileManager.default,
                                                   bundleIdentifier: bundleIdentifier,
                                                   sortRootChildrenByName: true,
                                                   groupByLanguage: true)
