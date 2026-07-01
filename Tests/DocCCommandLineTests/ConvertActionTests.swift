@@ -332,7 +332,7 @@ class ConvertActionTests: XCTestCase {
         
         let targetURL = target.absoluteURL.appendingPathComponent("output")
         
-        XCTAssertNoThrow(try action.moveOutput(from: source.absoluteURL, to: targetURL))
+        XCTAssertNoThrow(try ConvertAction.moveOutput(from: source.absoluteURL, to: targetURL, fileManager: testDataProvider))
         XCTAssertTrue(testDataProvider.fileExists(atPath: targetURL.path, isDirectory: nil))
         XCTAssertFalse(testDataProvider.fileExists(atPath: source.absoluteURL.path, isDirectory: nil))
     }
@@ -366,7 +366,7 @@ class ConvertActionTests: XCTestCase {
         
         let targetURL = target.absoluteURL.appendingPathComponent("target").appendingPathComponent("output")
         
-        XCTAssertThrowsError(try action.moveOutput(from: source.absoluteURL, to: targetURL))
+        XCTAssertThrowsError(try ConvertAction.moveOutput(from: source.absoluteURL, to: targetURL, fileManager: testDataProvider))
     }
 
     func testConvertDoesNotLowercasesResourceFileNames() async throws {
@@ -2872,7 +2872,7 @@ class ConvertActionTests: XCTestCase {
             outOfProcessResolver: nil,
             analyze: false,
             targetDirectory: targetURL,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
             fileManager: fileSystem,
@@ -2895,6 +2895,8 @@ class ConvertActionTests: XCTestCase {
         │     ├─ image-name@2x.png
         │     ├─ image-name~dark.png
         │     ╰─ image-name~dark@2x.png
+        ├─ index/
+        │  ╰─ index.json
         ├─ link-hierarchy.json
         ├─ linkable-entities.json
         ├─ metadata.json
