@@ -178,7 +178,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
-                
+        node.metadata.remoteSource = remoteSource(for: documentationNode)
+
         var intro = visitIntro(tutorial.intro) as! IntroRenderSection
         intro.estimatedTimeInMinutes = tutorial.durationMinutes
         
@@ -412,6 +413,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
+        node.metadata.remoteSource = remoteSource(for: documentationNode)
 
         var intro = visitIntro(tableOfContents.intro) as! IntroRenderSection
         if let firstTutorial = self.firstTutorial(ofTechnology: identifier) {
@@ -621,6 +623,19 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return section
     }
     
+    /// Computes the remote source location for a non-symbol page (article or tutorial content file),
+    /// based on the on-disk location of its markup and the configured source repository.
+    private func remoteSource(for documentationNode: DocumentationNode) -> RenderMetadata.RemoteSource? {
+        guard let sourceRepository,
+              let sourceURL = documentationNode.markup.range?.source,
+              let url = sourceRepository.format(sourceFileURL: sourceURL)
+        else {
+            return nil
+        }
+
+        return RenderMetadata.RemoteSource(fileName: sourceURL.lastPathComponent, url: url)
+    }
+
     public mutating func visitArticle(_ article: Article) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
         // Contains symbol references declared in the Topics section.
@@ -647,7 +662,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         let documentationNode = try! context.entity(with: identifier)
-        
+        node.metadata.remoteSource = remoteSource(for: documentationNode)
+
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitArticle(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
@@ -947,7 +963,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
-        
+        node.metadata.remoteSource = remoteSource(for: documentationNode)
+
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         
         var intro: IntroRenderSection
