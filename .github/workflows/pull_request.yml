@@ -35,9 +35,10 @@ jobs:
       license_header_check_project_name: "Swift"
       # The license header check is disabled as it requires a large number of changes.
       license_header_check_enabled: false
-      # The unacceptable language check is disabled due to conflict with
-      # DocC's own unacceptable language check tests.
-      unacceptable_language_check_enabled: false
+      # There are some words in typical programming jargon that are a part of the default list.
+      # The list of words checked by this job is restricted below to prevent raising issues for
+      # words that are contextually acceptable to use in this repository.
+      unacceptable_language_check_word_list: "blacklist whitelist slave master"  # ignore-unacceptable-language
       # The format check is disabled as this project does not conform to swift-format.
       # More discussion is needed before enabling this check.
       format_check_enabled: false
