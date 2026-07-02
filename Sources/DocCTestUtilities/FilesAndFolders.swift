@@ -338,7 +338,7 @@ public struct DataFile: File, DataRepresentable {
 }
 
 /// Creates a new test file system with a folder that contains the given `content`.
-/// - Parameter files: The content of the new folder.
+/// - Parameter content: The content of the new folder.
 /// - Returns: The test file system and the URL to the directory that contains the given files
 package func makeTestFileSystemWithFolder(containing content: [any File]) throws -> (TestFileSystem, URL) {
     let testFileSystem = try TestFileSystem(folders: [
@@ -350,6 +350,13 @@ package func makeTestFileSystemWithFolder(containing content: [any File]) throws
         ])
     ])
     return (testFileSystem, URL(fileURLWithPath: "/path/to/Some folder"))
+}
+
+/// Creates a new test file system with a folder that contains the given `content`.
+/// - Parameter content: The content of the new folder.
+/// - Returns: The test file system and the URL to the directory that contains the given files
+package func makeTestFileSystemWith(@FileBuilder content: () -> [any File]) throws -> (TestFileSystem, URL) {
+    try makeTestFileSystemWithFolder(containing: content())
 }
 
 // MARK: Dump

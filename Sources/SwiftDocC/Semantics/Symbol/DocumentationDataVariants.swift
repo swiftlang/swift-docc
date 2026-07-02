@@ -119,7 +119,12 @@ extension DocumentationDataVariants {
         // Since this convenience accessor exist to transition existing code from only working with Swift symbols,
         // it accesses the Swift value first, if it exist, and otherwise accesses the real non-deterministic first value.
         // This assumes that variant only represents one non-Swift language.
-        get { self[.swift] ?? self.values.first?.value }
+        get {
+            if hasVariant(for: .swift) {
+                return values[.swift]
+            }
+            return self.values.first?.value ?? defaultVariantValue
+        }
         set { self[.swift] = newValue }
     }
 }
@@ -136,13 +141,7 @@ public struct DocumentationDataVariantsTrait: Hashable {
     
     /// The language in which the documentation node is relevant.
     public var interfaceLanguage: String? {
-        get {
-            sourceLanguage?.id
-        }
-        @available(*, deprecated, message: "Create a new DocumentationDataVariantsTrait instead. This deprecated API will be removed after 6.4 is released.")
-        set {
-            sourceLanguage = newValue.map { SourceLanguage(id: $0) }
-        }
+        sourceLanguage?.id
     }
     
     private(set) var sourceLanguage: SourceLanguage?

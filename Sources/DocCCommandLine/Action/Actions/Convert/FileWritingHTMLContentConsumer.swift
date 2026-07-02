@@ -21,6 +21,7 @@ private import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool
+    let _isPrimaryOutputFormat = false
     
     private struct HTMLTemplate {
         var original: String
@@ -97,6 +98,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         }
     }
     private var htmlTemplate: HTMLTemplate
+    // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
     private let fileWriter: JSONEncodingRenderNodeWriter
     
     init(

@@ -1983,6 +1983,26 @@
         },
         {
           "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Alignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = leading"
+        },
+        {
+          "kind" : "text",
           "spelling" : ")"
         },
         {
@@ -2005,6 +2025,66 @@
             "text" : "Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive."
           },
           {
+            "text" : "Use `size` to span multiple columns and `alignment` to control content positioning."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Row {"
+          },
+          {
+            "text" : "    @Column {"
+          },
+          {
+            "text" : "        Default (leading) alignment"
+          },
+          {
+            "text" : "    }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "    @Column(alignment: center) {"
+          },
+          {
+            "text" : "        Centered content"
+          },
+          {
+            "text" : "    }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "    @Column(size: 2, alignment: trailing) {"
+          },
+          {
+            "text" : "        Trailing alignment; twice as wide"
+          },
+          {
+            "text" : "    }"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier Versions:"
+          },
+          {
+            "text" : "> Before Swift-DocC 6.4, the `alignment` parameter wasn't supported for `@Column`."
+          },
+          {
             "text" : "- Parameters:"
           },
           {
@@ -2021,6 +2101,21 @@
           },
           {
             "text" : "     in the parent ``Row``."
+          },
+          {
+            "text" : "  - alignment: The alignment of this column's content."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     - term `leading`: Align to the leading edge."
+          },
+          {
+            "text" : "     - term `center`: Align to the center."
+          },
+          {
+            "text" : "     - term `trailing`: Align to the trailing edge."
           }
         ]
       },
@@ -2068,6 +2163,22 @@
           {
             "kind" : "typeIdentifier",
             "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "alignment"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Alignment"
           },
           {
             "kind" : "text",
@@ -2993,12 +3104,6 @@
           },
           {
             "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - source: A reference to the source file for the media item."
-          },
-          {
-            "text" : "     **(required)**"
           },
           {
             "text" : "  - alt: Optional alternate text for an image."
@@ -4809,6 +4914,26 @@
         {
           "kind" : "text",
           "spelling" : " = 1"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Alignment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = leading"
         },
         {
           "kind" : "text",
@@ -7193,12 +7318,6 @@
           },
           {
             "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - source: A reference to the source file for the media item."
-          },
-          {
-            "text" : "     **(required)**"
           },
           {
             "text" : "  - alt: Alternate text describing the video."

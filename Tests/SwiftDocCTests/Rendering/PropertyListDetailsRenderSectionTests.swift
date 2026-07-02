@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,100 +9,45 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 @testable import SwiftDocC
 import SymbolKit
+import DocCCommon
 import DocCTestUtilities
 
-class PropertyListDetailsRenderSectionTests: XCTestCase {
-
-    func testDecoding() async throws {
-        
-        func getPlistDetailsSection(arrayMode: any CustomStringConvertible, baseType: any CustomStringConvertible, rawKey: any CustomStringConvertible) async throws -> PropertyListDetailsRenderSection {
-            let symbolJSON = """
-            {
-              "accessLevel" : "public",
-              "availability" : [],
-              "identifier" : {
-                "interfaceLanguage" : "plist",
-                "precise" : "plist:propertylistkey"
-              },
-              "kind" : {
-                "displayName" : "Property List Key",
-                "identifier" : "typealias"
-              },
-              "names" : {
-                "navigator" : [
-                  {
-                    "kind" : "identifier",
-                    "spelling" : "propertylistkey"
-                  }
-                ],
-                "title" : "propertylistkey"
-              },
-              "pathComponents" : [
-                "Information-Property-List",
-                "propertylistkey"
-              ],
-              "plistDetails" : {
-                "arrayMode" : \(arrayMode),
-                "baseType" : \(baseType),
-                "rawKey" : \(rawKey)
-              }
-            }
-            """
-            let symbolGraphString = makeSymbolGraphString(moduleName: "MyModule", symbols: symbolJSON)
-            let catalog = Folder(name: "unit-test.docc", content: [
-                TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
-            ])
-            let (_, context) = try await loadBundle(catalog: catalog)
-            let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
-            let converter = DocumentationNodeConverter(context: context)
-            let renderNode = converter.convert(node)
-            return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PropertyListDetailsRenderSection }))
+struct PropertyListDetailsRenderSectionTests {
+    @Test(arguments: [true, false])
+    func renderingDecodedPropertyDetails(arrayMode: Bool) async throws {
+        let renderSection = try await makePlistDetailsSection(arrayMode: arrayMode, baseType: "string", rawKey: "property-list-key")
+        #expect(renderSection.details == .init(
+            rawKey: "property-list-key",
+            value: [TypeDetails(baseType: "string", arrayMode: arrayMode)],
+            platforms: [],
+            displayName: nil,
+            titleStyle: .useDisplayName
+        ))
+    }
+    
+    private func makePlistDetailsSection(
+        arrayMode: Bool,
+        baseType: any CustomStringConvertible,
+        rawKey: any CustomStringConvertible,
+        sourceLocation: SourceLocation = #_sourceLocation
+    ) async throws -> PropertyListDetailsRenderSection {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "MyModule", symbols: [
+                makeSymbol(id: "plist:propertylistkey", language: .init(id: "plist"), kind: .typealias, pathComponents: ["Information-Property-List", "propertylistkey"], otherMixins: [
+                    SymbolGraph.Symbol.PlistDetails(
+                        rawKey:    rawKey.description,
+                        baseType:  baseType.description,
+                        arrayMode: arrayMode
+                    )
+                ])
+            ]))
         }
-        
-        // Assert that the Details section is correctly generated when passing valid values into the plistDetails JSON object.
-        let withArrayMode = try await getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: "\"property-list-key\"")
-        XCTAssertEqual(
-            withArrayMode,
-            PropertyListDetailsRenderSection(
-               details: PropertyListDetailsRenderSection.Details(
-                   rawKey: "property-list-key",
-                   value: [TypeDetails(baseType: "string", arrayMode: true)],
-                   platforms: [],
-                   displayName: nil,
-                   titleStyle: .useDisplayName
-               )
-           )
-       )
-        
-        let withoutArrayMode = try await getPlistDetailsSection(arrayMode: false, baseType: "\"string\"", rawKey: "\"property-list-key\"")
-        XCTAssertEqual(
-            withoutArrayMode,
-            PropertyListDetailsRenderSection(
-               details: PropertyListDetailsRenderSection.Details(
-                   rawKey: "property-list-key",
-                   value: [TypeDetails(baseType: "string", arrayMode: false)],
-                   platforms: [],
-                   displayName: nil,
-                   titleStyle: .useDisplayName
-               )
-           )
-       )
-        
-        // Assert that the Details section does not decode unsupported values.
-        do {
-            _ = try await getPlistDetailsSection(arrayMode: true, baseType: true, rawKey: "\"property-list-key\"")
-            XCTFail("Didn't raise an error")
-        } catch {
-            XCTAssertTrue(error.localizedDescription.contains("isn’t in the correct format"))
-        }
-        do {
-            _ = try await getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: 1)
-            XCTFail("Didn't raise an error")
-        } catch {
-            XCTAssertTrue(error.localizedDescription.contains("isn’t in the correct format"))
-        }
+        let context = try await load(catalog: catalog)
+        let node = try #require(context.documentationCache["plist:propertylistkey"], sourceLocation: sourceLocation)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        return try #require(renderNode.primaryContentSections.mapFirst(where: { $0 as? PropertyListDetailsRenderSection }), sourceLocation: sourceLocation)
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -136,7 +136,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         isBeta = AvailabilityRenderItem.isBeta(introduced: introducedVersion, current: current)
     }
 
-    init?(_ availability: Metadata.Availability, current: PlatformVersion?) {
+    init(_ availability: Metadata.Availability, current: PlatformVersion?) {
         let platformName = PlatformName(metadataPlatform: availability.platform)
         name = platformName?.displayName
         introduced = availability.introduced.stringRepresentation(precisionUpToNonsignificant: .minor)
@@ -152,14 +152,33 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         return introduced >= SemanticVersion(versionTriplet: current.version)
     }
     
-    /// Creates a new item with the given platform name and version string.
-    /// - Parameters:
-    ///   - name: A platform name.
-    ///   - introduced: A version string.
-    ///   - isBeta: If `true`, the symbol is introduced in a beta version of the platform.
-    init(name: String, introduced: String?, isBeta: Bool) {
+    init(
+        name: String,
+        introduced: String?,
+        deprecated: String? = nil,
+        obsoleted: String? = nil,
+        message: String? = nil,
+        renamed: String? = nil,
+        unconditionallyDeprecated: Bool? = nil,
+        unconditionallyUnavailable: Bool? = nil,
+        isBeta: Bool
+    ) {
         self.name = name
         self.introduced = introduced
+        self.deprecated = deprecated
+        self.obsoleted = obsoleted
+        self.message = message
+        self.renamed = renamed
+        self.unconditionallyDeprecated = unconditionallyDeprecated
+        self.unconditionallyUnavailable = unconditionallyUnavailable
         self.isBeta = isBeta
+    }
+
+    /// Sort two availability render items based on their platform name.
+    static func isInPlatformOrder(lhs: AvailabilityRenderItem, rhs: AvailabilityRenderItem) -> Bool {
+        guard let lhsName = lhs.name, let rhsName = rhs.name else {
+            return lhs.name != nil
+        }
+        return PlatformName.isInOrder(lhsName, rhsName)
     }
 }

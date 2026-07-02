@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 #if canImport(NIOHTTP1)
 import XCTest
 @testable import SwiftDocC
-@testable import DocCCommandLine
+@_spi(Testing) @testable import DocCCommandLine
 import DocCTestUtilities
 import NIOCore
 
@@ -120,7 +120,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 var logHandle = LogHandle.memory(logStorage)
                 let result = try await preview.perform(logHandle: &logHandle)
                 
-                guard !result.problems.containsErrors else {
+                guard !result.diagnostics.containsAnyError else {
                     throw ErrorsEncountered()
                 }
             }
@@ -241,8 +241,8 @@ class PreviewActionIntegrationTests: XCTestCase {
                 let result = try await preview.perform(logHandle: &logHandle)
 
                 XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
-                XCTAssertNotNil(preview.convertAction.diagnosticEngine.problems.first(where: { problem -> Bool in
-                    DiagnosticConsoleWriter.formattedDescription(for: problem.diagnostic).contains(expectedErrorMessage)
+                XCTAssertNotNil(preview.convertAction.diagnosticEngine.diagnostics.first(where: { diagnostics -> Bool in
+                    DiagnosticConsoleWriter.formattedDescription(for: diagnostics).contains(expectedErrorMessage)
                 }), "Didn't find expected error message '\(expectedErrorMessage)'", file: file, line: line)
 
                 // Verify that the failed server is not added to the server list
@@ -305,7 +305,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         XCTAssertNotNil(servers[preview.serverIdentifier])
         
         // We have one preview running on the given port
-        let boundPort = try XCTUnwrap(servers[preview.serverIdentifier]?.channel.localAddress?.port)
+        let boundPort = try XCTUnwrap(servers[preview.serverIdentifier]?._boundPort)
 
         // Try to start another preview on the same port
         try await assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) is not available at the moment, try a different port number")
@@ -371,7 +371,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 var logHandle = LogHandle.memory(logStorage)
                 let result = try await preview.perform(logHandle: &logHandle)
                 
-                guard !result.problems.containsErrors else {
+                guard !result.diagnostics.containsAnyError else {
                     throw ErrorsEncountered()
                 }
             }

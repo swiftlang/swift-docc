@@ -13,6 +13,7 @@ package import Foundation
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
 public import SwiftDocC
 private import Markdown
+private import DocCHTML
 
 #if canImport(os)
 private import os
@@ -27,6 +28,7 @@ public struct ConvertAction: AsyncAction {
     let htmlTemplateDirectory: URL?
     
     private let emitDigest: Bool
+    private let outputFormat: Docc.Convert.OutputFormat
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
     private let experimentalModifyCatalogWithGeneratedCuration: Bool
@@ -59,6 +61,7 @@ public struct ConvertAction: AsyncAction {
     /// 
     ///     A JSON representation is built and emitted regardless of this value.
     ///   - fileManager: The file manager that the convert action uses to create directories and write data to files.
+    ///   - outputFormat: The format that the convert action will output the documentation in when writing to the output location.
     ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
     ///   - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
     ///   - diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
@@ -67,8 +70,11 @@ public struct ConvertAction: AsyncAction {
     ///   - formatConsoleOutputForTools: `true` if the convert action should write diagnostics to the console in a format suitable for parsing by an IDE or other tool, otherwise `false`.
     ///   - inheritDocs: `true` if the convert action should retain the original documentation content for inherited symbols, otherwise `false`.
     ///   - treatWarningsAsErrors: `true` if the convert action should treat warnings as errors, otherwise `false`.
+    ///   - diagnosticIDsWithWarningSeverity: A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
+    ///   - diagnosticIDsWithErrorSeverity: A list of diagnostic identifiers that are explicitly raised to an "error" severity.
     ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
     ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
+    ///   - featureFlags: A collection of feature flags that the convert action uses to enable or disable certain optional behaviors.
     ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
     ///   - includeContentInEachHTMLFile: `true` if the convert action should process each static hosting HTML file so that it includes documentation content for environments without JavaScript enabled, otherwise `false`.
     ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
@@ -87,6 +93,7 @@ public struct ConvertAction: AsyncAction {
         buildIndex: Bool = false,
         fileManager: any FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
+        outputFormat: Docc.Convert.OutputFormat = .json,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
         bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
@@ -95,8 +102,11 @@ public struct ConvertAction: AsyncAction {
         formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         treatWarningsAsErrors: Bool = false,
+        diagnosticIDsWithWarningSeverity: Set<String> = [],
+        diagnosticIDsWithErrorSeverity: Set<String> = [],
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
+        featureFlags: FeatureFlags = .init(),
         transformForStaticHosting: Bool = false,
         includeContentInEachHTMLFile: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
@@ -108,6 +118,7 @@ public struct ConvertAction: AsyncAction {
         self.targetDirectory = targetDirectory
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.emitDigest = emitDigest
+        self.outputFormat = outputFormat
         self.buildLMDBIndex = buildIndex
         self.fileManager = fileManager
         self.temporaryDirectory = temporaryDirectory
@@ -141,7 +152,10 @@ public struct ConvertAction: AsyncAction {
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
+        // Set these properties even if the caller passed a base diagnostic engine
         engine.filterLevel = filterLevel
+        engine.diagnosticIDsWithWarningSeverity = diagnosticIDsWithWarningSeverity
+        engine.diagnosticIDsWithErrorSeverity   = diagnosticIDsWithErrorSeverity
         if let diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: fileManager))
         }
@@ -149,6 +163,7 @@ public struct ConvertAction: AsyncAction {
         self.diagnosticEngine = engine
         
         var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags = featureFlags
         
         configuration.externalMetadata.diagnosticLevel = filterLevel
         // Inject current platform versions if provided
@@ -211,7 +226,17 @@ public struct ConvertAction: AsyncAction {
     
     func perform(logHandle: inout LogHandle) async throws -> (ActionResult, DocumentationContext) {
         // FIXME: Use `defer` again when the asynchronous defer-statement miscompilation (rdar://137774949) is fixed.
-        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        let temporaryFolder: URL
+        switch outputFormat {
+        case .json:
+            temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        case .experimentalHTML:
+            temporaryFolder = try createTempFolder(with: nil)
+            for file in DocCHTML.StaticResources.allFiles {
+                try fileManager.createFile(at: temporaryFolder.appendingPathComponent(file.filename), contents: file.data)
+            }
+        }
+        
         do {
             let result = try await _perform(logHandle: &logHandle, temporaryFolder: temporaryFolder)
             diagnosticEngine.flush()
@@ -242,9 +267,9 @@ public struct ConvertAction: AsyncAction {
             )
         }
         
-        // The converter has already emitted its problems to the diagnostic engine.
-        // Track additional problems separately to avoid repeating the converter's problems.
-        var postConversionProblems: [Problem] = []
+        // The converter has already emitted its diagnostics to the diagnostic engine.
+        // Track additional diagnostics separately to avoid repeating the converter's diagnostics.
+        var postConversionDiagnostics: [Diagnostic] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
         // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
@@ -262,13 +287,13 @@ public struct ConvertAction: AsyncAction {
 //        }
 
         let indexHTML: URL?
-        if let htmlTemplateDirectory {
+        if let htmlTemplateDirectory, outputFormat == .json {
             let indexHTMLUrl = temporaryFolder.appendingPathComponent(
                 HTMLTemplate.indexFileName.rawValue,
                 isDirectory: false
             )
             indexHTML = indexHTMLUrl
-            
+
             let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
             if customHostingBasePathProvided {
                 let data = try StaticHostableTransformer.indexHTMLData(
@@ -318,8 +343,15 @@ public struct ConvertAction: AsyncAction {
             bundleID: inputs.id
         )
         
-        let htmlConsumer: FileWritingHTMLContentConsumer?
-        if includeContentInEachHTMLFile, let indexHTML {
+        let htmlConsumer: (any HTMLContentConsumer)?
+        if outputFormat == .experimentalHTML {
+            htmlConsumer = try FullPageHTMLContentConsumer(
+                targetFolder: temporaryFolder,
+                fileManager: fileManager,
+                customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
+                customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
+            )
+        } else if includeContentInEachHTMLFile, let indexHTML {
             htmlConsumer = try FileWritingHTMLContentConsumer(
                 targetFolder: temporaryFolder,
                 fileManager: fileManager,
@@ -354,35 +386,32 @@ public struct ConvertAction: AsyncAction {
             signposter.endInterval("Process", processInterval)
         }
 
-        var didEncounterError = context.problems.containsErrors
+        var didEncounterError = context.diagnosticEngine.diagnostics.containsAnyError
         let hasTutorial = context.knownPages.contains(where: {
             guard let kind = try? context.entity(with: $0).kind else { return false }
             return kind == .tutorial || kind == .tutorialArticle
         })
-        // Warn the user if the catalog is a tutorial but does not contains a table of contents
-        // and provide template content to fix this problem.
+        // Warn the user if the catalog is a tutorial but does not contains a table of contents and provide template content to fix this issue.
         if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
-            var replacements = [SwiftDocC.Replacement]()
+            var replacements = [Solution.Replacement]()
             if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(inputs.displayName)[tableOfContentsFilename] {
                 replacements.append(
-                    Replacement(
+                    .init(
                         range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
                         replacement: tableOfContentsTemplate
                     )
                 )
             }
-            postConversionProblems.append(
-                Problem(
-                    diagnostic: Diagnostic(
-                        source: source,
-                        severity: .warning,
-                        identifier: "MissingTableOfContentsPage",
-                        summary: "Missing tutorial table of contents (`@Tutorials`) page",
-                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order."
-                    ),
-                    possibleSolutions: [
+            postConversionDiagnostics.append(
+                Diagnostic(
+                    source: source,
+                    severity: .warning,
+                    identifier: "MissingTableOfContentsPage",
+                    summary: "Missing tutorial table of contents (`@Tutorials`) page",
+                    explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order.",
+                    solutions: [
                         Solution(
                             summary: "Create a `@Tutorials` table of contents page",
                             replacements: replacements
@@ -392,7 +421,7 @@ public struct ConvertAction: AsyncAction {
             )
         }
         
-        // If we're building a navigation index, finalize the process and collect encountered problems.
+        // If we're building a navigation index, finalize the process and collect encountered diagnostics.
         if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
             
@@ -401,13 +430,13 @@ public struct ConvertAction: AsyncAction {
             let indexerProblems = signposter.withIntervalSignpost("Finalize navigator index") {
                 indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             }
-            postConversionProblems.append(contentsOf: indexerProblems)
+            postConversionDiagnostics.append(contentsOf: indexerProblems)
             
             benchmark(end: finalizeNavigationIndexMetric)
         }
         
-        // Output to the user the problems encountered during the convert process
-        diagnosticEngine.emit(postConversionProblems)
+        // Output the diagnostics encountered during the convert process to the user.
+        diagnosticEngine.emit(postConversionDiagnostics)
 
         // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
         // New tasks and computations should be added above this line so that they're included in the benchmark.
@@ -415,14 +444,14 @@ public struct ConvertAction: AsyncAction {
         
         if !didEncounterError {
             let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
-            postConversionProblems.append(contentsOf: coverageResults.problems)
+            postConversionDiagnostics.append(contentsOf: coverageResults.diagnostics)
         }
         
-        didEncounterError = didEncounterError || postConversionProblems.containsErrors
+        didEncounterError = didEncounterError || postConversionDiagnostics.containsAnyError
         
-        // We should generally only replace the current build output if we didn't encounter errors
-        // during conversion. However, if the `emitDigest` flag is true,
-        // we should replace the current output with our digest of problems.
+        // We should generally only replace the current build output if we didn't encounter errors during conversion.
+        // However, if the `emitDigest` flag is true, we should replace the current output with our digest of diagnostics.
+        // FIXME: We no longer output a diagnostics file in the output. We can remove the `emitDigest` check below.
         if !didEncounterError || emitDigest {
             try moveOutput(from: temporaryFolder, to: targetDirectory)
         }

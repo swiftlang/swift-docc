@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -103,7 +103,7 @@ class RenderNodeCodableTests: XCTestCase {
     
     func testSortedKeys() throws {
         guard #available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) else {
-            throw XCTSkip("Skipped on platforms that don't support JSONEncoder.OutputFormatting.sortedKeys")
+            try XCTSkipIf(true, "Skipped on platforms that don't support JSONEncoder.OutputFormatting.sortedKeys")
         }
 
         // When prettyPrint is enabled, keys are sorted
@@ -172,7 +172,7 @@ class RenderNodeCodableTests: XCTestCase {
     
     func testEncodeRenderNodeWithCustomTopicSectionStyle() async throws {
         let (_, context) = try await testBundleAndContext()
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
         
         let source = """
             # My Great Article
@@ -186,7 +186,7 @@ class RenderNodeCodableTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: context.inputs, problems: &problems)
+            Article(from: document.root, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         )
         
         let reference = ResolvedTopicReference(

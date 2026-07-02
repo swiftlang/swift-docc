@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -149,7 +149,7 @@ class AutomaticCurationTests: XCTestCase {
             return section.identifiers.contains("doc://org.swift.docc.example/documentation/SideKit/SideClass/Element")
         }).isEmpty)
 
-        // Verify that element `SideKit/SideClass/path` curated in sidecar under `SideKit`
+        // Verify that element `SideKit/SideClass/path` curated in a documentation extension under `SideKit`
         // is NOT automatically curated in `SideClass`'s "Topics"
         XCTAssertTrue(renderNode.topicSections.filter({ section -> Bool in
             return section.identifiers.contains("doc://org.swift.docc.example/documentation/SideKit/SideClass/path")
@@ -285,7 +285,7 @@ class AutomaticCurationTests: XCTestCase {
                     graph.relationships.append(newRelationship)
                 }
                 
-                // Add a sidecar file for this symbol
+                // Add a documentation extension file for this symbol
                 try """
                 # ``SideKit/SideClass\(suffix)``
                 
@@ -729,11 +729,14 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testOverloadedSymbolsAreCuratedUnderGroup() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let protocolRenderNode = try await renderNode(
             atPath: "/documentation/ShapeKit/OverloadedProtocol",
-            fromTestBundleNamed: "OverloadedSymbols")
+            fromTestBundleNamed: "OverloadedSymbols",
+            configuration: configuration
+        )
 
         guard protocolRenderNode.topicSections.count == 1, let protocolTopicSection = protocolRenderNode.topicSections.first else {
             XCTFail("Expected to find 1 topic section, found \(protocolRenderNode.topicSections.count): \(protocolRenderNode.topicSections.map(\.title?.singleQuoted))")
@@ -747,7 +750,9 @@ class AutomaticCurationTests: XCTestCase {
 
         let overloadGroupRenderNode = try await renderNode(
             atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
-            fromTestBundleNamed: "OverloadedSymbols")
+            fromTestBundleNamed: "OverloadedSymbols",
+            configuration: configuration
+        )
 
         XCTAssertEqual(
             overloadGroupRenderNode.topicSections.count, 0,
@@ -756,13 +761,14 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testAutomaticCurationHandlesOverloadsWithLanguageFilters() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let (bundle, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols", configuration: configuration)
 
         let protocolDocumentationNode = try context.entity(
             with: .init(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/ShapeKit/OverloadedProtocol",
                 sourceLanguage: .swift))
 
@@ -797,9 +803,10 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testAutomaticCurationDropsOverloadGroupWhenOverloadsAreCurated() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let (_, bundle, context) = try await testBundleAndContext(copying: "OverloadedSymbols") { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "OverloadedSymbols", configuration: configuration) { url in
             try """
             # ``OverloadedProtocol``
 
@@ -860,7 +867,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -892,7 +899,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -920,7 +927,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -952,7 +959,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -980,7 +987,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -1009,7 +1016,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -1043,7 +1050,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -1075,7 +1082,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -1121,7 +1128,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -1154,7 +1161,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
@@ -1193,7 +1200,7 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
@@ -1283,7 +1290,7 @@ class AutomaticCurationTests: XCTestCase {
         
         // Load the bundle
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         // Get the module and its automatic curation groups
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1348,7 +1355,7 @@ class AutomaticCurationTests: XCTestCase {
 
         // Load the bundle
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         // Get the module and its automatic curation groups
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)

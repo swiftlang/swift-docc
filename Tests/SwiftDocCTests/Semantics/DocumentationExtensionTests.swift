@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,25 +19,25 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(options)
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior", problems.first?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior", diagnostics.first?.identifier)
     }
     
     func testAppendArgumentValue() async throws {
         let source = "@DocumentationExtension(mergeBehavior: append)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options)
-        XCTAssertEqual(problems.count, 1)
-        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoConfiguration", problems.first?.diagnostic.identifier)
+        XCTAssertEqual(diagnostics.count, 1)
+        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoConfiguration", diagnostics.first?.identifier)
         XCTAssertEqual(options?.behavior, .append)
     }
     
@@ -45,11 +45,11 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension(mergeBehavior: override)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertEqual(options?.behavior, .override)
     }
     
@@ -57,26 +57,26 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension(mergeBehavior: somethingUnknown )"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(options)
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior.ConversionFailed", problems.first?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior.ConversionFailed", diagnostics.first?.identifier)
     }
     
     func testExtraArguments() async throws {
         let source = "@DocumentationExtension(mergeBehavior: override, argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options, "Even if there are warnings we can create an options value")
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.UnknownArgument", problems.first?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.UnknownArgument", diagnostics.first?.identifier)
     }
     
     func testExtraDirective() async throws {
@@ -87,14 +87,14 @@ class DocumentationExtensionTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options, "Even if there are warnings we can create a DocumentationExtension value")
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(2, problems.count)
-        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoInnerContentAllowed", problems.last?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(2, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", diagnostics.first?.identifier)
+        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoInnerContentAllowed", diagnostics.last?.identifier)
     }
     
     func testExtraContent() async throws {
@@ -105,38 +105,29 @@ class DocumentationExtensionTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(options, "Even if there are warnings we can create a DocumentationExtension value")
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoInnerContentAllowed", problems.first?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.DocumentationExtension.NoInnerContentAllowed")
     }
     
     func testIncorrectArgumentLabel() async throws {
-        let source = """
-        @DocumentationExtension(merge: override)
-        """
-        
+        let source = "@DocumentationExtension(merge: override)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
-        var problems = [Problem]()
-        let options = DocumentationExtension(from: directive, source: nil, for: bundle, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let options = DocumentationExtension(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(options)
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(2, problems.count)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(2, diagnostics.count)
         
-        let expectedIds = [
-            "org.swift.docc.UnknownArgument",
+        XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
             "org.swift.docc.HasArgument.mergeBehavior",
-        ]
-        
-        let problemIds = problems.map(\.diagnostic.identifier)
-        
-        for id in expectedIds {
-            XCTAssertTrue(problemIds.contains(id))
-        }
+            "org.swift.docc.UnknownArgument",
+        ])
     }
 }

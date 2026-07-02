@@ -1,7 +1,7 @@
 #[[
 This source file is part of the Swift open source project
 
-Copyright © 2014 - 2025 Apple Inc. and the Swift project authors
+Copyright © 2014 - 2026 Apple Inc. and the Swift project authors
 Licensed under Apache License v2.0 with Runtime Library Exception
 
 See https://swift.org/LICENSE.txt for license information
@@ -15,6 +15,7 @@ add_library(DocCCommandLine STATIC
   Action/Actions/Convert/ConvertFileWritingConsumer.swift
   Action/Actions/Convert/CoverageDataEntry+generateSummary.swift
   Action/Actions/Convert/FileWritingHTMLContentConsumer.swift
+  Action/Actions/Convert/FullPageHTMLContentConsumer.swift
   Action/Actions/Convert/Indexer.swift
   Action/Actions/Convert/JSONEncodingRenderNodeWriter.swift
   Action/Actions/CoverageAction.swift

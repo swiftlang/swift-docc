@@ -21,30 +21,6 @@ struct SourceLanguageTests {
         }
     }
     
-    // This test uses mutating SourceLanguage properties which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
-    @Test
-    func hasValueSemanticsForBothKnownAndUnknownLanguages() throws {
-        var original = SourceLanguage.swift
-        var copy = original
-        copy.name = "First"
-        #expect(copy.name == "First", "The copy has a modified value")
-        #expect(original.name == "Swift", "Modifying one value doesn't change the original")
-        
-        try assertRoundTripCoding(original)
-        try assertRoundTripCoding(copy)
-        
-        original = .init(name: "Custom", id: "custom")
-        copy = original
-        copy.name = "Second"
-        #expect(copy.name == "Second", "The copy has a modified value")
-        #expect(original.name == "Custom", "Modifying one value doesn't change the original")
-        
-        try assertRoundTripCoding(original)
-        try assertRoundTripCoding(copy)
-    }
-    
     @Test
     func reusesExistingValuesWhenCreatingLanguages() throws {
         // Creating more than 256 languages would fail if SourceLanguage initializer didn't reuse existing values
@@ -81,20 +57,6 @@ struct SourceLanguageTests {
             #expect(unknownLanguageWithAllInfo.id == "custom")
             #expect(unknownLanguageWithAllInfo.idAliases == ["other", "preferred"])
             #expect(unknownLanguageWithAllInfo.linkDisambiguationID == "preferred")
-        }
-    }
-    
-    // This test uses mutating SourceLanguage properties which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
-    @Test
-    func reusesExistingValuesModifyingProperties() {
-        // Creating more than 256 languages would fail if SourceLanguage initializer didn't reuse existing values
-        let numberOfIterations = 300 // anything more than `UInt8.max`
-        
-        var language = SourceLanguage.swift
-        for iteration in 0...numberOfIterations {
-            language.name = iteration.isMultiple(of: 2) ? "Even" : "Odd"
         }
     }
     

@@ -12,6 +12,7 @@ public import Foundation
 public import Markdown
 
 /// A type that can be initialized from markup.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.5 is released.")
 public protocol MarkupConvertible {
     /// Initializes a new element with a given markup and source that's part of a given documentation bundle.
     ///
