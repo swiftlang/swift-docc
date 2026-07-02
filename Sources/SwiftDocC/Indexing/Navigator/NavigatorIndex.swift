@@ -202,7 +202,7 @@ public class NavigatorIndex {
     
     fileprivate init(
         url: URL,
-        fileManager: any FileManagerProtocol,
+        fileManager: any FileManagerProtocol = FileManager.default,
         presentationIdentifier: String?,
         bundleIdentifier: String,
         environment: LMDB.Environment,
@@ -234,7 +234,7 @@ public class NavigatorIndex {
      
      - Note: Don't expose this initializer as it's used **ONLY** for building an index.
      */
-    fileprivate init(withEmptyTree url: URL, fileManager: any FileManagerProtocol, bundleIdentifier: String) throws {
+    fileprivate init(withEmptyTree url: URL, fileManager: any FileManagerProtocol = FileManager.default, bundleIdentifier: String) throws {
         self.url = url
         self.fileManager = fileManager
         self.bundleIdentifier = bundleIdentifier
@@ -596,7 +596,7 @@ extension NavigatorIndex {
         ///    - groupByLanguage: Configure the builder to group the entries by language.
         ///    - writePathsOnDisk: Configure the builder to write each navigator item's path components to the location.
         ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
-        public init(archiveURL: URL? = nil, outputURL: URL, fileManager: any FileManagerProtocol, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+        public init(archiveURL: URL? = nil, outputURL: URL, fileManager: any FileManagerProtocol = FileManager.default, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.archiveURL = archiveURL
             self.outputURL = outputURL
             self.fileManager = fileManager
