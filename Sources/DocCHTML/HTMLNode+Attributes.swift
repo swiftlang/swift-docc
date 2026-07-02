@@ -10,290 +10,422 @@
 
 extension HTMLNode {
     /// An attribute that can be applies to one or more HTML elements.
-    package enum Attribute {
+    package struct Attribute {
+        let name: StaticString
+        let value: String
+        
         /// A short, abbreviated description of a `<th>`element's content.
-        case abbr(String)
+        package static func abbr(_ description: String) -> Attribute { .init(name: "abbr", value: description) }
+
         /// A list of file types that the receiver of a `<form>` or `<input>` element's submission accepts.
         ///
         /// The file types are encoded as a comma separated string.
-        case accept([String])
+        package static func accept(_ fileTypes: [String]) -> Attribute { .init(name: "accept", value: fileTypes.joined(separator: ",")) }
+
         /// The character set that the server accepts for the `<form>` element's submission.
         ///
-        /// The only accepted value is "utf-8".
-        case acceptCharset
+        /// The only accepted character set is "utf-8".
+        package static let acceptCharset = Attribute(name: "accept-charset", value: "utf-8")
+
         /// A hint for the browser to generate a keyboard shortcut for the current element.
         ///
         /// Browsers should use the first character that's found on the user's keyboard layout.
-        case accessKey([UnicodeScalar])
+        package static func accessKey(_ keys: [UnicodeScalar]) -> Attribute { .init(name: "accesskey", value: keys.map { String(Character($0)) }.joined(separator: " ")) }
+
         /// The URL that processes the `<form>` element's submission.
-        case action(String)
+        package static func action(_ urlString: String) -> Attribute { .init(name: "action", value: urlString) }
+
         @available(*, deprecated, message: "Use CSS to align the content instead")
-        case align(Align)
+        package static func align(_ value: Align) -> Attribute { .init(name: "align", value: value.rawValue) }
+
         /// Determines what container policy that the browser will use for the `<iframe>` element.
-        case allow(String)
+        package static func allow(_ policy: String) -> Attribute { .init(name: "allow", value: policy) }
+
         /// The opacity of a "color" type `<input>` element's color.
-        case alpha(Int)
+        package static func alpha(_ opacity: Int) -> Attribute { .init(name: "alpha", value: opacity.description) }
+
         /// A textual description that can replace the image when it can't be displayed in an `<img>`, `<area>`, or `<input>` element.
-        case alt(String)
+        package static func alt(_ description: String) -> Attribute { .init(name: "alt", value: description) }
+
         /// The type of content that's referenced by the `<link>` element.
-        case `as`(As)
+        package static func `as`(_ value: As) -> Attribute { .init(name: "as", value: value.rawValue) }
+        
         /// Specifies the that browser should run the `<script>` element's script asynchronously.
-        case `async`
+        package static let async = Attribute(name: "async", value: "") // A "boolean" attribute
+        
         /// A configuration of the autocapitalization behavior of the element.
-        case autoCapitalize(AutoCapitalize)
+        package static func autoCapitalize(_ value: AutoCapitalize) -> Attribute { .init(name: "autocapitalize", value: value.rawValue) }
+
         /// A hint to the browser that the `<form>`, `<input>`, `<select>`, or `<textarea>` element can have its contents automatically completed.
-        case autoComplete(String)
+        package static func autoComplete(_ value: String) -> Attribute { .init(name: "autocomplete", value: value) }
+
         /// A configuration of the autocorrection behavior for the element.
-        case autoCorrect(Bool)
+        package static func autoCorrect(_ enabled: Bool) -> Attribute { .init(name: "autocorrect", value: enabled ? "on" : "off") }
+
         /// An indication that browser it to focus the element as soon as the page is loaded, allowing the user to just start typing without having to manually focus the element.
-        case autoFocus
+        package static let autoFocus = Attribute(name: "autofocus", value: "") // A "boolean" attribute
+
         /// Specifies that the browser should automatically being playing the `<audio>` or `<video>` element's resource as soon as it can, without waiting for the entire resource to finish downloading.
-        case autoPlay
+        package static let autoPlay = Attribute(name: "autoplay", value: "") // A "boolean" attribute
+
         @available(*, deprecated, message: "Use CSS to configure a background image instead")
-        case background(String)
+        package static func background(_ value: String) -> Attribute { .init(name: "background", value: value) } 
+
         @available(*, deprecated, message: "Use CSS to configure a background color instead")
-        case bgColor(String)
+        package static func bgColor(_ value: String) -> Attribute { .init(name: "bgcolor", value: value) }
+
         @available(*, deprecated, message: "Use CSS to configure a border instead")
-        case border(String)
+        package static func border(_ value: String) -> Attribute { .init(name: "border", value: value) } 
+
         /// The media capture input method for a "file" type `<input>` element.
-        case capture(Capture)
+        package static func capture(_ value: Capture) -> Attribute { .init(name: "capture", value: value.rawValue) }
+
         /// Declares the document's character encoding is UTF-8; which is the only valid encoding.
-        case charSet
+        package static let charSet = Attribute(name: "charset", value: "utf-8")
+
         /// Whether or not a "checkbox" type or "radio" type `<input>` element is checked.
-        case checked
+        package static let checked = Attribute(name: "checked", value: "") // A "boolean" attribute
+
         /// The URL to either the source of a `<blockquote>` or `<q>` element's source or to a `<ins>` or `<del>` element's change.
-        case cite(String)
+        package static func cite(_ value: String) -> Attribute { .init(name: "cite", value: value) } 
+
         /// A space-separated list of classes for the element.
-        case `class`(String)
+        package static func `class`(_ classNames: String...) -> Attribute { .init(name: "class", value: classNames.joined(separator: " ")) }
+        
         @available(*, deprecated, message: "Use CSS to configure a text color instead")
-        case color(String)
+        package static func color(_ value: String) -> Attribute { .init(name: "color", value: value) }
+
         /// The colorspace that the "color" type `<input>` element should use for selecting its color value.
-        case colorspace(String)
+        package static func colorspace(_ value: String) -> Attribute { .init(name: "colorspace", value: value) } 
+
         /// The width of a `<textarea>` element's textual contents, measured in average character widths.
-        case cols(Int)
+        package static func cols(_ width: Int) -> Attribute { .init(name: "cols", value: width.description) }
+
         /// How many columns the `<td>` or `<th>` element spans.
-        case colSpan(UInt)
+        package static func colSpan(_ count: UInt) -> Attribute { .init(name: "colspan", value: count.description) }
+
         /// The value associated with a `<meta>` element's ``name(_:)`` attribute.
-        case contents(String)
+        package static func contents(_ value: String) -> Attribute { .init(name: "contents", value: value) } 
+
         /// A configuration that controls whether or not the element is editable.
-        case contentEditable(ContentEditable)
+        package static func contentEditable(_ value: ContentEditable) -> Attribute { .init(name: "contenteditable", value: value.rawValue) }
+
         /// Specifies if the browser should offer audio playback controls for the `<audio>` or `<video>` element.
-        case controls
+        package static let controls = Attribute(name: "controls", value: "") // A "boolean" attribute
+
         /// A hint to the browser for what controls to show for this `<audio>` element.
-        case controlsList(Controls)
+        package static func controlsList(_ controls: Controls) -> Attribute { .init(name: "controlslist", value: controls.rawValue) }
+
         /// The coordinate information of an `<area>` element's ``shape(_:)`` attribute.
-        case coords(String)
+        package static func coords(_ value: String) -> Attribute { .init(name: "coords", value: value) } 
+
         /// Specifies that the browser should use Cross-Origin Resource Sharing (CORS) to fetch the `<audio>`, `<img>`, `<link>`, `<script>`, or `<video>` element's resource.
-        case crossOrigin(CrossOrigin)
+        package static func crossOrigin(_ value: CrossOrigin) -> Attribute { .init(name: "crossorigin", value: value.rawValue) }
+
         /// Specifies the Content Security Policy that an `<iframe>` element's embedded document must enforce upon itself.
-        case csp(String)
+        package static func csp(_ policy: String) -> Attribute { .init(name: "csp", value: policy) }
+
         /// The URL of an `<object>` element's resource.
-        case data(String)
+        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) } 
+
         /// Either the machine-readable representation of a `<time>` element's date-time value or the date-time value associated with an `<ins>` or `<del>` element's change.
-        case datetime(String)
+        package static func datetime(_ machineReadableRepresentation: String) -> Attribute { .init(name: "datetime", value: machineReadableRepresentation) }
+
         /// A hint to the browser for how it should perform image decoding in relation to rendering for the `<img>` element's resource.
-        case decoding(Decoding)
+        package static func decoding(_ value: Decoding) -> Attribute { .init(name: "decoding", value: value.rawValue) }
+
         /// A hint to the browser that it should enable the `<track>` element by default unless the user's preferences indicate something different.
-        case `default`
+        package static let `default` = Attribute(name: "default", value: "") // A "boolean" attribute
+        
         /// A hint to the browser that is should run the `<script>` element's source after it has parsed the page.
-        case `defer`
+        package static let `defer` = Attribute(name: "defer", value: "") // A "boolean" attribute
+        
         /// The text direction of the element.
-        case dir(Dir)
+        package static func dir(_ textDirection: Dir) -> Attribute { .init(name: "dir", value: textDirection.rawValue) }
+
         /// The name of the form field that the browser should use to submit the `<input>` or `<textarea>` element's directionality information.
-        case dirName(String)
+        package static func dirName(_ elementName: String) -> Attribute { .init(name: "dirname", value: elementName) }
+
         /// Whether or not the  `<button>`, `<fieldset>`, `<input>`, `<optgroup>`, `<option>`, `<select>`, or `<textarea>` element is disabled.
-        case disabled
+        package static let disabled = Attribute(name: "disabled", value: "") // A "boolean" attribute
+
         /// A configuration that the browser should disable playback on devices that are connected either via wire or wireless technologies.
-        case disableRemotePlayback
+        package static let disableRemotePlayback = Attribute(name: "disableremoteplayback", value: "") // A "boolean" attribute
+
         /// A configuration that the browser should not suggest a Picture-in-Picture context menu.
-        case disablePictureInPicture
+        package static let disablePictureInPicture = Attribute(name: "disablepictureinpicture", value: "") // A "boolean" attribute
+
         /// A hint to the browser that the  `<a>` or `<area>` element's linked URL is used to downloading a resource.
-        case download
+        package static let download = Attribute(name: "download", value: "") // A "boolean" attribute
+
         /// A configuration that controls whether or not the element is draggable.
-        case draggable(Bool)
+        package static func draggable(_ enabled: Bool) -> Attribute { .init(name: "draggable", value: enabled ? "true" : "false") }
+
         /// The MIME type of the `<form>` element's submission if the ``method(_:)`` attribute's value is ``Method/post``.
-        case encType(EncodingType)
+        package static func encType(_ value: EncodingType) -> Attribute { .init(name: "enctype", value: value.rawValue) }
+
         /// A configuration of what action label (or icon) the browser should present for the "enter key" on virtual keyboards.
-        case enterKeyHint(EnterKeyHint)
+        package static func enterKeyHint(_ value: EnterKeyHint) -> Attribute { .init(name: "enterkeyhint", value: value.rawValue) }
+
         /// Marks the `<img>` element for observation by the PerformanceElementTiming API and specifies the identifier for the observed timing event.
-        case elementTiming(String)
+        package static func elementTiming(_ id: String) -> Attribute { .init(name: "elementtiming", value: id) } 
+
         /// A hint to the browser about the relative priority it should use when fetching the `<img>`, `<link>`, or `<script>` element's resource.
-        case fetchPriority(FetchPriority)
+        package static func fetchPriority(_ value: FetchPriority) -> Attribute { .init(name: "fetchpriority", value: value.rawValue) }
+
         /// The identifier of the other element that this `<label>` or `<output>` element describes.
-        case `for`(String)
-        /// The identifier if the `<form>` element that this `<button>`, `<fieldset>`, `<input>`, `<object>`, `<output>`, `<select>`, or `<textarea>` element belongs to.
-        case form(String)
+        package static func `for`(_ identifier: String) -> Attribute { .init(name: "for", value: identifier) }
+        
+        /// The identifier of the `<form>` element that this `<button>`, `<fieldset>`, `<input>`, `<object>`, `<output>`, `<select>`, or `<textarea>` element belongs to.
+        package static func form(_ identifier: String) -> Attribute { .init(name: "form", value: identifier) }
+
         /// Overrides the action of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        case formAction(String)
+        package static func formAction(_ override: String) -> Attribute { .init(name: "formaction", value: override) }
+
         /// Overrides the encoding type of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        case formEncType(EncodingType)
+        package static func formEncType(_ override: EncodingType) -> Attribute { .init(name: "formenctype", value: override.rawValue) }
+
         /// Overrides the submission method of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        case formMethod(Method)
+        package static func formMethod(_ value: Method) -> Attribute { .init(name: "formmethod", value: value.rawValue) }
+
         /// Overrides the validation configuration of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        case formValidate
+        package static let formValidate = Attribute(name: "formvalidate", value: "") // A "boolean" attribute
+
         /// Overrides the target of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        case formTarget(String)
+        package static func formTarget(_ value: String) -> Attribute { .init(name: "formtarget", value: value) } 
+
         /// A list of strings corresponding to the id attributes of the `<th>` elements that provide the headers for this header cell.
-        case headers([String])
+        package static func headers(_ ids: [String]) -> Attribute { .init(name: "headers", value: ids.joined(separator: " ")) }
+
         /// An offset for the heading levels of descendants of the element.
         ///
         /// According to the HTML specification, the value must be a valid non-negative integer between 0 and 8, inclusive.
-        case headingOffset(Int)
+        package static func headingOffset(_ offset: Int) -> Attribute { .init(name: "headingoffset", value: Swift.min(8, Swift.max(0, offset)).description) }
+
         /// Prevents a heading offset from traversing beyond this element.
-        case headingReset
+        package static let headingReset = Attribute(name: "headingreset", value: "") // A "boolean" attribute
+
         /// The intrinsic height, in pixels, of the `<canvas>`, `<embed>`, `<iframe>`, `<img>`, `<input>`, `<object>`, or `<video>` element.
         ///
         /// For all other elements, configure the element's height using the CSS `height` property instead.
-        case height(Int)
+        package static func height(_ value: Int) -> Attribute { .init(name: "height", value: value.description) }
+
         /// An indication that the element is not yet, or is no longer, directly relevant to the page's current state,
         /// or that it is being used to declare content to be reused by other parts of the page as opposed to being directly accessed by the user.
-        case hidden(Hidden)
+        package static func hidden(_ value: Hidden) -> Attribute { .init(name: "hidden", value: value.rawValue) }
+
         /// The lower bound of the high end of the `<meter>` element's measured range.
-        case high(Int)
+        package static func high(_ value: Int) -> Attribute { .init(name: "high", value: value.description) }
+
         /// The URL that the `<a>`, `<area>`, `<base>`, or `<link>` element references.
-        case href(String)
+        package static func href(_ urlString: String) -> Attribute { .init(name: "href", value: urlString) }
+
         /// A hint at the human language of the `<a>` or `<link>` element's referenced content.
-        case hrefLang(String)
+        package static func hrefLang(_ languageName: String) -> Attribute { .init(name: "hreflang", value: languageName) }
+
         /// A `<meta>` element configuration that instructs the browser to process the page as if certain HTTP headers were present.
-        case httpEquiv(HTTPEquivalent)
+        package static func httpEquiv(_ value: HTTPEquivalent) -> Attribute { .init(name: "http-equiv", value: value.rawValue) }
+
         /// An identifier for this element that's unique within the scope of the entire HTML document.
-        case id(String)
+        package static func id(_ id: String) -> Attribute { .init(name: "id", value: id) }
+
         /// A configuration that controls whether or not the element is inert (cannot be interacted with).
-        case inert
+        package static let inert = Attribute(name: "inert", value: "") // A "boolean" attribute
+
         /// One or more hashes of the `<link>` or `<script>` element's linked resource that the browser can use to ensure that the resource is what it is expected to be.
-        case integrity([String])
+        package static func integrity(_ hashes: [String]) -> Attribute { .init(name: "integrity", value: hashes.joined(separator: " ")) }
+
         /// A hint to browsers about the type of virtual keyboard to use when editing this element.
-        case inputMode(InputMode)
+        package static func inputMode(_ value: InputMode) -> Attribute { .init(name: "inputmode", value: value.rawValue) }
+
         /// Specifies that the `<img>` element's image is part of a server-side map.
-        case isMap
+        package static let isMap = Attribute(name: "ismap", value: "") // A "boolean" attribute
+
         /// An indication of how the `<track>` element is meant to be used.
-        case kind(Kind)
+        package static func kind(_ value: Kind) -> Attribute { .init(name: "kind", value: value.rawValue) }
+
         /// A human-readable title of the `<optgroup>`, `<option>`, or `<track>` element.
-        case label(String)
+        package static func label(_ title: String) -> Attribute { .init(name: "label", value: title) }
+
         /// The language that a non-editable element is in, or the language that an editable element should be written in by the user.
         ///
         /// A compliant HTTP page should only specify a valid [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) as the value for this attribute.
-        case lang(String)
+        package static func lang(_ value: String) -> Attribute { .init(name: "lang", value: value) } 
+
         @available(*, deprecated, message: "Use the `type` attribute to specify a `<script>` element's scripting language instead.")
-        case language(String)
+        package static func language(_ value: String) -> Attribute { .init(name: "language", value: value) } 
+
         /// An indication for how the browser should load the `<img>` or `<iframe>` element's resource.
-        case loading(Loading)
+        package static func loading(_ value: Loading) -> Attribute { .init(name: "loading", value: value.rawValue) }
+
         /// The identifier of a `<datalist>` element that provides predefined values to suggest to the user for the `<input>` element.
-        case list(String)
+        package static func list(_ value: String) -> Attribute { .init(name: "list", value: value) } 
+
         /// A configuration that the `<audio>` or `<video>` element should automatically seek to the start upon reaching the end.
-        case loop
+        package static let loop = Attribute(name: "loop", value: "") // A "boolean" attribute
+
         /// The upper bound of of the low end of the `<meter>` element's measured range.
-        case low(Int)
+        package static func low(_ value: Int) -> Attribute { .init(name: "low", value: value.description) }
+
         /// The upper bound of the `<meter>` element's measured range.
-        case max(Int)
+        package static func max(_ value: Int) -> Attribute { .init(name: "max", value: value.description) }
+
         /// The maximum number of characters allowed in the `<input>` or `<textarea>` element.
-        case maxLength(Int)
+        package static func maxLength(_ value: Int) -> Attribute { .init(name: "maxlength", value: value.description) }
+
         /// The lower bound of the `<meter>` element's measured range.
-        case min(Int)
+        package static func min(_ value: Int) -> Attribute { .init(name: "min", value: value.description) }
+
         /// The minimum number of characters allowed in the `<input>` or `<textarea>` element.
-        case minLength(Int)
+        package static func minLength(_ value: Int) -> Attribute { .init(name: "minlength", value: value.description) }
+
         /// The media query for the resource's intended media of the `<a>`, `<area>`, `<link>`, `<source>`, or `<style>` element.
-        case media(String)
+        package static func media(_ value: String) -> Attribute { .init(name: "media", value: value) } 
+
         /// The HTTP method that the browser should use to submit the `<form>` element.
-        case method(Method)
+        package static func method(_ value: Method) -> Attribute { .init(name: "method", value: value.rawValue) }
+
         /// An indication that this `<input>` or `<select>` element supports multiple values.
-        case multiple
+        package static let multiple = Attribute(name: "multiple", value: "") // A "boolean" attribute
+
         /// The `<audio>` or `<video>` element will start out as muted.
-        case muted
+        package static let muted = Attribute(name: "muted", value: "") // A "boolean" attribute
+
         /// Either the name that gives the metadata name for a ``contents(_:)`` value for a `<meta>` element or the name of a form element for the server to identify fields in the form submission.
-        case name(String)
+        package static func name(_ value: String) -> Attribute { .init(name: "name", value: value) } 
+
         /// A cryptographic nonce ("number used once") which can be used by Content Security Policy to determine whether or not a given fetch will be allowed to proceed.
-        case nonce(String)
+        package static func nonce(_ value: String) -> Attribute { .init(name: "nonce", value: value) } 
+
         /// An indication that this `<form>` element should not be validated before its submission.
-        case noValidate
+        package static let noValidate = Attribute(name: "noValidate", value: "") // A "boolean" attribute
+
         /// A configuration that a `<details>` element is expanded or that a `<dialog>` element is active and can be interacted with.
-        case open
+        package static let open = Attribute(name: "open", value: "") // A "boolean" attribute
+
         /// The optimal value of the `<meter>` element's measured range.
-        case optimum(Int)
+        package static func optimum(_ value: Int) -> Attribute { .init(name: "optimum", value: value.description) }
+
         /// A regular expression that validates the `<input>` the element's value.
-        case pattern(String)
+        package static func pattern(_ value: String) -> Attribute { .init(name: "pattern", value: value) } 
+
         /// A list of URLs of that are interested in being notified if the user follows the `<a>` or `<area>` element's linked URL.
-        case ping([String])
+        package static func ping(_ urlStrings: [String]) -> Attribute { .init(name: "ping", value: urlStrings.joined(separator: " ")) }
+
         /// A placeholder value that provides a hint to the user of what can be entered in the `<input>` or `<textare>` element.
-        case placeholder(String)
+        package static func placeholder(_ value: String) -> Attribute { .init(name: "placeholder", value: value) } 
+
         /// An indication that browser should display the video within the `<video>` element's playback area.
-        case playsInline
+        package static let playsInline = Attribute(name: "playsInline", value: "") // A "boolean" attribute
+
         /// Designates the element as a "popover" that is hidden until it opened via an invoking element.
-        case popover
+        package static let popover = Attribute(name: "popover", value: "") // A "boolean" attribute
+
         /// A URL for an image to display while the video is downloading.
-        case poster(String)
+        package static func poster(_ value: String) -> Attribute { .init(name: "poster", value: value) } 
+
         /// A hint to the browser about how it should load the `<audio>` element's resource.
-        case preLoad(PreLoad)
+        package static func preLoad(_ value: PreLoad) -> Attribute { .init(name: "preload", value: value.rawValue) }
+
         /// An indication whether or not the`<input>` or `<textarea>` element can be edited.
-        case readOnly
+        package static let readOnly = Attribute(name: "readOnly", value: "") // A "boolean" attribute
+
         /// How much information the browser should send in a referrer header when following the `<a>` element's link.
-        case referrerPolicy(ReferrerPolicy)
+        package static func referrerPolicy(_ value: ReferrerPolicy) -> Attribute { .init(name: "referrerpolicy", value: value.rawValue) }
+
         /// A list of relationships between the current document and the `<a>` element's linked destination resource.
-        case rel([Rel])
+        package static func rel(_ relationships: [Rel]) -> Attribute { .init(name: "rel", value: relationships.map(\.rawValue).joined(separator: " ")) }
+
         /// An indication whether or not the`<input>`, `<select>`, or `<textarea>` element is required to be filled out.
-        case required
+        package static let required = Attribute(name: "required", value: "") // A "boolean" attribute
+
         /// An indication that a `<ol>` element should displays its list items in descending order (instead of in ascending order).
-        case revered
+        package static let revered = Attribute(name: "revered", value: "") // A "boolean" attribute
+
         /// The semantic meaning of an element.
-        case role(Role)
+        package static func role(_ value: Role) -> Attribute { .init(name: "role", value: value.rawValue) }
+
         /// The number of visible lines of text for the `<textarea>` element.
-        case rows(Int)
+        package static func rows(_ numberOfLines: Int) -> Attribute { .init(name: "rows", value: numberOfLines.description) }
+
         /// An indication of how many rows the `<td>` or `<th>` element spans.
-        case rowSpan(UInt)
+        package static func rowSpan(_ count: UInt) -> Attribute { .init(name: "rowspan", value: count.description) }
+
         /// Restrictions applied to the content embedded in the `<iframe>` element.
-        case sandbox([Sandbox])
+        package static func sandbox(_ value: [Sandbox]) -> Attribute { .init(name: "sandbox", value: value.map(\.rawValue).joined(separator: " ")) }
+
         /// The cells that the `<th>` element relates to.
-        case scope(Scope)
+        package static func scope(_ value: Scope) -> Attribute { .init(name: "scope", value: value.rawValue) }
+
         /// An indication that the `<option>` element is initially selected when the page loads.
-        case selected
+        package static let selected = Attribute(name: "selected", value: "") // A "boolean" attribute
+
         /// The shape of the `<a>` or `<area>` element.
-        case shape(Shape)
+        package static func shape(_ value: Shape) -> Attribute { .init(name: "shape", value: value.rawValue) }
+
         /// The width of the `<input>` or `<select>` element.
         ///
         /// If the element's ``type(_:)`` attribute is "text" or "password", the value is measured in number of characters.
         /// Otherwise, the value is measured in pixels.
-        case size(Int)
+        package static func size(_ width: Int) -> Attribute { .init(name: "size", value: width.description) }
+
         /// A list of source sizes that describe the final rendered width of an `<img>`, `<link>`, or `<source>` elements image resource.
-        case sizes([String])
+        package static func sizes(_ values: [String]) -> Attribute { .init(name: "sizes", value: values.joined(separator: " ")) }
+
         /// Assigns a slot in the shadow tree to the element.
         ///
         /// The created `<slot>` element will have a ``name(_:)`` attribute that matches the value of this `slot` attribute.
-        case slot(String)
+        package static func slot(_ name: String) -> Attribute { .init(name: "slot", value: name) }
+
         /// The number of columns that a `<col>` or `<colgroup>` element spans.
-        case span(Int)
+        package static func span(_ count: Int) -> Attribute { .init(name: "span", value: count.description) }
+
         /// A configuration that controls whether or not the element is spellchecked.
-        case spellcheck(Bool)
+        package static func spellcheck(_ enabled: Bool) -> Attribute { .init(name: "spellcheck", value: enabled ? "true" : "false") }
+
         /// The URL of the resource that this `<audio>`, `<embed>`, `<iframe>`, `<img>`, `<input>`, `<script>`, `<source>`, `<track>`, or `<video>` element references.
-        case src(String)
+        package static func src(_ urlString: String) -> Attribute { .init(name: "src", value: urlString) }
+
         /// Inline HTML to embed instead of the `<iframe>` element's resource.
         ///
         /// If the browser supports this attribute, and it's present, the browser will ignore the the ``src(_:)`` attribute.
-        case srcDoc(String)
+        package static func srcDoc(_ value: String) -> Attribute { .init(name: "srcdoc", value: value) } 
+
         /// The language `<track>` element's textual track data.
         ///
         /// A compliant `<track>` element must only specify a valid [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) as the value for this attribute.
-        case srcLang(String)
+        package static func srcLang(_ value: String) -> Attribute { .init(name: "srclang", value: value) } 
+
         /// A list of one or more resource URLs and their descriptors for the `<img>` or `<source>` element.
-        case srcSet([String])
+        package static func srcSet(_ urlStrings: [String]) -> Attribute { .init(name: "srcset", value: urlStrings.joined(separator: " ")) }
+
         /// The number of the `<ol>` element's first list item.
-        case start(Int)
+        package static func start(_ number: Int) -> Attribute { .init(name: "start", value: number.description) }
+
         /// The stepping interval for the `<input>` element with a numeric input type ("date", "month", "week", "time", "number", "range", or "datetime-local").
-        case step(Int)
+        package static func step(_ interval: Int) -> Attribute { .init(name: "step", value: interval.description) }
+
         @available(*, deprecated, message: "Use style sheet file to define CSS instead.")
-        case style(String)
+        package static func style(_ value: String) -> Attribute { .init(name: "style", value: value) } 
+
         @available(*, deprecated, message: "Us a `<caption>` element to describe this `<table>` element instead.")
-        case summary(String)
+        package static func summary(_ value: String) -> Attribute { .init(name: "summary", value: value) } 
+
         /// A configuration that controls whether or not the element is sequentially focusable and determines its relative oder in the sequential navigation.
         ///
         /// A negative value means that the element is _click_ focusable but not _sequentially_ focusable.
         /// A positive value means that the element is both _click_ focusable and _sequentially_ focusable and creates a relative ordering so that higher values come later.
-        case tabIndex(Int)
+        package static func tabIndex(_ value: Int) -> Attribute { .init(name: "tabindex", value: value.description) }
+
         /// The name of the "navigable" that browsers will use when following the `<a>` or `<area>` element's link or where browsers will display the response for a `<form>` element's submission.
-        case target(String)
+        package static func target(_ value: String) -> Attribute { .init(name: "target", value: value) } 
+
         /// Advisory information for the element, such as would be appropriate for a tooltip.
-        case title(String)
+        package static func title(_ value: String) -> Attribute { .init(name: "title", value: value) } 
+
         /// A configuration that controls whether the element's text is to be translated when the page is localized, or whether to leave them unchanged.
-        case translate(Bool)
+        package static func translate(_ enabled: Bool) -> Attribute { .init(name: "translate", value: enabled ? "yes" : "no") }
+
         /// Depending on the element, either:
         /// - the type of control to display for an `<input>` element ("button", "checkbox", "color", "date", "email", "file", "image", "month", "number", "password", "radio", "range", etc.)
         /// - the behavior for a `<button>` element ("submit", "reset", or "button")
@@ -301,306 +433,24 @@ extension HTMLNode {
         /// - the type of script that a `<script>` element represents
         /// - the MIME type that a `<link>` element is referencing.
         /// - the MIME type of the media that a `<source>` element is referencing.
-        case type(String)
+        package static func type(_ value: String) -> Attribute { .init(name: "type", value: value) } 
+
         /// Depending on the element, either:
         /// - The value of an `<input>` element.
         /// - The ordinal value of a `<li>` element within a `<ol>` element.
         /// - The machine-readable representation of a `<data>` element's content.
         /// - The numeric value of a `<meter>` or `<progress>` element.
         /// - The value that is associated with a `<button>` element's ``name(_:)`` when its containing form is submitted.
-        case value(String)
+        package static func value(_ value: String) -> Attribute { .init(name: "value", value: value) } 
+
         /// The intrinsic width, in pixels, of the `<canvas>`, `<embed>`, `<iframe>`, `<img>`, `<input>`, `<object>`, or `<video>` element.
-        case width(Int)
+        package static func width(_ pixels: Int) -> Attribute { .init(name: "width", value: pixels.description) }
+
         /// A configuration that the `<textarea>` element's textual content should wrap.
-        case wrap
+        package static let wrap = Attribute(name: "wrap", value: "") // A "boolean" attribute
+
         /// A configuration that the browser should offer writing suggestions for this element.
-        case writingSuggestions(Bool)
-    }
-}
-
-extension HTMLNode.Attribute {
-    // The more succinct name "name" is already taken by one of the (meta) attributes.
-    // That attribute gets the better name because it has `package` access, and this is only accessible within the DocCHTML module.
-    var nameForFormatting: StaticString {
-        switch self {
-            case .abbr:                    "abbr"
-            case .accept:                  "accept"
-            case .acceptCharset:           "accept-charset"
-            case .accessKey:               "accesskey"
-            case .action:                  "action"
-            case .align:                   "align"
-            case .allow:                   "allow"
-            case .alpha:                   "alpha"
-            case .alt:                     "alt"
-            case .as:                      "as"
-            case .async:                   "async"
-            case .autoCapitalize:          "autocapitalize"
-            case .autoComplete:            "autoComplete"
-            case .autoCorrect:             "autocorrect"
-            case .autoFocus:               "autofocus"
-            case .autoPlay:                "autoplay"
-            case .background:              "background"
-            case .bgColor:                 "bgColor"
-            case .border:                  "border"
-            case .capture:                 "capture"
-            case .charSet:                 "charset"
-            case .checked:                 "checked"
-            case .cite:                    "cite"
-            case .class:                   "class"
-            case .color:                   "color"
-            case .colorspace:              "colorspace"
-            case .cols:                    "cols"
-            case .colSpan:                 "colspan"
-            case .contentEditable:         "contenteditable"
-            case .contents:                "contents"
-            case .controls:                "controls"
-            case .controlsList:            "controlslist"
-            case .coords:                  "coords"
-            case .crossOrigin:             "crossorigin"
-            case .csp:                     "csp"
-            case .data:                    "data"
-            case .datetime:                "datetime"
-            case .decoding:                "decoding"
-            case .default:                 "default"
-            case .defer:                   "defer"
-            case .dir:                     "dir"
-            case .dirName:                 "dirname"
-            case .disabled:                "disabled"
-            case .disablePictureInPicture: "disablepictureinpicture"
-            case .disableRemotePlayback:   "disableremoteplayback"
-            case .download:                "download"
-            case .draggable:               "draggable"
-            case .elementTiming:           "elementtiming"
-            case .encType:                 "enctype"
-            case .enterKeyHint:            "enterkeyhint"
-            case .fetchPriority:           "fetchpriority"
-            case .for:                     "for"
-            case .form:                    "form"
-            case .formAction:              "formaction"
-            case .formEncType:             "formenctype"
-            case .formMethod:              "formmethod"
-            case .formTarget:              "formtarget"
-            case .formValidate:            "formvalidate"
-            case .headers:                 "headers"
-            case .headingOffset:           "headingoffset"
-            case .headingReset:            "headingreset"
-            case .height:                  "height"
-            case .hidden:                  "hidden"
-            case .high:                    "high"
-            case .href:                    "href"
-            case .hrefLang:                "hreflang"
-            case .httpEquiv:               "http-equiv"
-            case .id:                      "id"
-            case .inert:                   "inert"
-            case .inputMode:               "inputmode"
-            case .integrity:               "integrity"
-            case .isMap:                   "ismap"
-            case .kind:                    "kind"
-            case .label:                   "label"
-            case .lang:                    "lang"
-            case .language:                "language"
-            case .list:                    "list"
-            case .loading:                 "loading"
-            case .loop:                    "loop"
-            case .low:                     "low"
-            case .max:                     "max"
-            case .maxLength:               "maxlength"
-            case .media:                   "media"
-            case .method:                  "method"
-            case .min:                     "min"
-            case .minLength:               "minlength"
-            case .multiple:                "multiple"
-            case .muted:                   "muted"
-            case .name:                    "name"
-            case .nonce:                   "nonce"
-            case .noValidate:              "novalidate"
-            case .open:                    "open"
-            case .optimum:                 "optimum"
-            case .pattern:                 "pattern"
-            case .ping:                    "ping"
-            case .placeholder:             "placeholder"
-            case .playsInline:             "playsinline"
-            case .popover:                 "popover"
-            case .poster:                  "poster"
-            case .preLoad:                 "preload"
-            case .readOnly:                "readonly"
-            case .referrerPolicy:          "referrerpolicy"
-            case .rel:                     "rel"
-            case .required:                "required"
-            case .revered:                 "revered"
-            case .role:                    "role"
-            case .rows:                    "rows"
-            case .rowSpan:                 "rowspan"
-            case .sandbox:                 "sandbox"
-            case .scope:                   "scope"
-            case .selected:                "selected"
-            case .shape:                   "shape"
-            case .size:                    "size"
-            case .sizes:                   "sizes"
-            case .slot:                    "slot"
-            case .span:                    "span"
-            case .spellcheck:              "spellcheck"
-            case .src:                     "src"
-            case .srcDoc:                  "srcdoc"
-            case .srcLang:                 "srclang"
-            case .srcSet:                  "srcset"
-            case .start:                   "start"
-            case .step:                    "step"
-            case .style:                   "style"
-            case .summary:                 "summary"
-            case .tabIndex:                "tabindex"
-            case .target:                  "target"
-            case .title:                   "title"
-            case .translate:               "translate"
-            case .type:                    "type"
-            case .value:                   "value"
-            case .width:                   "width"
-            case .wrap:                    "wrap"
-            case .writingSuggestions:      "writingsuggestions"
-
-        }
-    }
-    
-    // The more succinct name "value" is already taken by one of the (meta) attributes.
-    // That attribute gets the better name because it has `package` access, and this is only accessible within the DocCHTML module.
-    var valueForFormatting: String {
-        switch self {
-            case .abbr(let string):                return string
-            case .accept(let types):               return types.joined(separator: ",")
-            case .acceptCharset:                   return "utf-8"
-            case .accessKey(let keys):             return keys.map { String(Character($0)) }.joined(separator: " ")
-            case .action(let string):              return string
-            case .align(let value):                return value.rawValue
-            case .allow(let string):               return string
-            case .alpha(let number):               return number.description
-            case .alt(let string):                 return string
-            case .as(let value):                   return value.rawValue
-            case .async:                           return "" // A "boolean" attribute
-            case .autoCapitalize(let value):       return value.rawValue
-            case .autoComplete(let string):        return string
-            case .autoCorrect(let enabled):        return enabled ? "on" : "off"
-            case .autoFocus:                       return "" // A "boolean" attribute
-            case .autoPlay:                        return "" // A "boolean" attribute
-            case .background(let string):          return string
-            case .bgColor(let string):             return string
-            case .border(let string):              return string
-            case .capture(let value):              return value.rawValue
-            case .charSet:                         return "utf-8" // There's only one valid HTML 5 character encoding.
-            case .checked:                         return "" // A "boolean" attribute
-            case .cite(let string):                return string
-            case .class(let classNames):           return classNames
-            case .color(let string):               return string
-            case .colorspace(let string):          return string
-            case .cols(let number):                return number.description
-            case .colSpan(let number):             return number.description
-            case .contentEditable(let value):      return value.rawValue
-            case .contents(let string):            return string
-            case .controls:                        return "" // A "boolean" attribute
-            case .controlsList(let value):         return value.rawValue
-            case .coords(let string):              return string
-            case .crossOrigin(let value):          return value.rawValue
-            case .csp(let string):                 return string
-            case .data(let string):                return string
-            case .datetime(let string):            return string
-            case .decoding(let value):             return value.rawValue
-            case .default:                         return "" // A "boolean" attribute
-            case .defer:                           return "" // A "boolean" attribute
-            case .dir(let value):                  return value.rawValue
-            case .dirName(let string):             return string
-            case .disabled:                        return "" // A "boolean" attribute
-            case .disablePictureInPicture:         return "" // A "boolean" attribute
-            case .disableRemotePlayback:           return "" // A "boolean" attribute
-            case .download:                        return "" // A "boolean" attribute
-            case .draggable(let enabled):          return enabled ? "true" : "false"
-            case .elementTiming(let string):       return string
-            case .encType(let value):              return value.rawValue
-            case .enterKeyHint(let value):         return value.rawValue
-            case .fetchPriority(let value):        return value.rawValue
-            case .for(let string):                 return string
-            case .form(let string):                return string
-            case .formAction(let string):          return string
-            case .formEncType(let value):          return value.rawValue
-            case .formMethod(let value):           return value.rawValue
-            case .formTarget(let string):          return string
-            case .formValidate:                    return "" // A "boolean" attribute
-            case .headers(let strings):            return strings.joined(separator: " ")
-            case .headingOffset(let number):       return number.description //min(0, max(8, number)).description
-            case .headingReset:                    return "" // A "boolean" attribute
-            case .height(let number):              return number.description
-            case .hidden(let value):               return value.rawValue
-            case .high(let number):                return number.description
-            case .href(let string):                return string
-            case .hrefLang(let string):            return string
-            case .httpEquiv(let value):            return value.rawValue
-            case .id(let string):                  return string
-            case .inert:                           return "" // A "boolean" attribute
-            case .inputMode(let value):            return value.rawValue
-            case .integrity(let string):           return string.joined(separator: " ")
-            case .isMap:                           return "" // A "boolean" attribute
-            case .kind(let string):                return string.rawValue
-            case .label(let string):               return string
-            case .lang(let string):                return string
-            case .language(let string):            return string
-            case .list(let string):                return string
-            case .loading(let value):              return value.rawValue
-            case .loop:                            return "" // A "boolean" attribute
-            case .low(let number):                 return number.description
-            case .max(let number):                 return number.description
-            case .maxLength(let number):           return number.description
-            case .media(let string):               return string
-            case .method(let value):               return value.rawValue
-            case .min(let number):                 return number.description
-            case .minLength(let number):           return number.description
-            case .multiple:                        return "" // A "boolean" attribute
-            case .muted:                           return "" // A "boolean" attribute
-            case .name(let string):                return string
-            case .nonce(let string):               return string
-            case .noValidate:                      return "" // A "boolean" attribute
-            case .open:                            return "" // A "boolean" attribute
-            case .optimum(let number):             return number.description
-            case .pattern(let string):             return string
-            case .ping(let urls):                  return urls.joined(separator: " ")
-            case .placeholder(let string):         return string
-            case .playsInline:                     return "" // A "boolean" attribute
-            case .popover:                         return "" // A "boolean" attribute
-            case .poster(let string):              return string
-            case .preLoad(let value):              return value.rawValue
-            case .readOnly:                        return "" // A "boolean" attribute
-            case .referrerPolicy(let value):       return value.rawValue
-            case .rel(let values):                 return values.map(\.rawValue).joined(separator: " ")
-            case .required:                        return "" // A "boolean" attribute
-            case .revered:                         return "" // A "boolean" attribute
-            case .role(let value):                 return value.rawValue
-            case .rows(let number):                return number.description
-            case .rowSpan(let number):             return number.description
-            case .sandbox(let restrictions):       return restrictions.map(\.rawValue).joined(separator: " ")
-            case .scope(let value):                return value.rawValue
-            case .selected:                        return "" // A "boolean" attribute
-            case .shape(let value):                return value.rawValue
-            case .size(let number):                return number.description
-            case .sizes(let strings):              return strings.joined(separator: " ")
-            case .slot(let string):                return string
-            case .span(let number):                return number.description
-            case .spellcheck(let enabled):         return enabled ? "true" : "false"
-            case .src(let string):                 return string
-            case .srcDoc(let string):              return string
-            case .srcLang(let string):             return string
-            case .srcSet(let strings):             return strings.joined(separator: ",")
-            case .start(let number):               return number.description
-            case .step(let number):                return number.description
-            case .style(let string):               return string
-            case .summary(let string):             return string
-            case .tabIndex(let number):            return number.description
-            case .target(let string):              return string
-            case .title(let string):               return string
-            case .translate(let enabled):          return enabled ? "yes" : "no"
-            case .type(let string):                return string
-            case .value(let string):               return string
-            case .width(let number):               return number.description
-            case .wrap:                            return "" // A "boolean" attribute
-            case .writingSuggestions(let enabled): return enabled ? "true" : "false"
-
-        }
+        package static func writingSuggestions(_ enabled: Bool) -> Attribute { .init(name: "writingsuggestions", value: enabled ? "true" : "false") }
     }
 }
 
