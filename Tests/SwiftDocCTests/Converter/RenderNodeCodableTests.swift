@@ -110,9 +110,9 @@ class RenderNodeCodableTests: XCTestCase {
         let encoderPretty = RenderJSONEncoder.makeEncoder(prettyPrint: true)
         XCTAssertTrue(encoderPretty.outputFormatting.contains(.sortedKeys))
 
-        // When prettyPrint is disabled, keys are not sorted
+        // When prettyPrint is disabled, keys are still sorted
         let encoderNotPretty = RenderJSONEncoder.makeEncoder(prettyPrint: false)
-        XCTAssertFalse(encoderNotPretty.outputFormatting.contains(.sortedKeys))
+        XCTAssertTrue(encoderNotPretty.outputFormatting.contains(.sortedKeys))
     }
 
     func testEncodesVariantOverridesSetAsProperty() throws {
