@@ -30,7 +30,7 @@ jobs:
       enable_macos_checks: true
   soundness:
     name: Soundness
-    uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.11
+    uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.12
     with:
       license_header_check_project_name: "Swift"
       # The license header check is disabled as it requires a large number of changes.
