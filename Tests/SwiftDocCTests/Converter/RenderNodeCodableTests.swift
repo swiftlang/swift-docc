@@ -102,10 +102,6 @@ class RenderNodeCodableTests: XCTestCase {
     }
     
     func testSortedKeys() throws {
-        guard #available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) else {
-            try XCTSkipIf(true, "Skipped on platforms that don't support JSONEncoder.OutputFormatting.sortedKeys")
-        }
-
         // When prettyPrint is enabled, keys are sorted
         let encoderPretty = RenderJSONEncoder.makeEncoder(prettyPrint: true)
         XCTAssertTrue(encoderPretty.outputFormatting.contains(.sortedKeys))
