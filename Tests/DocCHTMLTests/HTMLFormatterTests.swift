@@ -339,6 +339,21 @@ struct HTMLFormatterTests {
     }
     
     @Test
+    func prettyFormatsTextSemanticAfterOtherElementOnSeparateLines() {
+        let html = header(contents: [
+            h2(contents: [.text("Some header")]),
+            span(contents: [.text("Some other information")]),
+        ])
+        
+        #expect(htmlString(for: html, options: .prettyPrint) == """
+        <header>
+          <h2>Some header</h2>
+          <span>Some other information</span>
+        </header>
+        """)
+    }
+    
+    @Test
     func includesOptionalEndTagsByDefault() {
         let definitionList = dl(contents: [
             dt(contents: [.text("range")]),
