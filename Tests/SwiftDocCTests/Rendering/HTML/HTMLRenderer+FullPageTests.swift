@@ -149,18 +149,6 @@ struct HTMLRenderFullPageTests {
     }
 }
 
-private extension XMLNode {
-    func rendered(sourceLocation: Testing.SourceLocation = #_sourceLocation) -> String {
-        guard let htmlNode = HTMLNode(from: self) else {
-            Issue.record("Failed to convert node \(self.xmlString(options: .nodeCompactEmptyElement)) to HTML node", sourceLocation: sourceLocation)
-            return ""
-        }
-        
-        return String(decoding: HTMLFormatter.format(htmlNode, options: .prettyPrint), as: UTF8.self)
-    }
-}
-
-
-func assert(_ document: XMLDocument, matches expected: String, sourceLocation: SourceLocation = #_sourceLocation) {
-    #expect(document.rootElement()!.rendered(sourceLocation: sourceLocation) == expected, sourceLocation: sourceLocation)
+func assert(_ page: HTMLNode, matches expected: String, sourceLocation: SourceLocation = #_sourceLocation) {
+    #expect(String(decoding: HTMLFormatter.format(page, options: .prettyPrint), as: UTF8.self) == expected, sourceLocation: sourceLocation)
 }
