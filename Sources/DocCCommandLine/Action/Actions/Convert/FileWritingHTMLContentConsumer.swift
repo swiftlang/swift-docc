@@ -38,7 +38,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             
             // Ensure that the index.html file has at least a `<head>` and a `<body>`.
             guard var beforeEndOfHead  = content.utf8.firstRange(of: "</head>".utf8)?.lowerBound,
-                  var afterStartOfBody = content.range(of: "<body[^>]*>", options: .regularExpression)?.upperBound
+                  var afterStartOfBody = content.range(of: "<body[^>]*>\n?", options: .regularExpression)?.upperBound
             else {
                 struct MissingRequiredTagsError: DescribedError {
                     let errorDescription = "Missing required `<head>` and `<body>` elements in \"index.html\" file."
@@ -55,10 +55,10 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             {
                 titleReplacementRange = titleStart ..< titleEnd
             } else {
-                content.insert(contentsOf: "<title></title>", at: beforeEndOfHead)
-                content.utf8.formIndex(&beforeEndOfHead,  offsetBy: "<title></title>".utf8.count)
-                content.utf8.formIndex(&afterStartOfBody, offsetBy: "<title></title>".utf8.count)
-                let titleInside = content.utf8.index(beforeEndOfHead, offsetBy: -"</title>".utf8.count)
+                content.insert(contentsOf: "<title></title>\n", at: beforeEndOfHead)
+                content.utf8.formIndex(&beforeEndOfHead,  offsetBy: "<title></title>\n".utf8.count)
+                content.utf8.formIndex(&afterStartOfBody, offsetBy: "<title></title>\n".utf8.count)
+                let titleInside = content.utf8.index(beforeEndOfHead, offsetBy: -"</title>\n".utf8.count)
                 titleReplacementRange = titleInside ..< titleInside
             }
             
@@ -67,7 +67,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             {
                 contentReplacementRange = noScriptStart ..< noScriptEnd
             } else {
-                content.insert(contentsOf: "<noscript></noscript>", at: afterStartOfBody)
+                content.insert(contentsOf: "<noscript></noscript>\n", at: afterStartOfBody)
                 let noScriptInside = content.utf8.index(afterStartOfBody, offsetBy: "<noscript>".utf8.count)
                 contentReplacementRange = noScriptInside ..< noScriptInside
             }
@@ -92,7 +92,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
                 let metaDescription = XMLNode.element(named: "meta", attributes: ["name": "description", "content": plainDescription])
                 copy.replaceSubrange(descriptionReplacementRange, with: metaDescription.rendered(prettyPrinted: prettyPrint))
             }
-            copy.replaceSubrange(titleReplacementRange,   with: title)
+            copy.replaceSubrange(titleReplacementRange, with: title)
             
             return copy
         }
@@ -153,7 +153,15 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
 
 private extension XMLNode {
     func rendered(prettyPrinted: Bool) -> String {
-        if prettyPrinted {
+        if let htmlNode = HTMLNode(from: self) {
+            let data = HTMLFormatter.format(htmlNode, options: prettyPrinted ? .prettyPrint : [])
+            return String(decoding: data, as: UTF8.self)
+        }
+         
+        assertionFailure("Failed to convert XMLNode \(name ?? "<no tag>") to an HTMLNode")
+        
+        // Fallback to the XMLNode string formatting for now.
+        return if prettyPrinted {
             xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement])
         } else {
             xmlString(options: .nodeCompactEmptyElement)
