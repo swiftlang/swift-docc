@@ -217,35 +217,74 @@ package struct HTMLFormatter {
             //        <li>...
             //    ```
             //
-            // 2. Tags display textual content and text-level semantic element inline. For example:
-            //    ```
-            //    <h1>random(<wbr>in:<wbr>using:)</h1>
-            //    ```
-            //    or
+            // 2. Tags with only plain textual content display that content on the same line as the tag. For example:
             //    ```
             //    <dt>generator</dt>
             //    <dd>
             //      <p>The random number generator to use when creating the new random value.</p>
             //    </dd>
             //    ```
-            // 3. Tags with attributes display textual content and text-level semantic on a new line (but still the same line). For example:
+            // 3. Tags with attributes display plain textual content on a new line. For example:
             //    ```
             //    <p id="abstract">
             //      Returns a random value within the specified range, using the given generator as a source for randomness.
             //    </p>
             //    ```
+            // 4. Text-level semantics display on the same line as their surrounding plain textual contents, but on a new line compared to their container. For example:
+            //    ```
+            //    <h1>
+            //      random(<wbr>in:<wbr>using:)
+            //    </h1>
+            //    ```
+            //    or
+            //    ```
+            //    <p>
+            //      Some <b>bold</b> and <i>italicized</i> text.
+            //    </p>
+            //    ```
+            //
+            // Additionally the formatter has two special case behaviors that aims to make slight readability refinements for certain content:
+            //
+            // 1. Anchors (`<a>`) and table cells (`<td>` or `<th>`) with at most one attribute still displays plain textual contents on the same line. For example:
+            //    ```
+            //    <a href="something">Some text</a>
+            //    ```
+            //    or
+            //    ```
+            //    <tr>
+            //      <td>One</td>
+            //      <td colspan=2>Two</td>
+            //    </tr>
+            //    ```
+            // 2. Anchors within a paragraph of plain text or other text-level semantics display on a separate line from both the run of contents before and after. For example:
+            //    ```
+            //    <p>
+            //      Some <b>bold</b> text before a
+            //      <a href="something">link</a>
+            //      and some <i>italicized</i> text after.
+            //    </p>
+            //    ```
             
-            let presentContentsOnSameLine = tag != .picture && contents.allSatisfy { $0._tag?.canPrettyPrintInline != false }
-            var childState = PrettyPrintingState(depth: state.depth &+ 1, presentOnCurrentLine: presentContentsOnSameLine, nextElementTag: nil)
-            
-            let shouldWrapBecauseOfAttributes = if tag == .a, attributes.count == 1, case .href = attributes[0] {
-                true
-            } else {
-                attributes.isEmpty
+            let hasAttributeReasonToPresentOnSeparateLine = switch tag {
+                case .a, .td, .th: attributes.count > 1
+                default:           !attributes.isEmpty
             }
+            let firstContents = contents.first! // verified to be non-empty above
+            let shouldPresentContentsOnSeparateLine = contents.count > 1 || !firstContents._isText || hasAttributeReasonToPresentOnSeparateLine
             
-            if presentContentsOnSameLine && !shouldWrapBecauseOfAttributes {
-                // Place text semantic on the same _new_ line when the container element has attributes.
+            var childState = PrettyPrintingState(depth: state.depth &+ 1)
+            
+            func shouldPresentInline(for contents: HTMLNode) -> Bool {
+                switch contents._storage {
+                    case .text:
+                        true
+                    case .element(    let tag, let attributes, _),
+                         .voidElement(let tag, let attributes):
+                        tag.canPrettyPrintInline && attributes.isEmpty
+                }
+            }
+            if shouldPresentContentsOnSeparateLine, shouldPresentInline(for: firstContents) {
+                // Avoid adding _two_ line breaks when both the container and the first element has reasons to add a line break.
                 appendLineBreakAndIndentation(depth: childState.depth)
             }
             
@@ -254,6 +293,11 @@ package struct HTMLFormatter {
                 let nextIndex = index &+ 1
                 // It's necessary to know what element comes next in the container (if any) to determine when it's allowed to omit the end tag.
                 childState.nextElementTag = nextIndex < contents.endIndex ? contents[nextIndex]._tag : nil
+                
+                // If the previous element presented on its own line and the current line is text, add a line break before the text as well.
+                if childState.presentOnCurrentLine || !child._isText {
+                    childState.presentOnCurrentLine = shouldPresentInline(for: child)
+                }
                 
                 // Whitespace is significant inside `<pre>` elements; so we switch to formatting that sub-hierarchy _without_ pretty printing.
                 if child._tag == .pre {
@@ -269,7 +313,7 @@ package struct HTMLFormatter {
             if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: state.nextElementTag) {
                 return
             }
-            if !presentContentsOnSameLine || !shouldWrapBecauseOfAttributes {
+            if shouldPresentContentsOnSeparateLine {
                 appendLineBreakAndIndentation()
             }
             _formatEndTag(tag)

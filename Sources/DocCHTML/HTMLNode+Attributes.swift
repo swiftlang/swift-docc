@@ -17,6 +17,8 @@ extension HTMLNode {
         case autoFocus
         /// A space-separated list of classes for the element.
         case `class`(String)
+        /// How many columns the `<td>` or `<th>` element spans.
+        case colSpan(Int)
         /// A hint to the browser for how it should perform image decoding in relation to rendering for the `<img>` element's resource.
         case decoding(Decoding)
         /// An indication that the element is not yet, or is no longer, directly relevant to the page's current state,
@@ -64,6 +66,7 @@ extension HTMLNode.Attribute {
             case .alt:                     "alt"
             case .autoFocus:               "autofocus"
             case .class:                   "class"
+            case .colSpan:                 "colspan"
             case .decoding:                "decoding"
             case .hidden:                  "hidden"
             case .href:                    "href"
@@ -86,6 +89,7 @@ extension HTMLNode.Attribute {
             case .alt(let string):                 return string
             case .autoFocus:                       return "" // A "boolean" attribute
             case .class(let classNames):           return classNames
+            case .colSpan(let number):             return number.description
             case .decoding(let value):             return value.rawValue
             case .hidden(let value):               return value.rawValue
             case .href(let string):                return string

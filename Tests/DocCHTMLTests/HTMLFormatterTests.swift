@@ -98,7 +98,7 @@ struct HTMLFormatterTests {
     }
     
     @Test
-    func prettyFormatsTextInlineWhenContainerHasAttributes() {
+    func prettyFormatsTextOnSeparateLineWhenContainerHasAttributes() {
         let html = ul(contents: [
             li(contents: [.text("Container without attribute")]),
             li(attributes: [.id("something")], contents: [.text("Container with attribute")]),
@@ -128,11 +128,11 @@ struct HTMLFormatterTests {
         let preTag = pre(contents: [
             code(contents: [.text("  first")]),
             .text(" "),
-            code(contents: [.text("second")]),
+            code(contents: [.text("second  ")]),
         ])
         
         #expect(htmlString(for: preTag, options: .prettyPrint) == htmlString(for: preTag))
-        #expect(htmlString(for: preTag, options: .prettyPrint) == "<pre><code>  first</code> <code>second</code></pre>")
+        #expect(htmlString(for: preTag, options: .prettyPrint) == "<pre><code>  first</code> <code>second  </code></pre>")
         
         let html = section(contents: [
             hgroup(contents: [
@@ -148,7 +148,7 @@ struct HTMLFormatterTests {
             <h1>Some title</h1>
             <p>Some subheading</p>
           </hgroup>
-          <pre><code>  first</code> <code>second</code></pre>
+          <pre><code>  first</code> <code>second  </code></pre>
         </section>
         """)
     }
@@ -163,7 +163,6 @@ struct HTMLFormatterTests {
         </span>
         """)
     }
-    
     
     @Test
     func escapesAmpersandAndLessThanInText() {
@@ -184,40 +183,87 @@ struct HTMLFormatterTests {
     }
     
     @Test
-    func prettyFormatsTextSemanticElementsInline() {
-        let html = p(contents: [
-            .text("Some "),
-            b(contents: [.text("bold")]),
-            .text(" and "),
-            i(contents: [.text("italicized")]),
-            .text(" text."),
-        ])
+    func prettyFormatsTextSemanticElementsOnSameNewLine() {
+        func makeExample(paragraphAttributes: [HTMLNode.Attribute]) -> HTMLNode {
+            p(attributes: paragraphAttributes, contents: [
+                .text("Some "),
+                b(contents: [.text("bold")]),
+                .text(" and "),
+                i(contents: [.text("italicized")]),
+                .text(" text."),
+            ])
+        }
         
-        #expect(htmlString(for: html, options: .prettyPrint) == """
-        <p>Some <b>bold</b> and <i>italicized</i> text.</p>
-        """)
-    }
-    
-    @Test
-    func prettyFormatsTextSemanticElementsOnNewLineWhenContainerHasAttributes() {
-        let html = p(attributes: [.id("something")], contents: [
-            .text("Some "),
-            b(contents: [.text("bold")]),
-            .text(" and "),
-            i(contents: [.text("italicized")]),
-            .text(" text."),
-        ])
-        
-        #expect(htmlString(for: html, options: .prettyPrint) == """
+        #expect(htmlString(for: makeExample(paragraphAttributes: [.id("something")]), options: .prettyPrint) == """
         <p id="something">
+          Some <b>bold</b> and <i>italicized</i> text.
+        </p>
+        """)
+        
+        #expect(htmlString(for: makeExample(paragraphAttributes: []), options: .prettyPrint) == """
+        <p>
           Some <b>bold</b> and <i>italicized</i> text.
         </p>
         """)
     }
     
     @Test
-    func prettyFormatsAnchorElementWithOnlyHyperLinkAttributeInline() {
-        let anchorWithOnlyHyperlink = h1(attributes: [.id("something")], contents: [
+    func prettyFormatsAnchorElementSurroundedByTextOnSeparateLine() {
+        // It's common for anchor elements to appear within a paragraph of formatted text.
+        // These anchor elements can be hard slightly hard to read if formatted entirely inline.
+        // At the same time, these anchor elements can look slightly too verbose and out of place if they take up 3 lines (because the anchor has a "href" attribute).
+        // To try and address both these readability issues, the formatter presents the anchor on its own _separate_ line from the contents both before and after.
+        
+        let html = p(attributes: [.id("something")], contents: [
+            .text("Some "),
+            b(contents: [.text("bold")]),
+            .text("text before a "),
+            a(attributes: [.href("#something")], contents: [.text("link")]),
+            .text(" and some "),
+            i(contents: [.text("italicized")]),
+            .text(" text after."),
+        ])
+        
+        #expect(htmlString(for: html, options: .prettyPrint) == """
+        <p id="something">
+          Some <b>bold</b>text before a 
+          <a href="#something">link</a>
+           and some <i>italicized</i> text after.
+        </p>
+        """)
+    }
+    
+    @Test
+    func prettyFormatsTextContentsInlineForAnchorElementWithSingleAttribute() {
+        // It's fairly common for anchors with only plain text contents to appear within headings and other elements.
+        
+        let anchorWithOnlyTextContents = h1(attributes: [.id("something")], contents: [
+            a(attributes: [.href("#something")], contents: [
+                .text("Some plain text"),
+            ])
+        ])
+        
+        #expect(htmlString(for: anchorWithOnlyTextContents, options: .prettyPrint) == """
+        <h1 id="something">
+          <a href="#something">Some plain text</a>
+        </h1>
+        """)
+        
+        let anchorWithTwoAttributes = h1(attributes: [.id("something")], contents: [
+            a(attributes: [.href("#something"), .class("some-class")], contents: [
+                .text("Some plain text"),
+            ])
+        ])
+        
+        #expect(htmlString(for: anchorWithTwoAttributes, options: .prettyPrint) == """
+        <h1 id="something">
+          <a href="#something" class="some-class">
+            Some plain text
+          </a>
+        </h1>
+        """)
+        
+        let anchorWithFormattedContents = h1(attributes: [.id("something")], contents: [
             a(attributes: [.href("#something")], contents: [
                 .text("Some "),
                 b(contents: [.text("formatted")]),
@@ -225,39 +271,9 @@ struct HTMLFormatterTests {
             ])
         ])
         
-        #expect(htmlString(for: anchorWithOnlyHyperlink, options: .prettyPrint) == """
+        #expect(htmlString(for: anchorWithFormattedContents, options: .prettyPrint) == """
         <h1 id="something">
-          <a href="#something">Some <b>formatted</b> text</a>
-        </h1>
-        """)
-        
-        let anchorWithOtherAttribute = h1(attributes: [.id("something")], contents: [
-            a(attributes: [.class("some-class")], contents: [
-                .text("Some "),
-                b(contents: [.text("formatted")]),
-                .text(" text"),
-            ])
-        ])
-        
-        #expect(htmlString(for: anchorWithOtherAttribute, options: .prettyPrint) == """
-        <h1 id="something">
-          <a class="some-class">
-            Some <b>formatted</b> text
-          </a>
-        </h1>
-        """)
-        
-        let anchorWithMultipleAttributes = h1(attributes: [.id("something")], contents: [
-            a(attributes: [.href("#something"), .class("some-class")], contents: [
-                .text("Some "),
-                b(contents: [.text("formatted")]),
-                .text(" text"),
-            ])
-        ])
-
-        #expect(htmlString(for: anchorWithMultipleAttributes, options: .prettyPrint) == """
-        <h1 id="something">
-          <a href="#something" class="some-class">
+          <a href="#something">
             Some <b>formatted</b> text
           </a>
         </h1>
@@ -265,7 +281,50 @@ struct HTMLFormatterTests {
     }
     
     @Test
-    func prettyFormatsPictureContentsOnSeparateLines() {
+    func prettyFormatsTextContentsInlineForTableCellElementWithSingleAttribute() {
+        // It's somewhat common for table cells to only have spanning attributes and plain text content.
+        // When these spanning table cells are surrounded by other non-spanning cells, they appear more alike if both formats its plain text contents the same.
+        
+        // TODO: Update these initializers after https://github.com/swiftlang/swift-docc/pull/1578 is merged.
+        let html = HTMLNode._element(.table, contents: [
+            ._element(.tr, contents: [
+                ._element(.td, contents: [
+                    .text("No attribute")
+                ]),
+                ._element(.td, attributes: [.colSpan(2)], contents: [
+                    .text("One attribute")
+                ]),
+                ._element(.td, attributes: [.colSpan(2), .id("some-id")], contents: [
+                    .text("Two attributes")
+                ]),
+            ])
+        ])
+        
+        #expect(htmlString(for: html, options: .prettyPrint) == """
+        <table>
+          <tr>
+            <td>No attribute</td>
+            <td colspan="2">One attribute</td>
+            <td colspan="2" id="some-id">
+              Two attributes
+            </td>
+          </tr>
+        </table>
+        """)
+        
+        #expect(htmlString(for: html, options: [.prettyPrint, .omitOptionalEndTags]) == """
+        <table>
+          <tr>
+            <td>No attribute
+            <td colspan="2">One attribute
+            <td colspan="2" id="some-id">
+              Two attributes
+        </table>
+        """)
+    }
+    
+    @Test
+    func prettyFormatsVoidElementContentsOnSeparateLines() {
         let html = picture(contents: [
             source(attributes: [.media("(prefers-color-scheme: light)"), .src("relative/path/to/some-image.png")]),
             source(attributes: [.media("(prefers-color-scheme: dark)"),  .src("relative/path/to/some-image~dark.png")]),
@@ -287,7 +346,7 @@ struct HTMLFormatterTests {
             dt(contents: [.text("range")]),
             dd(contents: [
                 p(contents: [
-                    .text("The range in which to create a random value."),
+                    .text("The range in which to create a random value. "),
                     code(contents: [.text("range")]),
                     .text(" must not be empty.")
                 ])
@@ -301,14 +360,16 @@ struct HTMLFormatterTests {
             ]),
         ])
         
-        #expect(htmlString(for: definitionList) == #"<dl><dt>range</dt><dd><p>The range in which to create a random value.<code>range</code> must not be empty.</p></dd><dt>range</dt><dd><p>The random number generator to use when creating the new random value.</p></dd></dl>"#)
-        #expect(htmlString(for: definitionList, options: .omitOptionalEndTags) == #"<dl><dt>range<dd><p>The range in which to create a random value.<code>range</code> must not be empty.<dt>range<dd><p>The random number generator to use when creating the new random value.</dl>"#)
+        #expect(htmlString(for: definitionList) == #"<dl><dt>range</dt><dd><p>The range in which to create a random value. <code>range</code> must not be empty.</p></dd><dt>range</dt><dd><p>The random number generator to use when creating the new random value.</p></dd></dl>"#)
+        #expect(htmlString(for: definitionList, options: .omitOptionalEndTags) == #"<dl><dt>range<dd><p>The range in which to create a random value. <code>range</code> must not be empty.<dt>range<dd><p>The random number generator to use when creating the new random value.</dl>"#)
         
         #expect(htmlString(for: definitionList, options: .prettyPrint) == """
         <dl>
           <dt>range</dt>
           <dd>
-            <p>The range in which to create a random value.<code>range</code> must not be empty.</p>
+            <p>
+              The range in which to create a random value. <code>range</code> must not be empty.
+            </p>
           </dd>
           <dt>range</dt>
           <dd>
@@ -320,7 +381,8 @@ struct HTMLFormatterTests {
         <dl>
           <dt>range
           <dd>
-            <p>The range in which to create a random value.<code>range</code> must not be empty.
+            <p>
+              The range in which to create a random value. <code>range</code> must not be empty.
           <dt>range
           <dd>
             <p>The random number generator to use when creating the new random value.

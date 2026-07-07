@@ -39,9 +39,16 @@ package struct HTMLNode: Sendable {
     
     var _tag: _Tag? {
         switch _storage {
-            case .element(let tag, _, _),
+            case .element(    let tag, _, _),
                  .voidElement(let tag, _): tag
             case .text:                    nil
+        }
+    }
+    
+    var _isText: Bool {
+        switch _storage {
+            case .text:                  true
+            case .element, .voidElement: false
         }
     }
 }
