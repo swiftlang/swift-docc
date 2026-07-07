@@ -54,7 +54,7 @@ struct MarkdownRenderer_PageElementsTests {
         let breadcrumbs = makeRenderer(goal: goal, elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
         switch goal {
         case .richness:
-            breadcrumbs.assertMatches(prettyFormatted: true, expectedXMLString: """
+            breadcrumbs.assertMatches(prettyFormatted: true, expected: """
             <nav id="breadcrumbs">
               <ul>
                 <li>
@@ -71,7 +71,7 @@ struct MarkdownRenderer_PageElementsTests {
             </nav>
             """)
         case .conciseness:
-            breadcrumbs.assertMatches(prettyFormatted: true, expectedXMLString: """
+            breadcrumbs.assertMatches(prettyFormatted: true, expected: """
             <ul>
               <li>
                 <a href="../../index.html">ModuleName</a>
@@ -94,15 +94,21 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         switch goal {
         case .richness:
-            availability.assertMatches(prettyFormatted: true, expectedXMLString: """
+            availability.assertMatches(prettyFormatted: true, expected: """
             <ul id="availability">
-              <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
-              <li aria-label="Second 1.2.3+, Available on Second 1.2.3 and later" title="Available on Second 1.2.3 and later">Second 1.2.3+</li>
-              <li aria-label="Third 4.5+, Available on Third 4.5 and later" class="beta" title="Available on Third 4.5 and later">Third 4.5+</li>
+              <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" title="Introduced in First 1.2 and deprecated in First 3.4">
+                First 1.2–3.4
+              </li>
+              <li aria-label="Second 1.2.3+, Available on Second 1.2.3 and later" title="Available on Second 1.2.3 and later">
+                Second 1.2.3+
+              </li>
+              <li aria-label="Third 4.5+, Available on Third 4.5 and later" class="beta" title="Available on Third 4.5 and later">
+                Third 4.5+
+              </li>
             </ul>
             """)
         case .conciseness:
-            availability.assertMatches(prettyFormatted: true, expectedXMLString: """
+            availability.assertMatches(prettyFormatted: true, expected: """
             <ul id="availability">
               <li>First 1.2–3.4</li>
               <li>Second 1.2.3+</li>
@@ -127,7 +133,7 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
+            parameters.assertMatches(prettyFormatted: true, expected: """
             <section id="Parameters">
               <h2>
                 <a href="#Parameters">Parameters</a>
@@ -142,25 +148,28 @@ struct MarkdownRenderer_PageElementsTests {
                 <dt>Second</dt>
                 <dd>
                   <p>
-                    Some <b>other</b> <i>formatted</i> description</p>
+                    Some <b>other</b> <i>formatted</i> description
+                  </p>
                   <p>That spans two paragraphs</p>
                 </dd>
               </dl>
             </section>
             """)
         case .conciseness:
-            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
+            parameters.assertMatches(prettyFormatted: true, expected: """
             <h2>Parameters</h2>
             <dl>
               <dt>First</dt>
               <dd>
-                <p>Some <i>formatted</i>description with <code>code</code>
+                <p>
+                  Some <i>formatted</i> description with <code>code</code>
                 </p>
               </dd>
               <dt>Second</dt>
               <dd>
                 <p>
-                  Some <b>other</b> <i>formatted</i> description</p>
+                  Some <b>other</b> <i>formatted</i> description
+                </p>
                 <p>That spans two paragraphs</p>
               </dd>
             </dl>
@@ -182,7 +191,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(name: "ObjectiveCOnly", content: parseMarkup(string: "Only available in Objective-C")),
             ],
         ])
-        parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
+        parameters.assertMatches(prettyFormatted: true, expected: """
         <section id="Parameters">
           <h2>
             <a href="#Parameters">Parameters</a>
@@ -222,7 +231,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(name: "Third", content: parseMarkup(string: "Some description")),
             ],
         ])
-        parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
+        parameters.assertMatches(prettyFormatted: true, expected: """
         <section id="Parameters">
           <h2>
             <a href="#Parameters">Parameters</a>
@@ -262,16 +271,16 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            returns.assertMatches(prettyFormatted: true, expected: """
             <section id="Return-Value">
-            <h2>
-              <a href="#Return-Value">Return Value</a>
-            </h2>
-            \(commonHTML)
+              <h2>
+                <a href="#Return-Value">Return Value</a>
+              </h2>
+            \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
-            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            returns.assertMatches(prettyFormatted: true, expected: """
             <h2>Return Value</h2>
             \(commonHTML)
             """)
@@ -286,23 +295,29 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         
         let commonHTML = """
-        <p class="swift-only">First paragraph</p>
-        <p class="swift-only">Second paragraph</p>
-        <p class="occ-only">Other language’s paragraph</p>
+        <p class="swift-only">
+          First paragraph
+        </p>
+        <p class="swift-only">
+          Second paragraph
+        </p>
+        <p class="occ-only">
+          Other language’s paragraph
+        </p>
         """
         
         switch goal {
         case .richness:
-            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            returns.assertMatches(prettyFormatted: true, expected: """
             <section id="Return-Value">
-            <h2>
-              <a href="#Return-Value">Return Value</a>
-            </h2>
-            \(commonHTML)
+              <h2>
+                <a href="#Return-Value">Return Value</a>
+              </h2>
+            \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
-            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            returns.assertMatches(prettyFormatted: true, expected: """
             <h2>Return Value</h2>
             \(commonHTML)
             """)
@@ -348,28 +363,15 @@ struct MarkdownRenderer_PageElementsTests {
                 and second: SecondParameterValue
             ) throws -> ReturnValue
             """)
-            // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
-            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
-            <pre id="declaration">
-            <code>
-              <span class="keyword">func</span>
-               doSomething(
-                  with <span class="internalParameter">first</span>
-              : <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
-              ,
-                  and <span class="internalParameter">second</span>
-              : <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
-              
-              ) <span class="keyword">throws</span>
-               -&gt; <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
-            </code>
-            </pre>
+            declaration.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code><span class="keyword">func</span> doSomething(
+                with <span class="internalParameter">first</span>: <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>,
+                and <span class="internalParameter">second</span>: <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+            ) <span class="keyword">throws</span> -> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a></code></pre>
             """)
         case .conciseness:
-            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
-            <pre>
-              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws -&gt; ReturnValue</code>
-            </pre>
+            declaration.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws -> ReturnValue</code></pre>
             """)
         }
     }
@@ -445,34 +447,12 @@ struct MarkdownRenderer_PageElementsTests {
             _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> R
         ) throws(E) -> R where E : Error, T : ~Copyable, R : ~Copyable
         """)
-        // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
-        functionDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
-        <pre id="declaration">
-        <code>
-          <span class="keyword">func</span>
-           withUnsafeTemporaryAllocation&lt;T, R, E&gt;(
-              of <span class="internalParameter">type</span>
-          : <span class="typeIdentifier">T</span>
-          .Type,
-              capacity: <span class="typeIdentifier">Int</span>
-          ,
-              _ <span class="internalParameter">body</span>
-          : (<span class="typeIdentifier">UnsafeMutableBufferPointer</span>
-          &lt;<span class="typeIdentifier">T</span>
-          &gt;) <span class="keyword">throws</span>
-          (<span class="typeIdentifier">E</span>
-          ) -&gt; <span class="typeIdentifier">R</span>
-          
-          ) <span class="keyword">throws</span>
-          (<span class="typeIdentifier">E</span>
-          ) -&gt; <span class="typeIdentifier">R</span>
-           <span class="keyword">where</span>
-           <span class="typeIdentifier">E</span>
-           : <span class="typeIdentifier">Error</span>
-          , <span class="typeIdentifier">T</span>
-           : ~Copyable, <span class="typeIdentifier">R</span>
-           : ~Copyable</code>
-        </pre>
+        functionDeclaration.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="keyword">func</span> withUnsafeTemporaryAllocation&lt;T, R, E>(
+            of <span class="internalParameter">type</span>: <span class="typeIdentifier">T</span>.Type,
+            capacity: <span class="typeIdentifier">Int</span>,
+            _ <span class="internalParameter">body</span>: (<span class="typeIdentifier">UnsafeMutableBufferPointer</span>&lt;<span class="typeIdentifier">T</span>>) <span class="keyword">throws</span>(<span class="typeIdentifier">E</span>) -> <span class="typeIdentifier">R</span>
+        ) <span class="keyword">throws</span>(<span class="typeIdentifier">E</span>) -> <span class="typeIdentifier">R</span> <span class="keyword">where</span> <span class="typeIdentifier">E</span> : <span class="typeIdentifier">Error</span>, <span class="typeIdentifier">T</span> : ~Copyable, <span class="typeIdentifier">R</span> : ~Copyable</code></pre>
         """)
         
         // @attached(accessor) @attached(peer, names: prefixed(`$`)) macro TaskLocal()
@@ -493,16 +473,9 @@ struct MarkdownRenderer_PageElementsTests {
         @attached(accessor) @attached(peer, names: prefixed(`$`))
         macro TaskLocal()
         """)
-        // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
-        macroDeclaration.assertMatches(prettyFormatted: true, expectedXMLString: """
-        <pre id="declaration">
-        <code>
-          <span class="attribute">@attached</span>
-          (accessor) <span class="attribute">@attached</span>
-          (peer, names: prefixed(`$`))
-          <span class="keyword">macro</span>
-           TaskLocal()</code>
-        </pre>
+        macroDeclaration.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="attribute">@attached</span>(accessor) <span class="attribute">@attached</span>(peer, names: prefixed(`$`))
+        <span class="keyword">macro</span> TaskLocal()</code></pre>
         """)
 
         // @freestanding(declaration) macro warning(_ message: String)
@@ -527,17 +500,9 @@ struct MarkdownRenderer_PageElementsTests {
         @freestanding(declaration)
         macro warning(_ message: String)
         """)
-        // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
-        macroDeclaration2.assertMatches(prettyFormatted: true, expectedXMLString: """
-        <pre id="declaration">
-        <code>
-          <span class="attribute">@freestanding</span>
-          (declaration)
-          <span class="keyword">macro</span>
-           warning(_ <span class="internalParameter">message</span>
-          : <span class="typeIdentifier">String</span>
-          )</code>
-        </pre>
+        macroDeclaration2.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="attribute">@freestanding</span>(declaration)
+        <span class="keyword">macro</span> warning(_ <span class="internalParameter">message</span>: <span class="typeIdentifier">String</span>)</code></pre>
         """)
     }
     
@@ -611,39 +576,18 @@ struct MarkdownRenderer_PageElementsTests {
                                        andSecond: (SecondParameterValue) second
                                            error: (NSError **) error;
             """)
-            // FIXME: Pretty printing pre-formatted content changes the output (rdar://165755530)
-            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
-            <pre id="declaration">
-            <code class="swift-only">
-              <span class="keyword">func</span>
-               doSomething(
-                  with <span class="internalParameter">first</span>
-              : <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
-              ,
-                  and <span class="internalParameter">second</span>
-              : <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
-              
-              ) <span class="keyword">throws</span>
-               -&gt; <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
-            </code>
-            <code class="occ-only">- (<a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
-              ) doSomethingWithFirst: (<a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
-              ) <span class="internalParameter">first</span>
-              
-                                     andSecond: (<a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
-              ) <span class="internalParameter">second</span>
-              
-                                         error: (<a class="typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a>
-               **) <span class="internalParameter">error</span>
-              ;</code>
-            </pre>
+            declaration.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code class="swift-only"><span class="keyword">func</span> doSomething(
+                with <span class="internalParameter">first</span>: <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>,
+                and <span class="internalParameter">second</span>: <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+            ) <span class="keyword">throws</span> -> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a></code><code class="occ-only">- (<a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>) doSomethingWithFirst: (<a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>) <span class="internalParameter">first</span>
+                                       andSecond: (<a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>) <span class="internalParameter">second</span>
+                                           error: (<a class="typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a> **) <span class="internalParameter">error</span>;</code></pre>
             """)
             
         case .conciseness:
-            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
-            <pre>
-              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws -&gt; ReturnValue</code>
-            </pre>
+            declaration.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws -> ReturnValue</code></pre>
             """)
         }
     }
@@ -714,7 +658,7 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
+            groupedSection.assertMatches(prettyFormatted: true, expected: """
             <section id="\(expectedSectionID)">
               <h2>
                 <a href="#\(expectedSectionID)">\(expectedGroupTitle)</a>
@@ -728,74 +672,86 @@ struct MarkdownRenderer_PageElementsTests {
                   <a href="../../someclass/index.html">
                     <code class="swift-only">
                       <span class="decorator">class </span>
-                      <span class="identifier">Some<wbr/>
-                        Class</span>
+                      <span class="identifier">
+                        Some<wbr>Class
+                      </span>
                     </code>
                     <code class="occ-only">
                       <span class="decorator">@interface </span>
-                      <span class="identifier">TLASome<wbr/>
-                          Class</span>
+                      <span class="identifier">
+                        TLASome<wbr>Class
+                      </span>
                     </code>
                   </a>
-                  <p>Some <i>formatted</i> description of this class</p>
+                  <p>
+                    Some <i>formatted</i> description of this class
+                  </p>
                 </li>
                 <li>
                   <a href="../../somearticle/index.html">
-                    <p class="api-collection">Some Article</p>
+                    <p class="api-collection">
+                      Some Article
+                    </p>
                   </a>
-                  <p>Some <b>formatted</b>description of this <i>article</i>.</p>
+                  <p>
+                    Some <b>formatted</b> description of this <i>article</i>.
+                  </p>
                 </li>
                 <li>
                   <a href="../../someclass/somemethod(with:and:)/index.html">
                     <code class="swift-only">
                       <span class="decorator">func </span>
-                      <span class="identifier">some<wbr/>
-                        Method</span>
+                      <span class="identifier">
+                        some<wbr>Method
+                      </span>
                       <span class="decorator">(</span>
                       <span class="identifier">with</span>
-                      <span class="decorator">:<wbr/>
-                         Int, </span>
+                      <span class="decorator">
+                        :<wbr> Int, 
+                      </span>
                       <span class="identifier">and</span>
-                      <span class="decorator">:<wbr/>
-                         String)</span>
+                      <span class="decorator">
+                        :<wbr> String)
+                      </span>
                     </code>
                     <code class="occ-only">
                       <span class="decorator">- </span>
-                      <span class="identifier">some<wbr/>
-                        Method<wbr/>
-                        With<wbr/>
-                        First:<wbr/>
-                        and<wbr/>
-                        Second:</span>
+                      <span class="identifier">
+                        some<wbr>Method<wbr>With<wbr>First:<wbr>and<wbr>Second:
+                      </span>
                     </code>
                   </a>
                 </li>
-            </ul>
+              </ul>
             </section>
             """)
         case .conciseness:
-            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
+            groupedSection.assertMatches(prettyFormatted: true, expected: """
             <h2>\(expectedGroupTitle)</h2>
             <h3>Group title</h3>
             <p>Some description of this group</p>
             <ul>
-            <li>
-              <a href="../../someclass/index.html">
-                <code>class SomeClass</code>
-              </a>
-              <p>Some <i>formatted</i> description of this class</p>
-            </li>
-            <li>
-              <a href="../../somearticle/index.html">
-                <p>Some Article</p>
-              </a>
-              <p>Some <b>formatted</b> description of this <i>article</i>.</p>
-            </li>
-            <li>
-              <a href="../../someclass/somemethod(with:and:)/index.html">
-                <code>func someMethod(with: Int, and: String)</code>
-              </a>
-            </li>
+              <li>
+                <a href="../../someclass/index.html">
+                  <code>class SomeClass</code>
+                </a>
+                <p>
+                  Some <i>formatted</i> description of this class
+                </p>
+              </li>
+              <li>
+                <a href="../../somearticle/index.html">
+                  <p>Some Article</p>
+                </a>
+                <p>
+                  Some <b>formatted</b> description of this <i>article</i>.
+                </p>
+              </li>
+              <li>
+                <a href="../../someclass/somemethod(with:and:)/index.html">
+                  <code>func someMethod(with: Int, and: String)</code>
+                </a>
+              </li>
             </ul>
             """)
         }
@@ -824,16 +780,16 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            discussion.assertMatches(prettyFormatted: true, expected: """
             <section id="Fallback">
-            <h2>
-              <a href="#Fallback">Fallback</a>
-            </h2>
-            \(commonHTML)
+              <h2>
+                <a href="#Fallback">Fallback</a>
+              </h2>
+            \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
-            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            discussion.assertMatches(prettyFormatted: true, expected: """
             <h2>Fallback</h2>
             \(commonHTML)
             """)
@@ -858,16 +814,16 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            discussion.assertMatches(prettyFormatted: true, expected: """
             <section id="Some-Heading">
-            <h2>
-              <a href="#Some-Heading">Some Heading</a>
-            </h2>
-            \(commonHTML)
+              <h2>
+                <a href="#Some-Heading">Some Heading</a>
+              </h2>
+            \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
-            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            discussion.assertMatches(prettyFormatted: true, expected: """
             <h2>Some Heading</h2>
             \(commonHTML)
             """)
@@ -953,5 +909,12 @@ private extension XMLNode {
             }
         }
         return result
+    }
+}
+
+private extension String {
+    func indenting(depth: Int) -> String {
+        let indentation = String(repeating: "  ", count: depth)
+        return indentation + replacingOccurrences(of: "\n", with: "\n" + indentation)
     }
 }
