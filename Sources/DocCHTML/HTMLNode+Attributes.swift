@@ -11,7 +11,7 @@
 extension HTMLNode {
     /// An attribute that can be applies to one or more HTML elements.
     package struct Attribute {
-        let name: StaticString
+        let name: String
         let value: String
         
         /// A short, abbreviated description of a `<th>`element's content.

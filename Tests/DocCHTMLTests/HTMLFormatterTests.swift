@@ -158,9 +158,7 @@ struct HTMLFormatterTests {
         let html = span(attributes: [.title(#"' & " <>"#)], contents: [.text("Some text")])
         
         #expect(htmlString(for: html, options: .prettyPrint) == """
-        <span title="' &amp; &quot; <>">
-          Some text
-        </span>
+        <span title="' &amp; &quot; <>">Some text</span>
         """)
     }
     

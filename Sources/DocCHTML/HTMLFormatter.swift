@@ -265,8 +265,10 @@ package struct HTMLFormatter {
             //    ```
             
             let hasAttributeReasonToPresentOnSeparateLine = switch tag {
-                case .a, .td, .th: attributes.count > 1
-                default:           !attributes.isEmpty
+                case .a, .td, .th, .dt, .span:
+                    attributes.count > 1
+                default:
+                    !attributes.isEmpty
             }
             let firstContents = contents.first! // verified to be non-empty above
             let shouldPresentContentsOnSeparateLine = contents.count > 1 || !firstContents._isText || hasAttributeReasonToPresentOnSeparateLine
@@ -385,7 +387,7 @@ package struct HTMLFormatter {
     private mutating func _format(attributes: [HTMLNode.Attribute]) {
         for attribute in attributes {
             buffer.append(.init(ascii: " "))
-            _append(attribute.name)
+            buffer.append(contentsOf: attribute.name.utf8)
             
             var value = attribute.value
             guard !value.isEmpty else { continue }

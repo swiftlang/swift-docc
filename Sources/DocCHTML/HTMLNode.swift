@@ -59,7 +59,7 @@ package struct HTMLNode: Sendable {
     }
 }
 
-private extension HTMLNode._Tag {
+extension HTMLNode._Tag {
     var isVoid: Bool {
         switch self {
             case .base, .link, .meta,                  // Metadata
