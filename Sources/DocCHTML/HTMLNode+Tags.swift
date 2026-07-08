@@ -22,8 +22,8 @@
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<html>` element.
-package func html(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.html, attributes: attributes , contents: contents)
+package func html(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.html, attributes: attributes , contents: contents())
 }
 
 // MARK: - Metadata
@@ -36,8 +36,8 @@ package func html(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<head>` element.
-package func head(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.head, attributes: attributes, contents: contents)
+package func head(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.head, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<base>` element with the given attributes.
@@ -98,8 +98,8 @@ package func title(attributes: [HTMLNode.Attribute] = [], text: String) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<body>` element.
-package func body(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.body, attributes: attributes, contents: contents)
+package func body(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.body, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<address>` element with the given attributes and contents.
@@ -110,8 +110,8 @@ package func body(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<address>` element.
-func address(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.address, attributes: attributes, contents: contents)
+func address(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.address, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<article>` element with the given attributes and contents.
@@ -122,8 +122,8 @@ func address(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTM
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<article>` element.
-package func article(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.article, attributes: attributes, contents: contents)
+package func article(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.article, attributes: attributes, contents: contents())
 }
 /// Creates a new `<aside>` element with the given attributes and contents.
 
@@ -134,8 +134,8 @@ package func article(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<aside>` element.
-package func aside(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.aside, attributes: attributes, contents: contents)
+package func aside(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.aside, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<footer>` element with the given attributes and contents.
@@ -146,8 +146,8 @@ package func aside(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<footer>` element.
-package func footer(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.footer, attributes: attributes, contents: contents)
+package func footer(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.footer, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<h1>` element with the given attributes and contents.
@@ -158,8 +158,8 @@ package func footer(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode])
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<h1>` element.
-package func h1(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.h1, attributes: attributes, contents: contents)
+package func h1(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.h1, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<h2>` element with the given attributes and contents.
@@ -170,8 +170,8 @@ package func h1(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<h2>` element.
-package func h2(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.h2, attributes: attributes, contents: contents)
+package func h2(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.h2, attributes: attributes, contents: contents())
 /// Creates a new heading element with the given level, attributes, and contents.
 }
 
@@ -181,7 +181,7 @@ package func h2(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<h1>`-`<h6>` element.
-func heading(level: Int, attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func heading(level: Int, _ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
     let tag: HTMLNode._Tag = switch level {
         case 1:  .h1
         case 2:  .h2
@@ -190,7 +190,7 @@ func heading(level: Int, attributes: [HTMLNode.Attribute] = [], contents: [HTMLN
         case 5:  .h5
         default: .h6
     }
-    return ._element(tag, attributes: attributes, contents: contents)
+    return ._element(tag, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<hgroup>` element with the given attributes and contents.
@@ -204,7 +204,8 @@ func heading(level: Int, attributes: [HTMLNode.Attribute] = [], contents: [HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<hgroup>` element.
-package func hgroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func hgroup(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy {
         switch $0._tag {
             case .p, .h1, .h2, .h3, .h4, .h5, .h6: true
@@ -222,8 +223,8 @@ package func hgroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode])
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<header>` element.
-package func header(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.header, attributes: attributes, contents: contents)
+package func header(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.header, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<nav>` element with the given attributes and contents.
@@ -234,8 +235,8 @@ package func header(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode])
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<nav>` element.
-package func nav(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.nav, attributes: attributes, contents: contents)
+package func nav(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.nav, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<section>` element with the given attributes and contents.
@@ -246,8 +247,8 @@ package func nav(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) ->
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<section>` element.
-package func section(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.section, attributes: attributes, contents: contents)
+package func section(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.section, attributes: attributes, contents: contents())
 }
 
 // MARK: - Grouping
@@ -261,8 +262,8 @@ package func section(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<blockquote>` element.
-func blockquote(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.blockquote, attributes: attributes, contents: contents)
+func blockquote(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.blockquote, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<dd>` element with the given attributes and contents.
@@ -273,8 +274,8 @@ func blockquote(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<dd>` element.
-func dd(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.dd, attributes: attributes, contents: contents)
+func dd(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.dd, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<div>` element with the given attributes and contents.
@@ -287,8 +288,8 @@ func dd(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<div>` element.
-func div(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.div, attributes: attributes, contents: contents)
+func div(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.div, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<dl>` element with the given attributes and contents.
@@ -300,7 +301,8 @@ func div(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNod
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<dl>` element.
-package func dl(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func dl(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .dt || $0._tag == .dd }, "<dl> tags can only contain <dt> and <dd> tags")
     return ._element(.dl, attributes: attributes, contents: contents)
 }
@@ -313,8 +315,8 @@ package func dl(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<dt>` element.
-func dt(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.dt, attributes: attributes, contents: contents)
+func dt(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.dt, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<figcaption>` element with the given attributes and contents.
@@ -325,8 +327,8 @@ func dt(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<figcaption>` element.
-func figcaption(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.figcaption, attributes: attributes, contents: contents)
+func figcaption(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.figcaption, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<figure>` element with the given attributes and contents.
@@ -337,8 +339,8 @@ func figcaption(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<figure>` element.
-func figure(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.figure, attributes: attributes, contents: contents)
+func figure(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.figure, attributes: attributes, contents: contents())
 }
 
 /// A `<hr>` element.
@@ -356,8 +358,8 @@ package let hr = HTMLNode._voidElement(.hr)
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<li>` element.
-package func li(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.li, attributes: attributes, contents: contents)
+package func li(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.li, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<main>` element with the given attributes and contents.
@@ -370,8 +372,8 @@ package func li(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<main>` element.
-func main(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.main, attributes: attributes, contents: contents)
+func main(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.main, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<menu>` element with the given attributes and contents.
@@ -384,7 +386,8 @@ func main(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<menu>` element.
-func menu(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func menu(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .li }, "<menu> tags can only contain <li> tags")
     return ._element(.menu, attributes: attributes, contents: contents)
 }
@@ -398,7 +401,8 @@ func menu(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<ol>` element.
-package func ol(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func ol(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .li }, "<ol> tags can only contain <li> tags")
     return ._element(.ol, attributes: attributes, contents: contents)
 }
@@ -411,8 +415,8 @@ package func ol(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<p>` element.
-package func p(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.p, attributes: attributes, contents: contents)
+package func p(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.p, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<pre>` element with the given attributes and contents.
@@ -423,8 +427,8 @@ package func p(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> H
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<pre>` element.
-package func pre(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.pre, attributes: attributes, contents: contents)
+package func pre(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.pre, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<search>` element with the given attributes and contents.
@@ -435,8 +439,8 @@ package func pre(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) ->
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<search>` element.
-func search(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.search, attributes: attributes, contents: contents)
+func search(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.search, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<ul>` element with the given attributes and contents.
@@ -448,7 +452,8 @@ func search(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<ul>` element.
-package func ul(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func ul(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .li }, "<ul> tags can only contain <li> tags")
     return ._element(.ul, attributes: attributes, contents: contents)
 }
@@ -464,8 +469,8 @@ package func ul(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<a>` element.
-package func a(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.a, attributes: attributes, contents: contents)
+package func a(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.a, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<abbr>` element with the given attributes and contents.
@@ -478,8 +483,8 @@ package func a(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> H
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<abbr>` element.
-func abbr(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.abbr, attributes: attributes, contents: contents)
+func abbr(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.abbr, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<b>` element with the given attributes and contents.
@@ -492,8 +497,8 @@ func abbr(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<b>` element.
-func b(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.b, attributes: attributes, contents: contents)
+func b(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.b, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<bdi>` element with the given attributes and contents.
@@ -504,8 +509,8 @@ func b(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<bdi>` element.
-func bdi(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.bdi, attributes: attributes, contents: contents)
+func bdi(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.bdi, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<bdo>` element with the given attributes and contents.
@@ -517,8 +522,8 @@ func bdi(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNod
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<bdo>` element.
-func bdo(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.bdo, attributes: attributes, contents: contents)
+func bdo(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.bdo, attributes: attributes, contents: contents())
 }
 
 /// A `<br>` element.
@@ -534,8 +539,8 @@ package let br = HTMLNode._voidElement(.br)
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<cite>` element.
-func cite(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.cite, attributes: attributes, contents: contents)
+func cite(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.cite, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<code>` element with the given attributes and contents.
@@ -547,8 +552,8 @@ func cite(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<code>` element.
-package func code(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.code, attributes: attributes, contents: contents)
+package func code(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.code, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<data>` element with the given attributes and contents.
@@ -560,8 +565,8 @@ package func code(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<data>` element.
-func data(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.data, attributes: attributes, contents: contents)
+func data(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.data, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<dfn>` element with the given attributes and contents.
@@ -572,8 +577,8 @@ func data(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<dfn>` element.
-func dfn(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.dfn, attributes: attributes, contents: contents)
+func dfn(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.dfn, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<em>` element with the given attributes and contents.
@@ -585,8 +590,8 @@ func dfn(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNod
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<em>` element.
-func em(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.em, attributes: attributes, contents: contents)
+func em(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.em, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<i>` element with the given attributes and contents.
@@ -599,8 +604,8 @@ func em(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<i>` element.
-func i(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.i, attributes: attributes, contents: contents)
+func i(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.i, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<kbd>` element with the given attributes and contents.
@@ -611,8 +616,8 @@ func i(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<kbd>` element.
-func kbd(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.kbd, attributes: attributes, contents: contents)
+func kbd(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.kbd, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<mark>` element with the given attributes and contents.
@@ -623,8 +628,8 @@ func kbd(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNod
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<mark>` element.
-func mark(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.mark, attributes: attributes, contents: contents)
+func mark(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.mark, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<q>` element with the given attributes and contents.
@@ -636,8 +641,8 @@ func mark(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<q>` element.
-func q(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.q, attributes: attributes, contents: contents)
+func q(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.q, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<rt>` element with the given attributes and contents.
@@ -650,8 +655,8 @@ func q(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<rt>` element.
-func rt(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.rt, attributes: attributes, contents: contents)
+func rt(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.rt, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<rp>` element with the given attributes and textual contents.
@@ -674,8 +679,8 @@ func rp(attributes: [HTMLNode.Attribute] = [], text: String) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<ruby>` element.
-func ruby(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.ruby, attributes: attributes, contents: contents)
+func ruby(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.ruby, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<s>` element with the given attributes and contents.
@@ -686,8 +691,8 @@ func ruby(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<s>` element.
-func s(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.s, attributes: attributes, contents: contents)
+func s(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.s, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<samp>` element with the given attributes and contents.
@@ -698,8 +703,8 @@ func s(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<samp>` element.
-func samp(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.samp, attributes: attributes, contents: contents)
+func samp(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.samp, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<small>` element with the given attributes and contents.
@@ -710,8 +715,8 @@ func samp(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<small>` element.
-func small(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.small, attributes: attributes, contents: contents)
+func small(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.small, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<span>` element with the given attributes and contents.
@@ -724,8 +729,8 @@ func small(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<span>` element.
-package func span(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.span, attributes: attributes, contents: contents)
+package func span(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.span, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<strong>` element with the given attributes and contents.
@@ -736,8 +741,8 @@ package func span(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<strong>` element.
-func strong(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.strong, attributes: attributes, contents: contents)
+func strong(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.strong, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<sub>` element with the given attributes and contents.
@@ -749,8 +754,8 @@ func strong(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<sub>` element.
-func sub(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.sub, attributes: attributes, contents: contents)
+func sub(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.sub, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<sup>` element with the given attributes and contents.
@@ -762,8 +767,8 @@ func sub(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNod
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<sup>` element.
-func sup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.sup, attributes: attributes, contents: contents)
+func sup(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.sup, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<time>` element with the given attributes and contents.
@@ -775,8 +780,8 @@ func sup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNod
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<time>` element.
-func time(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.time, attributes: attributes, contents: contents)
+func time(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.time, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<u>` element with the given attributes and contents.
@@ -787,15 +792,15 @@ func time(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<u>` element.
-func u(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.u, attributes: attributes, contents: contents)
+func u(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.u, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<var>` element with the given attributes and contents.
 ///
 /// The `<var>` element semantically represents a variable. For example a variable in a mathematical expression or programming context, a symbol identifying a physical quantity, or a function parameter.
-func `var`(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.var, attributes: attributes, contents: contents)
+func `var`(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.var, attributes: attributes, contents: contents())
 }
 
 /// A `<wbr>` element.
@@ -814,7 +819,7 @@ package let wbr = HTMLNode._voidElement(.wbr)
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<area>` element.
-func area(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
+func area(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.area, attributes: attributes)
 }
 
@@ -826,8 +831,8 @@ func area(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<audio>` element.
-func audio(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.audio, attributes: attributes, contents: contents)
+func audio(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.audio, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<embed>` element with the given attributes.
@@ -839,7 +844,7 @@ func audio(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<embed>` element.
-func embed(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
+func embed(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._element(.embed, attributes: consume attributes, contents: [])
 }
 
@@ -852,7 +857,7 @@ func embed(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<iframe>` element.
-func iframe(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
+func iframe(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._element(.iframe, attributes: consume attributes, contents: [])
 }
 
@@ -864,7 +869,7 @@ func iframe(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<img>` element.
-func img(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
+func img(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.img, attributes: consume attributes)
 }
 
@@ -876,8 +881,8 @@ func img(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<map>` element.
-func map(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.map, attributes: attributes, contents: contents)
+func map(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.map, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<object>` element with the given attributes and contents.
@@ -888,8 +893,8 @@ func map(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNod
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<object>` element.
-func object(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.object, attributes: attributes, contents: contents)
+func object(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.object, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<picture>` element with the given attributes and contents.
@@ -901,7 +906,8 @@ func object(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<picture>` element.
-func picture(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func picture(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.dropLast().allSatisfy { $0._tag == .source }, "<picture> tag's content can only have <source> tags before the <img> tag")
     assert(contents.last?._tag == .img, "<picture> tag's content can only end with an <img> tag")
     return ._element(.picture, attributes: attributes, contents: contents)
@@ -917,7 +923,7 @@ func picture(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTM
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<source>` element.
-func source(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
+func source(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.source, attributes: consume attributes)
 }
 
@@ -930,7 +936,7 @@ func source(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<track>` element.
-func track(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
+func track(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.track, attributes: attributes)
 }
 
@@ -942,8 +948,8 @@ func track(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<video>` element.
-func video(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.video, attributes: attributes, contents: contents)
+func video(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.video, attributes: attributes, contents: contents())
 }
 
 // MARK: Tables
@@ -957,8 +963,8 @@ func video(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<caption>` element.
-func caption(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.caption, attributes: attributes, contents: contents)
+func caption(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.caption, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<col>` element with the given attributes.
@@ -970,7 +976,7 @@ func caption(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTM
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<col>` element.
-func col(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
+func col(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.col, attributes: attributes)
 }
 
@@ -983,8 +989,8 @@ func col(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<colgroup>` element.
-func colGroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.colgroup, attributes: attributes, contents: contents)
+func colGroup(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.colgroup, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<table>` element with the given attributes and contents.
@@ -995,7 +1001,8 @@ func colGroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<table>` element.
-func table(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func table(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy {
         switch $0._tag {
             case .caption, .colgroup, .thead, .tbody, .tfoot: true
@@ -1014,7 +1021,8 @@ func table(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<tbody>` element.
-func tbody(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func tbody(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .tr }, "<tbody> tags can only contain <tr> tags")
     return ._element(.tbody, attributes: attributes, contents: contents)
 }
@@ -1028,8 +1036,8 @@ func tbody(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<td>` element.
-func td(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.td, attributes: attributes, contents: contents)
+func td(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.td, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<tfoot>` element with the given attributes and contents.
@@ -1041,7 +1049,8 @@ func td(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<tfoot>` element.
-func tfoot(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func tfoot(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .tr }, "<tfoot> tags can only contain <tr> tags")
     return ._element(.tfoot, attributes: attributes, contents: contents)
 }
@@ -1055,8 +1064,8 @@ func tfoot(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<th>` element.
-func th(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.th, attributes: attributes, contents: contents)
+func th(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.th, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<thead>` element with the given attributes and contents.
@@ -1068,7 +1077,8 @@ func th(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<thead>` element.
-func thead(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func thead(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .tr }, "<thead> tags can only contain <tr> tags")
     return ._element(.thead, attributes: attributes, contents: contents)
 }
@@ -1082,7 +1092,8 @@ func thead(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<tr>` element.
-func tr(contents: [HTMLNode]) -> HTMLNode {
+func tr(@HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .td || $0._tag == .th }, "<tr> tags can only contain <td> and <th> tags")
     return ._element(.tr, contents: contents)
 }
@@ -1097,8 +1108,8 @@ func tr(contents: [HTMLNode]) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<button>` element.
-func button(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.button, attributes: attributes, contents: contents)
+func button(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.button, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<datalist>` element with the given attributes and contents.
@@ -1109,8 +1120,8 @@ func button(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<datalist>` element.
-func dataList(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.datalist, attributes: attributes, contents: contents)
+func dataList(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.datalist, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<fieldset>` element with the given attributes and contents.
@@ -1121,8 +1132,8 @@ func dataList(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<fieldset>` element.
-func fieldSet(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.fieldset, attributes: attributes, contents: contents)
+func fieldSet(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.fieldset, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<form>` element with the given attributes and contents.
@@ -1135,8 +1146,8 @@ func fieldSet(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<form>` element.
-func form(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.form, attributes: attributes, contents: contents)
+func form(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.form, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<input>` element with the given attributes.
@@ -1159,8 +1170,8 @@ func input(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<label>` element.
-func label(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.label, attributes: attributes, contents: contents)
+func label(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.label, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<legend>` element with the given attributes and contents.
@@ -1172,8 +1183,8 @@ func label(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<legend>` element.
-func legend(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.legend, attributes: attributes, contents: contents)
+func legend(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.legend, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<meter>` element with the given attributes and contents.
@@ -1184,8 +1195,8 @@ func legend(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<meter>` element.
-func meter(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.meter, attributes: attributes, contents: contents)
+func meter(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.meter, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<optgroup>` element with the given attributes and contents.
@@ -1197,7 +1208,8 @@ func meter(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<optgroup>` element.
-func optGroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func optGroup(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .button || $0._tag == .optgroup}, "<optgroup> tags can only contain <legend> or nested <optgroup> tags")
     return ._element(.optgroup, attributes: attributes, contents: contents)
 }
@@ -1211,8 +1223,8 @@ func optGroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<option>` element.
-func option(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.option, attributes: attributes, contents: contents)
+func option(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.option, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<output>` element with the given attributes and contents.
@@ -1223,8 +1235,8 @@ func option(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<output>` element.
-func output(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.output, attributes: attributes, contents: contents)
+func output(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.output, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<progress>` element with the given attributes and contents.
@@ -1235,8 +1247,8 @@ func output(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<progress>` element.
-func progress(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.progress, attributes: attributes, contents: contents)
+func progress(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.progress, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<select>` element with the given attributes and contents.
@@ -1248,7 +1260,8 @@ func progress(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<select>` element.
-func select(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+func select(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    let contents = contents()
     assert(contents.allSatisfy { $0._tag == .button }, "<select> tags can only contain <button> tags")
     return ._element(.select, attributes: attributes, contents: contents)
 }
@@ -1261,8 +1274,8 @@ func select(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<selectedcontent>` element.
-func selectedContent(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.selectedcontent, attributes: attributes, contents: contents)
+func selectedContent(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.selectedcontent, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<textarea>` element with the given attributes and textual contents.
@@ -1289,8 +1302,8 @@ func textarea(attributes: [HTMLNode.Attribute] = [], text: String) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<details>` element.
-func details(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.details, attributes: attributes, contents: contents)
+func details(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.details, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<dialog>` element with the given attributes and contents.
@@ -1301,8 +1314,8 @@ func details(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTM
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<dialog>` element.
-func dialog(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.dialog, attributes: attributes, contents: contents)
+func dialog(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.dialog, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<summary>` element with the given attributes and contents.
@@ -1314,8 +1327,8 @@ func dialog(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<summary>` element.
-func summary(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.summary, attributes: attributes, contents: contents)
+func summary(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.summary, attributes: attributes, contents: contents())
 }
 
 // MARK: - Scripting
@@ -1328,8 +1341,8 @@ func summary(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTM
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<canvas>` element.
-func canvas(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.canvas, attributes: attributes, contents: contents)
+func canvas(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.canvas, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<noscript>` element with the given attributes and contents.
@@ -1340,8 +1353,8 @@ func canvas(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<noscript>` element.
-func noScript(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.noscript, attributes: attributes, contents: contents)
+func noScript(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.noscript, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<script>` element with the given attributes and contents.
@@ -1353,8 +1366,8 @@ func noScript(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<script>` element.
-func script(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.script, attributes: attributes, contents: contents)
+func script(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.script, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<slot>` element with the given attributes and contents.
@@ -1365,8 +1378,8 @@ func script(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTML
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<slot>` element.
-func slot(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.slot, attributes: attributes, contents: contents)
+func slot(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.slot, attributes: attributes, contents: contents())
 }
 
 /// Creates a new `<template>` element with the given attributes and contents.
@@ -1377,8 +1390,8 @@ func slot(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<template>` element.
-func template(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.template, attributes: attributes, contents: contents)
+func template(_ attributes: HTMLNode.Attribute..., @HTMLBuilder contents: () -> [HTMLNode]) -> HTMLNode {
+    ._element(.template, attributes: attributes, contents: contents())
 }
 
 // MARK: - Tags
