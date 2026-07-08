@@ -512,7 +512,7 @@ private extension HTMLNode._Tag {
             next == nil
             
         case .tr:
-            next == .td || next == nil
+            next == .tr || next == nil
             
         case .td, .th:
             next == .td || next == .th || next == nil

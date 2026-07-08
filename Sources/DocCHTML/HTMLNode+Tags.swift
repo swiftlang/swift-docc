@@ -65,7 +65,7 @@ func dd(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 /// A conforming `<dl>` element can only contain `<dt>` and `<dd>` elements.
 package func dl(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     assert(contents.allSatisfy { $0._tag == .dt || $0._tag == .dd }, "<dl> tags can only contain <dt> and <dd> tags")
-    return ._element(.dl, contents: contents)
+    return ._element(.dl, attributes: attributes, contents: contents)
 }
 
 /// Creates a new `<dt>` element with the given attributes and contents.
