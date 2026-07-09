@@ -115,10 +115,10 @@ package struct HTMLFormatter {
     /// - Parameters:
     ///   - element: The HTML element to format compactly.
     ///   - nextElementTag: The tag of the next element in the element's container, or `nil` if there are no more elements in the element's container.
-    private mutating func _compactFormat(_ element: consuming HTMLNode, nextElementTag: HTMLNode._Tag?) {
+    private mutating func _compactFormat(_ element: HTMLNode, nextElementTag: HTMLNode._Tag?) {
         switch element._storage {
         case .text(let text):
-            _format(text: consume text)
+            _format(text: text)
             
         case .element(let tag, let attributes, let contents):
             // Start tag
@@ -183,7 +183,7 @@ package struct HTMLFormatter {
     /// - Parameters:
     ///   - element: The HTML element to format compactly.
     ///   - nextElementTag: The tag of the next element in the element's container, or `nil` if there are no more elements in the element's container.
-    private mutating func _prettyFormat(_ element: HTMLNode, state: consuming PrettyPrintingState) {
+    private mutating func _prettyFormat(_ element: HTMLNode, state: PrettyPrintingState) {
         func appendLineBreakAndIndentation(depth: UInt8 = state.depth) {
             Self._indentationData.withUnsafeBufferPointer {
                 buffer.append(contentsOf: $0.prefix(1 /* the newline */ &+ Int(depth) &* 2 /* two spaces per indentation level */))
@@ -196,7 +196,7 @@ package struct HTMLFormatter {
         
         switch element._storage {
         case .text(let text):
-            _format(text: consume text)
+            _format(text: text)
             
         case .element(let tag, let attributes, let contents):
             // Start tag
@@ -272,6 +272,7 @@ package struct HTMLFormatter {
             let firstContents = contents.first! // verified to be non-empty above
             let shouldPresentContentsOnSeparateLine = contents.count > 1 || !firstContents._isText || hasAttributeReasonToPresentOnSeparateLine
             
+            
             var childState = PrettyPrintingState(depth: state.depth &+ 1)
             
             func shouldPresentInline(for contents: HTMLNode) -> Bool {
@@ -319,7 +320,7 @@ package struct HTMLFormatter {
             _formatEndTag(tag)
             
         case .voidElement(let voidTag, let attributes):
-            _format(voidElement: voidTag, attributes: consume attributes)
+            _format(voidElement: voidTag, attributes: attributes)
         }
     }
     
@@ -329,9 +330,9 @@ package struct HTMLFormatter {
     }
     
     /// Formats and escapes the given text---for example `x &lt; y`---and appends it to the formatter's buffer.
-    private mutating func _format(text: consuming String) {
+    private mutating func _format(text: String) {
         // This can be made nicer with UTF8Span when we can require anyAppleOS 26+
-        var text = consume text
+        var text = text
         text.withUTF8 {
             var remaining = $0[...]
             
@@ -350,10 +351,10 @@ package struct HTMLFormatter {
     }
     
     /// Format's a start tag and its attributes---for example `<nav id="breadcrumbs">`---and appends it to the formatter's buffer.
-    private mutating func _formatStartTag(_ tag: HTMLNode._Tag, attributes: consuming [HTMLNode.Attribute], selfClosing: Bool) {
+    private mutating func _formatStartTag(_ tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute], selfClosing: Bool) {
         buffer.append(.init(ascii: "<"))
         _append(tag.name)
-        _format(attributes: consume attributes)
+        _format(attributes: attributes)
         
         if selfClosing {
             _append("/>")
@@ -370,10 +371,10 @@ package struct HTMLFormatter {
     }
     
     /// Format's a void tag---for example `<hr>`---and appends it to the formatter's buffer.
-    private mutating func _format(voidElement tag: HTMLNode._Tag, attributes: consuming [HTMLNode.Attribute]) {
+    private mutating func _format(voidElement tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute]) {
         buffer.append(.init(ascii: "<"))
         _append(tag.name)
-        _format(attributes: consume attributes)
+        _format(attributes: attributes)
         buffer.append(.init(ascii: ">"))
     }
     
