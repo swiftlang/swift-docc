@@ -322,7 +322,7 @@ package struct HTMLFormatter {
         }
     }
     
-    /// Append the static string to the formatter's buffer.
+    /// Appends the static string to the formatter's buffer.
     private mutating func _append(_ string: StaticString) {
         string.withUTF8Buffer { buffer.append(contentsOf: $0) }
     }
@@ -353,7 +353,7 @@ package struct HTMLFormatter {
         }
     }
     
-    /// Format's a start tag and its attributes---for example `<nav id="breadcrumbs">`---and appends it to the formatter's buffer.
+    /// Formats a start tag and its attributes---for example `<nav id="breadcrumbs">`---and appends it to the formatter's buffer.
     private mutating func _formatStartTag(_ tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute], selfClosing: Bool) {
         buffer.append(.init(ascii: "<"))
         _append(tag)
@@ -366,14 +366,14 @@ package struct HTMLFormatter {
         }
     }
     
-    /// Format's an end tag---for example `</p>`---and appends it to the formatter's buffer.
+    /// Formats an end tag---for example `</p>`---and appends it to the formatter's buffer.
     private mutating func _formatEndTag(_ tag: HTMLNode._Tag) {
         _append("</")
         _append(tag)
         buffer.append(.init(ascii: ">"))
     }
     
-    /// Format's a void tag---for example `<hr>`---and appends it to the formatter's buffer.
+    /// Formats a void tag---for example `<hr>`---and appends it to the formatter's buffer.
     private mutating func _format(voidElement tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute]) {
         buffer.append(.init(ascii: "<"))
         _append(tag)
@@ -381,7 +381,7 @@ package struct HTMLFormatter {
         buffer.append(.init(ascii: ">"))
     }
     
-    /// Format's a list of attributes---for example `id=something class="one two"`---and appends it to the formatter's buffer.
+    /// Formats a list of attributes---for example `id=something class="one two"`---and appends it to the formatter's buffer.
     private mutating func _format(attributes: [HTMLNode.Attribute]) {
         for attribute in attributes {
             buffer.append(.init(ascii: " "))
