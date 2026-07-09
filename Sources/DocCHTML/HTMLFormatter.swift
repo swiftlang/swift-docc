@@ -326,6 +326,11 @@ package struct HTMLFormatter {
     private mutating func _append(_ string: StaticString) {
         string.withUTF8Buffer { buffer.append(contentsOf: $0) }
     }
+    /// Appends the tag's string representation to the formatter's buffer.
+    private mutating func _append(_ tag: HTMLNode._Tag) {
+        var string = tag.rawValue
+        string.withUTF8 { buffer.append(contentsOf: $0) }
+    }
     
     /// Formats and escapes the given text---for example `x &lt; y`---and appends it to the formatter's buffer.
     private mutating func _format(text: String) {
@@ -351,7 +356,7 @@ package struct HTMLFormatter {
     /// Format's a start tag and its attributes---for example `<nav id="breadcrumbs">`---and appends it to the formatter's buffer.
     private mutating func _formatStartTag(_ tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute], selfClosing: Bool) {
         buffer.append(.init(ascii: "<"))
-        _append(tag.name)
+        _append(tag)
         _format(attributes: attributes)
         
         if selfClosing {
@@ -364,14 +369,14 @@ package struct HTMLFormatter {
     /// Format's an end tag---for example `</p>`---and appends it to the formatter's buffer.
     private mutating func _formatEndTag(_ tag: HTMLNode._Tag) {
         _append("</")
-        _append(tag.name)
+        _append(tag)
         buffer.append(.init(ascii: ">"))
     }
     
     /// Format's a void tag---for example `<hr>`---and appends it to the formatter's buffer.
     private mutating func _format(voidElement tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute]) {
         buffer.append(.init(ascii: "<"))
-        _append(tag.name)
+        _append(tag)
         _format(attributes: attributes)
         buffer.append(.init(ascii: ">"))
     }
@@ -467,7 +472,12 @@ private extension UTF8.CodeUnit {
 private extension HTMLNode._Tag {
     /// A Boolean value that determines whether or not an element of this tag is a [text-level semantic](https://html.spec.whatwg.org/#text-level-semantics).
     var isTextLevelSemantic: Bool {
-        Self.a.rawValue <= self.rawValue && self.rawValue <= Self.wbr.rawValue
+        switch self {
+        case .a, .abbr, .b, .bdi, .bdo, .br, .cite, .code, .data, .dfn, .em, .i, .kbd, .mark, .q, .rp, .rt, .ruby, .s, .samp, .small, .span, .strong, .sub, .sup, .time, .u, .var, .wbr:
+            true
+        default:
+            false
+        }
     }
     
     /// Determines whether or not an element of this tag can omit its end tag when followed by the given `next` element in the same container.
