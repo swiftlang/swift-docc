@@ -223,14 +223,14 @@ Currently there are few existing tests to draw inspiration from, so here are a f
           makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
           This is the in-source documentation for this class.    
           """)
-      ])),
+      ]))
       
       TextFile(name: "Something.md", utf8Content: """
       # ``SomeClass``
       
       This is additional documentation for this class.
-      """),
-  ])
+      """)
+  }
   let context = try await load(catalog: catalog)
   // Test rest of your test
   ```
@@ -246,7 +246,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   ```
   Such `XCTestCase` tests can sometimes be expressed more nicely as parameterized tests in Swift Testing.
   
-  > Tip: A parameterized test with pairs of inputs values can specify its arguments as either an array of tuples or as a dictionary:  
+  > Tip: A parameterized test with pairs of input values can specify its arguments as either an array of tuples or as a dictionary:  
   > ```swift
   > @Test(arguments: [
   >     DiagnosticSeverity.information: true,
