@@ -132,8 +132,7 @@ package struct HTMLFormatter {
             // Contents
             for index in contents.indices {
                 let node = contents[index]
-                
-                let nextIndex = index &+ 1
+                let nextIndex = index &+ 1 // The index will exceed `contents.endIndex` long before it overflows.
                 _compactFormat(node, nextElementTag: nextIndex < contents.endIndex ? contents[nextIndex]._tag : nil)
             }
                 
@@ -158,7 +157,7 @@ package struct HTMLFormatter {
         return data
     }()
     
-    /// Private state that the
+    /// Private state that the formatter uses to pretty-print the HTML element hierarchy.
     private struct PrettyPrintingState {
         /// The current depth in the HTML element hierarchy.
         var depth: UInt8 = 0
@@ -272,7 +271,6 @@ package struct HTMLFormatter {
             let firstContents = contents.first! // verified to be non-empty above
             let shouldPresentContentsOnSeparateLine = contents.count > 1 || !firstContents._isText || hasAttributeReasonToPresentOnSeparateLine
             
-            
             var childState = PrettyPrintingState(depth: state.depth &+ 1)
             
             func shouldPresentInline(for contents: HTMLNode) -> Bool {
@@ -281,7 +279,7 @@ package struct HTMLFormatter {
                         true
                     case .element(    let tag, let attributes, _),
                          .voidElement(let tag, let attributes):
-                        tag.canPrettyPrintInline && attributes.isEmpty
+                        tag.isTextLevelSemantic && attributes.isEmpty
                 }
             }
             if shouldPresentContentsOnSeparateLine, shouldPresentInline(for: firstContents) {
@@ -291,7 +289,7 @@ package struct HTMLFormatter {
             
             for index in contents.indices {
                 let child = contents[index]
-                let nextIndex = index &+ 1
+                let nextIndex = index &+ 1 // The index will exceed `contents.endIndex` long before it overflows.
                 // It's necessary to know what element comes next in the container (if any) to determine when it's allowed to omit the end tag.
                 childState.nextElementTag = nextIndex < contents.endIndex ? contents[nextIndex]._tag : nil
                 
@@ -425,12 +423,24 @@ package struct HTMLFormatter {
 
 private extension UTF8.CodeUnit {
     /// A Boolean value that determines whether this UTF-8 code unit needs to be escaped if it appears in the textual contents of an HTML element.
+    ///
+    /// Various sections of the [HTML specification](https://html.spec.whatwg.org) describes that text may not contain either:
+    /// - a less-than sign (`<`)
+    /// - an ["ambiguous" ampersand (`&`)](https://html.spec.whatwg.org/#syntax-ambiguous-ampersand).
+    ///
+    /// Because the formatter inspects each byte individually, it treats every ampersand as "ambiguous".
+    ///
+    /// - Note: The calling code in the formatter makes assumptions based on this logic.
     var needsEscapingInHTMLText: Bool {
         return self == .init(ascii: "&")
             || self == .init(ascii: "<")
     }
     
     /// A Boolean value that determines whether this UTF-8 code unit needs to be escaped if it appears in the attribute value of an HTML element.
+    ///
+    /// This is defined in the "Double-quoted attribute value syntax" subsection of the [HTML specification](https://html.spec.whatwg.org/#attributes-2)
+    ///
+    /// - Note: The calling code in the formatter makes assumptions based on this logic.
     var needsEscapingInHTMLAttribute: Bool {
         return self == .init(ascii: "&")
             || self == .init(ascii: "\"") // Because the formatter uses `"` to quote the attribute value, we don't need to escape `'`.
@@ -439,6 +449,7 @@ private extension UTF8.CodeUnit {
     /// A Boolean value that determines whether this UTF-8 code unit needs to be quoted if it appears in the attribute value of an HTML element.
     ///
     /// An attribute value can remain unquoted if it doesn't contain ASCII whitespace or any of " ' \` = < >
+    /// This is defined in the "Unquoted attribute value syntax" subsection of the [HTML specification](https://html.spec.whatwg.org/#attributes-2)
     var needsQuotingInHTMLAttribute: Bool {
         return self == .init(ascii: " " )
             || self == .init(ascii: "\t") // Tab
@@ -454,30 +465,15 @@ private extension UTF8.CodeUnit {
 }
 
 private extension HTMLNode._Tag {
-    /// A Boolean value that determines whether or not an element of this tag can be displayed inline when pretty printing the HTML.
-    ///
-    /// The details of "pretty print" HTML is a matter of opinion.
-    /// We opt to display text-semantic elements inline as a matter of preference; in other words favoring:
-    /// ```html
-    /// <p>
-    ///   Some <i>formatted</i> text with a <a href="something">link</a>.
-    /// </p>
-    /// ```
-    /// over
-    /// ```html
-    /// <p>
-    ///   Some
-    ///   <i>formatted</i>
-    ///   text with a
-    ///   <a href="something">link</a>.
-    /// </p>
-    /// ```
-    var canPrettyPrintInline: Bool {
-        // Our pretty printer can include any "text-level semantic" tag inline
+    /// A Boolean value that determines whether or not an element of this tag is a [text-level semantic](https://html.spec.whatwg.org/#text-level-semantics).
+    var isTextLevelSemantic: Bool {
         Self.a.rawValue <= self.rawValue && self.rawValue <= Self.wbr.rawValue
     }
     
     /// Determines whether or not an element of this tag can omit its end tag when followed by the given `next` element in the same container.
+    ///
+    /// Which end tags can be omitted is defined in the [HTML specification](https://html.spec.whatwg.org/#semantics) for each type of element,
+    /// and is summarized in the [Optional tags section](https://html.spec.whatwg.org/#optional-tags) of the specification.
     func canOmitEndTag(whenFollowedBy next: Self?) -> Bool {
         switch self {
         case .p:
