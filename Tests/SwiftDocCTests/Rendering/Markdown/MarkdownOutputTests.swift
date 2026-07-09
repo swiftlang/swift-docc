@@ -86,15 +86,15 @@ struct MarkdownOutputTests {
             TextFile(name: "RowsAndColumns.md", utf8Content: """
                 # Rows and Columns
                 
-                Just here for the links
+                Abstract rendered when curated
                 
                 ## Overview
                 
-                I am the overview
+                My section header will be specifically linked below
                 
                 ## Multi-word heading
                 
-                I am here to test the url readable fragment stuff
+                My section header is also linked below, and it has a hyphen in it and multiple words
                 """),
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -129,14 +129,85 @@ struct MarkdownOutputTests {
         let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
         #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
         
-        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nJust here for the links"
+        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nAbstract rendered when curated"
         #expect(node.markdown.contains(expectedLinkList))
         
         // No abstract
         let expectedLinkListAnchor = "[Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
         #expect(node.markdown.contains(expectedLinkListAnchor))
     }
-       
+
+    @Test
+    func articleInListItemIsTitleAndLink() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "RowsAndColumns.md", utf8Content: """
+                # Rows and Columns
+                
+                Just here for the links
+                
+                ## Overview
+                
+                Section is linked below
+                
+                ## Multi-word heading
+                
+                Multi-word section is linked below
+                """),
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                - This is an inline link: <doc:RowsAndColumns>
+                  - This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                - This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+                
+                1. This is an inline link: <doc:RowsAndColumns>
+                    1. This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                    2. Here is it again <doc:RowsAndColumns#Overview>
+                2. This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+                """)
+            ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
+        let expectedInline = "- This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
+        #expect(node.markdown.contains(expectedInline))
+
+        let expectedInlineAnchor = "  - This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)"
+        #expect(node.markdown.contains(expectedInlineAnchor))
+        let expectedInlineAnchorMultiWord = "- This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
+        #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
+
+        let expectedOrdered = """
+        1. This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)
+           1. This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+           2. Here is it again [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+        2. This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)
+        """
+        #expect(node.markdown.contains(expectedOrdered))
+    }
+
+    @Test
+    func nestedListsRetainNesting() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "NestedLists.md", utf8Content: """
+                # Nested Lists
+                
+                - This is a top-level list item
+                  - This is a nested list item
+                  - This is another nested list item
+                - This is back to the top-level
+                """)
+            ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "NestedLists")
+        let expectedOutput = """
+        - This is a top-level list item
+          - This is a nested list item
+          - This is another nested list item
+        - This is back to the top-level
+        """
+        #expect(node.markdown.contains(expectedOutput))
+    }
+    
     @Test 
     func curatedSymbolDisplaysLinkAndAbstractAsSeparateParagraphs() async throws {
         let catalog = catalog(files: [
@@ -150,6 +221,10 @@ struct MarkdownOutputTests {
                 This is an inline link: ``MarkdownSymbol``
                 
                 This is an unresolvable link: ``Unresolvable``
+                
+                This is a list of things that have links:
+                
+                - You can use ``MarkdownSymbol`` to do interesting things
 
                 ## Topics
 
@@ -176,7 +251,9 @@ struct MarkdownOutputTests {
         let unresolvableAsCodeVoice = "unresolvable link: `Unresolvable`"
         #expect(node.markdown.contains(unresolvableAsCodeVoice))
         #expect(node.markdown.contains("UnresolvableInList") == false)
-                    
+        let expectedUnorderedListContent = "- You can use [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol) to do interesting things"
+        #expect(node.markdown.contains(expectedUnorderedListContent))
+
     }
     
     @Test 
@@ -543,20 +620,16 @@ struct MarkdownOutputTests {
             TextFile(name: "ImageArticle.md", utf8Content: """
                 # Images
                 
-                Shows how images are represented in markdown output
-                
-                ## Overview
-                
                 ![Alternative Title](image.png)
                 ![](image.png)
                 ![Web Image](https://www.example.com/webimage.png)
                 ![Unresolved Image](unresolved.png)
                 """),
-            Folder(name: "Resources", content: [
-                Folder(name: "Images", content: [
-                    CopyOfFile(original: Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources")!)
-                ])
-            ])
+            Folder(name: "Resources") {
+                Folder(name: "Images") {
+                    DataFile(name: "image.png", data: Data())
+                }
+            }
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageArticle")
@@ -564,6 +637,29 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains("![](images/MarkdownOutput/image.png"))
         #expect(node.markdown.contains("![Web Image](https://www.example.com/webimage.png)"))
         #expect(node.markdown.contains("![Unresolved Image](unresolved.png)"))
+    }
+    
+    @Test(arguments: 1...10)
+    func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {      
+        let catalog = catalog(files: [
+            TextFile(name: "ImageVariants.md", utf8Content: """
+            # Image variants
+            
+            ![Image Title](image.png)
+            """),
+            Folder(name: "Resources") {
+                Folder(name: "Images") {
+                    DataFile(name: "image.png",         data: Data())
+                    DataFile(name: "image@2x.png",      data: Data())
+                    DataFile(name: "image~dark@2x.png", data: Data())
+                    DataFile(name: "image@3x.png",      data: Data())
+                    DataFile(name: "image~dark@2x.png", data: Data())
+                }
+            }
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageVariants")
+        #expect(node.markdown.contains("![Image Title](images/MarkdownOutput/image.png)"), "Expected to choose the first variant matching in order of DataTraitCollection.allCases.")
     }
     
     @Test

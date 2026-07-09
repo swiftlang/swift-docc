@@ -330,9 +330,7 @@ class RenderNodeSerializationTests: XCTestCase {
 
     func encode(renderNode: RenderNode) throws -> Data {
         let encoder = JSONEncoder()
-        if #available(OSX 10.13, *) {
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        }
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         
         return try encoder.encode(renderNode)
     }
