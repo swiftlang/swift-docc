@@ -10,6 +10,7 @@
 
 import XCTest
 import DocCTestUtilities
+import SymbolKit
 
 @testable import SwiftDocC
 
@@ -716,6 +717,58 @@ final class RenderIndexTests: XCTestCase {
             symbolNode.isDeprecated,
             "A symbol with @DeprecationSummary but no platform deprecation should appear deprecated in the navigator index."
         )
+    }
+
+    func testRenderIndexGenerationWithPerPlatformUnconditionalDeprecation() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "SomeModule",
+                symbols: [
+                    makeSymbol(
+                        id: "some-symbol-id",
+                        kind: .typealias,
+                        pathComponents: ["SomeTypeAlias"],
+                        availability: [
+                            SymbolGraph.Symbol.Availability.AvailabilityItem(
+                                domain: .init(rawValue: "macOS"),
+                                introducedVersion: .init(major: 10, minor: 15, patch: 0),
+                                deprecatedVersion: nil,
+                                obsoletedVersion: nil,
+                                message: nil,
+                                renamed: "SomeOtherTypeAlias",
+                                isUnconditionallyDeprecated: true,
+                                isUnconditionallyUnavailable: false,
+                                willEventuallyBeDeprecated: false
+                            ),
+                            SymbolGraph.Symbol.Availability.AvailabilityItem(
+                                domain: .init(rawValue: "iOS"),
+                                introducedVersion: .init(major: 13, minor: 0, patch: 0),
+                                deprecatedVersion: nil,
+                                obsoletedVersion: nil,
+                                message: nil,
+                                renamed: "SomeOtherTypeAlias",
+                                isUnconditionallyDeprecated: true,
+                                isUnconditionallyUnavailable: false,
+                                willEventuallyBeDeprecated: false
+                            ),
+                        ]
+                    )
+                ]
+            )),
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let renderIndex = try generatedRenderIndex(
+            forIdentifier: "com.test.example",
+            inContext: context
+        )
+
+        let swiftNodes = try XCTUnwrap(renderIndex.interfaceLanguages["swift"])
+        let symbolNode = try XCTUnwrap(
+            findNode(titled: "SomeTypeAlias", in: swiftNodes)
+        )
+        XCTAssertTrue(symbolNode.isDeprecated, "Should be unconditionally deprecated")
     }
 
     private func findNode(titled title: String, in nodes: [RenderIndex.Node]) -> RenderIndex.Node? {
