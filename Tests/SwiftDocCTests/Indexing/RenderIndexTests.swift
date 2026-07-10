@@ -10,7 +10,6 @@
 
 import XCTest
 import DocCTestUtilities
-import SymbolKit
 
 @testable import SwiftDocC
 
@@ -730,27 +729,17 @@ final class RenderIndexTests: XCTestCase {
                         kind: .typealias,
                         pathComponents: ["SomeTypeAlias"],
                         availability: [
-                            SymbolGraph.Symbol.Availability.AvailabilityItem(
-                                domain: .init(rawValue: "macOS"),
-                                introducedVersion: .init(major: 10, minor: 15, patch: 0),
-                                deprecatedVersion: nil,
-                                obsoletedVersion: nil,
-                                message: nil,
+                            makeAvailabilityItem(
+                                domainName: "macOS",
+                                introduced: .init(major: 10, minor: 15, patch: 0),
                                 renamed: "SomeOtherTypeAlias",
-                                isUnconditionallyDeprecated: true,
-                                isUnconditionallyUnavailable: false,
-                                willEventuallyBeDeprecated: false
+                                unconditionallyDeprecated: true
                             ),
-                            SymbolGraph.Symbol.Availability.AvailabilityItem(
-                                domain: .init(rawValue: "iOS"),
-                                introducedVersion: .init(major: 13, minor: 0, patch: 0),
-                                deprecatedVersion: nil,
-                                obsoletedVersion: nil,
-                                message: nil,
+                            makeAvailabilityItem(
+                                domainName: "iOS",
+                                introduced: .init(major: 13, minor: 0, patch: 0),
                                 renamed: "SomeOtherTypeAlias",
-                                isUnconditionallyDeprecated: true,
-                                isUnconditionallyUnavailable: false,
-                                willEventuallyBeDeprecated: false
+                                unconditionallyDeprecated: true
                             ),
                         ]
                     )
@@ -768,7 +757,10 @@ final class RenderIndexTests: XCTestCase {
         let symbolNode = try XCTUnwrap(
             findNode(titled: "SomeTypeAlias", in: swiftNodes)
         )
-        XCTAssertTrue(symbolNode.isDeprecated, "Should be unconditionally deprecated")
+        XCTAssertTrue(
+            symbolNode.isDeprecated,
+            "Should be unconditionally deprecated"
+        )
     }
 
     private func findNode(titled title: String, in nodes: [RenderIndex.Node]) -> RenderIndex.Node? {
