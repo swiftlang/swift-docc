@@ -1336,6 +1336,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
             renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
         } ?? .init()
         
+        // FIXME: Move this logic out of the rendering code (rdar://172280267)
+        let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
+        let symbolExistsInCatalystSymbolGraph = documentationNode.unifiedSymbol?.allSelectors.contains(where: { $0.platform?.lowercased() == PlatformName.catalyst.rawValue.lowercased() }) ?? false
+        
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
             // Different sources of availability information are added in-order to compute the complete availability information.
 
@@ -1385,13 +1389,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
                 
-                // FIXME: Move this logic out of the rendering code (rdar://172280267)
-                let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
-                let symbolExistsInCatalystSymbolGraph = information[PlatformName.catalyst.displayName] != nil
                 
                 // Catalyst only inherits iOS availability if the symbol don't specify in-source
-                // availability or if there's none Mac Catalyst symbol graph.
-                // If the symbol is not present in the Catalyst SGF then is not availble for this
+                // availability or if there's no Mac Catalyst symbol graph.
+                // If the symbol is not present in the Catalyst SGF then is not available for this
                 // platform.
                 if (catalystSGFExists && symbolExistsInCatalystSymbolGraph) || !catalystSGFExists  {
                     addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
