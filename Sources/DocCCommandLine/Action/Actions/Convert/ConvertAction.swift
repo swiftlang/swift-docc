@@ -348,6 +348,7 @@ public struct ConvertAction: AsyncAction {
             htmlConsumer = try FullPageHTMLContentConsumer(
                 targetFolder: temporaryFolder,
                 fileManager: fileManager,
+                prettyPrint: shouldPrettyPrintOutputJSON, // Use the same configuration as the JSON output to make it convenient for the developer.
                 customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
                 customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
             )

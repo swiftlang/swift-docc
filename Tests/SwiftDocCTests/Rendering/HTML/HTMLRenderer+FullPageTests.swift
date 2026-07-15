@@ -62,13 +62,16 @@ struct HTMLRenderFullPageTests {
                 <legend>Select a color scheme preference</legend>
                 <label>
                   <input name="color-scheme" type="radio" value="light">
-                  Light</label>
-              <label>
-                <input name="color-scheme" type="radio" value="dark">
-                Dark</label>
-              <label>
-                <input checked name="color-scheme" type="radio" value="auto">
-                Auto</label>
+                  Light
+                </label>
+                <label>
+                  <input name="color-scheme" type="radio" value="dark">
+                  Dark
+                </label>
+                <label>
+                  <input checked name="color-scheme" type="radio" value="auto">
+                  Auto
+                </label>
               </fieldset>
             </footer>
           </body>
@@ -126,13 +129,16 @@ struct HTMLRenderFullPageTests {
                     <legend>Select a color scheme preference</legend>
                     <label>
                       <input name="color-scheme" type="radio" value="light">
-                      Light</label>
-                  <label>
-                    <input name="color-scheme" type="radio" value="dark">
-                    Dark</label>
-                  <label>
-                    <input checked name="color-scheme" type="radio" value="auto">
-                    Auto</label>
+                      Light
+                    </label>
+                    <label>
+                      <input name="color-scheme" type="radio" value="dark">
+                      Dark
+                    </label>
+                    <label>
+                      <input checked name="color-scheme" type="radio" value="auto">
+                      Auto
+                    </label>
                   </fieldset>
                 </footer>
                 <footer>A custom footer</footer>
@@ -143,33 +149,6 @@ struct HTMLRenderFullPageTests {
     }
 }
 
-// This workaround is modified from the similar code in FileWritingHTMLContentConsumerTests.swift
-func assert(_ html: XMLDocument, matches expectedHTML: String, sourceLocation: SourceLocation = #_sourceLocation) {
-    // XMLNode on macOS and Linux pretty print with different indentation.
-    // To compare the XML structure without getting false positive failures because of indentation and other formatting differences,
-    // we explicitly process each string into an easy-to-compare format.
-    func formatForTestComparison(_ xmlString: String) -> String {
-        // This is overly simplified and won't result in "pretty" XML for general use but sufficient for test content comparisons
-        xmlString
-            // Workaround document type differences
-            .replacingOccurrences(of: #"<?xml version="1.0" encoding="utf-8" standalone="no"?>"#, with: "")
-            .replacingOccurrences(of: #"<!DOCTYPE html PUBLIC "" "">"#, with: "<!DOCTYPE html>")
-            // Put each tag on its own line
-            .replacingOccurrences(of: ">", with: ">\n")
-            // Allow some meta tags to encode as void elements rather than self-closing elements
-            .replacingOccurrences(of: "\">", with: "\"/>")
-            // Remove leading indentation
-            .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-            .joined(separator: "\n")
-            // Explicitly escape a few HTML characters that appear in the test content
-            .replacingOccurrences(of: "–", with: "&#x2013;") // en-dash
-            .replacingOccurrences(of: "—", with: "&#x2014;") // em-dash
-            // Shorten empty string attribute values
-            .replacingOccurrences(of: #"="""#, with: "")
-    }
-    
-    let actualHTML: String = html.xmlString(options: .nodeCompactEmptyElement)
-    #expect(formatForTestComparison(actualHTML) == formatForTestComparison(expectedHTML), sourceLocation: sourceLocation)
+func assert(_ page: HTMLNode, matches expected: String, sourceLocation: SourceLocation = #_sourceLocation) {
+    #expect(String(decoding: HTMLFormatter.format(page, options: .prettyPrint), as: UTF8.self) == expected, sourceLocation: sourceLocation)
 }
