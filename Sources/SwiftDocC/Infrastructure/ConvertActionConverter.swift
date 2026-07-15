@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -53,10 +53,11 @@ package enum ConvertActionConverter {
             benchmark(end: processingDurationMetric)
         }
         
-        guard !context.problems.containsErrors else {
+        guard !context.diagnosticEngine.diagnostics.containsAnyError else {
             return
         }
         
+        // FIXME: Don't create a (JSON) RenderContext when the output format is static HTML. (rdar://177867282)
         // Precompute the render context
         let renderContext = signposter.withIntervalSignpost("Build RenderContext", id: signposter.makeSignpostID()) {
             RenderContext(documentationContext: context)
@@ -73,6 +74,7 @@ package enum ConvertActionConverter {
         )
         
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
+        let featureFlags = context.configuration.featureFlags
         
         // Render all pages and gather their supplementary "digest" information if enabled.
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
@@ -86,7 +88,9 @@ package enum ConvertActionConverter {
                         let entity = try context.entity(with: identifier)
 
                         if let htmlContentConsumer {
-                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
+                            // TODO: Design a better way to indicate a primary output format and which "render" steps does and doesn't need (rdar://177867282)
+                            let isStaticHTMLOutput = htmlContentConsumer._isPrimaryOutputFormat
+                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: isStaticHTMLOutput ? .richness : .conciseness, featureFlags: featureFlags)
                             
                             if let symbol = entity.semantic as? Symbol {
                                 let renderedPageInfo = renderer.renderSymbol(symbol)
@@ -95,6 +99,10 @@ package enum ConvertActionConverter {
                                 let renderedPageInfo = renderer.renderArticle(article)
                                 try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
                             }
+                            
+                            if isStaticHTMLOutput {
+                                return // Don't create a (JSON) render node for this page
+                            }
                         }
 
                         guard let renderNode = converter.renderNode(for: entity) else {
@@ -102,12 +110,12 @@ package enum ConvertActionConverter {
                             return
                         }
                         
-                        if FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
+                        if featureFlags.isExperimentalMarkdownOutputEnabled,
                            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
                            let markdownNode = converter.markdownOutput(for: entity)
                         {
                             try markdownConsumer.consume(markdownNode: markdownNode.writable)
-                            if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+                            if featureFlags.isExperimentalMarkdownOutputManifestEnabled,
                                let manifest = markdownNode.manifest
                             {
                                 supplementaryRenderInfo.markdownManifestDocuments.formUnion(manifest.documents)
@@ -127,6 +135,7 @@ package enum ConvertActionConverter {
                             break
                         }
                         
+                        // FIXME: Read all linkable entity information from the documentation node rather than the JSON render node. (rdar://177867335)
                         if emitDigest {
                             let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
@@ -134,7 +143,7 @@ package enum ConvertActionConverter {
                             supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                             supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
-                        } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                        } else if featureFlags.isExperimentalLinkHierarchySerializationEnabled {
                             let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
@@ -188,7 +197,7 @@ package enum ConvertActionConverter {
             }
         }
         
-        if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+        if featureFlags.isExperimentalLinkHierarchySerializationEnabled {
             try signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
                 let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
                 try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
@@ -199,7 +208,7 @@ package enum ConvertActionConverter {
             }
         }
         
-        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+        if featureFlags.isExperimentalMarkdownOutputManifestEnabled,
            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
         {
             try markdownConsumer.consume(

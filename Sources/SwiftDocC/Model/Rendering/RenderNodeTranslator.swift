@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -706,6 +706,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -746,6 +748,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -892,7 +896,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             
             if !directiveAvailabilityByPlatform.isEmpty {
-                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderOrder.compare))
+                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder))
             }
         }
         
@@ -1018,15 +1022,89 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return nil
     }
 
-    /// Renders automatically generated task groups
-    private mutating func renderAutomaticTaskGroupsSection(_ taskGroups: [AutomaticTaskGroupSection], contentCompiler: inout RenderContentCompiler) -> [TaskGroupRenderSection] {
-        return taskGroups.map { group in
-            contentCompiler.collectedTopicReferences.append(contentsOf: group.references)
+    /// Returns whether the given reference is available in one of the given allowed traits.
+    ///
+    /// This is used by both manually authored and automatically generated task groups to filter
+    /// topic references based on the current language variant being rendered.
+    private func isReferenceAvailable(
+        _ reference: ResolvedTopicReference,
+        allowedTraits: Set<DocumentationDataVariantsTrait>,
+        availableTraits: Set<DocumentationDataVariantsTrait>
+    ) -> Bool {
+        // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
+        // and is external to the bundle, then curate the topic irrespective of the source
+        // language of the page or reference, since non-symbol kinds are not tied to a language.
+        // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+        // FIXME: This should ideally be solved by making the article language-agnostic rather
+        // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+        if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
+            return true
+        }
+
+        let referenceSourceLanguages = SmallSourceLanguageSet(context.sourceLanguages(for: reference))
+
+        let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
+        if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
+            // An external symbol may have no language overlap with the module being built,
+            // so filtering it out would mean it is not curated anywhere (rdar://94406023).
+            // For local references, this curation is forbidden. ``DocumentationCurator`` emits a warning,
+            // and the reference is filtered out here so it doesn't appear in the rendered topic section.
+            return context.isExternal(reference: reference)
+        }
+
+        return allowedTraits.contains { trait in
+            guard let language = trait.sourceLanguage else {
+                return false
+            }
+            return referenceSourceLanguages.contains(language)
+        }
+    }
+
+    /// Renders automatically generated task groups.
+    ///
+    /// When rendering task groups for a page that is available in multiple languages,
+    /// you can provide the total available traits the parent page will be available in,
+    /// as well as the _specific_ traits this particular render section should be created for.
+    /// Any referenced pages that are included in the _available_ traits
+    /// but excluded from the _allowed_ traits will be filtered out.
+    ///
+    /// This behavior is designed to ensure that all items in the task group will be rendered
+    /// in _some_ task group of the parent page, whether in the currently provided allowed traits,
+    /// or in a different subset of the page's available traits.
+    /// However, if a task-group item's language isn't included in any of the available traits,
+    /// it will _not_ be filtered out since otherwise it would be invisible to the reader
+    /// of the documentation regardless of which of the available traits they view.
+    ///
+    /// - Parameters:
+    ///   - taskGroups: The task groups to be rendered.
+    ///
+    ///   - allowedTraits: The traits that the returned render section should filter for.
+
+    ///     These traits should be a _subset_ of the given available traits.
+    ///
+    ///   - availableTraits: The traits that are available in the parent page that this render
+    ///     section belongs to.
+
+    ///     This method will only filter for allowed traits that are also explicitly available.
+    ///
+    ///   - contentCompiler: The current render content compiler.
+    private mutating func renderAutomaticTaskGroupsSection(
+        _ taskGroups: [AutomaticTaskGroupSection],
+        allowedTraits: Set<DocumentationDataVariantsTrait>,
+        availableTraits: Set<DocumentationDataVariantsTrait>,
+        contentCompiler: inout RenderContentCompiler
+    ) -> [TaskGroupRenderSection] {
+        return taskGroups.compactMap { group in
+            let filteredReferences = group.references.filter { reference in
+                isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits)
+            }
+            guard !filteredReferences.isEmpty else { return nil }
+            contentCompiler.collectedTopicReferences.append(contentsOf: filteredReferences)
             return TaskGroupRenderSection(
                 title: group.title,
                 abstract: nil,
                 discussion: nil,
-                identifiers: group.references.map(\.url.absoluteString),
+                identifiers: filteredReferences.map(\.url.absoluteString),
                 generated: true,
                 anchor: urlReadableFragment(group.title)
             )
@@ -1073,7 +1151,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: context.inputs)?.language
+                SupportedLanguage(from: $0, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags)?.language
             }
             
             // If the task group has a set of supported languages, see if it should render for the allowed traits.
@@ -1090,39 +1168,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 return ContentRenderSection(kind: .content, content: discussionContent, heading: "Discussion")
             }
             
-            /// Returns whether the topic with the given identifier is available in one of the traits in `allowedTraits`.
-            func isTopicAvailableInAllowedTraits(identifier topicIdentifier: String) -> Bool {
+            /// A helper method to check if a topic with the given identifier is available via ``isReferenceAvailable(_:allowedTraits:availableTraits)``.
+            func isTopicAvailable(identifier topicIdentifier: String) -> Bool {
                 guard let reference = contentCompiler.collectedTopicReferences[topicIdentifier] else {
                     // If there's no reference in `contentCompiler.collectedTopicReferences`, the reference refers to
                     // a non-documentation URL (e.g., 'https://' URL), in which case it is available in all traits.
                     return true
                 }
-                
-                // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
-                // and is external to the bundle, then curate the topic irrespective of the source
-                // language of the page or reference, since non-symbol kinds are not tied to a language.
-                // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
-                // FIXME: This should ideally be solved by making the article language-agnostic rather
-                // than accomodating the "Swift" language and special-casing for non-symbol nodes.
-                if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
-                    return true
-                }
-                
-                let referenceSourceLanguages = SmallSourceLanguageSet(context.sourceLanguages(for: reference))
-                
-                let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
-                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
-                    // The set of available source language traits has no members in common with the
-                    // set of source languages the given reference is available in.
-                    //
-                    // Since we should only filter for traits that are available in the parent page,
-                    // just return true. (See the documentation of this method for more details).
-                    return true
-                }
-                
-                return allowedTraits.contains { trait in
-                    trait.sourceLanguage.map { referenceSourceLanguages.contains($0) } ?? false
-                }
+
+                return isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits)
             }
             
             let taskGroupRenderSection = TaskGroupRenderSection(
@@ -1155,7 +1209,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                              overridingTitleInlineContent: _
                            ) = renderReference
                         {
-                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
+                            return isTopicAvailable(identifier: identifier.identifier)
                                 ? identifier.identifier : nil
                         }
                     case let link as SymbolLink:
@@ -1175,7 +1229,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                              overridingTitleInlineContent: _
                            ) = renderReference
                         {
-                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
+                            return isTopicAvailable(identifier: identifier.identifier)
                                 ? identifier.identifier : nil
                         }
                     default: break
@@ -1248,17 +1302,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
-        /*
-         FIXME: We shouldn't be doing this kind of crawling here.
-         
-         We should be doing a graph search to build up a breadcrumb and pass that to the translator, giving
-         a definitive hierarchy before we even begin to build a RenderNode.
-         */
-        var ref = documentationNode.reference
-        while let grandparent = context.parents(of: ref).first {
-            ref = grandparent
-        }
-        
         let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
@@ -1293,12 +1336,17 @@ public struct RenderNodeTranslator: SemanticVisitor {
             renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
         } ?? .init()
         
+        // FIXME: Move this logic out of the rendering code (rdar://172280267)
+        let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
+        let symbolExistsInCatalystSymbolGraph = documentationNode.unifiedSymbol?.allSelectors.contains(where: { $0.platform?.lowercased() == PlatformName.catalyst.rawValue.lowercased() }) ?? false
+        
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
             // Different sources of availability information are added in-order to compute the complete availability information.
+
+            // The default availability is merged with the in-source availability when loading a symbol graph (see ``SymbolGraphLoader.addDefaultAvailability(to:moduleName:)``).
+            // If no in-source availability is present, we fall back to the default availability for the module (in Info.plist).
             // FIXME: Move this logic out of the rendering code (rdar://172280267)
-            
-            // The "default" information provided by the Info.plist is the base information because it applies to every thing in the module.
-            var information = baseAvailabilityByPlatform
+            var information = inSourceAvailability.availability.isEmpty ? baseAvailabilityByPlatform : [String: AvailabilityRenderItem]()
             
             var unavailablePlatformNamesToRemove = [String]()
             
@@ -1332,7 +1380,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 
                 func addFallbackIfNeeded(named name: String) {
-                    guard information[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                    guard information[name]?.introduced == nil, !unavailableDefaultPlatformNames.contains(name) else {
                         return
                     }
                     var copy = iOSAvailability
@@ -1340,7 +1388,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     information[name] = copy
                 }
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+                
+                
+                // Catalyst only inherits iOS availability if the symbol don't specify in-source
+                // availability or if there's no Mac Catalyst symbol graph.
+                // If the symbol is not present in the Catalyst SGF then is not available for this
+                // platform.
+                if (catalystSGFExists && symbolExistsInCatalystSymbolGraph) || !catalystSGFExists  {
+                    addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+                }
             }
             
             // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.
@@ -1352,7 +1408,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 return nil
             }
             
-            return information.values.sorted(by: AvailabilityRenderOrder.compare)
+            return information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
         } ?? .init(defaultValue: {
             assertionFailure("This default value is never used")
             return nil
@@ -1380,7 +1436,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
             }
             
-            node.metadata.platforms = information.values.sorted(by: AvailabilityRenderOrder.compare)
+            node.metadata.platforms = information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
         }
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
@@ -1480,7 +1536,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     DictionaryKeysSectionTranslator(),
                     AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
-                    MentionsSectionTranslator(referencingSymbol: identifier),
+                    MentionsSectionTranslator(referencingSymbol: identifier, isEnabled: context.configuration.featureFlags.isMentionedInEnabled),
                     DiscussionSectionTranslator(),
                 ]
             )
@@ -1638,6 +1694,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .top }),
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1669,6 +1727,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }),
+                        allowedTraits: allowedTraits,
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )

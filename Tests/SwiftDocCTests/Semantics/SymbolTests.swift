@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ import DocCTestUtilities
 class SymbolTests: XCTestCase {
     
     func testDocCommentWithoutArticle() async throws {
-        let (withoutArticle, problems) = try await makeDocumentationNodeSymbol(
+        let (withoutArticle, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -28,7 +28,7 @@ class SymbolTests: XCTestCase {
             extensionFileContent: nil
         )
         
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
         
         XCTAssertEqual(withoutArticle.abstract?.format(), "A cool API to call.")
         XCTAssertEqual((withoutArticle.discussion?.content ?? []).map { $0.format() }.joined(), "")
@@ -45,7 +45,7 @@ class SymbolTests: XCTestCase {
     
     func testOverridingInSourceDocumentationWithEmptyArticle() async throws {
         // The article heading—which should always be the symbol link header—is not considered part of the article's content
-        let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+        let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -59,7 +59,7 @@ class SymbolTests: XCTestCase {
                 }
                 """
         )
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
         
         XCTAssertNil(withArticleOverride.abstract,
                        "The article overrides—and removes—the abstract from the in-source documentation")
@@ -74,7 +74,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testOverridingInSourceDocumentationWithDetailedArticle() async throws {
-        let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+        let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -107,7 +107,7 @@ class SymbolTests: XCTestCase {
 
                 """
         )
-        XCTAssertEqual(problems.map(\.diagnostic.summary), [
+        XCTAssertEqual(diagnostics.map(\.summary), [
             "Organizing the module 'ModuleName' under 'ModuleName/SomeClass/someMethod(name:)' isn't allowed",
             "Organizing 'ModuleName/SomeClass' under 'ModuleName/SomeClass/someMethod(name:)' forms a cycle",
         ])
@@ -137,9 +137,33 @@ class SymbolTests: XCTestCase {
         }
     }
     
+    func testRelationshipToSelfDoesNotCauseCyclicTopicGraph() async throws {
+        let symbolID = "some-symbol-id"
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: symbolID, kind: .struct, pathComponents: ["Something"], otherMixins: [
+                    SymbolGraph.Symbol.Swift.Extension(extendedModule: "ExtendedModuleName", constraints: [])
+                ])
+            ], relationships: [
+                // Symbols shouldn't have memberOf relationships to themselves (rdar://174848289), but we ensure that DocC gracefully handles it when they do.
+                .init(source: symbolID, target: symbolID, kind: .memberOf, targetFallback: nil, mixins: [
+                    SymbolGraph.Relationship.SourceOrigin(identifier: "origin-symbol-id", displayName: "OriginSymbolName")
+                ])
+            ]))
+        }
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
+        
+        for reference in context.knownPages {
+            let cycles = context.topicGraph.reverseEdgesGraph.cycles(from: reference)
+            XCTAssert(cycles.isEmpty, "Unexpectedly found cycles in the topic graph:\n  \(cycles.map { $0.map(\.path).joined(separator: " -> ") }.joined(separator: "\n  "))")
+        }
+    }
+    
     func testAppendingInSourceDocumentationWithArticle() async throws {
         // The article heading—which should always be the symbol link header—is not considered part of the article's content
-        let (withEmptyArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+        let (withEmptyArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -149,7 +173,7 @@ class SymbolTests: XCTestCase {
                 """,
             extensionFileContent: "" // just the H1 symbol link and no other content
         )
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
         
         XCTAssertEqual(withEmptyArticleOverride.abstract?.format(), "A cool API to call.")
         XCTAssertEqual((withEmptyArticleOverride.discussion?.content.filter({ markup -> Bool in
@@ -170,17 +194,17 @@ class SymbolTests: XCTestCase {
         // When no DocumentationExtension behavior is specified, the default behavior is "append to doc comment".
         let withAndWithoutAppendConfiguration = ["", "@Metadata { \n @DocumentationExtension(mergeBehavior: append) \n }"]
         
-        func verifyExtensionProblem(_ problems: [Problem], forMetadata metadata: String, file: StaticString = #filePath, line: UInt = #line) {
+        func verifyExtensionDiagnostics(_ diagnostics: [Diagnostic], forMetadata metadata: String, file: StaticString = #filePath, line: UInt = #line) {
             XCTAssertEqual(
                 !metadata.isEmpty,
-                problems.map(\.diagnostic.summary).contains("'DocumentationExtension' doesn't change default configuration and has no effect"),
+                diagnostics.map(\.summary).contains("'DocumentationExtension' doesn't change default configuration and has no effect"),
                 "When there is a \"append\" extension configuration, there should be a warning about it.",
                 file: file, line: line
             )
         }
-        func verifyProblems(_ problems: [Problem], forMetadata metadata: String, file: StaticString = #filePath, line: UInt = #line) {
-            verifyExtensionProblem(problems, forMetadata: metadata, file: file, line: line)
-            XCTAssertEqual(problems.suffix(2).map(\.diagnostic.summary), [
+        func verifyDiagnostics(_ diagnostics: [Diagnostic], forMetadata metadata: String, file: StaticString = #filePath, line: UInt = #line) {
+            verifyExtensionDiagnostics(diagnostics, forMetadata: metadata, file: file, line: line)
+            XCTAssertEqual(diagnostics.suffix(2).map(\.summary), [
                 "Organizing the module 'ModuleName' under 'ModuleName/SomeClass/someMethod(name:)' isn't allowed",
                 "Organizing 'ModuleName/SomeClass' under 'ModuleName/SomeClass/someMethod(name:)' forms a cycle",
             ], file: file, line: line)
@@ -188,7 +212,7 @@ class SymbolTests: XCTestCase {
         
         // Append curation to doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+            let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -207,7 +231,7 @@ class SymbolTests: XCTestCase {
                     - ``ModuleName/SomeClass``
                     """
             )
-            verifyProblems(problems, forMetadata: metadata)
+            verifyDiagnostics(diagnostics, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
             XCTAssertEqual((withArticleOverride.discussion?.content.filter({ markup -> Bool in
@@ -231,7 +255,7 @@ class SymbolTests: XCTestCase {
 
         // Append overview and curation to doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+            let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -254,7 +278,7 @@ class SymbolTests: XCTestCase {
                     - ``ModuleName/SomeClass``
                     """
             )
-            verifyProblems(problems, forMetadata: metadata)
+            verifyDiagnostics(diagnostics, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
@@ -281,7 +305,7 @@ class SymbolTests: XCTestCase {
 
         // Append overview and curation to doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+            let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -304,7 +328,7 @@ class SymbolTests: XCTestCase {
                     - ``ModuleName/SomeClass``
                     """
             )
-            verifyProblems(problems, forMetadata: metadata)
+            verifyDiagnostics(diagnostics, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
@@ -331,7 +355,7 @@ class SymbolTests: XCTestCase {
 
         // Append with only abstract in doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+            let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
                     """,
@@ -355,7 +379,7 @@ class SymbolTests: XCTestCase {
                     - ``ModuleName/SomeClass``
                     """
             )
-            verifyProblems(problems, forMetadata: metadata)
+            verifyDiagnostics(diagnostics, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
@@ -382,7 +406,7 @@ class SymbolTests: XCTestCase {
 
         // Append by extending overview and adding parameters
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+            let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -398,7 +422,7 @@ class SymbolTests: XCTestCase {
                     - Returns: Return value
                     """
             )
-            verifyExtensionProblem(problems, forMetadata: metadata)
+            verifyExtensionDiagnostics(diagnostics, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
@@ -420,7 +444,7 @@ class SymbolTests: XCTestCase {
 
         // Append by extending the overview (with parameters in the doc comment)
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+            let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -436,7 +460,7 @@ class SymbolTests: XCTestCase {
                     This continues the overview from the doc comment.
                     """
             )
-            verifyExtensionProblem(problems, forMetadata: metadata)
+            verifyExtensionDiagnostics(diagnostics, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
             
@@ -458,7 +482,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testRedirectFromArticle() async throws {
-        let (withRedirectInArticle, problems) = try await makeDocumentationNodeSymbol(
+        let (withRedirectInArticle, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -467,13 +491,13 @@ class SymbolTests: XCTestCase {
                 @Redirected(from: "some/previous/path/to/this/symbol")
                 """
         )
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
         
         XCTAssertEqual(withRedirectInArticle.redirects?.map { $0.oldPath.absoluteString }, ["some/previous/path/to/this/symbol"])
     }
     
     func testWarningWhenDocCommentContainsUnsupportedDirective() async throws {
-        let (withRedirectInArticle, problems) = try await makeDocumentationNodeSymbol(
+        let (withRedirectInArticle, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -481,16 +505,16 @@ class SymbolTests: XCTestCase {
                 """,
             extensionFileContent: nil
         )
-        XCTAssertFalse(problems.isEmpty)
+        XCTAssertFalse(diagnostics.isEmpty)
         XCTAssertEqual(withRedirectInArticle.redirects, nil)
 
-        XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.UnsupportedDocCommentDirective")
-        XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.line, 14)
-        XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.column, 18)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.UnsupportedDocCommentDirective")
+        XCTAssertEqual(diagnostics.first?.range?.lowerBound.line, 14)
+        XCTAssertEqual(diagnostics.first?.range?.lowerBound.column, 18)
     }
 
     func testNoWarningWhenDocCommentContainsDirective() async throws {
-        let (_, problems) = try await makeDocumentationNodeSymbol(
+        let (_, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -498,7 +522,7 @@ class SymbolTests: XCTestCase {
                 """,
             extensionFileContent: nil
         )
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
     }
     
     func testNoWarningWhenDocCommentContainsDoxygen() async throws {
@@ -507,7 +531,7 @@ class SymbolTests: XCTestCase {
             CopyOfFile(original: Bundle.module.url(forResource: "Inheritance.symbols", withExtension: "json", subdirectory: "Test Resources")!)
         }
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        XCTAssert(context.diagnostics.isEmpty, "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
     }
 
     func testParseDoxygen() async throws {
@@ -577,35 +601,35 @@ class SymbolTests: XCTestCase {
             try myKitDocumentationExtensionComment.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
         }
         
-        let unresolvedTopicProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
+        let unresolvedTopicDiagnostics = context.diagnostics.filter { $0.identifier == "org.swift.docc.unresolvedTopicReference" }
         
-        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "No external resolver registered for 'com.test.external'." }))
+        XCTAssertTrue(unresolvedTopicDiagnostics.contains(where: { $0.summary == "No external resolver registered for 'com.test.external'." }))
         
-        var problem: Problem
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'UnresolvableSymbolLinkInMyClassOverview<>(_:))' doesn't exist at '/MyKit/MyClass'" }))
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(problem.possibleSolutions.count, 0)
+        var diagnostic: Diagnostic
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'UnresolvableSymbolLinkInMyClassOverview<>(_:))' doesn't exist at '/MyKit/MyClass'" }))
+        XCTAssertEqual(diagnostic.notes.map(\.message), [])
+        XCTAssertEqual(diagnostic.solutions.count, 0)
         
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'UnresolvableClassInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(problem.possibleSolutions.count, 0)
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'UnresolvableClassInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
+        XCTAssertEqual(diagnostic.notes.map(\.message), [])
+        XCTAssertEqual(diagnostic.solutions.count, 0)
 
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'unresolvablePropertyInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(problem.possibleSolutions.count, 0)
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'unresolvablePropertyInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
+        XCTAssertEqual(diagnostic.notes.map(\.message), [])
+        XCTAssertEqual(diagnostic.solutions.count, 0)
 
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'init()' is ambiguous at '/MyKit/MyClass'" }))
-        XCTAssert(problem.diagnostic.notes.isEmpty)
-        XCTAssertEqual(problem.possibleSolutions.count, 2)
-        XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'init()' is ambiguous at '/MyKit/MyClass'" }))
+        XCTAssert(diagnostic.notes.isEmpty)
+        XCTAssertEqual(diagnostic.solutions.count, 2)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Insert '-33vaw' for \n'init()'", "-33vaw"],
             ["Insert '-3743d' for \n'init()'", "-3743d"],
         ])
-        XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -643,17 +667,17 @@ class SymbolTests: XCTestCase {
         """)
         
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
-            $0.diagnostic.range?.lowerBound.line == 33 && $0.diagnostic.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: {
+            $0.range?.lowerBound.line == 33 && $0.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
         }))
-        XCTAssert(problem.diagnostic.notes.isEmpty)
-        XCTAssertEqual(problem.possibleSolutions.count, 2)
-        XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssert(diagnostic.notes.isEmpty)
+        XCTAssertEqual(diagnostic.solutions.count, 2)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'swift.init' with '33vaw' for \n'init()'", "-33vaw"],
             ["Replace 'swift.init' with '3743d' for \n'init()'", "-3743d"],
         ])
-        XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -691,17 +715,17 @@ class SymbolTests: XCTestCase {
         """)
         
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
-            $0.diagnostic.range?.lowerBound.line == 34 && $0.diagnostic.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: {
+            $0.range?.lowerBound.line == 34 && $0.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
         }))
-        XCTAssert(problem.diagnostic.notes.isEmpty)
-        XCTAssertEqual(problem.possibleSolutions.count, 2)
-        XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssert(diagnostic.notes.isEmpty)
+        XCTAssertEqual(diagnostic.solutions.count, 2)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'swift.init' with '33vaw' for \n'init()'", "-33vaw"],
             ["Replace 'swift.init' with '3743d' for \n'init()'", "-3743d"],
         ])
-        XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -739,14 +763,14 @@ class SymbolTests: XCTestCase {
         """)
 
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'otherFunction()' doesn't exist at '/MyKit/MyClass'" }))
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: { $0.summary == "'otherFunction()' doesn't exist at '/MyKit/MyClass'" }))
+        XCTAssertEqual(diagnostic.notes.map(\.message), [])
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'otherFunction()' with 'myFunction()'", "myFunction()"],
         ])
-        XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -784,16 +808,16 @@ class SymbolTests: XCTestCase {
         """)
         
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
-            $0.diagnostic.range?.lowerBound.line == 26 && $0.diagnostic.summary == "'MyClas' doesn't exist at '/MyKit'"
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: {
+            $0.range?.lowerBound.line == 26 && $0.summary == "'MyClas' doesn't exist at '/MyKit'"
         }))
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.notes.map(\.message), [])
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'MyClas' with 'MyClass'", "MyClass"],
         ])
-        XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -831,16 +855,16 @@ class SymbolTests: XCTestCase {
         """)
         
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
-            $0.diagnostic.range?.lowerBound.line == 27 && $0.diagnostic.summary == "'MyClas' doesn't exist at '/MyKit'"
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: {
+            $0.range?.lowerBound.line == 27 && $0.summary == "'MyClas' doesn't exist at '/MyKit'"
         }))
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.notes.map(\.message), [])
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'MyClas' with 'MyClass'", "MyClass"],
         ])
-        XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -878,16 +902,16 @@ class SymbolTests: XCTestCase {
         """)
         
         
-        problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
-            $0.diagnostic.range?.lowerBound.line == 28 && $0.diagnostic.summary == "'MyClas' doesn't exist at '/MyKit'"
+        diagnostic = try XCTUnwrap(unresolvedTopicDiagnostics.first(where: {
+            $0.range?.lowerBound.line == 28 && $0.summary == "'MyClas' doesn't exist at '/MyKit'"
         }))
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
-        XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-        XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+        XCTAssertEqual(diagnostic.notes.map(\.message), [])
+        XCTAssertEqual(diagnostic.solutions.count, 1)
+        XCTAssert(diagnostic.solutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+        XCTAssertEqual(diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
             ["Replace 'MyClas' with 'MyClass'", "MyClass"],
         ])
-        XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
+        XCTAssertEqual(try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
         # ``MyKit/MyClass``
 
         @Metadata {
@@ -926,7 +950,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testTopicSectionInDocComment() async throws {
-        let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
+        let (withArticleOverride, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                 This is an abstract.
 
@@ -948,7 +972,7 @@ class SymbolTests: XCTestCase {
                 """,
             extensionFileContent: nil
         )
-        XCTAssertEqual(problems.map(\.diagnostic.summary), [
+        XCTAssertEqual(diagnostics.map(\.summary), [
             "Organizing the module 'ModuleName' under 'ModuleName/SomeClass/someMethod(name:)' isn't allowed",
             "Organizing 'ModuleName/SomeClass' under 'ModuleName/SomeClass/someMethod(name:)' forms a cycle",
         ])
@@ -999,8 +1023,8 @@ class SymbolTests: XCTestCase {
         )
         
         let engine = DiagnosticEngine()
-        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
-        XCTAssertEqual(engine.problems.count, 0)
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, featureFlags: .init(), engine: engine)
+        XCTAssertEqual(engine.diagnostics.count, 0)
     }
 
     func testAddingConstraintsToSymbol() async throws {
@@ -1106,7 +1130,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testParsesMetadataDirectiveFromDocComment() async throws {
-        let (node, problems) = try await makeDocumentationNodeForSymbol(
+        let (node, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1117,7 +1141,7 @@ class SymbolTests: XCTestCase {
             extensionFileContent: nil
         )
         
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
         
         let availability = try XCTUnwrap(node.metadata?.availability.first)
         XCTAssertEqual(availability.platform, .other("customOS"))
@@ -1125,7 +1149,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testEmitsWarningsInMetadataDirectives() async throws {
-        let (_, problems) = try await makeDocumentationNodeForSymbol(
+        let (_, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1136,9 +1160,9 @@ class SymbolTests: XCTestCase {
             diagnosticEngineFilterLevel: .information
         )
         
-        XCTAssertEqual(problems.count, 1)
+        XCTAssertEqual(diagnostics.count, 1)
         
-        let diagnostic = try XCTUnwrap(problems.first).diagnostic
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         XCTAssertEqual(diagnostic.identifier, "org.swift.docc.Metadata.NoConfiguration")
         XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
         XCTAssertEqual(diagnostic.range?.lowerBound.line, 15)
@@ -1146,7 +1170,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testEmitsWarningForDuplicateMetadata() async throws {
-        let (node, problems) = try await makeDocumentationNodeForSymbol(
+        let (node, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1162,9 +1186,9 @@ class SymbolTests: XCTestCase {
             """
         )
         
-        XCTAssertEqual(problems.count, 1)
+        XCTAssertEqual(diagnostics.count, 1)
         
-        let diagnostic = try XCTUnwrap(problems.first).diagnostic
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         XCTAssertEqual(diagnostic.identifier, "org.swift.docc.DuplicateMetadata")
         XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
         XCTAssertEqual(diagnostic.range?.lowerBound.line, 15)
@@ -1175,7 +1199,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testEmitsWarningsForInvalidMetadataChildrenInDocumentationComments() async throws {
-        let (_, problems) = try await makeDocumentationNodeForSymbol(
+        let (_, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1188,7 +1212,6 @@ class SymbolTests: XCTestCase {
                   @DocumentationExtension(mergeBehavior: override)
                   @TechnologyRoot
                   @DisplayName(Title)
-                  @PageImage(source: test, purpose: icon)
                   @CallToAction(url: "https://example.com/sample.zip", purpose: download)
                   @PageKind(sampleCode)
                   @SupportedLanguage(swift)
@@ -1201,12 +1224,11 @@ class SymbolTests: XCTestCase {
         )
         
         XCTAssertEqual(
-            Set(problems.map(\.diagnostic.identifier)),
+            Set(diagnostics.map(\.identifier)),
             [
                 "org.swift.docc.Metadata.InvalidDocumentationExtensionInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidTechnologyRootInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment",
-                "org.swift.docc.Metadata.InvalidPageImageInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidCallToActionInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidPageKindInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidSupportedLanguageInDocumentationComment",
@@ -1216,11 +1238,11 @@ class SymbolTests: XCTestCase {
             ]
         )
         
-        // Verify that each problem has exactly one solution to remove the directive
-        for problem in problems where problem.diagnostic.identifier.hasPrefix("org.swift.docc.Metadata.") {
-            XCTAssertEqual(problem.possibleSolutions.count, 1, "Each invalid metadata directive should have exactly one solution")
+        // Verify that each diagnostic has exactly one solution to remove the directive
+        for diagnostic in diagnostics where diagnostic.identifier.hasPrefix("org.swift.docc.Metadata.") {
+            XCTAssertEqual(diagnostic.solutions.count, 1, "Each invalid metadata directive should have exactly one solution")
             
-            let solution = try XCTUnwrap(problem.possibleSolutions.first)
+            let solution = try XCTUnwrap(diagnostic.solutions.first)
             XCTAssertTrue(solution.summary.hasPrefix("Remove invalid"), "Solution summary should start with 'Remove invalid'")
             XCTAssertEqual(solution.replacements.count, 1, "Solution should have exactly one replacement")
             
@@ -1231,7 +1253,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testParsesDeprecationSummaryDirectiveFromDocComment() async throws {
-        let (node, problems) = try await makeDocumentationNodeForSymbol(
+        let (node, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1242,7 +1264,7 @@ class SymbolTests: XCTestCase {
             extensionFileContent: nil
         )
         
-        XCTAssertEqual(problems.map(\.diagnostic.identifier), ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+        XCTAssert(diagnostics.isEmpty, "Unexpected diagnostics: \(diagnostics.map(\.summary))")
         
         XCTAssertEqual(
             (node.semantic as? Symbol)?
@@ -1257,7 +1279,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testAllowsCommentDirectiveInDocComment() async throws {
-        let (_, problems) = try await makeDocumentationNodeForSymbol(
+        let (_, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1266,11 +1288,11 @@ class SymbolTests: XCTestCase {
             extensionFileContent: nil
         )
         
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
     }
 
     func testSolutionForInvalidMetadataDirectiveRemovesDirective() async throws {
-        let (_, problems) = try await makeDocumentationNodeForSymbol(
+        let (_, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1281,13 +1303,13 @@ class SymbolTests: XCTestCase {
             extensionFileContent: nil
         )
         
-        XCTAssertEqual(problems.count, 1)
-        let problem = try XCTUnwrap(problems.first)
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         
-        XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment")
-        XCTAssertEqual(problem.possibleSolutions.count, 1)
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment")
+        XCTAssertEqual(diagnostic.solutions.count, 1)
         
-        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.summary, "Remove invalid 'DisplayName' directive")
         XCTAssertEqual(solution.replacements.count, 1)
         
@@ -1296,7 +1318,7 @@ class SymbolTests: XCTestCase {
         XCTAssertNotNil(replacement.range, "Replacement should have a valid range")
         
         // Verify that the replacement range covers the expected content
-        XCTAssertEqual(replacement.range, problem.diagnostic.range, "Replacement range should match the problem's diagnostic range to ensure it removes the entire @DisplayName directive")
+        XCTAssertEqual(replacement.range, diagnostic.range, "Replacement range should match the diagnostic's diagnostic range to ensure it removes the entire @DisplayName directive")
     }
 
     // MARK: - Leading Whitespace in Doc Comments
@@ -1429,7 +1451,7 @@ class SymbolTests: XCTestCase {
     }
 
     func testLeadingWhitespaceInDocComment() async throws {
-        let (semanticWithLeadingWhitespace, problems) = try await makeDocumentationNodeSymbol(
+        let (semanticWithLeadingWhitespace, diagnostics) = try await makeDocumentationNodeSymbol(
             docComment: """
                     This is an abstract.
                      
@@ -1439,7 +1461,7 @@ class SymbolTests: XCTestCase {
                 """,
             extensionFileContent: nil
         )
-        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        XCTAssertEqual(diagnostics.count, 0, "Unexpected diagnostics: \(diagnostics.map(\.summary).sorted())")
         XCTAssertEqual(semanticWithLeadingWhitespace.abstract?.format(), "This is an abstract.")
         let lines = semanticWithLeadingWhitespace.discussion?.content.map{ $0.format() } ?? []
         let expectedDiscussion = """
@@ -1460,7 +1482,7 @@ class SymbolTests: XCTestCase {
         diagnosticEngineFilterLevel: DiagnosticSeverity = .warning,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) async throws -> (DocumentationNode, [Problem]) {
+    ) async throws -> (DocumentationNode, [Diagnostic]) {
         let classUSR  = "some-class-id"
         let methodUSR = "some-method-id"
         var catalogContent: [any File] = [
@@ -1511,7 +1533,7 @@ class SymbolTests: XCTestCase {
         
         let node = try XCTUnwrap(context.documentationCache[methodUSR], file: file, line: line)
         
-        return (node, context.problems)
+        return (node, context.diagnostics)
     }
     
     private func makeDocumentationNodeSymbol(
@@ -1519,8 +1541,8 @@ class SymbolTests: XCTestCase {
         extensionFileContent: String?,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) async throws -> (Symbol, [Problem]) {
-        let (node, problems) = try await makeDocumentationNodeForSymbol(
+    ) async throws -> (Symbol, [Diagnostic]) {
+        let (node, diagnostics) = try await makeDocumentationNodeForSymbol(
             docComment: docComment,
             extensionFileContent: extensionFileContent,
             file: file,
@@ -1528,7 +1550,7 @@ class SymbolTests: XCTestCase {
         )
         
         let semantic = try XCTUnwrap(node.semantic as? Symbol)
-        return (semantic, problems)
+        return (semantic, diagnostics)
     }
 }
 
@@ -1573,5 +1595,12 @@ extension SourceLocation {
         }
         
         return string.endIndex
+    }
+}
+
+private extension SymbolGraph.Relationship {
+    init(source: String, target: String, kind: Kind, targetFallback: String?, mixins: [any Mixin] = []) {
+        self.init(source: source, target: target, kind: kind, targetFallback: targetFallback)
+        self.mixins = makeMixins(mixins)
     }
 }

@@ -34,7 +34,7 @@ extension RenderNode {
 }
 
 extension RenderNode: Indexable {
-    func topLevelIndexingRecord() throws -> IndexingRecord {
+    func topLevelIndexingRecord() -> IndexingRecord? {
         let kind: IndexingRecord.Kind
         switch self.kind {
         case .tutorial:
@@ -50,8 +50,11 @@ extension RenderNode: Indexable {
         }
         
         guard let title = metadata.title, !title.isEmpty else {
-            // We at least need a title for a search result.
-            throw IndexingError.missingTitle(identifier)
+            // Nodes without a title are erroneous entries in the symbol graph.
+            // A search result cannot be constructed without a title, meaning that
+            // an indexing record for this node is useless. The node is skipped.
+            assertionFailure("\(identifier.absoluteString.singleQuoted) has an empty title, and cannot have a usable search result")
+            return nil
         }
         
         let summaryParagraph: RenderBlockContent?
@@ -79,9 +82,9 @@ extension RenderNode: Indexable {
                     return try sectionsSection.indexingRecords(onPage: page, references: references)
             }
             
-            return [try topLevelIndexingRecord()] + sectionRecords
+            return [topLevelIndexingRecord()].compactMap({ $0 }) + sectionRecords
         default:
-            return [try topLevelIndexingRecord()]
+            return [topLevelIndexingRecord()].compactMap({ $0 })
         }
     }
 }

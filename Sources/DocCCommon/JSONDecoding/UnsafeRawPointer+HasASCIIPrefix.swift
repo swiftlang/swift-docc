@@ -16,7 +16,7 @@ extension UnsafeRawPointer {
     ///   - byteOffset: The byte offset from where the raw pointer checks for the given prefix.
     /// - Returns: `true` if the raw pointer has the given ASCII prefix at the given byte offset; `false` otherwise.
     @inlinable
-    func hasASCIIPrefix(_ prefix: StaticString, byteOffset: Int = 0) -> Bool {
+    package func hasASCIIPrefix(_ prefix: StaticString, byteOffset: Int = 0) -> Bool {
         assert(prefix.isASCII, """
         "\(prefix)" isn't an ASCII string. It's a programming error to pass non-ASCII strings to this method.
         """)

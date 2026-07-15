@@ -94,10 +94,15 @@ package extension MarkdownRenderer {
     }
     
     private func _taskGroupItem(for element: LinkedElement) -> XMLElement {
-        var items: [XMLNode]
+        let items: [XMLNode]
         switch element.subheadings {
         case .single(.conceptual(let title)):
-            items = [.element(named: "p", children: [.text(title)])]
+            let item = XMLNode.element(named: "p", children: [.text(title)])
+            if goal == .richness {
+                // TODO: Pass information about the type of icon that the conceptual element should display.
+                item.addAttributes(["class": "api-collection"])
+            }
+            items = [item]
             
         case .single(.symbol(let fragments)):
             items = switch goal {
@@ -122,15 +127,17 @@ package extension MarkdownRenderer {
             }
         }
         
-        // Add the formatted abstract if the linked element has one.
-        if let abstract = element.abstract {
-            items.append(visit(abstract))
-        }
-        
-        return .element(named: "li", children: [
-            // Wrap both the name and the abstract in an anchor so that the entire item is a link to that page.
+        let listItem = XMLNode.element(named: "li", children: [
+            // DocC-Render only makes the item's name an anchor, not its abstract
             .element(named: "a", children: items, attributes: ["href": path(to: element.path)])
         ])
+        
+        // Add the formatted abstract if the linked element has one.
+        if let abstract = element.abstract {
+            listItem.addChild(visit(abstract))
+        }
+        
+        return listItem
     }
     
     /// Transforms the symbol name fragments into a `<code>` HTML element that represents a symbol's subheading.

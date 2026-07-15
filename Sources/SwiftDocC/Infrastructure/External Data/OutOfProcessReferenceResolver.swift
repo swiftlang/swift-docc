@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -360,9 +360,8 @@ extension OutOfProcessReferenceResolver {
                 abstract: [.text(resolvedInformation.abstract)],
                 availableLanguages: resolvedInformation.availableLanguages,
                 platforms: resolvedInformation.platforms,
-                taskGroups: nil,
                 usr: nil,
-                declarationFragments: resolvedInformation.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+                subheadingDeclarationFragments: resolvedInformation.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
                 redirects: nil,
                 topicImages: resolvedInformation.topicImages,
                 references: resolvedInformation.references,
@@ -374,9 +373,8 @@ extension OutOfProcessReferenceResolver {
                         relativePresentationURL: variant.url?.withoutHostAndPortAndScheme(),
                         title: variant.title,
                         abstract: variant.abstract.map { [.text($0)] },
-                        taskGroups: nil,
                         usr: nil,
-                        declarationFragments: variant.declarationFragments.map { fragments in
+                        subheadingDeclarationFragments: variant.declarationFragments.map { fragments in
                             fragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) }
                         }
                     )
@@ -426,7 +424,7 @@ extension OutOfProcessReferenceResolver {
                     let prefixLength = 2 /* for "//" */ + bundleID.rawValue.utf8.count
                     let solutions: [Solution] = (diagnosticMessage.solutions ?? []).map {
                         Solution(summary: $0.summary, replacements: $0.replacement.map { replacement in
-                            [Replacement(
+                            [.init(
                                 // The replacement ranges are relative to the link itself.
                                 // To replace only the path and fragment portion of the link, we create a range from 0 to the relative link string length, both offset by the bundle ID length
                                 range: SourceLocation(line: 0, column: prefixLength, source: nil) ..< SourceLocation(line: 0, column: linkString.utf8.count + prefixLength, source: nil),

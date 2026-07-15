@@ -44,7 +44,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [any RenderContent] {
-        if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
+        if context.configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled {
             let codeBlockOptions = RenderBlockContent.CodeBlockOptions(parsingLanguageString: codeBlock.language)
             let listing = RenderBlockContent.CodeListing(
                 syntax: codeBlockOptions.language ?? context.inputs.info.defaultCodeListingLanguage,

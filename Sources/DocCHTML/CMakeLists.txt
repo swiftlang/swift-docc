@@ -1,13 +1,17 @@
 #[[
 This source file is part of the Swift open source project
 
-Copyright © 2014 - 2025 Apple Inc. and the Swift project authors
+Copyright © 2014 - 2026 Apple Inc. and the Swift project authors
 Licensed under Apache License v2.0 with Runtime Library Exception
 
 See https://swift.org/LICENSE.txt for license information
 #]]
 
 add_library(DocCHTML STATIC
+  HTMLFormatter.swift
+  HTMLNode.swift
+  HTMLNode+Attributes.swift
+  HTMLNode+Tags.swift
   LinkProvider.swift
   MarkdownRenderer+Availability.swift
   MarkdownRenderer+Breadcrumbs.swift
@@ -18,6 +22,7 @@ add_library(DocCHTML STATIC
   MarkdownRenderer+Returns.swift
   MarkdownRenderer+Topics.swift
   MarkdownRenderer.swift
+  StaticResources.swift
   WordBreak.swift
   XMLNode+element.swift)
 target_link_libraries(DocCHTML PRIVATE

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -268,6 +268,7 @@ public enum RenderBlockContent: Equatable {
         }
 
         // empty initializer with default values
+        @available(*, deprecated, renamed: "init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)", message: "Use 'CodeBlockOptions.init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)' instead. This deprecated API will be removed after 6.5 is released.")
         public init() {
             self.language = ""
             self.copyToClipboard = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
@@ -313,7 +314,7 @@ public enum RenderBlockContent: Equatable {
             self.lineAnnotations = annotations
         }
 
-        public init(copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
+        public init(copyToClipboard: Bool, showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
             self.copyToClipboard = copyToClipboard
             self.showLineNumbers = showLineNumbers
             self.wrap = wrap
@@ -330,6 +331,11 @@ public enum RenderBlockContent: Equatable {
                     annotations.append(LineAnnotation(style: "strikeout", range: range))
             }
             self.lineAnnotations = annotations
+        }
+        
+        @available(*, deprecated, renamed: "init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)", message: "Use 'CodeBlockOptions.init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)' instead. This deprecated API will be removed after 6.5 is released.")
+        public init(showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
+            self.init(copyToClipboard: FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: showLineNumbers, wrap: wrap, highlight: highlight, strikeout: strikeout)
         }
 
         public init(copyToClipboard: Bool, showLineNumbers: Bool, wrap: Int, lineAnnotations: [LineAnnotation]) {
@@ -609,12 +615,6 @@ public enum RenderBlockContent: Equatable {
         /// The underlying raw string value.
         public var rawValue: String
 
-        /// The heading text to use when rendering this style of aside.
-        @available(*, deprecated, message: "Use 'Aside.name' instead. This deprecated API will be removed after 6.4 is released.")
-        public var displayName: String {
-            return rawValue.capitalized
-        }
-
         /// Creates an aside style.
         ///
         /// The new aside style's underlying raw string value will be lowercased.
@@ -650,13 +650,6 @@ public enum RenderBlockContent: Equatable {
         /// > new aside style's raw value will be set to note.
         public init(asideKind: Markdown.Aside.Kind) {
             self.init(rawValue: asideKind.rawValue)
-        }
-
-        /// Creates an aside style with the specified display name.
-        /// - Parameter displayName: The heading text to use when rendering this style of aside.
-        @available(*, deprecated, renamed: "init(rawValue:)", message: "Use 'init(rawValue:)' instead. This deprecated API will be removed after 6.4 is released.")
-        public init(displayName: String) {
-            self.init(rawValue: displayName)
         }
         
         /// Encodes the aside style into the specified encoder.
@@ -795,14 +788,27 @@ public enum RenderBlockContent: Equatable {
         
         /// The columns that should be rendered in this row.
         public var columns: [Column]
-        
+
         /// A column with a row in a grid-based layout system.
-        public struct Column: Codable, Equatable {
+        public struct Column: Equatable {
             /// The number of columns in the parent row this column should span.
             public var size: Int
-            
+
+            /// The alignment of this column's content.
+            public var alignment: Alignment
+
             /// The content that should be rendered in this column.
             public var content: [RenderBlockContent]
+
+            /// The alignment of content within a column.
+            public enum Alignment: String, Codable, Equatable {
+                /// Align to the leading edge.
+                case leading
+                /// Align to the center.
+                case center
+                /// Align to the trailing edge.
+                case trailing
+            }
         }
     }
     
@@ -988,6 +994,26 @@ extension RenderBlockContent.Table: Codable {
     }
 }
 
+extension RenderBlockContent.Row.Column: Codable {
+    enum CodingKeys: String, CodingKey {
+        case size, alignment, content
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        size = try container.decode(Int.self, forKey: .size)
+        alignment = try container.decodeIfPresent(Alignment.self, forKey: .alignment) ?? .leading
+        content = try container.decode([RenderBlockContent].self, forKey: .content)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(size, forKey: .size)
+        try container.encode(alignment, forKey: .alignment)
+        try container.encode(content, forKey: .content)
+    }
+}
+
 // Codable conformance
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
@@ -999,6 +1025,8 @@ extension RenderBlockContent: Codable {
         case tabs
         case identifier
     }
+    
+    static let isExperimentalCodeBlockAnnotationsEnabledUserInfoKey = CodingUserInfoKey(rawValue: "isExperimentalCodeBlockAnnotationsEnabled")!
     
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -1020,7 +1048,7 @@ extension RenderBlockContent: Codable {
             }
             self = .aside(aside)
         case .codeListing:
-            let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
+            let copy = decoder.userInfo[Self.isExperimentalCodeBlockAnnotationsEnabledUserInfoKey] as? Bool == true
             let options: CodeBlockOptions?
             if !Set(container.allKeys).isDisjoint(with: [.copyToClipboard, .showLineNumbers, .wrap, .lineAnnotations]) {
                 options = try CodeBlockOptions(
@@ -1058,7 +1086,7 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample:
             self = try .dictionaryExample(.init(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example)))
         case .table:
-            // Defer to Table's own Codable implemenatation to parse `extendedData` properly.
+            // Defer to Table's own Codable implementation to parse `extendedData` properly.
             self = try .table(.init(from: decoder))
         case .termList:
             self = try .termList(.init(items: container.decode([TermListItem].self, forKey: .items)))
@@ -1169,7 +1197,7 @@ extension RenderBlockContent: Codable {
             try container.encodeIfPresent(e.summary, forKey: .summary)
             try container.encode(e.example, forKey: .example)
         case .table(let t):
-            // Defer to Table's own Codable implemenatation to format `extendedData` properly.
+            // Defer to Table's own Codable implementation to format `extendedData` properly.
             try t.encode(to: encoder)
         case .termList(items: let l):
             try container.encode(l.items, forKey: .items)

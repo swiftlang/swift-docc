@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,14 +19,15 @@ extension ConvertAction {
     public init(fromConvertCommand convert: Docc.Convert, withFallbackTemplate fallbackTemplateURL: URL? = nil) throws {
         var standardError = LogHandle.standardError
         let outOfProcessResolver: OutOfProcessReferenceResolver?
-        FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled = convert.featureFlags.enableExperimentalCodeBlockAnnotations
-        FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.featureFlags.enableExperimentalDeviceFrameSupport
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.featureFlags.enableExperimentalLinkHierarchySerialization
-        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.featureFlags.enableExperimentalOverloadedSymbolPresentation
-        FeatureFlags.current.isMentionedInEnabled = convert.featureFlags.enableMentionedIn
-        FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.featureFlags.enableParametersAndReturnsValidation
-        FeatureFlags.current.isExperimentalMarkdownOutputEnabled = convert.featureFlags.enableExperimentalMarkdownOutput
-        FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled = convert.featureFlags.enableExperimentalMarkdownOutputManifest
+        var featureFlags = FeatureFlags()
+        featureFlags.isExperimentalCodeBlockAnnotationsEnabled = convert.featureFlags.enableExperimentalCodeBlockAnnotations
+        featureFlags.isExperimentalDeviceFrameSupportEnabled = convert.featureFlags.enableExperimentalDeviceFrameSupport
+        featureFlags.isExperimentalLinkHierarchySerializationEnabled = convert.featureFlags.enableExperimentalLinkHierarchySerialization
+        featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = convert.featureFlags.enableExperimentalOverloadedSymbolPresentation
+        featureFlags.isMentionedInEnabled = convert.featureFlags.enableMentionedIn
+        featureFlags.isParametersAndReturnsValidationEnabled = convert.featureFlags.enableParametersAndReturnsValidation
+        featureFlags.isExperimentalMarkdownOutputEnabled = convert.featureFlags.enableExperimentalMarkdownOutput
+        featureFlags.isExperimentalMarkdownOutputManifestEnabled = convert.featureFlags.enableExperimentalMarkdownOutputManifest
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -68,6 +69,7 @@ extension ConvertAction {
             currentPlatforms: parsedPlatforms,
             buildIndex: convert.featureFlags.emitLMDBIndex,
             temporaryDirectory: FileManager.default.temporaryDirectory,
+            outputFormat: convert.inputsAndOutputs.outputFormat,
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
@@ -77,8 +79,11 @@ extension ConvertAction {
             formatConsoleOutputForTools: convert.diagnosticOptions.formatConsoleOutputForTools,
             inheritDocs: convert.featureFlags.enableInheritedDocs,
             treatWarningsAsErrors: convert.diagnosticOptions.warningsAsErrors,
+            diagnosticIDsWithWarningSeverity: Set(convert.diagnosticOptions.warningGroupsWithWarningSeverity),
+            diagnosticIDsWithErrorSeverity: Set(convert.diagnosticOptions.warningGroupsWithErrorSeverity),
             experimentalEnableCustomTemplates: convert.featureFlags.experimentalEnableCustomTemplates,
             experimentalModifyCatalogWithGeneratedCuration: convert.featureFlags.experimentalModifyCatalogWithGeneratedCuration,
+            featureFlags: featureFlags,
             transformForStaticHosting: convert.hostingOptions.transformForStaticHosting,
             includeContentInEachHTMLFile: convert.hostingOptions.experimentalTransformForStaticHostingWithContent,
             allowArbitraryCatalogDirectories: convert.featureFlags.allowArbitraryCatalogDirectories,

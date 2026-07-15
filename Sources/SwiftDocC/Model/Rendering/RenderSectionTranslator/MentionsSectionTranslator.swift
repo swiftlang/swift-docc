@@ -10,12 +10,14 @@
 
 struct MentionsSectionTranslator: RenderSectionTranslator {
     var symbolReference: ResolvedTopicReference
-    init(referencingSymbol symbolReference: ResolvedTopicReference) {
+    private let isEnabled: Bool
+    init(referencingSymbol symbolReference: ResolvedTopicReference, isEnabled: Bool) {
         self.symbolReference = symbolReference
+        self.isEnabled = isEnabled
     }
 
     func translateSection(for symbol: Symbol, renderNode: inout RenderNode, renderNodeTranslator: inout RenderNodeTranslator) -> VariantCollection<CodableContentSection?>? {
-        guard FeatureFlags.current.isMentionedInEnabled else {
+        guard isEnabled else {
             return nil
         }
 

@@ -17,7 +17,8 @@ class MentionsRenderSectionTests: XCTestCase {
     /// Verify that the Mentioned In section is present when a symbol is mentioned,
     /// pointing to the correct article.
     func testMentionedInSectionFull() async throws {
-        enableFeatureFlag(\.isMentionedInEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isMentionedInEnabled = true
         let (_, context) = try await createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
             bundleID: context.inputs.id,
@@ -40,7 +41,8 @@ class MentionsRenderSectionTests: XCTestCase {
 
     /// If there are no qualifying mentions of a symbol, the Mentioned In section should not appear.
     func testMentionedInSectionEmpty() async throws {
-        enableFeatureFlag(\.isMentionedInEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isMentionedInEnabled = true
         let (_, context) = try await createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
             bundleID: context.inputs.id,

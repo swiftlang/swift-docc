@@ -25,23 +25,28 @@ struct SymbolGraphLoader {
     private(set) var snippetSymbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
+    private(set) var platformsFoundInSymbolGraphsByModule: [String: Set<PlatformName>] = [:]
     private let dataProvider: any DataProvider
     private let bundle: DocumentationBundle
     private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
+    private let shouldCreateOverloadGroups: Bool
     
     /// Creates a new symbol graph loader
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
     ///   - dataProvider: A provider that the loader uses to read symbol graph data.
+    ///   - shouldCreateOverloadGroups: Whether or not experimental support for combining overloaded symbol pages is enabled.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
         bundle: DocumentationBundle,
         dataProvider: any DataProvider,
+        shouldCreateOverloadGroups: Bool,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
         self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
+        self.shouldCreateOverloadGroups = shouldCreateOverloadGroups
     }
 
     /// Loads all symbol graphs in the given bundle.
@@ -64,9 +69,25 @@ struct SymbolGraphLoader {
                 let data = try dataProvider.contents(of: symbolGraphURL)
 
                 var symbolGraph: SymbolGraph = try FastSymbolGraphJSONDecoder.decode(SymbolGraph.self, from: data)
-                
-                Self.applyWorkaroundFor139305015(to: &symbolGraph)
-                
+
+                // Clang can sometimes erroneously emit anonymous structs and unions without a title in the symbol graph.
+                // This typically occurs for anonymous types nested within public types, making them technically public
+                // but functionally private since they cannot be referenced in any way by any consumers of that header.
+                // This causes issues in a few different places for DocC:
+                //
+                // - Their pages can't be navigated to because their URL path end with a leading slash.
+                //   The corresponding static hosting 'index.html' copy also overrides the container's index.html file because
+                //   its file path has two slashes, for example "/documentation/ModuleName/ContainerName//index.html".
+                // - In cases where the symbol is top-level, its URL path conflicts with the root page of the framework,
+                //   leading to incorrect content being rendered.
+                //
+                // In order to avoid these issues, symbols without valid non-empty path components are dropped.
+                let droppedIDs = symbolGraph.symbols.compactMap { $0.value.pathComponents.contains("") ? $0.key : nil }
+                if !droppedIDs.isEmpty {
+                    for id in droppedIDs { symbolGraph.symbols.removeValue(forKey: id) }
+                    symbolGraph.relationships.removeAll { droppedIDs.contains($0.source) || droppedIDs.contains($0.target) }
+                }
+
                 symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
@@ -128,7 +149,7 @@ struct SymbolGraphLoader {
         self.symbolGraphs        = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? nil   : graph })
         self.snippetSymbolGraphs = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? graph : nil   })
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
-            createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
+            createOverloadGroups: shouldCreateOverloadGroups
         )
         signposter.endInterval("Build unified symbol graph", mergeSignpostHandle)
 
@@ -146,11 +167,12 @@ struct SymbolGraphLoader {
                 defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
                 defaultAvailableInformation = availablePlatforms
             }
-            
             let platformsFoundInSymbolGraphs: [PlatformName] = unifiedGraph.moduleData.compactMap {
                 guard let platformName = $0.value.platform.name else { return nil }
                 return PlatformName(operatingSystemName: platformName)
             }
+            
+            platformsFoundInSymbolGraphsByModule[unifiedGraph.moduleName] = Set(platformsFoundInSymbolGraphs)
 
             addMissingAvailability(
                 unifiedGraph: &unifiedGraph,
@@ -322,62 +344,6 @@ struct SymbolGraphLoader {
             moduleName = SymbolGraphLoader.moduleNameFor(url)!
         }
         return (moduleName, isMainSymbolGraph)
-    }
-    
-    private static func applyWorkaroundFor139305015(to symbolGraph: inout SymbolGraph) {
-        guard symbolGraph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }) == .objectiveC else {
-            return
-        }
-        
-        // Clang emits anonymous structs and unions differently than anonymous enums (rdar://139305015).
-        //
-        // The anonymous structs, with empty names, causes issues in a few different places for DocC:
-        // - The IndexingRecords (one of the `--emit-digest` files) throws an error about the empty name.
-        // - The NavigatorIndex.Builder may throw an error about the empty name.
-        // - Their pages can't be navigated to because their URL path end with a leading slash.
-        //   The corresponding static hosting 'index.html' copy also overrides the container's index.html file because
-        //   its file path has two slashes, for example "/documentation/ModuleName/ContainerName//index.html".
-        //
-        // To avoid all those issues without handling empty names throughout the code,
-        // we fill in titles and navigator titles for these symbols using the same format as Clang uses for anonymous enums.
-        
-        let relationshipsByTarget = [String: [SymbolGraph.Relationship]](grouping: symbolGraph.relationships, by: \.target)
-        
-        for (usr, symbol) in symbolGraph.symbols {
-            guard symbol.names.title.isEmpty,
-                  symbol.names.navigator?.map(\.spelling).joined().isEmpty == true,
-                  symbol.pathComponents.last?.isEmpty == true
-            else {
-                continue
-            }
-            
-            // This symbol has an empty title and an empty navigator title.
-            var modified = symbol
-            let fallbackTitle = "\(symbol.kind.identifier.identifier) (unnamed)"
-            modified.names.title = fallbackTitle
-            // Clang uses a single `identifier` fragment for anonymous enums.
-            modified.names.navigator = [.init(kind: .identifier, spelling: fallbackTitle, preciseIdentifier: nil)]
-            // Don't update `modified.names.subHeading`. Clang _doesn't_ use "enum (unnamed)" for the `Symbol/Names/subHeading` so we don't add it here either.
-            
-            // Clang uses the "enum (unnamed)" in the path components of anonymous enums so we follow that format for anonymous structs.
-            modified.pathComponents[modified.pathComponents.count - 1] = fallbackTitle
-            symbolGraph.symbols[usr] = modified
-            
-            // Also update all the members whose path components start with the container's path components so that they're consistent.
-            if let relationships = relationshipsByTarget[usr] {
-                let containerPathComponents = modified.pathComponents
-                
-                for memberRelationship in relationships where memberRelationship.kind == .memberOf {
-                    guard var modifiedMember = symbolGraph.symbols.removeValue(forKey: memberRelationship.source) else { continue }
-                    // Only update the member's path components if it starts with the original container's components.
-                    guard modifiedMember.pathComponents.starts(with: symbol.pathComponents) else { continue }
-                    
-                    modifiedMember.pathComponents.replaceSubrange(containerPathComponents.indices, with: containerPathComponents)
-                    
-                    symbolGraph.symbols[memberRelationship.source] = modifiedMember
-                }
-            }
-        }
     }
 }
 

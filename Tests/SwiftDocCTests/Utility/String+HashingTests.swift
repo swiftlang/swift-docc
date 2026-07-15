@@ -1,35 +1,41 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
 @testable import SwiftDocC
 
-class String_HashingTests: XCTestCase {
+struct String_HashingTests {
     
-    func testFNV1aHash() {
-        // Test that the results are stable for the given inputs
+    @Test(arguments: [
+        ("", "146ys"),
+        ("Hello", "1if00"),
+        ("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "3c6o6"),
+        ("/mykit/myclass/myfunc", "4y7c"),
+    ])
+    func stableHashStringIsDeterministicAcrossInvocations(input: String, expected: String) {
+        // Repeat the call to verify the result is stable for the given input.
         for _ in (0...100) {
-            XCTAssertEqual("146ys", "".stableHashString)
-            XCTAssertEqual("1if00", "Hello".stableHashString)
-            XCTAssertEqual("3c6o6", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.".stableHashString)
-            XCTAssertEqual("4y7c", "/mykit/myclass/myfunc".stableHashString)
+            #expect(input.stableHashString == expected)
         }
     }
     
-    func testUSRHash() {
-        // Test that the results are stable for the given inputs
+    @Test(arguments: [
+        ("", "ztntfp"),
+        ("s:5SideKit0A5ClassC10elementT", "1kf2iw4"),
+        ("s:5SideKit0A5ClassC10value_int", "n3jy95"),
+        (veryLongUSR, "1m0yasz"),
+    ])
+    func usrHashIsDeterministicAcrossInvocations(usr: String, expected: String) {
+        // Repeat the call to verify the result is stable for the given input.
         for _ in (0...100) {
-            XCTAssertEqual("ztntfp", ExternalIdentifier.usr("").hash)
-            XCTAssertEqual("1kf2iw4", ExternalIdentifier.usr("s:5SideKit0A5ClassC10elementT").hash)
-            XCTAssertEqual("n3jy95", ExternalIdentifier.usr("s:5SideKit0A5ClassC10value_int").hash)
-            XCTAssertEqual("1m0yasz", ExternalIdentifier.usr(veryLongUSR).hash)
+            #expect(ExternalIdentifier.usr(usr).hash == expected)
         }
     }
 }

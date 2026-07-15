@@ -279,16 +279,27 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <blockquote class="aside note">
+            <aside class="note">
               <p class="label">Note</p>
               <p>Something noteworthy</p>
-              <blockquote class="aside important">
+              <aside class="important">
                 <p class="label">Important</p>
                 <p>Something important</p>
-              </blockquote>
-            </blockquote>
+              </aside>
+            </aside>
             """
         )
+    }
+    
+    @Test
+    func renderingSmallDirective() async throws {
+        assert(
+            rendering: """
+            @Small {
+                Licensed under Apache License v2.0
+            }
+            """,
+            matches: "<p><small>Licensed under Apache License v2.0</small></p>")
     }
     
     @Test
@@ -615,7 +626,7 @@ struct MarkdownRendererTests {
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
             )
         )
-        let htmlNodes = Document(parsing: markdownContent, options: .parseSymbolLinks).children.map { renderer.visit($0) }
+        let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
         htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expectedXMLString: expectedHTML, sourceLocation: sourceLocation)
     }
     

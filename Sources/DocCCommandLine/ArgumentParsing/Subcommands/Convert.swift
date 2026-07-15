@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -83,6 +83,10 @@ extension Docc {
                     }
                 }
             }
+            
+            /// The format that the convert action will output the documentation in when writing to the specific output location.
+            @Option(name: .long, help: .hidden)
+            var outputFormat: OutputFormat = .json
         }
         
         /// The path to the directory that all build output should be placed in.
@@ -229,10 +233,38 @@ extension Docc {
             var formatConsoleOutputForTools = false
             
             /// Treat warning as errors.
-            @Flag(help: "Treat warnings as errors")
+            @Flag(help: "Treat all warnings as errors")
             var warningsAsErrors = false
+            
+            /// A list of identifiers for diagnostic groups or individual diagnostics that are explicitly raised to an "error" severity.
+            @Option(
+                name: [
+                    .customLong("Werror"), // This matches Swift's spellings
+                    .customLong("Werror", withSingleDash: true), // This matches Clang's spellings
+                ],
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp("Treat this diagnostic group (or individual diagnostic) as an error", valueName: "diagnostic-id")
+            )
+            var warningGroupsWithErrorSeverity: [String] = []
+            
+            /// A list of identifiers for diagnostic groups or individual diagnostics that are explicitly lowered to a "warning" severity.
+            @Option(
+                name: [
+                    .customLong("Wwarning"), // This matches Swift's spellings
+                    .customLong("Wwarning", withSingleDash: true), // This matches Clang's spellings
+                ],
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp(
+                    "Treat this diagnostic group (or individual diagnostic) as a warning",
+                    discussion: """
+                    If you pass '--warnings-as-errors' you can use this flag to lower one or more specific groups of diagnostics to a warnings severity.
+                    """,
+                    valueName: "diagnostic-id"
+                )
+            )
+            var warningGroupsWithWarningSeverity: [String] = []
 
-            func validate() throws {
+            mutating func validate() throws {
                 if analyze && diagnosticLevel != nil {
                     warnAboutDiagnostic(.init(
                         severity: .information,
@@ -250,6 +282,26 @@ extension Docc {
                             \(Self.supportedDiagnosticLevelsMessage)
                             """
                     ))
+                }
+                
+                if !warningGroupsWithErrorSeverity.isEmpty,
+                   !warningGroupsWithWarningSeverity.isEmpty
+                {
+                    // Check if there's overlap between the two diagnostic levels
+                    let diagnosticIDsWithConflictingSeverities = Set(warningGroupsWithErrorSeverity).intersection(warningGroupsWithWarningSeverity)
+                    if !diagnosticIDsWithConflictingSeverities.isEmpty {
+                        for diagnosticID in diagnosticIDsWithConflictingSeverities.sorted() {
+                            warnAboutDiagnostic(.init(
+                                severity: .information,
+                                identifier: "org.swift.docc.ConflictingDiagnosticSeverity",
+                                summary: "Conflicting severity (both '--Wwarning' and '--Werror') for diagnostic group '\(diagnosticID)'."
+                            ))
+                        }
+                        
+                        // Because we don't know which severity was specified last, remove the diagnostic ID from both groups
+                        warningGroupsWithErrorSeverity.removeAll(where: { diagnosticIDsWithConflictingSeverities.contains($0) })
+                        warningGroupsWithWarningSeverity.removeAll(where: { diagnosticIDsWithConflictingSeverities.contains($0) })
+                    }
                 }
             }
         
@@ -564,6 +616,32 @@ extension Docc {
                 DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: _diagnosticFormattingOptions),
                 to: &_errorLogHandle
             )
+        }
+        
+        /// The possible output (file) formats that the convert action can use for the documentation output.
+        package enum OutputFormat: ExpressibleByArgument {
+            /// Output each page as a JSON file---in the format described in RenderNode.spec.json---to be consumed by Swift-DocC Render.
+            case json
+            /// Output each page as a static HTML file.
+            case experimentalHTML
+            
+            package init?(argument: String) {
+                switch argument {
+                    case "json": self = .json
+                    
+                    // This spelling is meant to indicate that this feature is not suitable for general use.
+                    // As this start to approach being complete enough to a viable alternative output format,
+                    // the plan is to rename this to only "experimental-html" and post a pitch about the broader feature to the Swift Forums.
+                    case "experimental-html-for-development":
+                        self = .experimentalHTML
+                    
+                    default: return nil
+                }
+            }
+            
+            package static var allValueStrings: [String] {
+                ["json", "experimental-html-for-development"]
+            }
         }
     }
 }

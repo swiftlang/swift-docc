@@ -182,17 +182,23 @@ public protocol FileServerProvider {
 public class FileSystemServerProvider: FileServerProvider {
     
     private(set) var directoryURL: URL
+    private let fileManager: any FileManagerProtocol
     
-    public init?(directoryPath: String) {
-        guard FileManager.default.directoryExists(atPath: directoryPath) else {
+    public convenience init?(directoryPath: String) {
+        self.init(directoryPath: directoryPath, fileManager: FileManager.default)
+    }
+    
+    package init?(directoryPath: String, fileManager: any FileManagerProtocol) {
+        guard fileManager.directoryExists(atPath: directoryPath) else {
             return nil
         }
         self.directoryURL = URL(fileURLWithPath: directoryPath)
+        self.fileManager = fileManager
     }
     
     public func data(for path: String) -> Data? {
         let finalURL = directoryURL.appendingPathComponent(path)
-        return try? Data(contentsOf: finalURL)
+        return try? fileManager.contents(of: finalURL)
     }
     
 }
@@ -202,7 +208,19 @@ public class MemoryFileServerProvider: FileServerProvider {
     /// Files to serve based on relative path.
     private var files = [String: Data]()
     
-    public init() {}
+    private let fileManager: any FileManagerProtocol
+
+    /// Creates a memory file server provider with the default file manager.
+    public convenience init() {
+        self.init(fileManager: FileManager.default)
+    }
+
+    /// Creates a memory file server provider with the given file manager.
+    ///
+    /// - Parameter fileManager: The file manager that the provider uses to read files added with ``addFiles(inFolder:inSubPath:recursive:)``.
+    package init(fileManager: any FileManagerProtocol) {
+        self.fileManager = fileManager
+    }
     
     
     /// Add a file to the file server.
@@ -241,18 +259,16 @@ public class MemoryFileServerProvider: FileServerProvider {
     ///   - destination: The destination directory in the file server to add the files to.
     ///   - recursive: Whether or not to recursively add files from the source directory.
     public func addFiles(inFolder source: String, inSubPath destination: String = "", recursive: Bool = true) {
-        var isDirectory: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: source, isDirectory: &isDirectory) else { return }
-        guard isDirectory.boolValue else { return }
+        guard fileManager.directoryExists(atPath: source) else { return }
         
         let trimmedSubPath = destination.trimmingCharacters(in: slashCharSet)
-        let enumerator = FileManager.default.enumerator(atPath: source)!
+        let sourceURL = URL(fileURLWithPath: source)
         
-        for file in enumerator {
-            guard let file = file as? String else { fatalError("Enumerator returned an unexpected type.") }
-            guard let data = try? Data(contentsOf: URL(fileURLWithPath: source).appendingPathComponent(file)) else { continue }
-            if recursive == false && file.contains("/") { continue } // skip if subfolder and recursive is disabled
-            addFile(path: "/\(trimmedSubPath)/\(file)", data: data)
+        for fileURL in fileManager.recursiveFiles(startingPoint: sourceURL, options: []) {
+            let relativePath = fileURL.path.removingPrefix(sourceURL.path).removingPrefix("/")
+            if recursive == false && relativePath.contains("/") { continue }
+            guard let data = try? fileManager.contents(of: fileURL) else { continue }
+            addFile(path: "/\(trimmedSubPath)/\(relativePath)", data: data)
         }
     }
     
