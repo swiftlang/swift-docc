@@ -14,304 +14,232 @@ import DocCTestUtilities
 @testable import SwiftDocC
 
 struct ProseSymbolNameTests {
-    // MARK: - Helpers
+    // The symbol has the same precise identifier in both languages so that the
+    // Swift and Objective-C symbol graphs merge into a single multi-language symbol.
+    // The titles and prose names are deliberately self-identifying (and share no common
+    // substring across languages) so that each assertion is unambiguous.
+    static let symbolID = "method-id"
+    static let swiftTitle = "swiftSymbolTitle(with:)"
+    static let objcTitle = "objcSymbolTitle:"
 
-    private func loadedContext(swiftProse: String?, objcProse: String?) async throws -> DocumentationContext {
-        var swiftFunction = makeSymbol(id: "method-id", language: .swift, kind: .func, pathComponents: ["doSomething(with:)"])
+    // MARK: - Setups
+
+    // Each setup is verified across *all* output formats (see `assertAllFormats`) so that
+    // it's easy to see that the same behavior is covered consistently for every format,
+    // and so that a future output format only needs to be added in one place.
+
+    /// A symbol that has both a Swift and an Objective-C representation.
+    struct MultiLanguageSetup: CustomTestStringConvertible {
+        let name: String
+        let swiftProse: String?
+        let objcProse: String?
+        /// The Swift-only `<code>` contents (with `<wbr>` word breaks) expected in the static HTML.
+        let expectedSwiftHTML: String
+        /// The Objective-C-only `<code>` contents (with `<wbr>` word breaks) expected in the static HTML.
+        let expectedObjCHTML: String
+
+        var expectedSwiftText: String { swiftProse ?? swiftTitle }
+        var expectedObjCText: String { objcProse ?? objcTitle }
+        /// The markdown renderer accesses `firstValue` of a multi-language symbol, so an
+        /// Objective-C-only prose name bleeds into the Swift rendering path.
+        var markdownHasKnownIssue: Bool { swiftProse == nil && objcProse != nil }
+
+        var testDescription: String { name }
+    }
+
+    /// A symbol that only has a single-language representation.
+    struct SingleLanguageSetup: CustomTestStringConvertible {
+        let name: String
+        let prose: String?
+        /// The `<code>` contents (with `<wbr>` word breaks) expected in the static HTML.
+        let expectedHTML: String
+
+        var expectedText: String { prose ?? swiftTitle }
+
+        var testDescription: String { name }
+    }
+
+    // MARK: - Tests
+
+    @Test(arguments: [
+        MultiLanguageSetup(name: "Swift prose only",
+                           swiftProse: "swiftProseName", objcProse: nil,
+                           expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
+                           expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
+        MultiLanguageSetup(name: "Objective-C prose only",
+                           swiftProse: nil, objcProse: "objcProseName",
+                           expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
+                           expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
+        MultiLanguageSetup(name: "Both languages have prose",
+                           swiftProse: "swiftProseName", objcProse: "objcProseName",
+                           expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
+                           expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
+        MultiLanguageSetup(name: "Neither language has prose",
+                           swiftProse: nil, objcProse: nil,
+                           expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
+                           expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
+    ])
+    func usesProseNameForInlineLinkTextInAllOutputFormats(_ setup: MultiLanguageSetup) async throws {
+        let (context, reference) = try await loadMultiLanguageContext(
+            swiftProse: setup.swiftProse, objcProse: setup.objcProse
+        )
+        try assertAllFormats(
+            context: context, reference: reference,
+            expectedSwift: (setup.expectedSwiftText, setup.expectedSwiftHTML),
+            expectedObjC: (setup.expectedObjCText, setup.expectedObjCHTML),
+            markdownHasKnownIssue: setup.markdownHasKnownIssue
+        )
+    }
+
+    @Test(arguments: [
+        SingleLanguageSetup(name: "Prose set",
+                            prose: "singleProseName",
+                            expectedHTML: "single<wbr></wbr>Prose<wbr></wbr>Name"),
+        SingleLanguageSetup(name: "Prose not set",
+                            prose: nil,
+                            expectedHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)"),
+    ])
+    func usesProseNameForSingleLanguageSymbolInAllOutputFormats(_ setup: SingleLanguageSetup) async throws {
+        let (context, reference) = try await loadSingleLanguageContext(prose: setup.prose)
+        try assertAllFormats(
+            context: context, reference: reference,
+            expectedSwift: (setup.expectedText, setup.expectedHTML),
+            expectedObjC: nil,
+            markdownHasKnownIssue: false
+        )
+    }
+
+    // MARK: - Shared assertions
+
+    /// Verifies that the inline-link text for the loaded symbol matches the expected title/prose
+    /// name in every output format.
+    ///
+    /// A new output format should be verified by adding a section to this method so that every
+    /// setup automatically covers it.
+    ///
+    /// - Parameters:
+    ///   - expectedSwift: The expected inline-link text and static-HTML `<code>` contents for the
+    ///     Swift representation (or the single language representation).
+    ///   - expectedObjC: The same for the Objective-C representation, or `nil` for a symbol that
+    ///     only has a single-language representation.
+    ///   - markdownHasKnownIssue: Whether the markdown output is expected to be incorrect because
+    ///     the markdown renderer doesn't support multi-language symbols.
+    private func assertAllFormats(
+        context: DocumentationContext,
+        reference: ResolvedTopicReference,
+        expectedSwift: (text: String, html: String),
+        expectedObjC: (text: String, html: String)?,
+        markdownHasKnownIssue: Bool
+    ) throws {
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+
+        // A. RenderNode inline link.
+        let inlineLinkReference = try #require(
+            renderNode.references[reference.absoluteString] as? TopicRenderReference
+        )
+        assertTitleVariants(inlineLinkReference, expectedSwift: expectedSwift.text, expectedObjC: expectedObjC?.text)
+
+        // B. External reference (LinkDestinationSummary).
+        let summary = try #require(
+            node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first
+        )
+        assertTitleVariants(summary.makeTopicRenderReference(), expectedSwift: expectedSwift.text, expectedObjC: expectedObjC?.text)
+
+        // C. Static HTML — verify the word breaks land in the expected locations whether the link
+        // text uses the symbol's title or its prose name.
+        let symbol = try #require(node.semantic as? Symbol)
+        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: .init())
+        let html = renderer.renderSymbol(symbol).content.xmlString
+        if let expectedObjC {
+            #expect(html.contains(#"<code class="swift-only">\#(expectedSwift.html)</code>"#),
+                    "Swift-only HTML missing expected code \(expectedSwift.html); got: \(html)")
+            #expect(html.contains(#"<code class="occ-only">\#(expectedObjC.html)</code>"#),
+                    "Objective-C-only HTML missing expected code \(expectedObjC.html); got: \(html)")
+        } else {
+            #expect(html.contains(#"<code>\#(expectedSwift.html)</code>"#),
+                    "HTML missing expected code \(expectedSwift.html); got: \(html)")
+        }
+
+        // D. Markdown output.
+        var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
+        let output = visitor.createOutput()
+        let markdown = try #require(output).markdown
+        func assertMarkdown() {
+            #expect(markdown.contains("`\(expectedSwift.text)`"),
+                    "Markdown missing expected inline code `\(expectedSwift.text)`; got: \(markdown)")
+            // When a prose name replaces the title, the full title should not appear.
+            if expectedSwift.text != Self.swiftTitle {
+                #expect(!markdown.contains("`\(Self.swiftTitle)`"),
+                        "Markdown unexpectedly contains the full title `\(Self.swiftTitle)`; got: \(markdown)")
+            }
+        }
+        if markdownHasKnownIssue {
+            withKnownIssue("Markdown renderer does not support multi-language symbols") {
+                assertMarkdown()
+            }
+        } else {
+            assertMarkdown()
+        }
+    }
+
+    private func assertTitleVariants(
+        _ reference: TopicRenderReference,
+        expectedSwift: String,
+        expectedObjC: String?
+    ) {
+        if let expectedObjC {
+            #expect(reference.titleVariants.value(for: .swift) == expectedSwift,
+                    "Unexpected Swift link text: \(reference.titleVariants.value(for: .swift))")
+            #expect(reference.titleVariants.value(for: .objectiveC) == expectedObjC,
+                    "Unexpected Objective-C link text: \(reference.titleVariants.value(for: .objectiveC))")
+        } else {
+            #expect(reference.titleVariants.defaultValue == expectedSwift,
+                    "Unexpected link text: \(reference.titleVariants.defaultValue)")
+        }
+    }
+
+    // MARK: - Context loading
+
+    private func loadMultiLanguageContext(
+        swiftProse: String?,
+        objcProse: String?
+    ) async throws -> (context: DocumentationContext, reference: ResolvedTopicReference) {
+        var swiftFunction = makeSymbol(id: Self.symbolID, language: .swift, kind: .func,
+                                       pathComponents: [Self.swiftTitle],
+                                       docComment: "Call ``\(Self.swiftTitle)`` to do something.")
         swiftFunction.names.prose = swiftProse
-        var objcFunction = makeSymbol(id: "method-id", language: .objectiveC, kind: .func, pathComponents: ["doSomethingWith:"])
+        var objcFunction = makeSymbol(id: Self.symbolID, language: .objectiveC, kind: .func,
+                                      pathComponents: [Self.objcTitle])
         objcFunction.names.prose = objcProse
-        return try await load(catalog: Folder(name: "ModuleName.docc") {
+
+        let context = try await load(catalog: Folder(name: "ModuleName.docc") {
             JSONFile(name: "ModuleName.symbols.json",
                      content: makeSymbolGraph(moduleName: "ModuleName", symbols: [swiftFunction]))
             JSONFile(name: "ModuleName.occ.symbols.json",
                      content: makeSymbolGraph(moduleName: "ModuleName", symbols: [objcFunction]))
         })
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        let reference = try #require(context.documentationCache.reference(symbolID: Self.symbolID))
+        return (context, reference)
     }
 
-    private func loadedContextWithLinkedFunction(
-        swiftProse: String?,
-        objcProse: String?
-    ) async throws -> (context: DocumentationContext, functionRef: ResolvedTopicReference) {
-        var swiftFunction = makeSymbol(id: "method-id", language: .swift, kind: .func,
-                                       pathComponents: ["doSomething(with:)"],
-                                       docComment: "Call ``doSomething(with:)`` to do something.")
-        swiftFunction.names.prose = swiftProse
-        var objcFunction = makeSymbol(id: "method-id", language: .objectiveC, kind: .func, pathComponents: ["doSomethingWith:"])
-        objcFunction.names.prose = objcProse
-
-        let context = try await load(catalog: Folder(name: "ModuleName.docc") {
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                moduleName: "ModuleName", symbols: [swiftFunction]
-            ))
-            JSONFile(name: "ModuleName.occ.symbols.json", content: makeSymbolGraph(
-                moduleName: "ModuleName", symbols: [objcFunction]
-            ))
-        })
-        let functionRef = try #require(context.documentationCache.reference(symbolID: "method-id"))
-        return (context, functionRef)
-    }
-
-    private func loadedSingleLanguageContextWithLinkedFunction(
+    private func loadSingleLanguageContext(
         prose: String?
-    ) async throws -> (context: DocumentationContext, functionRef: ResolvedTopicReference) {
-        var function = makeSymbol(id: "method-id", language: .data, kind: .func,
-                                  pathComponents: ["doSomething(with:)"],
-                                  docComment: "Call ``doSomething(with:)`` to do something.")
+    ) async throws -> (context: DocumentationContext, reference: ResolvedTopicReference) {
+        var function = makeSymbol(id: Self.symbolID, language: .swift, kind: .func,
+                                  pathComponents: [Self.swiftTitle],
+                                  docComment: "Call ``\(Self.swiftTitle)`` to do something.")
         function.names.prose = prose
 
         let context = try await load(catalog: Folder(name: "ModuleName.docc") {
-            JSONFile(name: "ModuleName.data.symbols.json",
+            JSONFile(name: "ModuleName.symbols.json",
                      content: makeSymbolGraph(moduleName: "ModuleName", symbols: [function]))
         })
-        let functionRef = try #require(context.documentationCache.reference(symbolID: "method-id"))
-        return (context, functionRef)
-    }
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
-    // MARK: - Single language presentation
-
-    private func inlineLinkReferenceForSingleLanguage(prose: String?) async throws -> TopicRenderReference {
-        let (context, functionRef) = try await loadedSingleLanguageContextWithLinkedFunction(prose: prose)
-        let node = try context.entity(with: functionRef)
-        let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        return try #require(renderNode.references[functionRef.absoluteString] as? TopicRenderReference)
-    }
-
-    @Test
-    func singleLanguageSymbolProseNameIsUsedForInlineLinkTitle() async throws {
-        let ref = try await inlineLinkReferenceForSingleLanguage(prose: "doSomething")
-        #expect(ref.titleVariants.defaultValue == "doSomething")
-    }
-
-    @Test
-    func singleLanguageSymbolTitleIsUsedWhenProseIsNotSet() async throws {
-        let ref = try await inlineLinkReferenceForSingleLanguage(prose: nil)
-        #expect(ref.titleVariants.defaultValue == "doSomething(with:)")
-    }
-
-    // MARK: - Multi-language title variants
-
-    private func inlineLinkReference(swiftProse: String?, objcProse: String?) async throws -> TopicRenderReference {
-        let (context, functionRef) = try await loadedContextWithLinkedFunction(swiftProse: swiftProse, objcProse: objcProse)
-        let node = try context.entity(with: functionRef)
-        let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        return try #require(renderNode.references[functionRef.absoluteString] as? TopicRenderReference)
-    }
-
-    @Test
-    func proseNameIsUsedForInlineLinkTitle() async throws {
-        let ref = try await inlineLinkReference(swiftProse: "doSomething", objcProse: nil)
-
-        // Swift variant has prose — should use it.
-        #expect(ref.titleVariants.value(for: .swift) == "doSomething")
-        // ObjC variant has no prose — should fall back to its title.
-        #expect(ref.titleVariants.value(for: .objectiveC) == "doSomethingWith:")
-    }
-
-    @Test
-    func objcProseNameIsUsedForInlineLinkTitle() async throws {
-        let ref = try await inlineLinkReference(swiftProse: nil, objcProse: "doSomethingWith")
-
-        // Swift variant has no prose — should fall back to its title.
-        #expect(ref.titleVariants.value(for: .swift) == "doSomething(with:)")
-        // ObjC variant has prose — should use it.
-        #expect(ref.titleVariants.value(for: .objectiveC) == "doSomethingWith")
-    }
-
-    @Test
-    func titleIsUsedForAllVariantsWhenProseIsNotSet() async throws {
-        let ref = try await inlineLinkReference(swiftProse: nil, objcProse: nil)
-
-        #expect(ref.titleVariants.value(for: .swift) == "doSomething(with:)")
-        #expect(ref.titleVariants.value(for: .objectiveC) == "doSomethingWith:")
-    }
-
-    @Test
-    func proseIsUsedForAllVariantsWhenAllHaveProse() async throws {
-        let ref = try await inlineLinkReference(swiftProse: "doSomething", objcProse: "doSomethingWith")
-
-        #expect(ref.titleVariants.value(for: .swift) == "doSomething")
-        #expect(ref.titleVariants.value(for: .objectiveC) == "doSomethingWith")
-    }
-
-    // MARK: - External references (LinkDestinationSummary)
-
-    @Test
-    func linkDestinationSummaryUsesProseName() async throws {
-        let context = try await loadedContext(swiftProse: "doSomething", objcProse: nil)
-
-        let reference = try #require(context.documentationCache.reference(symbolID: "method-id"))
-        let node = try context.entity(with: reference)
-        let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        let summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
-        let topicRef = summary.makeTopicRenderReference()
-
-        // Swift has prose — should use it.
-        #expect(topicRef.titleVariants.value(for: .swift) == "doSomething")
-        // ObjC has no prose — falls back to its own title.
-        #expect(topicRef.titleVariants.value(for: .objectiveC) == "doSomethingWith:")
-    }
-
-    @Test
-    func linkDestinationSummaryUsesObjcProseName() async throws {
-        let context = try await loadedContext(swiftProse: nil, objcProse: "doSomethingWith")
-
-        let reference = try #require(context.documentationCache.reference(symbolID: "method-id"))
-        let node = try context.entity(with: reference)
-        let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        let summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
-        let topicRef = summary.makeTopicRenderReference()
-
-        // Swift has no prose — falls back to its own title.
-        #expect(topicRef.titleVariants.value(for: .swift) == "doSomething(with:)")
-        // ObjC has prose — should use it.
-        #expect(topicRef.titleVariants.value(for: .objectiveC) == "doSomethingWith")
-    }
-
-    @Test
-    func linkDestinationSummaryUsesBothProseNames() async throws {
-        let context = try await loadedContext(swiftProse: "doSomething", objcProse: "doSomethingWith")
-
-        let reference = try #require(context.documentationCache.reference(symbolID: "method-id"))
-        let node = try context.entity(with: reference)
-        let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        let summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
-        let topicRef = summary.makeTopicRenderReference()
-
-        #expect(topicRef.titleVariants.value(for: .swift) == "doSomething")
-        #expect(topicRef.titleVariants.value(for: .objectiveC) == "doSomethingWith")
-    }
-
-    @Test
-    func linkDestinationSummaryUsesTitleWhenProseNotSet() async throws {
-        let context = try await loadedContext(swiftProse: nil, objcProse: nil)
-
-        let reference = try #require(context.documentationCache.reference(symbolID: "method-id"))
-        let node = try context.entity(with: reference)
-        let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        let summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
-        let topicRef = summary.makeTopicRenderReference()
-
-        // Neither has prose — both fall back to their own full titles.
-        #expect(topicRef.titleVariants.value(for: .swift) == "doSomething(with:)")
-        #expect(topicRef.titleVariants.value(for: .objectiveC) == "doSomethingWith:")
-    }
-
-    // MARK: - Static HTML (HTMLRenderer.makeNames)
-
-    private func renderedHTML(swiftProse: String?, objcProse: String?) async throws -> String {
-        let (context, functionRef) = try await loadedContextWithLinkedFunction(swiftProse: swiftProse, objcProse: objcProse)
-        let functionNode = try context.entity(with: functionRef)
-        let functionSemantic = try #require(functionNode.semantic as? Symbol)
-        var renderer = HTMLRenderer(reference: functionRef, context: context, goal: .richness, featureFlags: .init())
-        let rendered = renderer.renderSymbol(functionSemantic)
-        return rendered.content.xmlString
-    }
-
-    @Test
-    func staticHTMLInlineLinkUsesSwiftProseName() async throws {
-        let html = try await renderedHTML(swiftProse: "doSomething", objcProse: nil)
-        #expect(html.contains(#"<code class="swift-only">do<wbr></wbr>Something</code>"#))
-    }
-
-    @Test
-    func staticHTMLInlineLinkUsesSwiftTitleWhenOnlyObjcProseIsSet() async throws {
-        let html = try await renderedHTML(swiftProse: nil, objcProse: "doSomethingWith")
-        #expect(html.contains(#"<code class="swift-only">do<wbr></wbr>Something(<wbr></wbr>with:)</code>"#))
-    }
-
-    @Test
-    func staticHTMLInlineLinkUsesSwiftProseWhenBothAreSet() async throws {
-        let html = try await renderedHTML(swiftProse: "doSomething", objcProse: "doSomethingWith")
-        #expect(html.contains(#"<code class="swift-only">do<wbr></wbr>Something</code>"#))
-        #expect(html.contains(#"<code class="occ-only">do<wbr></wbr>Something<wbr></wbr>With</code>"#))
-    }
-
-    @Test
-    func staticHTMLInlineLinkUsesTitleWhenProseNotSet() async throws {
-        let html = try await renderedHTML(swiftProse: nil, objcProse: nil)
-        #expect(html.contains(#"<code class="swift-only">do<wbr></wbr>Something(<wbr></wbr>with:)</code>"#))
-        #expect(html.contains(#"<code class="occ-only">do<wbr></wbr>Something<wbr></wbr>With:</code>"#))
-    }
-
-    @Test
-    func staticHTMLInlineLinkInSingleLanguageUsesProseName() async throws {
-        let (context, functionRef) = try await loadedSingleLanguageContextWithLinkedFunction(prose: "doSomething")
-        let functionNode = try context.entity(with: functionRef)
-        let functionSemantic = try #require(functionNode.semantic as? Symbol)
-        var renderer = HTMLRenderer(reference: functionRef, context: context, goal: .richness, featureFlags: .init())
-        let html = renderer.renderSymbol(functionSemantic).content.xmlString
-        #expect(html.contains(#"<code>do<wbr></wbr>Something</code>"#))
-    }
-
-    @Test
-    func staticHTMLInlineLinkInSingleLanguageUsesTitleWhenProseNotSet() async throws {
-        let (context, functionRef) = try await loadedSingleLanguageContextWithLinkedFunction(prose: nil)
-        let functionNode = try context.entity(with: functionRef)
-        let functionSemantic = try #require(functionNode.semantic as? Symbol)
-        var renderer = HTMLRenderer(reference: functionRef, context: context, goal: .richness, featureFlags: .init())
-        let html = renderer.renderSymbol(functionSemantic).content.xmlString
-        #expect(html.contains(#"<code>do<wbr></wbr>Something(<wbr></wbr>with:)</code>"#))
-    }
-
-    // MARK: - Markdown output (MarkdownOutputMarkdownWalker)
-
-    private func renderedMarkdown(swiftProse: String?, objcProse: String?) async throws -> String {
-        let (context, functionRef) = try await loadedContextWithLinkedFunction(swiftProse: swiftProse, objcProse: objcProse)
-        let functionNode = try context.entity(with: functionRef)
-        var visitor = MarkdownOutputSemanticVisitor(context: context, node: functionNode)
-        let output = visitor.createOutput()
-        return try #require(output).markdown
-    }
-
-    @Test
-    func markdownOutputInlineLinkUsesSwiftProseName() async throws {
-        let markdown = try await renderedMarkdown(swiftProse: "doSomething", objcProse: nil)
-        #expect(markdown.contains("`doSomething`"))
-        #expect(!markdown.contains("`doSomething(with:)`"))
-    }
-
-    @Test
-    func markdownOutputInlineLinkUsesSwiftTitleWhenOnlyObjcProseIsSet() async throws {
-        let markdown = try await renderedMarkdown(swiftProse: nil, objcProse: "doSomethingWith")
-        // The markdown renderer does not support multi-language symbols and uses firstValue,
-        // which bleeds ObjC-only prose into the Swift rendering path.
-        withKnownIssue("Markdown renderer does not support multi-language symbols") {
-            #expect(markdown.contains("`doSomething(with:)`"))
-        }
-    }
-
-    @Test
-    func markdownOutputInlineLinkUsesSwiftProseWhenBothAreSet() async throws {
-        let markdown = try await renderedMarkdown(swiftProse: "doSomething", objcProse: "doSomethingWith")
-        #expect(markdown.contains("`doSomething`"))
-        #expect(!markdown.contains("`doSomething(with:)`"))
-    }
-
-    @Test
-    func markdownOutputInlineLinkUsesTitleWhenProseNotSet() async throws {
-        let markdown = try await renderedMarkdown(swiftProse: nil, objcProse: nil)
-        #expect(markdown.contains("`doSomething(with:)`"))
-    }
-
-    @Test
-    func markdownOutputInlineLinkInSingleLanguageUsesProseName() async throws {
-        let (context, functionRef) = try await loadedSingleLanguageContextWithLinkedFunction(prose: "doSomething")
-        let functionNode = try context.entity(with: functionRef)
-        var visitor = MarkdownOutputSemanticVisitor(context: context, node: functionNode)
-        let output = visitor.createOutput()
-        let markdown = try #require(output).markdown
-        #expect(markdown.contains("`doSomething`"))
-        #expect(!markdown.contains("`doSomething(with:)`"))
-    }
-
-    @Test
-    func markdownOutputInlineLinkInSingleLanguageUsesTitleWhenProseNotSet() async throws {
-        let (context, functionRef) = try await loadedSingleLanguageContextWithLinkedFunction(prose: nil)
-        let functionNode = try context.entity(with: functionRef)
-        var visitor = MarkdownOutputSemanticVisitor(context: context, node: functionNode)
-        let output = visitor.createOutput()
-        let markdown = try #require(output).markdown
-        #expect(markdown.contains("`doSomething(with:)`"))
+        let reference = try #require(context.documentationCache.reference(symbolID: Self.symbolID))
+        return (context, reference)
     }
 }

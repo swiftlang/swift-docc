@@ -2483,23 +2483,81 @@ private extension ConvertServiceTests {
 }
 
 struct ConvertServiceProseNameTests {
+    private let testBundleInfo = DocumentationBundle.Info(displayName: "TestBundle", id: "identifier")
+
     @Test
-    func renderNodeReferenceUsesProseNameForInlineLink() async throws {
-        var method = makeSymbol(id: "method-id", kind: .func, pathComponents: ["myMethod(_:)"],
-                                docComment: "See ``myMethod(_:)`` for details.")
-        method.names.prose = "myMethod"
+    func convertResponseUsesProseNameForSymbolReference() async throws {
+        let symbolTitle = "symbolTitle(with:)"
+        let proseName = "proseName"
 
-        let context = try await load(catalog: Folder(name: "ModuleName.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                moduleName: "ModuleName", symbols: [method]
-            )),
-        ]))
+        var symbol = makeSymbol(id: "method-id", kind: .func, pathComponents: [symbolTitle],
+                                docComment: "Some documentation.")
+        symbol.names.prose = proseName
 
-        let reference = try #require(context.documentationCache.reference(symbolID: "method-id"))
-        let node = try context.entity(with: reference)
-        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["method-id"],
+            documentPathsToConvert: [],
+            symbolGraphs: [try JSONEncoder().encode(makeSymbolGraph(moduleName: "TestModule", symbols: [symbol]))],
+            markupFiles: [],
+            miscResourceURLs: []
+        )
 
-        let topicRef = try #require(renderNode.references[reference.absoluteString] as? TopicRenderReference)
-        #expect(topicRef.title == "myMethod")
+        // Drive the render pipeline through the ConvertService, the same way an IDE would.
+        let response = try await convert(request)
+
+        let renderNodeData = try #require(response.renderNodes.first)
+        let renderNode = try JSONDecoder().decode(RenderNode.self, from: renderNodeData)
+
+        // The render node contains a reference for the converted symbol; its title is what inline
+        // links to the symbol render as, so verify it uses the prose name rather than the title.
+        let symbolReference = try #require(
+            renderNode.references["doc://identifier/documentation/TestModule/\(symbolTitle)"] as? TopicRenderReference
+        )
+        #expect(symbolReference.title == proseName)
+    }
+
+    @Test
+    func convertResponseUsesTitleForSymbolReferenceWhenProseNotSet() async throws {
+        let symbolTitle = "symbolTitle(with:)"
+
+        // The symbol has no prose name set.
+        let symbol = makeSymbol(id: "method-id", kind: .func, pathComponents: [symbolTitle],
+                                docComment: "Some documentation.")
+
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["method-id"],
+            documentPathsToConvert: [],
+            symbolGraphs: [try JSONEncoder().encode(makeSymbolGraph(moduleName: "TestModule", symbols: [symbol]))],
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+
+        let response = try await convert(request)
+
+        let renderNodeData = try #require(response.renderNodes.first)
+        let renderNode = try JSONDecoder().decode(RenderNode.self, from: renderNodeData)
+
+        // Without a prose name, the reference falls back to the symbol's title.
+        let symbolReference = try #require(
+            renderNode.references["doc://identifier/documentation/TestModule/\(symbolTitle)"] as? TopicRenderReference
+        )
+        #expect(symbolReference.title == symbolTitle)
+    }
+
+    /// Processes a convert request through a `ConvertService` and returns the decoded response.
+    private func convert(_ request: ConvertRequest) async throws -> ConvertResponse {
+        let message = DocumentationServer.Message(
+            type: "convert",
+            identifier: "test-identifier",
+            payload: try JSONEncoder().encode(request)
+        )
+        let responseMessage: DocumentationServer.Message = await withCheckedContinuation { continuation in
+            ConvertService().process(message) { responseMessage in
+                continuation.resume(returning: responseMessage)
+            }
+        }
+        return try JSONDecoder().decode(ConvertResponse.self, from: try #require(responseMessage.payload))
     }
 }
