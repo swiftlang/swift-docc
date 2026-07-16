@@ -72,10 +72,16 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         
         // convert the data asset to a serializable object
         var result = [VariantProxy]()
-        // sort assets by URL path for deterministic sorting of images
-        for (key, value) in asset.variants.sorted(by: \.value.path) {
+        for (key, value) in asset.variants {
             let url = renderURL(for: value, prefixComponent: encoder.assetPrefixComponent)
             result.append(VariantProxy(url: url, traits: key, svgID: asset.metadata[value]?.svgID))
+        }
+        // Sort by the rendered URL, and by traits for variants with identical URLs
+        result.sort { lhs, rhs in
+            if lhs.url.path != rhs.url.path {
+                return lhs.url.path < rhs.url.path
+            }
+            return lhs.traits.joined() < rhs.traits.joined()
         }
         try container.encode(result, forKey: .variants)
     }
