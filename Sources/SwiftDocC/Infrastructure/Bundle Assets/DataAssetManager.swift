@@ -107,7 +107,7 @@ struct DataAssetManager {
     ///
     /// Data objects which have a file name ending with '~dark' are associated to their light variant.
     mutating func register(data datas: some Collection<URL>) throws {
-        for dataURL in datas {
+        for dataURL in datas.sorted(by: \.path) {
             let meta = try referenceMetaInformationForDataURL(dataURL)
 
             let referenceURL = URL(fileURLWithPath: meta.reference, isDirectory: false)
@@ -195,18 +195,32 @@ public struct DataAsset: Codable, Equatable {
     
     /// Returns the data that is registered to the data asset that best matches the given trait collection.
     ///
-    /// If no variant with the exact given trait collection is found, the variant that has the largest trait collection overlap with the
-    /// provided one is returned.
+    /// If no variant matches the given trait collection exactly, the closest variant is returned.
+    /// A matching user interface style is preferred over a matching display scale.
+    /// If there are multiple matches, the one with the lexicographically smallest URL path is used.
     public func data(bestMatching traitCollection: DataTraitCollection) -> BundleData {
-        guard let variant = variants[traitCollection] else {
-            // FIXME: If we can't find a variant that matches the given trait collection exactly,
-            // we should return the variant that has the largest trait collection overlap with the
-            // provided one. (rdar://68632024)
-            let first = variants.first!
-            return BundleData(url: first.value, traitCollection: first.key)
+        if let variant = variants[traitCollection] {
+            return BundleData(url: variant, traitCollection: traitCollection)
         }
-        
-        return BundleData(url: variant, traitCollection: traitCollection)
+
+        let style = traitCollection.userInterfaceStyle
+        let scale = traitCollection.displayScale
+        let best = variants.min { lhs, rhs in
+            if style != nil {
+                let lhsStyleMatches = style == lhs.key.userInterfaceStyle
+                let rhsStyleMatches = style == rhs.key.userInterfaceStyle
+                if lhsStyleMatches != rhsStyleMatches { return lhsStyleMatches }
+            }
+
+            if scale != nil {
+                let lhsScaleMatches = scale == lhs.key.displayScale
+                let rhsScaleMatches = scale == rhs.key.displayScale
+                if lhsScaleMatches != rhsScaleMatches { return lhsScaleMatches }
+            }
+
+            return lhs.value.path < rhs.value.path
+        }!
+        return BundleData(url: best.value, traitCollection: best.key)
     }
     
 }

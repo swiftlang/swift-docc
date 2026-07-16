@@ -228,4 +228,48 @@ struct DataAssetManagerTests {
         try manager.register(data: imagesWithDuplicates)
         #expect(manager.fuzzyKeyIndex.keys.sorted().map({ "\($0)" }) == ["image", "woof"])
     }
+
+    @Test
+    func duplicateAssetsRegisterOnlyLastSortedAsset() throws {
+        let urls = [
+            URL(fileURLWithPath: "/catalog/assets/overview.png"),
+            URL(fileURLWithPath: "/catalog/content/assets/overview.png"),
+        ]
+        let trait = DataTraitCollection(userInterfaceStyle: .light, displayScale: .double)
+
+        var forward = DataAssetManager()
+        try forward.register(data: urls)
+
+        var reversed = DataAssetManager()
+        try reversed.register(data: urls.reversed())
+
+        #expect(
+            forward.data(named: "overview.png", bestMatching: trait)?.url
+                == URL(fileURLWithPath: "/catalog/content/assets/overview.png")
+        )
+        #expect(
+            forward.data(named: "overview.png", bestMatching: trait)?.url
+                == reversed.data(named: "overview.png", bestMatching: trait)?.url
+        )
+    }
+
+    @Test
+    func dataBestMatchingPrioritizesUserInterfaceStyleOverDisplayScale() {
+        var asset = DataAsset()
+        asset.register(URL(fileURLWithPath: "/catalog/a/overview.png"), with: .init(userInterfaceStyle: .dark, displayScale: .double))
+        asset.register(URL(fileURLWithPath: "/catalog/z/overview.png"), with: .init(userInterfaceStyle: .light, displayScale: .standard))
+
+        let match = asset.data(bestMatching: .init(userInterfaceStyle: .light, displayScale: .double))
+        #expect(match.url == URL(fileURLWithPath: "/catalog/z/overview.png"))
+    }
+
+    @Test
+    func dataBestMatchingWithSameStyleAndScaleMatchesBySmallestURLPath() {
+        var asset = DataAsset()
+        asset.register(URL(fileURLWithPath: "/catalog/z/overview.png"), with: .init(userInterfaceStyle: .light, displayScale: .standard))
+        asset.register(URL(fileURLWithPath: "/catalog/a/overview.png"), with: .init(userInterfaceStyle: .light, displayScale: .triple))
+
+        let match = asset.data(bestMatching: .init(userInterfaceStyle: .light, displayScale: .double))
+        #expect(match.url == URL(fileURLWithPath: "/catalog/a/overview.png"))
+    }
 }
