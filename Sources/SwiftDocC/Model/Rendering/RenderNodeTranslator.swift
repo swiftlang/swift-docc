@@ -468,6 +468,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             
             for dependencyReference in dependencies.topicReferences {
+                // If this reference is also a direct reference of the page,
+                // do not redundantly process it as a dependency reference.
+                guard renderReferences[dependencyReference.absoluteString] == nil else {
+                    continue
+                }
                 var dependencyRenderReference: TopicRenderReference
                 if let renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
                     dependencyRenderReference = prerendered
@@ -478,7 +483,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderReferences[dependencyReference.absoluteString] = dependencyRenderReference
             }
             
-            // Add any conformance constraints to the reference, if any are present.
+            // Add conformance constraints to the reference, if any are present.
             if let conformanceSection = renderer.conformanceSectionFor(reference, collectedConstraints: collectedConstraints) {
                 renderReference.conformance = conformanceSection
             }

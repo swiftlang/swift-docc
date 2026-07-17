@@ -12,6 +12,7 @@ import Testing
 import SymbolKit
 import Markdown
 @testable import SwiftDocC
+import DocCTestUtilities
 import DocCCommon
 
 struct DocumentationContentRendererTests {
@@ -123,6 +124,49 @@ struct DocumentationContentRendererTests {
                 kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
             ),
         ])
+    }
+
+    @Test
+    func trivialConformanceFilterUsesShortestPathParent() async throws {
+        let selfIsBar = SymbolGraph.Symbol.Swift.Extension(
+            extendedModule: "SomeModule",
+            typeKind: .struct,
+            constraints: [.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "Bar")]
+        )
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "SomeModule",
+                symbols: [
+                    makeSymbol(id: "s:Foo", kind: .struct, pathComponents: ["Foo"]),
+                    makeSymbol(id: "s:Outer", kind: .struct, pathComponents: ["Outer"]),
+                    makeSymbol(id: "s:Bar", kind: .struct, pathComponents: ["Outer", "Bar"]),
+                    makeSymbol(id: "s:member", kind: .method, pathComponents: ["Outer", "Bar", "member"], otherMixins: [selfIsBar]),
+                ],
+                relationships: [
+                    .init(source: "s:Bar", target: "s:Outer", kind: .memberOf, targetFallback: nil),
+                    .init(source: "s:member", target: "s:Bar", kind: .memberOf, targetFallback: nil),
+                ]
+            )),
+        ])
+
+        let context = try await load(catalog: catalog)
+        let bundleID = context.inputs.id
+        let memberReference = ResolvedTopicReference(bundleID: bundleID, path: "/documentation/SomeModule/Outer/Bar/member", sourceLanguage: .swift)
+        let shorterParentReference = ResolvedTopicReference(bundleID: bundleID, path: "/documentation/SomeModule/Foo", sourceLanguage: .swift)
+
+        // Add `Foo` as a second parent of `member` with a shorter path than the original parent `Bar`.
+        let memberNode = try #require(context.topicGraph.nodeWithReference(memberReference))
+        let shorterParentNode = try #require(context.topicGraph.nodeWithReference(shorterParentReference))
+        context.topicGraph.addEdge(from: shorterParentNode, to: memberNode)
+
+        #expect(context.parents(of: memberReference).count == 2)
+        #expect(context.shortestFinitePath(to: memberReference)?.last?.path == "/documentation/SomeModule/Foo")
+
+        // The shortest path parent is `Foo`, so the `Self is Bar` constraint is non-trivial and must be retained.
+        let section = DocumentationContentRenderer(context: context)
+            .conformanceSectionFor(memberReference, collectedConstraints: [:])
+        #expect(section?.constraints.plainText == "Self is Bar.")
     }
 
     private func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
