@@ -146,7 +146,13 @@ extension NavigatorIndexableRenderMetadataRepresentation {
 
 extension NavigatorIndexableRenderNodeRepresentation {
     var isPlatformDeprecated: Bool {
-        metadata.platforms?.contains { $0.deprecated != nil } == true
+        metadata.platforms?.contains {
+            // @available(*, deprecated: "1.2.3)
+            $0.deprecated != nil ||
+                // or without a specific version/string for "deprecated:", like so:
+                // @available(*, deprecated, renamed: "Sendable")
+                $0.unconditionallyDeprecated == true
+        } == true
     }
     var isDeprecated: Bool {
         isPlatformDeprecated
