@@ -1,150 +1,136 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
 import SymbolKit
 import Markdown
 @testable import SwiftDocC
 import DocCCommon
 
-class DocumentationContentRendererTests: XCTestCase {
-    func testReplacesTypeIdentifierSubHeadingFragmentWithIdentifierForSwift() async throws {
+struct DocumentationContentRendererTests {
+    @Test
+    func replacesTypeIdentifierSubHeadingFragmentWithIdentifierForSwift() async throws {
         let subHeadingFragments = try await makeDocumentationContentRenderer()
             .subHeadingFragments(for: nodeWithSubheadingAndNavigatorVariants)
-        
-        XCTAssertEqual(
-            subHeadingFragments.defaultValue,
-            [
-                DeclarationRenderSection.Token(
-                    text: "class",
-                    kind: .keyword,
-                    identifier: nil,
-                    preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: " ",
-                    kind: .text,
-                    identifier: nil,
-                    preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: "ClassInSwift",
-                    
-                    // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
-                    kind: .identifier,
-                    identifier: nil,
-                    preciseIdentifier: nil
-                )
-            ]
-        )
+
+        #expect(subHeadingFragments.defaultValue == [
+            DeclarationRenderSection.Token(
+                text: "class",
+                kind: .keyword,
+                identifier: nil,
+                preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: " ",
+                kind: .text,
+                identifier: nil,
+                preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: "ClassInSwift",
+
+                // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
+                kind: .identifier,
+                identifier: nil,
+                preciseIdentifier: nil
+            ),
+        ])
     }
-    
-    func testDoesNotReplaceSubHeadingFragmentsForOtherLanguagesThanSwift() async throws {
+
+    @Test
+    func doesNotReplaceSubHeadingFragmentsForNonSwiftLanguages() async throws {
         let subHeadingFragments = try await makeDocumentationContentRenderer()
             .subHeadingFragments(for: nodeWithSubheadingAndNavigatorVariants)
-        
+
         guard case .replace(let fragments) = subHeadingFragments.variants.first?.patch.first else {
-            XCTFail("Unexpected patch")
+            Issue.record("Unexpected patch")
             return
         }
-        
-        XCTAssertEqual(
-            fragments,
-            [
-                DeclarationRenderSection.Token(
-                    text: "class",
-                    kind: .keyword, identifier: nil, preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: " ",
-                    kind: .text, identifier: nil, preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: "ClassInAnotherLanguage",
-                    kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
-                )
-            ]
-        )
+
+        #expect(fragments == [
+            DeclarationRenderSection.Token(
+                text: "class",
+                kind: .keyword, identifier: nil, preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: " ",
+                kind: .text, identifier: nil, preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: "ClassInAnotherLanguage",
+                kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
+            ),
+        ])
     }
-    
-    func testReplacesTypeIdentifierNavigatorFragmentWithIdentifierForSwift() async throws {
+
+    @Test
+    func replacesTypeIdentifierNavigatorFragmentWithIdentifierForSwift() async throws {
         let navigatorFragments = try await makeDocumentationContentRenderer()
             .navigatorFragments(for: nodeWithSubheadingAndNavigatorVariants)
-        
-        XCTAssertEqual(
-            navigatorFragments.defaultValue,
-            [
-                DeclarationRenderSection.Token(
-                    text: "class",
-                    kind: .keyword,
-                    identifier: nil,
-                    preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: " ",
-                    kind: .text,
-                    identifier: nil,
-                    preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: "ClassInSwift",
-                    
-                    // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
-                    kind: .identifier,
-                    identifier: nil,
-                    preciseIdentifier: nil
-                )
-            ]
-        )
+
+        #expect(navigatorFragments.defaultValue == [
+            DeclarationRenderSection.Token(
+                text: "class",
+                kind: .keyword,
+                identifier: nil,
+                preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: " ",
+                kind: .text,
+                identifier: nil,
+                preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: "ClassInSwift",
+
+                // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
+                kind: .identifier,
+                identifier: nil,
+                preciseIdentifier: nil
+            ),
+        ])
     }
-    
-    func testDoesNotReplacesNavigatorFragmentsForOtherLanguagesThanSwift() async throws {
+
+    @Test
+    func doesNotReplaceNavigatorFragmentsForNonSwiftLanguages() async throws {
         let navigatorFragments = try await makeDocumentationContentRenderer()
             .navigatorFragments(for: nodeWithSubheadingAndNavigatorVariants)
-        
+
         guard case .replace(let fragments) = navigatorFragments.variants.first?.patch.first else {
-            XCTFail("Unexpected patch")
+            Issue.record("Unexpected patch")
             return
         }
-        
-        XCTAssertEqual(
-            fragments,
-            [
-                DeclarationRenderSection.Token(
-                    text: "class",
-                    kind: .keyword, identifier: nil, preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: " ",
-                    kind: .text, identifier: nil, preciseIdentifier: nil
-                ),
-                DeclarationRenderSection.Token(
-                    text: "ClassInAnotherLanguage",
-                    kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
-                )
-            ]
-        )
+
+        #expect(fragments == [
+            DeclarationRenderSection.Token(
+                text: "class",
+                kind: .keyword, identifier: nil, preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: " ",
+                kind: .text, identifier: nil, preciseIdentifier: nil
+            ),
+            DeclarationRenderSection.Token(
+                text: "ClassInAnotherLanguage",
+                kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
+            ),
+        ])
     }
-}
 
-private extension DocumentationDataVariantsTrait {
-    static var otherLanguage: DocumentationDataVariantsTrait { .init(interfaceLanguage: "otherLanguage") }
-}
-
-private extension DocumentationContentRendererTests {
-    func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
-        let (_, context) = try await testBundleAndContext()
+    private func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
+        let context = try await makeEmptyContext()
         return DocumentationContentRenderer(context: context)
     }
-    
-    var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {
+
+    private var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {
         var node = DocumentationNode(
             reference: ResolvedTopicReference(
                 bundleID: "org.swift.example",
@@ -163,7 +149,7 @@ private extension DocumentationContentRendererTests {
             semantic: nil,
             platformNames: nil
         )
-        
+
         node.semantic = Symbol(
             kindVariants: .init(values: [
                 .swift: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"),
@@ -219,7 +205,11 @@ private extension DocumentationContentRendererTests {
             httpResponsesSection: nil,
             redirects: nil
         )
-        
+
         return node
     }
+}
+
+private extension DocumentationDataVariantsTrait {
+    static var otherLanguage: DocumentationDataVariantsTrait { .init(interfaceLanguage: "otherLanguage") }
 }
