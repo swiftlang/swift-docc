@@ -223,6 +223,11 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             let renderLanguageIDs = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
             ]
+
+            // Use the highest-priority platform declaration to compute the LCS for the common fragments.
+            // `declarations` is checked to be non-nil above, so it is safe to force unwrap here.
+            let highestPriorityDeclaration = declaration.mainRenderFragments()!
+                .declarationFragments.flatMap(preProcessFragment(_:))
             for pair in declaration {
                 let (platforms, declaration) = pair
                 let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
@@ -241,10 +246,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         OverloadDeclaration($0.declaration.flatMap(preProcessFragment(_:)), $0.reference, $0.conformance)
                     })
 
-                    // Collect the "common fragments" so we can highlight the ones that are different
-                    // in each declaration
+                    // Collect the "common fragments" so we can highlight the ones that differ
                     let commonFragments = commonFragments(
-                        for: (mainDeclaration, renderNode.identifier, nil),
+                        for: (highestPriorityDeclaration, renderNode.identifier, nil),
                         overloadDeclarations: processedOverloadDeclarations,
                         mainDeclarationIndex: overloads.displayIndex
                     )
