@@ -11,10 +11,13 @@
 import SymbolKit
 
 extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
+    /// The declaration fragments for the group with the highest priority platform.
     func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
         self.min(by: { lhs, rhs in
-            // Join all the platform IDs and use that to get a stable value
-            lhs.key.compactMap(\.?.rawValue).joined() < lhs.key.compactMap(\.?.rawValue).joined()
+            PlatformName.isInOrder(
+                lhs.key.compactMap { $0 }.min()?.rawValue,
+                rhs.key.compactMap { $0 }.min()?.rawValue
+            )
         })?.value
     }
 
