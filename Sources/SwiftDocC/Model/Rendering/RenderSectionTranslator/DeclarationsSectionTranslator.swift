@@ -170,8 +170,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                     let conformance = renderNodeTranslator.contentRenderer.conformanceSectionFor(overloadReference, collectedConstraints: [:])
 
-                    let declarationFragments = overload.declarationVariants[trait]?.values
-                        .first?
+                    let declarationFragments = overload.declarationVariants[trait]?
+                        .mainRenderFragments()?
                         .declarationFragments
                     precondition(
                         declarationFragments != nil,
