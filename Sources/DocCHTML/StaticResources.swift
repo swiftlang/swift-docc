@@ -144,6 +144,23 @@ section {
   }
 }
 
+/* Draw a separator between the Topics section and any non-"hero" section (with a background) before it */
+article > section:not(#hero) + #Topics,
+/* Draw a separator between the See Also section and any non-"hero" section (with a background) before it */
+article > section:not(#hero) + #See-Also,
+/* Draw a separator between a symbol's first and second sections */
+article > section:first-of-type:not(#hero) + section
+{
+  &:before {
+    content: "";
+    display: block;
+    width: 100%;
+    background: var(--color-grid);
+    height: 1px;
+    margin-bottom: 40px;
+  }
+}
+
 hr {
   max-width: 820px;
   margin: 0 auto;
