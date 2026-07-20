@@ -17,8 +17,9 @@ extension Benchmark {
         public static let displayName = "Total DocC archive size"
         public var result: MetricValue?
         
-        public init(archiveDirectory: URL) {
-            self.result = MetricValue(directory: archiveDirectory)
+        public init(archiveDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
+            self.result = MetricValue(directory: archiveDirectory,
+                                      fileManager: fileManager)
         }
     }
     
@@ -28,8 +29,9 @@ extension Benchmark {
         public static let displayName = "Data subdirectory size"
         public var result: MetricValue?
         
-        public init(dataDirectory: URL) {
-            self.result = MetricValue(directory: dataDirectory)
+        public init(dataDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
+            self.result = MetricValue(directory: dataDirectory,
+                                      fileManager: fileManager)
         }
     }
     
@@ -39,8 +41,9 @@ extension Benchmark {
         public static let displayName = "Index subdirectory size"
         public var result: MetricValue?
         
-        public init(indexDirectory: URL) {
-            self.result = MetricValue(directory: indexDirectory)
+        public init(indexDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
+            self.result = MetricValue(directory: indexDirectory,
+                                      fileManager: fileManager)
         }
     }
 }
@@ -52,21 +55,15 @@ extension MetricValue {
     /// in the given directory and not the disk space reserved for storing the
     /// corresponding files. This behavior helps produce real deltas between
     /// multiple benchmarks.
-    init?(directory: URL) {
-        guard let enumerator = FileManager.default.enumerator(
-            at: directory,
-            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey],
-            options: .skipsHiddenFiles,
-            errorHandler: nil
-        ) else {
+    init?(directory: URL, fileManager: some FileManagerProtocol) {
+        do {
+            let bytes = try fileManager.sizeOfDirectory(
+                at: directory,
+                options: [.skipsHiddenFiles]
+            )
+            self = .bytesOnDisk(bytes)
+        } catch {
             return nil
         }
-        
-        var bytes: Int64 = 0
-        for case let url as URL in enumerator {
-            bytes += Int64((try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0)
-        }
-        
-        self = .bytesOnDisk(bytes)
     }
 }
