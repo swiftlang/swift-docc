@@ -194,7 +194,9 @@ public class DocumentationContentRenderer {
         }
         
         let isLeaf = SymbolReference.isLeaf(symbol)
-        let parentName = context.parents(of: reference).first
+        // A symbol can be reached in the topic graph through one or more parent nodes.
+        // To ensure stable ordering, use the parent with the shortest path to the symbol.
+        let parentName = context.shortestFinitePath(to: reference)?.last
             .flatMap { try? context.entity(with: $0).symbol?.names.title }
         
         let options = ConformanceSection.ConstraintRenderOptions(
