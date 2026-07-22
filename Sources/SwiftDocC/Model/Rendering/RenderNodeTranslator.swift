@@ -447,17 +447,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
-            var dependencies: RenderReferenceDependencies
-            
-            if let renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
-                let renderReferenceDependencies = renderContext.store.content(for: reference)?.renderReferenceDependencies {
-                renderReference = prerendered
-                dependencies = renderReferenceDependencies
-            } else {
-                dependencies = RenderReferenceDependencies()
-                renderReference = renderer.renderReference(for: reference, dependencies: &dependencies)
-            }
-            
+            let dependencies: RenderReferenceDependencies
+            (renderReference, dependencies) = makeRenderReference(for: reference, with: renderer)
+
             for link in dependencies.linkReferences {
                 linkReferences[link.identifier.identifier] = link
             }
@@ -466,20 +458,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 imageReferences[imageReference.identifier.identifier] = imageReference
             }
             
-            
             for dependencyReference in dependencies.topicReferences {
                 // If this reference is also a direct reference of the page,
                 // do not redundantly process it as a dependency reference.
                 guard renderReferences[dependencyReference.absoluteString] == nil else {
                     continue
                 }
-                var dependencyRenderReference: TopicRenderReference
-                if let renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
-                    dependencyRenderReference = prerendered
-                } else {
-                    var dependencies = RenderReferenceDependencies()
-                    dependencyRenderReference = renderer.renderReference(for: dependencyReference, dependencies: &dependencies)
-                }
+                let (dependencyRenderReference, _) = makeRenderReference(for: dependencyReference, with: renderer)
                 renderReferences[dependencyReference.absoluteString] = dependencyRenderReference
             }
             
@@ -500,6 +485,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         return renderReferences
+    }
+
+    /// Creates the render reference for the given topic reference and gathers its dependencies,
+    // reusing a pre-rendered reference from the render context store if available.
+    private func makeRenderReference(
+        for reference: ResolvedTopicReference,
+        with renderer: DocumentationContentRenderer
+    ) -> (TopicRenderReference, RenderReferenceDependencies) {
+        if let renderContext,
+           let content = renderContext.store.content(for: reference),
+           let prerendered = content.renderReference as? TopicRenderReference {
+            return (prerendered, content.renderReferenceDependencies)
+        }
+        var dependencies = RenderReferenceDependencies()
+        let renderReference = renderer.renderReference(for: reference, dependencies: &dependencies)
+        return (renderReference, dependencies)
     }
     
     private func addReferences(_ references: [String: some RenderReference], to node: inout RenderNode) {
