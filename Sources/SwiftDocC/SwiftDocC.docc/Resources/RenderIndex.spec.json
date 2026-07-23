@@ -9,6 +9,7 @@
     "components": {
         "schemas": {
             "RenderIndex": {
+                "description": "maps to https://github.com/swiftlang/swift-docc/blob/main/Sources/SwiftDocC/Indexing/RenderIndexJSON/RenderIndex.swift#L24.",
                 "type": "object",
                 "required": [
                     "schemaVersion",
@@ -42,6 +43,7 @@
                 }
             },
             "Node": {
+                "description": "maps to https://github.com/swiftlang/swift-docc/blob/main/Sources/SwiftDocC/Indexing/RenderIndexJSON/RenderIndex.swift#L117.",
                 "type": "object",
                 "required": [
                     "title"
