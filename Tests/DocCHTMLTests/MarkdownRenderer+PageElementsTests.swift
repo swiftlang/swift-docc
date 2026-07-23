@@ -22,6 +22,7 @@ import Markdown
 import DocCCommon
 import SymbolKit
 
+extension DocCHTMLTestSuites {
 struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
     func renderingBreadcrumbs(goal: RenderGoal) {
@@ -868,6 +869,7 @@ struct MarkdownRenderer_PageElementsTests {
         let document = Document(parsing: string, options: [.parseBlockDirectives, .parseSymbolLinks])
         return Array(document.children)
     }
+}
 }
 
 struct MultiValueLinkProvider: LinkProvider {
