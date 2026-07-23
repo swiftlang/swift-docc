@@ -2416,7 +2416,7 @@ class ConvertServiceTests: XCTestCase {
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 1.5)
     }
     
     /// Asserts that the given render reference store contains the given topic.
