@@ -28,6 +28,7 @@ jobs:
       # - CMake: https://github.com/swiftlang/swift-docc/pull/1115
       enable_windows_checks: false
       enable_macos_checks: true
+
   soundness:
     name: Soundness
     uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.13
@@ -49,3 +50,58 @@ jobs:
       #
       # https://github.com/swiftlang/github-workflows/pull/279
       python_lint_check_enabled: false
+
+  # Detect which auxiliary packages are affected by the PR,
+  # so that the build jobs only run when relevant.
+  changes:
+    name: Detect changed packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      make_test_bundle: ${{ steps.filter.outputs.make_test_bundle }}
+      benchmark: ${{ steps.filter.outputs.benchmark }}
+    steps:
+      - id: filter
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          changed="$(gh api --paginate \
+            "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+            --jq '.[].filename')"
+          echo "Changed files:"
+          echo "$changed"
+
+          make_test_bundle=false
+          benchmark=false
+          # `bin/make-test-bundle` has no dependencies, only check its source.
+          if echo "$changed" | grep -qE '^bin/make-test-bundle/'; then make_test_bundle=true; fi
+          # `bin/benchmark` depends on the benchmark schema in `Sources/SwiftDocC/Benchmark/`.
+          # Build and test it if its source or this dependency changes.
+          if echo "$changed" | grep -qE '^(bin/benchmark/|Sources/SwiftDocC/Benchmark/|Package\.(swift|resolved)$)'; then benchmark=true; fi
+
+          echo "make_test_bundle=$make_test_bundle" >> "$GITHUB_OUTPUT"
+          echo "benchmark=$benchmark" >> "$GITHUB_OUTPUT"
+
+  make-test-bundle:
+    name: Build bin/make-test-bundle
+    needs: changes
+    if: ${{ needs.changes.outputs.make_test_bundle == 'true' }}
+    runs-on: ubuntu-latest
+    container:
+      image: swiftlang/swift:nightly-main-jammy
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift build --package-path bin/make-test-bundle
+
+  benchmark:
+    name: Build and test bin/benchmark
+    needs: changes
+    if: ${{ needs.changes.outputs.benchmark == 'true' }}
+    runs-on: ubuntu-latest
+    container:
+      image: swiftlang/swift:nightly-main-jammy
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test --parallel --package-path bin/benchmark
