@@ -22,6 +22,32 @@ DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
 # Build SwiftDocC.
 swift test --parallel --package-path "$DOCC_ROOT"
 
+base_ref=""
+if git -C "$DOCC_ROOT" rev-parse --verify --quiet origin/main >/dev/null 2>&1; then
+    base_ref="origin/main"
+fi
+# Build and test auxiliary Swift packages under `bin/`.
+# These are separate packages that aren't covered by `swift test` above.
+# To avoid rebuilding them on every run, only build an auxiliary package if
+# the package source changes or a package it depends on changes.
+should_build() {
+    [ -z "$base_ref" ] && return 0
+    git -C "$DOCC_ROOT" diff --name-only "$base_ref"...HEAD | grep -qE "$1"
+}
+
+# `bin/make-test-bundle` has no dependencies, only check its source.
+if should_build '^bin/make-test-bundle/'; then
+    printf "=> Building make-test-bundle…\n"
+    swift build --package-path "$DOCC_ROOT/bin/make-test-bundle"
+fi
+
+# `bin/benchmark` depends on the benchmark schema in `Sources/SwiftDocC/Benchmark/`.
+# Build and test it if its source or this dependency changes.
+if should_build '^(bin/benchmark/|Sources/SwiftDocC/Benchmark/|Package\.(swift|resolved)$)'; then
+    printf "=> Building and testing benchmark…\n"
+    swift test --parallel --package-path "$DOCC_ROOT/bin/benchmark"
+fi
+
 # Run source code checks for the codebase.
 LC_ALL=C "$DOCC_ROOT"/bin/check-source
 
