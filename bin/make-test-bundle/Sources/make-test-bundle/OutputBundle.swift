@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -244,7 +244,9 @@ class OutputBundle {
         // Build the package
         print("Building \(name)...")
         try runTask(envURL, directory: outputURL, arguments: ["swift", "build"])
-        
+
+        // Find build output path
+        let binPath = try runTask(envURL, directory: outputURL, arguments: ["swift", "build", "--show-bin-path"])
         // Find SDK path
         let sdkPath = try runTask(envURL, arguments: ["xcrun", "--sdk", "macosx", "--show-sdk-path"])
 
@@ -265,7 +267,7 @@ class OutputBundle {
             "-target",
             swiftInfo.target.triple,
             "-I",
-            outputURL.path.appending("/.build/debug"),
+            binPath.appending("/Modules"),
             "-sdk",
             sdkPath,
             "-output-dir",

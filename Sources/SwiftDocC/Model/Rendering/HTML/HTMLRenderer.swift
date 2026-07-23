@@ -203,8 +203,6 @@ package struct HTMLRenderer {
         
         // Topics
         if let topics = article.topics {
-            separateSectionsIfNeeded(in: articleElement)
-            
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
             articleElement.addChildren(
                 renderer.groupedSection(named: "Topics", groups: [
@@ -325,8 +323,6 @@ package struct HTMLRenderer {
             .values(goal: goal, by: { $0.parameters.elementsEqual($1.parameters, by: { $0.name == $1.name }) })
             .valuesByLanguage()
         {
-            separateSectionsIfNeeded(in: articleElement)
-            
             articleElement.addChildren(renderer.parameters(
                 parameterSections.mapValues { section in
                     section.parameters.map {
@@ -386,8 +382,6 @@ package struct HTMLRenderer {
             }
             
             if !taskGroupInfo.isEmpty {
-                separateSectionsIfNeeded(in: articleElement)
-                
                 articleElement.addChildren(renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
             }
         }
@@ -438,21 +432,7 @@ package struct HTMLRenderer {
         )
     }
     
-    private func separateSectionsIfNeeded(in element: XMLElement) {
-        guard goal == .richness,
-              let previous = (element.children ?? []).last as? XMLElement,
-              previous.name == "section",
-              previous.attribute(forName: "id")?.stringValue != "hero" // Avoid adding a `<hr>` element between then hero (with background) and the next section
-        else {
-            return
-        }
-        
-        element.addChild(.element(named: "hr")) // Separate the sections with a thematic break
-    }
-    
     private func addSeeAlso(_ seeAlso: SeeAlsoSection, to element: XMLElement) {
-        separateSectionsIfNeeded(in: element)
-        
         element.addChildren(
             renderer.groupedSection(named: "See Also", groups: [
                 .swift: seeAlso.taskGroups.map { group in
