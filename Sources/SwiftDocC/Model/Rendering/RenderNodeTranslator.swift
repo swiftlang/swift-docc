@@ -1035,7 +1035,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func isReferenceAvailable(
         _ reference: ResolvedTopicReference,
         allowedTraits: Set<DocumentationDataVariantsTrait>,
-        availableTraits: Set<DocumentationDataVariantsTrait>
+        availableTraits: Set<DocumentationDataVariantsTrait>,
+        inSeeAlsoSection: Bool = false
     ) -> Bool {
         // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
         // and is external to the bundle, then curate the topic irrespective of the source
@@ -1053,9 +1054,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
             // An external symbol may have no language overlap with the module being built,
             // so filtering it out would mean it is not curated anywhere (rdar://94406023).
-            // For local references, this curation is forbidden. ``DocumentationCurator`` emits a warning,
-            // and the reference is filtered out here so it doesn't appear in the rendered topic section.
-            return context.isExternal(reference: reference)
+            //
+            // Local references with no language overlap are disallowed in Topics sections
+            // as the reference would be unreachable in the navigator hierarchy.
+            // ``DocumentationCurator`` emits a warning, and the reference is dropped here.
+            //
+            // Local references with no language overlap are allowed in See Also sections
+            // since they do not contribute to the navigator hierarchy.
+            return inSeeAlsoSection || context.isExternal(reference: reference)
         }
 
         return allowedTraits.contains { trait in
@@ -1155,6 +1161,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         availableTraits: Set<DocumentationDataVariantsTrait>,
         contentCompiler: inout RenderContentCompiler
     ) -> [TaskGroupRenderSection] {
+        let isSeeAlsoSection = topics is SeeAlsoSection
+
         return topics.taskGroups.compactMap { group in
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
                 SupportedLanguage(from: $0, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags)?.language
@@ -1182,7 +1190,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
 
-                return isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits)
+                return isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits, inSeeAlsoSection: isSeeAlsoSection)
             }
             
             let taskGroupRenderSection = TaskGroupRenderSection(
