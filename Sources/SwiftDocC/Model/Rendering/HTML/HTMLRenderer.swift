@@ -489,7 +489,7 @@ private extension DocumentationNode {
 
 private extension Symbol {
     func makeNames(goal: RenderGoal, fallbackTitle: String) -> LinkedElement.Names {
-        switch titleVariants.values(goal: goal) {
+        switch proseTitleVariants.values(goal: goal) {
             case .single(let title):
                 .single(.symbol(title))
             case .languageSpecific(let titles):

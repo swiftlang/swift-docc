@@ -486,6 +486,7 @@ struct ReferenceResolver: SemanticVisitor {
         return Symbol(
             kindVariants: symbol.kindVariants,
             titleVariants: symbol.titleVariants,
+            proseVariants: symbol.proseVariants,
             subHeadingVariants: symbol.subHeadingVariants,
             navigatorVariants: symbol.navigatorVariants,
             roleHeadingVariants: symbol.roleHeadingVariants,
