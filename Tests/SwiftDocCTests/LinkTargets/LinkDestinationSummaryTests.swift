@@ -907,6 +907,77 @@ struct LinkDestinationSummaryTests {
         
         try assertRoundTripCoding(summaries)
     }
+
+    @Test
+    func chooseHighestPriorityPlatformDeclarationForMultiPlatformSymbol() async throws {
+        func symbolGraph(platformName: String, declarationSuffix: String) -> JSONFile<SymbolGraph> {
+            JSONFile(name: "\(platformName).symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                platform: .init(operatingSystem: .init(name: platformName)),
+                symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .func, pathComponents: ["someFunction()"], declaration: [
+                        .init(kind: .keyword,    spelling: "func",                              preciseIdentifier: nil),
+                        .init(kind: .text,       spelling: " ",                                 preciseIdentifier: nil),
+                        .init(kind: .identifier, spelling: "someFunction_\(declarationSuffix)", preciseIdentifier: nil),
+                    ])
+                ]
+            ))
+        }
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "ModuleName", identifier: "com.test.example"),
+            symbolGraph(platformName: "iOS",   declarationSuffix: "iOS"),
+            symbolGraph(platformName: "macOS", declarationSuffix: "macOS"),
+        ])
+
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let moduleReference = try #require(context.soleRootModuleReference)
+
+        let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/someFunction()" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        let summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
+
+        // iOS is higher priority than macOS
+        #expect(summary.plainTextDeclaration == "func someFunction_iOS")
+    }
+
+    @Test
+    func chooseHighestPriorityPlatformDeclarationWhenPlatformsShareDeclaration() async throws {
+        func symbolGraph(platformName: String, declarationSuffix: String) -> JSONFile<SymbolGraph> {
+            JSONFile(name: "\(platformName).symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                platform: .init(operatingSystem: .init(name: platformName)),
+                symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .func, pathComponents: ["someFunction()"], declaration: [
+                        .init(kind: .keyword,    spelling: "func",                              preciseIdentifier: nil),
+                        .init(kind: .text,       spelling: " ",                                 preciseIdentifier: nil),
+                        .init(kind: .identifier, spelling: "someFunction_\(declarationSuffix)", preciseIdentifier: nil),
+                    ])
+                ]
+            ))
+        }
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "ModuleName", identifier: "com.test.example"),
+            symbolGraph(platformName: "iOS",   declarationSuffix: "shared"),
+            symbolGraph(platformName: "tvOS",  declarationSuffix: "shared"),
+            symbolGraph(platformName: "macOS", declarationSuffix: "macOS"),
+        ])
+
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let moduleReference = try #require(context.soleRootModuleReference)
+
+        let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/someFunction()" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        let summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
+
+        // iOS in the merged [iOS, tvOS] group is higher priority than macOS
+        #expect(summary.plainTextDeclaration == "func someFunction_shared")
+    }
 }
 
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
