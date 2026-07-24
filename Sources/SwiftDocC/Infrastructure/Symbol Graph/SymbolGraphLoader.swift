@@ -302,25 +302,6 @@ struct SymbolGraphLoader {
             symbolGraph.symbols = symbolsWithFilledIntroducedVersions
         }
     }
-    
-    /// Returns the module name, if any, in the file name of a given symbol-graph URL.
-    ///
-    /// Returns "Combine", if it's a main symbol-graph file, such as "Combine.symbols.json".
-    /// Returns "Swift", if it's an extension file such as, "Combine@Swift.symbols.json".
-    /// - parameter url: A URL to a symbol graph file.
-    /// - returns: A module name, or `nil` if the file name cannot be parsed.
-    static func moduleNameFor(_ url: URL) -> String? {
-        let fileName = url.lastPathComponent.components(separatedBy: ".symbols.json")[0]
-
-        let fileNameComponents = fileName.components(separatedBy: "@")
-        if fileNameComponents.count > 2 {
-            // Two "@"s found in the name - it's a cross import symbol graph:
-            // "Framework1@Framework2@_Framework1_Framework2.symbols.json"
-            return fileNameComponents[0]
-        }
-        
-        return fileName.split(separator: "@", maxSplits: 1).last.map({ String($0) })
-    }
 }
 
 extension SymbolGraph.SemanticVersion {
