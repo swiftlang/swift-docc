@@ -769,4 +769,33 @@ struct DocumentationCuratorTests_new {
         #expect(!swiftOnlyRenderNode.topicSections.flatMap(\.identifiers).contains { $0.hasSuffix("/ObjcOnlyClass") },
                 "The cross-language reference should not be present in the parent page")
     }
+
+    @Test
+    func retainsCrossLanguageLinkInSeeAlsoSection() async throws {
+        let context = try await load(catalog:
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-swift.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "swift-only-class", language: .swift, kind: .class, pathComponents: ["SwiftOnlyClass"]),
+                ])),
+                JSONFile(name: "ModuleName-objc.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"]),
+                ])),
+                TextFile(name: "SwiftOnlyClass.md", utf8Content: """
+                # ``ModuleName/SwiftOnlyClass``
+
+                ## See Also
+
+                - ``ObjcOnlyClass``
+                """),
+            ])
+        )
+
+        #expect(context.diagnostics.map(\.identifier) == [], "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        let converter = DocumentationNodeConverter(context: context)
+        let swiftOnlyReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SwiftOnlyClass" }))
+        let swiftOnlyRenderNode = converter.convert(try context.entity(with: swiftOnlyReference))
+        #expect(swiftOnlyRenderNode.seeAlsoSections.flatMap(\.identifiers).contains { $0.hasSuffix("/ObjcOnlyClass") },
+                "Cross-language reference should be present in the parent page's See Also section")
+    }
 }
