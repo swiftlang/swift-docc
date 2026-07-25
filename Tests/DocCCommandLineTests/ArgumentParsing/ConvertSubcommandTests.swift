@@ -18,7 +18,7 @@ import ArgumentParser
 class ConvertSubcommandTests: XCTestCase {
     private let testBundleURL = Bundle.module.url(
         forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-    
+
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources")!
 
@@ -244,7 +244,7 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
             ])
             
-            XCTAssertEqual(convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory, nil)
+            XCTAssertEqual(convertOptions.inputsAndOutputs.additionalSymbolGraphDirectories, [])
         }
         
         // Is set when passed
@@ -256,8 +256,8 @@ class ConvertSubcommandTests: XCTestCase {
             ])
             
             XCTAssertEqual(
-                convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory,
-                URL(fileURLWithPath: "/path/to/folder-of-symbol-graph-files")
+                convertOptions.inputsAndOutputs.additionalSymbolGraphDirectories,
+                [URL(fileURLWithPath: "/path/to/folder-of-symbol-graph-files")]
             )
         }
         
@@ -271,6 +271,77 @@ class ConvertSubcommandTests: XCTestCase {
 
             XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
                 "FillIntroduced.symbols.json",
+                "MyKit@SideKit.symbols.json",
+                "mykit-iOS.symbols.json",
+                "sidekit.symbols.json",
+            ])
+        }
+
+        let mixedLanguageFrameworkTestBundleURL = Bundle.module.url(
+            forResource: "MixedLanguageFramework", withExtension: "docc", subdirectory: "Test Bundles"
+        )!
+
+        // Is recursively scanned when multiple paths provided
+        do {
+            let convertOptions = try Docc.Convert.parse([
+                testBundleURL.path,
+                "--additional-symbol-graph-dir",
+                testBundleURL.path,
+                "--additional-symbol-graph-dir",
+                mixedLanguageFrameworkTestBundleURL.path
+            ])
+
+            XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+                "FillIntroduced.symbols.json",
+                // One in `clang`, one in `swift`
+                "MixedLanguageFramework.symbols.json",
+                "MixedLanguageFramework.symbols.json",
+                "MyKit@SideKit.symbols.json",
+                "mykit-iOS.symbols.json",
+                "sidekit.symbols.json",
+            ])
+        }
+
+        // Is unique when the same directory is provided multiple times
+        do {
+            let convertOptions = try Docc.Convert.parse([
+                testBundleURL.path,
+                "--additional-symbol-graph-dir",
+                testBundleURL.path,
+                "--additional-symbol-graph-dir",
+                mixedLanguageFrameworkTestBundleURL.path,
+                "--additional-symbol-graph-dir",
+                mixedLanguageFrameworkTestBundleURL.path
+            ])
+
+            XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+                "FillIntroduced.symbols.json",
+                // One in `clang`, one in `swift`
+                "MixedLanguageFramework.symbols.json",
+                "MixedLanguageFramework.symbols.json",
+                "MyKit@SideKit.symbols.json",
+                "mykit-iOS.symbols.json",
+                "sidekit.symbols.json",
+            ])
+        }
+
+        // Is unique when the directories overlap
+        do {
+            let convertOptions = try Docc.Convert.parse([
+                testBundleURL.path,
+                "--additional-symbol-graph-dir",
+                testBundleURL.path,
+                "--additional-symbol-graph-dir",
+                mixedLanguageFrameworkTestBundleURL.path,
+                "--additional-symbol-graph-dir",
+                mixedLanguageFrameworkTestBundleURL.appendingPathComponent("symbol-graphs/swift").path
+            ])
+
+            XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+                "FillIntroduced.symbols.json",
+                // One in `clang`, one in `swift`
+                "MixedLanguageFramework.symbols.json",
+                "MixedLanguageFramework.symbols.json",
                 "MyKit@SideKit.symbols.json",
                 "mykit-iOS.symbols.json",
                 "sidekit.symbols.json",
@@ -308,8 +379,8 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier, "com.example.test")
         
         XCTAssertEqual(
-            convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory,
-            testBundleURL
+            convertOptions.inputsAndOutputs.additionalSymbolGraphDirectories,
+            [testBundleURL]
         )
         
         // Verify the action
