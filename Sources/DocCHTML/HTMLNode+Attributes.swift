@@ -14,7 +14,7 @@ extension HTMLNode {
         let name: StaticString
         let value: String
         
-        /// A short, abbreviated description of a `<th>`element's content.
+        /// A short, abbreviated description of a `<th>` element's content.
         package static func abbr(_ description: String) -> Attribute { .init(name: "abbr", value: description) }
 
         /// A list of file types that the receiver of a `<form>` or `<input>` element's submission accepts.
@@ -105,7 +105,7 @@ extension HTMLNode {
         package static func colSpan(_ count: UInt) -> Attribute { .init(name: "colspan", value: count.description) }
 
         /// The value associated with a `<meta>` element's ``name(_:)`` attribute.
-        package static func contents(_ value: String) -> Attribute { .init(name: "contents", value: value) } 
+        package static func content(_ value: String) -> Attribute { .init(name: "content", value: value) } 
 
         /// A configuration that controls whether or not the element is editable.
         package static func contentEditable(_ value: ContentEditable) -> Attribute { .init(name: "contenteditable", value: value.rawValue) }
@@ -189,7 +189,7 @@ extension HTMLNode {
         package static func formMethod(_ value: Method) -> Attribute { .init(name: "formmethod", value: value.rawValue) }
 
         /// Overrides the validation configuration of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        package static let formValidate = Attribute(name: "formvalidate", value: "") // A "boolean" attribute
+        package static let formNoValidate = Attribute(name: "formnovalidate", value: "") // A "boolean" attribute
 
         /// Overrides the target of the `<form>` element that this `<input>` or `<button>` element belongs to.
         package static func formTarget(_ value: String) -> Attribute { .init(name: "formtarget", value: value) } 
@@ -298,7 +298,7 @@ extension HTMLNode {
         package static func nonce(_ value: String) -> Attribute { .init(name: "nonce", value: value) } 
 
         /// An indication that this `<form>` element should not be validated before its submission.
-        package static let noValidate = Attribute(name: "noValidate", value: "") // A "boolean" attribute
+        package static let noValidate = Attribute(name: "novalidate", value: "") // A "boolean" attribute
 
         /// A configuration that a `<details>` element is expanded or that a `<dialog>` element is active and can be interacted with.
         package static let open = Attribute(name: "open", value: "") // A "boolean" attribute
@@ -316,7 +316,7 @@ extension HTMLNode {
         package static func placeholder(_ value: String) -> Attribute { .init(name: "placeholder", value: value) } 
 
         /// An indication that browser should display the video within the `<video>` element's playback area.
-        package static let playsInline = Attribute(name: "playsInline", value: "") // A "boolean" attribute
+        package static let playsInline = Attribute(name: "playsinline", value: "") // A "boolean" attribute
 
         /// Designates the element as a "popover" that is hidden until it opened via an invoking element.
         package static let popover = Attribute(name: "popover", value: "") // A "boolean" attribute
@@ -328,7 +328,7 @@ extension HTMLNode {
         package static func preLoad(_ value: PreLoad) -> Attribute { .init(name: "preload", value: value.rawValue) }
 
         /// An indication whether or not the`<input>` or `<textarea>` element can be edited.
-        package static let readOnly = Attribute(name: "readOnly", value: "") // A "boolean" attribute
+        package static let readOnly = Attribute(name: "readonly", value: "") // A "boolean" attribute
 
         /// How much information the browser should send in a referrer header when following the `<a>` element's link.
         package static func referrerPolicy(_ value: ReferrerPolicy) -> Attribute { .init(name: "referrerpolicy", value: value.rawValue) }
@@ -340,7 +340,7 @@ extension HTMLNode {
         package static let required = Attribute(name: "required", value: "") // A "boolean" attribute
 
         /// An indication that a `<ol>` element should displays its list items in descending order (instead of in ascending order).
-        package static let revered = Attribute(name: "revered", value: "") // A "boolean" attribute
+        package static let reversed = Attribute(name: "reversed", value: "") // A "boolean" attribute
 
         /// The semantic meaning of an element.
         package static func role(_ value: Role) -> Attribute { .init(name: "role", value: value.rawValue) }
@@ -615,17 +615,17 @@ extension HTMLNode.Attribute {
     /// A value for the ``HTMLNode/Attribute/httpEquiv(_:)`` attribute.
     package enum HTTPEquivalent: String {
         @available(*, deprecated, message: "Use the `lang` attribute to configure the page's language instead.")
-        case contentLanguage
+        case contentLanguage = "content-language"
         /// Equivalent to the `Content-Type` HTTP header.
-        case contentType
+        case contentType = "content-type"
         /// Equivalent to the `Content-Security-Policy` HTTP header.
-        case contentSecurityPolicy
+        case contentSecurityPolicy = "content-security-policy"
         /// Specifies the name of the default CSS style sheet set.
-        case defaultStyle
+        case defaultStyle = "default-style"
         /// Equivalent to the `Refresh` HTTP header.
         case refresh
         @available(*, deprecated, message: "Use the `Set-Cookie` HTTP response header instead.")
-        case setCookie
+        case setCookie = "set-cookie"
     }
     
     /// A value for the ``HTMLNode/Attribute/inputMode(_:)`` attribute.
