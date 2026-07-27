@@ -1190,14 +1190,20 @@ func meter(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 /// Creates a new `<optgroup>` element with the given attributes and contents.
 ///
 /// The `<optgroup>` element semantically represents a group of options with a common label, in a user interface.
-/// A conforming `<optgroup>` element can only contain `<legend>` and nested `<optgroup>` elements.
+/// A conforming `<optgroup>` element can only zero or one `<legend>` elements follower by zero or more `<option>`, `<script>`, `<template>`, `<noscript>`, or `<div>` elements.
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<optgroup>` element.
 func optGroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    assert(contents.allSatisfy { $0._tag == .button || $0._tag == .optgroup}, "<optgroup> tags can only contain <legend> or nested <optgroup> tags")
+    assert(contents.allSatisfy {
+        switch $0._tag {
+            case .div, .legend, .noscript, .option, .script, .template: true
+            default: false
+        }
+    }, "<optgroup> tags can only contain <legend>, <option>, <script>, <template>, <noscript> and <div> tags")
+    assert(contents.first?._tag == .legend || contents.dropFirst().allSatisfy { $0._tag != .legend}, "<optgroup> tags can only contain zero or one <legend> tags as the first element")
     return ._element(.optgroup, attributes: attributes, contents: contents)
 }
 
@@ -1241,14 +1247,20 @@ func progress(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 /// Creates a new `<select>` element with the given attributes and contents.
 ///
 /// The `<select>` element semantically represents a control, in a user interface, for selecting amongst a set of options.
-/// A conforming `<select>` element can only contain `<button>` elements.
+/// A conforming `<select>` element can only zero or one `<button>` elements,
+/// followed by zero or more `<option>`, `<optgroup>`, `<hr>`, `<script>`, `<template>`, `<noscript>`, or `<div>` elements.
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<select>` element.
 func select(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    assert(contents.allSatisfy { $0._tag == .button }, "<select> tags can only contain <button> tags")
+    assert(contents.allSatisfy {
+        switch $0._tag {
+            case .button, .div, .hr, .noscript, .optgroup, .option, .script, .template: true
+            default: false
+        }
+    }, "<select> tags can only contain <button>, <option>, <optgroup>, <hr>, <script>, <template>, <noscript> and <div> tags")
     return ._element(.select, attributes: attributes, contents: contents)
 }
 
