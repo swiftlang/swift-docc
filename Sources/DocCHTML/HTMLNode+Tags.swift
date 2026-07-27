@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-// Apart from the `<head>` and `<body>` elements; the groups of element accessors are defined in alphabetical order.
 // This file only exposes package-level accessors for the HTML elements that we currently need outside of this module.
 // Accessors that are only needed by the `MarkdownRenderer` visitor pattern can remain internal-only until there's another need for them.
 
