@@ -108,7 +108,7 @@ struct MergeAction: AsyncAction {
         
         let reference = ResolvedTopicReference(bundleID: .init(rawValue: landingPageName), path: "/documentation", sourceLanguage: language)
         
-        let rootRenderReferences = try readRootNodeRenderReferencesIn(dataDirectory: targetURL.appendingPathComponent("data", isDirectory: true))
+        let rootRenderReferences = try readRootNodeRenderReferencesIn(dataDirectory: targetURL.appendingPathComponent("data", isDirectory: true), on: fileManager)
         
         guard !rootRenderReferences.isEmpty else {
             // No need to synthesize a landing page if the combined archive is empty.

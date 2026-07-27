@@ -16,6 +16,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
     var targetFolder: URL
     var bundleRootFolder: URL?
     var fileManager: any FileManagerProtocol
+    var outputFileManager: any FileManagerProtocol
     var context: DocumentationContext
     var renderNodeWriter: JSONEncodingRenderNodeWriter
     var indexer: ConvertAction.Indexer?
@@ -31,6 +32,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         targetFolder: URL,
         bundleRootFolder: URL?,
         fileManager: any FileManagerProtocol,
+        outputFileManager: any FileManagerProtocol,
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
@@ -40,10 +42,12 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         self.targetFolder = targetFolder
         self.bundleRootFolder = bundleRootFolder
         self.fileManager = fileManager
+        self.outputFileManager = outputFileManager
         self.context = context
         self.renderNodeWriter = JSONEncodingRenderNodeWriter(
             targetFolder: targetFolder,
             fileManager: fileManager,
+            outputFileManager: outputFileManager,
             transformForStaticHostingIndexHTML: transformForStaticHostingIndexHTML
         )
         self.indexer = indexer
@@ -71,7 +75,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         encoder.outputFormatting.insert(.prettyPrinted)
         #endif
         let data = try encoder.encode(markdownManifest)
-        try fileManager.createFile(at: url, contents: data)
+        try outputFileManager.createFile(at: url, contents: data)
     }
     
     func consume(externalRenderNode: ExternalRenderNode) throws {
@@ -83,9 +87,10 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
             for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL {
                 let assetName = sourceURL.lastPathComponent
-                try fileManager._copyItem(
+                try fileManager.copyItem(
                     at: sourceURL,
-                    to: destinationFolder.appendingPathComponent(assetName, isDirectory: false)
+                    to: destinationFolder.appendingPathComponent(assetName, isDirectory: false),
+                    on: outputFileManager
                 )
             }
         }
@@ -97,8 +102,8 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         let imagesDirectory = targetFolder
             .appendingPathComponent("images", isDirectory: true)
             .appendingPathComponent(bundleID.rawValue, isDirectory: true)
-        if !fileManager.directoryExists(atPath: imagesDirectory.path) {
-            try fileManager.createDirectory(at: imagesDirectory, withIntermediateDirectories: true, attributes: nil)
+        if !outputFileManager.directoryExists(atPath: imagesDirectory.path) {
+            try outputFileManager.createDirectory(at: imagesDirectory, withIntermediateDirectories: true, attributes: nil)
         }
         
         // Copy all registered images to the output directory.
@@ -110,8 +115,8 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         let videosDirectory = targetFolder
             .appendingPathComponent("videos", isDirectory: true)
             .appendingPathComponent(bundleID.rawValue, isDirectory: true)
-        if !fileManager.directoryExists(atPath: videosDirectory.path) {
-            try fileManager.createDirectory(at: videosDirectory, withIntermediateDirectories: true, attributes: nil)
+        if !outputFileManager.directoryExists(atPath: videosDirectory.path) {
+            try outputFileManager.createDirectory(at: videosDirectory, withIntermediateDirectories: true, attributes: nil)
         }
         
         // Copy all registered videos to the output directory.
@@ -123,8 +128,8 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         let downloadsDirectory = targetFolder
             .appendingPathComponent(DownloadReference.locationName, isDirectory: true)
             .appendingPathComponent(bundleID.rawValue, isDirectory: true)
-        if !fileManager.directoryExists(atPath: downloadsDirectory.path) {
-            try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true, attributes: nil)
+        if !outputFileManager.directoryExists(atPath: downloadsDirectory.path) {
+            try outputFileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true, attributes: nil)
         }
 
         // Copy all downloads into the output directory.
@@ -151,33 +156,33 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         // that the renderer template may already contain.
         if let themeSettings = bundle.themeSettings {
             let targetFile = targetFolder.appendingPathComponent(themeSettings.lastPathComponent, isDirectory: false)
-            if fileManager.fileExists(atPath: targetFile.path) {
-                try fileManager.removeItem(at: targetFile)
+            if outputFileManager.fileExists(atPath: targetFile.path) {
+                try outputFileManager.removeItem(at: targetFile)
             }
-            try fileManager._copyItem(at: themeSettings, to: targetFile)
+            try fileManager.copyItem(at: themeSettings, to: targetFile, on: outputFileManager)
         }
 
         // If a custom favicon is provided, it will be copied in the output directory
         // The custom favicon will override the default one.
         if let customFavicon = bundle.customFavicon {
             let targetFile = targetFolder.appendingPathComponent(customFavicon.lastPathComponent, isDirectory: false)
-            if fileManager.fileExists(atPath: targetFile.path) {
-                try fileManager.removeItem(at: targetFile)
+            if outputFileManager.fileExists(atPath: targetFile.path) {
+                try outputFileManager.removeItem(at: targetFile)
             }
-            try fileManager._copyItem(at: customFavicon, to: targetFile)
+            try fileManager.copyItem(at: customFavicon, to: targetFile, on: outputFileManager)
         }
     }
     
     func consume(linkableElementSummaries summaries: [LinkDestinationSummary]) throws {
         let linkableElementsURL = targetFolder.appendingPathComponent(Self.linkableEntitiesFileName, isDirectory: false)
         let data = try encode(summaries)
-        try fileManager.createFile(at: linkableElementsURL, contents: data)
+        try outputFileManager.createFile(at: linkableElementsURL, contents: data)
     }
     
     func consume(indexingRecords: [IndexingRecord]) throws {
         let recordsURL = targetFolder.appendingPathComponent("indexing-records.json", isDirectory: false)
         let data = try encode(indexingRecords)
-        try fileManager.createFile(at: recordsURL, contents: data)
+        try outputFileManager.createFile(at: recordsURL, contents: data)
     }
     
     func consume(assets: [RenderReferenceType : [any RenderReference]]) throws {
@@ -191,32 +196,32 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
 
         let assetsURL = targetFolder.appendingPathComponent("assets.json", isDirectory: false)
         let data = try encode(digest)
-        try fileManager.createFile(at: assetsURL, contents: data)
+        try outputFileManager.createFile(at: assetsURL, contents: data)
     }
     
     func consume(benchmarks: Benchmark) throws {
         let data = try encode(benchmarks)
         let benchmarkURL = targetFolder.appendingPathComponent("benchmark.json", isDirectory: false)
-        try fileManager.createFile(at: benchmarkURL, contents: data)
+        try outputFileManager.createFile(at: benchmarkURL, contents: data)
     }
 
     func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {
         let data = try encode(documentationCoverageInfo)
         let docCoverageURL = targetFolder.appendingPathComponent(Self.docCoverageFileName, isDirectory: false)
-        try fileManager.createFile(at: docCoverageURL, contents: data)
+        try outputFileManager.createFile(at: docCoverageURL, contents: data)
     }
     
     func consume(buildMetadata: BuildMetadata) throws {
         let data = try encode(buildMetadata)
         let buildMetadataURL = targetFolder.appendingPathComponent(Self.buildMetadataFileName, isDirectory: false)
-        try fileManager.createFile(at: buildMetadataURL, contents: data)
+        try outputFileManager.createFile(at: buildMetadataURL, contents: data)
     }
     
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {
         let data = try encode(linkResolutionInformation)
         let linkResolutionInfoURL = targetFolder.appendingPathComponent(Self.linkHierarchyFileName, isDirectory: false)
         
-        try fileManager.createFile(at: linkResolutionInfoURL, contents: data)
+        try outputFileManager.createFile(at: linkResolutionInfoURL, contents: data)
     }
     
     /// Encodes the given value using the default render node JSON encoder.
@@ -243,7 +248,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         let template = "<template id=\"\(id.rawValue)\">\(templateContents)</template>"
         var newIndexContents = indexContents
         newIndexContents.replaceSubrange(bodyTagRange, with: indexContents[bodyTagRange] + template)
-        try fileManager.createFile(at: index, contents: Data(newIndexContents.utf8))
+        try outputFileManager.createFile(at: index, contents: Data(newIndexContents.utf8))
     }
     
     /// File name for the documentation coverage file emitted during conversion.

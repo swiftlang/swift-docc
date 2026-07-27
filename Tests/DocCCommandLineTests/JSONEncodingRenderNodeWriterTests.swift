@@ -31,6 +31,7 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
         let writer = JSONEncodingRenderNodeWriter(
             targetFolder: URL(fileURLWithPath: String(repeating: "A", count: 4096)),
             fileManager: FileManager.default,
+            outputFileManager: FileManager.default,
             transformForStaticHostingIndexHTML: indexHTML
         )
         

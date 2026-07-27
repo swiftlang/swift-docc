@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-package import Foundation
+public import Foundation
 
 /// A type that provides data for files.
-package protocol DataProvider {
+public protocol DataProvider {
     /// Returns the contents of the file at the specified location.
     ///
     /// - Parameter url: The url of the file to read.
