@@ -28,10 +28,10 @@ package struct HTMLNode: Sendable {
 
     static func _element(_ tag: _Tag, attributes: [Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
         assert(!tag.isVoid, "Cannot create an element using void tag '\(tag)'. Use `._voidElement(...)` instead.")
-        assert(attributes.count == Set(attributes.map { $0.nameForFormatting.description.lowercased() }).count, {
+        assert(attributes.count == Set(attributes.map { $0.name.description.lowercased() }).count, {
             let duplicateAttributes = attributes.filter {
-                let name = $0.nameForFormatting.description.lowercased()
-                return attributes.count(where: { $0.nameForFormatting.description.lowercased() == name }) > 1
+                let name = $0.name.description.lowercased()
+                return attributes.count(where: { $0.name.description.lowercased() == name }) > 1
             }
             return "All attribute names has to be case insensitively unique. This wasn't true for \(duplicateAttributes)."
         }())
