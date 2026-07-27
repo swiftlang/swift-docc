@@ -385,9 +385,9 @@ package struct HTMLFormatter {
     private mutating func _format(attributes: [HTMLNode.Attribute]) {
         for attribute in attributes {
             buffer.append(.init(ascii: " "))
-            _append(attribute.nameForFormatting)
+            _append(attribute.name)
             
-            var value = attribute.valueForFormatting
+            var value = attribute.value
             guard !value.isEmpty else { continue }
             
             value.withUTF8 {
