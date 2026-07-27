@@ -468,7 +468,7 @@ extension HTMLNode.Attribute {
     /// A value for the ``HTMLNode/Attribute/as(_:)`` attribute.
     package enum As: String {
         /// The loaded content is an audio worklet module.
-        case audioWorklet
+        case audioWorklet  = "audioworklet"
         /// The loaded content is an additional fetch or XML HTTP Request.
         case fetch
         /// The loaded content is a font.
@@ -478,13 +478,13 @@ extension HTMLNode.Attribute {
         /// The loaded content is supplementary JSON file.
         case json
         /// The loaded content is a paint worklet module.
-        case paintWorklet
+        case paintWorklet  = "paintworklet"
         /// The loaded content is a JavaScript source.
         case script
         /// The loaded content is a service worker module.
-        case serviceWorker
+        case serviceWorker = "serviceworker"
         /// The loaded content is a shared worker module.
-        case sharedWorked
+        case sharedWorker  = "sharedworker"
         /// The loaded content is a stylesheet
         case style
         /// The loaded content is a supplementary plain text file.
@@ -528,9 +528,9 @@ extension HTMLNode.Attribute {
     /// A value for the ``HTMLNode/Attribute/controls(_:)`` attribute.
     package enum Controls: String {
         /// Hints that the browser should not display a download control.
-        case noDownload = "nodownload"
+        case noDownload       = "nodownload"
         /// Hints that the browser should not display a full screen control.
-        case noFullscreen = "nofullscreen"
+        case noFullscreen     = "nofullscreen"
         /// Hints that the browser should not display a remote playback control.
         case noRemotePlayback = "noremoteplayback"
     }
@@ -571,7 +571,7 @@ extension HTMLNode.Attribute {
         case multiPartFormData = "multipart/form-data"
         /// Submits the form as plain text.
         @available(*, deprecated, message: "Submitting forms as plain text is discouraged other than for debugging.")
-        case textPlain = "text/plain"
+        case textPlain         = "text/plain"
     }
     
     /// A value for the ``HTMLNode/Attribute/enterKeyHint(_:)`` attribute.
@@ -617,15 +617,15 @@ extension HTMLNode.Attribute {
         @available(*, deprecated, message: "Use the `lang` attribute to configure the page's language instead.")
         case contentLanguage = "content-language"
         /// Equivalent to the `Content-Type` HTTP header.
-        case contentType = "content-type"
+        case contentType     = "content-type"
         /// Equivalent to the `Content-Security-Policy` HTTP header.
         case contentSecurityPolicy = "content-security-policy"
         /// Specifies the name of the default CSS style sheet set.
-        case defaultStyle = "default-style"
+        case defaultStyle    = "default-style"
         /// Equivalent to the `Refresh` HTTP header.
         case refresh
         @available(*, deprecated, message: "Use the `Set-Cookie` HTTP response header instead.")
-        case setCookie = "set-cookie"
+        case setCookie       = "set-cookie"
     }
     
     /// A value for the ``HTMLNode/Attribute/inputMode(_:)`` attribute.
@@ -693,19 +693,18 @@ extension HTMLNode.Attribute {
     /// A value for the ``HTMLNode/Attribute/referrerPolicy(_:)`` attribute.
     package enum ReferrerPolicy: String {
         /// The browser should not send a referrer header.
-        case noReferrer = "no-referrer"
+        case noReferrer              = "no-referrer"
         /// The browser should not send a referrer header. to origins without TLS (HTTPS).
         case noReferrerWhenDowngrade = "no-referrer-when-downgrade"
         /// The browser should limit the referrer information to the origin of the referring page: its scheme, host, and port.
         case origin
         /// The browser should limit the referrer information to the origin of the referring page: its scheme, host, and port. Navigations on the same origin should still include the path.
-        case originWhenCrossOrigin = "origin-when-cross-origin"
+        case originWhenCrossOrigin   = "origin-when-cross-origin"
         /// The browser should send referred information for the same origin, but cross-origin requests should contain no referrer information.
-        case sameOrigin = "same-origin"
-        // Only send the origin of the document as the referrer when the protocol security level stays the same (HTTPS→HTTPS), but don't send it to a less secure destination (HTTPS→HTTP).
-        
-        case strictOrigin = "strict-origin"
-        // Send a full URL when performing a same-origin request, only send the origin when the protocol security level stays the same (HTTPS→HTTPS), and send no header to a less secure destination (HTTPS→HTTP).
+        case sameOrigin              = "same-origin"
+        /// Only send the origin of the document as the referrer when the protocol security level stays the same (HTTPS→HTTPS), but don't send it to a less secure destination (HTTPS→HTTP).
+        case strictOrigin            = "strict-origin"
+        /// Send a full URL when performing a same-origin request, only send the origin when the protocol security level stays the same (HTTPS→HTTPS), and send no header to a less secure destination (HTTPS→HTTP).
         case strictOriginWhenCrossOrigin = "strict-origin-when-cross-origin"
         
         @available(*, deprecated, message: "This policy is unsafe because it leaks origins and paths from TLS-protected resources to insecure origins.")
@@ -725,7 +724,7 @@ extension HTMLNode.Attribute {
         /// A compression dictionary that can be used to compress future downloads on the same site.
         case compressionDictionary = "compression-dictionary"
         /// A configuration that the browser should preemptively perform DNS resolution for the target resource's origin.
-        case dnsPrefetch = "dns-prefetch"
+        case dnsPrefetch           = "dns-prefetch"
         /// An annotation that the referenced document is part of a different site than the current document.
         case external
         /// Configures the browser to be render-blocked---when used together with `blocking="render"`---so that the document will render consistently (only allowed in `<link>` elements).
@@ -745,21 +744,21 @@ extension HTMLNode.Attribute {
         /// An indication that the current document is a part of a series and that the next document in the series is the referenced document.
         case next
         /// Tells search engine crawlers to ignore the link. It may indicate that the current document's owner does not endorse the referenced document.
-        case noFollow = "nofollow"
+        case noFollow      = "nofollow"
         /// An indication that the browser should create top-level browsing context if the hyperlink would otherwise create an auxiliary browsing context.
-        case noOpener = "no-opener"
+        case noOpener      = "noopener"
         /// An indication that the browser should not include a referrer header.
-        case noReferrer = "no-referrer"
+        case noReferrer    = "noreferrer"
         /// An indication that the browser should create an auxiliary browsing context if the hyperlink would otherwise create a top-level browsing context.
         case opener
         /// An address of the pingback server that handles pingbacks to the current document (only allowed in `<link>` elements).
         case pingback
         /// A hint to the browser suggesting that it open a connection to the linked website in advance, without disclosing any private information or downloading any content (only allowed in `<link>` elements).
-        case preConnect = "pre-connect"
+        case preConnect    = "preconnect"
         /// Specifies that the browser _should_ preemptively fetch and cache the target resource (only allowed in `<link>` elements).
-        case preFetch = "pre-fetch"
+        case preFetch      = "prefetch"
         /// Specifies that the browser _must_ preemptively fetch and cache the target resource (only allowed in `<link>` elements).
-        case preLoad = "pre-load"
+        case preLoad       = "preload"
         /// An indication that the current document is a part of a series and that the previous document in the series is the referenced document.
         case prev
         /// An indication that the referenced document is the Privacy Policy which describes the data collection and usage practices of the current document.
@@ -893,25 +892,25 @@ extension HTMLNode.Attribute {
     /// A value for the ``HTMLNode/Attribute/sandbox(_:)`` attribute.
     package enum Sandbox: String {
         /// Allows the sandboxed resource to download files through an `<a>` or `<area>` element with the ``download`` attribute.
-        case allowDownloads
+        case allowDownloads       = "allow-downloads"
         /// Allows the sandboxed resource to submit forms
-        case allowForms
+        case allowForms           = "allow-forms"
         /// Allows the sandboxed resource to open modal windows.
-        case allowModels
+        case allowModels          = "allow-models"
         /// Allows the sandboxed resource to lock the screen orientation.
-        case allowOrientationLock
+        case allowOrientationLock = "allow-orientation-lock"
         /// Allows the sandboxed resource to use the Pointer Lock API.
-        case allowPointerLock
+        case allowPointerLock     = "allow-pointer-lock"
         /// Allows the sandboxed resource to create popups.
-        case allowPopups
+        case allowPopups          = "allow-popups"
         /// Allows the sandboxed resource to open a new browsing context without the sandbox attribute.
-        case allowPopupsToEscapeSandbox
+        case allowPopupsToEscapeSandbox = "allow-popups-to-escape-sandbox"
         /// If missing; configures the sandboxed resource to be treated as being from a special origin that always fails the same-origin policy.
-        case allowSameOrigin
+        case allowSameOrigin      = "allow-same-origin"
         /// Allows the sandboxed resource to run scripts.
-        case allowScripts
+        case allowScripts         = "allow-scripts"
         /// Allows the sandboxed resource to navigate the top-level browsing context.
-        case allowTopNavigation = "allow-top-navigation"
+        case allowTopNavigation   = "allow-top-navigation"
         /// Allows the sandboxed resource to navigate the top-level browsing context. but only if initiated by a user gesture.
         case allowTopNavigationByUserInteraction = "allow-top-navigation-by-user-activation"
         /// Allows the sandboxed resource to navigate to non-HTTP protocols built into browser.
