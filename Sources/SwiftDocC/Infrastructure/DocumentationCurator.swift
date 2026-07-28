@@ -148,8 +148,11 @@ struct DocumentationCurator {
     ///   - prepareForCuration: An optional closure to call just before walking the node's task group links.
     ///   - relateNodes: A closure to call when a parent <-> child relationship is found.
     mutating func crawlChildren(of nodeReference: ResolvedTopicReference, prepareForCuration: (ResolvedTopicReference) -> Void = {_ in}, relateNodes: (ResolvedTopicReference, ResolvedTopicReference) -> Void) throws {
-        // Keeping track if all articles have been curated.
-        curatedNodes.insert(nodeReference)
+        // Track if all articles have been curated.
+        // If a node has already been crawled, skip it.
+        guard curatedNodes.insert(nodeReference).inserted else {
+            return
+        }
 
         guard let documentationNode = context.documentationCache[nodeReference] else {
             return
@@ -336,11 +339,6 @@ struct DocumentationCurator {
 
                 // Link reference successfully resolved to a topic node
                 relateNodes(nodeReference, childReference)
-                
-                guard !curatedNodes.contains(childReference) else {
-                    // Don't crawl the same symbol more than once. 
-                    continue
-                }
                 
                 // Descend further into curated topics
                 try crawlChildren(of: childReference, prepareForCuration: prepareForCuration, relateNodes: relateNodes)
