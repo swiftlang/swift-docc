@@ -244,7 +244,8 @@ package struct HTMLFormatter {
             //
             // Additionally the formatter has two special case behaviors that aims to make slight readability refinements for certain content:
             //
-            // 1. Anchors (`<a>`) and table cells (`<td>` or `<th>`) with at most one attribute still displays plain textual contents on the same line. For example:
+            // 1. Anchors (`<a>`), table cells (`<td>` or `<th>`), definition terms (`<dt>`), and `<span>` elements with at most one attribute still displays plain textual contents on the same line.
+            // This arbitrary set of elements make for slight readability refinements for some patterns that occur in formatted documentation. For example:
             //    ```
             //    <a href="something">Some text</a>
             //    ```
@@ -265,8 +266,10 @@ package struct HTMLFormatter {
             //    ```
             
             let hasAttributeReasonToPresentOnSeparateLine = switch tag {
-                case .a, .td, .th: attributes.count > 1
-                default:           !attributes.isEmpty
+                case .a, .td, .th, .dt, .span:
+                    attributes.count > 1
+                default:
+                    !attributes.isEmpty
             }
             let firstContents = contents.first! // verified to be non-empty above
             let shouldPresentContentsOnSeparateLine = contents.count > 1 || !firstContents._isText || hasAttributeReasonToPresentOnSeparateLine
@@ -293,10 +296,12 @@ package struct HTMLFormatter {
                 // It's necessary to know what element comes next in the container (if any) to determine when it's allowed to omit the end tag.
                 childState.nextElementTag = nextIndex < contents.endIndex ? contents[nextIndex]._tag : nil
                 
-                // If the previous element presented on its own line and the current line is text, add a line break before the text as well.
-                if childState.presentOnCurrentLine || !child._isText {
-                    childState.presentOnCurrentLine = shouldPresentInline(for: child)
+                let presentOnCurrentLine = shouldPresentInline(for: child)
+                if presentOnCurrentLine && !childState.presentOnCurrentLine {
+                    // If the previous element presented on its own line but this element presents on the same line, add a "trailing" line break after the previous element.
+                    appendLineBreakAndIndentation(depth: childState.depth)
                 }
+                childState.presentOnCurrentLine = presentOnCurrentLine
                 
                 // Whitespace is significant inside `<pre>` elements; so we switch to formatting that sub-hierarchy _without_ pretty printing.
                 if child._tag == .pre {
@@ -385,7 +390,7 @@ package struct HTMLFormatter {
     private mutating func _format(attributes: [HTMLNode.Attribute]) {
         for attribute in attributes {
             buffer.append(.init(ascii: " "))
-            _append(attribute.name)
+            buffer.append(contentsOf: attribute.name.utf8)
             
             var value = attribute.value
             guard !value.isEmpty else { continue }
