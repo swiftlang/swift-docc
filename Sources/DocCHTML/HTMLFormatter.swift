@@ -300,7 +300,6 @@ package struct HTMLFormatter {
                 if presentOnCurrentLine && !childState.presentOnCurrentLine {
                     // If the previous element presented on its own line but this element presents on the same line, add a "trailing" line break after the previous element.
                     appendLineBreakAndIndentation(depth: childState.depth)
-                    childState.presentOnCurrentLine = shouldPresentInline(for: child)
                 }
                 childState.presentOnCurrentLine = presentOnCurrentLine
                 
