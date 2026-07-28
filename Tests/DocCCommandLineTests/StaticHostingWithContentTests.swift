@@ -13,6 +13,7 @@ import Foundation
 @testable import SwiftDocC
 @testable import DocCCommandLine
 import DocCTestUtilities
+import Testing
 
 class StaticHostingWithContentTests: XCTestCase {
 
@@ -147,5 +148,124 @@ class StaticHostingWithContentTests: XCTestCase {
             </html>
             """)
         }
+    }
+}
+
+@Suite
+struct StaticHostingWithContentProcessArchiveTests {
+
+    @Test
+    func preservesContentfulRouteHTMLWhenChangingBasePath() async throws {
+        let sentinel = "This sentence must survive archive processing: DOCC_1588_SENTINEL."
+
+        let catalog = Folder(name: "Example.docc", content: [
+            TextFile(name: "Example.md", utf8Content: """
+            # Example Documentation
+
+            \(sentinel)
+            """),
+        ])
+
+        let htmlTemplate = """
+        <html>
+          <head>
+            <link rel="icon" href="{{BASE_PATH}}/favicon.ico" />
+            <title>Documentation</title>
+          </head>
+          <body>
+            <noscript>
+              <p>This page requires JavaScript.</p>
+            </noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """
+
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [catalog]),
+            ]),
+            Folder(name: "template", content: [
+                TextFile(
+                    name: "index.html",
+                    utf8Content: htmlTemplate.replacingOccurrences(
+                        of: "{{BASE_PATH}}",
+                        with: ""
+                    )
+                ),
+                TextFile(name: "index-template.html", utf8Content: htmlTemplate),
+            ]),
+            Folder(name: "output-dir", content: []),
+        ])
+
+        var convertAction = try ConvertAction(
+            documentationBundleURL: URL(fileURLWithPath: "/path/to/Example.docc"),
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: URL(fileURLWithPath: "/output-dir"),
+            htmlTemplateDirectory: URL(fileURLWithPath: "/template"),
+            emitDigest: false,
+            currentPlatforms: nil,
+            buildIndex: false,
+            fileManager: fileSystem,
+            temporaryDirectory: URL(fileURLWithPath: "/tmp"),
+            experimentalEnableCustomTemplates: true,
+            transformForStaticHosting: true,
+            includeContentInEachHTMLFile: true,
+            hostingBasePath: nil
+        )
+        convertAction._completelySkipBuildingIndex = true
+
+        _ = try await convertAction.perform(logHandle: .none)
+
+        let routeURL = URL(
+            fileURLWithPath: "/output-dir/documentation/example/index.html"
+        )
+
+        let originalHTML = try #require(
+            String(
+                data: fileSystem.contents(of: routeURL),
+                encoding: .utf8
+            )
+        )
+
+        #expect(originalHTML.contains(sentinel))
+        #expect(originalHTML.contains("<title>Example Documentation</title>"))
+
+        let indexHTMLData = try StaticHostableTransformer.indexHTMLData(
+            in: URL(fileURLWithPath: "/template"),
+            with: "internship-test",
+            fileManager: fileSystem
+        )
+
+        let transformer = StaticHostableTransformer(
+            dataDirectory: URL(fileURLWithPath: "/output-dir/data"),
+            fileManager: fileSystem,
+            outputURL: URL(fileURLWithPath: "/output-dir"),
+            indexHTMLData: indexHTMLData
+        )
+        try transformer.transform()
+
+        let processedHTML = try #require(
+            String(
+                data: fileSystem.contents(of: routeURL),
+                encoding: .utf8
+            )
+        )
+
+        #expect(
+            processedHTML.contains(#"<meta content="\#(sentinel)" name="description"/>"#),
+            "Processing should preserve the page-specific description."
+        )
+        #expect(
+            processedHTML.contains("<p>\(sentinel)</p>"),
+            "Processing should preserve the semantic fallback content."
+        )
+        #expect(
+            processedHTML.contains("<title>Example Documentation</title>"),
+            "Processing should preserve the page-specific title."
+        )
+        #expect(processedHTML.contains("/internship-test/favicon.ico"))
+        #expect(!processedHTML.contains("{{BASE_PATH}}"))
     }
 }

@@ -74,8 +74,133 @@ struct StaticHostableTransformer {
                 try fileManager.createDirectory(at: outputDirectoryURL, withIntermediateDirectories: true, attributes: [:])
             }
             
-            try fileManager.createFile(at: outputDirectoryURL.appendingPathComponent("index.html"), contents: indexHTMLData)
+            let outputIndexHTMLURL = outputDirectoryURL.appendingPathComponent("index.html")
+            let outputIndexHTMLData = indexHTMLDataPreservingPageContent(
+                at: outputIndexHTMLURL
+            )
+
+            try fileManager.createFile(
+                at: outputIndexHTMLURL,
+                contents: outputIndexHTMLData
+            )
         }
+    }
+
+    private func indexHTMLDataPreservingPageContent(at outputURL: URL) -> Data {
+        guard fileManager.fileExists(atPath: outputURL.path),
+              let existingData = try? fileManager.contents(of: outputURL),
+              let existingHTML = String(data: existingData, encoding: .utf8),
+              let pageContent = PageSpecificHTMLContent(html: existingHTML),
+              let templateHTML = String(data: indexHTMLData, encoding: .utf8),
+              let updatedHTML = pageContent.inserting(into: templateHTML)
+        else {
+            return indexHTMLData
+        }
+
+        return Data(updatedHTML.utf8)
+    }
+}
+
+private struct PageSpecificHTMLContent {
+    let title: String
+    let description: String?
+    let noScriptContent: String
+
+    init?(html: String) {
+        guard
+            let titleRange = Self.contentRange(of: "title", in: html),
+            let noScriptRange = Self.contentRange(of: "noscript", in: html)
+        else {
+            return nil
+        }
+
+        let noScriptContent = String(html[noScriptRange])
+
+        // Contentful route HTML uses an article as its semantic fallback.
+        guard noScriptContent.range(
+            of: #"<article(?:\s|>)"#,
+            options: [.regularExpression, .caseInsensitive]
+        ) != nil else {
+            return nil
+        }
+
+        self.title = String(html[titleRange])
+        self.description = Self.descriptionRange(in: html).map {
+            String(html[$0])
+        }
+        self.noScriptContent = noScriptContent
+    }
+
+    func inserting(into template: String) -> String? {
+        var result = template
+
+        guard let noScriptRange = Self.contentRange(
+            of: "noscript",
+            in: result
+        ) else {
+            return nil
+        }
+        result.replaceSubrange(noScriptRange, with: noScriptContent)
+
+        if let existingDescriptionRange = Self.descriptionRange(in: result) {
+            result.replaceSubrange(
+                existingDescriptionRange,
+                with: description ?? ""
+            )
+        } else if let description {
+            guard let headRange = Self.contentRange(
+                of: "head",
+                in: result
+            ) else {
+                return nil
+            }
+            result.insert(contentsOf: description, at: headRange.upperBound)
+        }
+
+        guard let titleRange = Self.contentRange(
+            of: "title",
+            in: result
+        ) else {
+            return nil
+        }
+        result.replaceSubrange(titleRange, with: title)
+
+        return result
+    }
+
+    private static func contentRange(
+        of elementName: String,
+        in html: String
+    ) -> Range<String.Index>? {
+        guard
+            let openingTag = html.range(
+                of: "<\(elementName)\\b[^>]*>",
+                options: [.regularExpression, .caseInsensitive]
+            ),
+            let closingTag = html.range(
+                of: "</\(elementName)\\s*>",
+                options: [.regularExpression, .caseInsensitive],
+                range: openingTag.upperBound..<html.endIndex
+            )
+        else {
+            return nil
+        }
+
+        return openingTag.upperBound..<closingTag.lowerBound
+    }
+
+    private static func descriptionRange(
+        in html: String
+    ) -> Range<String.Index>? {
+        guard let headRange = contentRange(of: "head", in: html) else {
+            return nil
+        }
+
+        return html.range(
+            of: #"<meta\b[^>]*\bname\s*=\s*["']description["'][^>]*\/?>"#,
+            options: [.regularExpression, .caseInsensitive],
+            range: headRange
+        )
     }
 }
 
