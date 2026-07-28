@@ -184,6 +184,14 @@ have one or more aliases.
 | xml         | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
 | yaml        | yml                                                    |
 
+If most of your code listings use the same language, set a catalog-wide default in your documentation catalog's `Info.plist` file using the `CDDefaultCodeListingLanguage` key.
+DocC applies that language to any code listing that doesn't specify one, including indented code blocks, which have no Markdown syntax for specifying a language identifier.
+
+```xml
+<key>CDDefaultCodeListingLanguage</key>
+<string>swift</string>
+```
+
 ### Add Bulleted, Numbered, and Term Lists
 
 DocC supports the following list types:
