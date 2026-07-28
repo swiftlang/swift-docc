@@ -38,7 +38,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             
             // Ensure that the index.html file has at least a `<head>` and a `<body>`.
             guard var beforeEndOfHead  = content.utf8.firstRange(of: "</head>".utf8)?.lowerBound,
-                  var afterStartOfBody = content.range(of: "<body[^>]*>\n?", options: .regularExpression)?.upperBound
+                  var afterStartOfBody = content.range(of: "<body[^>]*>", options: .regularExpression)?.upperBound
             else {
                 struct MissingRequiredTagsError: DescribedError {
                     let errorDescription = "Missing required `<head>` and `<body>` elements in \"index.html\" file."

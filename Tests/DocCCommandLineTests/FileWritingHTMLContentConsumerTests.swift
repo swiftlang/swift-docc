@@ -576,8 +576,7 @@ struct FileWritingHTMLContentConsumerTests {
             <meta charset="utf-8" />
             <link rel="icon" href="/favicon.ico" />
         \(expectedMetadata)</head>
-          <body>
-        \(templateHasNoScriptTag ? "  " : "")<noscript><article>
+          <body>\(templateHasNoScriptTag ? "\n  " : "")<noscript><article>
           <section>
             <ul>
               <li>RootArticle</li>
@@ -590,7 +589,7 @@ struct FileWritingHTMLContentConsumerTests {
               This is a <i>formatted</i> article that becomes the root page (because there is only one page).
             </p>
           </section>
-        </article></noscript>
+        </article></noscript>\(templateHasNoScriptTag ? "" : "\n")
             <div id="app"></div>
           </body>
         </html>

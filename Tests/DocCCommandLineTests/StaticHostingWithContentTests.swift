@@ -137,8 +137,7 @@ struct StaticHostingWithContentTests {
             <meta charset="utf-8" />
             <link rel="icon" href="/some/test/base-path/favicon.ico" />
           \(expectedTitleAndMetaContent)</head>
-          <body>\(includeHTMLContent ? "\n" : "")\
-        <template id="custom-footer"><p>Some footer content</p></template><template id="custom-header"><p>Some header content</p></template>\(expectedNoScriptContent)
+          <body><template id="custom-footer"><p>Some footer content</p></template><template id="custom-header"><p>Some header content</p></template>\(includeHTMLContent ? "\n" : "")\(expectedNoScriptContent)
             <div id="app"></div>
           </body>
         </html>
