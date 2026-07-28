@@ -15,7 +15,7 @@ package import FoundationXML
 package import Foundation
 #endif
 
-/// Creates a new HTML from an XMLNode, or returns `nil` if the XMLNode doesn't represent an HTML element.
+/// Creates a new HTML node from an XMLNode, or returns `nil` if the XMLNode doesn't represent an HTML element.
 package extension HTMLNode {
     init?(from xmlNode: XMLNode) {
         if let element = xmlNode as? XMLElement {

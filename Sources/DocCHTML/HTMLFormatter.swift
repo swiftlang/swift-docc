@@ -244,7 +244,8 @@ package struct HTMLFormatter {
             //
             // Additionally the formatter has two special case behaviors that aims to make slight readability refinements for certain content:
             //
-            // 1. Anchors (`<a>`) and table cells (`<td>` or `<th>`) with at most one attribute still displays plain textual contents on the same line. For example:
+            // 1. Anchors (`<a>`), table cells (`<td>` or `<th>`), definition terms (`<dt>`), and `<span>` elements with at most one attribute still displays plain textual contents on the same line.
+            // This arbitrary set of elements make for slight readability refinements for some patterns that occur in formatted documentation. For example:
             //    ```
             //    <a href="something">Some text</a>
             //    ```
