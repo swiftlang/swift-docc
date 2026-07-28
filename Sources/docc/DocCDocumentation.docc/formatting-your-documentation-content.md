@@ -184,7 +184,7 @@ have one or more aliases.
 | xml         | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
 | yaml        | yml                                                    |
 
-If most of your code listings use the same language, set a catalog-wide default in your documentation catalog's `Info.plist` file using the `CDDefaultCodeListingLanguage` key.
+If most of your code listings use the same language, you can specify a catalog-wide default code listing language in your documentation catalog's (optional) `Info.plist` file using the `CDDefaultCodeListingLanguage` key, or pass the `--default-code-listing-language` command-line option.
 DocC applies that language to any code listing that doesn't specify one, including indented code blocks, which have no Markdown syntax for specifying a language identifier.
 
 ```xml
