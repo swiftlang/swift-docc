@@ -43,9 +43,3 @@ jobs:
       format_check_enabled: false
       # The docs check is disabled as it requires a large number of changes.
       docs_check_enabled: false
-      # The Python lint check is buggy due to flake8's default ignore list
-      # being overridden by the config in the workflow definition. The check
-      # needs to remain disabled until the fix is merged and released:
-      #
-      # https://github.com/swiftlang/github-workflows/pull/279
-      python_lint_check_enabled: false
