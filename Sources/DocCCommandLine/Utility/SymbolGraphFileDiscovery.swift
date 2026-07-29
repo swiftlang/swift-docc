@@ -11,6 +11,13 @@
 import Foundation
 import SwiftDocC
 
+/// Returns the symbol graph files found by recursively searching the given directories.
+///
+/// Files are deduplicated and returned in the order that their directories were provided in.
+/// Directories that don't exist are ignored.
+///
+/// - Parameter directories: The directories to search for symbol graph files.
+/// - Returns: The symbol graph files in the given directories.
 func symbolGraphFiles(in directories: [URL]) -> [URL] {
     directories
         // avoid traversing the same exact folders multiple times
