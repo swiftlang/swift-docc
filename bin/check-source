@@ -28,6 +28,7 @@ unacceptable_terms=(
     -e blacklis[t]
     -e whitelis[t]
     -e slav[e]
+    -e maste[r]
 )
 # Ignore the NonInclusiveLanguageChecker source and tests
 if git grep --color=never -i "${unacceptable_terms[@]}" -- :/**/^NonInclusiveLanguageChecker*.swift > /dev/null; then
