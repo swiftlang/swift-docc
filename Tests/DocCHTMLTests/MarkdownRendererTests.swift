@@ -21,6 +21,7 @@ import DocCHTML
 import Markdown
 import DocCCommon
 
+extension DocCHTMLTestSuites {
 struct MarkdownRendererTests {
     @Test
     func renderingParagraphsWithFormattedText() {
@@ -652,6 +653,7 @@ struct MarkdownRendererTests {
             abstract: nil // Not relevant for inline links
         )
     }
+}
 }
 
 // MARK: Helpers

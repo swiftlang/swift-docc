@@ -11,12 +11,23 @@
 import Foundation
 
 /// A supported platform's name representation.
-public struct PlatformName: Codable, Hashable, Equatable {
+public struct PlatformName: Codable, Hashable, Comparable {
     public var rawValue: String
-    
+
     /// Compares platform names independently of any known aliases differences or possible incomplete display names.
     public static func == (lhs: PlatformName, rhs: PlatformName) -> Bool {
         return lhs.rawValue == rhs.rawValue
+    }
+
+    /// Hashes the entity using the raw value, consistent with the implementation of ``==``.
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue)
+    }
+
+    /// Compares two platform names using the order defined in ``sortedPlatforms``.
+    /// Unknown platforms are lexicographically sorted after known platforms.
+    public static func < (lhs: PlatformName, rhs: PlatformName) -> Bool {
+        isInOrder(lhs.rawValue, rhs.rawValue)
     }
     
     /// Creates a new platform name value.
