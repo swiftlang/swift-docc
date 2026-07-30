@@ -494,25 +494,6 @@ extension LinkDestinationSummary {
     }
 }
 
-private extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
-    func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
-        self.min(by: { lhs, rhs in
-            // Join all the platform IDs and use that to get a stable value
-            lhs.key.compactMap(\.?.rawValue).joined() < lhs.key.compactMap(\.?.rawValue).joined()
-        })?.value
-    }
-    
-    func renderDeclarationTokens() -> [DeclarationRenderSection.Token]? {
-        mainRenderFragments()?.declarationFragments.renderDeclarationTokens()
-    }
-}
-
-private extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
-    func renderDeclarationTokens() -> [DeclarationRenderSection.Token] {
-        map { .init(fragment: $0, identifier: nil) }
-    }
-}
-
 extension LinkDestinationSummary {
     
     /// Creates a link destination summary for a landmark on a page.
