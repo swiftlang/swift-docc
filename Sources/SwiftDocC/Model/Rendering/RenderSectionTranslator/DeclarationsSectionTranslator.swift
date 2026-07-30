@@ -208,17 +208,6 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return platforms + fallbacks
             }
 
-            func comparePlatformNames(_ lhs: PlatformName?, _ rhs: PlatformName?) -> Bool {
-                guard let lhsValue = lhs, let rhsValue = rhs else {
-                    return lhs == nil
-                }
-                return lhsValue.rawValue < rhsValue.rawValue
-            }
-
-            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
-                platforms.sorted(by: comparePlatformNames(_:_:))
-            }
-
             var declarations: [DeclarationRenderSection] = []
             let renderLanguageIDs = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
@@ -231,7 +220,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             for pair in declaration {
                 let (platforms, declaration) = pair
                 let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
-                let platformNames = sortPlatformNames(expandedPlatforms)
+                let platformNames = expandedPlatforms.sorted { PlatformName.isInOrder($0?.rawValue, $1?.rawValue) }
 
                 let renderedTokens: [DeclarationRenderSection.Token]
                 let otherDeclarations: DeclarationRenderSection.OtherDeclarations?
@@ -280,7 +269,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
                     let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
-                    let platformNames = sortPlatformNames(expandedPlatforms)
+                    let platformNames = expandedPlatforms.sorted { PlatformName.isInOrder($0?.rawValue, $1?.rawValue) }
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
@@ -301,7 +290,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 guard let lhsPlatform = lhs.platforms.first, let rhsPlatform = rhs.platforms.first else {
                     return lhs.platforms.isEmpty
                 }
-                return comparePlatformNames(lhsPlatform, rhsPlatform)
+                return PlatformName.isInOrder(lhsPlatform?.rawValue, rhsPlatform?.rawValue)
             }
 
             return DeclarationsRenderSection(declarations: declarations)
