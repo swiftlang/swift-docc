@@ -884,10 +884,13 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput", "Swift"])
     }
     
+    private let iOSPlatform = SymbolGraph.Platform(operatingSystem: .init(name: "ios"))
+    private let macOSPlatform = SymbolGraph.Platform(operatingSystem: .init(name: "macosx"))
+    
     @Test
     func symbolMetadataGetsDefaultAvailability() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
@@ -900,9 +903,24 @@ struct MarkdownOutputTests {
     }
     
     @Test
+    func symbolMetadataGetsSymbolLevelAvailability() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output", availability: [.init(domainName: "iOS", introduced: .init(string: "2.0.0"), deprecated: nil)])
+            ])),
+            InfoPlist(defaultAvailability: [
+                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+            ])
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        let availability = try #require(node.metadata.availability)
+        #expect(availability.contains(.init(platform: "iOS", introduced: "2.0.0", deprecated: nil, unavailable: false)))
+    }
+    
+    @Test
     func symbolAvailabilityIsCapturedFromMetadataBlock() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
@@ -912,7 +930,7 @@ struct MarkdownOutputTests {
                 # ``MarkdownSymbol``
                 
                 @Metadata {
-                    @Available(iPadOS, introduced: "13.1")
+                    @Available(iOS, introduced: "13.1")
                 }
                 
                 A basic symbol to test markdown output
@@ -924,8 +942,47 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iPadOS", introduced: "13.1.0", deprecated: nil, unavailable: false)
+        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "13.1.0", deprecated: nil, unavailable: false)
         #expect(availability.contains(expected))
+    }
+    
+    @Test
+    func symbolAvailabilityOnePlatformDoesntUseDefaults() async throws {
+        // A symbol that only exists in the macOS graph should not show as available on iOS.
+        let catalog = catalog(files: [
+            JSONFile(
+                name: "MarkdownOutput-macOS.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    platform: macOSPlatform,
+                    symbols: [
+                        makeSymbol(
+                            id: "MarkdownSymbol",
+                            kind: .struct,
+                            pathComponents: ["MarkdownSymbol"],
+                            docComment: "A basic symbol to test markdown output"
+                        )
+                    ]
+                )),
+            JSONFile(
+                name: "MarkdownOutput-iOS.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    platform: iOSPlatform,
+                    symbols: []
+                )),
+            InfoPlist(defaultAvailability: [
+                "MarkdownOutput" : [
+                    .init(platformName: .iOS, platformVersion: "1.0.0"),
+                    .init(platformName: .macOS, platformVersion: "1.0.0"),
+                ]
+            ]),
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        let availability = try #require(node.metadata.availability)
+        #expect(availability.count == 1)
+        #expect(availability.first?.platform == "macOS")
     }
     
     @Test(arguments: [
