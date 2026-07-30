@@ -303,7 +303,7 @@ package struct HTMLRenderer {
             var fragmentsByLanguage = [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
             for (trait, variant) in symbol.declarationVariants.allValues {
                 guard let language = trait.sourceLanguage else { continue }
-                fragmentsByLanguage[language] = variant.values.first?.declarationFragments
+                fragmentsByLanguage[language] = variant.mainRenderFragments()?.declarationFragments
             }
             
             if fragmentsByLanguage.values.contains(where: { !$0.isEmpty }) {
