@@ -87,7 +87,7 @@ jobs:
     container:
       image: swiftlang/swift:nightly-main-jammy
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: swift build --package-path bin/make-test-bundle
 
   benchmark:
@@ -98,5 +98,5 @@ jobs:
     container:
       image: swiftlang/swift:nightly-main-jammy
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: swift test --parallel --package-path bin/benchmark
