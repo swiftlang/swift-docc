@@ -57,14 +57,22 @@ extension MarkdownOutputSemanticVisitor {
         add(targetIdentifier: target.path, type: type, subtype: subtype)
     }
     
-    mutating func add(fallbackTarget: String, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
-        let targetIdentifier: String
+    func pathAndName(from fallbackTarget: String) -> (path: String, name: String) {
+        let path: String
+        let name: String
         let components = fallbackTarget.components(separatedBy: ".")
         if components.count > 1 {
-            targetIdentifier = "/documentation/\(components.joined(separator: "/"))"
+            path = "/documentation/\(components.joined(separator: "/"))"
+            name = components.last ?? fallbackTarget
         } else {
-            targetIdentifier = fallbackTarget
+            path = fallbackTarget
+            name = fallbackTarget
         }
+        return (path, name)
+    }
+    
+    mutating func add(fallbackTarget: String, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
+        let (targetIdentifier, _) = pathAndName(from: fallbackTarget)
         add(targetIdentifier: targetIdentifier, type: type, subtype: subtype)
     }
     
@@ -187,14 +195,29 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
         
+        if symbol.relationships.groups.isEmpty == false {
+            markdownWalker.visit(Heading(level: 2, Text(RelationshipsSection.title)))
+        }
         for relationshipGroup in symbol.relationships.groups {
+            markdownWalker.visit(Heading(level: 3, Text(relationshipGroup.sectionTitle)))
             for destination in relationshipGroup.destinations {
                 switch context.resolve(destination, in: identifier) {
                 case .success(let resolved):
+                    // Add the relationship to the manifest
                     add(target: resolved, type: .relatedSymbol, subtype: relationshipGroup.kind)
+                    
+                    // Add the relationship to the markdown
+                    markdownWalker.startNewParagraphIfRequired()
+                    let link = Link(destination: resolved.path, title: resolved.lastPathComponent, [InlineCode(resolved.lastPathComponent)])
+                    markdownWalker.defaultVisit(link)
+                    
                 case .failure:
                     if let fallback = symbol.relationships.targetFallbacks[destination] {
                         add(fallbackTarget: fallback, type: .relatedSymbol, subtype: relationshipGroup.kind)
+                        markdownWalker.startNewParagraphIfRequired()
+                        let (path, name) = pathAndName(from: fallback)
+                        let link = Link(destination: path, title: name, [InlineCode(name)])
+                        markdownWalker.defaultVisit(link)
                     }
                 }
             }

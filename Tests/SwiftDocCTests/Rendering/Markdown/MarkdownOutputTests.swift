@@ -766,6 +766,106 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedList))
     }
     
+    @Test
+    func conformsToIncludedInExport() async throws {
+        let symbols = [
+            makeSymbol(id: "MO_Conformer", kind: .struct, pathComponents: ["LocalConformer"]),
+            makeSymbol(id: "MO_Protocol", kind: .protocol, pathComponents: ["LocalProtocol"]),
+        ]
+        
+        let relationships = [
+            SymbolGraph.Relationship(source: "MO_Conformer", target: "MO_Protocol", kind: .conformsTo, targetFallback: nil),
+            SymbolGraph.Relationship(source: "MO_Conformer", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
+        ]
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
+        let title = RelationshipsGroup(kind: .conformsTo, destinations: []).sectionTitle
+        let markdown = node.markdown
+        #expect(markdown.contains(title))
+        let link = "\n[`LocalProtocol`](/documentation/MarkdownOutput/LocalProtocol)"
+        #expect(markdown.contains(link))
+        let externalLink = "\n[`Hashable`](/documentation/Swift/Hashable)"
+        #expect(markdown.contains(externalLink))
+    }
+    
+    @Test
+    func conformingTypesIncludedInExport() async throws {
+        let symbols = [
+            makeSymbol(id: "MO_Conformer", kind: .struct, pathComponents: ["LocalConformer"]),
+            makeSymbol(id: "MO_Protocol", kind: .protocol, pathComponents: ["LocalProtocol"]),
+        ]
+        
+        let relationships = [
+            SymbolGraph.Relationship(source: "MO_Conformer", target: "MO_Protocol", kind: .conformsTo, targetFallback: nil),
+        ]
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
+        let title = RelationshipsGroup(kind: .conformingTypes, destinations: []).sectionTitle
+        let markdown = node.markdown
+        #expect(markdown.contains(title))
+        let link = "\n[`LocalConformer`](/documentation/MarkdownOutput/LocalConformer)"
+        #expect(markdown.contains(link))
+    }
+    
+    @Test
+    func inheritsFromIncludedInExport() async throws {
+        let symbols = [
+            makeSymbol(id: "MO_Super", kind: .class, pathComponents: ["LocalSuper"]),
+            makeSymbol(id: "MO_Sub", kind: .class, pathComponents: ["LocalSub"]),
+        ]
+        
+        let relationships = [
+            SymbolGraph.Relationship(source: "MO_Sub", target: "MO_Super", kind: .inheritsFrom, targetFallback: nil),
+        ]
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "LocalSub")
+        let title = RelationshipsGroup(kind: .inheritsFrom, destinations: []).sectionTitle
+        let markdown = node.markdown
+        #expect(markdown.contains(title))
+        let link = "\n[`LocalSuper`](/documentation/MarkdownOutput/LocalSuper)"
+        #expect(markdown.contains(link))
+    }
+    
+    @Test
+    func inheritedByIncludedInExport() async throws {
+        let symbols = [
+            makeSymbol(id: "MO_Super", kind: .class, pathComponents: ["LocalSuper"]),
+            makeSymbol(id: "MO_Sub", kind: .class, pathComponents: ["LocalSub"]),
+        ]
+        
+        let relationships = [
+            SymbolGraph.Relationship(source: "MO_Sub", target: "MO_Super", kind: .inheritsFrom, targetFallback: nil),
+        ]
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "LocalSuper")
+        let title = RelationshipsGroup(kind: .inheritedBy, destinations: []).sectionTitle
+        let markdown = node.markdown
+        #expect(markdown.contains(title))
+        let link = "\n[`LocalSub`](/documentation/MarkdownOutput/LocalSub)"
+        #expect(markdown.contains(link))
+    }
+    
+    
     // MARK: - Metadata
     
     @Test 
