@@ -308,15 +308,19 @@ extension MarkdownOutputMarkupWalker {
             linkListAbstract = nil
         }
         
-        let linkMarkup: any RecurringInlineMarkup
-        if doc.semantic is Symbol {
-            linkMarkup = InlineCode(linkTitle)
+        var convertedLink = Link(destination: outputDestination, title: linkTitle, [])
+        // Preserve any inline title markup for the link. If the plain text value is the same as the destination, then this was an auto-link or double-backtick symbol link and will require an appropriate title.
+        if link.plainText == link.destination {
+            if doc.semantic is Symbol {
+                convertedLink.setInlineChildren([InlineCode(linkTitle)])
+            } else {
+                convertedLink.setInlineChildren([Text(linkTitle)])
+            }
         } else {
-            linkMarkup = Text(linkTitle)
+            convertedLink.setInlineChildren(link.inlineChildren)
         }
         
-        let link = Link(destination: outputDestination, title: linkTitle, [linkMarkup])
-        return (link, linkListAbstract)
+        return (convertedLink, linkListAbstract)
     }
     
     mutating func visitLink(_ link: Link) {

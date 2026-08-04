@@ -288,6 +288,39 @@ struct MarkdownOutputTests {
         let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](/documentation/MarkdownOutput/OtherMarkdownSymbol)"
         #expect(node.markdown.contains(expectedLinkList))
     }
+    
+    @Test
+    func linkTitlesAreRetained() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "RootDocument.md", utf8Content: """
+                # Links
+                
+                Tests the processing of named links
+                
+                ## Overview
+                
+                This is a [named *link*](doc:LinkDestination)
+                This is not <doc:LinkDestination>
+                
+                This is a [named symbol link](doc:MarkdownSymbol)
+                This is not <doc:MarkdownSymbol>
+                """),
+            TextFile(name: "LinkDestination.md", utf8Content: """
+                # Link Destination
+                
+                This document title should not replace the specific title in the link
+                """),
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output."),
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "RootDocument")
+        #expect(node.markdown.contains("This is a [named *link*](/documentation/MarkdownOutput/LinkDestination"))
+        #expect(node.markdown.contains("This is not [Link Destination](/documentation/MarkdownOutput/LinkDestination"))
+        #expect(node.markdown.contains("This is a [named symbol link](/documentation/MarkdownOutput/MarkdownSymbol"))
+        #expect(node.markdown.contains("This is not [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"))
+    }
         
     @Test
     func languageTabOnlyIncludesPrimaryLanguage() async throws {
