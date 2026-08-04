@@ -72,6 +72,9 @@ extension MarkdownOutputMarkupWalker {
             return
         }
         
+        // Some content is filtered from the markdown export. If this entire section consists of filtered content, the heading should not be added. 
+        let markdownBeforeSection = markdown
+        
         if let heading = addingHeading ?? type(of: section).title, heading.isEmpty == false {
             // Don't add if there is already a heading in the content
             if let first = section.content.first as? Heading, first.level == 2 {
@@ -80,9 +83,15 @@ extension MarkdownOutputMarkupWalker {
                 visit(Heading(level: 2, Text(heading)))
             }
         }
+        let markdownWithSectionHeading = markdown
         
         for content in section.content {
             self.visit(content)
+        }
+        
+        if markdown == markdownWithSectionHeading {
+            // No content was added for this section, revert to where we were before
+            markdown = markdownBeforeSection
         }
     }
         

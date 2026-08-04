@@ -766,6 +766,28 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedList))
     }
     
+    @Test
+    func sectionsThatAreEmptyAfterFilteringDoNotHaveHeadingsAdded() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol.myFunction", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
+                    Everything is described in the abstract.
+                    
+                    - Parameters:
+                      - arg: The first argument. 
+                    
+                    @Comment {
+                        This should be removed, but should not lead to a discussion heading.
+                    }
+                    """)
+            ]
+            ))
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
+        #expect(node.markdown.contains("## Parameters"))
+        #expect(node.markdown.contains("## Discussion") == false)
+    }
+    
     // MARK: - Metadata
     
     @Test 
