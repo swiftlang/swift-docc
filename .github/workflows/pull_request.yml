@@ -16,18 +16,19 @@ jobs:
     name: Test
     uses: swiftlang/github-workflows/.github/workflows/swift_package_test.yml@0.0.13
     with:
+      enable_macos_checks: true
       linux_host_archs: '["x86_64", "aarch64"]'
       linux_swift_versions: '["nightly-main", "nightly-6.3"]'
       windows_swift_versions: '["nightly-main", "nightly-6.3"]'
-      # The Windows CI runs are disabled due to issues with file names on Windows.
-      # The CMake build tests for Windows are also not present at the moment.
-      # They can be enabled in the future once Windows CI is fixed.
+      # The package and tests build on Windows, but the tests don't pass yet,
+      # due to issues with filenames on Windows. For now, the Windows CI runs
+      # build the package, and only build the tests without running them.
       # Related PRs:
       #
-      # - File names: https://github.com/swiftlang/swift-docc/pull/668
+      # - Filenames: https://github.com/swiftlang/swift-docc/pull/668
       # - CMake: https://github.com/swiftlang/swift-docc/pull/1115
-      enable_windows_checks: false
-      enable_macos_checks: true
+      windows_build_command: "Invoke-Program swift build --build-tests"
+
   soundness:
     name: Soundness
     uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.13
@@ -35,17 +36,67 @@ jobs:
       license_header_check_project_name: "Swift"
       # The license header check is disabled as it requires a large number of changes.
       license_header_check_enabled: false
-      # The unacceptable language check is disabled due to conflict with
-      # DocC's own unacceptable language check tests.
-      unacceptable_language_check_enabled: false
+      # There are some words in typical programming jargon that are a part of the default list.
+      # The list of words checked by this job is restricted below to prevent raising issues for
+      # words that are contextually acceptable to use in this repository.
+      unacceptable_language_check_word_list: "blacklist whitelist slave master"  # ignore-unacceptable-language
       # The format check is disabled as this project does not conform to swift-format.
       # More discussion is needed before enabling this check.
       format_check_enabled: false
       # The docs check is disabled as it requires a large number of changes.
       docs_check_enabled: false
-      # The Python lint check is buggy due to flake8's default ignore list
-      # being overridden by the config in the workflow definition. The check
-      # needs to remain disabled until the fix is merged and released:
-      #
-      # https://github.com/swiftlang/github-workflows/pull/279
-      python_lint_check_enabled: false
+
+  # Detect which auxiliary packages are affected by the PR,
+  # so that the build jobs only run when relevant.
+  changes:
+    name: Detect changed packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      make_test_bundle: ${{ steps.filter.outputs.make_test_bundle }}
+      benchmark: ${{ steps.filter.outputs.benchmark }}
+    steps:
+      - id: filter
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          changed="$(gh api --paginate \
+            "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+            --jq '.[].filename')"
+          echo "Changed files:"
+          echo "$changed"
+
+          make_test_bundle=false
+          benchmark=false
+          # `bin/make-test-bundle` has no dependencies, only check its source.
+          if echo "$changed" | grep -qE '^bin/make-test-bundle/'; then make_test_bundle=true; fi
+          # `bin/benchmark` depends on the benchmark schema in `Sources/SwiftDocC/Benchmark/`.
+          # Build and test it if its source or this dependency changes.
+          if echo "$changed" | grep -qE '^(bin/benchmark/|Sources/SwiftDocC/Benchmark/|Package\.(swift|resolved)$)'; then benchmark=true; fi
+
+          echo "make_test_bundle=$make_test_bundle" >> "$GITHUB_OUTPUT"
+          echo "benchmark=$benchmark" >> "$GITHUB_OUTPUT"
+
+  make-test-bundle:
+    name: Build bin/make-test-bundle
+    needs: changes
+    if: ${{ needs.changes.outputs.make_test_bundle == 'true' }}
+    runs-on: ubuntu-latest
+    container:
+      image: swiftlang/swift:nightly-main-jammy
+    steps:
+      - uses: actions/checkout@v7
+      - run: swift build --package-path bin/make-test-bundle
+
+  benchmark:
+    name: Build and test bin/benchmark
+    needs: changes
+    if: ${{ needs.changes.outputs.benchmark == 'true' }}
+    runs-on: ubuntu-latest
+    container:
+      image: swiftlang/swift:nightly-main-jammy
+    steps:
+      - uses: actions/checkout@v7
+      - run: swift test --parallel --package-path bin/benchmark
