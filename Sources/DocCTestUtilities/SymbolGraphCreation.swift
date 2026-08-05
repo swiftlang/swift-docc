@@ -140,9 +140,11 @@ package func makeAvailabilityItem(
     introduced: SymbolGraph.SemanticVersion? = nil,
     deprecated: SymbolGraph.SemanticVersion? = nil,
     obsoleted: SymbolGraph.SemanticVersion? = nil,
+    renamed: String? = nil,
+    unconditionallyDeprecated: Bool = false,
     unconditionallyUnavailable: Bool = false
 ) -> SymbolGraph.Symbol.Availability.AvailabilityItem {
-    return SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: domainName), introducedVersion: introduced, deprecatedVersion: deprecated, obsoletedVersion: obsoleted, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: unconditionallyUnavailable, willEventuallyBeDeprecated: false)
+    return SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: domainName), introducedVersion: introduced, deprecatedVersion: deprecated, obsoletedVersion: obsoleted, message: nil, renamed: renamed, isUnconditionallyDeprecated: unconditionallyDeprecated, isUnconditionallyUnavailable: unconditionallyUnavailable, willEventuallyBeDeprecated: false)
 }
 
 package func makeSymbolNames(name: String) -> SymbolGraph.Symbol.Names {

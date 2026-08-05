@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,46 +9,51 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 @testable import SwiftDocC
 
-class VariantContainerTests: XCTestCase {
+struct VariantContainerTests {
     var testValue = VariantContainerTest()
     
-    func testSetVariantDefaultValueOptional() throws {
+    @Test
+    mutating func setsVariantDefaultValueForOptionalProperty() {
         testValue.setVariantDefaultValue("new value", keyPath: \.optionalPropertyVariants)
-        XCTAssertEqual(testValue.optionalPropertyVariants?.defaultValue, "new value")
+        #expect(testValue.optionalPropertyVariants?.defaultValue == "new value")
     }
     
-    func testSetVariantDefaultValueOptionalExistingValue() throws {
+    @Test
+    mutating func setsVariantDefaultValueForOptionalPropertyWithExistingValue() throws {
         testValue.optionalPropertyVariants = VariantCollection<String>(
             defaultValue: "default value",
             objectiveCValue: "Objective-C value"
         )
         testValue.setVariantDefaultValue("new value", keyPath: \.optionalPropertyVariants)
-        XCTAssertEqual(testValue.optionalPropertyVariants?.defaultValue, "new value")
+        #expect(testValue.optionalPropertyVariants?.defaultValue == "new value")
         
         guard case .replace(let value) = testValue.optionalPropertyVariants?.variants[0].patch[0] else {
-            XCTFail("Unexpected patch value")
+            Issue.record("Unexpected patch value")
             return
         }
         
-        XCTAssertEqual(value, "Objective-C value")
+        #expect(value == "Objective-C value")
     }
     
-    func testGetVariantDefaultValueOptional() throws {
+    @Test
+    mutating func getsVariantDefaultValueForOptionalProperty() {
         testValue.optionalPropertyVariants = VariantCollection<String>(defaultValue: "default value")
-        XCTAssertEqual(testValue.getVariantDefaultValue(keyPath: \.optionalPropertyVariants), "default value")
+        #expect(testValue.getVariantDefaultValue(keyPath: \.optionalPropertyVariants) == "default value")
     }
     
-    func testSetVariantDefaultValueNonOptional() throws {
+    @Test
+    mutating func setsVariantDefaultValueForNonOptionalProperty() {
         testValue.setVariantDefaultValue("new value", keyPath: \.nonOptionalPropertyVariants)
-        XCTAssertEqual(testValue.nonOptionalPropertyVariants.defaultValue, "new value")
+        #expect(testValue.nonOptionalPropertyVariants.defaultValue == "new value")
     }
     
-    func testGetVariantDefaultValue() throws {
+    @Test
+    mutating func getsVariantDefaultValueForNonOptionalProperty() {
         testValue.nonOptionalPropertyVariants = VariantCollection<String>(defaultValue: "default value")
-        XCTAssertEqual(testValue.getVariantDefaultValue(keyPath: \.nonOptionalPropertyVariants), "default value")
+        #expect(testValue.getVariantDefaultValue(keyPath: \.nonOptionalPropertyVariants) == "default value")
     }
     
     struct VariantContainerTest: VariantContainer {

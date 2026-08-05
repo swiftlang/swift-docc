@@ -20,7 +20,7 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertEqual([
@@ -107,7 +107,7 @@ Step @1:1-9:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertEqual(2, diagnostics.count)

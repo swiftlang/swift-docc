@@ -19,7 +19,7 @@ class RedirectedTests: XCTestCase {
         let source = "@Redirected"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(redirected)
@@ -33,7 +33,7 @@ class RedirectedTests: XCTestCase {
         let source = "@Redirected(from: \(oldPath))"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(redirected)
@@ -46,7 +46,7 @@ class RedirectedTests: XCTestCase {
         let source = "@Redirected(from: \(oldPath), argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
@@ -64,7 +64,7 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
@@ -83,7 +83,7 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
@@ -107,7 +107,7 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let tutorialTableOfContents = TutorialTableOfContents(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(tutorialTableOfContents, "A tutorial table-of-contents value can be created with a Redirected child.")
@@ -139,7 +139,7 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let volume = Volume(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(volume, "A Volume value can be created with a Redirected child.")
@@ -204,7 +204,7 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let tutorial = Tutorial(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(tutorial, "A Tutorial value can be created with a Redirected child.")
@@ -232,7 +232,7 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "A TutorialArticle value can be created with a Redirected child.")
@@ -281,7 +281,7 @@ class RedirectedTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let article = Resources(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "A Resources value can be created with a Redirected child.")
@@ -302,7 +302,7 @@ class RedirectedTests: XCTestCase {
         ![full width image](referenced-article-image.png)
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
@@ -337,7 +337,7 @@ class RedirectedTests: XCTestCase {
         ![full width image](referenced-article-image.png)
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
@@ -374,7 +374,7 @@ class RedirectedTests: XCTestCase {
         ![full width image](referenced-article-image.png)
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let article = Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
@@ -398,7 +398,7 @@ class RedirectedTests: XCTestCase {
         let source = "@Redirected(fromURL: /old/path)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let redirected = Redirect(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(redirected)

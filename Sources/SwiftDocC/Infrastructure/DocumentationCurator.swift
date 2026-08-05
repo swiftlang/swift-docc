@@ -313,6 +313,27 @@ struct DocumentationCurator {
                     continue
                 }
                 
+                // Verify that the parent and child have at least one source language in common.
+                // Curating across disjoint source languages would make the child unreachable
+                // from any variant of the parent page in the navigator.
+                if documentationNode.availableSourceLanguages.isDisjoint(with: childDocumentationNode.availableSourceLanguages) {
+                    let nodeLanguages = documentationNode.availableSourceLanguages.map(\.name).sorted().joined(separator: ", ")
+                    let childLanguages = childDocumentationNode.availableSourceLanguages.map(\.name).sorted().joined(separator: ", ")
+                    diagnostics.append(Diagnostic(
+                        source: source(), severity: .warning, range: range(), identifier: "UnreachableCrossLanguageCuration",
+                        summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) would make it unreachable in the documentation hierarchy",
+                        explanation: """
+                        \(topicSectionBaseExplanation). The documentation hierarchy requires a curated link and its parent to share at least one source language.
+                        If this link contributed to the documentation hierarchy, \(describeForDiagnostic(childReference).singleQuoted) wouldn't be reachable from any variant of \(describeForDiagnostic(nodeReference).singleQuoted) because they have no source languages in common:
+
+                        - \(describeForDiagnostic(childReference).singleQuoted): \(childLanguages)
+                        - \(describeForDiagnostic(nodeReference).singleQuoted): \(nodeLanguages)
+                        """,
+                        solutions: removeListItemSolutions
+                    ))
+                    continue
+                }
+
                 // Link reference successfully resolved to a topic node
                 relateNodes(nodeReference, childReference)
                 
