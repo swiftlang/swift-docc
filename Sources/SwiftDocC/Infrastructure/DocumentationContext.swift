@@ -173,6 +173,9 @@ public class DocumentationContext {
     /// The unsuccessful links are tracked so that the context doesn't attempt to re-resolve the unsuccessful links during rendering which runs concurrently for each page.
     var externallyResolvedLinks = [ValidatedURL: TopicReferenceResolutionResult]()
     
+    /// The set of symbol graph platforms registered for each module.
+    private(set) var registeredPlatformsPerModule: [String: Set<PlatformName>] = [:]
+    
     /// A temporary structure to hold a semantic value that hasn't yet had its links resolved.
     ///
     /// These temporary values are only expected to exist while the documentation is being built. Once the documentation bundles have been fully registered and the topic graph
@@ -274,6 +277,7 @@ public class DocumentationContext {
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
             NonOverviewHeadingChecker(sourceFile: source).any(),
+            MiscasedSectionHeading(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
             InvalidCodeBlockOption(sourceFile: source).any(),
         ])
@@ -2030,6 +2034,7 @@ public class DocumentationContext {
             try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
                 try autoreleasepool {
                     try symbolGraphLoader.loadAll()
+                    registeredPlatformsPerModule = symbolGraphLoader.platformsFoundInSymbolGraphsByModule
                 }
             }
             try shouldContinueRegistration()
@@ -2426,9 +2431,6 @@ public class DocumentationContext {
             }
         }
     }
-    /// A closure type getting the information about a reference in a context and returns any possible problems with it.
-    @available(*, deprecated, message: "This alias is unused. This deprecated API will be removed after 6.4 is released.")
-    public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
     
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
     /// - Parameters:

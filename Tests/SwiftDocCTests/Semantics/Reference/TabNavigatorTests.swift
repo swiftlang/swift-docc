@@ -178,11 +178,13 @@ class TabNavigatorTests: XCTestCase {
                                 columns: [
                                     RenderBlockContent.Row.Column(
                                         size: 1,
+                                        alignment: .leading,
                                         content: ["Hello!"]
                                     ),
                                     
                                     RenderBlockContent.Row.Column(
                                         size: 1,
+                                        alignment: .leading,
                                         content: ["Hello there!"]
                                     )
                                 ]

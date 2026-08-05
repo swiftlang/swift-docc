@@ -46,7 +46,7 @@ extension XMLNode {
 
 extension XMLElement {
     /// Adds the given attributes to the element.
-    func addAttributes(_ attributes: [String: String]) {
+    package func addAttributes(_ attributes: [String: String]) {
         let attributeNodes = attributes.sorted(by: { $0.key < $1.key }).map {
             XMLNode.attribute(withName: $0.key, stringValue: $0.value) as! XMLNode
         }

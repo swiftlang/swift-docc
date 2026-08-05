@@ -10,6 +10,7 @@
 
 import Foundation
 import XCTest
+import Testing
 @testable import SwiftDocC
 import DocCTestUtilities
 import SymbolKit
@@ -576,4 +577,60 @@ private func declarationsAndHighlights(for section: DeclarationRenderSection) ->
     var declarations = otherDeclarations.declarations.map(\.tokens)
     declarations.insert(section.tokens, at: otherDeclarations.displayIndex)
     return declarations.flatMap(declarationAndHighlights(for:))
+}
+
+@Suite
+struct DeclarationsRenderSectionTests_new {
+    // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // If you suspect that your changes might affect this test, you need to run it repeatedly (and relaunch for each repetition)
+    // to verify that the behavior remains deterministic.
+    @Test
+    func highlightsOverloadsAgainstHighestPriorityPlatformDeclaration() async throws {
+        func declaration(type: String, default defaultValue: String) -> SymbolGraph.Symbol.DeclarationFragments {
+            .init(declarationFragments: [
+                .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+                .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                .init(kind: .identifier, spelling: "make", preciseIdentifier: nil),
+                .init(kind: .text, spelling: "(_ value: \(type) = \(defaultValue))", preciseIdentifier: nil),
+            ])
+        }
+
+        func graph(platform: String, default defaultValue: String) -> SymbolGraph {
+            makeSymbolGraph(
+                moduleName: "Overloads",
+                platform: .init(operatingSystem: .init(name: platform)),
+                symbols: [
+                    // A method whose default value changes per platform.
+                    makeSymbol(id: "main", kind: .func, pathComponents: ["make(_:)"], otherMixins: [declaration(type: "Value", default: defaultValue)]),
+                    // An overload with a different parameter type that always has the macOS default value.
+                    makeSymbol(id: "sibling", kind: .func, pathComponents: ["make(_:)"], otherMixins: [declaration(type: "Other", default: ".standard")]),
+                ])
+        }
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "macos.symbols.json", content: graph(platform: "macos", default: ".standard")),
+            JSONFile(name: "tvos.symbols.json", content: graph(platform: "tvos", default: ".compact")),
+            JSONFile(name: "watchos.symbols.json", content: graph(platform: "watchos", default: ".mini")),
+            JSONFile(name: "visionos.symbols.json", content: graph(platform: "visionos", default: ".immersive")),
+        ])
+        let context = try await load(catalog: catalog, configuration: configuration)
+
+        let reference = try #require(context.documentationCache.reference(symbolID: "main"))
+        let symbol = try #require(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
+        let renderNode = try #require(translator.visitSymbol(symbol) as? RenderNode)
+        let section = try #require(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+
+        // The macOS declaration must be used to compute the LCS, where only the parameter type differs.
+        // If a different platform is used, the sibling overload gets highlighted differently here.
+        #expect(declarationsAndHighlights(for: try #require(section.declarations.first)) == [
+            "func make(_ value: Other = .standard)",
+            "                   ~~~~~             ",
+            "func make(_ value: Value = .standard)",
+            "                   ~~~~~             ",
+        ])
+    }
 }

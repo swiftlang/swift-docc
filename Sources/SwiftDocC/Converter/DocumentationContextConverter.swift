@@ -69,25 +69,6 @@ public class DocumentationContextConverter {
         self.sourceRepository = sourceRepository
         self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
     }
-    @available(*, deprecated, renamed: "init(context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)", message: "Use 'init(context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)' instead. This deprecated API will be removed after 6.4 is released.")
-    public convenience init(
-        bundle _: DocumentationBundle,
-        context: DocumentationContext,
-        renderContext: RenderContext,
-        emitSymbolSourceFileURIs: Bool = false,
-        emitSymbolAccessLevels: Bool = false,
-        sourceRepository: SourceRepository? = nil,
-        symbolIdentifiersWithExpandedDocumentation: [String]? = nil
-    ) {
-        self.init(
-            context: context,
-            renderContext: renderContext,
-            emitSymbolSourceFileURIs: emitSymbolSourceFileURIs,
-            emitSymbolAccessLevels: emitSymbolAccessLevels,
-            sourceRepository: sourceRepository,
-            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
-        )
-    }
     
     /// Converts a documentation node to a render node.
     ///

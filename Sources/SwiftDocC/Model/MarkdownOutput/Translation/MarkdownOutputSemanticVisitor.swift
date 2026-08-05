@@ -132,14 +132,17 @@ extension MarkdownOutputSemanticVisitor {
         // Availability - defaults, overridden with symbol, overridden with metadata
         
         var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
-        if let primaryModule = metadata.symbol?.modules.first {
+        
+        let symbolAvailability = symbol.availability?.availability ?? []
+        // Framework defaults only apply if there are no specific availabilities at symbol level.
+        if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
             for availability in bundle.info.defaultAvailability?.modules[primaryModule] ?? [] {
                 let meta = MarkdownOutputNode.Metadata.Availability(availability)
                 availabilities[meta.platform] = meta
             }
         }
-         
-        for availability in symbol.availability?.availability ?? [] {
+        
+        for availability in symbolAvailability {
             let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
         }

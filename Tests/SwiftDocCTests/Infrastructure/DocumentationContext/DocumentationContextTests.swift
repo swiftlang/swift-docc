@@ -924,7 +924,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertTrue(parent.path.hasSuffix("MyKit/MyClass"))
         
         //
-        // Test sidecar documentation
+        // Test documentation extension
         //
         
         // MyProtocol is loaded
@@ -2176,7 +2176,7 @@ let expected = """
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
     }
 
-    func testUnresolvedSidecarDiagnostics() async throws {
+    func testUnresolvedDocumentationExtensionDiagnostics() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
@@ -2203,15 +2203,14 @@ let expected = """
         let unmatchedDocExtensionDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.identifier == "org.swift.docc.SymbolUnmatched" }))
         XCTAssertNotNil(unmatchedDocExtensionDiagnostic)
         
-        // Verify the diagnostics have the sidecar source URL
+        // Verify the diagnostics have the documentation extension source URL
         let source = try XCTUnwrap(unmatchedDocExtensionDiagnostic.source)
-        
-        let unmatchedSidecarDiagnostic = unmatchedDocExtensionDiagnostic
+
         XCTAssertTrue(bundle.markupURLs.contains(source.standardizedFileURL), "One of the files should be the diagnostic source")
-        XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedDocExtensionDiagnostic.source)..<SourceLocation(line: 1, column: 32, source: unmatchedDocExtensionDiagnostic.source))
-        
-        XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched '/ModuleName/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/ModuleName'.")
-        XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
+        XCTAssertEqual(unmatchedDocExtensionDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedDocExtensionDiagnostic.source)..<SourceLocation(line: 1, column: 32, source: unmatchedDocExtensionDiagnostic.source))
+
+        XCTAssertEqual(unmatchedDocExtensionDiagnostic.summary, "No symbol matched '/ModuleName/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/ModuleName'.")
+        XCTAssertEqual(unmatchedDocExtensionDiagnostic.severity, .warning)
     }
     
     func testExtendingSymbolWithSpaceInName() async throws {

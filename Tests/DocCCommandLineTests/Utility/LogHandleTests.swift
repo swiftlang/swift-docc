@@ -18,7 +18,7 @@ class LogHandleTests: XCTestCase {
     /// - Bug: rdar://73462272
     func testWriteToStandardOutput() throws {
 #if os(Windows)
-        throw XCTSkip("cannot reassign file handles on Windows")
+        try XCTSkipIf(true, "cannot reassign file handles on Windows")
 #else
         let pipe = Pipe()
 
@@ -58,7 +58,7 @@ class LogHandleTests: XCTestCase {
 
     func testFlushesStandardOutput() throws {
 #if os(Windows)
-        throw XCTSkip("cannot reassign file handles on Windows")
+        try XCTSkipIf(true, "cannot reassign file handles on Windows")
 #else
         let pipe = Pipe()
 
@@ -79,7 +79,7 @@ class LogHandleTests: XCTestCase {
 
     func testFlushesStandardError() throws {
 #if os(Windows)
-        throw XCTSkip("cannot reassign file handles on Windows")
+        try XCTSkipIf(true, "cannot reassign file handles on Windows")
 #else
         let pipe = Pipe()
 

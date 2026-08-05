@@ -85,7 +85,6 @@ struct FastSymbolGraphJSONDecoderTests {
         "LegacyBundle_DoNotUseInNewTests",
         "MixedLanguageFramework",
         "MixedLanguageFrameworkComplexLinks",
-        "MixedLanguageFrameworkSingleLanguageCuration",
         "MixedLanguageFrameworkSingleLanguageParent",
         "MixedLanguageFrameworkWithArticlesUsingSupportedLanguages",
         "MixedLanguageFrameworkWithLanguageRefinements",

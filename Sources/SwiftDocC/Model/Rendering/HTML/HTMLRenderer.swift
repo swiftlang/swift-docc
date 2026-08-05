@@ -37,20 +37,23 @@ private struct ContextLinkProvider: LinkProvider {
         
         // A helper function that transforms SymbolKit fragments into renderable identifier/decorator fragments
         func convert(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [LinkedElement.SymbolNameFragment] {
-            func convert(kind: SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind) -> LinkedElement.SymbolNameFragment.Kind {
-                switch kind {
-                    case .identifier, .externalParameter: .identifier
-                    default:                              .decorator
+            func convert(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> LinkedElement.SymbolNameFragment.Kind {
+                switch fragment.kind {
+                    case .identifier, .externalParameter,
+                         .keyword where fragment.spelling == "init":
+                            .identifier
+                    default:
+                            .decorator
                 }
             }
-            guard var current = fragments.first.map({ LinkedElement.SymbolNameFragment(text: $0.spelling, kind: convert(kind: $0.kind)) }) else {
+            guard var current = fragments.first.map({ LinkedElement.SymbolNameFragment(text: $0.spelling, kind: convert($0)) }) else {
                 return []
             }
             
             // Join together multiple fragments of the same identifier/decorator kind to produce a smaller output.
             var result: [LinkedElement.SymbolNameFragment] = []
             for fragment in fragments.dropFirst() {
-                let kind = convert(kind: fragment.kind)
+                let kind = convert(fragment)
                 if kind == current.kind  {
                     current.text += fragment.spelling
                 } else {
@@ -119,7 +122,7 @@ private struct ContextLinkProvider: LinkProvider {
 // MARK: HTML Renderer
 
 /// A type that renders documentation pages into semantic HTML elements.
-struct HTMLRenderer {
+package struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
     let goal: RenderGoal
@@ -161,24 +164,29 @@ struct HTMLRenderer {
         let node = context.documentationCache[reference]!
         
         let articleElement = XMLElement(name: "article")
-        let hero = XMLElement(name: "section")
+        let hero = XMLNode.element(named: "section")
+        if goal == .richness {
+            // Draw a background color for the hero section and an article/collection glyph
+            hero.addAttributes(["id": "hero", "class": article.topics == nil ? "article" : "api-collection"])
+        }
         articleElement.addChild(hero)
         
-        // Breadcrumbs and Eyebrow
+        // Breadcrumbs
         hero.addChild(renderer.breadcrumbs(
             references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.url },
             currentPageNames: .single(.conceptual(node.name.plainText))
         ))
-        addEyebrow(text: article.topics == nil ? "Article": "API Collection", to: hero)
-        
-        // Title
+        // Eyebrow and title
         hero.addChild(
-            .element(named: "h1", children: [.text(node.name.plainText)])
+            .element(named: "hgroup", children: [
+                .element(named: "p", children: [.text(article.topics == nil ? "Article": "API Collection")]),
+                .element(named: "h1", children: [.text(node.name.plainText)]),
+            ])
         )
         
         // Abstract
         if let abstract = article.abstract {
-            addAbstract(abstract, to: hero)
+            hero.addChild(renderer.visit(abstract))
         }
         
         // Deprecation message
@@ -195,8 +203,6 @@ struct HTMLRenderer {
         
         // Topics
         if let topics = article.topics {
-            separateSectionsIfNeeded(in: articleElement)
-            
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
             articleElement.addChildren(
                 renderer.groupedSection(named: "Topics", groups: [
@@ -231,36 +237,47 @@ struct HTMLRenderer {
         let articleElement = XMLElement(name: "article")
         let hero = XMLElement(name: "section")
         articleElement.addChild(hero)
+        let isModule = symbol.kind.identifier == .module
         
-        // Breadcrumbs and Eyebrow
-        hero.addChild(renderer.breadcrumbs(
-            references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
-            currentPageNames: node.makeNames(goal: goal)
-        ))
-        addEyebrow(text: symbol.roleHeading, to: hero)
+        if isModule {
+            if goal == .richness {
+                // Draw a background color for the hero section and a module glyph
+                hero.addAttributes(["id": "hero", "class": "module"])
+            }
+        } else {
+            // Breadcrumbs
+            hero.addChild(renderer.breadcrumbs(
+                references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
+                currentPageNames: node.makeNames(goal: goal)
+            ))
+        }
         
-        // Title
+        // Eyebrow and title
+        let hgroup = XMLNode.element(named: "hgroup", children: [
+            .element(named: "p", children: [.text(symbol.roleHeading)]),
+        ])
         switch symbol.titleVariants.values(goal: goal) {
             case .single(let title):
-                hero.addChild(
+                hgroup.addChild(
                     .element(named: "h1", children: renderer.wordBreak(symbolName: title))
                 )
             case .languageSpecific(let languageSpecificTitles):
                 for (language, languageSpecificTitle) in languageSpecificTitles.sorted(by: { $0.key < $1.key }) {
-                    hero.addChild(
+                    hgroup.addChild(
                         .element(named: "h1", children: renderer.wordBreak(symbolName: languageSpecificTitle), attributes: ["class": "\(language.id)-only"])
                     )
                 }
             case .empty:
                 // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
-                hero.addChild(
+                hgroup.addChild(
                     .element(named: "h1", children: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
                 )
         }
+        hero.addChild(hgroup)
         
         // Abstract
         if let abstract = symbol.abstract {
-            addAbstract(abstract, to: hero)
+            hero.addChild(renderer.visit(abstract))
         }
         
         // Availability
@@ -286,13 +303,15 @@ struct HTMLRenderer {
             var fragmentsByLanguage = [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
             for (trait, variant) in symbol.declarationVariants.allValues {
                 guard let language = trait.sourceLanguage else { continue }
-                fragmentsByLanguage[language] = variant.values.first?.declarationFragments
+                fragmentsByLanguage[language] = variant.mainRenderFragments()?.declarationFragments
             }
             
             if fragmentsByLanguage.values.contains(where: { !$0.isEmpty }) {
                 hero.addChild( renderer.declaration(fragmentsByLanguage) )
             }
         }
+        
+        // TODO: Constraints
         
         // Deprecation message
         if let deprecationMessage = symbol.deprecatedSummary?.content {
@@ -363,8 +382,6 @@ struct HTMLRenderer {
             }
             
             if !taskGroupInfo.isEmpty {
-                separateSectionsIfNeeded(in: articleElement)
-                
                 articleElement.addChildren(renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
             }
         }
@@ -401,20 +418,6 @@ struct HTMLRenderer {
             )
         )
     }
-   
-    private func addEyebrow(text: String, to element: XMLElement) {
-        element.addChild(
-            .element(named: "p", children: [.text(text)], attributes: goal == .richness ? ["id": "eyebrow"] : [:])
-        )
-    }
-    
-    private func addAbstract(_ abstract: Paragraph, to element: XMLElement) {
-        let paragraph = renderer.visit(abstract) as! XMLElement
-        if goal == .richness {
-            paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
-        }
-        element.addChild(paragraph)
-    }
     
     private func addDeprecationSummary(markup: [any Markup], to element: XMLElement) {
         var children: [XMLNode] = [
@@ -425,21 +428,11 @@ struct HTMLRenderer {
         }
         
         element.addChild(
-            .element(named: "blockquote", children: children, attributes: ["class": "aside deprecated"])
+            .element(named: "aside", children: children, attributes: ["class": "deprecated"])
         )
     }
     
-    private func separateSectionsIfNeeded(in element: XMLElement) {
-        guard goal == .richness, ((element.children ?? []).last as? XMLElement)?.name == "section" else {
-            return
-        }
-        
-        element.addChild(.element(named: "hr")) // Separate the sections with a thematic break
-    }
-    
     private func addSeeAlso(_ seeAlso: SeeAlsoSection, to element: XMLElement) {
-        separateSectionsIfNeeded(in: element)
-        
         element.addChildren(
             renderer.groupedSection(named: "See Also", groups: [
                 .swift: seeAlso.taskGroups.map { group in
@@ -450,8 +443,6 @@ struct HTMLRenderer {
             ])
         )
     }
-    
-    // TODO: As a future enhancement, add another layer on top of this that creates complete HTML pages (both `<head>` and `<body>`) (rdar://165912669)
 }
 
 // MARK: Helpers

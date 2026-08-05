@@ -620,6 +620,29 @@ class ConvertSubcommandFlagParsingTests {
     }
     
     @Test
+    func parsingOutputFormat() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.inputsAndOutputs.outputFormat == .json)
+        
+        // It's allowed (but redundant) to explicitly specify "json" as the output format
+        let redundantJSONOutput = try Docc.Convert.parse(["--output-format", "json"])
+        #expect(redundantJSONOutput.inputsAndOutputs.outputFormat == .json)
+        
+        // At this stage, the static HTML output format is spelled very verbosely and explicitly to dissuade general usage (in addition to the option is hidden)
+        let htmlOutput = try Docc.Convert.parse(["--output-format", "experimental-html-for-development"])
+        #expect(htmlOutput.inputsAndOutputs.outputFormat == .experimentalHTML)
+        
+        // Any shorter and less explicit spelling raises an error.
+        #expect(throws: (any Error).self) {
+            try Docc.Convert.parse(["--output-format", "experimental-html"])
+        }
+        #expect(throws: (any Error).self) {
+            try Docc.Convert.parse(["--output-format", "html"])
+        }
+    }
+    
+    @Test
     func parsingExternalLinkSupportFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,6 +15,7 @@ import FoundationNetworking
 
 import XCTest
 @testable import SwiftDocC
+import DocCTestUtilities
 
 fileprivate let baseURL = URL(string: "test://")!
 fileprivate let helloWorldHTML = "<html><header><title>Hello Title</title></header><body>Hello world</body></html>".data(using: .utf8)!
@@ -65,12 +66,16 @@ class FileServerTests: XCTestCase {
         XCTAssertNil(retrieved, "\(baseURL.appendingPathComponent("/invalid/").absoluteString) should return nil, but returned \(String(describing: retrieved))")
     }
     
-    func testAddingFilesInFolder() {
-        let folder = Bundle.module.url(
-            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        
-        let memoryFileProvider = MemoryFileServerProvider()
-        memoryFileProvider.addFiles(inFolder: folder.path)
+    func testAddingFilesInFolder() throws {
+        let (fileSystem, folderURL) = try makeTestFileSystemWith {
+            DataFile(name: "figure1.png", data: Data())
+            Folder(name: "images") {
+                DataFile(name: "figure1.jpg", data: Data())
+            }
+        }
+
+        let memoryFileProvider = MemoryFileServerProvider(fileManager: fileSystem)
+        memoryFileProvider.addFiles(inFolder: folderURL.path)
         
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: memoryFileProvider)
@@ -80,11 +85,9 @@ class FileServerTests: XCTestCase {
     }
     
     func testAddingRemovingFromPath() {
-        let folder = Bundle.module.url(
-            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        
         let memoryFileProvider = MemoryFileServerProvider()
-        memoryFileProvider.addFiles(inFolder: folder.path)
+        memoryFileProvider.addFile(path: "/figure1.png", data: Data())
+        memoryFileProvider.addFile(path: "/images/figure1.jpg", data: Data())
         
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: memoryFileProvider)
@@ -96,11 +99,15 @@ class FileServerTests: XCTestCase {
         XCTAssertNil(fileServer.data(for: baseURL.appendingPathComponent("/images/figure1.jpg")))
     }
     
-    func testDiskServerProvider() {
-        let folder = Bundle.module.url(
-            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!.path
-        
-        guard let fileSystemFileProvider = FileSystemServerProvider(directoryPath: folder) else {
+    func testDiskServerProvider() throws {
+        let (fileSystem, folderURL) = try makeTestFileSystemWith {
+            DataFile(name: "figure1.png", data: Data())
+            Folder(name: "images") {
+                DataFile(name: "figure1.jpg", data: Data())
+            }
+        }
+
+        guard let fileSystemFileProvider = FileSystemServerProvider(directoryPath: folderURL.path, fileManager: fileSystem) else {
             XCTFail("Provided folder is not valid, it cannot be served.")
             return
         }
@@ -112,11 +119,15 @@ class FileServerTests: XCTestCase {
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/figure1.png")))
     }
     
-    func testSubPathProvider() {
-        let folder = Bundle.module.url(
-            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!.path
-        
-        guard let fileSystemFileProvider = FileSystemServerProvider(directoryPath: folder) else {
+    func testSubPathProvider() throws {
+        let (fileSystem, folderURL) = try makeTestFileSystemWith {
+            DataFile(name: "figure1.png", data: Data())
+            Folder(name: "images") {
+                DataFile(name: "figure1.jpg", data: Data())
+            }
+        }
+
+        guard let fileSystemFileProvider = FileSystemServerProvider(directoryPath: folderURL.path, fileManager: fileSystem) else {
             XCTFail("Provided folder is not valid, it cannot be served.")
             return
         }
@@ -145,11 +156,8 @@ class FileServerTests: XCTestCase {
     }
     
     func testResponse() {
-        let folder = Bundle.module.url(
-            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        
         let memoryFileProvider = MemoryFileServerProvider()
-        memoryFileProvider.addFiles(inFolder: folder.path)
+        memoryFileProvider.addFile(path: "/images/figure1.jpg", data: Data())
         
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: memoryFileProvider)

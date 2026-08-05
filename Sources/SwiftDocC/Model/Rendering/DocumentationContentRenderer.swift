@@ -58,11 +58,6 @@ public class DocumentationContentRenderer {
         self.urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
     }
     
-    @available(*, deprecated, renamed: "init(context:)", message: "Use 'init(context:)' instead. This deprecated API will be removed after 6.4 is released.")
-    public convenience init(documentationContext: DocumentationContext, bundle _: DocumentationBundle) {
-        self.init(context: documentationContext)
-    }
-    
     /// For symbol nodes, returns the declaration render section if any.
     func subHeadingFragments(for node: DocumentationNode) -> VariantCollection<[DeclarationRenderSection.Token]?> {
         guard let symbol = (node.semantic as? Symbol) else {
@@ -199,7 +194,9 @@ public class DocumentationContentRenderer {
         }
         
         let isLeaf = SymbolReference.isLeaf(symbol)
-        let parentName = context.parents(of: reference).first
+        // A symbol can be reached in the topic graph through one or more parent nodes.
+        // To ensure stable ordering, use the parent with the shortest path to the symbol.
+        let parentName = context.shortestFinitePath(to: reference)?.last
             .flatMap { try? context.entity(with: $0).symbol?.names.title }
         
         let options = ConformanceSection.ConstraintRenderOptions(

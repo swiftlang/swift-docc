@@ -152,6 +152,71 @@ struct PathHierarchyTests_new {
         #expect(paths["some-symbol-id"] == "/ModuleName/Symbol_Name__", "Each special character should be replaced with a '_'")
         #expect(links["some-symbol-id"] == "/ModuleName/\(symbolName)", "Links allow any special characters")
     }
+
+    // This verifies determinism in a previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // If you suspect that your changes might affect this test,
+    // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
+    @Test
+    func symbolWithPlatformSpecificNameHasDeterministicPath() async throws {
+        let symbolID = "some-symbol-id"
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName-A.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(id: symbolID, kind: .enum, pathComponents: ["FirstName"]),
+                ]
+            )),
+            JSONFile(name: "ModuleName-B.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                platform: .init(operatingSystem: .init(name: "ios")),
+                symbols: [
+                    makeSymbol(id: symbolID, kind: .enum, pathComponents: ["SecondName"]),
+                ]
+            ))
+        ])
+
+        let context = try await load(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        // The symbol from the symbol graph whose path is lexicographically sorted first should be used.
+        #expect(paths[symbolID] == "/ModuleName/FirstName")
+    }
+
+    // This verifies determinism in a previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // If you suspect that your changes might affect this test,
+    // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
+    @Test
+    func symbolWithPlatformSpecificNameAndSGFsWithIdenticalNamesHasDeterminsticPath() async throws {
+        let symbolID = "some-symbol-id"
+
+        // Catalog with two identically named SGFs in different directories
+        let catalog = Folder(name: "unit-test.docc", content: [
+            Folder(name: "A", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: symbolID, kind: .enum, pathComponents: ["FirstName"]),
+                    ]
+                )),
+            ]),
+            Folder(name: "B", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(id: symbolID, kind: .enum, pathComponents: ["SecondName"]),
+                    ]
+                )),
+            ]),
+        ])
+
+        let context = try await load(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        // The symbol from the symbol graph whose path is lexicographically sorted first should be used.
+        #expect(paths[symbolID] == "/ModuleName/FirstName")
+    }
 }
 
 class PathHierarchyTests: XCTestCase {

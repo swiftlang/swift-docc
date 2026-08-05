@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -615,12 +615,6 @@ public enum RenderBlockContent: Equatable {
         /// The underlying raw string value.
         public var rawValue: String
 
-        /// The heading text to use when rendering this style of aside.
-        @available(*, deprecated, message: "Use 'Aside.name' instead. This deprecated API will be removed after 6.4 is released.")
-        public var displayName: String {
-            return rawValue.capitalized
-        }
-
         /// Creates an aside style.
         ///
         /// The new aside style's underlying raw string value will be lowercased.
@@ -656,13 +650,6 @@ public enum RenderBlockContent: Equatable {
         /// > new aside style's raw value will be set to note.
         public init(asideKind: Markdown.Aside.Kind) {
             self.init(rawValue: asideKind.rawValue)
-        }
-
-        /// Creates an aside style with the specified display name.
-        /// - Parameter displayName: The heading text to use when rendering this style of aside.
-        @available(*, deprecated, renamed: "init(rawValue:)", message: "Use 'init(rawValue:)' instead. This deprecated API will be removed after 6.4 is released.")
-        public init(displayName: String) {
-            self.init(rawValue: displayName)
         }
         
         /// Encodes the aside style into the specified encoder.
@@ -801,14 +788,27 @@ public enum RenderBlockContent: Equatable {
         
         /// The columns that should be rendered in this row.
         public var columns: [Column]
-        
+
         /// A column with a row in a grid-based layout system.
-        public struct Column: Codable, Equatable {
+        public struct Column: Equatable {
             /// The number of columns in the parent row this column should span.
             public var size: Int
-            
+
+            /// The alignment of this column's content.
+            public var alignment: Alignment
+
             /// The content that should be rendered in this column.
             public var content: [RenderBlockContent]
+
+            /// The alignment of content within a column.
+            public enum Alignment: String, Codable, Equatable {
+                /// Align to the leading edge.
+                case leading
+                /// Align to the center.
+                case center
+                /// Align to the trailing edge.
+                case trailing
+            }
         }
     }
     
@@ -991,6 +991,26 @@ extension RenderBlockContent.Table: Codable {
                 try cellContainer.encode(data.rowspan, forKey: .rowspan)
             }
         }
+    }
+}
+
+extension RenderBlockContent.Row.Column: Codable {
+    enum CodingKeys: String, CodingKey {
+        case size, alignment, content
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        size = try container.decode(Int.self, forKey: .size)
+        alignment = try container.decodeIfPresent(Alignment.self, forKey: .alignment) ?? .leading
+        content = try container.decode([RenderBlockContent].self, forKey: .content)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(size, forKey: .size)
+        try container.encode(alignment, forKey: .alignment)
+        try container.encode(content, forKey: .content)
     }
 }
 

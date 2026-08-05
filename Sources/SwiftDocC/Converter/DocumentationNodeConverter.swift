@@ -22,10 +22,6 @@ public struct DocumentationNodeConverter {
     public init(context: DocumentationContext) {
         self.context = context
     }
-    @available(*, deprecated, renamed: "init(context:)", message: "Use 'init(context:)' instead. This deprecated API will be removed after 6.4 is released.")
-    public init(bundle _: DocumentationBundle, context: DocumentationContext) {
-        self.init(context: context)
-    }
     
     /// Converts a documentation node to a render node.
     ///

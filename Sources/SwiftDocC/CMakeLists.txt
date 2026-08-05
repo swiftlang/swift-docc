@@ -26,6 +26,7 @@ add_library(SwiftDocC
   Checker/Checkers/MissingAbstract.swift
   Checker/Checkers/NonInclusiveLanguageChecker.swift
   Checker/Checkers/NonOverviewHeadingChecker.swift
+  Checker/Checkers/MiscasedSectionHeading.swift
   Checker/Checkers/SeeAlsoInTopicsHeadingChecker.swift
   Converter/DocumentationContextConverter.swift
   Converter/DocumentationNodeConverter.swift
@@ -178,6 +179,7 @@ add_library(SwiftDocC
   Model/Rendering/DocumentationContentRenderer.swift
   Model/Rendering/HTML/HTMLContentConsumer.swift
   Model/Rendering/HTML/HTMLRenderer.swift
+  Model/Rendering/HTML/HTMLRenderer+FullPage.swift
   Model/Rendering/LinkTitleResolver.swift
   "Model/Rendering/Navigation Tree/RenderHierarchy.swift"
   "Model/Rendering/Navigation Tree/RenderHierarchyChapter.swift"
@@ -230,7 +232,6 @@ add_library(SwiftDocC
   Model/Rendering/SemanticVersion.swift
   Model/Rendering/Symbol/AttributesRenderSection.swift
   Model/Rendering/Symbol/AvailabilityRenderMetadataItem.swift
-  Model/Rendering/Symbol/AvailabilitySortOrder.swift
   Model/Rendering/Symbol/ConformanceSection.swift
   Model/Rendering/Symbol/ContentRenderSection.swift
   Model/Rendering/Symbol/DeclarationRenderSection+SymbolGraph.swift

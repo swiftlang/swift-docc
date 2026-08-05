@@ -16,21 +16,21 @@ import DocCTestUtilities
 
 struct StaticHostingWithContentTests {
     @Test(arguments: [true, false])
-    func perPageIndexHTMLFileIncludesBasePath(includeHTMLContent: Bool) async throws {
-        let catalog = Folder(name: "Something.docc", content: [
+    func includesBasePathInPerPageIndexHTMLFile(includeHTMLContent: Bool) async throws {
+        let catalog = Folder(name: "Something.docc") {
             TextFile(name: "RootArticle.md", utf8Content: """
             # A single article
             
             This is a _formatted_ article that becomes the root page (because there is only one page).
-            """),
+            """)
             
             TextFile(name: "header.html", utf8Content: """
             <p>Some header content</p>
-            """),
+            """)
             TextFile(name: "footer.html", utf8Content: """
             <p>Some footer content</p>
-            """),
-        ])
+            """)
+        }
         let htmlTemplateContent = """
         <html>
           <head>
@@ -47,18 +47,18 @@ struct StaticHostingWithContentTests {
         </html>
         """
         
-        let fileSystem = try TestFileSystem(folders: [
-            Folder(name: "path", content: [
-                Folder(name: "to", content: [
+        let fileSystem = try TestFileSystem {
+            Folder(name: "path") {
+                Folder(name: "to") {
                     catalog
-                ])
-            ]),
-            Folder(name: "template", content: [
-                TextFile(name: "index.html", utf8Content: htmlTemplateContent.replacingOccurrences(of: "{{BASE_PATH}}", with: "")),
-                TextFile(name: "index-template.html", utf8Content: htmlTemplateContent),
-            ]),
-            Folder(name: "output-dir", content: [])
-        ])
+                }
+            }
+            Folder(name: "template") {
+                TextFile(name: "index.html", utf8Content: htmlTemplateContent.replacingOccurrences(of: "{{BASE_PATH}}", with: ""))
+                TextFile(name: "index-template.html", utf8Content: htmlTemplateContent)
+            }
+            Folder(name: "output-dir") {}
+        }
         
         let basePath = "some/test/base-path"
         
@@ -105,23 +105,31 @@ struct StaticHostingWithContentTests {
         """)
         
         let expectedTitleAndMetaContent = includeHTMLContent ? """
-        <title>A single article</title>
-        <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description"/>
-        """ : "<title>Documentation</title>"
+          <title>A single article</title>
+          <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
+        """ : "  <title>Documentation</title>\n  "
         
         let expectedNoScriptContent = includeHTMLContent ? """
-        <article>
-          <section>
-            <ul>
-              <li>RootArticle</li>
-            </ul>
-            <p>
-            Article</p>
-            <h1>RootArticle</h1>
-            <p>This is a <i> formatted</i> article that becomes the root page (because there is only one page).</p>
-          </section>
-        </article>
-        """ : "<p>Some existing information inside the no script tag</p>"
+            <noscript>\
+        <article>\
+        <section>\
+        <ul>\
+        <li>RootArticle</li>\
+        </ul>\
+        <hgroup>\
+        <p>Article</p>\
+        <h1>RootArticle</h1>\
+        </hgroup>\
+        <p>This is a <i>formatted</i> article that becomes the root page (because there is only one page).</p>\
+        </section>\
+        </article>\
+        </noscript>
+        """ : """
+        
+            <noscript>
+              <p>Some existing information inside the no script tag</p>
+            </noscript>
+        """
         
         // The footer comes before the header to match the behavior of ConvertFileWritingConsumer.
         try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
@@ -129,18 +137,8 @@ struct StaticHostingWithContentTests {
           <head>
             <meta charset="utf-8" />
             <link rel="icon" href="/some/test/base-path/favicon.ico" />
-            \(expectedTitleAndMetaContent)
-          </head>
-          <body>
-            <template id="custom-footer">
-              <p>Some footer content</p>
-            </template>
-            <template id="custom-header">
-              <p>Some header content</p>
-            </template>
-            <noscript>
-              \(expectedNoScriptContent)
-            </noscript>
+          \(expectedTitleAndMetaContent)</head>
+          <body><template id="custom-footer"><p>Some footer content</p></template><template id="custom-header"><p>Some header content</p></template>\(includeHTMLContent ? "\n" : "")\(expectedNoScriptContent)
             <div id="app"></div>
           </body>
         </html>

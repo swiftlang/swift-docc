@@ -1828,6 +1828,14 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() async throws {
+        #if !os(Windows)
+        // Skip this test if running as root (e.g. inside a CI container).
+        // The kernel bypasses POSIX permission checks for the root user, so
+        // the file is always readable, even if the permissions are set to 000.
+        // This means the assertion in the last line will not succeed.
+        try XCTSkipIf(getuid() == 0, "POSIX permission checks are bypassed for the root user")
+        #endif
+
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(context: context)
         

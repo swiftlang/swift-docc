@@ -29,20 +29,26 @@ public class DocumentationSchemeHandler: NSObject {
     var fileServer: FileServer
     
     /// The default file provider to serve content from memory.
-    var memoryProvider = MemoryFileServerProvider()
+    var memoryProvider: MemoryFileServerProvider
     
     /**
      Initializes a `DocumentationSchemeHandler` with content coming from a folder.
      */
-    public init(withTemplateURL templateURL:URL) {
+    public convenience init(withTemplateURL templateURL: URL) {
+        self.init(withTemplateURL: templateURL, fileManager: FileManager.default)
+    }
+    
+    package init(withTemplateURL templateURL: URL, fileManager: any FileManagerProtocol) {
         fileServer = FileServer(baseURL: URL(string: DocumentationSchemeHandler.fullScheme)!)
-        let templateProvider = FileSystemServerProvider(directoryPath: templateURL.path)!
+        memoryProvider = MemoryFileServerProvider(fileManager: fileManager)
+        let templateProvider = FileSystemServerProvider(directoryPath: templateURL.path, fileManager: fileManager)!
         fileServer.register(provider: templateProvider)
         fileServer.register(provider: memoryProvider, subPath: "/data")
     }
     
     public override init() {
         fileServer = FileServer(baseURL: URL(string: DocumentationSchemeHandler.fullScheme)!)
+        memoryProvider = MemoryFileServerProvider()
         fileServer.register(provider: memoryProvider)
     }
     

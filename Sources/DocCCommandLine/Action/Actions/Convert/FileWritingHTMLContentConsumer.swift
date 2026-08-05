@@ -21,6 +21,7 @@ private import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool
+    let _isPrimaryOutputFormat = false
     
     private struct HTMLTemplate {
         var original: String
@@ -54,10 +55,10 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             {
                 titleReplacementRange = titleStart ..< titleEnd
             } else {
-                content.insert(contentsOf: "<title></title>", at: beforeEndOfHead)
-                content.utf8.formIndex(&beforeEndOfHead,  offsetBy: "<title></title>".utf8.count)
-                content.utf8.formIndex(&afterStartOfBody, offsetBy: "<title></title>".utf8.count)
-                let titleInside = content.utf8.index(beforeEndOfHead, offsetBy: -"</title>".utf8.count)
+                content.insert(contentsOf: "<title></title>\n", at: beforeEndOfHead)
+                content.utf8.formIndex(&beforeEndOfHead,  offsetBy: "<title></title>\n".utf8.count)
+                content.utf8.formIndex(&afterStartOfBody, offsetBy: "<title></title>\n".utf8.count)
+                let titleInside = content.utf8.index(beforeEndOfHead, offsetBy: -"</title>\n".utf8.count)
                 titleReplacementRange = titleInside ..< titleInside
             }
             
@@ -66,7 +67,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             {
                 contentReplacementRange = noScriptStart ..< noScriptEnd
             } else {
-                content.insert(contentsOf: "<noscript></noscript>", at: afterStartOfBody)
+                content.insert(contentsOf: "<noscript></noscript>\n", at: afterStartOfBody)
                 let noScriptInside = content.utf8.index(afterStartOfBody, offsetBy: "<noscript>".utf8.count)
                 contentReplacementRange = noScriptInside ..< noScriptInside
             }
@@ -91,12 +92,13 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
                 let metaDescription = XMLNode.element(named: "meta", attributes: ["name": "description", "content": plainDescription])
                 copy.replaceSubrange(descriptionReplacementRange, with: metaDescription.rendered(prettyPrinted: prettyPrint))
             }
-            copy.replaceSubrange(titleReplacementRange,   with: title)
+            copy.replaceSubrange(titleReplacementRange, with: title)
             
             return copy
         }
     }
     private var htmlTemplate: HTMLTemplate
+    // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
     private let fileWriter: JSONEncodingRenderNodeWriter
     
     init(
@@ -151,7 +153,15 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
 
 private extension XMLNode {
     func rendered(prettyPrinted: Bool) -> String {
-        if prettyPrinted {
+        if let htmlNode = HTMLNode(from: self) {
+            let data = HTMLFormatter.format(htmlNode, options: prettyPrinted ? .prettyPrint : [])
+            return String(decoding: data, as: UTF8.self)
+        }
+         
+        assertionFailure("Failed to convert XMLNode \(name ?? "<no tag>") to an HTMLNode")
+        
+        // Fallback to the XMLNode string formatting for now.
+        return if prettyPrinted {
             xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement])
         } else {
             xmlString(options: .nodeCompactEmptyElement)

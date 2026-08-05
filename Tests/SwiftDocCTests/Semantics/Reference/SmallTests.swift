@@ -173,6 +173,7 @@ class SmallTests: XCTestCase {
                     columns: [
                         RenderBlockContent.Row.Column(
                             size: 1,
+                            alignment: .leading,
                             content: [
                                 "Regular text.",
                                 .small(RenderBlockContent.Small(
@@ -183,6 +184,7 @@ class SmallTests: XCTestCase {
                         
                         RenderBlockContent.Row.Column(
                             size: 1,
+                            alignment: .leading,
                             content: [
                                 "Second column of regular text.",
                             ]

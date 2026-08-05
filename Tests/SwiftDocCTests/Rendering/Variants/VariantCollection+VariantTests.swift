@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,10 +9,10 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 @testable import SwiftDocC
 
-class VariantCollection_VariantTests: XCTestCase {
+struct VariantCollection_VariantTests {
     let testVariant = VariantCollection<String>.Variant(
         traits: [.interfaceLanguage("a")],
         patch: [
@@ -22,10 +22,11 @@ class VariantCollection_VariantTests: XCTestCase {
         ]
     )
     
-    func testMapPatch() throws {
-        XCTAssertEqual(
-            testVariant.mapPatch { "\($0) transformed" }.patch.map(\.value),
-            ["replace transformed", "add transformed", nil]
+    @Test
+    func mapsPatchValues() {
+        #expect(
+            testVariant.mapPatch { "\($0) transformed" }.patch.map(\.value)
+                == ["replace transformed", "add transformed", nil]
         )
     }
 }

@@ -12,8 +12,7 @@ import ArgumentParser
 import Foundation
 
 @main
-struct BenchmarkCommand: @MainActor ParsableCommand {
-    @MainActor
+struct BenchmarkCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
             abstract: "A utility for performing benchmarks for Swift-DocC.",
             subcommands: [Measure.self, Diff.self, CompareTo.self, MeasureCommits.self, RenderTrend.self],

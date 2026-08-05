@@ -149,6 +149,9 @@ struct DocumentationMarkup {
                Self.allowedSectionsForDeprecationSummary.contains(currentSection)
             {
                 deprecation = MarkupContainer(directive.children)
+                if isLastChild, currentSection == .discussion, let discussionIndex {
+                    finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
+                }
                 continue
             }
             
@@ -173,21 +176,6 @@ struct DocumentationMarkup {
                     // advance to a discussion section.
                     currentSection = .discussion
                 }
-            }
-            
-            // Parse content into a discussion section and assorted tags
-            let parseDiscussion: ([any Markup])-> (discussion: DiscussionSection, tags: TaggedListItemExtractor) = { children in
-                // Extract tags
-                var extractor = TaggedListItemExtractor()
-                let content: [any Markup]
-                
-                if let remainder = extractor.visit(markup.withUncheckedChildren(children)) {
-                    content = Array(remainder.children)
-                } else {
-                    content = []
-                }
-                
-                return (discussion: DiscussionSection(content: content), tags: extractor)
             }
             
             // Parse a discussion, if found
@@ -219,16 +207,12 @@ struct DocumentationMarkup {
                 if let heading = child as? Heading, heading.level == 2 {
                     switch heading.plainText {
                     case TopicsSection.title:
-                        let (discussion, tags) = parseDiscussion(markup.children(at: discussionIndex ..< index))
-                        discussionSection = discussion
-                        discussionTags = tags
+                        finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
                         currentSection = .topics
                         continue
                         
                     case SeeAlsoSection.title:
-                        let (discussion, tags) = parseDiscussion(markup.children(at: discussionIndex ..< index))
-                        discussionSection = discussion
-                        discussionTags = tags
+                        finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
                         currentSection = .seeAlso
                         continue
                     default: break
@@ -237,9 +221,7 @@ struct DocumentationMarkup {
                 
                 // If at end of content, parse discussion
                 if isLastChild {
-                    let (discussion, tags) = parseDiscussion(markup.children(at: discussionIndex ... index))
-                    discussionSection = discussion
-                    discussionTags = tags
+                    finalizeDiscussion(over: markup.children(at: discussionIndex ... index))
                 }
             }
             
@@ -296,6 +278,28 @@ struct DocumentationMarkup {
                 }
             }
         }
+    }
+
+    /// Parses content into a discussion section and assorted tags.
+    private func parseDiscussion(_ children: [any Markup]) -> (discussion: DiscussionSection, tags: TaggedListItemExtractor) {
+        // Extract tags
+        var extractor = TaggedListItemExtractor()
+        let content: [any Markup]
+
+        if let remainder = extractor.visit(markup.withUncheckedChildren(children)) {
+            content = Array(remainder.children)
+        } else {
+            content = []
+        }
+
+        return (discussion: DiscussionSection(content: content), tags: extractor)
+    }
+
+    /// Parses the given children as the discussion section and stores the result.
+    private mutating func finalizeDiscussion(over children: [any Markup]) {
+        let (discussion, tags) = parseDiscussion(children)
+        discussionSection = discussion
+        discussionTags = tags
     }
 }
 

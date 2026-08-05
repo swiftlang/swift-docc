@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,7 @@
 
 public import ArgumentParser
 public import Foundation
+import SwiftDocC
 
 extension Docc {
     /// Indexes a documentation bundle.
@@ -37,12 +38,43 @@ extension Docc {
         }
 
         public func run() async throws {
+            Self.warnAboutDeprecation()
+            
             let indexAction = IndexAction(
                 archiveURL: documentationArchive.urlOrFallback,
                 outputURL: outputURL,
                 bundleIdentifier: bundleIdentifier
             )
             try await indexAction.performAndHandleResult()
+        }
+        
+        /// The file handle that the index command uses to write the warning about its deprecation.
+        ///
+        /// Provided as a static variable to allow for redirecting output in unit tests.
+        static var _errorLogHandle: LogHandle = .standardError
+        static var _diagnosticFormattingOptions: DiagnosticFormattingOptions = []
+        
+        private static func warnAboutDeprecation() {
+            let diagnostic = Diagnostic(
+                severity: .warning,
+                identifier: "DeprecatedIndexCommand",
+                summary: "The `index` command is deprecated and scheduled to be removed after the Swift 6.6 release; pass the `--emit-lmdb-index` flag to the `convert` command instead",
+                explanation: """
+                The `convert` command always creates a JSON representation of the navigation hierarchy for the on-page sidebar.
+                If you need an LMDB database representation of the same navigation hierarchy, \
+                pass the `--emit-lmdb-index` flag to the `convert` command _instead_ of running the `index` command on the output of the `convert` command.
+                
+                If you're building documentation using the Swift-DocC Plugin (`swift package generate-documentation`) it passes the `--emit-lmdb-index` flag to Swift-DocC by default, \
+                and requires the `--disable-indexing`/`--no-indexing` flag to opt out of that behavior. \
+                If you need the LMDB database representation of the same navigation hierarchy in the documentation output, \
+                don't pass the `--disable-indexing`/`--no-indexing` flag to `swift package generate-documentation`.
+                """
+            )
+            
+            print(
+                DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: _diagnosticFormattingOptions),
+                to: &_errorLogHandle
+            )
         }
     }
     

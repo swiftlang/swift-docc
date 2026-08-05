@@ -944,12 +944,12 @@ class SemaToRenderNodeTests: XCTestCase {
         
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         
-        // Verify that `MyProtocol` the symbol is loaded in the topic graph, but the `MyProtocol` sidecar article was removed.
+        // Verify that `MyProtocol` the symbol is loaded in the topic graph, but the `MyProtocol` documentation extension was removed.
         let matches = context.knownPages.filter({ reference -> Bool in
             return reference.path.contains("MyProtocol")
         })
         
-        // Verify the sidecar article was merged successfully into the symbol
+        // Verify the documentation extension was merged successfully into the symbol
         XCTAssertEqual(matches.count, 1)
         guard matches.count == 1 else { return }
         

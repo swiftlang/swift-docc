@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,6 +21,7 @@ import DocCHTML
 import Markdown
 import DocCCommon
 
+extension DocCHTMLTestSuites {
 struct MarkdownRendererTests {
     @Test
     func renderingParagraphsWithFormattedText() {
@@ -212,7 +213,7 @@ struct MarkdownRendererTests {
                   <td>Seven</td>
                   <td>Eight</td>
                 </tr>
-            </tbody>
+              </tbody>
             </table>
             """
         )
@@ -279,16 +280,31 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <blockquote class="aside note">
-              <p class="label">Note</p>
+            <aside class="note">
+              <p class="label">
+                Note
+              </p>
               <p>Something noteworthy</p>
-              <blockquote class="aside important">
-                <p class="label">Important</p>
+              <aside class="important">
+                <p class="label">
+                  Important
+                </p>
                 <p>Something important</p>
-              </blockquote>
-            </blockquote>
+              </aside>
+            </aside>
             """
         )
+    }
+    
+    @Test
+    func renderingSmallDirective() async throws {
+        assert(
+            rendering: """
+            @Small {
+                Licensed under Apache License v2.0
+            }
+            """,
+            matches: "<p><small>Licensed under Apache License v2.0</small></p>")
     }
     
     @Test
@@ -301,10 +317,8 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <pre>
-              <code>Some block of code
-              </code>
-            </pre>
+            <pre><code>Some block of code
+            </code></pre>
             """
         )
         
@@ -314,10 +328,8 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <pre>
-              <code>Some block of code
-              </code>
-            </pre>
+            <pre><code>Some block of code
+            </code></pre>
             """
         )
         
@@ -329,10 +341,8 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <pre class="lang">
-              <code>Some block of code
-              </code>
-            </pre>
+            <pre class="lang"><code>Some block of code
+            </code></pre>
             """
         )
     }
@@ -346,14 +356,14 @@ struct MarkdownRendererTests {
         
         assert(
             rendering: "First  \nSecond", // ... but with two trailing spaces they are treated as line breaks
-            matches: "<p>First<br/>Second</p>"
+            matches: "<p>First<br>Second</p>"
         )
         
         assert(
             rendering: """
             -------
             """,
-            matches: "<hr/>"
+            matches: "<hr>"
         )
     }
     
@@ -393,10 +403,9 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <a href="../someclass/somemethod(_:_:)/index.html">
-                <code>some<wbr/>
-                  Method(<wbr/>
-                  _:<wbr/>
-                  _:)</code>
+                <code>
+                  some<wbr>Method(<wbr>_:<wbr>_:)
+                </code>
               </a>
             </p>
             """
@@ -410,16 +419,12 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <a href="../someclass/somemethod(_:_:)/index.html">
-                <code class="swift-only">do<wbr/>
-                  Something(<wbr/>
-                  with:<wbr/>
-                  and:)</code>
-                <code class="occ-only">do<wbr/>
-                  Something<wbr/>
-                  With<wbr/>
-                  First:<wbr/>
-                  and<wbr/>
-                  Second:</code>
+                <code class="swift-only">
+                  do<wbr>Something(<wbr>with:<wbr>and:)
+                </code>
+                <code class="occ-only">
+                  do<wbr>Something<wbr>With<wbr>First:<wbr>and<wbr>Second:
+                </code>
               </a>
             </p>
             """
@@ -429,8 +434,13 @@ struct MarkdownRendererTests {
         assert(
             rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
+            prettyFormatted: true,
             matches: """
-            <p><a href="../someclass/somemethod(_:_:)/index.html">Custom <i>formatted</i> title</a></p>
+            <p>
+              <a href="../someclass/somemethod(_:_:)/index.html">
+                Custom <i>formatted</i> title
+              </a>
+            </p>
             """
         )
         
@@ -439,7 +449,7 @@ struct MarkdownRendererTests {
             rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
-            <p><a href="../someclass/somemethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
+            <p><a href="../someclass/somemethod(_:_:)/index.html">Some <code>Custom<wbr>Symbol<wbr>Name</code> title</a></p>
             """
         )
         
@@ -461,7 +471,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <code>Some fallback link text</code>
+              <code>Some fallback link text</code>
             </p>
             """
         )
@@ -479,7 +489,7 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png"/>
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png">
               </picture>
             </p>
             """
@@ -498,7 +508,7 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x"/>
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
               </picture>
             </p>
             """
@@ -515,9 +525,9 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png"/>
-                <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png"/>
-                <img alt="Some alt text" decoding="async" loading="lazy"/>
+                <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png">
+                <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png">
+                <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
             </p>
             """
@@ -540,9 +550,9 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x"/>
-                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x"/>
-                <img alt="Some alt text" decoding="async" loading="lazy"/>
+                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x">
+                <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
             </p>
             """
@@ -557,8 +567,8 @@ struct MarkdownRendererTests {
         )
         
         assert(
-            rendering: "This<br/> is a <em><!-- multi\n line\n comment-->formatted</em>paragraph.",
-            matches: "<p>This<br/> is a <em>formatted</em> paragraph.</p>"
+            rendering: "This<br/> is a <em><!-- multi\n line\n comment-->formatted</em> paragraph.",
+            matches: "<p>This<br> is a <em>formatted</em> paragraph.</p>"
         )
         
         assert(
@@ -589,10 +599,7 @@ struct MarkdownRendererTests {
             <!-- comment after block element -->
             """,
             matches: """
-            <details>
-                <summary>Some summary</summary>
-                <p>Some longer description</p>
-            </details>
+            <details><summary>Some summary</summary><p>Some longer description</p></details>
             """
         )
     }
@@ -615,8 +622,8 @@ struct MarkdownRendererTests {
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
             )
         )
-        let htmlNodes = Document(parsing: markdownContent, options: .parseSymbolLinks).children.map { renderer.visit($0) }
-        htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expectedXMLString: expectedHTML, sourceLocation: sourceLocation)
+        let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
+        htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)
     }
     
     private func makeExampleMethodWithDifferentLanguageRepresentations() -> LinkedElement {
@@ -647,65 +654,34 @@ struct MarkdownRendererTests {
         )
     }
 }
+}
 
 // MARK: Helpers
 
 extension XMLNode {
-    func assertMatches(prettyFormatted: Bool, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
-        _assertMatches(actualXMLString: rendered(prettyFormatted: prettyFormatted), expectedXMLString: expectedXMLString, sourceLocation: sourceLocation)
+    func assertMatches(prettyFormatted: Bool, expected: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
+        #expect(rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) == expected, sourceLocation: sourceLocation)
     }
     
-    fileprivate func rendered(prettyFormatted: Bool) -> String {
-        if prettyFormatted {
-            xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement])
-        } else {
-            xmlString(options: .nodeCompactEmptyElement)
+    fileprivate func rendered(prettyFormatted: Bool, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> String {
+        guard let htmlNode = HTMLNode(from: self) else {
+            Issue.record("Failed to convert node \(self.xmlString(options: .nodeCompactEmptyElement)) to HTML node", sourceLocation: sourceLocation)
+            return ""
         }
+        
+        return String(decoding: HTMLFormatter.format(htmlNode, options: prettyFormatted ? .prettyPrint : []), as: UTF8.self)
     }
 }
 
 extension Sequence<XMLNode> {
-    func assertMatches(prettyFormatted: Bool, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
-        _assertMatches(actualXMLString: rendered(prettyFormatted: prettyFormatted), expectedXMLString: expectedXMLString, sourceLocation: sourceLocation)
+    func assertMatches(prettyFormatted: Bool, expected: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
+        #expect(rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) == expected, sourceLocation: sourceLocation)
     }
     
-    private func rendered(prettyFormatted: Bool) -> String {
-        map { $0.rendered(prettyFormatted: prettyFormatted) }
+    private func rendered(prettyFormatted: Bool, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> String {
+        map { $0.rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) }
             .joined(separator: prettyFormatted ? "\n" : "")
     }
-}
-
-extension Sequence<XMLElement> {
-    func assertMatches(prettyFormatted: Bool, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
-        _assertMatches(actualXMLString: rendered(prettyFormatted: prettyFormatted), expectedXMLString: expectedXMLString, sourceLocation: sourceLocation)
-    }
-    
-    private func rendered(prettyFormatted: Bool) -> String {
-        map { $0.rendered(prettyFormatted: prettyFormatted) }
-            .joined(separator: prettyFormatted ? "\n" : "")
-    }
-}
-
-private func _assertMatches(actualXMLString: String, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
-    // XMLNode on macOS and Linux pretty print with different indentation.
-    // To compare the XML structure without getting false positive failures because of indentation and other formatting differences,
-    // we explicitly process each string into an easy-to-compare format.
-    func formatForTestComparison(_ xmlString: String) -> String {
-        // This is overly simplified and won't result in "pretty" XML for general use but sufficient for test content comparisons
-        xmlString
-            // Put each tag on its own line
-            .replacingOccurrences(of: ">", with: ">\n")
-            // Remove leading indentation
-            .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-            .joined(separator: "\n")
-            // Explicitly escape a few HTML characters that appear in the test content
-            .replacingOccurrences(of: "–", with: "&#x2013;") // en-dash
-            .replacingOccurrences(of: "—", with: "&#x2014;") // em-dash
-    }
-    
-    #expect(formatForTestComparison(actualXMLString) == formatForTestComparison(expectedXMLString), sourceLocation: sourceLocation)
 }
 
 struct SingleValueLinkProvider: LinkProvider {

@@ -10,6 +10,7 @@
 
 import Foundation
 import XCTest
+import Testing
 @testable import SwiftDocC
 import DocCTestUtilities
 import Markdown
@@ -147,12 +148,12 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     func testAutomaticOverviewAndDiscussionHeadings() async throws {
         guard let myFunctionDiscussion = try await findDiscussion(forSymbolPath: "/documentation/MyKit/MyClass/myFunction()", configureBundle: { url in
-            let sidecarURL = url.appendingPathComponent("/documentation/myFunction.md")
+            let documentationExtensionURL = url.appendingPathComponent("/documentation/myFunction.md")
             try """
             # ``MyKit/MyClass/myFunction()``
             
             This is the overview for myFunction.
-            """.write(to: sidecarURL, atomically: true, encoding: .utf8)
+            """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
         }) else {
             return
         }
@@ -166,15 +167,15 @@ class RenderNodeTranslatorTests: XCTestCase {
         )
         
         guard let myClassDiscussion = try await findDiscussion(forSymbolPath: "/documentation/MyKit/MyClass", configureBundle: { url in
-            let sidecarURL = url.appendingPathComponent("/documentation/myclass.md")
-            XCTAssert(FileManager.default.fileExists(atPath: sidecarURL.path), "Make sure that this overrides the existing file.")
+            let documentationExtensionURL = url.appendingPathComponent("/documentation/myclass.md")
+            XCTAssert(FileManager.default.fileExists(atPath: documentationExtensionURL.path), "Make sure that this overrides the existing file.")
             try """
             # ``MyKit/MyClass``
 
             This is the abstract (because MyClass doesn't have an in-source abstract).
 
             This is the overview for MyClass.
-            """.write(to: sidecarURL, atomically: true, encoding: .utf8)
+            """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
         }) else {
             return
         }
@@ -1585,5 +1586,44 @@ class RenderNodeTranslatorTests: XCTestCase {
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+    }
+}
+
+struct RenderNodeTranslatorTests_new {
+    @Test
+    func curatedReferenceKeepsConformanceWhenAlsoReachedAsADependency() async throws {
+        let selfIsBar = SymbolGraph.Symbol.Swift.Extension(
+            extendedModule: "SomeModule",
+            typeKind: .struct,
+            constraints: [.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "Bar")]
+        )
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "SomeModule",
+                symbols: [
+                    makeSymbol(id: "s:Foo", kind: .struct, pathComponents: ["Foo"]),
+                    makeSymbol(id: "s:Bar", kind: .struct, pathComponents: ["Bar"]),
+                    makeSymbol(id: "s:x", kind: .method, pathComponents: ["Foo", "x"], otherMixins: [selfIsBar]),
+                    makeSymbol(id: "s:y", kind: .method, pathComponents: ["Foo", "y"], docComment: "See ``Foo/x`` for details."),
+                ],
+                relationships: [
+                    .init(source: "s:x", target: "s:Foo", kind: .memberOf, targetFallback: nil),
+                    .init(source: "s:y", target: "s:Foo", kind: .memberOf, targetFallback: nil),
+                ]
+            )),
+        ])
+
+        let context = try await load(catalog: catalog)
+        let bundleID = context.inputs.id
+
+        // `x` and `y` are both curated under `Foo`, and `y`'s abstract links to `x`.
+        // So on `Foo`'s page, `x` is both a direct reference and a dependency via `y`.
+        let fooReference = ResolvedTopicReference(bundleID: bundleID, path: "/documentation/SomeModule/Foo", sourceLanguage: .swift)
+        let renderNode = DocumentationNodeConverter(context: context).convert(try context.entity(with: fooReference))
+
+        let memberReference = ResolvedTopicReference(bundleID: bundleID, path: "/documentation/SomeModule/Foo/x", sourceLanguage: .swift)
+        let renderedReference = try #require(renderNode.references[memberReference.absoluteString] as? TopicRenderReference)
+        #expect(renderedReference.conformance?.constraints.plainText == "Self is Bar.")
     }
 }

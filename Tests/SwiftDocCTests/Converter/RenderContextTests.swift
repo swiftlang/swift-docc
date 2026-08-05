@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,10 +11,17 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import DocCTestUtilities
 
 class RenderContextTests: XCTestCase {
     func testCreatesRenderReferences() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "MyKit", symbols: [
+                makeSymbol(id: "s:6MyKit5MyClassC", kind: .class, pathComponents: ["MyClass"]),
+            ]))
+            DataFile(name: "image.png", data: Data())
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
         let renderContext = RenderContext(documentationContext: context)
         
         // Verify render references are created for all topics

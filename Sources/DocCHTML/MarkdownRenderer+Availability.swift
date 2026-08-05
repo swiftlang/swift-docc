@@ -47,14 +47,13 @@ package extension MarkdownRenderer {
                     description = "Introduced in \($0.name) \(introduced) and deprecated in \($0.name) \(deprecated)"
                 } else {
                     text += " \(introduced)+"
-                    description = "Available on \(introduced) and later"
+                    description = "Available on \($0.name) \(introduced) and later"
                 }
             } else {
                 description = "Available on \($0.name)"
             }
             
             var attributes = [
-                "role": "text",
                 "aria-label": "\(text), \(description)",
                 "title": description
             ]
