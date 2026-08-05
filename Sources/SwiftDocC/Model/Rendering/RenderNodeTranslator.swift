@@ -447,17 +447,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
-            var dependencies: RenderReferenceDependencies
-            
-            if let renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
-                let renderReferenceDependencies = renderContext.store.content(for: reference)?.renderReferenceDependencies {
-                renderReference = prerendered
-                dependencies = renderReferenceDependencies
-            } else {
-                dependencies = RenderReferenceDependencies()
-                renderReference = renderer.renderReference(for: reference, dependencies: &dependencies)
-            }
-            
+            let dependencies: RenderReferenceDependencies
+            (renderReference, dependencies) = makeRenderReference(for: reference, with: renderer)
+
             for link in dependencies.linkReferences {
                 linkReferences[link.identifier.identifier] = link
             }
@@ -466,19 +458,17 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 imageReferences[imageReference.identifier.identifier] = imageReference
             }
             
-            
             for dependencyReference in dependencies.topicReferences {
-                var dependencyRenderReference: TopicRenderReference
-                if let renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
-                    dependencyRenderReference = prerendered
-                } else {
-                    var dependencies = RenderReferenceDependencies()
-                    dependencyRenderReference = renderer.renderReference(for: dependencyReference, dependencies: &dependencies)
+                // If this reference is also a direct reference of the page,
+                // do not redundantly process it as a dependency reference.
+                guard renderReferences[dependencyReference.absoluteString] == nil else {
+                    continue
                 }
+                let (dependencyRenderReference, _) = makeRenderReference(for: dependencyReference, with: renderer)
                 renderReferences[dependencyReference.absoluteString] = dependencyRenderReference
             }
             
-            // Add any conformance constraints to the reference, if any are present.
+            // Add conformance constraints to the reference, if any are present.
             if let conformanceSection = renderer.conformanceSectionFor(reference, collectedConstraints: collectedConstraints) {
                 renderReference.conformance = conformanceSection
             }
@@ -495,6 +485,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         return renderReferences
+    }
+
+    /// Creates the render reference for the given topic reference and gathers its dependencies,
+    // reusing a pre-rendered reference from the render context store if available.
+    private func makeRenderReference(
+        for reference: ResolvedTopicReference,
+        with renderer: DocumentationContentRenderer
+    ) -> (TopicRenderReference, RenderReferenceDependencies) {
+        if let renderContext,
+           let content = renderContext.store.content(for: reference),
+           let prerendered = content.renderReference as? TopicRenderReference {
+            return (prerendered, content.renderReferenceDependencies)
+        }
+        var dependencies = RenderReferenceDependencies()
+        let renderReference = renderer.renderReference(for: reference, dependencies: &dependencies)
+        return (renderReference, dependencies)
     }
     
     private func addReferences(_ references: [String: some RenderReference], to node: inout RenderNode) {
@@ -1029,7 +1035,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func isReferenceAvailable(
         _ reference: ResolvedTopicReference,
         allowedTraits: Set<DocumentationDataVariantsTrait>,
-        availableTraits: Set<DocumentationDataVariantsTrait>
+        availableTraits: Set<DocumentationDataVariantsTrait>,
+        inSeeAlsoSection: Bool = false
     ) -> Bool {
         // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
         // and is external to the bundle, then curate the topic irrespective of the source
@@ -1047,9 +1054,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
             // An external symbol may have no language overlap with the module being built,
             // so filtering it out would mean it is not curated anywhere (rdar://94406023).
-            // For local references, this curation is forbidden. ``DocumentationCurator`` emits a warning,
-            // and the reference is filtered out here so it doesn't appear in the rendered topic section.
-            return context.isExternal(reference: reference)
+            //
+            // Local references with no language overlap are disallowed in Topics sections
+            // as the reference would be unreachable in the navigator hierarchy.
+            // ``DocumentationCurator`` emits a warning, and the reference is dropped here.
+            //
+            // Local references with no language overlap are allowed in See Also sections
+            // since they do not contribute to the navigator hierarchy.
+            return inSeeAlsoSection || context.isExternal(reference: reference)
         }
 
         return allowedTraits.contains { trait in
@@ -1149,6 +1161,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         availableTraits: Set<DocumentationDataVariantsTrait>,
         contentCompiler: inout RenderContentCompiler
     ) -> [TaskGroupRenderSection] {
+        let isSeeAlsoSection = topics is SeeAlsoSection
+
         return topics.taskGroups.compactMap { group in
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
                 SupportedLanguage(from: $0, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags)?.language
@@ -1176,7 +1190,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
 
-                return isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits)
+                return isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits, inSeeAlsoSection: isSeeAlsoSection)
             }
             
             let taskGroupRenderSection = TaskGroupRenderSection(
@@ -1336,6 +1350,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
             renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
         } ?? .init()
         
+        // FIXME: Move this logic out of the rendering code (rdar://172280267)
+        let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
+        let symbolExistsInCatalystSymbolGraph = documentationNode.unifiedSymbol?.allSelectors.contains(where: { $0.platform?.lowercased() == PlatformName.catalyst.rawValue.lowercased() }) ?? false
+        
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
             // Different sources of availability information are added in-order to compute the complete availability information.
 
@@ -1385,13 +1403,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
                 
-                // FIXME: Move this logic out of the rendering code (rdar://172280267)
-                let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
-                let symbolExistsInCatalystSymbolGraph = information[PlatformName.catalyst.displayName] != nil
                 
                 // Catalyst only inherits iOS availability if the symbol don't specify in-source
-                // availability or if there's none Mac Catalyst symbol graph.
-                // If the symbol is not present in the Catalyst SGF then is not availble for this
+                // availability or if there's no Mac Catalyst symbol graph.
+                // If the symbol is not present in the Catalyst SGF then is not available for this
                 // platform.
                 if (catalystSGFExists && symbolExistsInCatalystSymbolGraph) || !catalystSGFExists  {
                     addFallbackIfNeeded(named: PlatformName.catalyst.displayName)

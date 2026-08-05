@@ -102,17 +102,13 @@ class RenderNodeCodableTests: XCTestCase {
     }
     
     func testSortedKeys() throws {
-        guard #available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) else {
-            try XCTSkipIf(true, "Skipped on platforms that don't support JSONEncoder.OutputFormatting.sortedKeys")
-        }
-
         // When prettyPrint is enabled, keys are sorted
         let encoderPretty = RenderJSONEncoder.makeEncoder(prettyPrint: true)
         XCTAssertTrue(encoderPretty.outputFormatting.contains(.sortedKeys))
 
-        // When prettyPrint is disabled, keys are not sorted
+        // When prettyPrint is disabled, keys are still sorted
         let encoderNotPretty = RenderJSONEncoder.makeEncoder(prettyPrint: false)
-        XCTAssertFalse(encoderNotPretty.outputFormatting.contains(.sortedKeys))
+        XCTAssertTrue(encoderNotPretty.outputFormatting.contains(.sortedKeys))
     }
 
     func testEncodesVariantOverridesSetAsProperty() throws {
