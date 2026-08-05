@@ -146,7 +146,7 @@ package enum ConvertActionConverter {
                         }
                         
                         // FIXME: Read all linkable entity information from the documentation node rather than the JSON render node. (rdar://177867335)
-                         if shouldSerializeLinkHierarchy {
+                        if shouldSerializeLinkHierarchy {
                             let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             for linkSummary in nodeLinkSummaries {
                                 try outputConsumer.consumeIncremental(linkableElementSummary: linkSummary)

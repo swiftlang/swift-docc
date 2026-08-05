@@ -26,9 +26,6 @@ public protocol ConvertOutputConsumer {
     /// Finishes consuming all linkable element summaries that were incrementally and individually consumed.
     func finishConsumingLinkElementSummaries() throws
     
-    @available(*, deprecated, renamed: "consume(linkableElementSummary:)", message: "Use 'consume(linkableElementSummary:)' instead. This deprecated API will be removed after 6.4 is released")
-    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws
-    
     /// Consumes the indexing records produced during a conversion.
     func consume(indexingRecords: [IndexingRecord]) throws
     
@@ -76,7 +73,13 @@ public extension ConvertOutputConsumer {
 
 // Default implementation so that conforming types don't need to implement deprecated API.
 public extension ConvertOutputConsumer {
-    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
+    @available(*, deprecated, renamed: "consumeIncremental(linkableElementSummary:)", message: "Implement 'consumeIncremental(linkableElementSummary:)' and 'finishConsumingLinkElementSummaries' instead. This deprecated API will be removed after 6.5 is released")
+    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {
+        for summary in linkableElementSummaries {
+            try consumeIncremental(linkableElementSummary: summary)
+        }
+        try finishConsumingLinkElementSummaries()
+    }
 }
 
 /// A consumer for nodes generated from external references.

@@ -168,14 +168,14 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         }
     }
     
-    private var linkableElementsData = Synchronized(Data())
+    private var linkableElementsData = Synchronized(Data([UTF8.CodeUnit(ascii: "[")]))
     
-    /// Consumes one  linkable element summary produced during a conversion.
+    /// Consumes one linkable element summary produced during a conversion.
     func consumeIncremental(linkableElementSummary: LinkDestinationSummary) throws {
         let data = try encode(linkableElementSummary)
         linkableElementsData.sync {
-            if !$0.isEmpty {
-                $0.append(Data(",".utf8))
+            if $0.count >= 2 { // The data is initialized with an opening square brace (`[`).
+                $0.append(UTF8.CodeUnit(ascii: ","))
             }
             $0.append(data)
         }
@@ -187,7 +187,6 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         let data = linkableElementsData.sync { accumulatedData in
             var data = Data()
             swap(&data, &accumulatedData)
-            data.insert(UTF8.CodeUnit(ascii: "["), at: 0)
             data.append(UTF8.CodeUnit(ascii: "]"))
             
             return data
