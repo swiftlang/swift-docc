@@ -798,4 +798,71 @@ struct DocumentationCuratorTests_new {
         #expect(swiftOnlyRenderNode.seeAlsoSections.flatMap(\.identifiers).contains { $0.hasSuffix("/ObjcOnlyClass") },
                 "Cross-language reference should be present in the parent page's See Also section")
     }
+
+    // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // If you suspect that your changes might affect this test,
+    // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
+    @Test
+    func validatesEachSymbolTaskGroupLinksOnlyOnce() async throws {
+        let context = try await load(catalog:
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-swift.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-container", language: .swift, kind: .class, pathComponents: ["SomeContainer"]),
+                    makeSymbol(id: "swift-only-class", language: .swift, kind: .class, pathComponents: ["SwiftOnlyClass"]),
+                ])),
+                JSONFile(name: "ModuleName-objc.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"]),
+                ])),
+                TextFile(name: "SomeContainer.md", utf8Content: """
+                # ``ModuleName/SomeContainer``
+
+                ## Topics
+
+                ### Curating another top-level symbol
+
+                - ``SwiftOnlyClass``
+                """),
+                TextFile(name: "SwiftOnlyClass.md", utf8Content: """
+                # ``ModuleName/SwiftOnlyClass``
+
+                ## Topics
+
+                ### Cross-language curation
+
+                - ``ObjcOnlyClass``
+                """),
+            ])
+        )
+
+        #expect(context.diagnostics.map(\.identifier) == ["UnreachableCrossLanguageCuration"],
+                "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+    }
+
+    @Test
+    func validatesEachArticleTaskGroupLinksOnlyOnce() async throws {
+        let context = try await load(catalog:
+            Folder(name: "unit-test.docc", content: [
+                TextFile(name: "First.md", utf8Content: """
+                # First article
+
+                ## Topics
+
+                - <doc:Second>
+                """),
+                TextFile(name: "Second.md", utf8Content: """
+                # Second article
+
+                ## Topics
+
+                - <https://example.com/something>
+                """),
+            ])
+        )
+
+        #expect(context.diagnostics.map(\.identifier) == ["org.swift.docc.InvalidDocumentationLink"],
+                "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        #expect(context.diagnostics.map(\.summary) == [
+            "The link 'https://example.com/something' isn't valid"
+        ])
+    }
 }
