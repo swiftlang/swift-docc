@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 /// Resolves and validates the arguments needed to enable the documentation coverage feature.
 ///
 /// These options are used by the `Convert` subcommand.
-public struct DocumentationCoverageOptions {
+public struct DocumentationCoverageOptions: Sendable {
     public init(
         level: DocumentationCoverageLevel,
         kindFilterOptions: KindFilterOptions = []) {
@@ -54,7 +54,7 @@ extension DocumentationCoverageOptions {
 }
 
 /// Specifies whether the documentation coverage feature is enabled and, if it is, what amount of specificity is selected.
-public enum DocumentationCoverageLevel: String, Codable, CaseIterable {
+public enum DocumentationCoverageLevel: String, Codable, CaseIterable, Sendable {
     /// No documentation coverage data should be emitted and no documentation coverage information should be displayed in console
     case none
     /// Documentation coverage data should be emitted and a high-level summary should be displayed in console
@@ -67,7 +67,7 @@ extension DocumentationCoverageOptions {
 
     /// Represents kinds to select and display documentation coverage statistics for.
     /// Note: This enum is not meant to be persisted between runs
-    public struct KindFilterOptions: OptionSet, Hashable, CustomDebugStringConvertible {
+    public struct KindFilterOptions: OptionSet, Hashable, CustomDebugStringConvertible, Sendable {
 
         public typealias RawValue = Int
         public let rawValue: Int

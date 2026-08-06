@@ -11,7 +11,7 @@
 import Foundation
 
 /// A supported platform's name representation.
-public struct PlatformName: Codable, Hashable, Comparable {
+public struct PlatformName: Codable, Hashable, Comparable, Sendable {
     public var rawValue: String
 
     /// Compares platform names independently of any known aliases differences or possible incomplete display names.

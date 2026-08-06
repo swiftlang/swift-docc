@@ -242,7 +242,7 @@ public class NavigatorIndex {
     
     /// Indicates the page type of a given item inside the tree.
     /// - Note: This information is stored as `UInt8` to decrease the required size to store it and make the comparison faster between types.
-    public enum PageType: UInt8 {
+    public enum PageType: UInt8, Sendable {
         case root = 0
         case article = 1
         case tutorial = 2
