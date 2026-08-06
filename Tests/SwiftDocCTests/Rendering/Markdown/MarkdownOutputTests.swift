@@ -304,6 +304,13 @@ struct MarkdownOutputTests {
                 
                 This is a [named symbol link](doc:MarkdownSymbol)
                 This is not <doc:MarkdownSymbol>
+                
+                This has an empty title [](doc:LinkDestination)
+                
+                This is a reference link with an empty title [][link-id]
+                This is a reference link with a title [title][link-id]
+                
+                [link-id]: doc:LinkDestination
                 """),
             TextFile(name: "LinkDestination.md", utf8Content: """
                 # Link Destination
@@ -316,10 +323,20 @@ struct MarkdownOutputTests {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "RootDocument")
-        #expect(node.markdown.contains("This is a [named *link*](/documentation/MarkdownOutput/LinkDestination"))
-        #expect(node.markdown.contains("This is not [Link Destination](/documentation/MarkdownOutput/LinkDestination"))
-        #expect(node.markdown.contains("This is a [named symbol link](/documentation/MarkdownOutput/MarkdownSymbol"))
-        #expect(node.markdown.contains("This is not [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"))
+        
+        let expectedLinks = [
+            "This is a [named *link*](/documentation/MarkdownOutput/LinkDestination",
+            "This is not [Link Destination](/documentation/MarkdownOutput/LinkDestination",
+            "This is a [named symbol link](/documentation/MarkdownOutput/MarkdownSymbol",
+            "This is not [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)",
+            "This has an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination",
+            "This is a reference link with an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination)",
+            "This is a reference link with a title [title](/documentation/MarkdownOutput/LinkDestination)",
+        ]
+        
+        for expectedLink in expectedLinks {
+            #expect(node.markdown.contains(expectedLink))
+        }
     }
         
     @Test
