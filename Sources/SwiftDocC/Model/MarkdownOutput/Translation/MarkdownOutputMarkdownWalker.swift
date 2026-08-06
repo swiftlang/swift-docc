@@ -215,7 +215,8 @@ extension MarkdownOutputMarkupWalker {
         
         guard
             let resolved = context.referenceIndex[destination],
-            let node = context.topicGraph.nodeWithReference(resolved)
+            let doc = try? context.entity(with: resolved),
+            let symbol = doc.semantic as? Symbol
         else {
             // Unresolved symbol - use code voice, unless we're in a list, in which case, ignore it
             if isRenderingLinkList {
@@ -225,25 +226,19 @@ extension MarkdownOutputMarkupWalker {
             return (code, nil)
         }
         
-        let linkTitle: String
+        var linkTitle = symbol.proseVariants[.swift] ?? symbol.title
         var linkListAbstract: (any Markup)?
                 
-        if isRenderingLinkList,
-           let doc = try? context.entity(with: resolved),
-           let symbol = doc.semantic as? Symbol
-        {
+        if isRenderingLinkList {
             linkListAbstract = (doc.semantic as? Symbol)?.abstract
             if let fragments = symbol.navigator {
                 linkTitle = fragments
                     .map { $0.spelling }
                     .joined(separator: " ")
-            } else {
-                linkTitle = symbol.proseVariants.firstValue ?? symbol.title
             }
             relationships.insert(relationship(source: resolved, type: .belongsToTopic, subtype: nil))
-        } else {
-            linkTitle = node.title
         }
+        
         let (link, _) = convertLink(Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)]), relationships: &relationships)
         return (link, linkListAbstract)
     }
@@ -298,7 +293,7 @@ extension MarkdownOutputMarkupWalker {
             }
             linkTitle = anchorSection?.title ?? article.title?.plainText ?? resolved.lastPathComponent
         } else if let symbol = doc.semantic as? Symbol {
-            linkTitle = anchorSection?.title ?? symbol.proseVariants.firstValue ?? symbol.title
+            linkTitle = anchorSection?.title ?? symbol.proseVariants[.swift] ?? symbol.title
         } else {
             linkTitle = anchorSection?.title ?? resolved.lastPathComponent
         }
