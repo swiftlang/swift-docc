@@ -40,9 +40,6 @@ struct ProseSymbolNameTests {
 
         var expectedSwiftText: String { swiftProse ?? swiftTitle }
         var expectedObjCText: String { objcProse ?? objcTitle }
-        /// The markdown renderer accesses `firstValue` of a multi-language symbol, so an
-        /// Objective-C-only prose name bleeds into the Swift rendering path.
-        var markdownHasKnownIssue: Bool { swiftProse == nil && objcProse != nil }
 
         var testDescription: String { name }
     }
@@ -86,8 +83,7 @@ struct ProseSymbolNameTests {
         try assertAllFormats(
             context: context, reference: reference,
             expectedSwift: (setup.expectedSwiftText, setup.expectedSwiftHTML),
-            expectedObjC: (setup.expectedObjCText, setup.expectedObjCHTML),
-            markdownHasKnownIssue: setup.markdownHasKnownIssue
+            expectedObjC: (setup.expectedObjCText, setup.expectedObjCHTML)
         )
     }
 
@@ -104,8 +100,7 @@ struct ProseSymbolNameTests {
         try assertAllFormats(
             context: context, reference: reference,
             expectedSwift: (setup.expectedText, setup.expectedHTML),
-            expectedObjC: nil,
-            markdownHasKnownIssue: false
+            expectedObjC: nil
         )
     }
 
@@ -122,14 +117,11 @@ struct ProseSymbolNameTests {
     ///     Swift representation (or the single language representation).
     ///   - expectedObjC: The same for the Objective-C representation, or `nil` for a symbol that
     ///     only has a single-language representation.
-    ///   - markdownHasKnownIssue: Whether the markdown output is expected to be incorrect because
-    ///     the markdown renderer doesn't support multi-language symbols.
     private func assertAllFormats(
         context: DocumentationContext,
         reference: ResolvedTopicReference,
         expectedSwift: (text: String, html: String),
-        expectedObjC: (text: String, html: String)?,
-        markdownHasKnownIssue: Bool
+        expectedObjC: (text: String, html: String)?
     ) throws {
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
@@ -165,21 +157,13 @@ struct ProseSymbolNameTests {
         var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
         let output = visitor.createOutput()
         let markdown = try #require(output).markdown
-        func assertMarkdown() {
-            #expect(markdown.contains("`\(expectedSwift.text)`"),
-                    "Markdown missing expected inline code `\(expectedSwift.text)`; got: \(markdown)")
-            // When a prose name replaces the title, the full title should not appear.
-            if expectedSwift.text != Self.swiftTitle {
-                #expect(!markdown.contains("`\(Self.swiftTitle)`"),
-                        "Markdown unexpectedly contains the full title `\(Self.swiftTitle)`; got: \(markdown)")
-            }
-        }
-        if markdownHasKnownIssue {
-            withKnownIssue("Markdown renderer does not support multi-language symbols") {
-                assertMarkdown()
-            }
-        } else {
-            assertMarkdown()
+        
+        #expect(markdown.contains("`\(expectedSwift.text)`"),
+                "Markdown missing expected inline code `\(expectedSwift.text)`; got: \(markdown)")
+        // When a prose name replaces the title, the full title should not appear.
+        if expectedSwift.text != Self.swiftTitle {
+            #expect(!markdown.contains("`\(Self.swiftTitle)`"),
+                    "Markdown unexpectedly contains the full title `\(Self.swiftTitle)`; got: \(markdown)")
         }
     }
 
