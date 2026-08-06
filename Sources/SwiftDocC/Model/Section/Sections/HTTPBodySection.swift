@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,9 +10,7 @@
 
 /// A section that contains a request's upload body.
 public struct HTTPBodySection {
-    public static var title: String {
-        return "Request Body"
-    }
+    public static let title = "Request Body"
     
     /// The request body.
     public var body: HTTPBody

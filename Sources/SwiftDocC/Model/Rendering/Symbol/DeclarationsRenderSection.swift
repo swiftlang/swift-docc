@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,7 +13,11 @@ import Foundation
 /// A compound section that contains a list of declaration sections.
 public struct DeclarationsRenderSection: RenderSection, Codable, Equatable {
     /// The section title, by default `nil`.
-    public static var title: String? = nil
+    public static var title: String? {
+        get { nil }
+        @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     public var kind: RenderSectionKind = .declarations
     /// The list of declaration sections.

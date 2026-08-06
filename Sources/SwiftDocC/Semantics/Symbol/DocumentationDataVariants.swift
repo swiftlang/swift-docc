@@ -134,10 +134,18 @@ extension DocumentationDataVariants: Equatable where Variant: Equatable {}
 /// The trait associated with a variant of some piece of information about a documentation node.
 public struct DocumentationDataVariantsTrait: Hashable, Sendable {
     /// The Swift programming language.
-    public static var swift = DocumentationDataVariantsTrait(sourceLanguage: .swift)
+    public static var swift: DocumentationDataVariantsTrait {
+        get { DocumentationDataVariantsTrait(sourceLanguage: .swift) }
+        @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     /// The Objective-C programming language.
-    public static var objectiveC = DocumentationDataVariantsTrait(sourceLanguage: .objectiveC)
+    public static var objectiveC: DocumentationDataVariantsTrait {
+        get { DocumentationDataVariantsTrait(sourceLanguage: .objectiveC) }
+        @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     /// The language in which the documentation node is relevant.
     public var interfaceLanguage: String? {
@@ -147,7 +155,7 @@ public struct DocumentationDataVariantsTrait: Hashable, Sendable {
     private(set) var sourceLanguage: SourceLanguage?
     
     /// A special trait that represents the fallback trait, which internal clients can use to access the default value of a collection of variants.
-    static var fallback = DocumentationDataVariantsTrait()
+    static let fallback = DocumentationDataVariantsTrait()
     
     /// Creates a new trait given an interface language.
     ///

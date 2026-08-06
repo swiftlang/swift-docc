@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -247,16 +247,16 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
     }
     
     /// File name for the documentation coverage file emitted during conversion.
-    static var docCoverageFileName = "documentation-coverage.json"
+    static let docCoverageFileName = "documentation-coverage.json"
     
     /// File name for the build metadata file emitted during conversion.
-    static var buildMetadataFileName = "metadata.json"
+    static let buildMetadataFileName = "metadata.json"
     
     /// File name for the linkable entity file emitted during conversion.
-    static var linkableEntitiesFileName = "linkable-entities.json"
+    static let linkableEntitiesFileName = "linkable-entities.json"
     
     /// File name for the link hierarchy file emitted during conversion.
-    static var linkHierarchyFileName = "link-hierarchy.json"
+    static let linkHierarchyFileName = "link-hierarchy.json"
 }
 
 enum Digest {
