@@ -13,6 +13,7 @@ import Testing
 @testable import DocCHTML
 import DocCCommon
 
+extension DocCHTMLTestSuites {
 struct HTMLFormatterTests {
     
     @Test
@@ -158,9 +159,7 @@ struct HTMLFormatterTests {
         let html = span(attributes: [.title(#"' & " <>"#)], contents: [.text("Some text")])
         
         #expect(htmlString(for: html, options: .prettyPrint) == """
-        <span title="' &amp; &quot; <>">
-          Some text
-        </span>
+        <span title="' &amp; &quot; <>">Some text</span>
         """)
     }
     
@@ -341,6 +340,21 @@ struct HTMLFormatterTests {
     }
     
     @Test
+    func prettyFormatsTextSemanticAfterOtherElementOnSeparateLines() {
+        let html = header(contents: [
+            h2(contents: [.text("Some header")]),
+            span(contents: [.text("Some other information")]),
+        ])
+        
+        #expect(htmlString(for: html, options: .prettyPrint) == """
+        <header>
+          <h2>Some header</h2>
+          <span>Some other information</span>
+        </header>
+        """)
+    }
+    
+    @Test
     func includesOptionalEndTagsByDefault() {
         let definitionList = dl(contents: [
             dt(contents: [.text("range")]),
@@ -428,7 +442,8 @@ struct HTMLFormatterTests {
         """)
     }
 }
-    
+}
+
 private func htmlString(for element: HTMLNode, options: HTMLFormatter.Options = []) -> String {
     String(decoding: HTMLFormatter.format(element, options: options), as: UTF8.self)
 }
