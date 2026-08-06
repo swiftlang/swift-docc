@@ -789,7 +789,8 @@ struct MarkdownOutputTests {
         let localProtocolLink = "\n[`LocalProtocol`](/documentation/MarkdownOutput/LocalProtocol)"
         #expect(conformerMarkdown.contains(localProtocolLink))
         let externalProtocolLink = "\n[`Hashable`](/documentation/Swift/Hashable)"
-        #expect(conformerMarkdown.contains(externalProtocolLink))
+        #expect(conformerMarkdown.contains(externalProtocolLink) == false)
+        #expect(conformerMarkdown.contains("\n`Swift.Hashable`"))
         
         let (protocolNode, _) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
         let protocolMarkdown = protocolNode.markdown
@@ -1299,11 +1300,11 @@ struct MarkdownOutputTests {
                         symbols: [
                             makeSymbol(id: "local-conformer-id", kind: .struct, pathComponents: ["LocalConformer"]),
                             makeSymbol(id: "local-protocol-id", kind: .protocol, pathComponents: ["LocalProtocol"]),
-                            makeSymbol(id: "external-protocol-id", kind: .struct, pathComponents: ["ExternalConformer"])
+                            makeSymbol(id: "external-conformer-id", kind: .struct, pathComponents: ["ExternalConformer"])
                         ],
                         relationships: [
                             SymbolGraph.Relationship(source: "local-conformer-id", target: "local-protocol-id", kind: .conformsTo, targetFallback: nil),
-                            SymbolGraph.Relationship(source: "external-protocol-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
+                            SymbolGraph.Relationship(source: "external-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
                         ]
                     ))
         ])
@@ -1322,8 +1323,9 @@ struct MarkdownOutputTests {
         
         let (_, externalManifest) = try await markdownOutput(catalog: catalog, path: "ExternalConformer")
         let externalRelated = externalManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        // Unresolved symbol should use the fallback identifier
         #expect(externalRelated.contains(where: {
-            $0.targetIdentifier == "/documentation/Swift/Hashable" && $0.subtype == .conformsTo
+            $0.targetIdentifier == "Swift.Hashable" && $0.subtype == .conformsTo
         }))
     }
 }
