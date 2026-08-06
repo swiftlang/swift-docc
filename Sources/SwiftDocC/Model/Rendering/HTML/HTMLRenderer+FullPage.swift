@@ -108,7 +108,7 @@ package extension HTMLRenderer {
         
         let root = XMLNode.element(named: "html", children: [head, body], attributes: ["lang": "en-US"])
         
-        return HTMLNode(from: root) ?? html(contents: [])
+        return HTMLNode(from: root) ?? html {}
     }
     
     /// Prepares the provided custom header and footer files to be included in the full-page structure.
