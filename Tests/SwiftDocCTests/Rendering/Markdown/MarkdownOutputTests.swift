@@ -774,7 +774,21 @@ struct MarkdownOutputTests {
                 content: makeSymbolGraph(
                     moduleName: "MarkdownOutput",
                     symbols: [
-                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"]),
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: """
+                            Abstract.
+                                                        
+                            The next heading will appear in the output as it does not imply a `Section` in the document so is just markdown content. The last two headings should not appear, because they are `Section`s, but have no section content.
+                            
+                            ## Random heading
+                            
+                            ## Topics
+                            
+                            ## See Also
+                            
+                            @Comment {
+                                This should be removed, but should not lead to a See Also heading.
+                            }
+                            """),
                         makeSymbol(id: "markdown-symbol-my-function-id", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
                     Everything is described in the abstract.
                     
@@ -791,9 +805,15 @@ struct MarkdownOutputTests {
                     ]
             ))
         ])
-        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
-        #expect(node.markdown.contains("## Parameters"))
-        #expect(node.markdown.contains("## Discussion") == false)
+        let (functionNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
+        #expect(functionNode.markdown.contains("## Parameters"))
+        #expect(functionNode.markdown.contains("## Discussion") == false)
+        
+        let (structNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        #expect(structNode.markdown.contains("## Overview"))
+        #expect(structNode.markdown.contains("## Random heading"))
+        #expect(structNode.markdown.contains("## Topics") == false)
+        #expect(structNode.markdown.contains("## See Also") == false)
     }
     
     // MARK: - Metadata
