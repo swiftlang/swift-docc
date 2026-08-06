@@ -288,6 +288,56 @@ struct MarkdownOutputTests {
         let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](/documentation/MarkdownOutput/OtherMarkdownSymbol)"
         #expect(node.markdown.contains(expectedLinkList))
     }
+    
+    @Test
+    func linkTitlesAreRetained() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "RootDocument.md", utf8Content: """
+                # Links
+                
+                Tests the processing of named links
+                
+                ## Overview
+                
+                This is a [named *link*](doc:LinkDestination)
+                This is not <doc:LinkDestination>
+                
+                This is a [named symbol link](doc:MarkdownSymbol)
+                This is not <doc:MarkdownSymbol>
+                
+                This has an empty title [](doc:LinkDestination)
+                
+                This is a reference link with an empty title [][link-id]
+                This is a reference link with a title [title][link-id]
+                
+                [link-id]: doc:LinkDestination
+                """),
+            TextFile(name: "LinkDestination.md", utf8Content: """
+                # Link Destination
+                
+                This document title should not replace the specific title in the link
+                """),
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output."),
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "RootDocument")
+        
+        let expectedLinks = [
+            "This is a [named *link*](/documentation/MarkdownOutput/LinkDestination",
+            "This is not [Link Destination](/documentation/MarkdownOutput/LinkDestination",
+            "This is a [named symbol link](/documentation/MarkdownOutput/MarkdownSymbol",
+            "This is not [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)",
+            "This has an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination",
+            "This is a reference link with an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination)",
+            "This is a reference link with a title [title](/documentation/MarkdownOutput/LinkDestination)",
+        ]
+        
+        for expectedLink in expectedLinks {
+            #expect(node.markdown.contains(expectedLink))
+        }
+    }
         
     @Test
     func languageTabOnlyIncludesPrimaryLanguage() async throws {

@@ -215,7 +215,8 @@ extension MarkdownOutputMarkupWalker {
         
         guard
             let resolved = context.referenceIndex[destination],
-            let node = context.topicGraph.nodeWithReference(resolved)
+            let doc = try? context.entity(with: resolved),
+            let symbol = doc.semantic as? Symbol
         else {
             // Unresolved symbol - use code voice, unless we're in a list, in which case, ignore it
             if isRenderingLinkList {
@@ -225,25 +226,19 @@ extension MarkdownOutputMarkupWalker {
             return (code, nil)
         }
         
-        let linkTitle: String
+        var linkTitle = symbol.proseVariants[.swift] ?? symbol.title
         var linkListAbstract: (any Markup)?
                 
-        if isRenderingLinkList,
-           let doc = try? context.entity(with: resolved),
-           let symbol = doc.semantic as? Symbol
-        {
+        if isRenderingLinkList {
             linkListAbstract = (doc.semantic as? Symbol)?.abstract
             if let fragments = symbol.navigator {
                 linkTitle = fragments
                     .map { $0.spelling }
                     .joined(separator: " ")
-            } else {
-                linkTitle = symbol.proseVariants.firstValue ?? symbol.title
             }
             relationships.insert(relationship(source: resolved, type: .belongsToTopic, subtype: nil))
-        } else {
-            linkTitle = node.title
         }
+        
         let (link, _) = convertLink(Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)]), relationships: &relationships)
         return (link, linkListAbstract)
     }
@@ -298,7 +293,7 @@ extension MarkdownOutputMarkupWalker {
             }
             linkTitle = anchorSection?.title ?? article.title?.plainText ?? resolved.lastPathComponent
         } else if let symbol = doc.semantic as? Symbol {
-            linkTitle = anchorSection?.title ?? symbol.proseVariants.firstValue ?? symbol.title
+            linkTitle = anchorSection?.title ?? symbol.proseVariants[.swift] ?? symbol.title
         } else {
             linkTitle = anchorSection?.title ?? resolved.lastPathComponent
         }
@@ -308,15 +303,19 @@ extension MarkdownOutputMarkupWalker {
             linkListAbstract = nil
         }
         
-        let linkMarkup: any RecurringInlineMarkup
-        if doc.semantic is Symbol {
-            linkMarkup = InlineCode(linkTitle)
+        var convertedLink = Link(destination: outputDestination, title: linkTitle, [])
+        // Preserve any inline title markup for the link. If the plain text value is the same as the destination, or was empty, then this was an auto-link or double-backtick symbol link and will require an appropriate title.
+        if link.plainText == link.destination || link.plainText.isEmpty {
+            if doc.semantic is Symbol {
+                convertedLink.setInlineChildren([InlineCode(linkTitle)])
+            } else {
+                convertedLink.setInlineChildren([Text(linkTitle)])
+            }
         } else {
-            linkMarkup = Text(linkTitle)
+            convertedLink.setInlineChildren(link.inlineChildren)
         }
         
-        let link = Link(destination: outputDestination, title: linkTitle, [linkMarkup])
-        return (link, linkListAbstract)
+        return (convertedLink, linkListAbstract)
     }
     
     mutating func visitLink(_ link: Link) {
