@@ -265,6 +265,11 @@ public struct DocumentationNode {
                 platformName: platformName,
                 keyPath: \.title
             ),
+            proseVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.names,
+                platformName: platformName,
+                keyPath: \.prose
+            ),
             subHeadingVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.names,
                 platformName: platformName,
@@ -803,6 +808,7 @@ public struct DocumentationNode {
         self.semantic = Symbol(
             kindVariants: .init(swiftVariant: symbol.kind),
             titleVariants: .init(swiftVariant: symbol.names.title),
+            proseVariants: .init(swiftVariant: symbol.names.prose),
             subHeadingVariants: .init(swiftVariant: symbol.names.subHeading),
             navigatorVariants: .init(swiftVariant: symbol.names.navigator),
             roleHeadingVariants: .init(swiftVariant: symbol.kind.displayName),
