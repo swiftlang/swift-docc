@@ -1,59 +1,65 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 @testable import SwiftDocC
 
-class DocumentationBundleIdentifierTests: XCTestCase {
+struct DocumentationBundleIdentifierTests {
     private typealias Identifier = DocumentationBundle.Identifier
     
-    func testInitialization() {
-        let id = Identifier(rawValue: "com.example.test")
-        XCTAssertEqual(id.rawValue, "com.example.test")
-        
-        let idWithSpace = Identifier(rawValue: "Package  Name")
-        XCTAssertEqual(idWithSpace.rawValue, "Package-Name", "The initializer transforms the value to a valid identifier")
+    @Test(arguments: [
+        "com.example.test": "com.example.test",
+        "Package  Name": "Package-Name", // The initializer transforms the value to a valid identifier
+    ])
+    func replacedDisallowedCharactersWhenInitialized(_ input: String, expectedParsedValue: String) {
+        #expect(Identifier(rawValue: input).rawValue == expectedParsedValue)
     }
     
-    func testExpressibleByStringLiteral() {
+    @Test
+    func replacedDisallowedCharactersWhenExpressibleByStringLiteral() {
         let id: Identifier = "com.example.test"
-        XCTAssertEqual(id.rawValue, "com.example.test")
+        #expect(id.rawValue == "com.example.test")
         
         let idWithSpace: Identifier = "Package  Name"
-        XCTAssertEqual(idWithSpace.rawValue, "Package-Name", "The initializer transforms the value to a valid identifier")
+        #expect(idWithSpace.rawValue == "Package-Name", "The initializer transforms the value to a valid identifier")
     }
     
-    func testEquatable() {
-        XCTAssertEqual(Identifier(rawValue: "A"), "A")
-        XCTAssertNotEqual(Identifier(rawValue: "A"), "B")
+    @Test
+    func isEquatableWithStringLiteral() {
+        #expect(Identifier(rawValue: "A") == "A")
+        #expect(Identifier(rawValue: "A") != "B")
     }
     
-    func testComparable() {
-        XCTAssertLessThan(Identifier(rawValue: "B"), "C")
-        XCTAssertGreaterThan(Identifier(rawValue: "B"), "A")
+    @Test
+    func isComparableToStringLiteral() {
+        #expect(Identifier(rawValue: "B") < "C")
+        #expect(Identifier(rawValue: "B") > "A")
     }
     
-    func testCustomStringConvertible() {
-        XCTAssertEqual(Identifier(rawValue: "com.example.test").description, "com.example.test")
-        XCTAssertEqual(Identifier(rawValue: "Package  Name").description, "Package-Name")
-        
+    @Test
+    func describesItsRawValue() {
+        #expect(Identifier(rawValue: "com.example.test").description == "com.example.test")
+        #expect(Identifier(rawValue: "Package  Name").description == "Package-Name")
     }
     
-    func testEncodesAsPlainString() throws {
+    @Test
+    func encodesAsSinglePlainStringValue() throws {
         let id = Identifier(rawValue: "com.example.test")
         let encoded = try String(data: JSONEncoder().encode(id), encoding: .utf8)
-        XCTAssertEqual(encoded, "\"com.example.test\"")
+        #expect(encoded == "\"com.example.test\"")
     }
     
-    func testDecodingFromPlainString() throws {
+    @Test
+    func canDecodeFromFromPlainString() throws {
         let decoded = try JSONDecoder().decode(Identifier.self, from: Data("\"com.example.test\"".utf8))
-        XCTAssertEqual(decoded, "com.example.test")
+        #expect(decoded == "com.example.test")
     }
 }
