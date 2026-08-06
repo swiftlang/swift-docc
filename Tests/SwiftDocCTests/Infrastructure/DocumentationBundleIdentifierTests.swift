@@ -18,6 +18,7 @@ struct DocumentationBundleIdentifierTests {
     @Test(arguments: [
         "com.example.test": "com.example.test",
         "Package  Name": "Package-Name", // The initializer transforms the value to a valid identifier
+        "Before: After": "Before-After", // The initializer transforms the value to a valid identifier
     ])
     func replacedDisallowedCharactersWhenInitialized(_ input: String, expectedParsedValue: String) {
         #expect(Identifier(rawValue: input).rawValue == expectedParsedValue)
@@ -30,6 +31,9 @@ struct DocumentationBundleIdentifierTests {
         
         let idWithSpace: Identifier = "Package  Name"
         #expect(idWithSpace.rawValue == "Package-Name", "The initializer transforms the value to a valid identifier")
+        
+        let idWithColon: Identifier = "Before: After"
+        #expect(idWithColon.rawValue == "Before-After", "The initializer transforms the value to a valid identifier")
     }
     
     @Test
