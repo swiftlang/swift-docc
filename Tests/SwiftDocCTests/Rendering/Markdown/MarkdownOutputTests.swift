@@ -769,8 +769,13 @@ struct MarkdownOutputTests {
     @Test
     func sectionsThatAreEmptyAfterFilteringDoNotHaveHeadingsAdded() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol.myFunction", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"]),
+                        makeSymbol(id: "markdown-symbol-my-function-id", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
                     Everything is described in the abstract.
                     
                     - Parameters:
@@ -780,7 +785,10 @@ struct MarkdownOutputTests {
                         This should be removed, but should not lead to a discussion heading.
                     }
                     """)
-            ]
+                    ],
+                    relationships: [
+                        .init(source: "markdown-symbol-my-function-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil)
+                    ]
             ))
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
