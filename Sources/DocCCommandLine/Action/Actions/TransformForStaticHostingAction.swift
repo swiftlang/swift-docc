@@ -50,6 +50,15 @@ struct TransformForStaticHostingAction: AsyncAction {
     }
     
     private func emit() throws {
+        // Transform the indexHTML before copying template files because in-place
+        // transformations replace the archive's root index.html below.
+        let indexHTMLData = try StaticHostableTransformer.indexHTMLData(
+            in: htmlTemplateDirectory,
+            with: hostingBasePath,
+            fileManager: fileManager,
+            preservingCustomTemplatesFrom: rootURL.appendingPathComponent(HTMLTemplate.indexFileName.rawValue)
+        )
+
         // If the emit is to create the static hostable content outside of the source archive
         // then the output folder needs to be set up and the archive data copied
         // to the new folder.
@@ -84,13 +93,6 @@ struct TransformForStaticHostingAction: AsyncAction {
             try fileManager._copyItem(at: source, to: target)
         }
         
-        // Transform the indexHTML if needed.
-        let indexHTMLData = try StaticHostableTransformer.indexHTMLData(
-            in: htmlTemplateDirectory,
-            with: hostingBasePath,
-            fileManager: FileManager.default
-        )
-
         // Create a StaticHostableTransformer targeted at the archive data folder
         let transformer = StaticHostableTransformer(dataDirectory: rootURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName), fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
         try transformer.transform()
