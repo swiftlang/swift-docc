@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import SwiftDocC
 /// An action that emits documentation extension files that reflect the auto-generated curation.
 struct EmitGeneratedCurationAction: AsyncAction {
     let catalogURL: URL?
-    let additionalSymbolGraphDirectory: URL?
+    let additionalSymbolGraphDirectories: [URL]
     let outputURL: URL
     let depthLimit: Int?
     let startingPointSymbolLink: String?
@@ -23,7 +23,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
     
     init(
         documentationCatalog: URL?,
-        additionalSymbolGraphDirectory: URL?,
+        additionalSymbolGraphDirectories: [URL],
         outputURL: URL?,
         depthLimit: Int?,
         startingPointSymbolLink: String?,
@@ -37,7 +37,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
         }
         self.depthLimit = depthLimit
         self.startingPointSymbolLink = startingPointSymbolLink
-        self.additionalSymbolGraphDirectory = additionalSymbolGraphDirectory
+        self.additionalSymbolGraphDirectories = additionalSymbolGraphDirectories
         self.fileManager = fileManager
     }
     
@@ -47,7 +47,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
             startingPoint: catalogURL,
             options: BundleDiscoveryOptions(
                 infoPlistFallbacks: [:],
-                additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
+                additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectories)
             )
         )
         let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider)
@@ -62,12 +62,4 @@ struct EmitGeneratedCurationAction: AsyncAction {
         
         return ActionResult(didEncounterError: false, outputs: [outputURL])
     }
-}
-
-private func symbolGraphFiles(in directory: URL?) -> [URL] {
-    guard let directory else { return [] }
-    
-    let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
-    return subpaths.map { directory.appendingPathComponent($0) }
-        .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
 }

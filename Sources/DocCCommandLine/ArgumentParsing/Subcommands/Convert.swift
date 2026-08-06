@@ -56,14 +56,14 @@ extension Docc {
             @OptionGroup()
             var documentationCatalog: DocumentationCatalogOption
             
-            /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
+            /// User-provided paths to directories of additional symbol graph files that the convert action will process.
             @Option(
                 name: [.customLong("additional-symbol-graph-dir")],
-                help: "A path to a directory of additional symbol graph files.",
+                help: "A path to a directory of additional symbol graph files. May be specified multiple times.",
                 transform: URL.init(fileURLWithPath:)
             )
-            var additionalSymbolGraphDirectory: URL?
-            
+            var additionalSymbolGraphDirectories: [URL] = []
+
             /// A user-provided location where the convert action writes the built documentation.
             @Option(
                 name: [.customLong("output-path"), .customLong("output-dir"), .customShort("o")], // Remove "output-dir" when other tools no longer pass that option. (rdar://72449411)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,13 +50,13 @@ extension Docc.ProcessCatalog {
             @Option(
                 name: [.customLong("additional-symbol-graph-dir")],
                 help: ArgumentHelp(
-                    "Path to a directory of additional symbol graph files.",
+                    "Path to a directory of additional symbol graph files. May be specified multiple times.",
                     valueName: "symbol-graph-dir"
                 ),
                 transform: URL.init(fileURLWithPath:)
             )
-            var additionalSymbolGraphDirectory: URL?
-            
+            var additionalSymbolGraphDirectories: [URL] = []
+
             /// A user-provided location where the command will write the updated catalog output.
             @Option(
                 name: [.customLong("output-path")],
@@ -135,7 +135,7 @@ extension Docc.ProcessCatalog {
         func run() async throws {
             let action = try EmitGeneratedCurationAction(
                 documentationCatalog: inputsAndOutputs.documentationCatalog,
-                additionalSymbolGraphDirectory: inputsAndOutputs.additionalSymbolGraphDirectory,
+                additionalSymbolGraphDirectories: inputsAndOutputs.additionalSymbolGraphDirectories,
                 outputURL: inputsAndOutputs.outputURL,
                 depthLimit: generationOptions.depthLimit,
                 startingPointSymbolLink: generationOptions.startingPointSymbolLink

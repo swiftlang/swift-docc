@@ -96,8 +96,8 @@ extension ConvertAction {
 
 package extension Docc.Convert {
     var bundleDiscoveryOptions: BundleDiscoveryOptions {
-        let additionalSymbolGraphFiles = symbolGraphFiles(in: inputsAndOutputs.additionalSymbolGraphDirectory)
-        
+        let additionalSymbolGraphFiles = symbolGraphFiles(in: inputsAndOutputs.additionalSymbolGraphDirectories)
+
         return BundleDiscoveryOptions(
             fallbackDisplayName: infoPlistFallbacks.fallbackBundleDisplayName,
             fallbackIdentifier: infoPlistFallbacks.fallbackBundleIdentifier,
@@ -106,12 +106,4 @@ package extension Docc.Convert {
             additionalSymbolGraphFiles: additionalSymbolGraphFiles
         )
     }
-}
-
-private func symbolGraphFiles(in directory: URL?) -> [URL] {
-    guard let directory else { return [] }
-    
-    let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
-    return subpaths.map { directory.appendingPathComponent($0) }
-        .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
 }
