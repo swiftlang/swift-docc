@@ -643,13 +643,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         let moduleNames = modules.compactMap { reference -> String? in
-            guard let node = try? context.entity(with: reference) else { return nil }
-            return node.name.plainText
+            try? context.entity(with: reference).name.plainText
         }
         if !moduleNames.isEmpty {
-            node.metadata.modules = moduleNames.map({
-                return RenderMetadata.Module(name: $0, relatedModules: nil)
-            })
+            node.metadata.modules = moduleNames.sorted().map {
+                RenderMetadata.Module(name: $0, relatedModules: nil)
+            }
         }
         
         let documentationNode = try! context.entity(with: identifier)
