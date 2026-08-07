@@ -10,12 +10,11 @@
 
 import Testing
 import Foundation
-@testable import SwiftDocC
+import SwiftDocC
 @testable import DocCCommandLine
 import DocCTestUtilities
 
 struct StaticHostingWithContentTests {
-
     @Test(arguments: [true, false])
     func includesBasePathInPerPageIndexHTMLFile(includeHTMLContent: Bool) async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -98,6 +97,8 @@ struct StaticHostingWithContentTests {
         ├─ images/
         │  ╰─ Something/
         ├─ index.html
+        ├─ link-hierarchy.json
+        ├─ linkable-entities.json
         ├─ metadata.json
         ╰─ videos/
            ╰─ Something/

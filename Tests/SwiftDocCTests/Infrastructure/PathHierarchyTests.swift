@@ -492,10 +492,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() async throws {
-        var configuration = DocumentationContext.Configuration()
-        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
-        
-        let (_, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements", configuration: configuration)
+        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // Symbol name not found. Suggestions only include module names (search is not relative to a known page)
@@ -3108,9 +3105,6 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testLanguageRepresentationsWithDifferentParentKinds() async throws {
-        var configuration = DocumentationContext.Configuration()
-        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
-
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
 
@@ -3148,7 +3142,7 @@ class PathHierarchyTests: XCTestCase {
             })
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         let resolvedSwiftContainerID = try tree.find(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
@@ -3440,9 +3434,6 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testAbsoluteLinksToOtherModuleWithExtensions() async throws {
-        var configuration = DocumentationContext.Configuration()
-        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
-
         let extendedTypeID = "extended-type-id"
         let extensionID = "extension-id"
         let extensionMethodID = "extension-method-id"
@@ -3488,7 +3479,7 @@ class PathHierarchyTests: XCTestCase {
             ))
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         try assertFindsPath(
@@ -4826,9 +4817,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testResolveExternalLinkFromTechnologyRoot() async throws {
-        var configuration = DocumentationContext.Configuration()
-        configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled = true
-        
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Some root page
@@ -4837,7 +4825,7 @@ class PathHierarchyTests: XCTestCase {
             """),
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)
