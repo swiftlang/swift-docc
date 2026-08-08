@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,9 +15,7 @@ typealias GroupedLinkRanges = [[SourceRange?]]
 
 /// A section that contains groups of symbols.
 public struct TopicsSection: GroupedSection {
-    public static var title: String? {
-        return "Topics"
-    }
+    public static let title: String? = "Topics"
     public var content: [any Markup]
     
     /// Creates a new topics section with the given content.

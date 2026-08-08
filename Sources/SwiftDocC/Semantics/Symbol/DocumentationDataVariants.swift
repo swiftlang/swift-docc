@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -132,12 +132,20 @@ extension DocumentationDataVariants {
 extension DocumentationDataVariants: Equatable where Variant: Equatable {}
 
 /// The trait associated with a variant of some piece of information about a documentation node.
-public struct DocumentationDataVariantsTrait: Hashable {
+public struct DocumentationDataVariantsTrait: Hashable, Sendable {
     /// The Swift programming language.
-    public static var swift = DocumentationDataVariantsTrait(sourceLanguage: .swift)
+    public static var swift: DocumentationDataVariantsTrait {
+        get { DocumentationDataVariantsTrait(sourceLanguage: .swift) }
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     /// The Objective-C programming language.
-    public static var objectiveC = DocumentationDataVariantsTrait(sourceLanguage: .objectiveC)
+    public static var objectiveC: DocumentationDataVariantsTrait {
+        get { DocumentationDataVariantsTrait(sourceLanguage: .objectiveC) }
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     /// The language in which the documentation node is relevant.
     public var interfaceLanguage: String? {
@@ -147,7 +155,7 @@ public struct DocumentationDataVariantsTrait: Hashable {
     private(set) var sourceLanguage: SourceLanguage?
     
     /// A special trait that represents the fallback trait, which internal clients can use to access the default value of a collection of variants.
-    static var fallback = DocumentationDataVariantsTrait()
+    static let fallback = DocumentationDataVariantsTrait()
     
     /// Creates a new trait given an interface language.
     ///

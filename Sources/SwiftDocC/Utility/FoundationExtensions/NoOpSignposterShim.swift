@@ -40,7 +40,7 @@ package struct NoOpSignposterShim : @unchecked Sendable {
     
     package var isEnabled: Bool { false }
     
-    package struct ID {
+    package struct ID: Sendable {
         static var exclusive = ID()
     }
     package func makeSignpostID() -> ID { ID() }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,7 +13,7 @@
 /// Clients can use the type of the message to determine which handler to invoke.
 ///
 /// - Note: Message types are backed by strings, so you can add new types without breaking the public API.
-public struct MessageType: Codable, RawRepresentable, Hashable, CustomDebugStringConvertible {
+public struct MessageType: Codable, RawRepresentable, Hashable, CustomDebugStringConvertible, Sendable {
     public var rawValue: String
     
     /// Creates a type from a raw value.

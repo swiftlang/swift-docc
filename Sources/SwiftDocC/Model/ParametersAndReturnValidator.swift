@@ -9,8 +9,8 @@
 */
 
 import Foundation
-import SymbolKit
-import Markdown
+@preconcurrency import SymbolKit
+@preconcurrency import Markdown
 import DocCCommon
 
 /// A type that validates and filters a symbol's parameter and return value documentation based on the symbol's function signature.

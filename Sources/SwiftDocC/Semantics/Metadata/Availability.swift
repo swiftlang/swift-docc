@@ -48,7 +48,7 @@ extension Metadata {
         public static let directiveName: String = "Available"
         public static let introducedVersion = "5.8"
 
-        public enum Platform: RawRepresentable, Hashable, DirectiveArgumentValueConvertible {
+        public enum Platform: RawRepresentable, Hashable, DirectiveArgumentValueConvertible, Sendable {
             case macOS, iOS, watchOS, tvOS
 
             case other(String)

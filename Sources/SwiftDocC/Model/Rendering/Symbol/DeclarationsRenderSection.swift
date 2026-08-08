@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,7 +13,11 @@ import Foundation
 /// A compound section that contains a list of declaration sections.
 public struct DeclarationsRenderSection: RenderSection, Codable, Equatable {
     /// The section title, by default `nil`.
-    public static var title: String? = nil
+    public static var title: String? {
+        get { nil }
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     public var kind: RenderSectionKind = .declarations
     /// The list of declaration sections.
@@ -75,14 +79,14 @@ public struct DeclarationRenderSection: Codable, Equatable {
     ///
     /// A lexical token is a string with an associated meaning in source code.
     /// For example, `123` is represented as a single token of kind "number".
-    public struct Token: Codable, Hashable, Equatable {
+    public struct Token: Codable, Hashable, Equatable, Sendable {
         /// The token text content.
         public var text: String
         /// The token programming kind.
         public let kind: Kind
         
         /// The list of all expected tokens in a declaration.
-        public enum Kind: String, Codable, RawRepresentable {
+        public enum Kind: String, Codable, RawRepresentable, Sendable {
             /// A known keyword, like "class" or "var".
             case keyword
             /// An attribute, for example, "@main".
@@ -119,7 +123,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         public var highlight: Highlight?
 
         /// The kinds of highlights that can be applied to a token.
-        public enum Highlight: String, Codable, RawRepresentable {
+        public enum Highlight: String, Codable, RawRepresentable, Sendable {
             /// A highlight representing generalized change, not specifically added or removed.
             case changed
         }
