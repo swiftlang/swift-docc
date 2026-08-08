@@ -27,7 +27,7 @@ public struct DocumentationCoverageOptions: Sendable {
     /// An instance configured to represent the choice not to produce any documentation coverage artifacts or output.
     public static var noCoverage: DocumentationCoverageOptions {
         get { DocumentationCoverageOptions(level: .none, kindFilterOptions: []) }
-        @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
         set { /* Do nothing */ }
     }
 

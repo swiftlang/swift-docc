@@ -136,14 +136,14 @@ public struct DocumentationDataVariantsTrait: Hashable, Sendable {
     /// The Swift programming language.
     public static var swift: DocumentationDataVariantsTrait {
         get { DocumentationDataVariantsTrait(sourceLanguage: .swift) }
-        @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
         set { /* Do nothing */ }
     }
     
     /// The Objective-C programming language.
     public static var objectiveC: DocumentationDataVariantsTrait {
         get { DocumentationDataVariantsTrait(sourceLanguage: .objectiveC) }
-        @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
         set { /* Do nothing */ }
     }
     
