@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,7 +18,11 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
     /// that contains downloads.
     public static let locationName = "downloads"
 
-    public static var baseURL = URL(string: "/\(locationName)/")!
+    public static var baseURL: URL {
+        get { URL(string: "/\(locationName)/")! }
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     public var type: RenderReferenceType = .download
     

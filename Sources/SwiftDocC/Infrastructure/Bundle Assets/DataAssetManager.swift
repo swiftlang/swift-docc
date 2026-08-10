@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -297,10 +297,12 @@ public struct DataTraitCollection: Hashable, Codable {
     }
     
     /// Returns all the asset's registered variants.
-    public static var allCases: [DataTraitCollection] = {
-        return UserInterfaceStyle.allCases.flatMap { style in DisplayScale.allCases.map { .init(userInterfaceStyle: style, displayScale: $0)}}
-    }()
-    
+    public static var allCases: [DataTraitCollection] {
+        get { _allCases }
+        @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
+        set { _allCases = newValue }
+    }
+    private static var _allCases: [DataTraitCollection] = UserInterfaceStyle.allCases.flatMap { style in DisplayScale.allCases.map { .init(userInterfaceStyle: style, displayScale: $0)}}
 }
 
 /// The interface style for a rendering context.

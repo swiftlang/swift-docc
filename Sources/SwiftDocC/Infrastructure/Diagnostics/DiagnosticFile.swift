@@ -24,7 +24,7 @@ struct DiagnosticFile: Codable {
     // Breaking changes should increment the major version component.
     // Non breaking additions should increment the minor version.
     // Bug fixes should increment the patch version.
-    static var currentVersion = SemanticVersion(major: 1, minor: 1, patch: 0, prerelease: nil, buildMetadata: nil)
+    static let currentVersion = SemanticVersion(major: 1, minor: 1, patch: 0, prerelease: nil, buildMetadata: nil)
     
     enum Error: Swift.Error {
         case unknownMajorVersion(found: SemanticVersion, latestKnown: SemanticVersion)
