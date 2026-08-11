@@ -19,7 +19,6 @@ add_library(SwiftDocC
   Benchmark/Metrics/TopicGraphHash.swift
   "Catalog Processing/GeneratedCurationWriter.swift"
   Checker/Checker.swift
-  Checker/Checkers/AbstractContainsFormattedTextOnly.swift
   Checker/Checkers/DuplicateTopicsSection.swift
   Checker/Checkers/InvalidAdditionalTitle.swift
   Checker/Checkers/InvalidCodeBlockOption.swift
@@ -372,6 +371,7 @@ add_library(SwiftDocC
   Semantics/Symbol/DeprecationSummary.swift
   Semantics/Symbol/DocumentationDataVariants+SymbolGraphSymbol.swift
   Semantics/Symbol/DocumentationDataVariants.swift
+  Semantics/Symbol/PlatformDeclarations.swift
   Semantics/Symbol/PlatformName.swift
   Semantics/Symbol/Relationship.swift
   Semantics/Symbol/Symbol.swift
