@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 public import SwiftDocC
 
-#if canImport(NIOHTTP1)
 /// A preview server instance.
 var servers: [String: PreviewServer] = [:]
 
@@ -228,7 +228,6 @@ extension PreviewAction {
     }
 }
 #endif // !os(Linux) && !os(Android)
-#endif // canImport(NIOHTTP1)
 
 extension DocumentationContext {
     
@@ -250,3 +249,4 @@ extension DocumentationContext {
         }
     }
 }
+#endif // canImport(NIOHTTP1)
