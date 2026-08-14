@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -76,7 +76,7 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
             let url = renderURL(for: value, prefixComponent: encoder.assetPrefixComponent)
             result.append(VariantProxy(url: url, traits: key, svgID: asset.metadata[value]?.svgID))
         }
-        result.sort(by: VariantProxy.isInOrder)
+        result.sort(by: VariantProxy.areInIncreasingOrder)
 
         try container.encode(result, forKey: .variants)
     }
