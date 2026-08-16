@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "indentation": {
+    "spaces": 4
+  },
+  "lineLength": 500,
+  "indentConditionalCompilationBlocks" : false,
+  "rules": {
+    "OrderedImports": false
+  }
+}
