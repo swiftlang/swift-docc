@@ -125,6 +125,7 @@ class SnippetResolverTests: XCTestCase {
     
     func testWarningsAboutMisspelledSnippetPathsAndMisspelledSlice() async throws {
         for pathPrefix in optionalPathPrefixes.prefix(1) {
+            // swift-format-ignore
             let (diagnostics, logOutput, snippetRenderBlocks) = try await makeSnippetContext(
                 snippets: [
                     makeSnippet(

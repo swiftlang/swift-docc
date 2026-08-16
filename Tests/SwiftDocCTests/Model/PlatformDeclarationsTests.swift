@@ -19,6 +19,7 @@ struct PlatformDeclarationsTests {
 
     @Test
     func picksHighestPriorityPlatformDeclaration() {
+        // swift-format-ignore
         let variants: [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] = [
             [.macOS]: declaration("macOS"),
             [.iOS]:   declaration("iOS"),

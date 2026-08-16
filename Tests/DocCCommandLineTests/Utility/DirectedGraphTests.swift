@@ -64,6 +64,7 @@ struct DirectedGraphTests {
         #expect(graph.allFinitePaths(from: 8) == [[8]])
         #expect(graph.allFinitePaths(from: 9) == [[9,8]])
         
+        // swift-format-ignore
         for node in 1...9 {
             #expect(graph.firstCycle(from: node) == nil)
             #expect(graph.cycles(from: node)     == [])

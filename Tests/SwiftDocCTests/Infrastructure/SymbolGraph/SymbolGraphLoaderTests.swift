@@ -100,6 +100,7 @@ struct SymbolGraphLoaderTests {
         var loadedGraphs = 0
         for graph in loader.unifiedGraphs.values {
             loadedGraphs += 1
+            // swift-format-ignore
             #expect(graph.symbols.count       == symbolGraph.symbols.count)
             #expect(graph.relationships.count == symbolGraph.relationships.count)
         }
@@ -159,6 +160,7 @@ struct SymbolGraphLoaderTests {
         }), "\(symbolGraphFileName).symbols.json should\(!shouldContainAsyncVariant ? "" : " not") contain a completionHandler parameter declaration fragment")
     }
     
+    // swift-format-ignore
     @Test(arguments: [
         "WithCompletionHandler": false,
         "WithAsyncKeyword": true,

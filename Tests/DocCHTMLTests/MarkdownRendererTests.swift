@@ -627,6 +627,7 @@ struct MarkdownRendererTests {
     }
     
     private func makeExampleMethodWithDifferentLanguageRepresentations() -> LinkedElement {
+        // swift-format-ignore
         LinkedElement(
             path: URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")!,
             names: .languageSpecificSymbol([

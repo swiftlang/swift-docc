@@ -343,6 +343,7 @@ struct TestFileSystemTests {
         #expect(!fileSystem.fileExists(atPath: "/main/nested/myfile3.txt"))
     }
     
+    // swift-format-ignore
     @Test
     func readingFileContents() throws {
         let fileSystem = try makeTestFileSystemWithExampleStructure()
@@ -375,6 +376,7 @@ struct TestFileSystemTests {
         #expect(!fileSystem.contentsEqual(atPath: "/main/test.txt", andPath: "/main/missing.txt"))
     }
     
+    // swift-format-ignore
     @Test
     func catalogUsesFileURLs() throws {
         let fileSystem = try TestFileSystem {

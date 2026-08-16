@@ -165,6 +165,7 @@ struct LinkCompletionToolsTests {
     
     @Test
     func suggestsProvidedHashesAsDisambiguationEvenWhenInvalidHashes() {
+        // swift-format-ignore
         let invalidHashes = [
             "1+2+3",         // "+" is not allowed in a symbol ID hash
             "ABCDE",         // uppercase letters are not allowed in a symbol ID hash
@@ -234,6 +235,7 @@ struct LinkCompletionToolsTests {
 
     @Test
     func suggestingBothParameterAndReturnTypesInTheSameDisambiguation() {
+        // swift-format-ignore
         let overloads = [
             (parameters: ["Int"],  returns: []),      // (Int)  -> Void
             (parameters: ["Bool"], returns: []),      // (Bool) -> Void
@@ -247,6 +249,7 @@ struct LinkCompletionToolsTests {
             )
         }
         
+        // swift-format-ignore
         #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads) == [
             "-(Int)->()", // Only parameter type would be ambiguous with 3rd overload & only return type would be ambiguous with 2nd overload.
             "-(Bool)",    // The only overload with a `Bool` value

@@ -60,6 +60,7 @@ struct SourceLanguageTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: [
         (SourceLanguage.swift,      "Swift"),
         (SourceLanguage.objectiveC, "Objective-C"),
@@ -76,6 +77,7 @@ struct SourceLanguageTests {
     func sortsSwiftFirstAndThenByID() throws {
         var languages = SourceLanguage.knownLanguages
         #expect(languages.min()?.name == "Swift")
+        // swift-format-ignore
         #expect(languages.sorted().map(\.name) == [
             "Swift",       // swift (always first)
             "Data",        // data
@@ -90,6 +92,7 @@ struct SourceLanguageTests {
             SourceLanguage(name: "ZZZ", id: "aaa"), // will sort first (after Swift)
         ])
         #expect(languages.min()?.name == "Swift")
+        // swift-format-ignore
         #expect(languages.sorted().map(\.name) == [
             "Swift",       // swift (always first)
             "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)

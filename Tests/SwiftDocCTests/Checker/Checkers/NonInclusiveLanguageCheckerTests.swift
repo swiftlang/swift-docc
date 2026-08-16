@@ -194,6 +194,7 @@ func aBlackListedFunc() {
         #expect(context.diagnostics.isEmpty) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
     }
 
+    // swift-format-ignore
     @Test(arguments: [
         DiagnosticSeverity.information: true,
         DiagnosticSeverity.warning:     false,

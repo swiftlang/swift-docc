@@ -118,6 +118,7 @@ struct FastSymbolGraphJSONDecoderTests {
         }
     }
     
+    // swift-format-ignore
     private func expectSymbolGraphToDecodeTheSame(data: Data) throws {
         let real = try JSONDecoder().decode(SymbolGraph.self, from: data)
         let fast = try FastSymbolGraphJSONDecoder.decode(SymbolGraph.self, from: data)
@@ -253,6 +254,7 @@ private extension SymbolGraph.Symbol {
 
 extension SymbolGraph.Symbol.Availability.AvailabilityItem: @retroactive Equatable {
     static func == (lhs: SymbolKit.SymbolGraph.Symbol.Availability.AvailabilityItem, rhs: SymbolKit.SymbolGraph.Symbol.Availability.AvailabilityItem) -> Bool {
+        // swift-format-ignore
         return lhs.isUnconditionallyUnavailable == rhs.isUnconditionallyUnavailable
             && lhs.isUnconditionallyDeprecated  == rhs.isUnconditionallyDeprecated
             && lhs.domain?.rawValue             == rhs.domain?.rawValue
@@ -281,6 +283,7 @@ extension SymbolGraph.Symbol.Swift.GenericParameter: @retroactive Equatable {
 
 extension SymbolGraph.Symbol.HTTP.Endpoint: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         return lhs.baseURL    == rhs.baseURL
             && lhs.method     == rhs.method
             && lhs.path       == rhs.path
@@ -290,6 +293,7 @@ extension SymbolGraph.Symbol.HTTP.Endpoint: @retroactive Equatable {
 
 extension SymbolGraph.Symbol.Swift.Extension: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         return lhs.extendedModule == rhs.extendedModule
             && lhs.typeKind       == rhs.typeKind
             && lhs.constraints    == rhs.constraints
@@ -304,6 +308,7 @@ extension SymbolGraph.Symbol.AlternateSymbols: @retroactive Equatable {
 
 extension SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         return lhs.docComment           == rhs.docComment
             && lhs.functionSignature    == rhs.functionSignature
             && lhs.declarationFragments == rhs.declarationFragments
@@ -312,6 +317,7 @@ extension SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol: @retroactive Equa
 
 extension SymbolGraph.Symbol.Location: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         return lhs.uri      == lhs.uri
             && lhs.position == rhs.position
     }
@@ -319,6 +325,7 @@ extension SymbolGraph.Symbol.Location: @retroactive Equatable {
 
 extension SymbolGraph.Symbol.OverloadData: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         return lhs.overloadGroupIdentifier == rhs.overloadGroupIdentifier
             && lhs.overloadGroupIndex      == rhs.overloadGroupIndex
     }
@@ -326,6 +333,7 @@ extension SymbolGraph.Symbol.OverloadData: @retroactive Equatable {
 
 extension SymbolGraph.Symbol.PlistDetails: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         return lhs.customTitle == rhs.customTitle
             && lhs.rawKey      == rhs.rawKey
             && lhs.arrayMode   == rhs.arrayMode
@@ -335,6 +343,7 @@ extension SymbolGraph.Symbol.PlistDetails: @retroactive Equatable {
 
 extension SymbolGraph.Symbol.Snippet: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         return lhs.slices   == rhs.slices
             && lhs.language == rhs.language
             && lhs.lines    == rhs.lines

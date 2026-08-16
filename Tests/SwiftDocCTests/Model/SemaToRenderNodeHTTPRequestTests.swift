@@ -149,6 +149,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         let outputConsumer = try await renderNodeConsumer(for: "HTTPRequests")
         let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:get:v1/artists/{}")
         
+        // swift-format-ignore
         assertExpectedContent(
             getArtistRenderNode,
             sourceLanguage: "data",
@@ -234,6 +235,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         let outputConsumer = try await renderNodeConsumer(for: "HTTPRequests")
         let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:post:v1/artists")
         
+        // swift-format-ignore
         assertExpectedContent(
             getArtistRenderNode,
             sourceLanguage: "data",

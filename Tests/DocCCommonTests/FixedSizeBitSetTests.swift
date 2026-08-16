@@ -12,6 +12,7 @@ import DocCCommon
 import Testing
 
 struct FixedSizeBitSetTests {
+    // swift-format-ignore
     @Test
     func behavesSameAsSet() {
         var tiny = _FixedSizeBitSet<UInt64>()
@@ -75,6 +76,7 @@ struct FixedSizeBitSetTests {
         #expect(tiny.isSuperset(of: .init(tiny.dropLast())) ==  real.isSuperset(of: .init(real.dropLast())))
     }
     
+    // swift-format-ignore
     @Test(arguments: [
         [],
         [    2],
@@ -159,6 +161,7 @@ struct FixedSizeBitSetTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func producingCombinations() {
         do {
@@ -228,6 +231,7 @@ struct FixedSizeBitSetTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func isSameSizeAsWrappedStorageType() async {
         // Size

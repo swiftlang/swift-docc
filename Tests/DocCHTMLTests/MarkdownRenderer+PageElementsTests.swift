@@ -24,6 +24,7 @@ import SymbolKit
 
 extension DocCHTMLTestSuites {
 struct MarkdownRenderer_PageElementsTests {
+    // swift-format-ignore
     @Test(arguments: RenderGoal.allCases)
     func renderingBreadcrumbs(goal: RenderGoal) {
         let elements = [
@@ -86,6 +87,7 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: RenderGoal.allCases)
     func renderingAvailability(goal: RenderGoal) {
         let availability = makeRenderer(goal: goal).availability([
@@ -288,6 +290,7 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: RenderGoal.allCases)
     func renderingLanguageSpecificReturnSections(goal: RenderGoal) {
         let returns = makeRenderer(goal: goal).returns([
@@ -325,6 +328,7 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
 
+    // swift-format-ignore
     @Test(arguments: RenderGoal.allCases)
     func renderingSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
@@ -377,6 +381,7 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func prettyPrintsSwiftDeclarations() {
         let symbolPaths = [
@@ -507,6 +512,7 @@ struct MarkdownRenderer_PageElementsTests {
         """)
     }
     
+    // swift-format-ignore
     @Test(arguments: RenderGoal.allCases)
     func renderingLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
@@ -593,6 +599,7 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
     func renderingSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
         let elements = [

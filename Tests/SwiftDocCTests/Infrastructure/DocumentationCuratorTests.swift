@@ -253,6 +253,7 @@ class DocumentationCuratorTests: XCTestCase {
         let renderer = DocumentationNodeConverter(context: context)
         let renderNode = renderer.convert(rootPage)
         
+        // swift-format-ignore
         XCTAssertEqual(renderNode.topicSections.map(\.title), [
             nil,        // An unnamed topic section
             "Articles", // The automatic topic section

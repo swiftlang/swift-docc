@@ -13,6 +13,7 @@ import Testing
 import Foundation
 
 struct SmallSourceLanguageSetTests {
+    // swift-format-ignore
     @Test
     func behavesSameAsSet() {
         var tiny = SmallSourceLanguageSet()
@@ -85,6 +86,7 @@ struct SmallSourceLanguageSetTests {
              == Set(tiny.symmetricDifference(SmallSourceLanguageSet(SourceLanguage.knownLanguages)) ))
     }
     
+    // swift-format-ignore
     @Test
     func sortsSwiftFirstAndThenByID() {
         var languages = SmallSourceLanguageSet(SourceLanguage.knownLanguages)
@@ -145,6 +147,7 @@ struct SmallSourceLanguageSetTests {
         ])
     }
     
+    // swift-format-ignore
     @Test
     func isSameSizeAsUInt64() {
         #expect(MemoryLayout<SmallSourceLanguageSet>.size      == MemoryLayout<UInt64>.size)

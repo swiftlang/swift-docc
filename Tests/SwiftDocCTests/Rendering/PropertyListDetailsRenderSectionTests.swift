@@ -35,6 +35,7 @@ struct PropertyListDetailsRenderSectionTests {
         sourceLocation: SourceLocation = #_sourceLocation
     ) async throws -> PropertyListDetailsRenderSection {
         let catalog = Folder(name: "unit-test.docc") {
+            // swift-format-ignore
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "MyModule", symbols: [
                 makeSymbol(id: "plist:propertylistkey", language: .init(id: "plist"), kind: .typealias, pathComponents: ["Information-Property-List", "propertylistkey"], otherMixins: [
                     SymbolGraph.Symbol.PlistDetails(

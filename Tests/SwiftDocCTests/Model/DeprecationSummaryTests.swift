@@ -15,6 +15,7 @@ import DocCTestUtilities
 import SymbolKit
 
 struct DeprecationSummaryTests {
+    // swift-format-ignore
     @Test(arguments: [
         makeInSourceAvailabilityInfo(domain: "FirstPlatform", deprecated: .init(major: 4, minor: 5, patch: 6)),
         makeInSourceAvailabilityInfo(domain: "FirstPlatform", deprecated: nil,                                isUnconditionallyDeprecated: true),
@@ -159,6 +160,7 @@ struct DeprecationSummaryTests {
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
         
         let range  = try #require(diagnostic.range)
+        // swift-format-ignore
         switch directiveLocation {
         case .extensionFile:
             #expect(range.lowerBound.line   ==  5)
@@ -171,6 +173,7 @@ struct DeprecationSummaryTests {
     
     @Test(arguments: DirectiveLocation.allCases)
     func warnsAboutDeprecationSummaryIfSymbolIsExplicitlyAvailable(_ directiveLocation: DirectiveLocation) async throws {
+        // swift-format-ignore
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .typealias, pathComponents: ["SomeTypeAlias"], docComment: """
@@ -211,6 +214,7 @@ struct DeprecationSummaryTests {
     
     @Test(arguments: DirectiveLocation.allCases)
     func doesNotWarnAboutDeprecationSummaryIfSymbolIsPartiallyDeprecated(_ directiveLocation: DirectiveLocation) async throws {
+        // swift-format-ignore
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .typealias, pathComponents: ["SomeTypeAlias"], docComment: """
@@ -291,6 +295,7 @@ struct DeprecationSummaryTests {
         }
         """
         
+        // swift-format-ignore
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-symbol-id", language: sourceLanguage, kind: .typealias,  pathComponents: ["SomeTypeAlias"], docComment: """
@@ -322,6 +327,7 @@ struct DeprecationSummaryTests {
         #expect(diagnostic.explanation == "This type alias has attributes that mark it as available for 'PlatformA' 1.2.3 onwards, 'PlatformB' 2.3.4 onwards, and 'PlatformC' 3.4.5 onwards.")
         
         // Verify that the notes refer to the Available directives
+        // swift-format-ignore
         let expectedSource = switch directiveLocation {
             case .extensionFile:   "/unit-test.docc/SomeTypeAlias.md"
             case .inSourceComment: "/Users/username/path/to/SomeFile.swift"
@@ -333,6 +339,7 @@ struct DeprecationSummaryTests {
         ])
         
         // Verify that the solutions suggest marking the available platforms as deprecated using both attributes (preferred) and directives
+        // swift-format-ignore
         let expectedSourceAttribute: String? = switch sourceLanguage {
             case .swift:      "'@available()' attributes"
             case .objectiveC: "'API_AVAILABLE\' macros"
@@ -474,6 +481,7 @@ struct DeprecationSummaryTests {
         deprecated: SymbolGraph.SemanticVersion?,
         isUnconditionallyDeprecated: Bool = false
     ) -> SymbolGraph.Symbol.Availability.AvailabilityItem {
+        // swift-format-ignore
         .init(
             domain: domain.map { .init(rawValue: $0) },
             introducedVersion: introduced,

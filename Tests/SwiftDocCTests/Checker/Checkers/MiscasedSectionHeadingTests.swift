@@ -46,6 +46,7 @@ struct MiscasedSectionHeadingTests {
         #expect(replacement.range.upperBound.column == 12)
     }
 
+    // swift-format-ignore
     @Test(arguments: [
         (actual: "See also",   expected: "See Also",   article: "a"),
         (actual: "SEE ALSO",   expected: "See Also",   article: "a"),

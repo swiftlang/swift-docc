@@ -1051,6 +1051,7 @@ struct ExternalPathHierarchyResolverTests_new {
         
         // Verify that the link in the abstract renders correctly
         let renderReferenceID = RenderReferenceIdentifier("doc://Dependency/documentation/Dependency/Second")
+        // swift-format-ignore
         do {
             let reference = try #require(dependencyContext.knownPages.first(where: { $0.lastPathComponent == "First" }))
             let node = try dependencyContext.entity(with: reference)
@@ -1099,6 +1100,7 @@ struct ExternalPathHierarchyResolverTests_new {
         #expect(mainContext.knownPages.count == 2 /* 1 symbol & 1 module */)
         
         // Check the reference
+        // swift-format-ignore
         do {
             let reference = try #require(mainContext.knownPages.first(where: { $0.lastPathComponent == "Something" }))
             let node = try mainContext.entity(with: reference)

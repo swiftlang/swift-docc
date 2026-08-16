@@ -1485,6 +1485,7 @@ class SymbolTests: XCTestCase {
     ) async throws -> (DocumentationNode, [Diagnostic]) {
         let classUSR  = "some-class-id"
         let methodUSR = "some-method-id"
+        // swift-format-ignore
         var catalogContent: [any File] = [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",

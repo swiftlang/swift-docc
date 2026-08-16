@@ -53,6 +53,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
     
     private func makeTestSummary() -> (summary: LinkDestinationSummary, imageReference: RenderReferenceIdentifier, imageURLs: (light: URL, dark: URL)) {
         let linkedReference = RenderReferenceIdentifier("doc://com.test.bundle/something-else")
+        // swift-format-ignore
         let linkedImage     = RenderReferenceIdentifier("some-image-identifier")
         let linkedVariantReference = RenderReferenceIdentifier("doc://com.test.bundle/something-else-2")
         
@@ -416,6 +417,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         XCTAssertEqual(renderNode.references[linkRef.identifier] as? TopicRenderReference, originalLinkedTopic)
     }
     
+    // swift-format-ignore
     func testExternalLinkFailureResultInDiagnosticWithSolutions() async throws {
         let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
         

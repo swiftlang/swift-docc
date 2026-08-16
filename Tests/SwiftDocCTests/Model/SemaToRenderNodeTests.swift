@@ -2624,6 +2624,7 @@ Document
         }
 
         // Aside blocks from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
+        // swift-format-ignore
         let expectedAsides: [RenderBlockContent.Aside] = [
             .init(name: "Note",                 content: testContent("This is a note.")),
             .init(name: "Tip",                  content: testContent("Here’s a tip.")),
@@ -3403,6 +3404,7 @@ Document
     }
     
     func testTopicsSectionWithSingleAnonymousTopicGroup() async throws {
+        // swift-format-ignore
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName", symbols: [
                 makeSymbol(id: "some-class-id",    kind: .class,    pathComponents: ["SomeClass"]),

@@ -27,6 +27,7 @@ struct InvalidAdditionalTitleTests {
         #expect(diagnostics.isEmpty)
     }
     
+    // swift-format-ignore
     @Test(arguments: [
         "First",     // The page title of an article
         "``First``", // A symbol association for a documentation extension
@@ -91,6 +92,7 @@ struct InvalidAdditionalTitleTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: [
         "First",     // The page title of an article
         "``First``", // A symbol association for a documentation extension

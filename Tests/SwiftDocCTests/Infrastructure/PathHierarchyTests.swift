@@ -17,6 +17,7 @@ import Markdown
 import DocCCommon
 
 struct PathHierarchyTests_new {
+    // swift-format-ignore
     @Test
     func resolvesLinksToHeadings() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -71,6 +72,7 @@ struct PathHierarchyTests_new {
         }
     }
     
+    // swift-format-ignore
     @Test
     func prefersSymbolMatchOverHeadingMatch() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -99,6 +101,7 @@ struct PathHierarchyTests_new {
         #expect(foundWithoutAnchor == secondSymbol, "Should find the symbol before considering heading matches")
     }
     
+    // swift-format-ignore
     @Test
     func prefersArticleMatchOverHeadingMatch() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -884,6 +887,7 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MixedFramework-module-9r7pl/myTopLevelVariable-var-520ez", in: tree, asSymbolID: "s:14MixedFramework18myTopLevelVariableSbvp")
     }
     
+    // swift-format-ignore
     func testDefaultImplementationWithCollidingTargetSymbol() async throws {
  
         // ---- Inner
@@ -2166,6 +2170,7 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
+    // swift-format-ignore
     func testParameterDisambiguationWithAnyType() async throws {
         // Create two overloads with different parameter types
         let parameterTypes: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
@@ -2223,6 +2228,7 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("doSomething(with:)-9kd0v", in: tree, asSymbolID: "some-function-id-AnyObject")
     }
     
+    // swift-format-ignore
     func testReturnDisambiguationWithAnyType() async throws {
         // Create two overloads with different return types
         let returnTypes: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
@@ -2493,6 +2499,7 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("Inner/InnerClass/something()", in: tree, asSymbolID: "s:5Inner0A5ClassC5OuterE9somethingyyF")
     }
     
+    // swift-format-ignore
     func testExtensionSymbolsWithSameNameAsExtendedModule() async throws {
         // ---- ExtendedModule
         // public struct SomeStruct {
@@ -2778,6 +2785,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testPrefersNonSymbolsWhenOnlyFindSymbolIsFalse() async throws {
+        // swift-format-ignore
         let catalog = Folder(name: "SymbolsWithSameNameAsModule.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something", symbols: [
                 makeSymbol(id: "same-name-symbol-id", kind: .class, pathComponents: ["Something"]),
@@ -3731,6 +3739,7 @@ class PathHierarchyTests: XCTestCase {
             )
         }
         
+        // swift-format-ignore
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
@@ -3767,6 +3776,7 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
+    // swift-format-ignore
     func testMissingMemberOfAnonymousStructInsideUnion() async throws {
         let outerContainerID = "some-outer-container-symbol-id"
         let innerContainerID = "some-inner-container-symbol-id"
@@ -4070,6 +4080,7 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/CxxOperators/MyClass/operator,", in: tree, asSymbolID: "c:@S@MyClass@F@operator,#&$@S@MyClass#")
     }
     
+    // swift-format-ignore
     func testMinimalTypeDisambiguation() async throws {
         enum DeclToken: ExpressibleByStringLiteral {
             case text(String)

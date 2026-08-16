@@ -17,6 +17,7 @@ import DocCCommon
 import DocCTestUtilities
 
 struct AnchorSectionTests {
+    // swift-format-ignore
     @Test
     func resolvesLinksToArticleSubsections() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -66,6 +67,7 @@ struct AnchorSectionTests {
         ], "Both links should be resolved")
     }
     
+    // swift-format-ignore
     @Test
     func resolvesLinksToSymbolSubsections() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -111,6 +113,7 @@ struct AnchorSectionTests {
         ], "Both links should be resolved")
     }
     
+    // swift-format-ignore
     @Test
     func resolvesLinksToModulePageSubsections() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -208,6 +211,7 @@ struct AnchorSectionTests {
         ], "Unexpected problems: \(context.diagnostics.map(\.summary))")
     }
     
+    // swift-format-ignore
     @Test
     func prefersSymbolMatchOverHeadingMatch() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -247,6 +251,7 @@ struct AnchorSectionTests {
         ], "Both links should be resolved")
     }
     
+    // swift-format-ignore
     @Test
     func prefersArticleMatchOverHeadingMatch() async throws {
         let catalog = Folder(name: "Something.docc") {

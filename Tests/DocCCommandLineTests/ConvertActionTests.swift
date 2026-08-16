@@ -1602,6 +1602,7 @@ class ConvertActionTests: XCTestCase {
                 return
             }
             
+            // swift-format-ignore
             let serialContent   = testDataProvider._allFilePaths().filter{ $0.hasPrefix(serialOutput.path) }
             let parallelContent = testDataProvider._allFilePaths().filter{ $0.hasPrefix(parallelOutput.path) }
 

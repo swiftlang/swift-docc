@@ -691,6 +691,7 @@ struct MarkdownOutputTests {
     
     @Test(arguments: 1...10)
     func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {      
+        // swift-format-ignore
         let catalog = catalog(files: [
             TextFile(name: "ImageVariants.md", utf8Content: """
             # Image variants

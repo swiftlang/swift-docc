@@ -16,6 +16,7 @@ import DocCTestUtilities
 import DocCCommon
 
 struct LinkDestinationSummaryTests {
+    // swift-format-ignore
     @Test
     func summarizeSymbolPagesWithDifferentLanguageRepresentations() async throws {
         let context = try await loadFromDisk(catalogName: "GeometricalShapes")
@@ -253,6 +254,7 @@ struct LinkDestinationSummaryTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func summarizeArticleWithTopicImages() async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -567,6 +569,7 @@ struct LinkDestinationSummaryTests {
     }
     
     // FIXME: Symbol semantics and RenderContext doesn't consider pages deprecated when all their platforms are deprecated (rdar://172273148)
+    // swift-format-ignore
     @Test(arguments: [AvailabilitySource.inSourceAttributes], AvailabilityConfiguration.allCases)
     func symbolsIncludePlatformAvailability(from availabilitySource: AvailabilitySource, _ availabilityConfiguration: AvailabilityConfiguration) async throws {
         let isDeprecated = availabilityConfiguration == .isDeprecated
@@ -648,6 +651,7 @@ struct LinkDestinationSummaryTests {
         #expect(pageRenderReference.isDeprecated == isDeprecated)
     }
     
+    // swift-format-ignore
     @Test(arguments: AvailabilityConfiguration.allCases)
     func articleIncludePlatformAvailability(_ availabilityConfiguration: AvailabilityConfiguration) async throws {
         let isDeprecated = availabilityConfiguration == .isDeprecated
@@ -728,6 +732,7 @@ struct LinkDestinationSummaryTests {
     
     // FIXME: Add tests that verify the behaviors of mixing in-source availability attributes and Available directives (rdar://171807245)
     
+    // swift-format-ignore
     @Test
     func includesTopicReferencesFromSymbolAbstract() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -763,6 +768,7 @@ struct LinkDestinationSummaryTests {
         #expect(renderReference.url   == "/documentation/modulename/second")
     }
     
+    // swift-format-ignore
     @Test
     func includesTopicReferencesFromArticleAbstract() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -800,6 +806,7 @@ struct LinkDestinationSummaryTests {
         #expect(renderReference.url   == "/documentation/unit-test/second")
     }
     
+    // swift-format-ignore
     @Test
     func summarizeTutorialPage() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -908,6 +915,7 @@ struct LinkDestinationSummaryTests {
         try assertRoundTripCoding(summaries)
     }
 
+    // swift-format-ignore
     @Test
     func chooseHighestPriorityPlatformDeclarationForMultiPlatformSymbol() async throws {
         func symbolGraph(platformName: String, declarationSuffix: String) -> JSONFile<SymbolGraph> {
@@ -943,6 +951,7 @@ struct LinkDestinationSummaryTests {
         #expect(summary.plainTextDeclaration == "func someFunction_iOS")
     }
 
+    // swift-format-ignore
     @Test
     func chooseHighestPriorityPlatformDeclarationWhenPlatformsShareDeclaration() async throws {
         func symbolGraph(platformName: String, declarationSuffix: String) -> JSONFile<SymbolGraph> {
@@ -981,6 +990,7 @@ struct LinkDestinationSummaryTests {
 }
 
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    // swift-format-ignore
     init(
         domainName: String,
         introduced: SymbolGraph.SemanticVersion?,

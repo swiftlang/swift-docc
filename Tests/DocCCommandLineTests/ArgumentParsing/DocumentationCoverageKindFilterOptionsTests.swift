@@ -22,6 +22,7 @@ class KindFilterOptionsTests: XCTestCase {
     }
     func testFromArrayWithSingleString() {
 
+        // swift-format-ignore
         XCTAssertEqual(BitFlag(string: "chicken"), nil  )
 
         XCTAssertEqual(BitFlag(string: "module"), BitFlag.module) // 1

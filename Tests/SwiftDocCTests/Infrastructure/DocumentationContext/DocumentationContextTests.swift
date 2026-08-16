@@ -474,6 +474,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testRegisteredImages() async throws {
+        // swift-format-ignore
         let (bundle, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
             DataFile(name: "figure1.jpg",          data: Data()),
             DataFile(name: "figure1.png",          data: Data()),
@@ -655,6 +656,7 @@ class DocumentationContextTests: XCTestCase {
         DocC can only create a web page for one of them; deterministically keeping 'First/Something.tutorial' and dropping 'path/to/Second/something.tutorial'.
         """)
         
+        // swift-format-ignore
         XCTAssertEqual(diagnostic.solutions.map(\.summary), [
             "Rename 'path/to/Second/something.tutorial'", // The file that the warning is about; which DocC deterministically skips
             "Rename 'First/Something.tutorial'"           // The other file; which DocC deterministically keeps
@@ -693,6 +695,7 @@ class DocumentationContextTests: XCTestCase {
         DocC can only create a web page for one of them; deterministically keeping 'First/Something.md' and dropping 'path/to/Second/Something.md'.
         """)
         
+        // swift-format-ignore
         XCTAssertEqual(diagnostic.solutions.map(\.summary), [
             "Rename 'path/to/Second/Something.md'", // The file that the warning is about; which DocC deterministically skips
             "Rename 'First/Something.md'"           // The other file; which DocC deterministically keeps
@@ -734,6 +737,7 @@ class DocumentationContextTests: XCTestCase {
         DocC can only create a web page for one of them; deterministically keeping 'Something/FileName.md' and dropping 'Something Else/Subdirectory/FileName.md'.
         """)
         
+        // swift-format-ignore
         XCTAssertEqual(diagnostic.solutions.map(\.summary), [
             "Rename 'Something Else/Subdirectory/FileName.md'", // The file that the warning is about; which DocC deterministically skips
             "Rename 'Something/FileName.md'",                   // The other file; which DocC deterministically keeps (in this case because it has a shallower path)
@@ -1601,6 +1605,7 @@ let expected = """
 
     // Verify that a symbol that has no parents in the symbol graph is automatically curated under the module node.
     func testRootSymbolsAreCuratedInModule() async throws {
+        // swift-format-ignore
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName", symbols: [
                 makeSymbol(id: "some-class-id",    kind: .class,    pathComponents: ["SomeClass"]),
@@ -1835,6 +1840,7 @@ let expected = """
         XCTAssertEqual(unresolvedTopicDiagnostics.map(\.summary), [], "All links should resolve without warnings")
     }
     
+    // swift-format-ignore
     func testOperatorReferences() async throws {
         let (_, context) = try await testBundleAndContext(named: "InheritedOperators")
         
@@ -2484,6 +2490,7 @@ let expected = """
     }
 
     func testPrefersNonSymbolsInDocLink() async throws {
+        // swift-format-ignore
         let catalog = Folder(name: "SymbolsWithSameNameAsModule.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something", symbols: [
                 makeSymbol(id: "same-name-symbol-id", kind: .class, pathComponents: ["Something"]),
@@ -2974,6 +2981,7 @@ let expected = """
     }
 
     func testLinkResolutionDiagnosticsEmittedForTechnologyPages() async throws {
+        // swift-format-ignore
         let catalog = Folder(name: "ModuleName.docc") {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-class-id",    kind: .class,    pathComponents: ["SomeClass"]),
@@ -4958,6 +4966,7 @@ let expected = """
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
         
+        // swift-format-ignore
         let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter {
             !$0.isOverloadableKind &&
             !$0.isSnippetKind      && // avoid mixing snippets with "real" symbols

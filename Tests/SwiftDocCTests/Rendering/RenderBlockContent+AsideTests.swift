@@ -281,6 +281,7 @@ struct RenderBlockContent_AsideTests {
     }
 
     // Asides with different names and styles.
+    // swift-format-ignore
     @Test(arguments: [
         "Important": "tip",
         "Custom":    "warning",

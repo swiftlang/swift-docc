@@ -548,6 +548,7 @@ class DefaultAvailabilityTests: XCTestCase {
         )
     }
     
+    // swift-format-ignore
     func testInheritDefaultAvailabilityOptions() async throws {
         func loadExampleCatalog(defaultAvailability: [DefaultAvailability.ModuleAvailability]) async throws -> DocumentationContext {
             let catalog = Folder(name: "test.docc") {

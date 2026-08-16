@@ -41,6 +41,7 @@ struct FileWritingHTMLContentConsumerTests {
             - ``SomeClass``
             """)
             
+            // swift-format-ignore
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                 Some in-source description of this class.

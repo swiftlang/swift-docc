@@ -22,6 +22,7 @@ struct AvailabilityTests {
     
     // MARK: Fallback availability
     
+    // swift-format-ignore
     @Test(arguments: ["8.0", nil])
     func fillsInFallbackAvailabilityFromDefaultAvailability(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -82,6 +83,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func defaultAvailabilityDoesNotPropagateToVisionOS() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -121,6 +123,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: {$0.name == "visionOS"     })?.deprecated == "1.0")
     }
     
+    // swift-format-ignore
     @Test
     func fillsInFallbackAvailabilityFromInSourceAnnotations() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -144,6 +147,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
     }
     
+    // swift-format-ignore
     @Test(arguments: DirectiveLocation.allCases)
     func fillsInFallbackAvailabilityFromDirectiveAnnotations(_ directiveLocation: DirectiveLocation) async throws {
         let availableDirective = """
@@ -191,6 +195,7 @@ struct AvailabilityTests {
         case iPadOS, catalyst
         
         var platformName: PlatformName {
+            // swift-format-ignore
             switch self {
                 case .iPadOS:   .iPadOS
                 case .catalyst: .catalyst
@@ -198,6 +203,7 @@ struct AvailabilityTests {
         }
         
         var availablePlatformsDisplayName: String {
+            // swift-format-ignore
             switch self {
                 case .iPadOS:   "Mac Catalyst"
                 case .catalyst: "iPadOS"
@@ -205,6 +211,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: UnavailableDefaultPlatform.allCases)
     func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDefaultAvailability(_ unavailableDefaultPlatform: UnavailableDefaultPlatform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -239,6 +246,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == nil)
     }
     
+    // swift-format-ignore
     @Test(arguments: UnavailableDefaultPlatform.allCases)
     func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromInSourceAvailability(_ unavailableDefaultPlatform: UnavailableDefaultPlatform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -272,6 +280,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: DirectiveLocation.allCases, UnavailableDefaultPlatform.allCases)
     func doesNotFillInFallbackAvailabilityForPlatformsMarkedUnavailableFromDirectiveAvailability(_ directiveLocation: DirectiveLocation, _ unavailableDefaultPlatform: UnavailableDefaultPlatform) async throws {
         let availableDirective = """
@@ -325,6 +334,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func fallbackAvailabilityDoesNotOverrideInSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -354,6 +364,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "6.5")
     }
     
+    // swift-format-ignore
     @Test
     func defaultAvailabilityDoesNotOverrideInSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -389,6 +400,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "6.5")
     }
     
+    // swift-format-ignore
     @Test
     func catalystInheritsAvailabilityIfDefaulAvailabilityIsVersionless() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -421,6 +433,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "12.0")
     }
     
+    // swift-format-ignore
     @Test
     func catalystDoesNotInheritsAvailabilityIfItsNotVersionless() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -453,6 +466,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "1.2.3")
     }
     
+    // swift-format-ignore
     @Test
     func catalystDoesNotInheritsAvailabilityIfItHasDefaultAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -485,6 +499,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "1.2.3")
     }
     
+    // swift-format-ignore
     @Test
     func catalystInheritsAvailabilityIfITheresNoCatalystSGF() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -536,6 +551,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS"])
     }
     
+    // swift-format-ignore
     @Test
     func catalystInheritsWhenTheresNoInSourceCatalystAvailabilityButSymbolInCatalystSGF() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -560,6 +576,7 @@ struct AvailabilityTests {
     
     // MARK: Default Availability
     
+    // swift-format-ignore
     @Test
     func defaultAvailabilityFillMissingSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -591,6 +608,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced == "10.0")
     }
     
+    // swift-format-ignore
     @Test
     func unavailableDefaultPlatformsDoNotRemovePlatformsWithSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -656,6 +674,7 @@ struct AvailabilityTests {
                 "The 'Second' symbol is not present in the tvOS symbol graph, so it shouldn't have any tvOS availability")
     }
     
+    // swift-format-ignore
     @Test
     func platformSpecificSymbolWithInSourceAvailabilityDoesNotDisplayDefaultAvailabilityForOtherPlatforms() async throws {
         let macOSOnlySymbol = makeSymbol(id: "macOS-only-symbol", kind: .class, pathComponents: ["MacOSOnlyClass"], availability: [
@@ -713,6 +732,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.0")
     }
     
+    // swift-format-ignore
     @Test
     func prefersMoreSpecificDefaultAvailabilityWhenThereIsNoSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -757,6 +777,7 @@ struct AvailabilityTests {
         #expect(renderNode.metadata.platforms == nil)
     }
     
+    // swift-format-ignore
     @Test(arguments: Self.allMainPlatforms)
     func displaysInSourceAvailabilityForAllPlatformsWhenThereIsOnlyOneSymbolGraph(_ platform: SymbolGraph.Platform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -790,6 +811,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced == "6.6")
     }
     
+    // swift-format-ignore
     @Test(arguments: [
         SymbolGraph.Platform(operatingSystem: .init(name: "ios")),
         SymbolGraph.Platform(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst
@@ -842,6 +864,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced == "6.6")
     }
     
+    // swift-format-ignore
     @Test(arguments: [true, false])
     func platformSpecificSymbolOnlyDisplaysItsOwnAvailability(withUnavailablePlatformsInInfoPlist: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -898,6 +921,7 @@ struct AvailabilityTests {
         #expect(secondRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
     }
     
+    // swift-format-ignore
     @Test
     func unifiesCatalystAvailabilityWithDifferentSpellingFromDifferentSources() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -931,6 +955,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "15.2")
     }
     
+    // swift-format-ignore
     @Test
     func fallbackFromSourceAvailabilityTakesPrecedenceOverDefaultAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -963,6 +988,7 @@ struct AvailabilityTests {
         case iOS, catalyst
     }
     
+    // swift-format-ignore
     @Test(arguments: FakeExtensionGraph.allCases)
     func mergingAvailabilityInformationFromDifferentPlatforms(_ fakeExtensionGraph: FakeExtensionGraph) async throws {
         // This test (which is rewritten based on a rather old test) tries to enforce a loading order by pretending that a main symbol graph file is an extension symbol graph file.
@@ -1018,6 +1044,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "watchOS"      })?.introduced ==  "6.0")
     }
     
+    // swift-format-ignore
     @Test(arguments: [
         SymbolGraph.Platform(operatingSystem: .init(name: "ios")),
         SymbolGraph.Platform(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst
@@ -1096,6 +1123,7 @@ struct AvailabilityTests {
         #expect(renderNode.metadata.platforms == nil)
     }
     
+    // swift-format-ignore
     @Test(arguments: Self.allMainPlatforms)
     func symbolDisplaysAppExtensionsInterspersedAmongPlatforms(_ platform: SymbolGraph.Platform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1140,6 +1168,7 @@ struct AvailabilityTests {
     
     // MARK: Deprecations
     
+    // swift-format-ignore
     @Test(arguments: Self.allMainPlatforms)
     func symbolIsConsideredDeprecatedWhenAllPlatformsHaveDeprecatedVersion(_ platform: SymbolGraph.Platform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1185,6 +1214,7 @@ struct AvailabilityTests {
         #expect(renderReference.isDeprecated)
     }
     
+    // swift-format-ignore
     @Test
     func symbolAvailableOnOnePlatformIsNotConsideredDeprecated() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1214,6 +1244,7 @@ struct AvailabilityTests {
         #expect(renderReference.isDeprecated == false)
     }
     
+    // swift-format-ignore
     @Test(arguments: ["9.2", nil])
     func symbolAvailableOnOnePlatformIsNotConsideredDeprecatedWhenDefaultAvailable(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1251,6 +1282,7 @@ struct AvailabilityTests {
         #expect(renderReference.isDeprecated == false)
     }
 
+    // swift-format-ignore
     @Test(arguments: DirectiveLocation.allCases)
     func symbolIsConsideredDeprecatedWhenOnlyAvailableDirectiveHasDeprecatedVersion(_ directiveLocation: DirectiveLocation) async throws {
         let availableDirective = """
@@ -1303,6 +1335,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func articleIsConsideredDeprecatedWhenOnlyAvailableDirectiveHasDeprecatedVersion() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1345,6 +1378,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: DirectiveLocation.allCases)
     func symbolIsNotConsideredDeprecatedWhenOnlySomeAvailableDirectivesHaveDeprecatedVersion(_ directiveLocation: DirectiveLocation) async throws {
         let availableDirective = """
@@ -1404,6 +1438,7 @@ struct AvailabilityTests {
         #expect(renderReference.isDeprecated == false)
     }
     
+    // swift-format-ignore
     @Test
     func articleIsNotConsideredDeprecatedWhenOnlySomeAvailableDirectivesHaveDeprecatedVersion() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1612,6 +1647,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func unconditionallyDeprecatedSymbolIsConsideredDeprecated() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1660,6 +1696,7 @@ struct AvailabilityTests {
     
     // MARK: Beta
     
+    // swift-format-ignore
     @Test(arguments: AvailabilitySource.allCases)
     func symbolIsConsideredInBetaWhenOnlyPlatformIsCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
@@ -1722,6 +1759,7 @@ struct AvailabilityTests {
     
     // FIXME: Articles don't display default availability (rdar://173688303)
     // FIXME: Articles are not considered in-beta for any source of availability (rdar://173773442)
+    // swift-format-ignore
     @Test(.bug("rdar://173773442&173688303"), arguments: [AvailabilitySource.infoPlist, .directiveInExtensionFile])
     func articleIsConsideredInBetaWhenOnlyPlatformIsCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
@@ -1772,6 +1810,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: AvailabilitySource.allCases)
     func symbolIsNotConsideredInBetaWhenIntroducedBeforeCurrentVersion(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
@@ -1831,6 +1870,7 @@ struct AvailabilityTests {
     }
     
     // FIXME: Articles don't display default availability (rdar://173688303)
+    // swift-format-ignore
     @Test(.bug("rdar://173688303"), arguments: [AvailabilitySource.infoPlist, .directiveInExtensionFile])
     func articleIsNotConsideredInBetaWhenIntroducedBeforeCurrentVersion(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
@@ -1881,6 +1921,7 @@ struct AvailabilityTests {
         }, when: { availabilitySource == .infoPlist })
     }
     
+    // swift-format-ignore
     @Test(arguments: AvailabilitySource.allCases)
     func symbolIsNotConsideredInBetaWhenOnlySomePlatformsAreCurrentlyInBeta(_ availabilitySource: AvailabilitySource) async throws {
         let availableDirective = """
@@ -1951,6 +1992,7 @@ struct AvailabilityTests {
     
     // MARK: Custom platforms
     
+    // swift-format-ignore
     @Test(arguments: [true, false])
     func symbolDisplaysCustomDefaultPlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1991,6 +2033,7 @@ struct AvailabilityTests {
         #expect(renderNode.metadata.isBeta == false)
     }
     
+    // swift-format-ignore
     @Test(arguments: DirectiveLocation.allCases, [true, false])
     func symbolDisplaysCustomDirectivePlatformAfterKnownPlatforms(_ directiveLocation: DirectiveLocation, customPlatformIsBeta: Bool) async throws {
         let availableDirective = """
@@ -2054,6 +2097,7 @@ struct AvailabilityTests {
     }
     
     // FIXME: Articles don't display default availability (rdar://173688303)
+    // swift-format-ignore
     @Test(.bug("rdar://173688303"), arguments: [true, false])
     func articleDisplaysCustomDefaultPlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -2095,6 +2139,7 @@ struct AvailabilityTests {
         }
     }
     
+    // swift-format-ignore
     @Test(arguments: [true, false])
     func articleDisplaysCustomDirectivePlatformAfterKnownPlatforms(customPlatformIsBeta: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -2138,6 +2183,7 @@ struct AvailabilityTests {
         #expect(renderNode.metadata.isBeta == false)
     }
     
+    // swift-format-ignore
     @Test
     func displaysCustomDefaultPlatformsInAlphabeticalOrder() async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -2185,6 +2231,7 @@ struct AvailabilityTests {
     
     // MARK: Multiple language representations
     
+    // swift-format-ignore
     @Test(arguments: ["7.3", nil])
     func symbolVariantDisplaysTheirOwnInSourceAvailability(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -2241,6 +2288,7 @@ struct AvailabilityTests {
     
     // MARK: Mixed sources
     
+    // swift-format-ignore
     @Test(arguments: DirectiveLocation.allCases)
     func combinesAvailabilityFromMultipleSources(_ directiveLocation: DirectiveLocation) async throws {
         // This symbol has macOS availability for different platforms from all 3 sources; Info.plist, in-source attributes, @Available directives.

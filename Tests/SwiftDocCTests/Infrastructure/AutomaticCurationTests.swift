@@ -1065,6 +1065,7 @@ class AutomaticCurationTests: XCTestCase {
         let innerContainerID = "inner-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
+        // swift-format-ignore
         let catalog = Folder(name: "Something.docc", content: [
             JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
                 makeSymbol(id: outerContainerID,  kind: .class, pathComponents: ["FirstClass"]),
@@ -1097,6 +1098,7 @@ class AutomaticCurationTests: XCTestCase {
         let innerContainerID = "inner-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
+        // swift-format-ignore
         let catalog = Folder(name: "Something.docc", content: [
             JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
                 makeSymbol(id: outerContainerID,  kind: .class, pathComponents: ["FirstClass"]),
@@ -1143,6 +1145,7 @@ class AutomaticCurationTests: XCTestCase {
         let innerContainerID = "inner-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
+        // swift-format-ignore
         let catalog = Folder(name: "Something.docc", content: [
             JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
                 makeSymbol(id: outerContainerID,  kind: .class, pathComponents: ["OuterClass"]),

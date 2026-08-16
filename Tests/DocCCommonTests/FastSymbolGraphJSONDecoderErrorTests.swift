@@ -290,6 +290,7 @@ private func expectMatchingErrors<Value: Decodable & FastJSONDecodable>(
 
 private extension DecodingError {
     var kindDescription: String {
+        // swift-format-ignore
         switch self {
             case .typeMismatch:  "typeMismatch"
             case .valueNotFound: "valueNotFound"

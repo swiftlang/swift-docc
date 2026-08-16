@@ -592,6 +592,7 @@ class ConvertSubcommandFlagParsingTests {
         }
     }
     
+    // swift-format-ignore
     @Test
     func parsingExplicitDiagnosticSeverities() throws {
         // The feature is enabled when no flag is passed.
