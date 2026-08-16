@@ -34,6 +34,7 @@ public final class Choice: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective
     public private(set) var justification: Justification
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "isCorrect"         : \Choice._isCorrect,
         "content"           : \Choice._content,

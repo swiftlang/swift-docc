@@ -501,6 +501,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         }
         
         static func == (lhs: Storage, rhs: Storage) -> Bool {
+            // swift-format-ignore
             lhs.path     == rhs.path     &&
             lhs.fragment == rhs.fragment &&
             lhs.bundleID == rhs.bundleID // Compare bundle ID last since it's expected to be the same for _almost_ all content in the build.
@@ -638,6 +639,7 @@ func urlReadablePath(_ path: some StringProtocol) -> String {
 
 private extension CharacterSet {
     // For fragments
+    // swift-format-ignore
     static let fragmentCharactersToRemove = CharacterSet.punctuationCharacters // Remove punctuation from fragments
         .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.

@@ -81,6 +81,7 @@ extension OutOfProcessReferenceResolver {
         
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
+            // swift-format-ignore
             switch self {
                 case .link(let link): try container.encode(link, forKey: .link)
                 case .symbol(let id): try container.encode(id,   forKey: .symbol)
@@ -92,6 +93,7 @@ extension OutOfProcessReferenceResolver {
         
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
+            // swift-format-ignore
             self = switch container.allKeys.first {
                 case .link?:   .link(  try container.decode(String.self,         forKey: .link))
                 case .symbol?: .symbol(try container.decode(String.self,         forKey: .symbol))
@@ -162,6 +164,7 @@ extension OutOfProcessReferenceResolver {
         
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
+            // swift-format-ignore
             switch self {
                 case .identifierAndCapabilities(let identifier, let capabilities):
                     try container.encode(identifier,   forKey: .identifier)

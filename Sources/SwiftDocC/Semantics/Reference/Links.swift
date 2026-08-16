@@ -43,6 +43,7 @@ public final class Links: Semantic, AutomaticDirectiveConvertible, MarkupContain
     /// This content should not be rendered directly, instead the individual documentation links
     /// inside the first bulleted list should be extracted and previews of the linked
     /// pages should be rendered.
+    // swift-format-ignore
     @ChildMarkup(numberOfParagraphs: .zeroOrMore)    // ← Set to '.zeroOrMore' because the 'validate()'
     public private(set) var content: MarkupContainer //   method below already handles errors for missing
                                                      //   or extraneous content.
@@ -67,6 +68,7 @@ public final class Links: Semantic, AutomaticDirectiveConvertible, MarkupContain
         case detailedGrid
     }
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "content"       : \Links._content,
         "visualStyle"   : \Links._visualStyle,

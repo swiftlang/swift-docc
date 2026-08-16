@@ -178,6 +178,7 @@ package class TestFileSystem: FileManagerProtocol {
         return files.keys.contains(path)
     }
     
+    // swift-format-ignore
     package func _copyItem(at source: URL, to destination: URL) throws {
         guard !disableWriting else { return }
         
@@ -328,6 +329,7 @@ package class TestFileSystem: FileManagerProtocol {
         let partitionIndex = allContents.partition {
             self.files[$0.path] == .folder
         }
+        // swift-format-ignore
         return (
             files:       Array( allContents[..<partitionIndex] ),
             directories: Array( allContents[partitionIndex...] )

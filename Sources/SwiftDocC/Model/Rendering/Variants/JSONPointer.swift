@@ -156,10 +156,14 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable, Sendable
 
 // A few UInt8 raw values for various UTF-8 characters that this implementation frequently checks for
 
+// swift-format-ignore
 private let tilde        = UTF8.CodeUnit(ascii: "~")
 private let forwardSlash = UTF8.CodeUnit(ascii: "/")
+// swift-format-ignore
 private let zero         = UTF8.CodeUnit(ascii: "0")
+// swift-format-ignore
 private let one          = UTF8.CodeUnit(ascii: "1")
 
+// swift-format-ignore
 private let escapedTilde        = [tilde, zero]
 private let escapedForwardSlash = [tilde, one]

@@ -82,6 +82,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective(requirements: .zeroOrMore)
     var alternateRepresentations: [AlternateRepresentation]
 
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
         "technologyRoot"        : \Metadata._technologyRoot,
@@ -191,6 +192,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     ///
     /// Some configuration options of Metadata are not supported in documentation comments.
     /// This function emits warnings for unsupported uses and resets their values (to `nil` or `[]`) .
+    // swift-format-ignore
     func validateForUseInDocumentationComment(symbolSource: URL?, diagnostics: inout [Diagnostic]) {
         func validateUnsupportedMetadataDirective<Directive: AutomaticDirectiveConvertible>(for directives: [Directive]?) {
             for directive in directives ?? [] {

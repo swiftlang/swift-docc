@@ -34,6 +34,7 @@ public final class Chapter: Semantic, AutomaticDirectiveConvertible, Abstracted,
     @ChildDirective(requirements: .oneOrMore)
     public private(set) var topicReferences: [TutorialReference]
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "name"              : \Chapter._name,
         "content"           : \Chapter._content,

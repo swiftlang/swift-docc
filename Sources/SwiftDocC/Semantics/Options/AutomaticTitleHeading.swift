@@ -40,6 +40,7 @@ public class AutomaticTitleHeading: Semantic, AutomaticDirectiveConvertible {
         return enabledness == .enabled
     }
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "enabledness"  : \AutomaticTitleHeading._enabledness,
     ]

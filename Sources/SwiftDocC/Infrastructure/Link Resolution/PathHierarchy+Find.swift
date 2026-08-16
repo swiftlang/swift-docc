@@ -37,6 +37,7 @@ extension PathHierarchy {
         var remaining = path[...]
         
         // If the first path component is "tutorials" or "documentation" then use that information to narrow the search.
+        // swift-format-ignore
         let isKnownTutorialPath      = remaining.first?.full == NodeURLGenerator.Path.tutorialsFolderName
         let isKnownDocumentationPath = remaining.first?.full == NodeURLGenerator.Path.documentationFolderName
         if isKnownDocumentationPath || isKnownTutorialPath {
@@ -598,6 +599,7 @@ private extension PathHierarchy.Node {
         }
         // Otherwise, check if the node's symbol matches the provided disambiguation
         else if let symbol, let disambiguation = component.disambiguation {
+            // swift-format-ignore
             switch disambiguation {
             case .kindAndHash(let kind, let hash):
                 return name == component.name

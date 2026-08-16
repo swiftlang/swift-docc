@@ -73,6 +73,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
     @ChildDirective
     public private(set) var redirects: [Redirect]? = nil
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "durationMinutes"   :   \Tutorial._durationMinutes,
         "projectFiles"      :   \Tutorial._projectFiles,

@@ -14,6 +14,7 @@ private import SymbolKit
 // MARK: Decoding conformances
 
 extension SymbolGraph: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -68,6 +69,7 @@ extension SymbolGraph: FastJSONDecodable {
 }
 
 extension SymbolGraph.Metadata: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -106,6 +108,7 @@ extension SymbolGraph.Metadata: FastJSONDecodable {
 }
 
 extension SymbolGraph.SemanticVersion: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -157,6 +160,7 @@ extension SymbolGraph.SemanticVersion: FastJSONDecodable {
 }
 
 extension SymbolGraph.Module: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -211,6 +215,7 @@ extension SymbolGraph.Module: FastJSONDecodable {
 }
 
 extension SymbolGraph.Platform: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 4 properties with default values
         var architecture:    String?                      = nil
@@ -279,6 +284,7 @@ extension SymbolGraph.OperatingSystem: FastJSONDecodable {
             throw decoder.makeKeyNotFoundError("name")
         }
 
+        // swift-format-ignore
         self.init(
             name:           consume name,
             minimumVersion: consume minimumVersion
@@ -287,6 +293,7 @@ extension SymbolGraph.OperatingSystem: FastJSONDecodable {
 }
 
 extension SymbolGraph.Relationship: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -400,6 +407,7 @@ extension SymbolGraph.Relationship.SourceOrigin: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -579,6 +587,7 @@ extension SymbolGraph.Symbol: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.Identifier: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -647,6 +656,7 @@ extension SymbolGraph.Symbol.Kind: FastJSONDecodable {
             throw decoder.makeKeyNotFoundError("displayName")
         }
         
+        // swift-format-ignore
         self.init(
             rawIdentifier: consume identifier,
             displayName:   consume displayName
@@ -662,6 +672,7 @@ extension SymbolGraph.Symbol.KindIdentifier: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.Names: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -714,6 +725,7 @@ extension SymbolGraph.Symbol.DeclarationFragments: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.DeclarationFragments.Fragment: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -765,6 +777,7 @@ extension SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind: FastJSONDecodab
 }
 
 extension SymbolGraph.LineList: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -842,6 +855,7 @@ extension SymbolGraph.LineList.Line: FastJSONDecodable {
 }
 
 extension SymbolGraph.LineList.SourceRange: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -880,6 +894,7 @@ extension SymbolGraph.LineList.SourceRange: FastJSONDecodable {
 }
 
 extension SymbolGraph.LineList.SourceRange.Position: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -925,6 +940,7 @@ extension SymbolGraph.Symbol.AccessControl: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.Availability.AvailabilityItem: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 9 properties with default values
         var domain:                       SymbolGraph.Symbol.Availability.Domain? = nil
@@ -996,6 +1012,7 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.FunctionSignature: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 2 properties with default values
         var parameters: [FunctionParameter]                                = []
@@ -1026,6 +1043,7 @@ extension SymbolGraph.Symbol.FunctionSignature: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.FunctionSignature.FunctionParameter: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -1085,6 +1103,7 @@ extension SymbolGraph.Symbol.FunctionSignature.FunctionParameter: FastJSONDecoda
 }
 
 extension SymbolGraph.Symbol.Location: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -1123,6 +1142,7 @@ extension SymbolGraph.Symbol.Location: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.Swift.Extension: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -1164,6 +1184,7 @@ extension SymbolGraph.Symbol.Swift.Extension: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.Swift.GenericConstraint: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -1247,6 +1268,7 @@ extension SymbolGraph.Symbol.Swift.Generics: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.Swift.GenericParameter: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
@@ -1351,6 +1373,7 @@ extension SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol: FastJSONDecodable
 
         // No required properties to unwrap
         
+        // swift-format-ignore
         self.init(
             docComment: consume docComment,
             mixins:     consume mixins
@@ -1359,6 +1382,7 @@ extension SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol: FastJSONDecodable
 }
 
 extension SymbolGraph.Symbol.OverloadData: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
         
@@ -1397,6 +1421,7 @@ extension SymbolGraph.Symbol.OverloadData: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.Snippet: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
         
@@ -1438,6 +1463,7 @@ extension SymbolGraph.Symbol.Snippet: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.PlistDetails: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
         
@@ -1484,6 +1510,7 @@ extension SymbolGraph.Symbol.PlistDetails: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.HTTP.Endpoint: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
         
@@ -1536,6 +1563,7 @@ extension SymbolGraph.Symbol.HTTP.Endpoint: FastJSONDecodable {
 }
 
 extension SymbolGraph.Symbol.TypeDetail: FastJSONDecodable {
+    // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 3 property with default values
         var fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]? = nil

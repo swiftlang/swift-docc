@@ -962,6 +962,7 @@ extension LinkCompletionTools {
     /// - Important: The nodes and identifier are only intended for link completion purposes. _Don't_ add them to the path hierarchy or try and resolve links for them.
     static func _makeNodeAndIdentifier(name: String) -> (PathHierarchy.Node, ResolvedIdentifier) {
         let node = PathHierarchy.Node(name: name)
+        // swift-format-ignore
         let id   = ResolvedIdentifier()
         
         node.identifier = id

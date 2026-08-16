@@ -90,6 +90,7 @@ extension SymbolGraph.Symbol.Kind {
 
 // MARK: Swift AccessControl Levels
 
+// swift-format-ignore
 extension SymbolGraph.Symbol.AccessControl {
     static let `private`   = Self(rawValue: "private")
     static let filePrivate = Self(rawValue: "fileprivate")

@@ -812,6 +812,7 @@ public class DocumentationContext {
                 let webURLPathComponent = urlReadablePath(url.deletingPathExtension().lastPathComponent).lowercased()
                 assert(webURLPathComponent == urlReadablePath(firstFoundAtURL.deletingPathExtension().lastPathComponent).lowercased(), "The two files didn't collide")
                 
+                // swift-format-ignore
                 let diagnostic = Diagnostic(
                     source: url,
                     severity: .warning,
@@ -2532,6 +2533,7 @@ public class DocumentationContext {
                             return
                         }
                         
+                        // swift-format-ignore
                         if canonicalContainer   == curationLocationContainers.main        ||
                            canonicalContainer   == curationLocationContainers.counterpart ||
                            counterpartContainer == curationLocationContainers.main        ||

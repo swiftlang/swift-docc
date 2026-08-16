@@ -155,6 +155,7 @@ public struct ConvertAction: AsyncAction {
         // Set these properties even if the caller passed a base diagnostic engine
         engine.filterLevel = filterLevel
         engine.diagnosticIDsWithWarningSeverity = diagnosticIDsWithWarningSeverity
+        // swift-format-ignore
         engine.diagnosticIDsWithErrorSeverity   = diagnosticIDsWithErrorSeverity
         if let diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: fileManager))

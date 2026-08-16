@@ -60,6 +60,7 @@ package extension MarkdownRenderer {
         )
         let list = XMLNode.element(named: "ul", children: items)
         
+        // swift-format-ignore
         return switch goal {
         case .conciseness: list // If the goal is conciseness, don't wrap the list in a `<nav>` HTML element with an "id".
         case .richness:    .element(named: "nav", children: [list], attributes: ["id": "breadcrumbs"])

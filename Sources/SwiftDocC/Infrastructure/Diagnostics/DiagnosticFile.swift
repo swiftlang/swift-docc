@@ -88,6 +88,7 @@ struct DiagnosticFile: Codable {
 // MARK: Initialization
 
 extension DiagnosticFile.Diagnostic {
+    // swift-format-ignore
     init(_ diagnostic: Diagnostic) {
         self.id          = diagnostic.identifier
         self.groupID     = diagnostic.groupIdentifier
@@ -102,6 +103,7 @@ extension DiagnosticFile.Diagnostic {
 }
 
 extension DiagnosticFile.Diagnostic.Range {
+    // swift-format-ignore
     init(_ sourceRange: Range<SourceLocation>) {
         start = .init(sourceRange.lowerBound)
         end   = .init(sourceRange.upperBound)
@@ -109,6 +111,7 @@ extension DiagnosticFile.Diagnostic.Range {
 }
 
 extension DiagnosticFile.Diagnostic.Range.Location {
+    // swift-format-ignore
     init(_ sourceLocation: SourceLocation) {
         self.line   = sourceLocation.line
         self.column = sourceLocation.column
@@ -116,6 +119,7 @@ extension DiagnosticFile.Diagnostic.Range.Location {
 }
 
 extension DiagnosticFile.Diagnostic.Solution {
+    // swift-format-ignore
     init(_ solution: Solution) {
         self.summary      = solution.summary
         self.replacements = solution.replacements.map { .init($0) }
@@ -130,6 +134,7 @@ extension DiagnosticFile.Diagnostic.Solution.Replacement {
 }
 
 extension DiagnosticFile.Diagnostic.Note {
+    // swift-format-ignore
     init(_ note: Diagnostic.Note) {
         self.source  = note.source
         self.range   = .init(note.range)

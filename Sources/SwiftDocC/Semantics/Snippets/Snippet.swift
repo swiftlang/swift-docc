@@ -51,6 +51,7 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public var slice: String? = nil
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "path"  : \Snippet._path,
         "slice" : \Snippet._slice,

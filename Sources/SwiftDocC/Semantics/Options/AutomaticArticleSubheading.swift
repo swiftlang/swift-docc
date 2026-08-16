@@ -41,6 +41,7 @@ public class AutomaticArticleSubheading: Semantic, AutomaticDirectiveConvertible
         return enabledness == .enabled
     }
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "enabledness"  : \AutomaticArticleSubheading._enabledness,
     ]

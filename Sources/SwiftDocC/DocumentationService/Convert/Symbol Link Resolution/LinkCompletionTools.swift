@@ -78,6 +78,7 @@ public enum LinkCompletionTools {
         public var suffix: String {
             typealias Disambiguation = PathHierarchy.DisambiguationContainer.Disambiguation
             
+            // swift-format-ignore
             switch self {
             case .kindAndOrHash(let kind?, nil):
                 return Disambiguation.kind(kind).makeSuffix()

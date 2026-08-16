@@ -97,6 +97,7 @@ extension Metadata {
         @DirectiveArgumentWrapped
         public var deprecated: SemanticVersion? = nil
 
+        // swift-format-ignore
         static var keyPaths: [String : AnyKeyPath] = [
             "platform"     : \Availability._platform,
             "introduced"   : \Availability._introduced,

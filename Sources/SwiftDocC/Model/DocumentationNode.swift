@@ -1020,6 +1020,7 @@ public struct DocumentationNode {
         
         
         // It's preferred to specify availability using source attributes because that's also reflected when _calling_ the API.
+        // swift-format-ignore
         let inSourceAttributeDescription: String? = switch SourceLanguage(id: symbol.identifier.interfaceLanguage) {
             case .swift:      "'@available()' attribute"
             case .objectiveC: "'API_AVAILABLE' macro"

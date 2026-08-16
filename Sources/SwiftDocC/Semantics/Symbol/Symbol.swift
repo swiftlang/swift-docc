@@ -762,6 +762,7 @@ extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments: Swift.Equatable {
 extension SymbolKit.SymbolGraph.Symbol.FunctionSignature: Swift.Equatable {
     // Extension outside of declaring module can't synthesize equatable implementation
     public static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         lhs.parameters == rhs.parameters &&
         lhs.returns    == rhs.returns
     }
@@ -770,6 +771,7 @@ extension SymbolKit.SymbolGraph.Symbol.FunctionSignature: Swift.Equatable {
 extension SymbolKit.SymbolGraph.Symbol.FunctionSignature.FunctionParameter: Swift.Equatable {
     // Extension outside of declaring module can't synthesize equatable implementation
     public static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-format-ignore
         lhs.name                 == rhs.name                 &&
         lhs.externalName         == rhs.externalName         &&
         lhs.declarationFragments == rhs.declarationFragments &&

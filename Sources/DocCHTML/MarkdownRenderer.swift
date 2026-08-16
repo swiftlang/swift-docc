@@ -245,6 +245,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     }
     
     package func wordBreak(symbolName: String) -> [XMLNode] {
+        // swift-format-ignore
         switch goal {
         case .richness:     RenderHelpers.wordBreak(symbolName: symbolName)
         case .conciseness: [.text(symbolName)]
@@ -297,6 +298,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         
         // Make a relative link
         if let linkedElement {
+            // swift-format-ignore
             let children: [XMLNode] = switch linkedElement.names {
                 case .single(.conceptual(let name)): [ .text(name) ]
                 case .single(.symbol(let name)):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
@@ -350,6 +352,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return .element(named: "code", children: [.text(linkProvider.fallbackLinkText(linkString: symbolLink.destination ?? ""))])
         }
         
+        // swift-format-ignore
         let children: [XMLNode] = switch linkedElement.names {
             case .single(.conceptual(let name)): [ .text(name) ]
             case .single(.symbol(let name)):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
@@ -367,6 +370,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         )
     }
     
+    // swift-format-ignore
     package func path(to other: URL) -> String {
         let from = path
         let to   = other
@@ -600,6 +604,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                         }
                         
                         if let alignment = table.columnAlignments[column] {
+                            // swift-format-ignore
                             attributes["class"] = switch alignment {
                                 case .left:   "left"
                                 case .center: "center"
@@ -637,6 +642,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                         }
                         
                         if let alignment = table.columnAlignments[column] {
+                            // swift-format-ignore
                             attributes["class"] = switch alignment {
                                 case .left:   "left"
                                 case .center: "center"
@@ -862,6 +868,7 @@ private extension Image {
 }
 
 private extension CharacterSet {
+    // swift-format-ignore
     static let fragmentCharactersToRemove = CharacterSet.punctuationCharacters // Remove punctuation from fragments
         .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.

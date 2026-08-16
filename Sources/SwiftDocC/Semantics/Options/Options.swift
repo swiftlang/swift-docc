@@ -74,6 +74,7 @@ public class Options: Semantic, AutomaticDirectiveConvertible {
         case global
     }
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "scope"                 : \Options._scope,
         "_automaticSeeAlso"      : \Options.__automaticSeeAlso,

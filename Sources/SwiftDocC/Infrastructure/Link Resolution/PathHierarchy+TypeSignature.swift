@@ -55,6 +55,7 @@ extension PathHierarchy {
         var depth = 0
         let endIndex = spelling.count - 1 // before the trailing ")"
         var substringStartIndex = 1 // skip the leading "("
+        // swift-format-ignore
         for index in 1 /* after the leading "(" */ ..< endIndex {
             switch spelling[index] {
             case openParen:
@@ -289,25 +290,41 @@ extension PathHierarchy {
 
 // A collection of UInt8 raw values for various UTF-8 characters that this implementation frequently checks for
 
+// swift-format-ignore
 private let space       = UTF8.CodeUnit(ascii: " ")
 
+// swift-format-ignore
 private let uppercaseA  = UTF8.CodeUnit(ascii: "A")
+// swift-format-ignore
 private let uppercaseO  = UTF8.CodeUnit(ascii: "O")
+// swift-format-ignore
 private let uppercaseD  = UTF8.CodeUnit(ascii: "D")
 
+// swift-format-ignore
 private let openAngle   = UTF8.CodeUnit(ascii: "<")
+// swift-format-ignore
 private let closeAngle  = UTF8.CodeUnit(ascii: ">")
+// swift-format-ignore
 private let openSquare  = UTF8.CodeUnit(ascii: "[")
 private let closeSquare = UTF8.CodeUnit(ascii: "]")
+// swift-format-ignore
 private let openParen   = UTF8.CodeUnit(ascii: "(")
+// swift-format-ignore
 private let closeParen  = UTF8.CodeUnit(ascii: ")")
 
+// swift-format-ignore
 private let comma       = UTF8.CodeUnit(ascii: ",")
+// swift-format-ignore
 private let fullStop    = UTF8.CodeUnit(ascii: ".")
+// swift-format-ignore
 private let question    = UTF8.CodeUnit(ascii: "?")
+// swift-format-ignore
 private let colon       = UTF8.CodeUnit(ascii: ":")
+// swift-format-ignore
 private let hyphen      = UTF8.CodeUnit(ascii: "-")
+// swift-format-ignore
 private let ampersand   = UTF8.CodeUnit(ascii: "&")
+// swift-format-ignore
 private let tilde       = UTF8.CodeUnit(ascii: "~")
 
 /// A guesstimate of the "shape" of a Swift type based on its spelling.
@@ -449,6 +466,7 @@ private extension ContiguousArray<UTF8.CodeUnit> {
                     }
                     return false // keep scanning
                 }
+                // swift-format-ignore
                 guard let commaIndex = self[open + 1 /* skip the known opening bracket */ ..< close /* skip the known closing bracket */].firstIndex(where: predicate) else {
                     assertionFailure("Didn't find ',' in \(String(decoding: self[open + 1 ..< close], as: UTF8.self))")
                     return

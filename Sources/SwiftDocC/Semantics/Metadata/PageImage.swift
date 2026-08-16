@@ -47,6 +47,7 @@ public final class PageImage: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public private(set) var alt: String? = nil
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "purpose"   : \PageImage._purpose,
         "source"    : \PageImage._source,

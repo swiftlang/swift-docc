@@ -159,6 +159,7 @@ extension DocumentationContext.InputsProvider {
         )
 
         let foundContents = try findContents(in: url)
+        // swift-format-ignore
         return DocumentationContext.Inputs(
             info: info,
             symbolGraphURLs:  foundContents.symbolGraphs + options.additionalSymbolGraphFiles,
@@ -172,6 +173,7 @@ extension DocumentationContext.InputsProvider {
     }
 
     /// Finds all the markup files, resource files, and symbol graph files in the given directory.
+    // swift-format-ignore
     private func findContents(in startURL: URL) throws -> (markup: [URL], resources: [URL], symbolGraphs: [URL]) {
         // Find all the files
         var foundMarkup:       [URL] = []

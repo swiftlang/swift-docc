@@ -1477,6 +1477,7 @@ extension HTMLNode {
         case audio
         case embed  // a void-element
         case iframe
+        // swift-format-ignore
         case img    // a void-element
         case map
         case object

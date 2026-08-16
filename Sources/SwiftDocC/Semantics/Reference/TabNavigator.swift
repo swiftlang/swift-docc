@@ -76,6 +76,7 @@ extension TabNavigator {
         @ChildMarkup(numberOfParagraphs: .oneOrMore, supportsStructure: true)
         public private(set) var content: MarkupContainer
         
+        // swift-format-ignore
         static var keyPaths: [String : AnyKeyPath] = [
             "title"      : \Tab._title,
             "content"   : \Tab._content,

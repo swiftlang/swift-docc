@@ -50,6 +50,7 @@ extension UnsafeRawPointer {
             // It may seem like it would be slow to switch over the string's count like this,
             // but the compiler is able to inline only the case for each string's length and optimize it into simple move instructions of integer literals.
             // This is only possible because the string is a `StaticString` which _has_ to be known at compile time.
+            // swift-format-ignore
             switch prefix.utf8CodeUnitCount {
             case 0:
                 return true // An empty string is always considered a prefix match

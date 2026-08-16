@@ -376,6 +376,7 @@ extension DefaultDiagnosticConsoleFormatter {
         // Example:
         //   --> /path/to/file.md:1:10-2:20
         result.append("\n\(String(repeating: " ", count: maxLinePrefixWidth))--> ")
+        // swift-format-ignore
         result.append(        "\(formattedSourcePath(url)):\(max(1, diagnosticRange.lowerBound.line)):\(max(1, diagnosticRange.lowerBound.column))-\(max(1, diagnosticRange.upperBound.line)):\(max(1, diagnosticRange.upperBound.column))")
 
         for (sourceLineIndex, sourceLine) in sourceLines[sourceLinesToDisplay].enumerated() {

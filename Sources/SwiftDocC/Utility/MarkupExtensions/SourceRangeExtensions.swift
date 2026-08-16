@@ -21,6 +21,7 @@ extension SourceRange {
     /// Initialize a `SourceRange` from a SymbolKit `SourceRange`.
     init(from symbolGraphRange: SymbolGraph.LineList.SourceRange) {
         let start = SourceLocation(line: symbolGraphRange.start.line, column: symbolGraphRange.start.character, source: nil)
+        // swift-format-ignore
         let end =   SourceLocation(line: symbolGraphRange.end.line,   column: symbolGraphRange.end.character,   source: nil)
         
         self = start ..< end
@@ -32,6 +33,7 @@ extension SourceRange {
     /// of `self` or `range` must be a relative range indexed from 0.
     mutating func offsetWithRange(_ range: SourceRange) {
         let start = SourceLocation(line: lowerBound.line + range.lowerBound.line, column: lowerBound.column + range.lowerBound.column, source: lowerBound.source)
+        // swift-format-ignore
         let end   = SourceLocation(line: upperBound.line + range.lowerBound.line, column: upperBound.column + range.lowerBound.column, source: upperBound.source)
         
         self = start ..< end

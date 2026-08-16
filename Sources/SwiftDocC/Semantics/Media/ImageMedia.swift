@@ -40,6 +40,7 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     @ChildMarkup(numberOfParagraphs: .zeroOrOne)
     public private(set) var caption: MarkupContainer
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "altText" : \ImageMedia._altText,
         "source"  : \ImageMedia._source,

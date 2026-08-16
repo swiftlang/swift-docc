@@ -38,6 +38,7 @@ package struct _FilesIterator: IteratorProtocol {
         self.options = options
         
         // Check if the starting point is a file or a directory.
+        // swift-format-ignore
         if fileManager.directoryExists(atPath: startingPoint.path) {
             foundFiles       = []
             foundDirectories = [startingPoint]

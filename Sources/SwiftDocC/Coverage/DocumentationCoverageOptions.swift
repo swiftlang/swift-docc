@@ -69,6 +69,7 @@ extension DocumentationCoverageOptions {
 
     /// Represents kinds to select and display documentation coverage statistics for.
     /// Note: This enum is not meant to be persisted between runs
+    // swift-format-ignore
     public struct KindFilterOptions: OptionSet, Hashable, CustomDebugStringConvertible, Sendable {
 
         public typealias RawValue = Int

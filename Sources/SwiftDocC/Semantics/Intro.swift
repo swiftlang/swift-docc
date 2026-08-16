@@ -34,6 +34,7 @@ public final class Intro: Semantic, AutomaticDirectiveConvertible {
     @ChildMarkup(numberOfParagraphs: .zeroOrMore)
     public private(set) var content: MarkupContainer
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "title"     : \Intro._title,
         "video"     : \Intro._video,

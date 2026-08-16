@@ -37,6 +37,7 @@ enum RenderHelpers {
             let previous = utf8View[previousIndex]
             let current  = utf8View[index]
             
+            // swift-format-ignore
             guard previous.isSyntaxSeparator      && !current.isSyntaxSeparator
                || previous.isLowercaseASCIILetter && current.isUppercaseASCIILetter
             else {

@@ -40,6 +40,7 @@ public class TopicsVisualStyle: Semantic, AutomaticDirectiveConvertible {
         case hidden
     }
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "style"  : \TopicsVisualStyle._style,
     ]

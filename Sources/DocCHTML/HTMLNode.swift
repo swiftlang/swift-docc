@@ -13,6 +13,7 @@ package struct HTMLNode: Sendable {
     // However, to avoid needing to define the formatting and parsing of HTML all in this file,
     // it's implementation is accessible within this module.
     
+    // swift-format-ignore
     enum _Storage {
         case text(String)
         // We intentionally don't model comments because we don't want them to appear in the output.
@@ -44,6 +45,7 @@ package struct HTMLNode: Sendable {
     }
     
     var _tag: _Tag? {
+        // swift-format-ignore
         switch _storage {
             case .element(    let tag, _, _),
                  .voidElement(let tag, _): tag
@@ -52,6 +54,7 @@ package struct HTMLNode: Sendable {
     }
     
     var _isText: Bool {
+        // swift-format-ignore
         switch _storage {
             case .text:                  true
             case .element, .voidElement: false
@@ -61,6 +64,7 @@ package struct HTMLNode: Sendable {
 
 extension HTMLNode._Tag {
     var isVoid: Bool {
+        // swift-format-ignore
         switch self {
             case .base, .link, .meta,                  // Metadata
                  .hr,                                  // Grouping

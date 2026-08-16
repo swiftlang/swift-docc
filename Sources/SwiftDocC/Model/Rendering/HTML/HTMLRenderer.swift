@@ -334,6 +334,7 @@ package struct HTMLRenderer {
         
         // Return value
         if !symbol.returnsSectionVariants.allValues.isEmpty {
+            // swift-format-ignore
             articleElement.addChildren(
                 renderer.returns(
                     .init(
@@ -395,6 +396,7 @@ package struct HTMLRenderer {
                 renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
                     section.groups.map {
                         .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
+                            // swift-format-ignore
                             switch topic {
                                 case .resolved(.success(let reference)): reference.url
                                 case .unresolved, .resolved(.failure):   nil

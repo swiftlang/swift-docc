@@ -26,6 +26,7 @@ public final class XcodeRequirement: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public private(set) var destination: URL
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "title"         : \XcodeRequirement._title,
         "destination"   : \XcodeRequirement._destination,

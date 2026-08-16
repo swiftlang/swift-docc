@@ -82,6 +82,7 @@ public final class DiagnosticEngine {
     ///   - treatWarningsAsErrors: A Boolean value indicating whether the engine raises the severity of warnings to "error" (unless `warningGroupsWithWarningSeverity` explicitly lowers the severity of that diagnostic to a warning)
     ///   - diagnosticIDsWithWarningSeverity: A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
     ///   - diagnosticIDsWithErrorSeverity: A list of diagnostic identifiers that are explicitly raised to an "error" severity.
+    // swift-format-ignore
     public init(
         filterLevel: DiagnosticSeverity = .warning,
         treatWarningsAsErrors: Bool = false,
@@ -173,6 +174,7 @@ public final class DiagnosticEngine {
     
     private func updateDiagnosticSeverity(_ diagnostic: inout Diagnostic) {
         func _severity(identifier: String) -> DiagnosticSeverity? {
+            // swift-format-ignore
             if      diagnosticIDsWithErrorSeverity.contains(identifier)   { .error }
             else if diagnosticIDsWithWarningSeverity.contains(identifier) { .warning }
             else                                                          { nil }

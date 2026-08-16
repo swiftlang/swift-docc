@@ -139,6 +139,7 @@ extension FileManager: FileManagerProtocol {
         let partitionIndex = try allContents.partition {
             try $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
         }
+        // swift-format-ignore
         return (
             files:       Array( allContents[..<partitionIndex] ),
             directories: Array( allContents[partitionIndex...] )

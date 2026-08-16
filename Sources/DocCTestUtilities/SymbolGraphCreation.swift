@@ -53,6 +53,7 @@ package func makeLineList(
         docComment.components(separatedBy: .newlines)
             .enumerated()
             .map { lineOffset, line in
+                // swift-format-ignore
                 SymbolGraph.LineList.Line(
                     text: line,
                     range: SymbolGraph.LineList.SourceRange(
@@ -158,6 +159,7 @@ package func makeSymbolNames(name: String) -> SymbolGraph.Symbol.Names {
 
 package func makeSymbolKind(_ kindID: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol.Kind {
     var documentationNodeKind: DocumentationNode.Kind {
+        // swift-format-ignore
         switch kindID {
         case .associatedtype: .associatedType
         case .class:          .class
@@ -197,6 +199,7 @@ package func makeSymbolKind(_ kindID: SymbolGraph.Symbol.KindIdentifier) -> Symb
 }
 
 package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    // swift-format-ignore
     init(
         domainName: String?,
         introduced: SymbolGraph.SemanticVersion?,

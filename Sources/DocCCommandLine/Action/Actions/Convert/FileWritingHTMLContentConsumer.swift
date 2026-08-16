@@ -23,6 +23,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool
     let _isPrimaryOutputFormat = false
     
+    // swift-format-ignore
     private struct HTMLTemplate {
         var original: String
         var contentReplacementRange:     Range<String.Index>

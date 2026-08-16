@@ -526,6 +526,7 @@ extension HTMLNode.Attribute {
     }
     
     /// A value for the ``HTMLNode/Attribute/controls(_:)`` attribute.
+    // swift-format-ignore
     package enum Controls: String {
         /// Hints that the browser should not display a download control.
         case noDownload       = "nodownload"
@@ -564,6 +565,7 @@ extension HTMLNode.Attribute {
     }
     
     /// A value for the ``HTMLNode/Attribute/encType(_:)`` attribute.
+    // swift-format-ignore
     package enum EncodingType: String {
         /// Submits the form as URL encoded key-value pairs.
         case wwwFormURLEncoded = "application/x-www-form-urlencoded"
@@ -603,6 +605,7 @@ extension HTMLNode.Attribute {
     }
     
     /// A value for the ``HTMLNode/Attribute/hidden(_:)`` attribute.
+    // swift-format-ignore
     package enum Hidden: String {
         /// The element is will not be rendered
         ///
@@ -613,6 +616,7 @@ extension HTMLNode.Attribute {
     }
     
     /// A value for the ``HTMLNode/Attribute/httpEquiv(_:)`` attribute.
+    // swift-format-ignore
     package enum HTTPEquivalent: String {
         @available(*, deprecated, message: "Use the `lang` attribute to configure the page's language instead.")
         case contentLanguage = "content-language"
@@ -691,6 +695,7 @@ extension HTMLNode.Attribute {
     }
     
     /// A value for the ``HTMLNode/Attribute/referrerPolicy(_:)`` attribute.
+    // swift-format-ignore
     package enum ReferrerPolicy: String {
         /// The browser should not send a referrer header.
         case noReferrer              = "no-referrer"
@@ -712,6 +717,7 @@ extension HTMLNode.Attribute {
     }
     
     /// A value for the ``HTMLNode/Attribute/rel(_:)`` attribute.
+    // swift-format-ignore
     package enum Rel: String {
         /// An alternate representation of the document.
         case alternate
@@ -890,6 +896,7 @@ extension HTMLNode.Attribute {
     }
     
     /// A value for the ``HTMLNode/Attribute/sandbox(_:)`` attribute.
+    // swift-format-ignore
     package enum Sandbox: String {
         /// Allows the sandboxed resource to download files through an `<a>` or `<area>` element with the ``download`` attribute.
         case allowDownloads       = "allow-downloads"

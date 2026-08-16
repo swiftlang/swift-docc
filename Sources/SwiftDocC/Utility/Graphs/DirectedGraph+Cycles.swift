@@ -178,6 +178,7 @@ extension DirectedGraph {
         if lhs.count == rhs.count {
             let rhsStart = rhs.first!
             
+            // swift-format-ignore
             return (lhs + lhs)                   // Repeat one of the cycles once
                 .drop(while: { $0 != rhsStart }) // Align it with the other cycle by removing its leading nodes
                 .starts(with: rhs)               // See if the cycles match

@@ -245,6 +245,7 @@ public extension SourceLanguage {
     }
     
     private static func knownLanguage(withName name: String) -> SourceLanguage? {
+        // swift-format-ignore
         switch name.lowercased() {
             case "swift":       .swift
             case "objective-c": .objectiveC
@@ -256,6 +257,7 @@ public extension SourceLanguage {
     }
     
     private static func _knownLanguage(withIdentifier id: String) -> SourceLanguage? {
+        // swift-format-ignore
         switch id.lowercased() {
             case "swift":      .swift
             case "occ", "objc", "objective-c",

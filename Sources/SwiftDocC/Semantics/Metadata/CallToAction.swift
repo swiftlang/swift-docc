@@ -74,6 +74,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public var label: String? = nil
 
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "url"      : \CallToAction._url,
         "file"     : \CallToAction._file,

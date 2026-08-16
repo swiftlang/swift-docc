@@ -410,6 +410,7 @@ extension OutOfProcessReferenceResolver {
                 return .success( makeReference(for: cachedSummary) )
             }
             
+            // swift-format-ignore
             let linkString = String(
                 unresolvedReferenceString.dropFirst(6) // "doc://"
                     .drop(while: { $0 != "/" })        // the known identifier (host component)
@@ -583,6 +584,7 @@ private class LongRunningProcess: ExternalLinkResolving {
                 // To avoid blocking forever we check if the response can be decoded after each chunk of data.
                 return try JSONDecoder().decode(Response.self, from: response)
             } catch {
+                // swift-format-ignore
                 if case DecodingError.dataCorrupted = error,    // If the data wasn't valid JSON, read more data and try to decode it again.
                    response.count.isMultiple(of: Int(PIPE_BUF)) // To reduce the risk of deadlocking, check that bytes so far is a multiple of the pipe buffer size.
                 {

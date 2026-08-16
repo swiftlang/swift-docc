@@ -39,6 +39,7 @@ public final class DisplayName: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public var style: Style = .conceptual
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "style" : \DisplayName._style,
         "name"  : \DisplayName._name,

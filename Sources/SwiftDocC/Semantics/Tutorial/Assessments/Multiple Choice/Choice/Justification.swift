@@ -26,6 +26,7 @@ public final class Justification: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public private(set) var reaction: String? = nil
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "content"   : \Justification._content,
         "reaction"  : \Justification._reaction

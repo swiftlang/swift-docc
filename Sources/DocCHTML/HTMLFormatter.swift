@@ -277,6 +277,7 @@ package struct HTMLFormatter {
             var childState = PrettyPrintingState(depth: state.depth &+ 1)
             
             func shouldPresentInline(for contents: HTMLNode) -> Bool {
+                // swift-format-ignore
                 switch contents._storage {
                     case .text:
                         true

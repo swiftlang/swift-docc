@@ -59,6 +59,7 @@ public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContainin
     @ChildDirective(requirements: .oneOrMore)
     public private(set) var columns: [Column]
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "_numberOfColumns"   : \Row.__numberOfColumns,
         "columns"           : \Row._columns,
@@ -132,6 +133,7 @@ extension Row {
         @ChildMarkup(numberOfParagraphs: .zeroOrMore, supportsStructure: true)
         public private(set) var content: MarkupContainer
         
+        // swift-format-ignore
         static var keyPaths: [String : AnyKeyPath] = [
             "size"      : \Column._size,
             "alignment" : \Column._alignment,

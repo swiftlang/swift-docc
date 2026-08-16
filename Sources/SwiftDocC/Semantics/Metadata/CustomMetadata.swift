@@ -38,6 +38,7 @@ public final class CustomMetadata: Semantic, AutomaticDirectiveConvertible {
     
     static var hiddenFromDocumentation = true
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "key" : \CustomMetadata._key,
         "value"  : \CustomMetadata._value,

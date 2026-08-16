@@ -49,6 +49,7 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
     )
     public private(set) var poster: ResourceReference? = nil
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "source"    : \VideoMedia._source,
         "poster"    : \VideoMedia._poster,

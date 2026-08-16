@@ -306,6 +306,7 @@ private struct Table<Element>: ~Copyable {
         _read { yield storage[index(row: row, column: column)] }
     }
 
+    // swift-format-ignore
     private func index(row: Int, column: Int) -> Int {
         // Give nice assertion messages in debug builds and let the wrapped array validate the index in release builds.
         assert(0 <= row    && row    < size.height, "Row \(row) is out of range of 0..<\(size.height)")

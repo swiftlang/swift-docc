@@ -650,6 +650,7 @@ extension LinkDestinationSummary {
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
     }
     
+    // swift-format-ignore
     private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
         guard decodedURL.isAbsoluteWebURL,
               var components = URLComponents(url: decodedURL, resolvingAgainstBaseURL: false)

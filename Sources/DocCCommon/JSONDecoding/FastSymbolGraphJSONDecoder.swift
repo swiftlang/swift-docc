@@ -767,6 +767,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         while count &- 8 >= length {
             let bytes = pointer.loadUnaligned(fromByteOffset: length, as: UInt64.self)
             
+            // swift-format-ignore
             let isQuote     = ByteMatches(bytes, ByteMatches.quoteSearchPattern)
             let isBackslash = ByteMatches(bytes, ByteMatches.backslashSearchPattern)
             
@@ -1003,6 +1004,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     fileprivate mutating func __workaround_decodeAnyScalar() throws(DecodingError) -> SymbolGraph.AnyScalar {
         _skipWhitespace()
         
+        // swift-format-ignore
         switch pointer.nextByte {
             case .init(ascii: "\""):
                 return .string(try decode(String.self))
@@ -1206,6 +1208,7 @@ package struct ByteMatches: ~Copyable {
     package static let colonSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: ":") )
     
     /// A 64-bit value that repeats a byte with only the _low_ bit set (`0b00000001`) 8 times.
+    // swift-format-ignore
     private static let lowBitInEachByte  : UInt64 = 0x01_01_01_01_01_01_01_01
     /// A 64-bit value that repeats a byte with only the _high_ bit set (`0b10000000`) 8 times.
     private static let highBitInEachByte : UInt64 = 0x80_80_80_80_80_80_80_80
@@ -1333,11 +1336,13 @@ private extension Path {
         let stringValue: String
         init(stringValue: String) {
             self.stringValue = stringValue
+            // swift-format-ignore
             self.intValue    = nil
         }
         
         let intValue: Int?
         init(intValue: Int) {
+            // swift-format-ignore
             self.intValue    = intValue
             self.stringValue = intValue.description
         }

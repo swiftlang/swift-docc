@@ -185,6 +185,7 @@ extension NavigatorIndexableRenderNodeRepresentation {
     /// Returns the type of page for the render node.
     func navigatorPageType() -> NavigatorIndex.PageType {
         // This is a workaround to support plist keys.
+        // swift-format-ignore
         switch metadata.roleHeading?.lowercased() {
             case "property list key":           return .propertyListKey
             case "property list key reference": return .propertyListKeyReference

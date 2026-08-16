@@ -17,6 +17,7 @@ public import SymbolKit
 // Because AccessControl only has a string raw value, it's unlikely that SymbolKit would add a Comparable conformance and default implementation.
 extension SymbolKit.SymbolGraph.Symbol.AccessControl: Swift.Comparable {
     private var level: Int? {
+        // swift-format-ignore
         switch self {
         case .private :    return 1
         case .filePrivate: return 2

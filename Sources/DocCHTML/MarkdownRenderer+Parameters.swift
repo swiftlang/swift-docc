@@ -89,6 +89,7 @@ package extension MarkdownRenderer {
         return items
     }
     
+    // swift-format-ignore
     private func _dualLanguageParameters(
         primary:   (key: SourceLanguage, value: [ParameterInfo]),
         secondary: (key: SourceLanguage, value: [ParameterInfo])

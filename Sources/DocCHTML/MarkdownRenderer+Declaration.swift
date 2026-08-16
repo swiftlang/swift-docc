@@ -53,6 +53,7 @@ package extension MarkdownRenderer {
     }
     
     private func _declarationTokens(for fragments: [DeclarationFragment], in language: SourceLanguage) -> [XMLNode] {
+        // swift-format-ignore
         switch language {
             case .swift:      DeclarationFormatter.prettyPrintedSwiftDeclaration(fragments, using: self)
             case .objectiveC: DeclarationFormatter.prettyPrintedObjectiveCDeclaration(fragments, using: self)
@@ -83,10 +84,15 @@ package extension MarkdownRenderer {
     }
 }
 
+// swift-format-ignore
 private let openParen  = UInt8(ascii: "(")
+// swift-format-ignore
 private let closeParen = UInt8(ascii: ")")
+// swift-format-ignore
 private let comma      = UInt8(ascii: ",")
+// swift-format-ignore
 private let colon      = UInt8(ascii: ":")
+// swift-format-ignore
 private let space      = UInt8(ascii: " ")
 
 /// A scope for a collection of methods that pretty print declarations
@@ -111,6 +117,7 @@ private enum DeclarationFormatter {
             case keyword, attribute, number, string, internalParameter
             
             init(_ symbolFragment: MarkdownRenderer.DeclarationFragment) {
+                // swift-format-ignore
                 self = switch symbolFragment.kind {
                     case .keyword:           .keyword
                     case .attribute:         .attribute
@@ -125,6 +132,7 @@ private enum DeclarationFormatter {
             
             /// The class name used to syntax highlight the text in the HTML declaration.
             var htmlClassName: String {
+                // swift-format-ignore
                 switch self {
                     case .link:              "typeIdentifier"
                     case .text:              fatalError("The caller is responsible for checking that the kind isn't `text` before calling `htmlClassName`")

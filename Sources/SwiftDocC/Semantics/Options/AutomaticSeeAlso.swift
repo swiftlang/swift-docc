@@ -38,6 +38,7 @@ public class AutomaticSeeAlso: Semantic, AutomaticDirectiveConvertible {
         return enabledness == .enabled
     }
     
+    // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "enabledness"  : \AutomaticSeeAlso._enabledness,
     ]

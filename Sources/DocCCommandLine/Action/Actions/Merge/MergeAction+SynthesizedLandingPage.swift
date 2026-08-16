@@ -55,6 +55,7 @@ extension MergeAction {
                 })
         }
         
+        // swift-format-ignore
         return .init(
             documentation: try inner(url: dataDirectory.appendingPathComponent("documentation", isDirectory: true)),
             tutorials:     try inner(url: dataDirectory.appendingPathComponent("tutorials", isDirectory: true))
@@ -70,6 +71,7 @@ extension MergeAction {
     ) -> RenderNode {
         var renderNode = RenderNode(identifier: reference, kind: .article)
         
+        // swift-format-ignore
         renderNode.topicSectionsStyle = switch topicsStyle {
             case .list:         .list
             case .compactGrid:  .compactGrid

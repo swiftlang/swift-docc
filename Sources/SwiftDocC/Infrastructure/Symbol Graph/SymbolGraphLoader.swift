@@ -146,7 +146,9 @@ struct SymbolGraphLoader {
             throw loadError
         }
         
+        // swift-format-ignore
         self.symbolGraphs        = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? nil   : graph })
+        // swift-format-ignore
         self.snippetSymbolGraphs = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? graph : nil   })
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
             createOverloadGroups: shouldCreateOverloadGroups
