@@ -25,21 +25,21 @@ class IntroTests: XCTestCase {
         XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.title")
     }
-    
+
     func testValid() async throws {
         let videoPath = "/path/to/video"
         let imagePath = "/path/to/image"
         let posterPath = "/path/to/poster"
         let title = "Intro Title"
         let source = """
-@Intro(title: "\(title)") {
-        
-   Here is a paragraph.
-        
-   @Video(source: "\(videoPath)", poster: \(posterPath))
-   @Image(source: "\(imagePath)", alt: text)
-}
-"""
+            @Intro(title: "\(title)") {
+                    
+               Here is a paragraph.
+                    
+               @Video(source: "\(videoPath)", poster: \(posterPath))
+               @Image(source: "\(imagePath)", alt: text)
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -55,17 +55,17 @@ class IntroTests: XCTestCase {
             XCTAssertEqual(1, intro.content.elements.count)
         }
     }
-    
+
     func testIncorrectArgumentLabel() async throws {
         let source = """
-        @Intro(titleText: "Title") {
-          Here is a paragraph.
-            
-          @Video(source: "/video/path", poster: /poster/path)
-          @Image(source: "/image/path", alt: text)
-        }
-        """
-        
+            @Intro(titleText: "Title") {
+              Here is a paragraph.
+                
+              @Video(source: "/video/path", poster: /poster/path)
+              @Image(source: "/image/path", alt: text)
+            }
+            """
+
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -74,10 +74,12 @@ class IntroTests: XCTestCase {
         XCTAssertNil(intro)
         XCTAssertEqual(2, diagnostics.count)
         XCTAssertFalse(diagnostics.containsAnyError)
-        
-        XCTAssertEqual(diagnostics.map(\.identifier), [
-            "org.swift.docc.UnknownArgument",
-            "org.swift.docc.HasArgument.title",
-        ])
+
+        XCTAssertEqual(
+            diagnostics.map(\.identifier),
+            [
+                "org.swift.docc.UnknownArgument",
+                "org.swift.docc.HasArgument.title",
+            ])
     }
 }

@@ -14,41 +14,41 @@ import XCTest
 class DiffAvailabilityTests: XCTestCase {
     func testDecode() throws {
         let json = """
-        {
-          "minor": {
-            "change": "modified",
-            "platform": "Xcode",
-            "versions": [
-              "11.3",
-              "11.4"
-            ]
-          },
-          "beta": {
-            "change": "modified",
-            "platform": "Xcode",
-            "versions": [
-              "11.4 beta 3",
-              "11.4"
-            ]
-          },
-          "major": {
-            "change": "modified",
-            "platform": "Xcode",
-            "versions": [
-              "11.0",
-              "11.4"
-            ]
-          },
-          "sdk": {
-            "change": "modified",
-            "platform": "Xcode",
-            "versions": [
-              "12A123",
-              "12A124"
-            ]
-          }
-        }
-        """.data(using: .utf8)!
+            {
+              "minor": {
+                "change": "modified",
+                "platform": "Xcode",
+                "versions": [
+                  "11.3",
+                  "11.4"
+                ]
+              },
+              "beta": {
+                "change": "modified",
+                "platform": "Xcode",
+                "versions": [
+                  "11.4 beta 3",
+                  "11.4"
+                ]
+              },
+              "major": {
+                "change": "modified",
+                "platform": "Xcode",
+                "versions": [
+                  "11.0",
+                  "11.4"
+                ]
+              },
+              "sdk": {
+                "change": "modified",
+                "platform": "Xcode",
+                "versions": [
+                  "12A123",
+                  "12A124"
+                ]
+              }
+            }
+            """.data(using: .utf8)!
 
         let diffAvailability = try JSONDecoder().decode(DiffAvailability.self, from: json)
         XCTAssertEqual(
@@ -74,17 +74,17 @@ class DiffAvailabilityTests: XCTestCase {
 
     func testDecodeSomeInfoMissing() throws {
         let json = """
-        {
-          "minor": {
-            "change": "modified",
-            "platform": "Xcode",
-            "versions": [
-              "11.3",
-              "11.4"
-            ]
-          }
-        }
-        """.data(using: .utf8)!
+            {
+              "minor": {
+                "change": "modified",
+                "platform": "Xcode",
+                "versions": [
+                  "11.3",
+                  "11.4"
+                ]
+              }
+            }
+            """.data(using: .utf8)!
 
         let diffAvailability = try JSONDecoder().decode(DiffAvailability.self, from: json)
         XCTAssertEqual(

@@ -20,47 +20,51 @@ import DocCCommon
 class RenderNodeTranslatorTests: XCTestCase {
     private func findDiscussion(forSymbolPath: String, configureBundle: ((URL) throws -> Void)? = nil) async throws -> ContentRenderSection? {
         let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: configureBundle)
-        
+
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: forSymbolPath, sourceLanguage: .swift))
-        
+
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
-        guard let section = renderNode.primaryContentSections.last(where: { section -> Bool in
-            return section.kind == .content
-        }), let discussion = section as? ContentRenderSection else {
+
+        guard
+            let section = renderNode.primaryContentSections.last(where: { section -> Bool in
+                return section.kind == .content
+            }), let discussion = section as? ContentRenderSection
+        else {
             XCTFail("Could not find discussion")
             return nil
         }
         return discussion
     }
-    
+
     private func findParagraph(withPrefix: String, forSymbolPath: String) async throws -> [RenderInlineContent]? {
         guard let discussion = try await findDiscussion(forSymbolPath: forSymbolPath) else {
             return nil
         }
-        
+
         // In the rendered content find the link exercising paragraph
-        guard let paragraph = discussion.content
-            .compactMap({ block -> [RenderInlineContent]? in
-                switch block {
-                case .paragraph(let p): return p.inlineContent
-                default: return nil
-                }
-            })
-            .first(where: { children in
-                switch children[0] {
-                case .text(let string): return string.hasPrefix(withPrefix)
-                default: return false
-                }
-            }) else {
-                XCTFail("Could not find 'Exercise links to symbols' paragraph")
-                return nil
-            }
-        
+        guard
+            let paragraph = discussion.content
+                .compactMap({ block -> [RenderInlineContent]? in
+                    switch block {
+                    case .paragraph(let p): return p.inlineContent
+                    default: return nil
+                    }
+                })
+                .first(where: { children in
+                    switch children[0] {
+                    case .text(let string): return string.hasPrefix(withPrefix)
+                    default: return false
+                    }
+                })
+        else {
+            XCTFail("Could not find 'Exercise links to symbols' paragraph")
+            return nil
+        }
+
         return paragraph
     }
-    
+
     func testResolvingSymbolLinks() async throws {
         guard let paragraph = try await findParagraph(withPrefix: "Exercise links to symbols", forSymbolPath: "/documentation/MyKit/MyProtocol") else {
             XCTFail("Failed to fetch test content")
@@ -75,17 +79,17 @@ class RenderNodeTranslatorTests: XCTestCase {
             default: return false
             }
         }
-        
+
         // Verify that we found exactly 2 resolved references
         XCTAssertEqual(references.count, 2)
     }
-    
+
     func testExternalSymbolLink() async throws {
         guard let paragraph = try await findParagraph(withPrefix: "Exercise unresolved symbols", forSymbolPath: "/documentation/MyKit/MyProtocol") else {
             XCTFail("Failed to fetch test content")
             return
         }
-        
+
         // Find the references to ``MyClass``
         let references = paragraph.filter { inline -> Bool in
             switch inline {
@@ -94,70 +98,77 @@ class RenderNodeTranslatorTests: XCTestCase {
             default: return false
             }
         }
-        
+
         // Verify that we found exactly 1 unresolved references
         XCTAssertEqual(references.count, 1)
     }
-    
+
     func testOrderedAndUnorderedList() async throws {
         guard let discussion = try await findDiscussion(forSymbolPath: "/documentation/MyKit/MyProtocol") else {
             return
         }
-        
-        XCTAssert(discussion.content.contains(where: { block in
-            if case .orderedList(let l) = block,
-                l.startIndex == 1,
-                l.items.count == 3,
-                l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One ordered")])),
-                l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two ordered")])),
-                l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three ordered")]))
-            {
-                return true
-            } else {
-                return false
-            }
-        }))
-        
-        XCTAssert(discussion.content.contains(where: { block in
-            if case .unorderedList(let l) = block,
-                l.items.count == 3,
-                l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One unordered")])),
-                l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two unordered")])),
-                l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three unordered")]))
-            {
-                return true
-            } else {
-                return false
-            }
-        }))
 
-        XCTAssert(discussion.content.contains(where: { block in
-            if case .orderedList(let l) = block,
-               l.startIndex == 2,
-               l.items.count == 3,
-               l.items[0].content.first == .paragraph(.init(inlineContent: [.text("Two ordered with custom start")])),
-               l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Three ordered with custom start")])),
-               l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Four ordered with custom start")]))
-            {
-                return true
-            } else {
-                return false
-            }
-        }))
+        XCTAssert(
+            discussion.content.contains(where: { block in
+                if case .orderedList(let l) = block,
+                    l.startIndex == 1,
+                    l.items.count == 3,
+                    l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One ordered")])),
+                    l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two ordered")])),
+                    l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three ordered")]))
+                {
+                    return true
+                } else {
+                    return false
+                }
+            }))
+
+        XCTAssert(
+            discussion.content.contains(where: { block in
+                if case .unorderedList(let l) = block,
+                    l.items.count == 3,
+                    l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One unordered")])),
+                    l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two unordered")])),
+                    l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three unordered")]))
+                {
+                    return true
+                } else {
+                    return false
+                }
+            }))
+
+        XCTAssert(
+            discussion.content.contains(where: { block in
+                if case .orderedList(let l) = block,
+                    l.startIndex == 2,
+                    l.items.count == 3,
+                    l.items[0].content.first == .paragraph(.init(inlineContent: [.text("Two ordered with custom start")])),
+                    l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Three ordered with custom start")])),
+                    l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Four ordered with custom start")]))
+                {
+                    return true
+                } else {
+                    return false
+                }
+            }))
     }
-    
+
     func testAutomaticOverviewAndDiscussionHeadings() async throws {
-        guard let myFunctionDiscussion = try await findDiscussion(forSymbolPath: "/documentation/MyKit/MyClass/myFunction()", configureBundle: { url in
-            let documentationExtensionURL = url.appendingPathComponent("/documentation/myFunction.md")
-            try """
-            # ``MyKit/MyClass/myFunction()``
-            
-            This is the overview for myFunction.
-            """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
-        }) else {
+        guard
+            let myFunctionDiscussion = try await findDiscussion(
+                forSymbolPath: "/documentation/MyKit/MyClass/myFunction()",
+                configureBundle: { url in
+                    let documentationExtensionURL = url.appendingPathComponent("/documentation/myFunction.md")
+                    try """
+                    # ``MyKit/MyClass/myFunction()``
+
+                    This is the overview for myFunction.
+                    """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
+                })
+        else {
             return
         }
-        
+
         XCTAssertEqual(
             myFunctionDiscussion.content,
             [
@@ -165,18 +176,22 @@ class RenderNodeTranslatorTests: XCTestCase {
                 RenderBlockContent.paragraph(.init(inlineContent: [.text("This is the overview for myFunction.")])),
             ]
         )
-        
-        guard let myClassDiscussion = try await findDiscussion(forSymbolPath: "/documentation/MyKit/MyClass", configureBundle: { url in
-            let documentationExtensionURL = url.appendingPathComponent("/documentation/myclass.md")
-            XCTAssert(FileManager.default.fileExists(atPath: documentationExtensionURL.path), "Make sure that this overrides the existing file.")
-            try """
-            # ``MyKit/MyClass``
 
-            This is the abstract (because MyClass doesn't have an in-source abstract).
+        guard
+            let myClassDiscussion = try await findDiscussion(
+                forSymbolPath: "/documentation/MyKit/MyClass",
+                configureBundle: { url in
+                    let documentationExtensionURL = url.appendingPathComponent("/documentation/myclass.md")
+                    XCTAssert(FileManager.default.fileExists(atPath: documentationExtensionURL.path), "Make sure that this overrides the existing file.")
+                    try """
+                    # ``MyKit/MyClass``
 
-            This is the overview for MyClass.
-            """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
-        }) else {
+                    This is the abstract (because MyClass doesn't have an in-source abstract).
+
+                    This is the overview for MyClass.
+                    """.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
+                })
+        else {
             return
         }
 
@@ -188,54 +203,60 @@ class RenderNodeTranslatorTests: XCTestCase {
             ]
         )
     }
-    
+
     func testContentSectionSafeAnchor() {
         // Verify an already safe title is not altered
         do {
             let section = ContentRenderSection(kind: .content, content: [], heading: "declaration")
-            XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
-                switch element {
-                case .heading(let h): return h.anchor
-                default: return nil
-                }
-            }))
+            XCTAssertEqual(
+                "declaration",
+                section.content.mapFirst(where: { element -> String? in
+                    switch element {
+                    case .heading(let h): return h.anchor
+                    default: return nil
+                    }
+                }))
         }
-        
+
         // Verify mixed cased title is lowercased
         do {
             let section = ContentRenderSection(kind: .content, content: [], heading: "DeclaratioN")
-            XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
-                switch element {
-                case .heading(let h): return h.anchor
-                default: return nil
-                }
-            }))
+            XCTAssertEqual(
+                "declaration",
+                section.content.mapFirst(where: { element -> String? in
+                    switch element {
+                    case .heading(let h): return h.anchor
+                    default: return nil
+                    }
+                }))
         }
-        
+
         do {
             // Verify that "unsafe" title is safe-ified
             let section = ContentRenderSection(kind: .content, content: [], heading: "My Declaration")
-            XCTAssertEqual("my-declaration", section.content.mapFirst(where: { element -> String? in
-                switch element {
-                case .heading(let h): return h.anchor
-                default: return nil
-                }
-            }))
+            XCTAssertEqual(
+                "my-declaration",
+                section.content.mapFirst(where: { element -> String? in
+                    switch element {
+                    case .heading(let h): return h.anchor
+                    default: return nil
+                    }
+                }))
         }
     }
-            
+
     func testArticleRoles() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var diagnostics = [Diagnostic]()
-        
+
         // Verify article's role
         do {
             let source = """
-            # My Article
-            My introduction.
-            My exposé.
-            My conclusion.
-            """
+                # My Article
+                My introduction.
+                My exposé.
+                My conclusion.
+                """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let article = try XCTUnwrap(
                 Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
@@ -246,14 +267,14 @@ class RenderNodeTranslatorTests: XCTestCase {
         // Verify collections' role
         do {
             let source = """
-            # My Article
-            My introduction.
-            My exposé.
-            My conclusion.
-            ## Topics
-            ### Basics
-             - <doc:MyKit>
-            """
+                # My Article
+                My introduction.
+                My exposé.
+                My conclusion.
+                ## Topics
+                ### Basics
+                 - <doc:MyKit>
+                """
             let document = Document(parsing: source, options: .parseBlockDirectives)
 
             // Verify a collection group
@@ -261,12 +282,12 @@ class RenderNodeTranslatorTests: XCTestCase {
                 Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             )
             XCTAssertEqual(RenderMetadata.Role.collectionGroup, DocumentationContentRenderer.roleForArticle(article1, nodeKind: .article))
-            
+
             let metadataSource = """
-            @Metadata {
-               @TechnologyRoot
-            }
-            """
+                @Metadata {
+                   @TechnologyRoot
+                }
+                """
             let metadataDocument = Document(
                 parsing: source + "\n" + metadataSource,
                 options: .parseBlockDirectives
@@ -279,19 +300,21 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(RenderMetadata.Role.collection, DocumentationContentRenderer.roleForArticle(article2, nodeKind: .article))
         }
     }
-    
+
     // Verifies that links to sections include their container's abstract rdar://72110558
     func testSectionAbstracts() async throws {
         // Create an article including a link to a tutorial section
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
-            try """
-            # Article
-            Article abstract
-            ## Topics
-            ### Task Group
-            - <doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>
-            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
-        })
+        let (_, bundle, context) = try await testBundleAndContext(
+            copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [],
+            configureBundle: { url in
+                try """
+                # Article
+                Article abstract
+                ## Topics
+                ### Task Group
+                - <doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>
+                """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+            })
 
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
@@ -307,18 +330,18 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testEmptyTaskGroupsNotRendered() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var diagnostics = [Diagnostic]()
-        
+
         let source = """
             # My Article
-            
+
             ## Topics           
                         
             ### No Topics
 
             -
-            
+
             ### Links
-            
+
             - <doc:article>
 
             ### Not even an empty item
@@ -329,15 +352,15 @@ class RenderNodeTranslatorTests: XCTestCase {
             - text <doc:DoesNotExist>
             - <https://www.example.com>
             - <doc:ThisArticleDoesNotResolve>
-            
+
             ### Last
-            
+
             This task group has at least one good topic
-            
+
             - <https://www.example.com>
             - <doc:article2>
             -
-            
+
             """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
@@ -347,40 +370,46 @@ class RenderNodeTranslatorTests: XCTestCase {
         context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)
         let topicGraphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: URL(fileURLWithPath: "/path/to/article.md")), title: "My Article")
         context.topicGraph.addNode(topicGraphNode)
-    
+
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         XCTAssertEqual(node.topicSections.count, 2)
-        
+
         let linksGroup = try XCTUnwrap(node.topicSections.first)
         XCTAssertEqual(linksGroup.title, "Links")
-        XCTAssertEqual(linksGroup.identifiers, [
-            "doc://org.swift.docc.example/documentation/Test-Bundle/article",
-        ])
-        
+        XCTAssertEqual(
+            linksGroup.identifiers,
+            [
+                "doc://org.swift.docc.example/documentation/Test-Bundle/article",
+            ])
+
         let lastGroup = try XCTUnwrap(node.topicSections.last)
         XCTAssertEqual(lastGroup.title, "Last")
-        XCTAssertEqual(lastGroup.identifiers, [
-            "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
-        ])
+        XCTAssertEqual(
+            lastGroup.identifiers,
+            [
+                "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
+            ])
     }
-    
+
     /// Tests the ordering of automatic groups for symbols
     func testAutomaticTaskGroupsOrderingInSymbols() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-            try """
-            # ``SideKit/SideClass``
-            SideClass abstract
-            ## Topics
-            ### Basics
-             - <doc:documentation/MyKit/MyProtocol>
-            """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
-        })
-        
+        let (_, bundle, context) = try await testBundleAndContext(
+            copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil,
+            configureBundle: { url in
+                try """
+                # ``SideKit/SideClass``
+                SideClass abstract
+                ## Topics
+                ### Basics
+                 - <doc:documentation/MyKit/MyProtocol>
+                """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
+            })
+
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try XCTUnwrap(try? context.entity(with: reference))
-        
+
         // Test manual task groups and automatic symbol groups ordering
         do {
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -389,14 +418,16 @@ class RenderNodeTranslatorTests: XCTestCase {
             // Verify that by default we render:
             // 1. Manually curated task group
             // 2. Automatic task groups for uncurated symbols
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Basics",
-                "Enumeration Cases",
-                "Initializers",
-                "Instance Properties",
-                "Instance Methods",
-                "Type Aliases",
-            ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Basics",
+                    "Enumeration Cases",
+                    "Initializers",
+                    "Instance Properties",
+                    "Instance Methods",
+                    "Type Aliases",
+                ])
         }
 
         // Test manual task groups, automatic symbol groups ordering, and
@@ -422,15 +453,17 @@ class RenderNodeTranslatorTests: XCTestCase {
             // 1. Manually curated task group
             // 2. Automatic article groups
             // 3. Automatic task groups for uncurated symbols
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Basics",
-                "Articles",
-                "Enumeration Cases",
-                "Initializers",
-                "Instance Properties",
-                "Instance Methods",
-                "Type Aliases",
-            ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Basics",
+                    "Articles",
+                    "Enumeration Cases",
+                    "Initializers",
+                    "Instance Properties",
+                    "Instance Methods",
+                    "Type Aliases",
+                ])
         }
 
         // Test manual task groups, automatic symbol groups ordering,
@@ -478,45 +511,51 @@ class RenderNodeTranslatorTests: XCTestCase {
             // 1. Manually curated task group
             // 2. Automatic article groups
             // 3. Automatic task groups for uncurated symbols
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Basics",
-                "Articles",
-                "Enumeration Cases",
-                "Initializers",
-                "Instance Properties",
-                "Instance Methods",
-                "Type Aliases",
-                "Default Implementations",
-                "Another Task Group",
-            ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Basics",
+                    "Articles",
+                    "Enumeration Cases",
+                    "Initializers",
+                    "Instance Properties",
+                    "Instance Methods",
+                    "Type Aliases",
+                    "Default Implementations",
+                    "Another Task Group",
+                ])
         }
     }
-    
+
     /// Tests the ordering of automatic groups for articles
     func testAutomaticTaskGroupsOrderingInArticles() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-            try """
-            # Article
-            Article abstract
-            ## Topics
-            ### Basics
-             - <doc:documentation/MyKit/MyProtocol>
-            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
-        })
-        
+        let (_, bundle, context) = try await testBundleAndContext(
+            copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil,
+            configureBundle: { url in
+                try """
+                # Article
+                Article abstract
+                ## Topics
+                ### Basics
+                 - <doc:documentation/MyKit/MyProtocol>
+                """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+            })
+
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try XCTUnwrap(try? context.entity(with: reference))
-        
+
         // Test the manual curation task groups
         do {
             let article = try XCTUnwrap(node.semantic as? Article)
             let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
 
             // Verify that by default we render manually curated task groups.
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Basics",
-            ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Basics",
+                ])
         }
 
         // Test manual task groups, and automatic uncurated article groups.
@@ -540,10 +579,12 @@ class RenderNodeTranslatorTests: XCTestCase {
             // Verify that by default we render:
             // 1. Manually curated task group
             // 2. Automatic task groups for uncurated symbols
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Basics",
-                "Articles",
-            ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Basics",
+                    "Articles",
+                ])
         }
 
         // Test manual task groups, automatic symbol groups ordering,
@@ -590,57 +631,69 @@ class RenderNodeTranslatorTests: XCTestCase {
             // Verify that by default we render:
             // 1. Manually curated task group
             // 2. Automatic task groups for uncurated symbols
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Basics",
-                "Articles",
-                "Default Implementations",
-                "Another Task Group",
-            ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Basics",
+                    "Articles",
+                    "Default Implementations",
+                    "Another Task Group",
+                ])
         }
     }
 
     /// Tests the ordering of automatic groups in defining protocol
     func testOrderingOfAutomaticGroupsInDefiningProtocol() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-            //
-        })
-        
+        let (_, bundle, context) = try await testBundleAndContext(
+            copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil,
+            configureBundle: { url in
+                //
+            })
+
         // Verify "Default Implementations" group on the implementing type
         do {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/Element", sourceLanguage: .swift)
             var translator = RenderNodeTranslator(context: context, identifier: reference)
             let node = try XCTUnwrap(try? context.entity(with: reference))
-            
+
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
 
             // Verify that implementing type gets a "Default implementations"
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Default Implementations",
-            ])
-            XCTAssertEqual(renderNode.topicSections.map(\.identifiers), [
-                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations"],
-            ])
-            
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Default Implementations",
+                ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.identifiers),
+                [
+                    ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations"],
+                ])
+
         }
-        
+
         // Verify automatically generated api collection
         do {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/Element/Protocol-Implementations", sourceLanguage: .swift)
             var translator = RenderNodeTranslator(context: context, identifier: reference)
             let node = try XCTUnwrap(try? context.entity(with: reference))
-            
+
             let article = try XCTUnwrap(node.semantic as? Article)
             let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
 
             // Verify that implementing type gets a "Default implementations"
-            XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Instance Methods",
-            ])
-            XCTAssertEqual(renderNode.topicSections.map(\.identifiers), [
-                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()"],
-            ])
-            
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.title),
+                [
+                    "Instance Methods",
+                ])
+            XCTAssertEqual(
+                renderNode.topicSections.map(\.identifiers),
+                [
+                    ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()"],
+                ])
+
         }
 
     }
@@ -662,46 +715,50 @@ class RenderNodeTranslatorTests: XCTestCase {
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
 
         let defaultImplementationSection = try XCTUnwrap(renderNode.topicSections.first(where: { $0.title == "Default Implementations" }))
-        XCTAssertEqual(defaultImplementationSection.identifiers, [
-            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Comparable-Implementations",
-            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Equatable-Implementations",
-            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/FancyProtocol-Implementations",
-        ])
+        XCTAssertEqual(
+            defaultImplementationSection.identifiers,
+            [
+                "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Comparable-Implementations",
+                "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Equatable-Implementations",
+                "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/FancyProtocol-Implementations",
+            ])
         let implReferences = defaultImplementationSection.identifiers.compactMap({ renderNode.references[$0] as? TopicRenderReference })
-        XCTAssertEqual(implReferences.map({ $0.title }), [
-            "Comparable Implementations",
-            "Equatable Implementations",
-            "FancyProtocol Implementations",
-        ])
+        XCTAssertEqual(
+            implReferences.map({ $0.title }),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+                "FancyProtocol Implementations",
+            ])
 
     }
-    
+
     func testAutomaticImplementationsWithExtraDotsFromExternalModule() async throws {
         let inheritedDefaultImplementationsFromExternalModuleSGF = Bundle.module.url(
             forResource: "InheritedDefaultImplementationsFromExternalModule.symbols",
             withExtension: "json",
             subdirectory: "Test Resources"
         )!
-        
+
         let catalog = Folder(name: "unit-test.docc") {
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
             CopyOfFile(original: inheritedDefaultImplementationsFromExternalModuleSGF)
         }
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/FancyProtocolConformer", catalog: catalog),
             [
                 "FancyProtocol Implementations",
             ]
         )
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/OtherFancyProtocolConformer", catalog: catalog),
             [
                 "OtherFancyProtocol Implementations",
             ]
         )
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/FooConformer", catalog: catalog),
             [
@@ -709,7 +766,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             ]
         )
     }
-    
+
     func testAutomaticImplementationsFromCurrentModuleWithMixOfDocCoverage() async throws {
         let inheritedDefaultImplementationsSGF = Bundle.module.url(
             forResource: "InheritedDefaultImplementations.symbols",
@@ -721,20 +778,20 @@ class RenderNodeTranslatorTests: XCTestCase {
             withExtension: "json",
             subdirectory: "Test Resources"
         )!
-        
+
         let catalog = Folder(name: "unit-test.docc") {
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
             CopyOfFile(original: inheritedDefaultImplementationsSGF)
             CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF)
         }
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
                 "Foo Implementations",
             ]
         )
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", catalog: catalog),
             [
@@ -742,7 +799,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 "Equatable Implementations",
             ]
         )
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", catalog: catalog),
             [
@@ -753,35 +810,35 @@ class RenderNodeTranslatorTests: XCTestCase {
             ]
         )
     }
-    
+
     func testAutomaticImplementationsFromMultiPlatformSymbolGraphs() async throws {
         let inheritedDefaultImplementationsSGF = Bundle.module.url(
             forResource: "InheritedDefaultImplementations.symbols",
             withExtension: "json",
             subdirectory: "Test Resources"
         )!
-        
+
         let symbolGraphWithModifiedPlatform = try String(contentsOf: inheritedDefaultImplementationsSGF)
-        .replacingOccurrences(
-            of: """
-                "architecture": "x86_64",
-                """,
-            with: """
-                "architecture": "arm64",
-                """
-        )
-        .replacingOccurrences(
-            of: """
-                "name": "macosx",
-                """,
-            with: """
-                "name": "ios",
-                """
-        )
-        
+            .replacingOccurrences(
+                of: """
+                    "architecture": "x86_64",
+                    """,
+                with: """
+                    "architecture": "arm64",
+                    """,
+            )
+            .replacingOccurrences(
+                of: """
+                    "name": "macosx",
+                    """,
+                with: """
+                    "name": "ios",
+                    """,
+            )
+
         let catalog = Folder(name: "unit-test.docc") {
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
-            
+
             Folder(name: "x86_64-apple-macos") {
                 CopyOfFile(original: inheritedDefaultImplementationsSGF)
             }
@@ -789,14 +846,14 @@ class RenderNodeTranslatorTests: XCTestCase {
                 TextFile(name: inheritedDefaultImplementationsSGF.lastPathComponent, utf8Content: symbolGraphWithModifiedPlatform)
             }
         }
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
                 "Foo Implementations",
             ]
         )
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", catalog: catalog),
             [
@@ -804,7 +861,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 "Equatable Implementations",
             ]
         )
-        
+
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", catalog: catalog),
             [
@@ -815,7 +872,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             ]
         )
     }
-    
+
     func assertDefaultImplementationCollectionTitles(
         in renderNode: RenderNode,
         _ expectedTitles: [String],
@@ -828,14 +885,14 @@ class RenderNodeTranslatorTests: XCTestCase {
             file: file,
             line: line
         )
-        
+
         let references = defaultImplementationSection.identifiers.compactMap { identifier in
             renderNode.references[identifier] as? TopicRenderReference
         }
-        
+
         XCTAssertEqual(references.map(\.title), expectedTitles, file: file, line: line)
     }
-    
+
     private func loadRenderNode(at path: String, catalog: Folder) async throws -> RenderNode {
         let (_, context) = try await loadBundle(catalog: catalog)
 
@@ -845,47 +902,51 @@ class RenderNodeTranslatorTests: XCTestCase {
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         return try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
     }
-    
+
     func testAutomaticTaskGroupTopicsAreSorted() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "DefaultImplementations")
         let structReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DefaultImplementations/Foo", sourceLanguage: .swift)
         let structNode = try context.entity(with: structReference)
         let symbol = try XCTUnwrap(structNode.semantic as? Symbol)
-        
+
         // Verify that the ordering of default implementations is deterministic
         for _ in 0..<100 {
             var translator = RenderNodeTranslator(context: context, identifier: structReference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let section = renderNode.topicSections.first(where: { $0.title == "Default Implementations" })
-            XCTAssertEqual(section?.identifiers, [
-                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/A-Implementations",
-                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/B-Implementations",
-                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/C-Implementations",
-            ])
+            XCTAssertEqual(
+                section?.identifiers,
+                [
+                    "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/A-Implementations",
+                    "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/B-Implementations",
+                    "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/C-Implementations",
+                ])
         }
     }
-    
+
     // Verifies we don't render links to non linkable nodes.
     func testNonLinkableNodes() async throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-            try """
-            # ``SideKit/SideClass``
-            Abstract.
-            ## Discussion
-            This is a link to <doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations>.
-            ## Topics
-            ### Basics
-             - <doc:documentation/SideKit/SideClass/Element/Protocol-Implementations>
-             - ``SideKit/SideClass/Element/Protocol-Implementations``
-             - ``Element/Protocol-Implementations``
-            """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
-        })
+        let (_, bundle, context) = try await testBundleAndContext(
+            copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil,
+            configureBundle: { url in
+                try """
+                # ``SideKit/SideClass``
+                Abstract.
+                ## Discussion
+                This is a link to <doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations>.
+                ## Topics
+                ### Basics
+                 - <doc:documentation/SideKit/SideClass/Element/Protocol-Implementations>
+                 - ``SideKit/SideClass/Element/Protocol-Implementations``
+                 - ``Element/Protocol-Implementations``
+                """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
+            })
 
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try XCTUnwrap(try? context.entity(with: reference))
-        
+
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
 
@@ -896,47 +957,51 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTFail("Unexpected discussion content.")
             return
         }
-        
-        XCTAssertEqual(p.inlineContent, [
-            .text("This is a link to "),
-            .text("doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations"),
-            .text("."),
-        ])
+
+        XCTAssertEqual(
+            p.inlineContent,
+            [
+                .text("This is a link to "),
+                .text("doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations"),
+                .text("."),
+            ])
     }
-    
+
     // Verifies we support rendering links in abstracts.
     func testLinkInAbstract() async throws {
         do {
             // First verify that `SideKit` page does not contain render reference to `SideKit/SideClass/Element`.
             let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-            
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            
-            var translator = RenderNodeTranslator(context: context, identifier: reference)
-            let symbol = try XCTUnwrap(node.semantic as? Symbol)
-            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-            
-            // No render reference to `Element`
-            XCTAssertFalse(renderNode.references.keys.contains("doc://\(bundle.id)/documentation/SideKit/SideClass/Element"))
-        }
-        
-        do {
-            // Create a bundle with a link in abstract, then verify the render reference is present in `SideKit` render node references.
-            let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-                try """
-                # ``SideKit/SideClass``
-                This is a link to <doc:/documentation/SideKit/SideClass/Element>.
-                """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
-            })
 
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
-            
+
             var translator = RenderNodeTranslator(context: context, identifier: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-            
+
+            // No render reference to `Element`
+            XCTAssertFalse(renderNode.references.keys.contains("doc://\(bundle.id)/documentation/SideKit/SideClass/Element"))
+        }
+
+        do {
+            // Create a bundle with a link in abstract, then verify the render reference is present in `SideKit` render node references.
+            let (_, bundle, context) = try await testBundleAndContext(
+                copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil,
+                configureBundle: { url in
+                    try """
+                    # ``SideKit/SideClass``
+                    This is a link to <doc:/documentation/SideKit/SideClass/Element>.
+                    """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
+                })
+
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+
             // There is a render reference to `Element`
             XCTAssertTrue(renderNode.references.keys.contains("doc://\(bundle.id)/documentation/SideKit/SideClass/Element"))
         }
@@ -949,7 +1014,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
-        
+
         if case let .paragraph(p) = discussion.content.dropFirst(2).first {
             XCTAssertEqual(p.inlineContent, [.text("Does a foo.")])
         } else {
@@ -958,20 +1023,22 @@ class RenderNodeTranslatorTests: XCTestCase {
 
         if case let .codeListing(l) = discussion.content.dropFirst(3).first {
             XCTAssertEqual(l.syntax, "swift")
-            XCTAssertEqual(l.code.joined(separator: "\n"), """
+            XCTAssertEqual(
+                l.code.joined(separator: "\n"),
+                """
                 func foo() {}
-                
+
                 do {
                   middle()
                 }
-                
+
                 func bar() {}
                 """)
         } else {
             XCTFail("Missing snippet code block")
         }
     }
-    
+
     func testSnippetSliceToCodeListing() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "Snippets")
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
@@ -979,13 +1046,14 @@ class RenderNodeTranslatorTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
-        
-        let lastCodeListingIndex = try XCTUnwrap(discussion.content.indices.last {
-            guard case .codeListing = discussion.content[$0] else {
-                return false
-            }
-            return true
-        })
+
+        let lastCodeListingIndex = try XCTUnwrap(
+            discussion.content.indices.last {
+                guard case .codeListing = discussion.content[$0] else {
+                    return false
+                }
+                return true
+            })
 
         guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
@@ -1004,12 +1072,13 @@ class RenderNodeTranslatorTests: XCTestCase {
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
 
-        let lastTabNavigator = try XCTUnwrap(discussion.content.indices.last {
-            guard case .tabNavigator = discussion.content[$0] else {
-                return false
-            }
-            return true
-        })
+        let lastTabNavigator = try XCTUnwrap(
+            discussion.content.indices.last {
+                guard case .tabNavigator = discussion.content[$0] else {
+                    return false
+                }
+                return true
+            })
 
         guard case let .tabNavigator(t) = discussion.content[lastTabNavigator] else {
             XCTFail("Missing snippet slice code block")
@@ -1026,7 +1095,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(l.syntax, "swift")
         XCTAssertEqual(l.code, ["middle()"])
     }
-    
+
     func testSnippetSliceTrimsIndentation() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "Snippets")
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Snippets/SliceIndentation", sourceLanguage: .swift)
@@ -1034,13 +1103,14 @@ class RenderNodeTranslatorTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
-        
-        let lastCodeListingIndex = try XCTUnwrap(discussion.content.indices.last {
-            guard case .codeListing = discussion.content[$0] else {
-                return false
-            }
-            return true
-        })
+
+        let lastCodeListingIndex = try XCTUnwrap(
+            discussion.content.indices.last {
+                guard case .codeListing = discussion.content[$0] else {
+                    return false
+                }
+                return true
+            })
 
         guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
@@ -1051,7 +1121,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(l.code, ["middle()"])
 
     }
-    
+
     func testRowAndColumn() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "BookLikeContent")
         let reference = ResolvedTopicReference(
@@ -1062,25 +1132,25 @@ class RenderNodeTranslatorTests: XCTestCase {
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-        
+
         let discussion = try XCTUnwrap(
             renderNode.primaryContentSections.first(
                 where: { $0.kind == .content }
             ) as? ContentRenderSection
         )
-        
+
         guard case let .row(row) = discussion.content.dropFirst().first else {
             XCTFail("Expected to find row as first child.")
             return
         }
-        
+
         XCTAssertEqual(row.numberOfColumns, 8)
         XCTAssertEqual(row.columns.first?.size, 3)
         XCTAssertEqual(row.columns.first?.content.count, 1)
         XCTAssertEqual(row.columns.last?.size, 5)
         XCTAssertEqual(row.columns.last?.content.count, 3)
     }
-    
+
     func testSmall() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "BookLikeContent")
         let reference = ResolvedTopicReference(
@@ -1091,24 +1161,24 @@ class RenderNodeTranslatorTests: XCTestCase {
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-        
+
         let discussion = try XCTUnwrap(
             renderNode.primaryContentSections.first(
                 where: { $0.kind == .content }
             ) as? ContentRenderSection
         )
-        
+
         guard case let .small(small) = discussion.content.last else {
             XCTFail("Expected to find small as last child.")
             return
         }
-        
+
         XCTAssertEqual(
             small.inlineContent,
             [.text("Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved.")]
         )
     }
-    
+
     func testTabNavigator() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "BookLikeContent")
         let reference = ResolvedTopicReference(
@@ -1119,102 +1189,98 @@ class RenderNodeTranslatorTests: XCTestCase {
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-        
+
         let discussion = try XCTUnwrap(
             renderNode.primaryContentSections.first(
                 where: { $0.kind == .content }
             ) as? ContentRenderSection
         )
-        
+
         guard case let .tabNavigator(tabNavigator) = discussion.content.dropFirst().first else {
             XCTFail("Expected to find tab as first child.")
             return
         }
-        
 
         guard tabNavigator.tabs.count == 3 else {
             XCTFail("Expected to find a tab navigator with '3' tabs")
             return
         }
-        
+
         XCTAssertEqual(tabNavigator.tabs[0].title, "Powers")
         XCTAssertEqual(tabNavigator.tabs[1].title, "Exercise routines")
         XCTAssertEqual(tabNavigator.tabs[2].title, "Hats")
-        
+
         XCTAssertEqual(tabNavigator.tabs[0].content.count, 1)
         XCTAssertEqual(tabNavigator.tabs[1].content.count, 2)
         XCTAssertEqual(tabNavigator.tabs[2].content.count, 1)
     }
-    
+
     func testRenderNodeMetadata() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "BookLikeContent")
-         let reference = ResolvedTopicReference(
+        let reference = ResolvedTopicReference(
             bundleID: bundle.id,
-             path: "/documentation/BestBook/MyArticle",
-             sourceLanguage: .swift
-         )
-         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-         var translator = RenderNodeTranslator(context: context, identifier: reference)
-         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-    
-         let encodedArticle = try JSONEncoder().encode(renderNode)
-         let roundTrippedArticle = try JSONDecoder().decode(RenderNode.self, from: encodedArticle)
-    
-         XCTAssertEqual(roundTrippedArticle.icon?.identifier, "plus.svg")
+            path: "/documentation/BestBook/MyArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
 
-         XCTAssertEqual(renderNode.metadata.customMetadata.count, 1)
-         XCTAssertEqual(
-             roundTrippedArticle.references["figure1.png"] as? ImageReference,
-             ImageReference(
-                 identifier: RenderReferenceIdentifier("figure1.png"),
-                 altText: "An example figure.",
-                 imageAsset: DataAsset(
-                     variants: [
-                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)
-                             : URL(string: "/images/figure1.png")!,
-    
-                         DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard)
-                             : URL(string: "/images/figure1~dark.png")!,
-                     ],
-                     metadata: [
-                         URL(string: "/images/figure1.png")! : DataAsset.Metadata(),
-                         URL(string: "/images/figure1~dark.png")! : DataAsset.Metadata(),
-                     ]
-                 )
-             )
-         )
-    
-         XCTAssertEqual(
-             roundTrippedArticle.references["plus.svg"] as? ImageReference,
-             ImageReference(
-                 identifier: RenderReferenceIdentifier("plus.svg"),
-                 altText: "A plus icon.",
-                 imageAsset: DataAsset(
-                     variants: [
-                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)
-                             : URL(string: "/images/plus.svg")!,
-                     ],
-                     metadata: [
-                         URL(string: "/images/plus.svg")! : DataAsset.Metadata(svgID: "plus-id"),
-                     ]
-                 )
-             )
-         )
-    
-         XCTAssertEqual(
-             Set(roundTrippedArticle.metadata.images),
-             [
-                 TopicImage(type: .icon, identifier: RenderReferenceIdentifier("plus.svg")),
-                 TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png"))
-             ]
-         )
+        let encodedArticle = try JSONEncoder().encode(renderNode)
+        let roundTrippedArticle = try JSONDecoder().decode(RenderNode.self, from: encodedArticle)
+
+        XCTAssertEqual(roundTrippedArticle.icon?.identifier, "plus.svg")
+
+        XCTAssertEqual(renderNode.metadata.customMetadata.count, 1)
+        XCTAssertEqual(
+            roundTrippedArticle.references["figure1.png"] as? ImageReference,
+            ImageReference(
+                identifier: RenderReferenceIdentifier("figure1.png"),
+                altText: "An example figure.",
+                imageAsset: DataAsset(
+                    variants: [
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): URL(string: "/images/figure1.png")!,
+
+                        DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard): URL(string: "/images/figure1~dark.png")!,
+                    ],
+                    metadata: [
+                        URL(string: "/images/figure1.png")!: DataAsset.Metadata(),
+                        URL(string: "/images/figure1~dark.png")!: DataAsset.Metadata(),
+                    ],
+                )
+            )
+        )
+
+        XCTAssertEqual(
+            roundTrippedArticle.references["plus.svg"] as? ImageReference,
+            ImageReference(
+                identifier: RenderReferenceIdentifier("plus.svg"),
+                altText: "A plus icon.",
+                imageAsset: DataAsset(
+                    variants: [
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): URL(string: "/images/plus.svg")!
+                    ],
+                    metadata: [
+                        URL(string: "/images/plus.svg")!: DataAsset.Metadata(svgID: "plus-id")
+                    ],
+                )
+            )
+        )
+
+        XCTAssertEqual(
+            Set(roundTrippedArticle.metadata.images),
+            [
+                TopicImage(type: .icon, identifier: RenderReferenceIdentifier("plus.svg")),
+                TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png"))
+            ],
+        )
 
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.count, 1)
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.keys.count, 1)
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.keys.first, "country")
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.count, 1)
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.first, "Belgium")
-        
+
         XCTAssertEqual(
             roundTrippedArticle.metadata.color?.standardColorIdentifier,
             "yellow"
@@ -1222,8 +1288,8 @@ class RenderNodeTranslatorTests: XCTestCase {
 
         XCTAssertEqual(roundTrippedArticle.metadata.roleHeading, "Book-Like Content")
         XCTAssertEqual(roundTrippedArticle.metadata.role, "article")
-     }
-    
+    }
+
     func testPageColorMetadataInSymbolExtension() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
         let reference = ResolvedTopicReference(
@@ -1234,7 +1300,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-   
+
         let encodedSymbol = try JSONEncoder().encode(renderNode)
         let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
         XCTAssertEqual(roundTrippedSymbol.metadata.color?.standardColorIdentifier, "purple")
@@ -1250,71 +1316,83 @@ class RenderNodeTranslatorTests: XCTestCase {
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-   
+
         let encodedSymbol = try JSONEncoder().encode(renderNode)
         let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
         XCTAssertEqual(roundTrippedSymbol.metadata.roleHeading, "TestBed Notes")
         XCTAssertEqual(roundTrippedSymbol.metadata.role, "collection")
     }
-    
+
     func testExpectedRoleHeadingIsAssigned() async throws {
         let catalog = Folder(
             name: "unit-test.docc",
             content: [
-                TextFile(name: "APICollection.md", utf8Content: """
-                # API Collection
-                My API Collection Abstract.
-                ## Topics
-                - ``Symbol``
-                - <doc:article2>
-                - <doc:article3>
-                """),
-                TextFile(name: "Collection.md", utf8Content: """
-                # Collection
-                An abstract with a symbol link: ``MyKit/MyProtocol``
-                ## Overview
-                An overview with a symbol link: ``MyKit/MyProtocol``
-                ## Topics
-                A topic group abstract with a symbol link: ``MyKit/MyProtocol``
-                - <doc:article4>
-                - <doc:article5>
-                """),
-                TextFile(name: "Article.md", utf8Content: """
-                # Article
-                My Article Abstract.
-                ## Overview
-                An overview.
-                """),
-                TextFile(name: "CustomRole.md", utf8Content: """
-                # Article 4
-                @Metadata {
-                    @TitleHeading("Custom Role")
-                }
-                My Article Abstract.
-                ## Overview
-                An overview.
-                """),
-                TextFile(name: "SampleCode.md", utf8Content: """
-                # Sample Code
-                @Metadata {
-                    @PageKind(sampleCode)
-                }
-                ## Topics
-                - <doc:article>
-                """),
+                TextFile(
+                    name: "APICollection.md",
+                    utf8Content: """
+                        # API Collection
+                        My API Collection Abstract.
+                        ## Topics
+                        - ``Symbol``
+                        - <doc:article2>
+                        - <doc:article3>
+                        """),
+                TextFile(
+                    name: "Collection.md",
+                    utf8Content: """
+                        # Collection
+                        An abstract with a symbol link: ``MyKit/MyProtocol``
+                        ## Overview
+                        An overview with a symbol link: ``MyKit/MyProtocol``
+                        ## Topics
+                        A topic group abstract with a symbol link: ``MyKit/MyProtocol``
+                        - <doc:article4>
+                        - <doc:article5>
+                        """),
+                TextFile(
+                    name: "Article.md",
+                    utf8Content: """
+                        # Article
+                        My Article Abstract.
+                        ## Overview
+                        An overview.
+                        """),
+                TextFile(
+                    name: "CustomRole.md",
+                    utf8Content: """
+                        # Article 4
+                        @Metadata {
+                            @TitleHeading("Custom Role")
+                        }
+                        My Article Abstract.
+                        ## Overview
+                        An overview.
+                        """),
+                TextFile(
+                    name: "SampleCode.md",
+                    utf8Content: """
+                        # Sample Code
+                        @Metadata {
+                            @PageKind(sampleCode)
+                        }
+                        ## Topics
+                        - <doc:article>
+                        """),
                 JSONFile(
                     name: "unit-test.symbols.json",
                     content: makeSymbolGraph(
                         moduleName: "unit-test",
-                        symbols: [SymbolGraph.Symbol(
-                            identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
-                            names: .init(title: "Symbol", navigator: nil, subHeading: nil, prose: nil),
-                            pathComponents: ["Symbol"],
-                            docComment: nil,
-                            accessLevel: .public,
-                            kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
-                            mixins: [:]
-                        )]
+                        symbols: [
+                            SymbolGraph.Symbol(
+                                identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                                names: .init(title: "Symbol", navigator: nil, subHeading: nil, prose: nil),
+                                pathComponents: ["Symbol"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            )
+                        ]
                     )
                 ),
             ]
@@ -1337,73 +1415,83 @@ class RenderNodeTranslatorTests: XCTestCase {
         renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/SampleCode")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
     }
-    
+
     func testExpectedRoleHeadingWhenAutomaticRoleHeadingIsDisabled() async throws {
         let catalog = Folder(
             name: "unit-test.docc",
             content: [
-                TextFile(name: "APICollection.md", utf8Content: """
-                # API Collection
-                @Options {
-                    @AutomaticTitleHeading(disabled)
-                }
-                My API Collection Abstract.
-                ## Topics
-                - ``Symbol``
-                - <doc:article2>
-                - <doc:article3>
-                """),
-                TextFile(name: "Article.md", utf8Content: """
-                # Article
-                @Options {
-                    @AutomaticTitleHeading(disabled)
-                }
-                My Article Abstract.
-                ## Overview
-                An overview.
-                """),
-                TextFile(name: "CustomRole.md", utf8Content: """
-                # Article 4
-                @Options {
-                    @AutomaticTitleHeading(disabled)
-                }
-                @Metadata {
-                    @TitleHeading("Custom Role")
-                }
-                My Article Abstract.
-                ## Overview
-                An overview.
-                """),
-                TextFile(name: "SampleCode.md", utf8Content: """
-                # Sample Code
-                @Options {
-                    @AutomaticTitleHeading(disabled)
-                }
-                @Metadata {
-                    @PageKind(sampleCode)
-                }
-                ## Topics
-                - <doc:article>
-                """),
+                TextFile(
+                    name: "APICollection.md",
+                    utf8Content: """
+                        # API Collection
+                        @Options {
+                            @AutomaticTitleHeading(disabled)
+                        }
+                        My API Collection Abstract.
+                        ## Topics
+                        - ``Symbol``
+                        - <doc:article2>
+                        - <doc:article3>
+                        """),
+                TextFile(
+                    name: "Article.md",
+                    utf8Content: """
+                        # Article
+                        @Options {
+                            @AutomaticTitleHeading(disabled)
+                        }
+                        My Article Abstract.
+                        ## Overview
+                        An overview.
+                        """),
+                TextFile(
+                    name: "CustomRole.md",
+                    utf8Content: """
+                        # Article 4
+                        @Options {
+                            @AutomaticTitleHeading(disabled)
+                        }
+                        @Metadata {
+                            @TitleHeading("Custom Role")
+                        }
+                        My Article Abstract.
+                        ## Overview
+                        An overview.
+                        """),
+                TextFile(
+                    name: "SampleCode.md",
+                    utf8Content: """
+                        # Sample Code
+                        @Options {
+                            @AutomaticTitleHeading(disabled)
+                        }
+                        @Metadata {
+                            @PageKind(sampleCode)
+                        }
+                        ## Topics
+                        - <doc:article>
+                        """),
                 JSONFile(
                     name: "unit-test.symbols.json",
                     content: makeSymbolGraph(
                         moduleName: "unit-test",
-                        symbols: [SymbolGraph.Symbol(
-                            identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
-                            names: .init(title: "Symbol", navigator: nil, subHeading: nil, prose: nil),
-                            pathComponents: ["Symbol"],
-                            docComment: nil,
-                            accessLevel: .public,
-                            kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
-                            mixins: [:]
-                        )]
+                        symbols: [
+                            SymbolGraph.Symbol(
+                                identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                                names: .init(title: "Symbol", navigator: nil, subHeading: nil, prose: nil),
+                                pathComponents: ["Symbol"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            )
+                        ]
                     )
                 ),
             ]
         )
         let (_, context) = try await loadBundle(catalog: catalog)
-        
+
         // Assert that API collections disabling automatic title headings don't get any value assigned as the eyebrow title,
         // but that the node's role itself is unaffected.
         var renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/APICollection")
@@ -1430,32 +1518,34 @@ class RenderNodeTranslatorTests: XCTestCase {
         configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
         let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols", configuration: configuration)
-        
-        let overloadPreciseIdentifiers = ["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF",
-                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF",
-                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF",
-                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF",
-                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"]
-        
+
+        let overloadPreciseIdentifiers = [
+            "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF",
+            "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF",
+            "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF",
+            "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF",
+            "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF",
+        ]
+
         let overloadReferences = try overloadPreciseIdentifiers.map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
-        
+
         for (index, reference) in overloadReferences.indexed() {
             let documentationNode = try context.entity(with: reference)
-            
+
             var translator = RenderNodeTranslator(context: context, identifier: reference)
             let symbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-            
+
             let declarationSection = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0 is DeclarationsRenderSection }) as? DeclarationsRenderSection)
-            
+
             // Each render node should contain declarations for all of its sibling overloads.
             let otherDeclarations = try XCTUnwrap(declarationSection.declarations.first?.otherDeclarations)
             XCTAssertEqual(otherDeclarations.declarations.count, overloadPreciseIdentifiers.count - 1)
-            
+
             for declaration in otherDeclarations.declarations {
                 XCTAssertNotNil(declaration.tokens)
             }
-            
+
             for (otherIndex, otherReference) in overloadReferences.indexed() where otherIndex != index {
                 XCTAssertTrue(otherDeclarations.declarations.contains(where: { $0.identifier == otherReference.absoluteString }))
 
@@ -1463,54 +1553,61 @@ class RenderNodeTranslatorTests: XCTestCase {
             }
         }
     }
-    
+
     func testAlternateRepresentationsRenderedAsVariants() async throws {
-        let (_, context) = try await loadBundle(catalog: Folder(
-            name: "unit-test.docc",
-            content: [
-                TextFile(name: "Symbol.md", utf8Content: """
-                # ``Symbol``
-                @Metadata {
-                    @AlternateRepresentation(``CounterpartSymbol``)
-                }
-                A symbol extension file defining an alternate representation.
-                """),
-                TextFile(name: "OtherSymbol.md", utf8Content: """
-                # ``OtherSymbol``
-                @Metadata {
-                    @AlternateRepresentation(``MissingCounterpart``)
-                }
-                A symbol extension file defining an alternate representation which doesn't exist.
-                """),
-                TextFile(name: "MultipleSwiftVariantsSymbol.md", utf8Content: """
-                # ``MultipleSwiftVariantsSymbol``
-                @Metadata {
-                    @AlternateRepresentation(``Symbol``)
-                }
-                A symbol extension file defining an alternate representation which is also in Swift.
-                """),
-                JSONFile(
-                    name: "unit-test.swift.symbols.json",
-                    content: makeSymbolGraph(
-                        moduleName: "unit-test",
-                        symbols: [
-                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
-                            makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["OtherSymbol"]),
-                            makeSymbol(id: "multiple-swift-variants-symbol-id", kind: .class, pathComponents: ["MultipleSwiftVariantsSymbol"]),
-                        ]
+        let (_, context) = try await loadBundle(
+            catalog: Folder(
+                name: "unit-test.docc",
+                content: [
+                    TextFile(
+                        name: "Symbol.md",
+                        utf8Content: """
+                            # ``Symbol``
+                            @Metadata {
+                                @AlternateRepresentation(``CounterpartSymbol``)
+                            }
+                            A symbol extension file defining an alternate representation.
+                            """),
+                    TextFile(
+                        name: "OtherSymbol.md",
+                        utf8Content: """
+                            # ``OtherSymbol``
+                            @Metadata {
+                                @AlternateRepresentation(``MissingCounterpart``)
+                            }
+                            A symbol extension file defining an alternate representation which doesn't exist.
+                            """),
+                    TextFile(
+                        name: "MultipleSwiftVariantsSymbol.md",
+                        utf8Content: """
+                            # ``MultipleSwiftVariantsSymbol``
+                            @Metadata {
+                                @AlternateRepresentation(``Symbol``)
+                            }
+                            A symbol extension file defining an alternate representation which is also in Swift.
+                            """),
+                    JSONFile(
+                        name: "unit-test.swift.symbols.json",
+                        content: makeSymbolGraph(
+                            moduleName: "unit-test",
+                            symbols: [
+                                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                                makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["OtherSymbol"]),
+                                makeSymbol(id: "multiple-swift-variants-symbol-id", kind: .class, pathComponents: ["MultipleSwiftVariantsSymbol"]),
+                            ]
+                        ),
+                    ),
+                    JSONFile(
+                        name: "unit-test.occ.symbols.json",
+                        content: makeSymbolGraph(
+                            moduleName: "unit-test",
+                            symbols: [
+                                makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                            ]
+                        ),
                     )
-                ),
-                JSONFile(
-                    name: "unit-test.occ.symbols.json",
-                    content: makeSymbolGraph(
-                        moduleName: "unit-test",
-                        symbols: [
-                            makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
-                        ]
-                    )
-                ),
-            ]
-        ))
+                ]
+            ))
 
         func renderNodeSymbolFromReferencePath(
             referencePath: String
@@ -1520,62 +1617,73 @@ class RenderNodeTranslatorTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, identifier: reference)
             return try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         }
-        
+
         // Assert that CounterpartSymbol's source languages have been added as source languages of Symbol
         var renderNode = try renderNodeSymbolFromReferencePath(referencePath: "/documentation/unit-test/Symbol")
         XCTAssertEqual(renderNode.variants?.count, 2)
-        XCTAssertEqual(renderNode.variants, [
-            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/symbol"]),
-            .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unit-test/counterpartsymbol"])
-        ])
-        
+        XCTAssertEqual(
+            renderNode.variants,
+            [
+                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/symbol"]),
+                .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unit-test/counterpartsymbol"])
+            ])
+
         // Assert that alternate representations which can't be resolved are ignored
         renderNode = try renderNodeSymbolFromReferencePath(referencePath: "/documentation/unit-test/OtherSymbol")
         XCTAssertEqual(renderNode.variants?.count, 1)
-        XCTAssertEqual(renderNode.variants, [
-            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/othersymbol"]),
-        ])
+        XCTAssertEqual(
+            renderNode.variants,
+            [
+                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/othersymbol"]),
+            ])
 
         // Assert that duplicate alternate representations are not added as variants
         renderNode = try renderNodeSymbolFromReferencePath(referencePath: "/documentation/unit-test/MultipleSwiftVariantsSymbol")
         XCTAssertEqual(renderNode.variants?.count, 1)
-        XCTAssertEqual(renderNode.variants, [
-            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/multipleswiftvariantssymbol"]),
-        ])
+        XCTAssertEqual(
+            renderNode.variants,
+            [
+                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/multipleswiftvariantssymbol"]),
+            ])
     }
 
     // Tests if variants are emitted in catalogs with more than one root module.
     func testEmitVariantsInCatalogWithMultipleModules() async throws {
-        let (_, context) = try await loadBundle(catalog: Folder(
-            name: "UnitTest.docc",
-            content: [
-                TextFile(name: "UnitTest.md", utf8Content: """
-                # Unit test
+        let (_, context) = try await loadBundle(
+            catalog: Folder(
+                name: "UnitTest.docc",
+                content: [
+                    TextFile(
+                        name: "UnitTest.md",
+                        utf8Content: """
+                            # Unit test
 
-                @Metadata {
-                  @TechnologyRoot
-                  @SupportedLanguage(swift)
-                  @SupportedLanguage(occ)
-                }
+                            @Metadata {
+                              @TechnologyRoot
+                              @SupportedLanguage(swift)
+                              @SupportedLanguage(occ)
+                            }
 
-                This is an article in a catalog containing a module different from the article-only collection.
-                """),
-                // The correct way to configure a catalog is to have a single
-                // root module. If multiple modules are present, it is not
-                // possible to determine which module an article is supposed to
-                // be registered with. This test includes another module to
-                // verify if the variants are correctly emitted when there is
-                // no sole root module.
-                JSONFile(name: "foo.symbols.json", content: makeSymbolGraph(moduleName: "foo")),
-            ]
-        ))
+                            This is an article in a catalog containing a module different from the article-only collection.
+                            """),
+                    // The correct way to configure a catalog is to have a single
+                    // root module. If multiple modules are present, it is not
+                    // possible to determine which module an article is supposed to
+                    // be registered with. This test includes another module to
+                    // verify if the variants are correctly emitted when there is
+                    // no sole root module.
+                    JSONFile(name: "foo.symbols.json", content: makeSymbolGraph(moduleName: "foo")),
+                ]
+            ))
 
         let article = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/UnitTest")
         XCTAssertEqual(article.variants?.count, 2)
-        XCTAssertEqual(article.variants, [
-            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unittest"]),
-            .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unittest"])
-        ])
+        XCTAssertEqual(
+            article.variants,
+            [
+                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unittest"]),
+                .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unittest"])
+            ])
     }
 
     private func renderNodeArticleFromReferencePath(
@@ -1598,21 +1706,25 @@ struct RenderNodeTranslatorTests_new {
             constraints: [.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "Bar")]
         )
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
-                moduleName: "SomeModule",
-                symbols: [
-                    makeSymbol(id: "s:Foo", kind: .struct, pathComponents: ["Foo"]),
-                    makeSymbol(id: "s:Bar", kind: .struct, pathComponents: ["Bar"]),
-                    makeSymbol(id: "s:x", kind: .method, pathComponents: ["Foo", "x"], otherMixins: [selfIsBar]),
-                    makeSymbol(id: "s:y", kind: .method, pathComponents: ["Foo", "y"], docComment: "See ``Foo/x`` for details."),
-                ],
-                relationships: [
-                    .init(source: "s:x", target: "s:Foo", kind: .memberOf, targetFallback: nil),
-                    .init(source: "s:y", target: "s:Foo", kind: .memberOf, targetFallback: nil),
-                ]
-            )),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                JSONFile(
+                    name: "SomeModule.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "SomeModule",
+                        symbols: [
+                            makeSymbol(id: "s:Foo", kind: .struct, pathComponents: ["Foo"]),
+                            makeSymbol(id: "s:Bar", kind: .struct, pathComponents: ["Bar"]),
+                            makeSymbol(id: "s:x", kind: .method, pathComponents: ["Foo", "x"], otherMixins: [selfIsBar]),
+                            makeSymbol(id: "s:y", kind: .method, pathComponents: ["Foo", "y"], docComment: "See ``Foo/x`` for details."),
+                        ],
+                        relationships: [
+                            .init(source: "s:x", target: "s:Foo", kind: .memberOf, targetFallback: nil),
+                            .init(source: "s:y", target: "s:Foo", kind: .memberOf, targetFallback: nil),
+                        ],
+                    )),
+            ])
 
         let context = try await load(catalog: catalog)
         let bundleID = context.inputs.id

@@ -13,7 +13,7 @@ extension DirectedGraph {
     func breadthFirstSearch(from startingPoint: Node) -> some Sequence<Node> {
         IteratorSequence(GraphNodeIterator(from: startingPoint, traversal: .breadthFirst, in: self))
     }
-    
+
     /// Returns a sequence that traverses the graph in depth first order from a given element, without visiting the same node more than once.
     func depthFirstSearch(from startingPoint: Node) -> some Sequence<Node> {
         IteratorSequence(GraphNodeIterator(from: startingPoint, traversal: .depthFirst, in: self))
@@ -29,20 +29,20 @@ private struct GraphNodeIterator<Node: Hashable>: IteratorProtocol {
     }
     var traversal: Traversal
     var graph: DirectedGraph<Node>
-    
+
     private var nodesToTraverse: [Node]
     private var seen: Set<Node>
-    
+
     init(from startingPoint: Node, traversal: Traversal, in graph: DirectedGraph<Node>) {
         self.traversal = traversal
         self.graph = graph
         self.nodesToTraverse = [startingPoint]
         self.seen = []
     }
-    
+
     private mutating func pop() -> Node? {
         guard !nodesToTraverse.isEmpty else { return nil }
-        
+
         switch traversal {
         case .breadthFirst:
             return nodesToTraverse.removeFirst()
@@ -50,14 +50,14 @@ private struct GraphNodeIterator<Node: Hashable>: IteratorProtocol {
             return nodesToTraverse.removeLast()
         }
     }
-    
+
     mutating func next() -> Node? {
         while let node = pop() {
             guard !seen.contains(node) else { continue }
             seen.insert(node)
-            
+
             nodesToTraverse.append(contentsOf: graph.neighbors(of: node))
-            
+
             return node
         }
         return nil

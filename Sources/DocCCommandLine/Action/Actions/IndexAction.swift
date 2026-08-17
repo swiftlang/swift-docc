@@ -29,23 +29,24 @@ public struct IndexAction: AsyncAction {
         self.diagnosticEngine = diagnosticEngine
         self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: archiveURL))
     }
-    
+
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let diagnostics = try buildIndex()
         diagnosticEngine.emit(diagnostics)
-        
+
         return ActionResult(didEncounterError: diagnostics.containsAnyError, outputs: [outputURL])
     }
-    
+
     private func buildIndex() throws -> [Diagnostic] {
-        let indexBuilder = NavigatorIndex.Builder(archiveURL: archiveURL,
-                                                  outputURL: outputURL,
-                                                  bundleIdentifier: bundleIdentifier,
-                                                  sortRootChildrenByName: true,
-                                                  groupByLanguage: true)
+        let indexBuilder = NavigatorIndex.Builder(
+            archiveURL: archiveURL,
+            outputURL: outputURL,
+            bundleIdentifier: bundleIdentifier,
+            sortRootChildrenByName: true,
+            groupByLanguage: true)
         return indexBuilder.build()
     }
-    
+
 }

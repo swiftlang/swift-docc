@@ -16,7 +16,7 @@ public struct DuplicateTopicsSections: Checker {
     /// The list of second-level headings named "Topics" that the checker encountered while walking the the document.
     public var foundTopicsHeadings = [Heading]()
     private var sourceFile: URL?
-    
+
     /// Creates a new checker that warns about multiple "Topics" sections.
     ///
     /// - Parameter sourceFile: The URL to the documentation file that the checker checks, for diagnostics purposes.
@@ -28,19 +28,20 @@ public struct DuplicateTopicsSections: Checker {
         guard foundTopicsHeadings.count > 1 else {
             return []
         }
-        
+
         // The notes are the same for all diagnostics, so only create them once.
         let first = foundTopicsHeadings[0]
-        let notes: [Diagnostic.Note] = if let sourceFile, let range = first.range {
-            [.init(source: sourceFile, range: range, message: "Topics section starts here")]
-        } else {
-            []
-        }
-        
+        let notes: [Diagnostic.Note] =
+            if let sourceFile, let range = first.range {
+                [.init(source: sourceFile, range: range, message: "Topics section starts here")]
+            } else {
+                []
+            }
+
         let duplicates = foundTopicsHeadings[1...]
         return duplicates.map { duplicateHeading in
             let range = duplicateHeading.range!
-            
+
             return Diagnostic(
                 source: sourceFile,
                 severity: .warning,
@@ -48,20 +49,22 @@ public struct DuplicateTopicsSections: Checker {
                 identifier: "MultipleTopicsSections",
                 summary: "Topics section can only appear once per page",
                 explanation: """
-                A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. \
-                Each page can only have a single Topics section.
-                """,
+                    A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. \
+                    Each page can only have a single Topics section.
+                    """,
                 notes: notes,
                 solutions: [
-                    Solution(summary: "Change heading name", replacements: [
-                        .init(range: range, replacement: "## <#New heading name#>")
-                    ]),
-                    Solution(summary: "Move this section's content under the first Topics section", replacements: []/* It would be nice but complicated to offer a replacement for this */)
+                    Solution(
+                        summary: "Change heading name",
+                        replacements: [
+                            .init(range: range, replacement: "## <#New heading name#>")
+                        ]),
+                    Solution(summary: "Move this section's content under the first Topics section", replacements: [] /* It would be nice but complicated to offer a replacement for this */),
                 ]
             )
         }
     }
-    
+
     public mutating func visitHeading(_ heading: Heading) {
         guard heading.isTopicsSection, heading.parent is Document? else {
             return

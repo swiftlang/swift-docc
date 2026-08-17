@@ -13,7 +13,7 @@ import Foundation
 @testable import SwiftDocC
 
 struct ValidatedURLTests {
-    
+
     @Test(arguments: [
         URL(string: "http://domain")!,
         URL(string: "http://www.domain.com")!,
@@ -47,7 +47,7 @@ struct ValidatedURLTests {
             #expect(validated == nil)
         }
     }
-    
+
     // We need to validate fragment parsing because former approach using `URL`
     // led to failing to parse the fragment for some variants of the test strings below.
     @Test(arguments: [
@@ -59,7 +59,7 @@ struct ValidatedURLTests {
     func accessingFragment(string: String) {
         #expect(ValidatedURL(parsingExact: string)?.components.fragment != nil)
     }
-    
+
     @Test
     func queryIsPartOfPathForAuthoredLinks() throws {
         func validate(linkText: String, expectedPath: String, expectedFragment: String? = nil, sourceLocation: SourceLocation = #_sourceLocation) throws {
@@ -68,56 +68,58 @@ struct ValidatedURLTests {
             #expect(validated.components.path == expectedPath, sourceLocation: sourceLocation)
             #expect(validated.components.fragment == expectedFragment, sourceLocation: sourceLocation)
         }
-        
+
         // Test return type disambiguation
         for linkText in [
             "SymbolName/memberName()->Int?",
             "doc:SymbolName/memberName()->Int?",
             "doc://com.example.test/SymbolName/memberName()->Int?",
         ] {
-            let expectedPath = linkText.hasPrefix("doc://")
+            let expectedPath =
+                linkText.hasPrefix("doc://")
                 ? "/SymbolName/memberName()->Int?"
-                :  "SymbolName/memberName()->Int?"
-            
+                : "SymbolName/memberName()->Int?"
+
             try validate(linkText: linkText, expectedPath: expectedPath)
             try validate(linkText: linkText + "#Heading-Name", expectedPath: expectedPath, expectedFragment: "Heading-Name")
         }
-        
+
         // Test parameter type disambiguation
         for linkText in [
             "SymbolName/memberName(with:and:)-(Int?,_)",
             "doc:SymbolName/memberName(with:and:)-(Int?,_)",
             "doc://com.example.test/SymbolName/memberName(with:and:)-(Int?,_)",
         ] {
-            let expectedPath = linkText.hasPrefix("doc://")
+            let expectedPath =
+                linkText.hasPrefix("doc://")
                 ? "/SymbolName/memberName(with:and:)-(Int?,_)"
-                :  "SymbolName/memberName(with:and:)-(Int?,_)"
-            
+                : "SymbolName/memberName(with:and:)-(Int?,_)"
+
             try validate(linkText: linkText, expectedPath: expectedPath)
             try validate(linkText: linkText + "#Heading-Name", expectedPath: expectedPath, expectedFragment: "Heading-Name")
         }
-        
+
         // Test parameter with percent encoding
         var linkText = "doc://com.example.test/docc=Whats%20New&version=DocC&Title=[Update]"
         var expectedPath = "/docc=Whats%20New&version=DocC&Title=[Update]"
         try validate(linkText: linkText, expectedPath: expectedPath)
-        
+
         // Test parameter with percent encoding at the end of the URL
         linkText = "doc://com.example.test/docc=Whats%20New&version=DocC&Title=[Update]%20"
         expectedPath = "/docc=Whats%20New&version=DocC&Title=[Update]%20"
         try validate(linkText: linkText, expectedPath: expectedPath)
-        
+
         // Test parameter without percent encoding
         linkText = "doc://com.example.test/docc=WhatsNew&version=DocC&Title=[Update]"
         expectedPath = "/docc=WhatsNew&version=DocC&Title=[Update]"
         try validate(linkText: linkText, expectedPath: expectedPath)
-        
+
         // Test parameter with special characters
         linkText = "doc://com.example.test/テスト"
         expectedPath = "/テスト"
         try validate(linkText: linkText, expectedPath: expectedPath)
     }
-    
+
     @Test(arguments: [
         "SymbolName#",
         "doc:SymbolName#",
@@ -126,15 +128,16 @@ struct ValidatedURLTests {
     func parsingAuthoredLinkWithEscapedFragment(baseLink: String) throws {
         let escapedFragment = try #require("💻".addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed))
         #expect(escapedFragment == "%F0%9F%92%BB")
-        
+
         let linkText = baseLink + escapedFragment
-        
-        let expectedPath = linkText.hasPrefix("doc://")
+
+        let expectedPath =
+            linkText.hasPrefix("doc://")
             ? "/SymbolName"
-            :  "SymbolName"
-        
+            : "SymbolName"
+
         let validated = try #require(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
-        
+
         #expect(validated.components.path == expectedPath)
         #expect(validated.components.fragment == "💻")
     }

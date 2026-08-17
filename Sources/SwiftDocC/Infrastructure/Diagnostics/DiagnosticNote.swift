@@ -16,10 +16,10 @@ extension Diagnostic {
     public struct Note {
         /// The source file to associate the message with.
         public var source: URL
-        
+
         /// The range within the source file to associate the message with.
         public var range: SourceRange
-        
+
         /// The plain text supplementary message of this note.
         public var message: String
     }

@@ -15,18 +15,18 @@ import XCTest
 class RESTResponseRenderSectionTests: XCTestCase {
     func value() throws -> RESTResponseRenderSection {
         let jsonData = """
-        {
-            "kind": "restResponses",
-            "title": "",
-            "items": [
-                {
-                    "status": 200,
-                    "reason": "reason",
-                    "type": []
-                }
-            ]
-        }
-        """.data(using: .utf8)!
+            {
+                "kind": "restResponses",
+                "title": "",
+                "items": [
+                    {
+                        "status": 200,
+                        "reason": "reason",
+                        "type": []
+                    }
+                ]
+            }
+            """.data(using: .utf8)!
 
         return try JSONDecoder().decode(RESTResponseRenderSection.self, from: jsonData)
     }
@@ -51,17 +51,17 @@ class RESTResponseRenderSectionTests: XCTestCase {
 
     func valueWithoutReason() throws -> RESTResponseRenderSection {
         let jsonData = """
-        {
-            "kind": "restResponses",
-            "title": "",
-            "items": [
-                {
-                    "status": 200,
-                    "type": []
-                }
-            ]
-        }
-        """.data(using: .utf8)!
+            {
+                "kind": "restResponses",
+                "title": "",
+                "items": [
+                    {
+                        "status": 200,
+                        "type": []
+                    }
+                ]
+            }
+            """.data(using: .utf8)!
 
         return try JSONDecoder().decode(RESTResponseRenderSection.self, from: jsonData)
     }

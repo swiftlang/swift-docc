@@ -17,26 +17,26 @@ import DocCCommon
 class SemaToRenderNodeHTTPRequestTests: XCTestCase {
     func testBaseRenderNodeFromHTTPRequest() async throws {
         let (_, context) = try await testBundleAndContext(named: "HTTPRequests")
-        
-        let expectedPageUSRsAndLanguages: [String : Set<SourceLanguage>] = [
+
+        let expectedPageUSRsAndLanguages: [String: Set<SourceLanguage>] = [
             // Get Artist endpoint - ``Get_Artist``:
             "rest:test:get:v1/artists/{}": [.data],
-            
+
             // Create Artist endpoint - ``Create_Artist``:
             "rest:test:post:v1/artists": [.data],
-            
+
             // Artist dictionary - ``Artist``:
             "data:test:Artist": [.data],
-            
+
             // Module - ``Rest``:
             "HTTPRequests": [.data, .swift],
-            
+
             // Swift class - ``FooSwift``:
             "s:FooSwift": [.swift],
         ]
-        
+
         let expectedPageUSRs: Set<String> = Set(expectedPageUSRsAndLanguages.keys)
-        
+
         let expectedNonPageUSRs: Set<String> = [
             // id path parameter - ``id``:
             "rest:test:get:v1/artists/{}@p=id",
@@ -55,14 +55,14 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             // `userName` upload POST body parameter:
             "rest:test:post:v1/artists@body-multipart/form-data@userName",
         ]
-        
+
         // Verify we have the right number of cached nodes.
         XCTAssertEqual(context.documentationCache.count, expectedPageUSRsAndLanguages.count + expectedNonPageUSRs.count)
-        
+
         // Verify each node matches the expectations.
         for (_, documentationNode) in context.documentationCache {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
-            
+
             if documentationNode.kind.isPage {
                 XCTAssertTrue(
                     expectedPageUSRs.contains(symbolUSR),
@@ -83,7 +83,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         let frameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "HTTPRequests"
         )
-        
+
         assertExpectedContent(
             frameworkRenderNode,
             sourceLanguage: "swift",  // Swift wins default when multiple languages present
@@ -106,15 +106,14 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 "Get Artist",
                 "HTTPRequests",
             ],
-            referenceFragments: [
-            ],
+            referenceFragments: [],
             failureMessage: { fieldName in
                 "'HTTPRequests' module has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         let objcFrameworkNode = try renderNodeApplying(variant: "data", to: frameworkRenderNode)
-        
+
         assertExpectedContent(
             objcFrameworkNode,
             sourceLanguage: "data",
@@ -137,18 +136,17 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 "Get Artist",
                 "HTTPRequests",
             ],
-            referenceFragments: [
-            ],
+            referenceFragments: [],
             failureMessage: { fieldName in
                 "'HTTPRequests' module has unexpected content for '\(fieldName)'."
             }
         )
     }
-    
+
     func testRestGetRequestRenderNodeHasExpectedContent() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "HTTPRequests")
         let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:get:v1/artists/{}")
-        
+
         // swift-format-ignore
         assertExpectedContent(
             getArtistRenderNode,
@@ -188,7 +186,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 "'Get Artist' symbol has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         // Confirm docs for parameters
         let paramItemSets = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTParametersRenderSection)?.parameters }
         XCTAssertEqual(2, paramItemSets.count)
@@ -209,7 +207,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 XCTAssertFalse(items[0].required ?? false)
             }
         }
-        
+
         // Confirm docs for request body
         let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
         XCTAssertNotNil(body)
@@ -217,7 +215,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             XCTAssertEqual(["Simple body."], body.content?.paragraphText)
             XCTAssertEqual("application/json", body.mimeType)
         }
-        
+
         // Confirm docs for responses
         let responses = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTResponseRenderSection)?.responses }.flatMap { $0 }
         XCTAssertEqual(2, responses.count)
@@ -230,11 +228,11 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             XCTAssertEqual(["Success without content."], response.content?.paragraphText)
         }
     }
-    
+
     func testRestPostRequestRenderNodeHasExpectedContent() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "HTTPRequests")
         let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:post:v1/artists")
-        
+
         // swift-format-ignore
         assertExpectedContent(
             getArtistRenderNode,
@@ -266,14 +264,14 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 "'Create Artist' symbol has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         // Confirm docs for request body
         let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
         XCTAssertNotNil(body)
         if let body {
             XCTAssertEqual(["Uploaded payload."], body.content?.paragraphText)
             XCTAssertEqual("multipart/form-data", body.mimeType)
-            
+
             // Confirm docs for body parameters
             let parameters = body.parameters
             XCTAssertNotNil(parameters)
@@ -291,6 +289,6 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 }
             }
         }
-        
+
     }
 }

@@ -11,7 +11,7 @@
 extension DocumentationNode {
     /**
      The annotated name of a node.
-     
+
      Extend this type to transform the name of a node into various forms,
      such as for display as a title or in a task group, or normalized for
      search indexing.
@@ -21,7 +21,7 @@ extension DocumentationNode {
         case conceptual(title: String)
         /// The name of the symbol.
         case symbol(name: String)
-        
+
         public var description: String {
             switch self {
             case .conceptual(let title):
@@ -30,7 +30,7 @@ extension DocumentationNode {
                 return name
             }
         }
-        
+
         var plainText: String {
             description
         }

@@ -16,137 +16,142 @@ import DocCTestUtilities
 class StepTests: XCTestCase {
     func testEmpty() async throws {
         let source = """
-@Step
-"""
+            @Step
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
-        XCTAssertEqual([
-            "org.swift.docc.HasContent",
-        ], diagnostics.map { $0.identifier })
+        XCTAssertEqual(
+            [
+                "org.swift.docc.HasContent",
+            ], diagnostics.map { $0.identifier })
         XCTAssertNotNil(step)
         step.map {
             XCTAssertTrue($0.content.isEmpty)
             XCTAssertTrue($0.caption.isEmpty)
         }
     }
-    
+
     func testValid() async throws {
         let source = """
-@Step {
-   This is the step's content.
+            @Step {
+               This is the step's content.
 
-   This is the step's caption.
+               This is the step's caption.
 
-   > Important: This is important.
-   
-   @Image(source: test.png, alt: "Test image")
-}
-"""
+               > Important: This is important.
+               
+               @Image(source: test.png, alt: "Test image")
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
-            DataFile(name: "test.png", data: Data())
-        ]))
+        let (_, context) = try await loadBundle(
+            catalog: Folder(
+                name: "Something.docc",
+                content: [
+                    DataFile(name: "test.png", data: Data())
+                ]))
         var diagnostics = [Diagnostic]()
         let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertNotNil(step)
-        
+
         let expectedDump = """
-Step @1:1-9:2
-├─ MarkupContainer (1 element)
-└─ MarkupContainer (2 elements)
-"""
-        
+            Step @1:1-9:2
+            ├─ MarkupContainer (1 element)
+            └─ MarkupContainer (2 elements)
+            """
+
         let expectedContentDump = """
-├─ Paragraph @2:4-2:31
-│  └─ Text @2:4-2:31 "This is the step’s content."
-"""
-        
+            ├─ Paragraph @2:4-2:31
+            │  └─ Text @2:4-2:31 "This is the step’s content."
+            """
+
         let expectedCaptionDump = """
-├─ Paragraph @4:4-4:31
-│  └─ Text @4:4-4:31 "This is the step’s caption."
-"""
-        
+            ├─ Paragraph @4:4-4:31
+            │  └─ Text @4:4-4:31 "This is the step’s caption."
+            """
+
         step.map { step in
             XCTAssertEqual(expectedDump, step.dump())
-            
+
             XCTAssertEqual(1, step.content.count)
             step.content.first.map { content in
                 XCTAssertEqual(expectedContentDump, content.debugDescription(options: .printSourceLocations))
             }
-            
+
             XCTAssertEqual(2, step.caption.count)
             step.caption.first.map { caption in
                 XCTAssertEqual(expectedCaptionDump, caption.debugDescription(options: .printSourceLocations))
             }
         }
     }
-    
+
     func testExtraneousContent() async throws {
         let source = """
-@Step {
-   This is the step's content.
-   
-   @Image(source: test.png, alt: "Test image")
+            @Step {
+               This is the step's content.
+               
+               @Image(source: test.png, alt: "Test image")
 
-   - A
-   - B
+               - A
+               - B
 
-   This is the step's caption.
+               This is the step's caption.
 
-   > Important: This is not extraneous.
+               > Important: This is not extraneous.
 
-   This is an extranous paragraph.
+               This is an extranous paragraph.
 
-   > Note: More than one aside is technically allowed per design.
-}
-"""
+               > Note: More than one aside is technically allowed per design.
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
         var diagnostics = [Diagnostic]()
         let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertEqual(2, diagnostics.count)
-        
-        XCTAssertEqual([
-            "org.swift.docc.Step.ExtraneousContent",
-            "org.swift.docc.Step.ExtraneousContent",
-        ], diagnostics.map { $0.identifier })
-        
+
+        XCTAssertEqual(
+            [
+                "org.swift.docc.Step.ExtraneousContent",
+                "org.swift.docc.Step.ExtraneousContent",
+            ], diagnostics.map { $0.identifier })
+
         XCTAssertNotNil(step)
-        
-                let expectedDump = """
-Step @1:1-16:2
-├─ MarkupContainer (1 element)
-└─ MarkupContainer (3 elements)
-"""
-        
+
+        let expectedDump = """
+            Step @1:1-16:2
+            ├─ MarkupContainer (1 element)
+            └─ MarkupContainer (3 elements)
+            """
+
         let expectedContentDump = """
-├─ Paragraph @2:4-2:31
-│  └─ Text @2:4-2:31 "This is the step’s content."
-"""
-        
+            ├─ Paragraph @2:4-2:31
+            │  └─ Text @2:4-2:31 "This is the step’s content."
+            """
+
         let expectedCaptionDump = """
-├─ Paragraph @9:4-9:31
-│  └─ Text @9:4-9:31 "This is the step’s caption."
-├─ BlockQuote @11:4-11:40
-│  └─ Paragraph @11:6-11:40
-│     └─ Text @11:6-11:40 "Important: This is not extraneous."
-└─ BlockQuote @15:4-15:66
-└─ Paragraph @15:6-15:66
-   └─ Text @15:6-15:66 "Note: More than one aside is technically allowed per design."
-"""
-        
+            ├─ Paragraph @9:4-9:31
+            │  └─ Text @9:4-9:31 "This is the step’s caption."
+            ├─ BlockQuote @11:4-11:40
+            │  └─ Paragraph @11:6-11:40
+            │     └─ Text @11:6-11:40 "Important: This is not extraneous."
+            └─ BlockQuote @15:4-15:66
+            └─ Paragraph @15:6-15:66
+               └─ Text @15:6-15:66 "Note: More than one aside is technically allowed per design."
+            """
+
         step.map { step in
             XCTAssertEqual(expectedDump, step.dump())
-            
+
             XCTAssertEqual(1, step.content.count)
             XCTAssertEqual(expectedContentDump, step.content.elements.map { $0.debugDescription(options: .printSourceLocations) }.joined(separator: "\n"))
-            
+
             XCTAssertEqual(3, step.caption.count)
             XCTAssertEqual(expectedCaptionDump, step.caption.elements.map { $0.debugDescription(options: .printSourceLocations) }.joined(separator: "\n"))
         }

@@ -18,9 +18,9 @@ class HasExactlyOneTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let (bundle, _) = try await testBundleAndContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, diagnostics: &diagnostics)
@@ -39,19 +39,19 @@ class HasExactlyOneTests: XCTestCase {
             }
         }
     }
-    
+
     func testHasOne() async throws {
         let source = """
-@Parent {
-   @Child
-}
-"""
+            @Parent {
+               @Child
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let (bundle, _) = try await testBundleAndContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, diagnostics: &diagnostics)
@@ -60,21 +60,21 @@ class HasExactlyOneTests: XCTestCase {
             XCTAssertTrue(diagnostics.isEmpty)
         }
     }
-    
+
     func testHasMany() async throws {
         let source = """
-@Parent {
-   @Child
-   @Child
-   @Child
-}
-"""
+            @Parent {
+               @Child
+               @Child
+               @Child
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let (bundle, _) = try await testBundleAndContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, diagnostics: &diagnostics)
@@ -82,28 +82,29 @@ class HasExactlyOneTests: XCTestCase {
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertEqual(2, diagnostics.count)
             XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasExactlyOne<Parent, \(TestChild.self)>.DuplicateChildren")
-            XCTAssertEqual(diagnostics.last?.identifier,  "org.swift.docc.HasExactlyOne<Parent, \(TestChild.self)>.DuplicateChildren")
+            XCTAssertEqual(diagnostics.last?.identifier, "org.swift.docc.HasExactlyOne<Parent, \(TestChild.self)>.DuplicateChildren")
             XCTAssert(diagnostics.allSatisfy { $0.severity == .error })
-            XCTAssertEqual("""
-                 error: Duplicate 'Child' child directive
-                 The 'Parent' directive must have exactly one 'Child' child directive
-                 """, diagnostics.first.map { DiagnosticConsoleWriter.formattedDescription(for: $0, options: .formatConsoleOutputForTools) }
+            XCTAssertEqual(
+                """
+                error: Duplicate 'Child' child directive
+                The 'Parent' directive must have exactly one 'Child' child directive
+                """, diagnostics.first.map { DiagnosticConsoleWriter.formattedDescription(for: $0, options: .formatConsoleOutputForTools) }
             )
         }
     }
-    
+
     func testAlternateDirectiveTitle() async throws {
         let source = """
-@AlternateParent {
-   @AlternateChild
-}
-"""
+            @AlternateParent {
+               @AlternateChild
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let (bundle, _) = try await testBundleAndContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, diagnostics: &diagnostics)

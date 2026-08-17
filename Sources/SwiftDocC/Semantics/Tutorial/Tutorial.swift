@@ -15,11 +15,11 @@ public import Markdown
 public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted, Titled, Timed, Redirected {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// The estimated time in minutes that the containing ``Tutorial`` will take.
     @DirectiveArgumentWrapped(name: .custom("time"))
     public private(set) var durationMinutes: Int? = nil
-    
+
     /// Project files to download to get started with the ``Tutorial``.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
@@ -27,11 +27,11 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
         }
     )
     public private(set) var projectFiles: ResourceReference? = nil
-    
+
     /// Informal requirements to complete the ``Tutorial``.
     @ChildDirective(requirements: .zeroOrOne)
     public private(set) var requirements: [XcodeRequirement]
-    
+
     /// The Intro section, representing a slide that introduces the tutorial.
     @ChildDirective
     public private(set) var intro: Intro
@@ -39,40 +39,37 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
     /// All of the sections to complete to finish the tutorial.
     @ChildDirective(requirements: .oneOrMore)
     public private(set) var sections: [TutorialSection]
-    
+
     /// The linkable parts of the tutorial.
     ///
     /// Allows you to direct link to discrete sections within a tutorial.
     public var landmarks: [any Landmark] {
         return sections
     }
-    
+
     /// A section containing various questions to test the reader's knowledge.
     @ChildDirective
     public private(set) var assessments: Assessments? = nil
-    
+
     /// An image for the final call to action, which directs the reader to the starting point to learn about this category.
     @ChildDirective
     public private(set) var callToActionImage: ImageMedia? = nil
-    
+
     public var abstract: Paragraph? {
         return intro.content.first as? Paragraph
     }
-    
+
     public var title: String? {
         return intro.title
     }
-    
+
     override var children: [Semantic] {
-        return [intro] +
-            requirements as [Semantic] +
-            sections as [Semantic] +
-            (assessments.map({ [$0] }) ?? [])
+        return [intro] + requirements as [Semantic] + sections as [Semantic] + (assessments.map({ [$0] }) ?? [])
     }
-    
+
     @ChildDirective
     public private(set) var redirects: [Redirect]? = nil
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "durationMinutes"   :   \Tutorial._durationMinutes,
@@ -84,7 +81,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
         "callToActionImage" :   \Tutorial._callToActionImage,
         "redirects"         :   \Tutorial._redirects,
     ]
-    
+
     init(originalMarkup: BlockDirective, durationMinutes: Int?, projectFiles: ResourceReference?, requirements: [XcodeRequirement], intro: Intro, sections: [TutorialSection], assessments: Assessments?, callToActionImage: ImageMedia?, redirects: [Redirect]?) {
         self.originalMarkup = originalMarkup
         self.durationMinutes = durationMinutes
@@ -97,12 +94,12 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
         self.callToActionImage = callToActionImage
         self.redirects = redirects
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
-    
+
     func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         var seenSectionTitles = [String: SourceRange]()
         sections = sections.filter { section -> Bool in
@@ -119,10 +116,10 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
             seenSectionTitles[section.title] = thisTitleRange
             return true
         }
-        
+
         return true
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitTutorial(self)
     }
@@ -135,22 +132,28 @@ extension Tutorial {
         if let project = try? context.entity(with: node.reference).semantic as? Tutorial, let projectFiles = project.projectFiles {
             if context.resolveAsset(named: projectFiles.url.lastPathComponent, in: node.reference) == nil {
                 // The project download file is not found.
-                engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Project.ProjectFilesNotFound",
-                    summary: "\(projectFiles.path) file reference not found in \(Tutorial.directiveName.singleQuoted) directive", solutions: [
-                        Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
-                    ]
-                ))
+                engine.emit(
+                    Diagnostic(
+                        source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Project.ProjectFilesNotFound",
+                        summary: "\(projectFiles.path) file reference not found in \(Tutorial.directiveName.singleQuoted) directive",
+                        solutions: [
+                            Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
+                        ]
+                    ))
             }
         }
-        
+
         let tutorialTableOfContentsParent = context.parents(of: node.reference)
             .compactMap({ context.topicGraph.nodeWithReference($0) })
             .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
         guard tutorialTableOfContentsParent != nil else {
-            engine.emit(Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents", solutions: [
-                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
-                ]
-            ))
+            engine.emit(
+                Diagnostic(
+                    source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents",
+                    solutions: [
+                        Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
+                    ]
+                ))
             return
         }
     }

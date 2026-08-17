@@ -52,7 +52,8 @@ struct SymbolLinkCollector: MarkupWalker {
 
     func visitSymbolLink(_ symbolLink: SymbolLink) {
         if let destination = symbolLink.destination,
-           let symbol = context.referenceIndex[destination] {
+            let symbol = context.referenceIndex[destination]
+        {
             context.articleSymbolMentions.article(article, didMention: symbol, weight: baseWeight)
         }
     }

@@ -17,7 +17,7 @@ public enum IndexingError: DescribedError {
      have a useful search record.
      */
     case missingTitle(ResolvedTopicReference)
-    
+
     public var errorDescription: String {
         switch self {
         case let .missingTitle(topicReference):

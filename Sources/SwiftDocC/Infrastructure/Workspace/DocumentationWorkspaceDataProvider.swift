@@ -10,20 +10,19 @@
 
 public import Foundation
 
-
 /// Options to configure the discovery of documentation bundles
 public struct BundleDiscoveryOptions {
     // When adding new configuration, remember to include a default value in the initializer so that an options
     // value can be created without passing any arguments, resulting in the "default" configuration.
     //
     // The provider uses the default configuration in the `DocumentationWorkspaceDataProvider.bundles()` function.
-    
+
     /// Fallback values for information that's missing in the bundle's Info.plist file.
     public let infoPlistFallbacks: [String: Any]
-    
+
     /// Additional symbol graph files that the provider should include in the discovered bundles.
     public let additionalSymbolGraphFiles: [URL]
-    
+
     /// Creates a new options value with the given configurations.
     ///
     /// - Parameters:
@@ -36,7 +35,7 @@ public struct BundleDiscoveryOptions {
         self.infoPlistFallbacks = infoPlistFallbacks
         self.additionalSymbolGraphFiles = additionalSymbolGraphFiles
     }
-    
+
     /// Creates new bundle discovery options with the provided documentation bundle info
     /// as Info.plist fallback values.
     ///
@@ -50,17 +49,17 @@ public struct BundleDiscoveryOptions {
         // Use JSONEncoder to dynamically create the Info.plist fallback
         // dictionary the `BundleDiscoveryOption`s expect from given DocumentationBundle.Info
         // model.
-        
+
         let data = try JSONEncoder().encode(fallbackInfo)
         let serializedFallbackInfo = try JSONSerialization.jsonObject(with: data)
-        
+
         guard let fallbackInfoDictionary = serializedFallbackInfo as? [String: Any] else {
             throw DocumentationBundle.Info.Error.wrongType(
                 expected: [String: Any].Type.self,
                 actual: type(of: serializedFallbackInfo)
             )
         }
-        
+
         self.init(
             infoPlistFallbacks: fallbackInfoDictionary,
             additionalSymbolGraphFiles: additionalSymbolGraphFiles

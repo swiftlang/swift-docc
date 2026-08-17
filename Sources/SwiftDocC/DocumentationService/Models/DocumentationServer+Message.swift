@@ -17,18 +17,18 @@ public extension DocumentationServer {
         ///
         /// The message type is used to determine which service should process the message.
         public var type: MessageType
-        
+
         /// The identifier of the message.
         public var identifier: String
-        
+
         /// The payload of the message.
         ///
         /// The payload's encoding format is determine by the service that processes messages of its type.
         public var payload: Data?
-        
+
         /// Closure that generates a random identifier.
         public static var randomIdentifierGenerator: () -> String = { UUID().uuidString }
-        
+
         /// Creates a documentation service message.
         ///
         /// - Parameters:
@@ -44,7 +44,7 @@ public extension DocumentationServer {
             self.identifier = identifier
             self.payload = payload
         }
-        
+
         /// Creates a documentation service message.
         ///
         /// - Parameters:

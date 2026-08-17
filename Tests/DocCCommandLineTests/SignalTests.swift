@@ -15,9 +15,11 @@ class SignalTests: XCTestCase {
     /// The path to the built products directory.
     private var productDirectory: URL {
         #if !os(Linux) && !os(Android)
-        guard let xcTestBundle = Bundle.allBundles.first(where: { bundle in
-            bundle.bundleURL.pathExtension == "xctest"
-        }) else {
+        guard
+            let xcTestBundle = Bundle.allBundles.first(where: { bundle in
+                bundle.bundleURL.pathExtension == "xctest"
+            })
+        else {
             fatalError("Couldn't find the products directory.")
         }
         return xcTestBundle.bundleURL.deletingLastPathComponent()
@@ -25,14 +27,14 @@ class SignalTests: XCTestCase {
         return Bundle.main.bundleURL
         #endif
     }
-    
+
     /// Runs `signal-test-app` and confirms that it exits with code 99.
     ///
     /// `signal-test-app` sends a kill signal to itself and uses ``Signal`` to intercept that signal
     /// and set the exit code to 99.
     func testTrappingSignal() throws {
         let signalTestAppPath = productDirectory.appendingPathComponent("signal-test-app").path
-        
+
         // This is a workaround (r69892261) to address situations where the `signal-test-app`
         // executable this test relies on has not been built.
         //
@@ -46,7 +48,7 @@ class SignalTests: XCTestCase {
             The executable ('signal-test-app') required for this test was not found.
             It is built as a part of the overall 'SwiftDocC-Package' scheme in Xcode."
             """)
-        
+
         // Run signal test app.
         let runSignalTestApp = Process()
         runSignalTestApp.executableURL = URL(fileURLWithPath: "/bin/bash")
@@ -58,6 +60,6 @@ class SignalTests: XCTestCase {
             return
         }
     }
-    
+
     #endif
 }

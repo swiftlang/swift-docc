@@ -18,14 +18,16 @@ struct DiagnosticFileWriterTests {
     @Test
     func writesFileOnlyWhenFinalized() throws {
         let testFileSystem = try TestFileSystem(folders: [
-            Folder(name: "path", content: [
-                Folder(name: "to", content: [])
-            ])
+            Folder(
+                name: "path",
+                content: [
+                    Folder(name: "to", content: [])
+                ])
         ])
-        
+
         let diagnosticFileURL = URL(fileURLWithPath: "/path/to/some-custom-diagnostics-file.json")
         let writer = DiagnosticFileWriter(outputPath: diagnosticFileURL, fileManager: testFileSystem)
-        
+
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
         let identifier = "test-identifier"
@@ -33,52 +35,52 @@ struct DiagnosticFileWriterTests {
         let summary = "Test diagnostic summary"
         let solutionSummary = "Test solution summary"
         let explanation = "Test diagnostic explanation."
-        
+
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
         let replacement = Solution.Replacement(range: replacementRange, replacement: "Replacement text")
-        
+
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, groupIdentifier: groupIdentifier, summary: summary, explanation: explanation, solutions: [solution])
-            
+
             writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
-        
+
         do {
             let firstSolutionSummary = "Test first solution summary!"  // end with punctuation
-            let secondSolutionSummary = "Test second solution summary" // end without punctuation
+            let secondSolutionSummary = "Test second solution summary"  // end without punctuation
             let firstSolution = Solution(summary: firstSolutionSummary, replacements: [replacement])
             let secondSolution = Solution(summary: secondSolutionSummary, replacements: [])
-            
+
             let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [firstSolution, secondSolution])
-            
+
             writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
-        
+
         let firstInsertRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 8, source: source)
         let secondInsertRange = SourceLocation(line: 1, column: 14, source: source)..<SourceLocation(line: 1, column: 14, source: source)
         let firstReplacement = Solution.Replacement(range: firstInsertRange, replacement: "ABC")
         let secondReplacement = Solution.Replacement(range: secondInsertRange, replacement: "abc")
-        
+
         do {
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
-            
+
             let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
-            
+
             writer.receive([diagnostic])
             #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
-        
+
         try writer.flush()
         #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path))
-        
+
         let diagnosticFile = try JSONDecoder().decode(DiagnosticFile.self, from: testFileSystem.contents(of: diagnosticFileURL))
-        
+
         #expect(diagnosticFile.version == DiagnosticFile.currentVersion)
         #expect(diagnosticFile.diagnostics.count == 3)
-        
+
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.first)
             #expect(diagnostic.id == identifier)
@@ -103,7 +105,7 @@ struct DiagnosticFileWriterTests {
             #expect(replacement.range.end.column == replacementRange.upperBound.column)
             #expect(diagnostic.notes.count == 0, "Found unexpected notes: \(diagnostic.notes)")
         }
-        
+
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst().first)
             #expect(diagnostic.id == identifier)
@@ -135,7 +137,7 @@ struct DiagnosticFileWriterTests {
             }
             #expect(diagnostic.notes.count == 0, "Found unexpected notes: \(diagnostic.notes)")
         }
-        
+
         do {
             let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst(2).first)
             #expect(diagnostic.id == identifier)
@@ -171,29 +173,29 @@ struct DiagnosticFileWriterTests {
             #expect(diagnostic.notes.count == 0, "Found unexpected notes: \(diagnostic.notes)")
         }
     }
-    
+
     @Test
     func throwsErrorAboutUnsupportedVersionForDecoding() throws {
         let version1_0_0 = SemanticVersion(major: 1, minor: 0, patch: 0)
         let version1_0_1 = SemanticVersion(major: 1, minor: 0, patch: 1)
         let version1_2_3 = SemanticVersion(major: 1, minor: 2, patch: 3)
         let version2_0_0 = SemanticVersion(major: 2, minor: 0, patch: 0)
-        
+
         try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_0)
         try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_1)
         try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_2_3)
         #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version1_0_0, current: version2_0_0) }
-        
+
         try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_0_0)
         try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_0_1)
         try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_2_3)
         #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version1_0_1, current: version2_0_0) }
-        
+
         try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_0_0)
         try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_0_1)
         try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_2_3)
         #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version1_2_3, current: version2_0_0) }
-        
+
         #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_0_0) }
         #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_0_1) }
         #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_2_3) }

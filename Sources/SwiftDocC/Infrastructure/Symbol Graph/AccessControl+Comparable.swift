@@ -30,10 +30,11 @@ extension SymbolKit.SymbolGraph.Symbol.AccessControl: Swift.Comparable {
             return nil
         }
     }
-    
+
     public static func < (lhs: SymbolGraph.Symbol.AccessControl, rhs: SymbolGraph.Symbol.AccessControl) -> Bool {
         guard let lhs = lhs.level,
-              let rhs = rhs.level else {
+            let rhs = rhs.level
+        else {
             return false
         }
         return lhs < rhs

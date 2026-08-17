@@ -21,13 +21,13 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
     public static var baseURL: URL {
         get { URL(string: "/\(locationName)/")! }
         @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
-        set { /* Do nothing */ }
+        set { /* Do nothing */  }
     }
-    
+
     public var type: RenderReferenceType = .download
-    
+
     public var identifier: RenderReferenceIdentifier
-    
+
     /// The location of the downloadable resource.
     public var url: URL
 
@@ -40,7 +40,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
 
     /// The SHA512 hash value for the resource.
     public var checksum: String?
-    
+
     /// Creates a new reference to a downloadable resource.
     ///
     /// - Parameters:
@@ -87,7 +87,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
         try container.encode(checksum, forKey: .checksum)
-        
+
         // Render URL
         if !encodeUrlVerbatim {
             try container.encode(renderURL(for: url, prefixComponent: encoder.assetPrefixComponent), forKey: .url)

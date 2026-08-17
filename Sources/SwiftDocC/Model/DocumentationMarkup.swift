@@ -64,7 +64,7 @@ struct DocumentationMarkup {
         static func < (lhs: DocumentationMarkup.ParserSection, rhs: DocumentationMarkup.ParserSection) -> Bool {
             return lhs.rawValue < rhs.rawValue
         }
-        
+
         case title
         case abstract
         case discussion
@@ -72,35 +72,35 @@ struct DocumentationMarkup {
         case seeAlso
         case end
     }
-    
+
     private static let allowedSectionsForDeprecationSummary = [
         ParserSection.abstract,
         ParserSection.discussion,
     ]
 
     // MARK: - Parsed Data
-    
+
     /// The documentation title, if found.
     private(set) var titleHeading: Heading?
-    
+
     /// The documentation abstract, if found.
     private(set) var abstractSection: AbstractSection?
 
     /// The documentation Discussion section, if found.
     private(set) var discussionSection: DiscussionSection?
-    
+
     /// The documentation tags, if found.
     private(set) var discussionTags: TaggedListItemExtractor?
-    
+
     /// The documentation Topics section, if found.
     private(set) var topicsSection: TopicsSection?
 
     /// The documentation See Also, if found.
     private(set) var seeAlsoSection: SeeAlsoSection?
-    
+
     /// The symbol deprecation information, if found.
     private(set) var deprecation: MarkupContainer?
-    
+
     // MARK: - Initialize and parse the markup
 
     /// Initialize a documentation model with the given markup.
@@ -109,16 +109,16 @@ struct DocumentationMarkup {
     ///   - parseUpToSection: Documentation past this section will be ignored.
     init(markup: any Markup, parseUpToSection: ParserSection = .end) {
         self.markup = markup
-        
+
         // The current documentation section being parsed.
         var currentSection = ParserSection.title
-        
+
         // Tracking the start indexes of various sections.
         var discussionIndex: Int?
         var topicsIndex: Int?
         var topicsFirstTaskGroupIndex: Int?
         var seeAlsoIndex: Int?
-        
+
         // Index all headings as a lookup during parsing the content
         for (index, child) in markup.children.enumerated() {
             // If we've parsed the last section we're interested in, skip through the rest
@@ -126,35 +126,35 @@ struct DocumentationMarkup {
                 continue
             }
             let isLastChild = index == (markup.childCount - 1)
-            
+
             // Already parsed all expected content.
             guard currentSection != .end else {
                 continue
             }
-            
+
             // Parse an H1 title, if found.
             if currentSection == .title {
                 currentSection = .abstract
-                
+
                 // Index the title child node.
                 if let heading = child as? Heading, heading.level == 1 {
                     titleHeading = heading
                     continue
                 }
             }
-            
+
             // The deprecation summary directive is allowed to have an effect in multiple sections of the content.
             if let directive = child as? BlockDirective,
-               directive.name == DeprecationSummary.directiveName,
-               Self.allowedSectionsForDeprecationSummary.contains(currentSection)
+                directive.name == DeprecationSummary.directiveName,
+                Self.allowedSectionsForDeprecationSummary.contains(currentSection)
             {
                 deprecation = MarkupContainer(directive.children)
                 if isLastChild, currentSection == .discussion, let discussionIndex {
-                    finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
+                    finalizeDiscussion(over: markup.children(at: discussionIndex..<index))
                 }
                 continue
             }
-            
+
             // Parse an abstract, if found
             if currentSection == .abstract {
                 if abstractSection == nil, let firstParagraph = child as? Paragraph {
@@ -177,7 +177,7 @@ struct DocumentationMarkup {
                     currentSection = .discussion
                 }
             }
-            
+
             // Parse a discussion, if found
             if currentSection == .discussion {
                 // Scanning for the first discussion content child
@@ -194,37 +194,37 @@ struct DocumentationMarkup {
                         default: break
                         }
                     }
-                    
+
                     // Discussion content starts at this index
                     discussionIndex = index
                 }
-                
+
                 guard let discussionIndex else {
                     continue
                 }
-                
+
                 // Level 2 heading found inside discussion
                 if let heading = child as? Heading, heading.level == 2 {
                     switch heading.plainText {
                     case TopicsSection.title:
-                        finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
+                        finalizeDiscussion(over: markup.children(at: discussionIndex..<index))
                         currentSection = .topics
                         continue
-                        
+
                     case SeeAlsoSection.title:
-                        finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
+                        finalizeDiscussion(over: markup.children(at: discussionIndex..<index))
                         currentSection = .seeAlso
                         continue
                     default: break
                     }
                 }
-                
+
                 // If at end of content, parse discussion
                 if isLastChild {
-                    finalizeDiscussion(over: markup.children(at: discussionIndex ... index))
+                    finalizeDiscussion(over: markup.children(at: discussionIndex...index))
                 }
             }
-            
+
             if currentSection == .topics {
                 if let heading = child as? Heading {
                     // Level 2 heading found inside Topics
@@ -232,7 +232,7 @@ struct DocumentationMarkup {
                         switch heading.plainText {
                         case SeeAlsoSection.title:
                             if let topicsIndex, topicsFirstTaskGroupIndex != nil {
-                                topicsSection = TopicsSection(content: markup.children(at: topicsIndex ..< index))
+                                topicsSection = TopicsSection(content: markup.children(at: topicsIndex..<index))
                             }
                             currentSection = .seeAlso
                             continue
@@ -251,12 +251,12 @@ struct DocumentationMarkup {
                 } else if child is Paragraph {
                     topicsFirstTaskGroupIndex = index
                 }
-                
+
                 if topicsIndex == nil { topicsIndex = index }
-                
+
                 // If at end of content, parse topics
                 if isLastChild && topicsFirstTaskGroupIndex != nil {
-                    topicsSection = TopicsSection(content: markup.children(at: topicsIndex! ... index))
+                    topicsSection = TopicsSection(content: markup.children(at: topicsIndex!...index))
                 }
             }
 
@@ -264,17 +264,17 @@ struct DocumentationMarkup {
                 // Level 2 heading found inside See Also
                 if child is Heading {
                     if let seeAlsoIndex {
-                        seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex ..< index))
+                        seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex..<index))
                     }
                     currentSection = .end
                     continue
                 }
-                
+
                 if seeAlsoIndex == nil { seeAlsoIndex = index }
-                
+
                 // If at end of content, parse topics
                 if isLastChild {
-                    seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex! ... index))
+                    seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex!...index))
                 }
             }
         }
@@ -313,7 +313,7 @@ extension Markup {
         var iterator = children.makeIterator()
         var counter = 0
         var result = [any Markup]()
-        
+
         while let next = iterator.next() {
             defer { counter += 1 }
             guard counter <= range.upperBound else { break }
@@ -330,7 +330,7 @@ extension Markup {
         var iterator = children.makeIterator()
         var counter = 0
         var result = [any Markup]()
-        
+
         while let next = iterator.next() {
             defer { counter += 1 }
             guard counter < range.upperBound else { break }

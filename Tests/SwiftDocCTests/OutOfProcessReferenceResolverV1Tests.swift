@@ -19,48 +19,52 @@ import DocCCommon
 // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
 @available(*, deprecated)
 class OutOfProcessReferenceResolverV1Tests: XCTestCase {
-    
+
     func testInitializationProcess() throws {
         #if os(macOS)
         let temporaryFolder = try createTemporaryDirectory()
-        
+
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         // When the executable file doesn't exist
         XCTAssertFalse(FileManager.default.fileExists(atPath: executableLocation.path))
-        XCTAssertThrowsError(try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in }),
-                        "There should be a validation error if the executable file doesn't exist")
-        
+        XCTAssertThrowsError(
+            try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in }),
+            "There should be a validation error if the executable file doesn't exist")
+
         // When the file isn't executable
         try "".write(to: executableLocation, atomically: true, encoding: .utf8)
         XCTAssertFalse(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-        XCTAssertThrowsError(try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in }),
-                        "There should be a validation error if the file isn't executable")
-        
+        XCTAssertThrowsError(
+            try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in }),
+            "There should be a validation error if the file isn't executable")
+
         // When the file isn't executable
         try """
         #!/bin/bash
         echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
         read                                            # Wait for docc to send a topic URL
         """.write(to: executableLocation, atomically: true, encoding: .utf8)
-        
+
         // `0o0700` is `-rwx------` (read, write, & execute only for owner)
         try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-         
-        let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { errorMessage in
-            XCTFail("No error output is expected for this test executable. Got:\n\(errorMessage)")
-        })
+
+        let resolver = try OutOfProcessReferenceResolver(
+            processLocation: executableLocation,
+            errorOutputHandler: { errorMessage in
+                XCTFail("No error output is expected for this test executable. Got:\n\(errorMessage)")
+            })
         XCTAssertEqual(resolver.bundleID, "com.test.bundle")
         #endif
     }
-    
+
     private func assertResolvesTopicLink(makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver) throws {
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
             kind: .function,
             url: URL(string: "doc://com.test.bundle/something")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
-            language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
+            language: .swift,  // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
             availableLanguages: [
                 .swift,
                 .init(name: "Language Name 2", id: "com.test.another-language.id"),
@@ -89,10 +93,10 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 )
             ]
         )
-        
+
         let resolver = try makeResolver(testMetadata)
         XCTAssertEqual(resolver.bundleID, "com.test.bundle")
-        
+
         // Resolve the reference
         let unresolved = TopicReference.unresolved(
             UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!))
@@ -100,36 +104,36 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             XCTFail("Unexpectedly failed to resolve reference")
             return
         }
-        
+
         // Resolve the symbol
         let entity = resolver.entity(with: resolvedReference)
         let topicRenderReference = entity.makeTopicRenderReference()
-        
+
         XCTAssertEqual(topicRenderReference.url, testMetadata.url.withoutHostAndPortAndScheme().absoluteString)
-        
+
         XCTAssertEqual(topicRenderReference.kind.rawValue, "symbol")
         XCTAssertEqual(topicRenderReference.role, "symbol")
-        
+
         XCTAssertEqual(topicRenderReference.title, "Resolved Title")
         XCTAssertEqual(topicRenderReference.abstract, [.text("Resolved abstract for this topic.")])
 
         XCTAssertFalse(topicRenderReference.isBeta)
-        
+
         XCTAssertEqual(entity.availableLanguages.count, 3)
 
         let availableSourceLanguages = entity.availableLanguages.sorted()
         let expectedLanguages = testMetadata.availableLanguages.sorted()
-        
+
         XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
         XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
-        
+
         XCTAssertEqual(topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
 
         let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
         XCTAssertEqual(topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
         XCTAssertEqual(topicRenderReference.abstractVariants.value(for: variantTraits), [.text("Resolved variant abstract for this topic.")])
-        
+
         let fragmentVariant = try XCTUnwrap(topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
         XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
         if case .replace(let variantFragment) = fragmentVariant.patch.first {
@@ -137,70 +141,71 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         } else {
             XCTFail("Unexpected fragments variant patch")
         }
-        
+
         XCTAssertEqual(entity.kind, .function)
     }
-    
+
     func testResolvingTopicLinkProcess() throws {
         #if os(macOS)
         try assertResolvesTopicLink(makeResolver: { testMetadata in
             let temporaryFolder = try createTemporaryDirectory()
             let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
-            
+
             let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
-            
+
             try """
             #!/bin/bash
             echo '{"bundleIdentifier":"com.test.bundle"}'       # Write this resolver's bundle identifier
             read                                                # Wait for docc to send a topic URL
             echo '{"resolvedInformation":\(encodedMetadata)}'   # Respond with the test metadata (above)
             """.write(to: executableLocation, atomically: true, encoding: .utf8)
-            
+
             // `0o0700` is `-rwx------` (read, write, & execute only for owner)
             try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
             XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-             
+
             return try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
         })
-        
+
         #endif
     }
-    
+
     func testResolvingTopicLinkService() throws {
         try assertResolvesTopicLink(makeResolver: { testMetadata in
             let server = DocumentationServer()
-            server.register(service: MockService { message in
-                XCTAssertEqual(message.type, "resolve-reference")
-                XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
-                do {
-                    let payload = try XCTUnwrap(message.payload)
-                    let request = try JSONDecoder()
-                        .decode(
-                            ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
-                            from: payload
+            server.register(
+                service: MockService { message in
+                    XCTAssertEqual(message.type, "resolve-reference")
+                    XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+                    do {
+                        let payload = try XCTUnwrap(message.payload)
+                        let request = try JSONDecoder()
+                            .decode(
+                                ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                                from: payload
+                            )
+
+                        XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
+
+                        guard case .topic(let url) = request.payload else {
+                            XCTFail("Unexpected request")
+                            return nil
+                        }
+
+                        XCTAssertEqual(url, URL(string: "doc://com.test.bundle/something")!)
+
+                        let response = DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata))
                         )
-                    
-                    XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
-                    
-                    guard case .topic(let url) = request.payload else {
-                        XCTFail("Unexpected request")
+
+                        return response
+                    } catch {
+                        XCTFail(error.localizedDescription)
                         return nil
                     }
-                    
-                    XCTAssertEqual(url, URL(string: "doc://com.test.bundle/something")!)
-                    
-                    let response = DocumentationServer.Message(
-                        type: "resolve-reference-response",
-                        payload: try JSONEncoder().encode(
-                            OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata))
-                    )
-                    
-                    return response
-                } catch {
-                    XCTFail(error.localizedDescription)
-                    return nil
-                }
-            })
+                })
 
             return try OutOfProcessReferenceResolver(
                 bundleID: "com.test.bundle",
@@ -209,17 +214,17 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             )
         })
     }
-    
+
     func assertResolvesSymbol(makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver) throws {
         let lightCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name.jpg"))
         let darkCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name-dark.jpg"))
-        
+
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
             kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
             url: URL(string: "/relative/path/to/symbol")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
-            language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
+            language: .swift,  // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
             availableLanguages: [
                 .swift,
                 .init(name: "Language Name 2", id: "com.test.another-language.id"),
@@ -249,12 +254,12 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                                 DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
                             ],
                             metadata: [
-                                lightCardImageURL : DataAsset.Metadata(svgID: nil),
-                                darkCardImageURL : DataAsset.Metadata(svgID: nil),
+                                lightCardImageURL: DataAsset.Metadata(svgID: nil),
+                                darkCardImageURL: DataAsset.Metadata(svgID: nil),
                             ],
                             context: .display
                         )
-                    ),
+                ),
             ],
             variants: [
                 .init(
@@ -270,43 +275,43 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 )
             ]
         )
-        
+
         let resolver = try makeResolver(testMetadata)
-        
+
         XCTAssertEqual(resolver.bundleID, "com.test.bundle")
-        
+
         // Resolve the symbol
         let (_, entity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
         let topicRenderReference = entity.makeTopicRenderReference()
-        
+
         XCTAssertEqual(topicRenderReference.url, testMetadata.url.absoluteString)
-        
+
         XCTAssertEqual(topicRenderReference.kind.rawValue, "symbol")
         XCTAssertEqual(topicRenderReference.role, "symbol")
-        
+
         XCTAssertEqual(topicRenderReference.title, "Resolved Title")
 
         XCTAssertEqual(entity.availableLanguages.count, 3)
 
         let availableSourceLanguages = entity.availableLanguages.sorted()
         let expectedLanguages = testMetadata.availableLanguages.sorted()
-        
+
         XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
         XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
-        
+
         XCTAssertEqual(topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
-        
+
         let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
         XCTAssertEqual(topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
         XCTAssertEqual(topicRenderReference.abstractVariants.value(for: variantTraits), [.text("Resolved variant abstract for this topic.")])
-        
+
         let fragmentVariant = try XCTUnwrap(topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
         XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
         if case .replace(let variantFragment) = fragmentVariant.patch.first {
             XCTAssertEqual(variantFragment, [.init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)])
         } else {
-           XCTFail("Unexpected fragments variant patch")
+            XCTFail("Unexpected fragments variant patch")
         }
 
         XCTAssertNil(topicRenderReference.conformance)
@@ -316,88 +321,91 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         XCTAssertFalse(topicRenderReference.isDeprecated)
         XCTAssertNil(topicRenderReference.propertyListKeyNames)
         XCTAssertNil(topicRenderReference.tags)
-        
+
         XCTAssertEqual(topicRenderReference.images.count, 1)
         let topicImage = try XCTUnwrap(topicRenderReference.images.first)
         XCTAssertEqual(topicImage.type, .card)
-        
+
         let image = try XCTUnwrap(entity.makeRenderDependencies().imageReferences.first(where: { $0.identifier == topicImage.identifier }))
-        
+
         XCTAssertEqual(image.identifier, RenderReferenceIdentifier("external-card"))
         XCTAssertEqual(image.altText, "External card alt text")
 
-        XCTAssertEqual(image.asset, DataAsset(
-            variants: [
-                DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
-                DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
-            ],
-            metadata: [
-                lightCardImageURL : DataAsset.Metadata(svgID: nil),
-                darkCardImageURL : DataAsset.Metadata(svgID: nil),
-            ],
-            context: .display
-        ))
+        XCTAssertEqual(
+            image.asset,
+            DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
+                    DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
+                ],
+                metadata: [
+                    lightCardImageURL: DataAsset.Metadata(svgID: nil),
+                    darkCardImageURL: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ))
     }
-    
+
     func testResolvingSymbolProcess() throws {
         #if os(macOS)
         try assertResolvesSymbol(makeResolver: { testMetadata in
             let temporaryFolder = try createTemporaryDirectory()
             let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
-            
+
             let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
-            
+
             try """
-        #!/bin/bash
-        echo '{"bundleIdentifier":"com.test.bundle"}'         # Write this resolver's bundle identifier
-        read                                                  # Wait for docc to send a symbol USR
-        echo '{"resolvedInformation":\(encodedMetadata)}'     # Respond with the test metadata (above)
-        """.write(to: executableLocation, atomically: true, encoding: .utf8)
-            
+            #!/bin/bash
+            echo '{"bundleIdentifier":"com.test.bundle"}'         # Write this resolver's bundle identifier
+            read                                                  # Wait for docc to send a symbol USR
+            echo '{"resolvedInformation":\(encodedMetadata)}'     # Respond with the test metadata (above)
+            """.write(to: executableLocation, atomically: true, encoding: .utf8)
+
             // `0o0700` is `-rwx------` (read, write, & execute only for owner)
             try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
             XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-            
+
             return try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
         })
         #endif
     }
-    
+
     func testResolvingSymbolService() throws {
         try assertResolvesSymbol(makeResolver: { testMetadata in
             let server = DocumentationServer()
-            server.register(service: MockService { message in
-                XCTAssertEqual(message.type, "resolve-reference")
-                XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
-                do {
-                    let payload = try XCTUnwrap(message.payload)
-                    let request = try JSONDecoder()
-                        .decode(
-                            ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
-                            from: payload
+            server.register(
+                service: MockService { message in
+                    XCTAssertEqual(message.type, "resolve-reference")
+                    XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+                    do {
+                        let payload = try XCTUnwrap(message.payload)
+                        let request = try JSONDecoder()
+                            .decode(
+                                ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                                from: payload
+                            )
+
+                        XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
+
+                        guard case .symbol(let preciseIdentifier) = request.payload else {
+                            XCTFail("Unexpected request")
+                            return nil
+                        }
+
+                        XCTAssertEqual(preciseIdentifier, "abc123")
+
+                        let response = DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata))
                         )
-                    
-                    XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
-                    
-                    guard case .symbol(let preciseIdentifier) = request.payload else {
-                        XCTFail("Unexpected request")
+
+                        return response
+                    } catch {
+                        XCTFail(error.localizedDescription)
                         return nil
                     }
-                    
-                    XCTAssertEqual(preciseIdentifier, "abc123")
-                    
-                    let response = DocumentationServer.Message(
-                        type: "resolve-reference-response",
-                        payload: try JSONEncoder().encode(
-                            OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata))
-                    )
-                    
-                    return response
-                } catch {
-                    XCTFail(error.localizedDescription)
-                    return nil
-                }
-            })
+                })
 
             return try OutOfProcessReferenceResolver(
                 bundleID: "com.test.bundle",
@@ -406,11 +414,11 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             )
         })
     }
-    
+
     func testForwardsErrorOutputProcess() throws {
         #if os(macOS)
         let temporaryFolder = try createTemporaryDirectory()
-        
+
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """
         #!/bin/bash
@@ -418,24 +426,26 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         echo "Some error output" 1>&2                   # Write to stderr
         read                                            # Wait for docc to send a topic URL
         """.write(to: executableLocation, atomically: true, encoding: .utf8)
-        
+
         // `0o0700` is `-rwx------` (read, write, & execute only for owner)
         try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-         
+
         let didReadErrorOutputExpectation = expectation(description: "Did read forwarded error output.")
-        
-        let resolver = try? OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: {
-            errorMessage in
-            XCTAssertEqual(errorMessage, "Some error output\n")
-            didReadErrorOutputExpectation.fulfill()
-        })
+
+        let resolver = try? OutOfProcessReferenceResolver(
+            processLocation: executableLocation,
+            errorOutputHandler: {
+                errorMessage in
+                XCTAssertEqual(errorMessage, "Some error output\n")
+                didReadErrorOutputExpectation.fulfill()
+            })
         XCTAssertEqual(resolver?.bundleID, "com.test.bundle")
-        
+
         wait(for: [didReadErrorOutputExpectation], timeout: 20.0)
         #endif
     }
-    
+
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver, file: StaticString = #filePath, line: UInt = #line) throws {
         XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
         let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)))
@@ -445,11 +455,11 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         }
         XCTAssertEqual(error.message, "Some error message.", file: file, line: line)
     }
-    
+
     func testForwardsResolverErrorsProcess() throws {
         #if os(macOS)
         let temporaryFolder = try createTemporaryDirectory()
-        
+
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """
         #!/bin/bash
@@ -457,90 +467,91 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         read                                            # Wait for docc to send a topic URL
         echo '{"errorMessage":"Some error message."}'   # Respond with an error message
         """.write(to: executableLocation, atomically: true, encoding: .utf8)
-        
+
         // `0o0700` is `-rwx------` (read, write, & execute only for owner)
         try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-         
+
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
         try assertForwardsResolverErrors(resolver: resolver)
         #endif
     }
-    
+
     func testForwardsResolverErrorsService() throws {
         let server = DocumentationServer()
-        server.register(service: MockService { message in
-            XCTAssertEqual(message.type, "resolve-reference")
-            XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
-            do {
-                let payload = try XCTUnwrap(message.payload)
-                let request = try JSONDecoder()
-                    .decode(
-                        ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
-                        from: payload
+        server.register(
+            service: MockService { message in
+                XCTAssertEqual(message.type, "resolve-reference")
+                XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+                do {
+                    let payload = try XCTUnwrap(message.payload)
+                    let request = try JSONDecoder()
+                        .decode(
+                            ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                            from: payload
+                        )
+
+                    XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
+
+                    guard case .topic = request.payload else {
+                        XCTFail("Unexpected request")
+                        return nil
+                    }
+
+                    let response = DocumentationServer.Message(
+                        type: "resolve-reference-response",
+                        payload: try JSONEncoder().encode(
+                            OutOfProcessReferenceResolver.Response.errorMessage("Some error message.")
+                        )
                     )
-                
-                XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
-                
-                guard case .topic = request.payload else {
-                    XCTFail("Unexpected request")
+
+                    return response
+                } catch {
+                    XCTFail(error.localizedDescription)
                     return nil
                 }
-                                
-                let response = DocumentationServer.Message(
-                    type: "resolve-reference-response",
-                    payload: try JSONEncoder().encode(
-                        OutOfProcessReferenceResolver.Response.errorMessage("Some error message.")
-                    )
-                )
-                
-                return response
-            } catch {
-                XCTFail(error.localizedDescription)
-                return nil
-            }
-        })
-        
+            })
+
         let resolver = try OutOfProcessReferenceResolver(
             bundleID: "com.test.bundle", server: server, convertRequestIdentifier: "convert-id")
-        
+
         try assertForwardsResolverErrors(resolver: resolver)
     }
-    
+
     func testMessageEncodingAndDecoding() throws {
         #if os(macOS)
         // Bundle identifier
         do {
             let message = OutOfProcessReferenceResolver.Response.bundleIdentifier("com.example.test")
-            
+
             let data = try JSONEncoder().encode(message)
             let decodedMessage = try JSONDecoder().decode(OutOfProcessReferenceResolver.Response.self, from: data)
-            
+
             switch decodedMessage {
             case .bundleIdentifier(let decodedIdentifier):
                 XCTAssertEqual(decodedIdentifier, "com.example.test")
-                
+
             default:
                 XCTFail("Decoded the wrong type of message")
             }
         }
-        
+
         // Error message
         do {
             let message = OutOfProcessReferenceResolver.Response.errorMessage("Some error output.")
-            
+
             let data = try JSONEncoder().encode(message)
             let decodedMessage = try JSONDecoder().decode(OutOfProcessReferenceResolver.Response.self, from: data)
-            
+
             switch decodedMessage {
             case .errorMessage(let decodedErrorMessage):
                 XCTAssertEqual(decodedErrorMessage, "Some error output.")
-                
+
             default:
                 XCTFail("Decoded the wrong type of message")
             }
         }
-        
+
         // Resolved metadata
         do {
             let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
@@ -556,28 +567,28 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 references: nil
             )
             let message = OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata)
-            
+
             let data = try JSONEncoder().encode(message)
             let decodedMessage = try JSONDecoder().decode(OutOfProcessReferenceResolver.Response.self, from: data)
-            
+
             switch decodedMessage {
             case .resolvedInformation(let decodedInformation):
                 XCTAssertEqual(decodedInformation.kind.name, testMetadata.kind.name)
                 XCTAssertEqual(decodedInformation.kind.id, testMetadata.kind.id)
                 XCTAssertEqual(decodedInformation.kind.isSymbol, testMetadata.kind.isSymbol)
-                
+
                 XCTAssertEqual(decodedInformation.title, testMetadata.title)
-                
+
                 XCTAssertEqual(decodedInformation.language.name, testMetadata.language.name)
                 XCTAssertEqual(decodedInformation.language.id, testMetadata.language.id)
-                
+
             default:
                 XCTFail("Decoded the wrong type of message")
             }
         }
         #endif
     }
-    
+
     func testMetadataMessageWithVariants() throws {
         #if os(macOS)
         do {
@@ -586,7 +597,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 url: URL(string: "scheme://host.name/path/")!,
                 title: "Resolved Title",
                 abstract: "Resolved abstract for this topic.",
-                language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
+                language: .swift,  // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
                 availableLanguages: [
                     .swift,
                     .init(name: "Variant Language Name", id: "com.test.other-language.id")
@@ -612,77 +623,77 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 ]
             )
             let message = OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata)
-            
+
             let data = try JSONEncoder().encode(message)
             let decodedMessage = try JSONDecoder().decode(OutOfProcessReferenceResolver.Response.self, from: data)
-            
+
             switch decodedMessage {
             case .resolvedInformation(let decodedInformation):
                 XCTAssertEqual(decodedInformation.kind.name, testMetadata.kind.name)
                 XCTAssertEqual(decodedInformation.kind.id, testMetadata.kind.id)
                 XCTAssertEqual(decodedInformation.kind.isSymbol, testMetadata.kind.isSymbol)
-                
+
                 XCTAssertEqual(decodedInformation.title, testMetadata.title)
-                
+
                 XCTAssertEqual(decodedInformation.abstract, testMetadata.abstract)
-                
+
                 XCTAssertEqual(decodedInformation.language.name, testMetadata.language.name)
                 XCTAssertEqual(decodedInformation.language.id, testMetadata.language.id)
-                
+
                 XCTAssertEqual(decodedInformation.availableLanguages, testMetadata.availableLanguages)
                 XCTAssertEqual(decodedInformation.platforms, testMetadata.platforms)
-                
+
                 XCTAssertEqual(decodedInformation.declarationFragments?.declarationFragments.count, testMetadata.declarationFragments?.declarationFragments.count)
                 for (decodedFragment, testFragment) in zip(decodedInformation.declarationFragments?.declarationFragments ?? [], testMetadata.declarationFragments?.declarationFragments ?? []) {
                     XCTAssertEqual(decodedFragment, testFragment)
                 }
-                
+
                 XCTAssertEqual(decodedInformation.variants?.count, testMetadata.variants?.count)
                 let decodedVariant = try XCTUnwrap(decodedInformation.variants?.first)
                 let testVariant = try XCTUnwrap(testMetadata.variants?.first)
-                
+
                 XCTAssertEqual(decodedVariant.kind?.name, testVariant.kind?.name)
                 XCTAssertEqual(decodedVariant.kind?.id, testVariant.kind?.id)
                 XCTAssertEqual(decodedVariant.kind?.isSymbol, testVariant.kind?.isSymbol)
-                
+
                 XCTAssertEqual(decodedVariant.title, testVariant.title)
-                
+
                 XCTAssertEqual(decodedVariant.abstract, testVariant.abstract)
-                
+
                 XCTAssertEqual(decodedVariant.language?.name, testVariant.language?.name)
                 XCTAssertEqual(decodedVariant.language?.id, testVariant.language?.id)
-                
+
                 XCTAssertEqual(decodedVariant.declarationFragments??.declarationFragments.count, testVariant.declarationFragments??.declarationFragments.count)
                 for (decodedFragment, testFragment) in zip(decodedVariant.declarationFragments??.declarationFragments ?? [], testVariant.declarationFragments??.declarationFragments ?? []) {
                     XCTAssertEqual(decodedFragment, testFragment)
                 }
-                
+
             default:
                 XCTFail("Decoded the wrong type of message")
             }
         }
         #endif
     }
-    
+
     func testErrorWhenReceivingBundleIdentifierTwiceProcess() throws {
         #if os(macOS)
         let temporaryFolder = try createTemporaryDirectory()
-        
+
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """
-            #!/bin/bash
-            echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
-            read                                            # Wait for docc to send a topic URL
-            echo '{"bundleIdentifier":"com.test.bundle"}'   # Write the bundle identifier again
-            """.write(to: executableLocation, atomically: true, encoding: .utf8)
-        
+        #!/bin/bash
+        echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
+        read                                            # Wait for docc to send a topic URL
+        echo '{"bundleIdentifier":"com.test.bundle"}'   # Write the bundle identifier again
+        """.write(to: executableLocation, atomically: true, encoding: .utf8)
+
         // `0o0700` is `-rwx------` (read, write, & execute only for owner)
         try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-        
+
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
         XCTAssertEqual(resolver.bundleID, "com.test.bundle")
-        
+
         if case .failure(_, let errorInfo) = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingAuthoredLink: "doc://com.test.bundle/something")!))) {
             XCTAssertEqual(errorInfo.message, "Executable sent bundle identifier message again, after it was already received.")
         } else {
@@ -690,12 +701,12 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         }
         #endif
     }
-    
+
     struct MockService: DocumentationService {
         static var handlingTypes: [DocumentationServer.MessageType] = ["resolve-reference"]
-        
+
         var processHandler: (DocumentationServer.Message) -> DocumentationServer.Message?
-        
+
         func process(
             _ message: DocumentationServer.Message,
             completion: @escaping (DocumentationServer.Message) -> ()
@@ -705,7 +716,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             }
         }
     }
-    
+
     func assertSymbolBetaStatus(
         platforms: [OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability], expectedStatus isBeta: Bool,
         file: StaticString = #filePath, line: UInt = #line,
@@ -716,7 +727,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             url: URL(string: "doc://com.test.bundle/something")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
-            language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
+            language: .swift,  // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
             availableLanguages: [],
             platforms: platforms,
             declarationFragments: nil,
@@ -724,7 +735,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             references: nil,
             variants: []
         )
-                
+
         let resolver = try makeResolver(testMetadata)
         XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
 
@@ -735,101 +746,103 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             XCTFail("Unexpectedly failed to resolve reference")
             return
         }
-        
+
         // Resolve the symbol
         let topicLinkEntity = resolver.entity(with: resolvedReference)
-        
+
         XCTAssertEqual(topicLinkEntity.makeTopicRenderReference().isBeta, isBeta, file: file, line: line)
-        
+
         // Resolve the symbol
         let (_, symbolEntity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
-        
+
         XCTAssertEqual(symbolEntity.makeTopicRenderReference().isBeta, isBeta, file: file, line: line)
 
     }
-    
+
     func testResolvingSymbolBetaStatusProcess() throws {
         #if os(macOS)
         func makeResolver(testMetadata: OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver {
             let temporaryFolder = try createTemporaryDirectory()
             let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
-            
+
             let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
-            
+
             try """
-        #!/bin/bash
-        echo '{"bundleIdentifier":"com.test.bundle"}'           # Write this resolver's bundle identifier
-        read                                                    # Wait for docc to send a symbol USR
-        echo '{"resolvedInformation":\(encodedMetadata)}'       # Respond with the test metadata (above)
-        read                                                    # Wait for docc to send a symbol USR
-        echo '{"resolvedInformation":\(encodedMetadata)}'       # Respond with the test metadata (above)
-        """.write(to: executableLocation, atomically: true, encoding: .utf8)
-            
+            #!/bin/bash
+            echo '{"bundleIdentifier":"com.test.bundle"}'           # Write this resolver's bundle identifier
+            read                                                    # Wait for docc to send a symbol USR
+            echo '{"resolvedInformation":\(encodedMetadata)}'       # Respond with the test metadata (above)
+            read                                                    # Wait for docc to send a symbol USR
+            echo '{"resolvedInformation":\(encodedMetadata)}'       # Respond with the test metadata (above)
+            """.write(to: executableLocation, atomically: true, encoding: .utf8)
+
             // `0o0700` is `-rwx------` (read, write, & execute only for owner)
             try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
             XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-            
+
             return try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
         }
-        
+
         // All platforms are in beta
-        try assertSymbolBetaStatus(platforms: [
-            .init(name: "fooOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
-        ], expectedStatus: true, makeResolver: makeResolver)
-        
+        try assertSymbolBetaStatus(
+            platforms: [
+                .init(name: "fooOS", introduced: "1.2.3", isBeta: true),
+                .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+                .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+            ], expectedStatus: true, makeResolver: makeResolver)
+
         // One platform is stable, the other two are in beta
-        try assertSymbolBetaStatus(platforms: [
-            .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
-            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
-        ], expectedStatus: false, makeResolver: makeResolver)
-        
+        try assertSymbolBetaStatus(
+            platforms: [
+                .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
+                .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+                .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+            ], expectedStatus: false, makeResolver: makeResolver)
+
         // No platforms explicitly supported
-        try assertSymbolBetaStatus(platforms: [
-        ], expectedStatus: false, makeResolver: makeResolver)
+        try assertSymbolBetaStatus(platforms: [], expectedStatus: false, makeResolver: makeResolver)
 
         #endif
     }
-    
+
     func testResolvingSymbolBetaStatusService() throws {
         func makeResolver(testMetadata: OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver {
             let server = DocumentationServer()
-            server.register(service: MockService { message in
-                XCTAssertEqual(message.type, "resolve-reference")
-                XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
-                do {
-                    let payload = try XCTUnwrap(message.payload)
-                    let request = try JSONDecoder()
-                        .decode(
-                            ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
-                            from: payload
+            server.register(
+                service: MockService { message in
+                    XCTAssertEqual(message.type, "resolve-reference")
+                    XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+                    do {
+                        let payload = try XCTUnwrap(message.payload)
+                        let request = try JSONDecoder()
+                            .decode(
+                                ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                                from: payload
+                            )
+
+                        XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
+
+                        switch request.payload {
+                        case .symbol(let preciseIdentifier):
+                            XCTAssertEqual(preciseIdentifier, "abc123")
+                        case .topic(let url):
+                            XCTAssertEqual(url, URL(string: "doc://com.test.bundle/something")!)
+                        default:
+                            XCTFail("Unexpected request")
+                            return nil
+                        }
+
+                        let response = DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata))
                         )
-                    
-                    XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
-                    
-                    switch request.payload {
-                    case .symbol(let preciseIdentifier):
-                        XCTAssertEqual(preciseIdentifier, "abc123")
-                    case .topic(let url):
-                        XCTAssertEqual(url, URL(string: "doc://com.test.bundle/something")!)
-                    default:
-                        XCTFail("Unexpected request")
+                        return response
+                    } catch {
+                        XCTFail(error.localizedDescription)
                         return nil
                     }
-
-                    let response = DocumentationServer.Message(
-                        type: "resolve-reference-response",
-                        payload: try JSONEncoder().encode(
-                            OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata))
-                    )
-                    return response
-                } catch {
-                    XCTFail(error.localizedDescription)
-                    return nil
-                }
-            })
+                })
 
             return try OutOfProcessReferenceResolver(
                 bundleID: "com.test.bundle",
@@ -837,23 +850,24 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 convertRequestIdentifier: "convert-id"
             )
         }
-        
+
         // All platforms are in beta
-        try assertSymbolBetaStatus(platforms: [
-            .init(name: "fooOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
-        ], expectedStatus: true, makeResolver: makeResolver)
-        
+        try assertSymbolBetaStatus(
+            platforms: [
+                .init(name: "fooOS", introduced: "1.2.3", isBeta: true),
+                .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+                .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+            ], expectedStatus: true, makeResolver: makeResolver)
+
         // One platform is stable, the other two are in beta
-        try assertSymbolBetaStatus(platforms: [
-            .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
-            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
-        ], expectedStatus: false, makeResolver: makeResolver)
-        
+        try assertSymbolBetaStatus(
+            platforms: [
+                .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
+                .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+                .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+            ], expectedStatus: false, makeResolver: makeResolver)
+
         // No platforms explicitly supported
-        try assertSymbolBetaStatus(platforms: [
-        ], expectedStatus: false, makeResolver: makeResolver)
+        try assertSymbolBetaStatus(platforms: [], expectedStatus: false, makeResolver: makeResolver)
     }
 }

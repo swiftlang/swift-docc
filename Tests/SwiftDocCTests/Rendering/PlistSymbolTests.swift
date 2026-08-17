@@ -17,22 +17,24 @@ class PlistSymbolTests: XCTestCase {
     private let plistSymbolURL = Bundle.module.url(
         forResource: "plist-symbol", withExtension: "json",
         subdirectory: "Rendering Fixtures")!
-    
+
     func testDecodePlistSymbol() throws {
         let data = try Data(contentsOf: plistSymbolURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         //
         // Plist Details
         //
-        
-        guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
-            return section.kind == .plistDetails
-        }) as? PropertyListDetailsRenderSection else {
+
+        guard
+            let section = symbol.primaryContentSections.first(where: { section -> Bool in
+                return section.kind == .plistDetails
+            }) as? PropertyListDetailsRenderSection
+        else {
             XCTFail("Plist details section not decoded")
             return
         }
-        
+
         XCTAssertEqual(section.details.rawKey, "com.apple.developer.networking.wifi")
         XCTAssertEqual(section.details.displayName, "WiFi access")
         XCTAssertEqual(section.details.titleStyle, .useDisplayName)
@@ -40,27 +42,29 @@ class PlistSymbolTests: XCTestCase {
             XCTFail("Invalid number of value types found")
             return
         }
-        
+
         XCTAssertEqual(section.details.value[0].baseType, "string")
         XCTAssertEqual(section.details.value[0].arrayMode, true)
         XCTAssertEqual(section.details.value[1].baseType, "number")
         XCTAssertNil(section.details.value[1].arrayMode)
-        
+
         XCTAssertEqual(section.details.platforms, ["iOS", "macOS"])
-        
+
         /// Plist Properties
-        guard let properties = symbol.primaryContentSections.first(where: { section -> Bool in
-            return section.kind == .properties
-        }) as? PropertiesRenderSection else {
+        guard
+            let properties = symbol.primaryContentSections.first(where: { section -> Bool in
+                return section.kind == .properties
+            }) as? PropertiesRenderSection
+        else {
             XCTFail("Plist properties section not decoded")
             return
         }
-        
+
         XCTAssertEqual(properties.items.count, 1)
         guard properties.items.count == 1 else { return }
-        
+
         XCTAssertEqual(properties.title, "Properties")
-        
+
         guard let attributes = properties.items[0].attributes else {
             XCTFail("The property doesn't have the expected attributes")
             return
@@ -68,46 +72,50 @@ class PlistSymbolTests: XCTestCase {
 
         XCTAssertEqual(attributes.count, 1)
         guard attributes.count == 1 else { return }
-        
+
         if case RenderAttribute.default(let value) = attributes[0] {
             XCTAssertEqual(value, "AABBCC")
         } else {
             XCTFail("Unexpected attribute")
         }
-        
+
         /// Plist Attributes
-        guard let attributesSection = symbol.primaryContentSections.first(where: { section -> Bool in
-            return section.kind == .attributes
-        }) as? AttributesRenderSection else {
+        guard
+            let attributesSection = symbol.primaryContentSections.first(where: { section -> Bool in
+                return section.kind == .attributes
+            }) as? AttributesRenderSection
+        else {
             XCTFail("Plist attributes section not decoded")
             return
         }
-        
+
         XCTAssertEqual(attributesSection.attributes?.count, 1)
         guard attributesSection.attributes?.count == 1 else { return }
-        
+
         XCTAssertEqual(attributesSection.title, "Attributes")
-        
+
         XCTAssertEqual(attributesSection.attributes?[0].title, "Default value")
-        
+
         if case .default(let value)? = attributesSection.attributes?[0] {
             XCTAssertEqual(value, "AABBCC")
         } else {
             XCTFail("Unexpected attribute")
         }
-        
+
         /// Plist Possible Values
-        guard let values = symbol.primaryContentSections.first(where: { section -> Bool in
-            return section.kind == .possibleValues
-        }) as? PossibleValuesRenderSection else {
+        guard
+            let values = symbol.primaryContentSections.first(where: { section -> Bool in
+                return section.kind == .possibleValues
+            }) as? PossibleValuesRenderSection
+        else {
             XCTFail("Plist possible values section not decoded")
             return
         }
-        
+
         XCTAssertEqual(values.title, "Possible Values")
         XCTAssertEqual(values.values.map { $0.name }, ["ppc", "i386", "arm"])
         XCTAssertEqual(values.values.map { $0.content?.firstParagraph.first }, [nil, .text("Any i386 type of processor"), nil])
-        
+
         // Test render reference to plist symbol
         guard let reference = symbol.references["doc://org.swift.docc.example/plist/dataaccess"] as? TopicRenderReference else {
             XCTFail("Did not find doc://org.swift.docc.example/plist/dataaccess reference")
@@ -116,38 +124,37 @@ class PlistSymbolTests: XCTestCase {
         XCTAssertEqual(reference.propertyListKeyNames?.titleStyle, .useDisplayName)
         XCTAssertEqual(reference.propertyListKeyNames?.rawKey, "com.apple.enabledataaccess")
         XCTAssertEqual(reference.propertyListKeyNames?.displayName, "Enable Data Access")
-    
+
         // Test navigator information
         XCTAssertEqual(symbol.navigatorPageType(), .propertyListKey)
-        
+
         AssertRoundtrip(for: symbol)
     }
-    
+
     func testDecodeDetailsSectionNoIdeTitle() throws {
         let modifiedJSON = try String(contentsOf: plistSymbolURL).replacingOccurrences(of: "\"ideTitle\": \"WiFi access\",", with: "")
         let symbol = try RenderNode.decode(fromJSON: Data(modifiedJSON.utf8))
 
         let section = try XCTUnwrap(symbol.primaryContentSections.first(where: { $0.kind == .plistDetails }) as? PropertyListDetailsRenderSection)
-        
+
         XCTAssertEqual(section.details.rawKey, "com.apple.developer.networking.wifi")
         XCTAssertNil(section.details.displayName)
-        
+
         AssertRoundtrip(for: symbol)
     }
-        
+
     func testDecodePossibleValuesNoTitle() throws {
         let modifiedJSON = try String(contentsOf: plistSymbolURL).replacingOccurrences(of: "\"title\": \"Possible Values\",", with: "")
         let symbol = try RenderNode.decode(fromJSON: Data(modifiedJSON.utf8))
 
         let section = try XCTUnwrap(symbol.primaryContentSections.first(where: { $0.kind == .possibleValues }) as? PossibleValuesRenderSection)
-        
+
         XCTAssertEqual(section.values.count, 3)
         XCTAssertNil(section.title)
-        
+
         AssertRoundtrip(for: symbol)
     }
 }
-
 
 /// Ensures a given render node can be encoded and decode back without throwing.
 public func AssertRoundtrip(for renderNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {

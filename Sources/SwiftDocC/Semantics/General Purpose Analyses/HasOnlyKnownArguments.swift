@@ -19,7 +19,7 @@ extension Semantic.Analyses {
             self.severityIfFound = severityIfFound
             self.allowedArguments = allowedArguments
         }
-        
+
         @available(*, deprecated, renamed: "analyze(_:children:source:diagnostics:)", message: "Use 'analyze(_:children:source:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) -> [String: Markdown.DirectiveArgument] {
             var diagnostics = [Diagnostic]()
@@ -28,7 +28,7 @@ extension Semantic.Analyses {
             }
             return analyze(directive, children: children, source: source, diagnostics: &diagnostics)
         }
-        
+
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, diagnostics: inout [Diagnostic]) -> [String: Markdown.DirectiveArgument] {
             let arguments = directive.arguments(diagnostics: &diagnostics)
             if let severity = severityIfFound {
@@ -37,10 +37,10 @@ extension Semantic.Analyses {
                 let unknownKeyIssues: [String] = unknownKeys.map { unknownKey in
                     var summary = "Unknown argument '\(unknownKey)' in \(Parent.directiveName)."
                     if !unusedKeys.isEmpty {
-                        let unusedKeyList = unusedKeys.sorted().map { "'\($0)'"}.joined(separator: ", ")
+                        let unusedKeyList = unusedKeys.sorted().map { "'\($0)'" }.joined(separator: ", ")
                         summary += " These arguments are currently unused but allowed: \(unusedKeyList)."
                     }
-                    
+
                     return summary
                 }
                 for summary in unknownKeyIssues {
@@ -51,4 +51,3 @@ extension Semantic.Analyses {
         }
     }
 }
-

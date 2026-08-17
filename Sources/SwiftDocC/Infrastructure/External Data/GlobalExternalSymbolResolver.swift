@@ -29,6 +29,6 @@ public protocol GlobalExternalSymbolResolver {
     ///
     /// - Parameter preciseIdentifier: The precise identifier for an external symbol.
     /// - Returns: The external symbol's reference and content if found; otherwise `nil`.
-    @_spi(ExternalLinks) // LinkResolver.ExternalEntity isn't stable API yet
+    @_spi(ExternalLinks)  // LinkResolver.ExternalEntity isn't stable API yet
     func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)?
 }

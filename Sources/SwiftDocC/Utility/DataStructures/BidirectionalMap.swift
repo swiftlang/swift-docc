@@ -27,41 +27,41 @@ struct BidirectionalMap<Value1: Hashable, Value2: Hashable>: Sequence {
         forward[key] = newValue
         reverse[newValue] = key
     }
-    
+
     /// Returns a `Value2` for a given key `Value1`.
     subscript(key: Value1) -> Value2? {
-      get {
-        return forward[key]
-      }
-
-      set (newValue) {
-        guard let newValue else {
-            preconditionFailure("Nil values are not allowed")
+        get {
+            return forward[key]
         }
-        BidirectionalMap.set(key: key, newValue: newValue, forward: &forward, reverse: &reverse)
-      }
+
+        set(newValue) {
+            guard let newValue else {
+                preconditionFailure("Nil values are not allowed")
+            }
+            BidirectionalMap.set(key: key, newValue: newValue, forward: &forward, reverse: &reverse)
+        }
     }
 
     /// Returns a `Value1` for a given key `Value2`.
     subscript(key: Value2) -> Value1? {
-      get {
-        return reverse[key]
-      }
-
-      set (newValue) {
-        guard let newValue else {
-            preconditionFailure("Nil values are not allowed")
+        get {
+            return reverse[key]
         }
-        BidirectionalMap.set(key: key, newValue: newValue, forward: &reverse, reverse: &forward)
-      }
+
+        set(newValue) {
+            guard let newValue else {
+                preconditionFailure("Nil values are not allowed")
+            }
+            BidirectionalMap.set(key: key, newValue: newValue, forward: &reverse, reverse: &forward)
+        }
     }
-    
+
     /// Reserves enough space to store the specified number of nodes.
     mutating func reserveCapacity(_ count: Int) {
         forward.reserveCapacity(count)
         reverse.reserveCapacity(count)
     }
-    
+
     func makeIterator() -> [Value1: Value2].Iterator {
         return forward.makeIterator()
     }

@@ -15,11 +15,11 @@ private import Foundation
 public struct Signal {
     /// List of all system signals that interrupt the program execution.
     public static let all = [SIGHUP, SIGINT, SIGQUIT, SIGABRT, SIGKILL, SIGALRM, SIGTERM]
-    
+
     /// Intercepts the given list of signals and invokes `callback` instead of interrupting execution.
     public static func on(_ signals: [Int32], callback: @convention(c) @escaping (Int32) -> Void) {
         var signalAction = sigaction()
-        
+
         // Different libraries name the `sigaction` fields and handler type differently.
         #if canImport(Musl)
         signalAction.__sa_handler = unsafeBitCast(callback, to: sigaction.__Unnamed_union___sa_handler.self)
@@ -32,7 +32,7 @@ public struct Signal {
         #else
         signalAction.__sigaction_u = unsafeBitCast(callback, to: __sigaction_u.self)
         #endif
-        
+
         withUnsafePointer(to: &signalAction) { (pointer) in
             for signal in signals {
                 sigaction(signal, pointer, nil)

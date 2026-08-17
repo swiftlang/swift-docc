@@ -16,28 +16,28 @@ private import SymbolKit
 struct DocumentationCurator {
     /// The documentation context to crawl.
     private let context: DocumentationContext
-    
+
     private(set) var diagnostics = [Diagnostic]()
-    
+
     init(in context: DocumentationContext, initial: Set<ResolvedTopicReference> = []) {
         self.context = context
         self.curatedNodes = initial
     }
-    
+
     /// The list of topics that have been curated during the crawl.
     private(set) var curatedNodes: Set<ResolvedTopicReference>
-    
+
     /// Tries to resolve a symbol link in the current module/context.
     func referenceFromSymbolLink(link: SymbolLink, resolved: ResolvedTopicReference) -> ResolvedTopicReference? {
         guard let destination = link.destination else {
             return nil
         }
-        
+
         // Optimization for absolute links.
         if let cached = context.referenceIndex[destination] {
             return cached
         }
-        
+
         // The symbol link may be written with a scheme and bundle identifier.
         let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
         if case let .success(resolved) = context.resolve(.unresolved(.init(topicURL: url)), in: resolved, fromSymbolLink: true) {
@@ -45,19 +45,21 @@ struct DocumentationCurator {
         }
         return nil
     }
-    
+
     /// Tries to resolve a link in the current module/context.
     mutating func referenceFromLink(link: Link, resolved: ResolvedTopicReference, source: URL?) -> ResolvedTopicReference? {
         // Try a link to a topic
-        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))?
-            .requiring(scheme: ResolvedTopicReference.urlScheme)
-            .map(UnresolvedTopicReference.init(topicURL:)) else {
-                // Emit a warning regarding the invalid link found in a task group.
-                diagnostics.append(Diagnostic(source: source, severity: .warning, range: link.range, identifier: "org.swift.docc.InvalidDocumentationLink", summary: "The link \((link.destination ?? "").singleQuoted) isn't valid", explanation: "Expected a well-formed URL that uses the \(ResolvedTopicReference.urlScheme.singleQuoted) scheme. You can only curate external links in a 'See Also' section."))
-                return nil
+        guard
+            let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))?
+                .requiring(scheme: ResolvedTopicReference.urlScheme)
+                .map(UnresolvedTopicReference.init(topicURL:))
+        else {
+            // Emit a warning regarding the invalid link found in a task group.
+            diagnostics.append(Diagnostic(source: source, severity: .warning, range: link.range, identifier: "org.swift.docc.InvalidDocumentationLink", summary: "The link \((link.destination ?? "").singleQuoted) isn't valid", explanation: "Expected a well-formed URL that uses the \(ResolvedTopicReference.urlScheme.singleQuoted) scheme. You can only curate external links in a 'See Also' section."))
+            return nil
         }
         let maybeResolved = context.resolve(.unresolved(unresolved), in: resolved)
-        
+
         if case let .success(resolved) = maybeResolved {
             // The link resolves to a known topic.
             if let node = context.topicGraph.nodeWithReference(resolved) {
@@ -74,27 +76,28 @@ struct DocumentationCurator {
                 return resolved
             }
         }
-        
+
         // Check if the link has been externally resolved already.
         if let bundleID = unresolved.topicURL.components.host.map({ DocumentationBundle.Identifier(rawValue: $0) }),
-           context.configuration.externalDocumentationConfiguration.sources[bundleID] != nil || context.configuration.convertServiceConfiguration.fallbackResolver != nil {
+            context.configuration.externalDocumentationConfiguration.sources[bundleID] != nil || context.configuration.convertServiceConfiguration.fallbackResolver != nil
+        {
             if case .success(let resolvedExternalReference) = context.externallyResolvedLinks[unresolved.topicURL] {
                 return resolvedExternalReference
             } else {
-                return nil // This link has already failed to resolve.
+                return nil  // This link has already failed to resolve.
             }
         }
-        
+
         // Try extracting an article from the cache
         let sourceArticlePath: String = {
             let path = unresolved.topicURL.components.path.removingLeadingSlash
-            
+
             // The article path can either be written as
             // - "ArticleName"
             // - "CatalogName/ArticleName"
             // - "documentation/CatalogName/ArticleName"
             switch path.components(separatedBy: "/").count {
-            case 0,1:
+            case 0, 1:
                 return NodeURLGenerator.Path.article(bundleName: context.inputs.displayName, articleName: path).stringValue
             case 2:
                 return "\(NodeURLGenerator.Path.documentationFolder)/\(path)"
@@ -109,52 +112,54 @@ struct DocumentationCurator {
 
         guard let currentArticle = self.context.uncuratedArticles[lookupReference] else { return nil }
 
-        guard let (documentationNode, _) = DocumentationContext.documentationNodeAndTitle(
-            for: currentArticle,
-            availableSourceLanguages: resolved.sourceLanguages,
-            kind: .article,
-            in: context.inputs
-        ) else { return nil }
+        guard
+            let (documentationNode, _) = DocumentationContext.documentationNodeAndTitle(
+                for: currentArticle,
+                availableSourceLanguages: resolved.sourceLanguages,
+                kind: .article,
+                in: context.inputs
+            )
+        else { return nil }
         let reference = documentationNode.reference
-        
+
         // An article has been found which needs to be extracted from the article cache
         // and curated under the current symbol. To do this we need to re-create the reference
         // to include the current module, update the file location map, and create a new
         // documentation node with the new reference and new semantic article.
-        
+
         // Add reference in the file location map
         context.documentLocationMap[currentArticle.source] = reference
-        
+
         // Add the curated node to the topic graph
         let node = currentArticle.topicGraphNode
         let curatedNode = TopicGraph.Node(reference: reference, kind: node.kind, source: node.source, title: node.title)
         context.topicGraph.addNode(curatedNode)
-        
+
         // Move the article from the article cache to the documentation
         let articleFilename = reference.url.pathComponents.last!
         context.linkResolver.localResolver.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
-        
+
         context.documentationCache[reference] = documentationNode
         for anchor in documentationNode.anchorSections {
             context.nodeAnchorSections[anchor.reference] = anchor
         }
         context.uncuratedArticles.removeValue(forKey: reference)
-        
+
         return reference
     }
-    
+
     private func isReference(_ childReference: ResolvedTopicReference, anAncestorOf nodeReference: ResolvedTopicReference) -> Bool {
         context.topicGraph.reverseEdgesGraph
             .breadthFirstSearch(from: nodeReference)
             .contains(childReference)
     }
-    
+
     /// Crawls the topic graph starting at a given root node, curates articles during.
     /// - Parameters:
     ///   - nodeReference: The root reference to start crawling.
     ///   - prepareForCuration: An optional closure to call just before walking the node's task group links.
     ///   - relateNodes: A closure to call when a parent <-> child relationship is found.
-    mutating func crawlChildren(of nodeReference: ResolvedTopicReference, prepareForCuration: (ResolvedTopicReference) -> Void = {_ in}, relateNodes: (ResolvedTopicReference, ResolvedTopicReference) -> Void) throws {
+    mutating func crawlChildren(of nodeReference: ResolvedTopicReference, prepareForCuration: (ResolvedTopicReference) -> Void = { _ in }, relateNodes: (ResolvedTopicReference, ResolvedTopicReference) -> Void) throws {
         // Track if all articles have been curated.
         // If a node has already been crawled, skip it.
         guard curatedNodes.insert(nodeReference).inserted else {
@@ -168,11 +173,11 @@ struct DocumentationCurator {
         func source() -> URL? {
             return context.documentLocationMap[nodeReference]
         }
-        
+
         let topics: TopicsSection?
         let seeAlso: SeeAlsoSection?
         let automaticallyGeneratedTaskGroups: [AutomaticTaskGroupSection]?
-        
+
         switch documentationNode.semantic {
         case let article as Article:
             topics = article.topics
@@ -191,15 +196,16 @@ struct DocumentationCurator {
         let taskGroups = topics?.taskGroups ?? []
         let authoredSeeAlsoGroups = seeAlso?.taskGroups ?? []
         let addedGroups = automaticallyGeneratedTaskGroups ?? []
-        
+
         // Validate the node groups' links
         for group in (taskGroups + authoredSeeAlsoGroups) {
-            diagnostics.append(contentsOf:
-                group.diagnosticsForGroupLinks().map({ diagnostic in
-                    var diagnostic = diagnostic
-                    diagnostic.source = context.documentLocationMap[nodeReference]
-                    return diagnostic
-                })
+            diagnostics.append(
+                contentsOf:
+                    group.diagnosticsForGroupLinks().map({ diagnostic in
+                        var diagnostic = diagnostic
+                        diagnostic.source = context.documentLocationMap[nodeReference]
+                        return diagnostic
+                    })
             )
         }
 
@@ -210,12 +216,12 @@ struct DocumentationCurator {
                 try crawlChildren(of: childReference, prepareForCuration: prepareForCuration, relateNodes: relateNodes)
             }
         }
-        
+
         // If the node docs include a topics section, remove the default curation
         // from the symbol graph because we will do custom curation based on the
         // task group links.
         prepareForCuration(nodeReference)
-        
+
         for (groupIndex, group) in taskGroups.enumerated() {
             for (linkIndex, link) in group.links.enumerated() {
                 let resolved: ResolvedTopicReference?
@@ -228,7 +234,7 @@ struct DocumentationCurator {
                     // Programmer error, a new conformance was added to ``AnyLink``
                     fatalError("Unexpected link type")
                 }
-                
+
                 /// Return the link's range or, when unavailable, fall back on any original ranges.
                 func range() -> SourceRange? {
                     if let range = link.range {
@@ -236,35 +242,39 @@ struct DocumentationCurator {
                     }
                     if let topics,
                         topics.originalLinkRangesByGroup.count > groupIndex,
-                        topics.originalLinkRangesByGroup[groupIndex].count > linkIndex {
+                        topics.originalLinkRangesByGroup[groupIndex].count > linkIndex
+                    {
                         return topics.originalLinkRangesByGroup[groupIndex][linkIndex]
                     }
                     return nil
                 }
-                
+
                 guard let childReference = resolved else {
                     // This issue will be raised when the references are resolved.
                     continue
                 }
 
                 guard let childDocumentationNode = context.documentationCache[childReference],
-                    (childDocumentationNode.kind == .article || childDocumentationNode.kind.isSymbol || childDocumentationNode.kind == .tutorial || childDocumentationNode.kind == .tutorialArticle) else {
-                        continue
+                    (childDocumentationNode.kind == .article || childDocumentationNode.kind.isSymbol || childDocumentationNode.kind == .tutorial || childDocumentationNode.kind == .tutorialArticle)
+                else {
+                    continue
                 }
-                
+
                 // A solution that suggests removing the list item that contain this link
                 var removeListItemSolutions: [Solution] {
                     // Traverse the markup parents up to the nearest list item
                     guard let listItem = sequence(first: link as (any Markup), next: \.parent).mapFirst(where: { $0 as? ListItem }),
-                          let listItemRange = listItem.range
+                        let listItemRange = listItem.range
                     else {
                         assertionFailure("Unable to find the list item element that contains \(link.format()) in the markup for \(describeForDiagnostic(nodeReference).singleQuoted)")
                         return []
                     }
-                    return [Solution(
-                        summary: "Remove \(listItem.format().trimmingCharacters(in: .whitespacesAndNewlines).singleQuoted)",
-                        replacements: [.init(range: listItemRange, replacement: "")]
-                    )]
+                    return [
+                        Solution(
+                            summary: "Remove \(listItem.format().trimmingCharacters(in: .whitespacesAndNewlines).singleQuoted)",
+                            replacements: [.init(range: listItemRange, replacement: "")]
+                        )
+                    ]
                 }
                 let topicSectionBaseExplanation = "Links in a \"Topics section\" are used to organize documentation into a hierarchy"
 
@@ -274,79 +284,83 @@ struct DocumentationCurator {
                         guard let node = context.topicGraph.nodeWithReference(reference) else { return false }
                         return node.kind == .module && documentationNode.kind.isSymbol == false
                     }
-        
+
                     let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.reachableRoots(from: nodeReference).contains(where: isTechnologyRoot)
 
                     if !hasTechnologyRoot {
-                        diagnostics.append(Diagnostic(
-                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration",
-                            summary: "Organizing the module \(childReference.lastPathComponent.singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) isn't allowed",
-                            explanation: "\(topicSectionBaseExplanation). Modules should be roots in the documentation hierarchy.",
-                            solutions: removeListItemSolutions))
+                        diagnostics.append(
+                            Diagnostic(
+                                source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration",
+                                summary: "Organizing the module \(childReference.lastPathComponent.singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) isn't allowed",
+                                explanation: "\(topicSectionBaseExplanation). Modules should be roots in the documentation hierarchy.",
+                                solutions: removeListItemSolutions))
                         continue
                     }
                 }
-                
+
                 // Verify we are not creating a graph cyclic relationship.
                 guard childReference != nodeReference else {
-                    diagnostics.append(Diagnostic(
-                        source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
-                        summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cycle",
-                        explanation: "\(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.",
-                        solutions: removeListItemSolutions
-                    ))
+                    diagnostics.append(
+                        Diagnostic(
+                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
+                            summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cycle",
+                            explanation: "\(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.",
+                            solutions: removeListItemSolutions
+                        ))
                     continue
                 }
-                
+
                 guard !isReference(childReference, anAncestorOf: nodeReference) else {
                     // Adding this edge in the topic graph _would_ introduce a cycle.
                     // In order to produce more actionable diagnostics, create a new graph that has this cycle.
                     var edges = context.topicGraph.edges
                     edges[nodeReference, default: []].append(childReference)
                     let graph = DirectedGraph(edges: edges)
-                    
+
                     let cycleDescriptions: [String] = graph.cycles(from: nodeReference).map { prettyPrint(cycle: $0) }
-                    
-                    diagnostics.append(Diagnostic(
-                        source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
-                        summary: """
-                        Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) \
-                        forms \(cycleDescriptions.count == 1 ? "a cycle" : "\(cycleDescriptions.count) cycles")
-                        """,
-                        explanation: """
-                        \(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.
-                        If this link contributed to the documentation hierarchy it would introduce \(cycleDescriptions.count == 1 ? "this cycle" : "these \(cycleDescriptions.count) cycles"):
-                        \(cycleDescriptions.joined(separator: "\n"))
-                        """,
-                        solutions: removeListItemSolutions
-                    ))
+
+                    diagnostics.append(
+                        Diagnostic(
+                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
+                            summary: """
+                                Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) \
+                                forms \(cycleDescriptions.count == 1 ? "a cycle" : "\(cycleDescriptions.count) cycles")
+                                """,
+                            explanation: """
+                                \(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.
+                                If this link contributed to the documentation hierarchy it would introduce \(cycleDescriptions.count == 1 ? "this cycle" : "these \(cycleDescriptions.count) cycles"):
+                                \(cycleDescriptions.joined(separator: "\n"))
+                                """,
+                            solutions: removeListItemSolutions
+                        ))
                     continue
                 }
-                
+
                 // Verify that the parent and child have at least one source language in common.
                 // Curating across disjoint source languages would make the child unreachable
                 // from any variant of the parent page in the navigator.
                 if documentationNode.availableSourceLanguages.isDisjoint(with: childDocumentationNode.availableSourceLanguages) {
                     let nodeLanguages = documentationNode.availableSourceLanguages.map(\.name).sorted().joined(separator: ", ")
                     let childLanguages = childDocumentationNode.availableSourceLanguages.map(\.name).sorted().joined(separator: ", ")
-                    diagnostics.append(Diagnostic(
-                        source: source(), severity: .warning, range: range(), identifier: "UnreachableCrossLanguageCuration",
-                        summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) would make it unreachable in the documentation hierarchy",
-                        explanation: """
-                        \(topicSectionBaseExplanation). The documentation hierarchy requires a curated link and its parent to share at least one source language.
-                        If this link contributed to the documentation hierarchy, \(describeForDiagnostic(childReference).singleQuoted) wouldn't be reachable from any variant of \(describeForDiagnostic(nodeReference).singleQuoted) because they have no source languages in common:
+                    diagnostics.append(
+                        Diagnostic(
+                            source: source(), severity: .warning, range: range(), identifier: "UnreachableCrossLanguageCuration",
+                            summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) would make it unreachable in the documentation hierarchy",
+                            explanation: """
+                                \(topicSectionBaseExplanation). The documentation hierarchy requires a curated link and its parent to share at least one source language.
+                                If this link contributed to the documentation hierarchy, \(describeForDiagnostic(childReference).singleQuoted) wouldn't be reachable from any variant of \(describeForDiagnostic(nodeReference).singleQuoted) because they have no source languages in common:
 
-                        - \(describeForDiagnostic(childReference).singleQuoted): \(childLanguages)
-                        - \(describeForDiagnostic(nodeReference).singleQuoted): \(nodeLanguages)
-                        """,
-                        solutions: removeListItemSolutions
-                    ))
+                                - \(describeForDiagnostic(childReference).singleQuoted): \(childLanguages)
+                                - \(describeForDiagnostic(nodeReference).singleQuoted): \(nodeLanguages)
+                                """,
+                            solutions: removeListItemSolutions
+                        ))
                     continue
                 }
 
                 // Link reference successfully resolved to a topic node
                 relateNodes(nodeReference, childReference)
-                
+
                 // Descend further into curated topics
                 try crawlChildren(of: childReference, prepareForCuration: prepareForCuration, relateNodes: relateNodes)
             }
@@ -355,11 +369,11 @@ struct DocumentationCurator {
 }
 
 private func prettyPrint(cycle: [ResolvedTopicReference]) -> String {
-    let pathDescription = cycle.map { describeForDiagnostic($0, withoutModuleName: true)}.joined(separator: " ─▶︎ ")
+    let pathDescription = cycle.map { describeForDiagnostic($0, withoutModuleName: true) }.joined(separator: " ─▶︎ ")
     return """
-    ╭─▶︎ \(pathDescription) ─╮
-    ╰\(String(repeating:"─", count: pathDescription.count + 3 /* "─▶︎ "*/ + 2 /* " ─"*/))╯
-    """
+        ╭─▶︎ \(pathDescription) ─╮
+        ╰\(String(repeating:"─", count: pathDescription.count + 3 /* "─▶︎ "*/ + 2 /* " ─"*/))╯
+        """
 }
 
 private func describeForDiagnostic(_ reference: ResolvedTopicReference, withoutModuleName: Bool = false) -> String {

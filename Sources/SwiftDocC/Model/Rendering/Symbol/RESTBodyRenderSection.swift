@@ -15,16 +15,16 @@ public struct RESTBodyRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restBody
     /// A title for the section.
     public var title: String
-    
+
     /// Content encoding MIME type for the request body.
     public let mimeType: String
-    
+
     /// A declaration that describes the body content.
     public let bodyContentType: [DeclarationRenderSection.Token]
-    
+
     /// Details about the request body, if available.
     public var content: [RenderBlockContent]?
-    
+
     /// A list of request parameters, if applicable.
     ///
     /// If the body content is `multipart/form-data` encoded, it contains a list
@@ -62,7 +62,7 @@ extension RESTBodyRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this RESTBodyRenderSection is similar enough to the given one.
     func isSimilar(to other: RESTBodyRenderSection) -> Bool {
         return self.title == other.title || self.content == other.content

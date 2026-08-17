@@ -27,73 +27,105 @@ struct LinkCompletionToolsTests {
                 #expect(got.disambiguation == expected.disambiguation, "Incorrect disambiguation for link component #\(index)", sourceLocation: sourceLocation)
             }
         }
-        
+
         assertParsing("", equal: [])
-        
-        assertParsing("SomeClass", equal: [
-            ("SomeClass", .none),
-        ])
+
+        assertParsing(
+            "SomeClass",
+            equal: [
+                ("SomeClass", .none),
+            ])
         // The leading slash indicate an absolute symbol link
-        assertParsing("/SomeModule", equal: [
-            ("SomeModule", .none),
-        ])
+        assertParsing(
+            "/SomeModule",
+            equal: [
+                ("SomeModule", .none),
+            ])
         // Trailing slash
-        assertParsing("SomeClass/", equal: [
-            ("SomeClass", .none),
-        ])
-        
+        assertParsing(
+            "SomeClass/",
+            equal: [
+                ("SomeClass", .none),
+            ])
+
         // Disambiguation
-        assertParsing("SomeClass-class", equal: [
-            ("SomeClass", .kindAndOrHash(kind: "class", hash: nil)),
-        ])
-        assertParsing("SomeClass-swift.class", equal: [
-            ("SomeClass", .kindAndOrHash(kind: "class", hash: nil)),
-        ])
-        assertParsing("SomeClass-p2kr1", equal: [
-            ("SomeClass", .kindAndOrHash(kind: nil, hash: "p2kr1")),
-        ])
-        
+        assertParsing(
+            "SomeClass-class",
+            equal: [
+                ("SomeClass", .kindAndOrHash(kind: "class", hash: nil)),
+            ])
+        assertParsing(
+            "SomeClass-swift.class",
+            equal: [
+                ("SomeClass", .kindAndOrHash(kind: "class", hash: nil)),
+            ])
+        assertParsing(
+            "SomeClass-p2kr1",
+            equal: [
+                ("SomeClass", .kindAndOrHash(kind: nil, hash: "p2kr1")),
+            ])
+
         // Slash in symbol names
-        assertParsing("Something//=(_:_:)", equal: [
-            ("Something", .none),
-            ("/=(_:_:)", .none),
-        ])
-        assertParsing("Something/operator/=", equal: [
-            ("Something", .none),
-            ("operator/=", .none),
-        ])
-        
+        assertParsing(
+            "Something//=(_:_:)",
+            equal: [
+                ("Something", .none),
+                ("/=(_:_:)", .none),
+            ])
+        assertParsing(
+            "Something/operator/=",
+            equal: [
+                ("Something", .none),
+                ("operator/=", .none),
+            ])
+
         // Type signature disambiguation
-        assertParsing("doSomething(with:and:)->()", equal: [
-            ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: [])),
-        ])
-        assertParsing("doSomething(with:and:)->_", equal: [
-            ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["_"])),
-        ])
-        assertParsing("doSomething(with:and:)->Bool", equal: [
-            ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"])),
-        ])
-        assertParsing("doSomething(with:and:)->(Int,_,Double)", equal: [
-            ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "Double"])),
-        ])
-        assertParsing("doSomething(with:and:)-(_,_)", equal: [
-            ("doSomething(with:and:)", .typeSignature(parameterTypes: ["_", "_"], returnTypes: nil)),
-        ])
-        assertParsing("doSomething(with:and:)-(String,_)", equal: [
-            ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: nil)),
-        ])
-        assertParsing("doSomething()-()", equal: [
-            ("doSomething()", .typeSignature(parameterTypes: [], returnTypes: nil)),
-        ])
-        assertParsing("doSomething(with:and:)-(String,_)->Bool", equal: [
-            ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: ["Bool"])),
-        ])
+        assertParsing(
+            "doSomething(with:and:)->()",
+            equal: [
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: [])),
+            ])
+        assertParsing(
+            "doSomething(with:and:)->_",
+            equal: [
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["_"])),
+            ])
+        assertParsing(
+            "doSomething(with:and:)->Bool",
+            equal: [
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"])),
+            ])
+        assertParsing(
+            "doSomething(with:and:)->(Int,_,Double)",
+            equal: [
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "Double"])),
+            ])
+        assertParsing(
+            "doSomething(with:and:)-(_,_)",
+            equal: [
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["_", "_"], returnTypes: nil)),
+            ])
+        assertParsing(
+            "doSomething(with:and:)-(String,_)",
+            equal: [
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: nil)),
+            ])
+        assertParsing(
+            "doSomething()-()",
+            equal: [
+                ("doSomething()", .typeSignature(parameterTypes: [], returnTypes: nil)),
+            ])
+        assertParsing(
+            "doSomething(with:and:)-(String,_)->Bool",
+            equal: [
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: ["Bool"])),
+            ])
     }
-    
+
     @Test
     func matchingSymbolsToDisambiguation() {
         let symbol = LinkCompletionTools.SymbolInformation(kind: "func.op", symbolIDHash: "vt1x", parameterTypes: ["Int", "String"], returnTypes: ["Bool"])
-        
+
         #expect(symbol.matches(.none))
         #expect(symbol.matches(.kindAndOrHash(kind: "func.op", hash: nil)))
         #expect(symbol.matches(.kindAndOrHash(kind: nil, hash: "vt1x")))
@@ -104,7 +136,7 @@ struct LinkCompletionToolsTests {
         #expect(symbol.matches(.typeSignature(parameterTypes: ["_", "String"], returnTypes: ["_"])))
         #expect(symbol.matches(.typeSignature(parameterTypes: ["Int", "String"], returnTypes: ["_"])))
         #expect(symbol.matches(.typeSignature(parameterTypes: ["Int", "String"], returnTypes: ["Bool"])))
-        
+
         #expect(false == symbol.matches(.kindAndOrHash(kind: "method", hash: nil)))
         #expect(false == symbol.matches(.kindAndOrHash(kind: nil, hash: "pfi6")))
         #expect(false == symbol.matches(.typeSignature(parameterTypes: [], returnTypes: [])))
@@ -115,54 +147,58 @@ struct LinkCompletionToolsTests {
         #expect(false == symbol.matches(.typeSignature(parameterTypes: ["_", "_"], returnTypes: ["Int"])))
         #expect(false == symbol.matches(.typeSignature(parameterTypes: ["String", "Int"], returnTypes: ["Bool"])))
     }
-    
+
     @Test(arguments: ["some", "unique", "symbol", "identifiers"])
     func hashingSymbolIDs(_ symbolID: String) {
         #expect(LinkCompletionTools.SymbolInformation.hash(uniqueSymbolID: symbolID) == symbolID.stableHashString)
     }
-    
+
     @Test
     func suggestsMinimalDisambiguationForCollidingSymbols() {
         let enumCase = LinkCompletionTools.SymbolInformation(kind: "enum.case", symbolIDHash: "lhk2x", parameterTypes: nil, returnTypes: nil)
         let property = LinkCompletionTools.SymbolInformation(kind: "property", symbolIDHash: "j56x", parameterTypes: nil, returnTypes: nil)
-        
+
         #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [enumCase]) == [""])
         #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [property]) == [""])
-        
-        #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
-            enumCase, property
-        ]) == [
-            "-enum.case", "-property"
-        ])
-        
+
+        #expect(
+            LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
+                enumCase, property
+            ]) == [
+                "-enum.case", "-property"
+            ])
+
         let operator1 = LinkCompletionTools.SymbolInformation(kind: "func.op", symbolIDHash: "vt1x", parameterTypes: ["Int", "String"], returnTypes: ["Bool"])
         let operator2 = LinkCompletionTools.SymbolInformation(kind: "func.op", symbolIDHash: "pfi6", parameterTypes: ["Wrapped", "Wrapped"], returnTypes: ["Wrapped"])
         let method = LinkCompletionTools.SymbolInformation(kind: "method", symbolIDHash: "w7ti9", parameterTypes: ["Int", "String"], returnTypes: [])
-        
-        #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
-            operator1, operator2, method,
-        ]) == [
-            "->Bool", "->Wrapped", "-method",
-        ])
-        
+
+        #expect(
+            LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
+                operator1, operator2, method,
+            ]) == [
+                "->Bool", "->Wrapped", "-method",
+            ])
+
         var operator3 = operator1
         operator3.symbolIDHash = "da50"
-        
-        #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
-            operator1, operator2, operator3,
-        ]) == [
-            "-vt1x", "->Wrapped", "-da50",
-        ])
-        
+
+        #expect(
+            LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
+                operator1, operator2, operator3,
+            ]) == [
+                "-vt1x", "->Wrapped", "-da50",
+            ])
+
         operator3.parameterTypes = ["Int", "Double"]
-        
-        #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
-            operator1, operator2, operator3,
-        ]) == [
-            "-(_,String)", "->Wrapped", "-(_,Double)",
-        ])
+
+        #expect(
+            LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
+                operator1, operator2, operator3,
+            ]) == [
+                "-(_,String)", "->Wrapped", "-(_,Double)",
+            ])
     }
-    
+
     @Test
     func suggestsProvidedHashesAsDisambiguationEvenWhenInvalidHashes() {
         // swift-format-ignore
@@ -171,59 +207,70 @@ struct LinkCompletionToolsTests {
             "ABCDE",         // uppercase letters are not allowed in a symbol ID hash
             "somelongstring" // symbol ID hashes cannot be longer than 5 characters
         ]
-        
+
         let collidingSymbols = invalidHashes.map {
             LinkCompletionTools.SymbolInformation(kind: "class", symbolIDHash: $0, parameterTypes: nil, returnTypes: nil)
         }
         #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: collidingSymbols) == invalidHashes.map { "-\($0)" })
     }
-    
+
     @Test
     func formattingDisambiguationSuffixStrings() {
         typealias Disambiguation = LinkCompletionTools.ParsedDisambiguation
-        
+
         #expect(Disambiguation.none.suffix == "")
-        
-        #expect(Disambiguation.kindAndOrHash(kind: "class", hash: nil).suffix
+
+        #expect(
+            Disambiguation.kindAndOrHash(kind: "class", hash: nil).suffix
                 == "-class")
-        #expect(Disambiguation.kindAndOrHash(kind: nil, hash: "z3jl").suffix
+        #expect(
+            Disambiguation.kindAndOrHash(kind: nil, hash: "z3jl").suffix
                 == "-z3jl")
-        
-        #expect(Disambiguation.typeSignature(parameterTypes: [], returnTypes: nil).suffix
+
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: [], returnTypes: nil).suffix
                 == "-()")
-        #expect(Disambiguation.typeSignature(parameterTypes: ["Int"], returnTypes: nil).suffix
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: ["Int"], returnTypes: nil).suffix
                 == "-(Int)")
-        #expect(Disambiguation.typeSignature(parameterTypes: ["Int", "_", "String"], returnTypes: nil).suffix
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: ["Int", "_", "String"], returnTypes: nil).suffix
                 == "-(Int,_,String)")
-        
-        #expect(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: []).suffix
+
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: nil, returnTypes: []).suffix
                 == "->()")
-        #expect(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int"]).suffix
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int"]).suffix
                 == "->Int")
-        #expect(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "String"]).suffix
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "String"]).suffix
                 == "->(Int,_,String)")
-        
-        #expect(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: []).suffix
+
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: []).suffix
                 == "-(_,Bool)->()")
-        #expect(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int"]).suffix
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int"]).suffix
                 == "-(_,Bool)->Int")
-        #expect(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int", "_", "String"]).suffix
+        #expect(
+            Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int", "_", "String"]).suffix
                 == "-(_,Bool)->(Int,_,String)")
     }
-    
+
     @Test(arguments: [
         "",
         "-class",
         "-z3jl",
-        
+
         "-()",
         "-(Int)",
         "-(Int,_,String)",
-        
+
         "->()",
         "->Int",
         "->(Int,_,String)",
-        
+
         "-(_,Bool)->()",
         "-(_,Bool)->Int",
         "-(_,Bool)->(Int,_,String)",
@@ -248,7 +295,7 @@ struct LinkCompletionToolsTests {
                 returnTypes: $0.returns
             )
         }
-        
+
         // swift-format-ignore
         #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads) == [
             "-(Int)->()", // Only parameter type would be ambiguous with 3rd overload & only return type would be ambiguous with 2nd overload.
@@ -256,12 +303,12 @@ struct LinkCompletionToolsTests {
             "->_",        // The only overload that returns something
         ])
     }
-    
+
     @Test
     func removesWhitespaceFromTypeSignatureDisambiguation() {
         let overloads = [
             // The caller included whitespace in these closure type spellings but the DocC disambiguation won't include this whitespace.
-            (parameters: ["(Int) -> Int"],  returns: []), // ((Int)  -> Int)  -> Void
+            (parameters: ["(Int) -> Int"], returns: []),  // ((Int)  -> Int)  -> Void
             (parameters: ["(Bool) -> ()"], returns: []),  // ((Bool) -> () )  -> Void
         ].map {
             LinkCompletionTools.SymbolInformation(
@@ -271,11 +318,12 @@ struct LinkCompletionToolsTests {
                 returnTypes: $0.returns
             )
         }
-        
-        #expect(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads) == [
-            // Both parameters require the only parameter type as disambiguation. The suggested disambiguation shouldn't contain extra whitespace.
-            "-((Int)->Int)",
-            "-((Bool)->())",
-        ])
+
+        #expect(
+            LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads) == [
+                // Both parameters require the only parameter type as disambiguation. The suggested disambiguation shouldn't contain extra whitespace.
+                "-((Int)->Int)",
+                "-((Bool)->())",
+            ])
     }
 }

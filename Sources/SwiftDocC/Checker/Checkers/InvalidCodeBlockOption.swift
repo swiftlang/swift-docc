@@ -62,7 +62,7 @@ struct InvalidCodeBlockOption: Checker {
 
             if !value.isEmpty, indices.isEmpty {
                 diagnostics.append(
-                Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Could not parse \(token.rawValue.singleQuoted) indices from \(value.singleQuoted). Expected an integer (e.g. 3) or an array (e.g. [1, 3, 5])")
+                    Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Could not parse \(token.rawValue.singleQuoted) indices from \(value.singleQuoted). Expected an integer (e.g. 3) or an array (e.g. [1, 3, 5])")
                 )
                 return
             }
@@ -70,14 +70,17 @@ struct InvalidCodeBlockOption: Checker {
             let invalid = indices.filter { $0 < 1 || $0 > lineCount }
             guard !invalid.isEmpty else { return }
 
-            let solutions: [Solution] = if invalid.contains(where: { $0 == lineCount + 1 }) {
-                [Solution(
-                    summary: "If you intended the last line, change '\(lineCount + 1)' to \(lineCount).",
-                    replacements: []
-                )]
-            } else {
-                []
-            }
+            let solutions: [Solution] =
+                if invalid.contains(where: { $0 == lineCount + 1 }) {
+                    [
+                        Solution(
+                            summary: "If you intended the last line, change '\(lineCount + 1)' to \(lineCount).",
+                            replacements: []
+                        )
+                    ]
+                } else {
+                    []
+                }
             diagnostics.append(
                 Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Invalid \(token.rawValue.singleQuoted) index\(invalid.count == 1 ? "" : "es") in \(value.singleQuoted) for a code block with \(lineCount) line\(lineCount == 1 ? "" : "s"). Valid range is 1...\(lineCount).", solutions: solutions)
             )

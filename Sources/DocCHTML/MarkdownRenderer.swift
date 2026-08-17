@@ -39,13 +39,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     let goal: RenderGoal
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
-    
+
     package init(path: URL, goal: RenderGoal, linkProvider: Provider) {
         self.path = path
         self.goal = goal
         self.linkProvider = linkProvider
     }
-    
+
     /// Transforms a markdown paragraph into a `<p>` HTML element.
     ///
     /// As part of transforming the paragraph, the renderer also transforms all of the its content recursively.
@@ -60,7 +60,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     func visit(_ paragraph: Paragraph) -> XMLNode {
         .element(named: "p", children: visit(paragraph.children))
     }
-    
+
     /// Transforms a markdown block quote into a `<aside>` HTML element that represents an "aside".
     ///
     /// As part of transforming the paragraph, the renderer also transforms all of its content recursively.
@@ -77,21 +77,21 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// ```
     func visit(_ blockQuote: BlockQuote) -> XMLNode {
         let aside = Aside(blockQuote)
-        
+
         var children: [XMLNode] = [
             .element(named: "p", children: [.text(aside.kind.displayName)], attributes: ["class": "label"])
         ]
         for child in aside.content {
             children.append(visit(child))
         }
-        
+
         return .element(
             named: "aside",
             children: children,
             attributes: ["class": aside.kind.rawValue.lowercased()]
         )
     }
-    
+
     /// Transforms a markdown heading into a`<h[1...6]>` HTML element whose content is wrapped in an `<a>` HTML element that references the heading itself.
     ///
     /// As part of transforming the heading, the renderer also transforms all of the its content recursively.
@@ -112,7 +112,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     package func visit(_ heading: Heading) -> XMLNode {
         selfReferencingHeading(level: heading.level, content: visit(heading.children), plainTextTitle: heading.plainText)
     }
-    
+
     /// Returns a `<h[1...6]>` HTML element whose content is wrapped in an `<a>` HTML element that references the heading itself.
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the heading's content in an anchor.
@@ -120,7 +120,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         switch goal {
         case .conciseness:
             return .element(named: "h\(level)", children: content)
-            
+
         case .richness:
             let id = urlReadableFragment(plainTextTitle())
             return .element(
@@ -134,7 +134,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             )
         }
     }
-    
+
     /// Returns a "section" with a level-2 heading that references the section it's in.
     ///
     /// When the renderer has a ``RenderGoal/richness`` goal, the returned section is a`<section>` HTML element.
@@ -144,80 +144,84 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// When the renderer has a ``RenderGoal/conciseness`` goal, it returns a plain `<h2>` element followed by the already transformed `content` nodes.
     func selfReferencingSection(named sectionName: String, content: [XMLNode]) -> [XMLNode] {
         guard !content.isEmpty else { return [] }
-        
+
         switch goal {
         case .richness:
             let id = urlReadableFragment(sectionName)
-            
-            return [.element(
-                named: "section",
-                children: [
-                    .element(named: "h2", children: [
-                        .element(named: "a", children: [.text(sectionName)], attributes: ["href": "#\(id)"])
-                    ])
-                ] + content,
-                attributes: ["id": id]
-            )]
+
+            return [
+                .element(
+                    named: "section",
+                    children: [
+                        .element(
+                            named: "h2",
+                            children: [
+                                .element(named: "a", children: [.text(sectionName)], attributes: ["href": "#\(id)"])
+                            ])
+                    ] + content,
+                    attributes: ["id": id]
+                )
+            ]
         case .conciseness:
             return [.element(named: "h2", children: [.text(sectionName)]) as XMLNode] + content
         }
     }
-    
+
     /// Transforms a markdown emphasis into a`<i>` HTML element.
     func visit(_ emphasis: Emphasis) -> XMLNode {
         .element(named: "i", children: visit(emphasis.children))
     }
-    
+
     /// Transforms a markdown strong into a`<b>` HTML element.
     func visit(_ strong: Strong) -> XMLNode {
         .element(named: "b", children: visit(strong.children))
     }
-    
+
     /// Transforms a markdown strikethrough into a`<s>` HTML element.
     func visit(_ strikethrough: Strikethrough) -> XMLNode {
         .element(named: "s", children: visit(strikethrough.children))
     }
-    
+
     /// Transforms a markdown inline code into a`<code>` HTML element.
     func visit(_ inlineCode: InlineCode) -> XMLNode {
         .element(named: "code", children: [.text(inlineCode.code)])
     }
-    
+
     /// Transforms a markdown text into an HTML escaped text node.
     func visit(_ text: Text) -> XMLNode {
         .text(text.string)
     }
-    
+
     /// Transforms a markdown line break into an empty`<br />` HTML element.
     func visit(_: LineBreak) -> XMLNode {
         .element(named: "br")
     }
-    
+
     /// Transforms a markdown line break into a single space.
     func visit(_: SoftBreak) -> XMLNode {
-        .text(" ") // A soft line break doesn't actually break the content
+        .text(" ")  // A soft line break doesn't actually break the content
     }
-    
+
     /// Transforms a markdown line break into an empty`<hr />` HTML element.
     func visit(_: ThematicBreak) -> XMLNode {
         .element(named: "hr")
     }
-    
+
     private func _removeComments(from node: XMLNode) {
         guard let element = node as? XMLElement,
-              let children = element.children
+            let children = element.children
         else {
             return
         }
-        
+
         let withoutComments = children.filter { $0.kind != .comment }
         element.setChildren(withoutComments)
-        
+
         for child in withoutComments {
             _removeComments(from: child)
         }
     }
-    
+
     /// Transforms a block of HTML in the source markdown into XML nodes representing the same structure with all the comments removed.
     func visit(_ html: HTMLBlock) -> XMLNode {
         do {
@@ -228,22 +232,22 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return .text("")
         }
     }
-    
+
     /// Transforms an inline HTML tag in the source markdown into XML nodes representing the same structure with all the comments removed.
     func visit(_ html: InlineHTML) -> XMLNode {
         // Inline HTML is one tag at a time, meaning that the closing and opening tags are parsed separately
         // Because of this, we can't parse it with `XMLElement` or `XMLParser`.
-        
+
         // We assume that we want all tags except for comments
         guard !html.rawHTML.hasPrefix("<!--") else {
             return .text("")
         }
-        
+
         // We can't create a valid structured XMLNode (because that closing tag will come later,
         // so we return the raw tag as text.
         return .text(html.rawHTML)
     }
-    
+
     package func wordBreak(symbolName: String) -> [XMLNode] {
         // swift-format-ignore
         switch goal {
@@ -251,7 +255,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         case .conciseness: [.text(symbolName)]
         }
     }
-    
+
     /// Transforms an already resolved markdown link into a`<a>` HTML element.
     ///
     /// The renderer uses its configured ``LinkProvider`` to find information about the referenced page.
@@ -273,7 +277,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         guard let destination = link.destination.flatMap({ URL(string: $0) }) else {
             return .text("")
         }
-        
+
         let linkedElement = linkProvider.element(for: destination)
         // Check if the link has an authored link title or if it's an "autolink" (for example `<LINK>` or `[](LINK)`)
         guard link.isAutolink else {
@@ -285,7 +289,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                     customTitle.append(visit(child))
                 }
             }
-            
+
             return .element(
                 named: "a",
                 children: customTitle,
@@ -295,20 +299,20 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 ]
             )
         }
-        
+
         // Make a relative link
         if let linkedElement {
             // swift-format-ignore
             let children: [XMLNode] = switch linkedElement.names {
                 case .single(.conceptual(let name)): [ .text(name) ]
                 case .single(.symbol(let name)):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
-                
+
                 case .languageSpecificSymbol(let namesByLanguageID):
                     RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
                         .element(named: "code", children: wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
                     }
             }
-            
+
             return .element(
                 named: "a",
                 children: children,
@@ -326,7 +330,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return .text(linkProvider.fallbackLinkText(linkString: destination.path))
         }
     }
-    
+
     /// Transforms an already resolved markdown symbol link into a`<a>` HTML element.
     ///
     /// The renderer uses its configured ``LinkProvider`` to find information about the referenced symbol.
@@ -346,35 +350,35 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr />` HTML elements in the symbol name.
     func visit(_ symbolLink: SymbolLink) -> XMLNode {
         guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
-              let linkedElement = linkProvider.element(for: destination)
+            let linkedElement = linkProvider.element(for: destination)
         else {
             // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
             return .element(named: "code", children: [.text(linkProvider.fallbackLinkText(linkString: symbolLink.destination ?? ""))])
         }
-        
+
         // swift-format-ignore
         let children: [XMLNode] = switch linkedElement.names {
             case .single(.conceptual(let name)): [ .text(name) ]
             case .single(.symbol(let name)):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
-                
+
             case .languageSpecificSymbol(let namesByLanguageID):
                 RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
                     .element(named: "code", children: wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
                 }
         }
-        
+
         return .element(
             named: "a",
             children: children,
             attributes: ["href": path(to: linkedElement.path)]
         )
     }
-    
+
     // swift-format-ignore
     package func path(to other: URL) -> String {
         let from = path
         let to   = other
-        
+
         guard from != to else { return "." }
 
         // To be able to compare the components of the two URLs they both need to be absolute and standardized.
@@ -385,11 +389,11 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
 
         let relativeComponents = repeatElement("..", count: fromComponents.count - commonPrefixLength - 1 /* the "index.html" component doesn't count in a web server */)
             + toComponents.dropFirst(commonPrefixLength)
-       
+
         return relativeComponents.joined(separator: "/")
             .lowercased() // Don't make assumptions about a case insensitive hosting environment.
     }
-    
+
     /// Transforms a markdown image into a`<picture>` HTML element that wraps an `<img>` element and zero or more `<source>` elements.
     ///
     /// The renderer uses its configured ``LinkProvider`` to find information about the referenced asset.
@@ -407,20 +411,22 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// ```
     func visit(_ image: Image) -> XMLNode {
         guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.files.isEmpty else {
-            return .text("") // ???: What do we return for images that won't display anything?
+            return .text("")  // ???: What do we return for images that won't display anything?
         }
-        
+
         func srcAttributes(for images: [Int: URL]) -> [String: String] {
             switch images.count {
-                case 0: [:]
-                case 1: ["src": path(to: images.first!.value)]
-                default: ["srcset": images.sorted(by: { $0.key > $1.key }) // large scale factors first
-                    .map { scale, url in "\(path(to: url)) \(scale)x" }
-                    .joined(separator: ", ")
+            case 0: [:]
+            case 1: ["src": path(to: images.first!.value)]
+            default:
+                [
+                    "srcset": images.sorted(by: { $0.key > $1.key })  // large scale factors first
+                        .map { scale, url in "\(path(to: url)) \(scale)x" }
+                        .joined(separator: ", ")
                 ]
             }
         }
-        
+
         var imgAttributes = [
             "decoding": "async",
             "loading": "lazy",
@@ -428,25 +434,25 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         if let altText = image.altText {
             imgAttributes["alt"] = altText
         }
-        
+
         var children = [XMLNode]()
         if asset.files.count == 1 {
             // When all image are either dark/light mode, add them directly on the "img" element
             imgAttributes.merge(srcAttributes(for: asset.files.first!.value), uniquingKeysWith: { _, new in new })
         } else {
             // Define a "source" element for each dark/light style
-            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
+            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) {  // order light images before dark images
                 var attributes = srcAttributes(for: images)
                 attributes["media"] = "(prefers-color-scheme: \(style.rawValue))"
                 children.append(.element(named: "source", attributes: attributes))
             }
         }
-        
+
         children.append(.element(named: "img", attributes: imgAttributes))
-        
+
         return .element(named: "picture", children: children)
     }
-    
+
     /// Transforms a markdown code block (either fenced or indented) into a `<pre>` HTML element that wraps a `<code>` HTML element containing the code block's code.
     ///
     /// If the fenced code block contains source language information on its opening line, the renderer includes this in the `<pre>` element.
@@ -466,7 +472,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         let attributes = codeBlock.language.map {
             ["class": $0]
         }
-        
+
         return .element(
             named: "pre",
             children: [
@@ -474,11 +480,11 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             ],
             attributes: attributes
         )
-        
+
     }
-    
+
     // MARK: List
-    
+
     /// Transforms a markdown unordered list into a`<ul>` HTML element.
     ///
     /// As part of transforming the unordered list, the renderer also transforms all of its list items and their content recursively.
@@ -511,7 +517,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     func visit(_ unorderedList: UnorderedList) -> XMLNode {
         .element(named: "ul", children: visit(unorderedList.children))
     }
-    
+
     /// Transforms a markdown ordered list into a`<ul>` HTML element.
     ///
     /// As part of transforming the ordered list, the renderer also transforms all of its list items and their content recursively.
@@ -534,16 +540,16 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     func visit(_ orderedList: OrderedList) -> XMLNode {
         .element(named: "ol", children: visit(orderedList.children))
     }
-    
+
     /// Transforms a markdown list item into a`<li>` HTML element.
     ///
     /// See ``visit(_:)-(UnorderedList)`` or ``visit(_:)-(OrderedList)`` for examples.
     func visit(_ listItem: ListItem) -> XMLNode {
         .element(named: "li", children: visit(listItem.children))
     }
-    
+
     // MARK: Tables
-    
+
     /// Transforms a markdown table into a`<table>` HTML element.
     ///
     /// As part of transforming the table, the renderer also transforms the table's head and body and all their cells and their content recursively.
@@ -582,93 +588,101 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// ```
     func visit(_ table: Table) -> XMLNode {
         let element = XMLElement(name: "table")
-                
+
         if !table.head.isEmpty {
             var column = 0
-            
+
             element.addChild(
-                .element(named: "thead", children: [
-                    .element(named: "tr", children: table.head.cells.compactMap { (cell) -> XMLNode? in
-                        defer { column += 1 }
-                        
-                        if cell.colspan == 0 || cell.rowspan == 0 {
-                            return nil
-                        }
-                        
-                        var attributes: [String: String] = [:]
-                        if cell.colspan != 1 {
-                            attributes["colspan"] = "\(cell.colspan)"
-                        }
-                        if cell.rowspan != 1 {
-                            attributes["rowspan"] = "\(cell.rowspan)"
-                        }
-                        
-                        if let alignment = table.columnAlignments[column] {
-                            // swift-format-ignore
-                            attributes["class"] = switch alignment {
+                .element(
+                    named: "thead",
+                    children: [
+                        .element(
+                            named: "tr",
+                            children: table.head.cells.compactMap { (cell) -> XMLNode? in
+                                defer { column += 1 }
+
+                                if cell.colspan == 0 || cell.rowspan == 0 {
+                                    return nil
+                                }
+
+                                var attributes: [String: String] = [:]
+                                if cell.colspan != 1 {
+                                    attributes["colspan"] = "\(cell.colspan)"
+                                }
+                                if cell.rowspan != 1 {
+                                    attributes["rowspan"] = "\(cell.rowspan)"
+                                }
+
+                                if let alignment = table.columnAlignments[column] {
+                                    // swift-format-ignore
+                                    attributes["class"] = switch alignment {
                                 case .left:   "left"
                                 case .center: "center"
                                 case .right:  "right"
                             }
-                        }
-                        
-                        return .element(
-                            named: "th",
-                            children: visit(cell.children),
-                            attributes: attributes
-                        )
-                    })
-                ])
+                                }
+
+                                return .element(
+                                    named: "th",
+                                    children: visit(cell.children),
+                                    attributes: attributes
+                                )
+                            })
+                    ])
             )
         }
-        
+
         if !table.body.isEmpty {
             element.addChild(
-                .element(named: "tbody", children: table.body.rows.map { row in
-                    var column = 0
-                    return .element(named: "tr", children: row.cells.compactMap { (cell) -> XMLNode? in
-                        defer { column += 1 }
-                        
-                        if cell.colspan == 0 || cell.rowspan == 0 {
-                            return nil
-                        }
-                        
-                        var attributes: [String: String] = [:]
-                        if cell.colspan != 1 {
-                            attributes["colspan"] = "\(cell.colspan)"
-                        }
-                        if cell.rowspan != 1 {
-                            attributes["rowspan"] = "\(cell.rowspan)"
-                        }
-                        
-                        if let alignment = table.columnAlignments[column] {
-                            // swift-format-ignore
-                            attributes["class"] = switch alignment {
+                .element(
+                    named: "tbody",
+                    children: table.body.rows.map { row in
+                        var column = 0
+                        return .element(
+                            named: "tr",
+                            children: row.cells.compactMap { (cell) -> XMLNode? in
+                                defer { column += 1 }
+
+                                if cell.colspan == 0 || cell.rowspan == 0 {
+                                    return nil
+                                }
+
+                                var attributes: [String: String] = [:]
+                                if cell.colspan != 1 {
+                                    attributes["colspan"] = "\(cell.colspan)"
+                                }
+                                if cell.rowspan != 1 {
+                                    attributes["rowspan"] = "\(cell.rowspan)"
+                                }
+
+                                if let alignment = table.columnAlignments[column] {
+                                    // swift-format-ignore
+                                    attributes["class"] = switch alignment {
                                 case .left:   "left"
                                 case .center: "center"
                                 case .right:  "right"
                             }
-                        }
-                        
-                        return .element(
-                            named: "td",
-                            children: visit(cell.children),
-                            attributes: attributes
-                        )
+                                }
+
+                                return .element(
+                                    named: "td",
+                                    children: visit(cell.children),
+                                    attributes: attributes
+                                )
+                            })
                     })
-                })
             )
         }
-        
+
         return element
     }
-    
+
     // MARK: Markup children
-    
+
     private func visit(_ container: MarkupChildren) -> [XMLNode] {
         var children: [XMLNode] = []
         children.reserveCapacity(container.underestimatedCount)
-        
+
         // Check if the markup contains _any_ inline HTML. If it doesn't, then we can simply visit each child.
         guard container.contains(where: { $0 is InlineHTML }) else {
             for element in container {
@@ -676,7 +690,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             }
             return children
         }
-        
+
         // The markup contains at least _some_ inline HTML. This could be either:
         // - A comment like `<!-- comment -->` that we'd want to exclude from the output.
         // - An empty element like `<br />` or `<hr />` that's complete on its own.
@@ -690,16 +704,16 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 children.append(visit(element))
                 continue
             }
-            
+
             // Otherwise, we need to determine how long this markdown element is.
             let rawHTML = openingHTML.rawHTML
             // Simply skip any HTML/XML comments.
             guard !rawHTML.hasPrefix("<!--") else {
                 continue
             }
-            
+
             // Next, check if its empty element (for example `<br />` or `<hr />`) that's complete on its own.
-            
+
             // On non-Darwin platforms, `XMLElement(xmlString:)` sometimes crashes for certain invalid / incomplete XML strings.
             // To minimize the risk of this happening, don't try to parse the XML string as an empty HTML element unless it ends with "/>"
             if rawHTML.hasSuffix("/>"), let parsed = try? XMLElement(xmlString: rawHTML) {
@@ -710,43 +724,43 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 children.append(parsed)
             }
         }
-        
+
         return children
     }
-    
+
     private func _findMultiMarkupHTMLElement(in remainder: inout ArraySlice<any Markup>, openingRawHTML: String) -> XMLNode? {
         // Don't modify `remainder` until we know that we've parsed a valid HTML element.
         var copy = remainder
-        
+
         var rawHTML = openingRawHTML
-        let tagName = rawHTML.dropFirst(/* the opening "<" */).prefix(while: \.isLetter)
+        let tagName = rawHTML.dropFirst( /* the opening "<" */).prefix(while: \.isLetter)
         let expectedClosingTag = "</\(tagName)>"
-        
+
         // Only iterate as long the markup is _inline_ markup.
         while let next = copy.first as? any InlineMarkup {
             _ = copy.removeFirst()
             let html = next as? InlineHTML
-            
+
             // Skip any HTML/XML comments _inside_ this HTML tag
             if let html, html.rawHTML.hasPrefix("<!--") {
                 continue
             }
-            
+
             // If this wasn't a comment, accumulate more raw HTML to try and parse
             rawHTML += next.format()
             // On non-Darwin platforms, `XMLElement(xmlString:)` sometimes crashes for certain invalid / incomplete XML strings.
             // To minimize the risk of this happening, don't try to parse the XML string as an empty HTML element unless it ends with "/>"
             if html?.rawHTML == expectedClosingTag, let parsed = try? XMLElement(xmlString: rawHTML) {
-                remainder = copy // Skip over all the elements that were used to create that HTML element.
-                return parsed // Include the valid HTML element in the output.
+                remainder = copy  // Skip over all the elements that were used to create that HTML element.
+                return parsed  // Include the valid HTML element in the output.
             }
         }
         // If we reached the end of the _inline_ markup without parsing a valid HTML element, skip just that opening markup without updating `remainder`
         return nil
     }
-    
+
     // MARK: Directives
-    
+
     func visit(_ directive: BlockDirective) -> XMLNode {
         switch directive.name {
         case "Small":
@@ -757,13 +771,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             }
             return .element(named: "p", children: [.element(named: "small", children: content)])
         default:
-            return .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
+            return .text("")  // TODO: Support the block directives that appear as in-page content (rdar://165755944)
         }
     }
-    
+
     // TODO: Support rendering Doxygen tags. (rdar://165755750)
     // It would be nice if DocC processed in the model, so that all renderers could have just one code path for parameters, returns, etc.
-    
+
     func visit(_: DoxygenNote) -> XMLNode {
         .text("")
     }
@@ -779,9 +793,9 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     func visit(_: DoxygenDiscussion) -> XMLNode {
         .text("")
     }
-    
+
     // MARK: Default
-    
+
     @_disfavoredOverload
     package func visit(_ markup: some Markup) -> XMLNode {
         // Check common markup types first
@@ -873,7 +887,7 @@ private extension CharacterSet {
         .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
     static let whitespaceAndDashes = CharacterSet.whitespaces
-        .union(CharacterSet(charactersIn: "-\u{2013}\u{2014}")) // hyphen, en dash, em dash
+        .union(CharacterSet(charactersIn: "-\u{2013}\u{2014}"))  // hyphen, en dash, em dash
 }
 
 /// Creates a more readable version of a fragment by replacing characters that are not allowed in the fragment of a URL with hyphens.
@@ -881,17 +895,18 @@ private extension CharacterSet {
 /// If this step is not performed, the disallowed characters are instead percent escape encoded, which is less readable.
 /// For example, a fragment like `"#hello world"` is converted to `"#hello-world"` instead of `"#hello%20world"`.
 func urlReadableFragment(_ fragment: some StringProtocol) -> String {
-    var fragment = fragment
+    var fragment =
+        fragment
         // Trim leading/trailing whitespace
         .trimmingCharacters(in: .whitespaces)
-    
+
         // Replace continuous whitespace and dashes
         .components(separatedBy: .whitespaceAndDashes)
         .filter({ !$0.isEmpty })
         .joined(separator: "-")
-    
+
     // Remove invalid characters
     fragment.unicodeScalars.removeAll(where: CharacterSet.fragmentCharactersToRemove.contains)
-    
+
     return fragment
 }

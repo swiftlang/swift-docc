@@ -15,28 +15,28 @@ import XCTest
 class ContentAndMediaSectionTests: XCTestCase {
     func testDecoderWithAllKeysPresent() {
         let json = """
-        {
-            "kind": "contentAndMedia",
-            "layout": "vertical",
-            "title": "myTitle",
-            "eyebrow": "myEyebrow",
-            "content": [],
-            "media": "myMedia",
-            "mediaPosition": "trailing"
-        }
-        """.data(using: .utf8)!
-        
+            {
+                "kind": "contentAndMedia",
+                "layout": "vertical",
+                "title": "myTitle",
+                "eyebrow": "myEyebrow",
+                "content": [],
+                "media": "myMedia",
+                "mediaPosition": "trailing"
+            }
+            """.data(using: .utf8)!
+
         XCTAssertNoThrow(try JSONDecoder().decode(ContentAndMediaSection.self, from: json))
     }
 
     // Test for backwards-compatibility.
     func testDecoderAcceptsMissingKindKey() {
         let json = """
-        {
-            "layout": "vertical"
-        }
-        """.data(using: .utf8)!
-        
+            {
+                "layout": "vertical"
+            }
+            """.data(using: .utf8)!
+
         XCTAssertNoThrow(try JSONDecoder().decode(ContentAndMediaSection.self, from: json))
     }
 }

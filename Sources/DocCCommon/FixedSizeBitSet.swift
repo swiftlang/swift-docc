@@ -14,12 +14,12 @@
 /// However, in specialized cases where the caller can guarantee that all values are in bounds, this type can offer a memory and performance improvement.
 package struct _FixedSizeBitSet<Storage: FixedWidthInteger & Sendable>: Sendable {
     package typealias Element = Int
-    
+
     package init() {}
-    
+
     @usableFromInline
     private(set) var storage: Storage = 0
-    
+
     @inlinable
     init(storage: Storage) {
         self.storage = storage
@@ -33,7 +33,7 @@ extension _FixedSizeBitSet: SetAlgebra {
         precondition(number < Storage.bitWidth, "Number \(number) is out of bounds (0..<\(Storage.bitWidth))")
         return 1 &<< number
     }
-    
+
     @inlinable
     @discardableResult
     mutating package func insert(_ member: Int) -> (inserted: Bool, memberAfterInsert: Int) {
@@ -43,7 +43,7 @@ extension _FixedSizeBitSet: SetAlgebra {
         }
         return (newStorage != storage, member)
     }
-    
+
     @inlinable
     @discardableResult
     mutating package func remove(_ member: Int) -> Int? {
@@ -53,54 +53,54 @@ extension _FixedSizeBitSet: SetAlgebra {
         }
         return newStorage != storage ? member : nil
     }
-    
+
     @inlinable
     @discardableResult
     mutating package func update(with member: Int) -> Int? {
         let (inserted, _) = insert(member)
         return inserted ? nil : member
     }
-    
+
     @inlinable
     package func contains(_ member: Int) -> Bool {
         storage & _FixedSizeBitSet.mask(member) != 0
     }
-        
+
     @inlinable
     package func isSuperset(of other: Self) -> Bool {
         (storage & other.storage) == other.storage
     }
-    
+
     @inlinable
     package func union(_ other: Self) -> Self {
         .init(storage: storage | other.storage)
     }
-    
+
     @inlinable
     package func intersection(_ other: Self) -> Self {
         .init(storage: storage & other.storage)
     }
-    
+
     @inlinable
     package func symmetricDifference(_ other: Self) -> Self {
         .init(storage: storage ^ other.storage)
     }
-    
+
     @inlinable
     mutating package func formUnion(_ other: Self) {
         storage |= other.storage
     }
-    
+
     @inlinable
     mutating package func formIntersection(_ other: Self) {
         storage &= other.storage
     }
-    
+
     @inlinable
     mutating package func formSymmetricDifference(_ other: Self) {
         storage ^= other.storage
     }
-    
+
     @inlinable
     package var isEmpty: Bool {
         storage == 0
@@ -114,18 +114,18 @@ extension _FixedSizeBitSet: Sequence {
     package func makeIterator() -> some IteratorProtocol<Int> {
         _Iterator(set: self)
     }
-    
+
     private struct _Iterator: IteratorProtocol {
         typealias Element = Int
-        
+
         private var storage: Storage
         private var current: Int = -1
-        
+
         @inlinable
         init(set: _FixedSizeBitSet) {
             self.storage = set.storage
         }
-        
+
         @inlinable
         mutating func next() -> Int? {
             guard storage != 0 else {
@@ -135,7 +135,7 @@ extension _FixedSizeBitSet: Sequence {
             // This saves needing to do `contains()` checks for all the numbers since the previous element.
             let amountToShift = storage.trailingZeroBitCount &+ 1
             storage &>>= amountToShift
-            
+
             current &+= amountToShift
             return current
         }
@@ -148,40 +148,40 @@ extension _FixedSizeBitSet: Collection {
     // Collection conformance requires an `Index` type, that the collection can advance, and `startIndex` and `endIndex` accessors that follow certain requirements.
     //
     // For this design, as a hidden implementation detail, the `Index` holds the bit offset to the element.
-    
+
     @inlinable
     package subscript(position: Index) -> Int {
         precondition(position.bit < Storage.bitWidth, "Index \(position.bit) out of bounds")
         // Because the index stores the bit offset, which is also the value, we can simply return the value without accessing the storage.
         return Int(position.bit)
     }
-    
+
     package struct Index: Comparable {
         // The bit offset into the storage to the value
         fileprivate var bit: UInt8
-        
+
         package static func < (lhs: Self, rhs: Self) -> Bool {
             lhs.bit < rhs.bit
         }
     }
-    
+
     @inlinable
     package var startIndex: Index {
         // This is the index (bit offset) to the smallest value in the bit set.
         Index(bit: UInt8(storage.trailingZeroBitCount))
     }
-    
+
     @inlinable
     package var endIndex: Index {
         // For a valid collection, the end index is required to be _exactly_ one past the last in-bounds index, meaning; `index(after: LAST_IN-BOUNDS_INDEX)`
         // If the collection implementation doesn't satisfy this requirement, it will have an infinitely long `indices` collection.
         // This either results in infinite implementations or hits internal preconditions in other Swift types that that collection has more elements than its `count`.
-        
+
         // See `index(after:)` below for explanation of how the index after is calculated.
         let lastInBoundsBit = UInt8(Storage.bitWidth &- storage.leadingZeroBitCount)
         return Index(bit: lastInBoundsBit &+ UInt8((storage &>> lastInBoundsBit).trailingZeroBitCount))
     }
-    
+
     @inlinable
     package func index(after currentIndex: Index) -> Index {
         // To advance the index we have to find the next 1 bit _after_ the current bit.
@@ -207,14 +207,14 @@ extension _FixedSizeBitSet: Collection {
         let shift = currentIndex.bit &+ 1
         return Index(bit: shift &+ UInt8((storage &>> shift).trailingZeroBitCount))
     }
-    
+
     @inlinable
-    package func formIndex(after index: inout Index)  {
+    package func formIndex(after index: inout Index) {
         // See `index(after:)` above for explanation.
         index.bit &+= 1
         index.bit &+= UInt8((storage &>> index.bit).trailingZeroBitCount)
     }
-    
+
     @inlinable
     package func distance(from start: Index, to end: Index) -> Int {
         // To compute the distance between two indices we have to find the number of 1 bits from the start index to (but excluding) the end index.
@@ -233,32 +233,32 @@ extension _FixedSizeBitSet: Collection {
         // Because collections can have end indices that extend out-of-bounds we need to clamp the mask from a larger integer type to avoid it wrapping around to 0.
         let mask = Storage(clamping: (1 &<< UInt(end.bit)) &- 1)
         var distance = storage & mask
-        
+
         // Then, we shift away all the bits below the start index:
         //      end╶╮    ╭╴start
         //   0000 0010 0110 0010
         //   0000 0000 0000 1001
         distance &>>= start.bit
-        
+
         // The distance from start to end is the number of 1 bits in this number.
         return distance.nonzeroBitCount
     }
-    
+
     @inlinable
     package var first: Element? {
         isEmpty ? nil : storage.trailingZeroBitCount
     }
-    
+
     @inlinable
     package func min() -> Element? {
-        first // The elements are already sorted
+        first  // The elements are already sorted
     }
-    
+
     @inlinable
     package func sorted() -> [Element] {
-        Array(self) // The elements are already sorted
+        Array(self)  // The elements are already sorted
     }
-    
+
     @inlinable
     package var count: Int {
         storage.nonzeroBitCount
@@ -276,16 +276,16 @@ extension _FixedSizeBitSet {
     package func allCombinationsOfValues() -> [Self] {
         // Leverage the fact that bits of an Int represent the possible combinations.
         let smallest = storage.trailingZeroBitCount
-        
+
         var combinations: [Self] = []
         combinations.reserveCapacity((1 &<< count /*known to be less than Storage.bitWidth */) - 1)
-        
-        for raw in 1 ... storage &>> smallest {
+
+        for raw in 1...storage &>> smallest {
             let combination = Self(storage: Storage(raw &<< smallest))
-            
+
             // Filter out any combinations that include columns that are the same for all overloads
             guard self.isSuperset(of: combination) else { continue }
-            
+
             combinations.append(combination)
         }
         // The bits of larger and larger Int values won't be in order of number of bits set, so we sort them.

@@ -19,28 +19,30 @@ struct FileWritingHTMLContentConsumerTests {
     @Test
     func writesContentInsideHTMLTemplate() async throws {
         let catalog = Folder(name: "ModuleName.docc") {
-            TextFile(name: "SomeArticle.md", utf8Content: """
-            # Some article
-            
-            This is a _formatted_ article.
-            
-            @DeprecationSummary {
-              Description of why this _article_ is deprecated.
-            }
-            
-            ## Custom discussion
-            
-            It explains how a developer can perform some task using ``SomeClass`` in this module.
-            
-            ### Details
-            
-            This subsection describes something more detailed.
-            
-            ## See Also
-            
-            - ``SomeClass``
-            """)
-            
+            TextFile(
+                name: "SomeArticle.md",
+                utf8Content: """
+                    # Some article
+
+                    This is a _formatted_ article.
+
+                    @DeprecationSummary {
+                      Description of why this _article_ is deprecated.
+                    }
+
+                    ## Custom discussion
+
+                    It explains how a developer can perform some task using ``SomeClass`` in this module.
+
+                    ### Details
+
+                    This subsection describes something more detailed.
+
+                    ## See Also
+
+                    - ``SomeClass``
+                    """)
+
             // swift-format-ignore
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
@@ -61,20 +63,20 @@ struct FileWritingHTMLContentConsumerTests {
                     id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod(with:and:)"],
                     docComment: """
                     Some in-source description of this method.
-                    
+
                     Further description of this method and how to use it.
-                    
+
                     @DeprecationSummary {
                       Some **formatted** description of why this method is deprecated.
                     }
-                    
-                    - Parameters: 
+
+                    - Parameters:
                       - first:  Description of the `first` parameter.
                       - second: Description of the `second` parameter.
                     - Returns:  Description of the return value.
-                    
+
                     ## See Also
-                    
+
                     - <doc:SomeArticle>
                     """,
                     signature: .init(
@@ -118,40 +120,44 @@ struct FileWritingHTMLContentConsumerTests {
                 .init(source: "some-method-id", target: "some-class-id",    kind: .memberOf,   targetFallback: nil),
                 .init(source: "some-class-id",  target: "some-protocol-id", kind: .conformsTo, targetFallback: nil)
             ]))
-            
-            TextFile(name: "ModuleName.md", utf8Content: """
-            # ``ModuleName``
-            
-            Some **formatted** description of this module
-            
-            ## Topics
-            
-            ### Something custom
-            
-            A custom _formatted_ description of this topic section
-            
-            - <doc:SomeArticle>
-            - ``SomeClass``
-            """)
+
+            TextFile(
+                name: "ModuleName.md",
+                utf8Content: """
+                    # ``ModuleName``
+
+                    Some **formatted** description of this module
+
+                    ## Topics
+
+                    ### Something custom
+
+                    A custom _formatted_ description of this topic section
+
+                    - <doc:SomeArticle>
+                    - ``SomeClass``
+                    """)
         }
-        
-        let htmlTemplate = TextFile(name: "index.html", utf8Content: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />
-            <title>Documentation</title>
-            <script>var baseUrl = "/"</script>
-          </head>
-          <body>
-            <noscript>
-              <p>Some existing information inside the no script tag</p>
-            </noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
-        
+
+        let htmlTemplate = TextFile(
+            name: "index.html",
+            utf8Content: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>Documentation</title>
+                    <script>var baseUrl = "/"</script>
+                  </head>
+                  <body>
+                    <noscript>
+                      <p>Some existing information inside the no script tag</p>
+                    </noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+
         let fileSystem = try TestFileSystem {
             Folder(name: "path") {
                 Folder(name: "to") {
@@ -163,12 +169,12 @@ struct FileWritingHTMLContentConsumerTests {
             }
             Folder(name: "output-dir") {}
         }
-        
+
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
-        
+
         let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
-        
+
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),
             fileManager: fileSystem,
@@ -177,7 +183,7 @@ struct FileWritingHTMLContentConsumerTests {
             customFooter: nil,
             prettyPrintOutput: true
         )
-        
+
         try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: TestOutputConsumer(),
@@ -186,335 +192,354 @@ struct FileWritingHTMLContentConsumerTests {
             emitDigest: false,
             documentationCoverageOptions: .noCoverage
         )
-        
+
         // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
-        #expect(fileSystem.dump(subHierarchyFrom: "/output-dir") == """
-        output-dir/
-        ╰─ documentation/
-           ╰─ modulename/
-              ├─ index.html
-              ├─ somearticle/
-              │  ╰─ index.html
-              ├─ someclass/
-              │  ├─ index.html
-              │  ╰─ somemethod(with:and:)/
-              │     ╰─ index.html
-              ╰─ someprotocol/
-                 ╰─ index.html
-        """)
-        
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />
-            <title>ModuleName</title>
-            <script>var baseUrl = "/"</script>
-          <meta content="Some formatted description of this module" name="description"></head>
-          <body>
-            <noscript><article>
-          <section>
-            <hgroup>
-              <p>Framework</p>
-              <h1>ModuleName</h1>
-            </hgroup>
-            <p>
-              Some <b>formatted</b> description of this module
-            </p>
-          </section>
-          <h2>Topics</h2>
-          <h3>Something custom</h3>
-          <p>
-            A custom <i>formatted</i> description of this topic section
-          </p>
-          <ul>
-            <li>
-              <a href="somearticle/index.html">
-                <p>Some article</p>
-              </a>
-              <p>
-                This is a <i>formatted</i> article.
-              </p>
-            </li>
-            <li>
-              <a href="someclass/index.html">
-                <code>class SomeClass</code>
-              </a>
-              <p>Some in-source description of this class.</p>
-            </li>
-          </ul>
-          <h3>Protocols</h3>
-          <ul>
-            <li>
-              <a href="someprotocol/index.html">
-                <code>protocol SomeProtocol</code>
-              </a>
-              <p>Some in-source description of this protocol.</p>
-            </li>
-          </ul>
-        </article></noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
-        
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />
-            <title>SomeClass</title>
-            <script>var baseUrl = "/"</script>
-          <meta content="Some in-source description of this class." name="description"></head>
-          <body>
-            <noscript><article>
-          <section>
-            <ul>
-              <li>
-                <a href="../index.html">ModuleName</a>
-              </li>
-              <li>SomeClass</li>
-            </ul>
-            <hgroup>
-              <p>Class</p>
-              <h1>SomeClass</h1>
-            </hgroup>
-            <p>Some in-source description of this class.</p>
-            <pre><code>class SomeClass</code></pre>
-          </section>
-          <h2>Mentioned In</h2>
-          <ul>
-            <li>
-              <a href="../somearticle/index.html">Some article</a>
-            </li>
-          </ul>
-          <h2>Topics</h2>
-          <h3>Instance Methods</h3>
-          <ul>
-            <li>
-              <a href="somemethod(with:and:)/index.html">
-                <code>func someMethod(with first: Int, and second: String) -> Bool</code>
-              </a>
-              <p>Some in-source description of this method.</p>
-            </li>
-          </ul>
-          <h2>Relationships</h2>
-          <h3>Conforms To</h3>
-          <ul>
-            <li>
-              <a href="../someprotocol/index.html">
-                <code>SomeProtocol</code>
-              </a>
-            </li>
-          </ul>
-        </article></noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
-        
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/somemethod(with:and:)/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />
-            <title>someMethod(with:and:)</title>
-            <script>var baseUrl = "/"</script>
-          <meta content="Some in-source description of this method." name="description"></head>
-          <body>
-            <noscript><article>
-          <section>
-            <ul>
-              <li>
-                <a href="../../index.html">ModuleName</a>
-              </li>
-              <li>
-                <a href="../index.html">SomeClass</a>
-              </li>
-              <li>someMethod(with:and:)</li>
-            </ul>
-            <hgroup>
-              <p>Instance Method</p>
-              <h1>someMethod(with:and:)</h1>
-            </hgroup>
-            <p>Some in-source description of this method.</p>
-            <pre><code>func someMethod(with first: Int, and second: String) -> Bool</code></pre>
-            <aside class="deprecated">
-              <p class="label">
-                Deprecated
-              </p>
-              <p>
-                Some <b>formatted</b> description of why this method is deprecated.
-              </p>
-            </aside>
-          </section>
-          <h2>Parameters</h2>
-          <dl>
-            <dt>first</dt>
-            <dd>
-              <p>
-                Description of the <code>first</code> parameter.
-              </p>
-            </dd>
-            <dt>second</dt>
-            <dd>
-              <p>
-                Description of the <code>second</code> parameter.
-              </p>
-            </dd>
-          </dl>
-          <h2>Return Value</h2>
-          <p>Description of the return value.</p>
-          <h2>Discussion</h2>
-          <p>Further description of this method and how to use it.</p>
-          
-          <h2>See Also</h2>
-          <h3>Related Documentation</h3>
-          <ul>
-            <li>
-              <a href="../../somearticle/index.html">
-                <p>Some article</p>
-              </a>
-              <p>
-                This is a <i>formatted</i> article.
-              </p>
-            </li>
-          </ul>
-        </article></noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
-        
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/somearticle/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />
-            <title>Some article</title>
-            <script>var baseUrl = "/"</script>
-          <meta content="This is a formatted article." name="description"></head>
-          <body>
-            <noscript><article>
-          <section>
-            <ul>
-              <li>
-                <a href="../index.html">ModuleName</a>
-              </li>
-              <li>Some article</li>
-            </ul>
-            <hgroup>
-              <p>Article</p>
-              <h1>Some article</h1>
-            </hgroup>
-            <p>
-              This is a <i>formatted</i> article.
-            </p>
-            <aside class="deprecated">
-              <p class="label">
-                Deprecated
-              </p>
-              <p>
-                Description of why this <i>article</i> is deprecated.
-              </p>
-            </aside>
-          </section>
-          <h2>Custom discussion</h2>
-          <p>
-            It explains how a developer can perform some task using 
-            <a href="../someclass/index.html">
-              <code>SomeClass</code>
-            </a>
-             in this module.
-          </p>
-          <h3>Details</h3>
-          <p>This subsection describes something more detailed.</p>
-          <h2>See Also</h2>
-          <h3>Related Documentation</h3>
-          <ul>
-            <li>
-              <a href="../someclass/index.html">
-                <code>class SomeClass</code>
-              </a>
-              <p>Some in-source description of this class.</p>
-            </li>
-          </ul>
-        </article></noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
-        
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someprotocol/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />
-            <title>SomeProtocol</title>
-            <script>var baseUrl = "/"</script>
-          <meta content="Some in-source description of this protocol." name="description"></head>
-          <body>
-            <noscript><article>
-          <section>
-            <ul>
-              <li>
-                <a href="../index.html">ModuleName</a>
-              </li>
-              <li>SomeProtocol</li>
-            </ul>
-            <hgroup>
-              <p>Protocol</p>
-              <h1>SomeProtocol</h1>
-            </hgroup>
-            <p>Some in-source description of this protocol.</p>
-            <pre><code>protocol SomeProtocol</code></pre>
-          </section>
-          <h2>Relationships</h2>
-          <h3>Conforming Types</h3>
-          <ul>
-            <li>
-              <a href="../someclass/index.html">
-                <code>SomeClass</code>
-              </a>
-            </li>
-          </ul>
-        </article></noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
+        #expect(
+            fileSystem.dump(subHierarchyFrom: "/output-dir") == """
+                output-dir/
+                ╰─ documentation/
+                   ╰─ modulename/
+                      ├─ index.html
+                      ├─ somearticle/
+                      │  ╰─ index.html
+                      ├─ someclass/
+                      │  ├─ index.html
+                      │  ╰─ somemethod(with:and:)/
+                      │     ╰─ index.html
+                      ╰─ someprotocol/
+                         ╰─ index.html
+                """)
+
+        try assert(
+            readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/index.html")),
+            matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>ModuleName</title>
+                    <script>var baseUrl = "/"</script>
+                  <meta content="Some formatted description of this module" name="description"></head>
+                  <body>
+                    <noscript><article>
+                  <section>
+                    <hgroup>
+                      <p>Framework</p>
+                      <h1>ModuleName</h1>
+                    </hgroup>
+                    <p>
+                      Some <b>formatted</b> description of this module
+                    </p>
+                  </section>
+                  <h2>Topics</h2>
+                  <h3>Something custom</h3>
+                  <p>
+                    A custom <i>formatted</i> description of this topic section
+                  </p>
+                  <ul>
+                    <li>
+                      <a href="somearticle/index.html">
+                        <p>Some article</p>
+                      </a>
+                      <p>
+                        This is a <i>formatted</i> article.
+                      </p>
+                    </li>
+                    <li>
+                      <a href="someclass/index.html">
+                        <code>class SomeClass</code>
+                      </a>
+                      <p>Some in-source description of this class.</p>
+                    </li>
+                  </ul>
+                  <h3>Protocols</h3>
+                  <ul>
+                    <li>
+                      <a href="someprotocol/index.html">
+                        <code>protocol SomeProtocol</code>
+                      </a>
+                      <p>Some in-source description of this protocol.</p>
+                    </li>
+                  </ul>
+                </article></noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+
+        try assert(
+            readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/index.html")),
+            matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>SomeClass</title>
+                    <script>var baseUrl = "/"</script>
+                  <meta content="Some in-source description of this class." name="description"></head>
+                  <body>
+                    <noscript><article>
+                  <section>
+                    <ul>
+                      <li>
+                        <a href="../index.html">ModuleName</a>
+                      </li>
+                      <li>SomeClass</li>
+                    </ul>
+                    <hgroup>
+                      <p>Class</p>
+                      <h1>SomeClass</h1>
+                    </hgroup>
+                    <p>Some in-source description of this class.</p>
+                    <pre><code>class SomeClass</code></pre>
+                  </section>
+                  <h2>Mentioned In</h2>
+                  <ul>
+                    <li>
+                      <a href="../somearticle/index.html">Some article</a>
+                    </li>
+                  </ul>
+                  <h2>Topics</h2>
+                  <h3>Instance Methods</h3>
+                  <ul>
+                    <li>
+                      <a href="somemethod(with:and:)/index.html">
+                        <code>func someMethod(with first: Int, and second: String) -> Bool</code>
+                      </a>
+                      <p>Some in-source description of this method.</p>
+                    </li>
+                  </ul>
+                  <h2>Relationships</h2>
+                  <h3>Conforms To</h3>
+                  <ul>
+                    <li>
+                      <a href="../someprotocol/index.html">
+                        <code>SomeProtocol</code>
+                      </a>
+                    </li>
+                  </ul>
+                </article></noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+
+        try assert(
+            readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/somemethod(with:and:)/index.html")),
+            matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>someMethod(with:and:)</title>
+                    <script>var baseUrl = "/"</script>
+                  <meta content="Some in-source description of this method." name="description"></head>
+                  <body>
+                    <noscript><article>
+                  <section>
+                    <ul>
+                      <li>
+                        <a href="../../index.html">ModuleName</a>
+                      </li>
+                      <li>
+                        <a href="../index.html">SomeClass</a>
+                      </li>
+                      <li>someMethod(with:and:)</li>
+                    </ul>
+                    <hgroup>
+                      <p>Instance Method</p>
+                      <h1>someMethod(with:and:)</h1>
+                    </hgroup>
+                    <p>Some in-source description of this method.</p>
+                    <pre><code>func someMethod(with first: Int, and second: String) -> Bool</code></pre>
+                    <aside class="deprecated">
+                      <p class="label">
+                        Deprecated
+                      </p>
+                      <p>
+                        Some <b>formatted</b> description of why this method is deprecated.
+                      </p>
+                    </aside>
+                  </section>
+                  <h2>Parameters</h2>
+                  <dl>
+                    <dt>first</dt>
+                    <dd>
+                      <p>
+                        Description of the <code>first</code> parameter.
+                      </p>
+                    </dd>
+                    <dt>second</dt>
+                    <dd>
+                      <p>
+                        Description of the <code>second</code> parameter.
+                      </p>
+                    </dd>
+                  </dl>
+                  <h2>Return Value</h2>
+                  <p>Description of the return value.</p>
+                  <h2>Discussion</h2>
+                  <p>Further description of this method and how to use it.</p>
+                  
+                  <h2>See Also</h2>
+                  <h3>Related Documentation</h3>
+                  <ul>
+                    <li>
+                      <a href="../../somearticle/index.html">
+                        <p>Some article</p>
+                      </a>
+                      <p>
+                        This is a <i>formatted</i> article.
+                      </p>
+                    </li>
+                  </ul>
+                </article></noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+
+        try assert(
+            readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/somearticle/index.html")),
+            matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>Some article</title>
+                    <script>var baseUrl = "/"</script>
+                  <meta content="This is a formatted article." name="description"></head>
+                  <body>
+                    <noscript><article>
+                  <section>
+                    <ul>
+                      <li>
+                        <a href="../index.html">ModuleName</a>
+                      </li>
+                      <li>Some article</li>
+                    </ul>
+                    <hgroup>
+                      <p>Article</p>
+                      <h1>Some article</h1>
+                    </hgroup>
+                    <p>
+                      This is a <i>formatted</i> article.
+                    </p>
+                    <aside class="deprecated">
+                      <p class="label">
+                        Deprecated
+                      </p>
+                      <p>
+                        Description of why this <i>article</i> is deprecated.
+                      </p>
+                    </aside>
+                  </section>
+                  <h2>Custom discussion</h2>
+                  <p>
+                    It explains how a developer can perform some task using 
+                    <a href="../someclass/index.html">
+                      <code>SomeClass</code>
+                    </a>
+                     in this module.
+                  </p>
+                  <h3>Details</h3>
+                  <p>This subsection describes something more detailed.</p>
+                  <h2>See Also</h2>
+                  <h3>Related Documentation</h3>
+                  <ul>
+                    <li>
+                      <a href="../someclass/index.html">
+                        <code>class SomeClass</code>
+                      </a>
+                      <p>Some in-source description of this class.</p>
+                    </li>
+                  </ul>
+                </article></noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+
+        try assert(
+            readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someprotocol/index.html")),
+            matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>SomeProtocol</title>
+                    <script>var baseUrl = "/"</script>
+                  <meta content="Some in-source description of this protocol." name="description"></head>
+                  <body>
+                    <noscript><article>
+                  <section>
+                    <ul>
+                      <li>
+                        <a href="../index.html">ModuleName</a>
+                      </li>
+                      <li>SomeProtocol</li>
+                    </ul>
+                    <hgroup>
+                      <p>Protocol</p>
+                      <h1>SomeProtocol</h1>
+                    </hgroup>
+                    <p>Some in-source description of this protocol.</p>
+                    <pre><code>protocol SomeProtocol</code></pre>
+                  </section>
+                  <h2>Relationships</h2>
+                  <h3>Conforming Types</h3>
+                  <ul>
+                    <li>
+                      <a href="../someclass/index.html">
+                        <code>SomeClass</code>
+                      </a>
+                    </li>
+                  </ul>
+                </article></noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
     }
 
     @Test(arguments: [true, false], [true, false])
     func addsTagsToTemplateIfMissing(templateHasTitleTag: Bool, templateHasNoScriptTag: Bool) async throws {
-        let catalog = Folder(name: "Something.docc", content: [
-            TextFile(name: "RootArticle.md", utf8Content: """
-            # A single article
-            
-            This is a _formatted_ article that becomes the root page (because there is only one page).
-            """)
-        ])
-        
+        let catalog = Folder(
+            name: "Something.docc",
+            content: [
+                TextFile(
+                    name: "RootArticle.md",
+                    utf8Content: """
+                        # A single article
+
+                        This is a _formatted_ article that becomes the root page (because there is only one page).
+                        """)
+            ])
+
         let maybeTitleTag = templateHasTitleTag ? "\n  <title>Documentation</title>" : ""
-        let maybeNoScriptTag = templateHasNoScriptTag ? """
-        
-          <noscript>
-            <p>Some existing information inside the no script tag</p>
-          </noscript>
-        """ : ""
-        
-        let htmlTemplate = TextFile(name: "index.html", utf8Content: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />\(maybeTitleTag)
-          </head>
-          <body>\(maybeNoScriptTag)
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
-        
+        let maybeNoScriptTag =
+            templateHasNoScriptTag
+            ? """
+
+              <noscript>
+                <p>Some existing information inside the no script tag</p>
+              </noscript>
+            """ : ""
+
+        let htmlTemplate = TextFile(
+            name: "index.html",
+            utf8Content: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />\(maybeTitleTag)
+                  </head>
+                  <body>\(maybeNoScriptTag)
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+
         let fileSystem = try TestFileSystem {
             Folder(name: "path") {
                 Folder(name: "to") {
@@ -526,12 +551,12 @@ struct FileWritingHTMLContentConsumerTests {
             }
             Folder(name: "output-dir") {}
         }
-        
+
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
-        
+
         let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
-        
+
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),
             fileManager: fileSystem,
@@ -540,7 +565,7 @@ struct FileWritingHTMLContentConsumerTests {
             customFooter: nil,
             prettyPrintOutput: true
         )
-        
+
         try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: TestOutputConsumer(),
@@ -549,69 +574,73 @@ struct FileWritingHTMLContentConsumerTests {
             emitDigest: false,
             documentationCoverageOptions: .noCoverage
         )
-        
+
         // Because the TestOutputConsumer below doesn't create any files, we only expect the HTML files in the output directory
-        #expect(fileSystem.dump(subHierarchyFrom: "/output-dir") == """
-        output-dir/
-        ╰─ documentation/
-           ╰─ rootarticle/
-              ╰─ index.html
-        """)
-        
+        #expect(
+            fileSystem.dump(subHierarchyFrom: "/output-dir") == """
+                output-dir/
+                ╰─ documentation/
+                   ╰─ rootarticle/
+                      ╰─ index.html
+                """)
+
         // In the current state, the whitespace around the metadata depends on how the text replacements were done
-        let expectedMetadata: String = if templateHasTitleTag {
-            """
-              <title>A single article</title>
-              <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
-            """
-        } else {
-            """
-              <title>A single article</title>
-            <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
-            """
-        }
-        
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/favicon.ico" />
-        \(expectedMetadata)</head>
-          <body>\(templateHasNoScriptTag ? "\n  " : "")<noscript><article>
-          <section>
-            <ul>
-              <li>RootArticle</li>
-            </ul>
-            <hgroup>
-              <p>Article</p>
-              <h1>RootArticle</h1>
-            </hgroup>
-            <p>
-              This is a <i>formatted</i> article that becomes the root page (because there is only one page).
-            </p>
-          </section>
-        </article></noscript>\(templateHasNoScriptTag ? "" : "\n")
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
+        let expectedMetadata: String =
+            if templateHasTitleTag {
+                """
+                  <title>A single article</title>
+                  <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
+                """
+            } else {
+                """
+                  <title>A single article</title>
+                <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
+                """
+            }
+
+        try assert(
+            readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")),
+            matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                \(expectedMetadata)</head>
+                  <body>\(templateHasNoScriptTag ? "\n  " : "")<noscript><article>
+                  <section>
+                    <ul>
+                      <li>RootArticle</li>
+                    </ul>
+                    <hgroup>
+                      <p>Article</p>
+                      <h1>RootArticle</h1>
+                    </hgroup>
+                    <p>
+                      This is a <i>formatted</i> article that becomes the root page (because there is only one page).
+                    </p>
+                  </section>
+                </article></noscript>\(templateHasNoScriptTag ? "" : "\n")
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
     }
 }
 
 // MARK: Helpers
 
 private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
-    func consume(renderNode: RenderNode) throws { }
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
-    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
-    func consume(indexingRecords: [IndexingRecord]) throws { }
-    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }
-    func consume(benchmarks: Benchmark) throws { }
-    func consume(documentationCoverageInfo: [CoverageDataEntry]) throws { }
-    func consume(renderReferenceStore: RenderReferenceStore) throws { }
-    func consume(buildMetadata: BuildMetadata) throws { }
-    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
-    func consume(externalRenderNode: ExternalRenderNode) throws { }
+    func consume(renderNode: RenderNode) throws {}
+    func consume(assetsInBundle bundle: DocumentationBundle) throws {}
+    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
+    func consume(indexingRecords: [IndexingRecord]) throws {}
+    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws {}
+    func consume(benchmarks: Benchmark) throws {}
+    func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {}
+    func consume(renderReferenceStore: RenderReferenceStore) throws {}
+    func consume(buildMetadata: BuildMetadata) throws {}
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
+    func consume(externalRenderNode: ExternalRenderNode) throws {}
 }
 
 func assert(readHTML: Data, matches expectedHTML: String, sourceLocation: SourceLocation = #_sourceLocation) {

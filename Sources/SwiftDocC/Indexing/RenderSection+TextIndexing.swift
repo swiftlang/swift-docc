@@ -13,7 +13,7 @@ extension IntroRenderSection {
         // An Intro's title becomes the top-level page's title, so it doesn't need to be included as a heading here. It doesn't get its own index record.
         return content.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
@@ -21,11 +21,9 @@ extension IntroRenderSection {
 
 extension VolumeRenderSection {
     public var headings: [String] {
-        return name.map { [$0] } ?? [] +
-            (content.map { $0.headings } ?? []) +
-            chapters.headings
+        return name.map { [$0] } ?? [] + (content.map { $0.headings } ?? []) + chapters.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.map { $0.rawIndexableTextContent(references: references) } ?? ""
     }
@@ -35,7 +33,7 @@ extension ResourcesRenderSection {
     public var headings: [String] {
         return tiles.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
@@ -43,10 +41,9 @@ extension ResourcesRenderSection {
 
 extension RenderTile {
     public var headings: [String] {
-        return [title] +
-            content.headings
+        return [title] + content.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
@@ -57,7 +54,7 @@ extension CallToActionSection {
         // A call-to-action's title is effectively an H2 on the page. It doesn't get its own index record.
         return [title]
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return abstract.rawIndexableTextContent(references: references)
     }
@@ -67,7 +64,7 @@ extension ContentAndMediaGroupSection {
     public var headings: [String] {
         return sections.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return sections.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
@@ -78,7 +75,7 @@ extension ContentAndMediaSection {
         // A ContentAndMedia's title is effectively an H2 on the page. It doesn't get its own index record.
         return (title.map { [$0] } ?? []) + content.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
@@ -88,7 +85,7 @@ extension TutorialAssessmentsRenderSection {
     public var headings: [String] {
         return assessments.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return assessments.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
@@ -101,7 +98,7 @@ extension TutorialAssessmentsRenderSection.Assessment {
         return [title.rawIndexableTextContent(references: [:])]
             + (self.content?.headings ?? [])
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.map {
             $0.rawIndexableTextContent(references: references)
@@ -113,7 +110,7 @@ extension TutorialSectionsRenderSection {
     public var headings: [String] {
         return tasks.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return tasks.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
@@ -121,13 +118,11 @@ extension TutorialSectionsRenderSection {
 
 extension TutorialSectionsRenderSection.Section {
     public var headings: [String] {
-        return contentSection.headings +
-            stepsSection.flatMap { $0.headings }
+        return contentSection.headings + stepsSection.flatMap { $0.headings }
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
-        return contentSection.rawIndexableTextContent(references: references) + " " +
-        stepsSection.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
+        return contentSection.rawIndexableTextContent(references: references) + " " + stepsSection.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
 }
 
@@ -135,7 +130,7 @@ extension TutorialArticleSection {
     public var headings: [String] {
         return content.headings
     }
-    
+
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
@@ -145,8 +140,8 @@ extension ContentRenderSection {
     public var headings: [String] {
         return content.headings
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -157,8 +152,8 @@ extension ParametersRenderSection {
             return $0.headings
         }
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return parameters.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -169,8 +164,8 @@ extension ParameterRenderSection {
     public var headings: [String] {
         return content.headings
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -179,8 +174,8 @@ extension RelationshipsRenderSection {
     public var headings: [String] {
         return [title]
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return title
     }
 }
@@ -190,8 +185,8 @@ extension TaskGroupRenderSection {
         guard let title else { return [] }
         return [title]
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return title ?? ""
     }
 }
@@ -202,8 +197,8 @@ extension RESTParametersRenderSection {
             return $0.headings
         }
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return parameters.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -214,8 +209,8 @@ extension RenderProperty {
     public var headings: [String] {
         return [name]
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content?.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ") ?? ""
@@ -226,8 +221,8 @@ extension RESTResponse {
     public var headings: [String] {
         return reason.map({ [$0] }) ?? []
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content?.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ") ?? ""
@@ -240,8 +235,8 @@ extension RESTResponseRenderSection {
             return $0.headings
         }
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return responses.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -252,27 +247,30 @@ extension RESTEndpointRenderSection {
     public var headings: [String] {
         return [title]
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return title
     }
 }
 
 extension RESTBodyRenderSection {
     public var headings: [String] {
-        return [title] + (parameters?.flatMap {
-            return $0.headings
-        } ?? [])
+        return [title]
+            + (parameters?.flatMap {
+                return $0.headings
+            } ?? [])
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
-        let contentText = (content?.map {
-            return $0.rawIndexableTextContent(references: references)
-        }.joined(separator: " ")) ?? ""
 
-        let parametersText = (parameters?.map {
-            return $0.rawIndexableTextContent(references: references)
-        }.joined(separator: " ")) ?? ""
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
+        let contentText =
+            (content?.map {
+                return $0.rawIndexableTextContent(references: references)
+            }.joined(separator: " ")) ?? ""
+
+        let parametersText =
+            (parameters?.map {
+                return $0.rawIndexableTextContent(references: references)
+            }.joined(separator: " ")) ?? ""
 
         return contentText + " " + parametersText
     }
@@ -284,8 +282,8 @@ extension PropertiesRenderSection {
             return $0.headings
         }
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return items.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -296,8 +294,8 @@ extension RenderAttribute {
     public var headings: [String] {
         return [title]
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         switch self {
         case .default(let value): return value
         case .maximum(let value): return value
@@ -318,8 +316,8 @@ extension AttributesRenderSection {
             return $0.headings
         } ?? []
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return attributes?.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ") ?? ""
@@ -334,8 +332,8 @@ extension PropertyListDetailsRenderSection {
             return [details.rawKey]
         }
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return [details.rawKey, details.displayName ?? ""].joined(separator: " ")
     }
 }
@@ -344,8 +342,8 @@ extension PossibleValuesRenderSection {
     public var headings: [String] {
         return []
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return values.map { namedValue -> String in
             let content = namedValue.content?.rawIndexableTextContent(references: references) ?? ""
             return namedValue.name + " " + content
@@ -357,8 +355,8 @@ extension SampleDownloadSection {
     public var headings: [String] {
         return []
     }
-    
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return ""
     }
 }
@@ -376,7 +374,7 @@ extension Sequence<ContentLayout> {
             }
         }.joined(separator: " ")
     }
-    
+
     var headings: [String] {
         return flatMap { layout -> [String] in
             switch layout {

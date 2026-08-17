@@ -29,12 +29,12 @@ class CheckerTests: XCTestCase {
         nullChecker.visit(Document())
         XCTAssertTrue(nullChecker.diagnostics.isEmpty)
     }
-    
+
     func testDiagnoseEverything() {
         var checker = DiagnoseEveryParagraph()
         let node = Paragraph(Text("Hello world!"))
         checker.visit(node)
-        
+
         XCTAssertEqual(1, checker.diagnostics.count)
     }
 }
@@ -45,13 +45,13 @@ class CompositeCheckerTests: XCTestCase {
         checker.visit(Paragraph())
         XCTAssertTrue(checker.diagnostics.isEmpty)
     }
-    
+
     func testOneChecker() {
         var checker = CompositeChecker([DiagnoseEveryParagraph()])
         checker.visit(Paragraph())
         XCTAssertEqual(1, checker.diagnostics.count)
     }
-    
+
     func testMultipleCheckers() {
         var checker = CompositeChecker([
             DiagnoseEveryParagraph(),

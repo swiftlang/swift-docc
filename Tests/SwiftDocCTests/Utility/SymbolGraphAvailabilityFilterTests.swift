@@ -13,20 +13,20 @@ import SymbolKit
 @testable import SwiftDocC
 
 class SymbolGraphAvailabilityFilterTests: XCTestCase {
-    
+
     func testFilterAvailabilityThatApplyToPlatforms() {
         let unfiltered = SymbolGraph.Symbol.Availability(availability: [
             // Availability without a domain applies to all platforms
             .init(domain: nil, introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             // A few domain specific availabilities to filter
-            .init(domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS),introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
+            .init(domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             .init(domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.iOS), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             .init(domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.tvOS), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             .init(domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.watchOS), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             // This will always be filtered out
             .init(domain: .init(rawValue: "unknownDomain"), introducedVersion: .init(major: 5, minor: 5, patch: 5), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
         ])
-        
+
         var filtered = unfiltered.filterItems(thatApplyTo: .macOS).availability
         XCTAssertEqual(filtered.count, 2)
         XCTAssertEqual(filtered.map { $0.domain?.rawValue }, [nil, "macOS"])
@@ -35,15 +35,15 @@ class SymbolGraphAvailabilityFilterTests: XCTestCase {
             XCTAssertEqual(filteredForAlias.count, 2)
             XCTAssertEqual(filteredForAlias.map { $0.domain?.rawValue }, [nil, "macOS"])
         }
-        
+
         filtered = unfiltered.filterItems(thatApplyTo: .iOS).availability
         XCTAssertEqual(filtered.count, 2)
         XCTAssertEqual(filtered.map { $0.domain?.rawValue }, [nil, "iOS"])
-        
+
         filtered = unfiltered.filterItems(thatApplyTo: .watchOS).availability
         XCTAssertEqual(filtered.count, 2)
         XCTAssertEqual(filtered.map { $0.domain?.rawValue }, [nil, "watchOS"])
-        
+
         filtered = unfiltered.filterItems(thatApplyTo: .tvOS).availability
         XCTAssertEqual(filtered.count, 2)
         XCTAssertEqual(filtered.map { $0.domain?.rawValue }, [nil, "tvOS"])

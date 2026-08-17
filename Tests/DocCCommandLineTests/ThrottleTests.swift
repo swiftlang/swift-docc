@@ -19,12 +19,12 @@ class ThrottleTests: XCTestCase {
         throttle.schedule {
             completes.fulfill()
         }
-        
+
         waitForExpectations(timeout: 1) { error in
             XCTAssertNil(error)
         }
     }
-    
+
     func testThrottlingMultipleCalls() throws {
         let completes = expectation(description: "Fullfills throttling test")
         let throttle = Throttle(interval: .milliseconds(250))
@@ -35,7 +35,7 @@ class ThrottleTests: XCTestCase {
                 completes.fulfill()
             }
         }
-        
+
         waitForExpectations(timeout: 1) { error in
             XCTAssertNil(error)
         }

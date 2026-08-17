@@ -35,15 +35,15 @@ func load(
 ) async throws -> DocumentationContext {
     let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
     let catalogURL = URL(fileURLWithPath: "/\(catalog.name)")
-    
+
     let diagnosticEngine = DiagnosticEngine(filterLevel: diagnosticFilterLevel)
     diagnosticEngine.add(DiagnosticConsoleWriter(logOutput, formattingOptions: [], baseURL: catalogURL, highlight: true, dataProvider: fileSystem))
-    
+
     let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
         .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
-    
+
     defer {
-        diagnosticEngine.flush() // Write to the logOutput
+        diagnosticEngine.flush()  // Write to the logOutput
     }
     return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
@@ -59,7 +59,7 @@ func makeEmptyContext(configuration: DocumentationContext.Configuration = .init(
         markupURLs: [],
         miscResourceURLs: []
     )
-    
+
     return try await DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []), configuration: configuration)
 }
 
@@ -88,10 +88,10 @@ func loadFromDisk(
     configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
     configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
     configuration.externalMetadata.diagnosticLevel = diagnosticEngine.filterLevel
-    
+
     let (inputs, dataProvider) = try DocumentationContext.InputsProvider()
         .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
-    
+
     return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
 
@@ -133,7 +133,7 @@ extension RenderNode {
             in: RenderJSONEncoder.makeEncoder().encode(self),
             for: [.interfaceLanguage(variant)]
         )
-        
+
         return try RenderJSONDecoder.makeDecoder().decode(
             RenderNode.self,
             from: variantData

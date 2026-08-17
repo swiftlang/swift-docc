@@ -27,7 +27,7 @@ import Foundation
 /// [ Aside Note ...   ]
 /// - - - - - - - - - -
 /// [ Code Listing ... ]
-/// - - - - - - - - - - 
+/// - - - - - - - - - -
 /// [ Paragraph ...    ]
 /// ```
 ///
@@ -49,38 +49,38 @@ public enum RenderBlockContent: Equatable {
     case orderedList(OrderedList)
     /// A list that contains unordered items.
     case unorderedList(UnorderedList)
-    
+
     /// A step in a multi-step tutorial.
     case step(TutorialStep)
     /// A REST endpoint example that includes a request and the expected response.
     case endpointExample(EndpointExample)
     /// An example that contains a sample code block.
     case dictionaryExample(DictionaryExample)
-    
+
     /// A list of terms.
     case termList(TermList)
     /// A table that contains a list of row data.
     case table(Table)
-    
+
     /// A row in a grid-based layout system that describes a collection of columns.
     case row(Row)
-    
+
     /// A paragraph of small print content that should be rendered in a small font.
     case small(Small)
-    
+
     /// A collection of content that should be rendered in a tab-based layout.
     case tabNavigator(TabNavigator)
-    
+
     /// A collection of authored links that should be rendered in a similar style
     /// to links in an on-page Topics section.
     case links(Links)
-    
+
     /// A video with an optional caption.
     case video(Video)
-    
+
     /// An authored thematic break between block elements.
     case thematicBreak
-    
+
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
     // RenderBlockContent+TextIndexing.swift!
@@ -242,7 +242,7 @@ public enum RenderBlockContent: Equatable {
         public struct LineAnnotation: Equatable, Codable {
             public var style: String
             public var range: Range<Position>
-            
+
             public init(style: String, range: Range<Position>) {
                 self.style = style
                 self.range = range
@@ -285,7 +285,8 @@ public enum RenderBlockContent: Equatable {
             self.showLineNumbers = tokens.contains { $0.name == .showLineNumbers }
 
             if let wrapString = tokens.first(where: { $0.name == .wrap })?.value,
-               let wrapValue = Int(wrapString) {
+                let wrapValue = Int(wrapString)
+            {
                 self.wrap = wrapValue
             } else {
                 self.wrap = 0
@@ -321,18 +322,18 @@ public enum RenderBlockContent: Equatable {
 
             var annotations: [LineAnnotation] = []
             for line in highlight {
-                    let pos = Position(line: line, character: nil)
-                    let range = pos..<pos
-                    annotations.append(LineAnnotation(style: "highlight", range: range))
+                let pos = Position(line: line, character: nil)
+                let range = pos..<pos
+                annotations.append(LineAnnotation(style: "highlight", range: range))
             }
             for line in strikeout {
-                    let pos = Position(line: line, character: nil)
-                    let range = pos..<pos
-                    annotations.append(LineAnnotation(style: "strikeout", range: range))
+                let pos = Position(line: line, character: nil)
+                let range = pos..<pos
+                annotations.append(LineAnnotation(style: "strikeout", range: range))
             }
             self.lineAnnotations = annotations
         }
-        
+
         @available(*, deprecated, renamed: "init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)", message: "Use 'CodeBlockOptions.init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)' instead. This deprecated API will be removed after 6.5 is released.")
         public init(showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
             self.init(copyToClipboard: FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: showLineNumbers, wrap: wrap, highlight: highlight, strikeout: strikeout)
@@ -413,9 +414,11 @@ public enum RenderBlockContent: Equatable {
             while i < input.endIndex {
                 let c = input[i]
 
-                if c == "[" { bracketDepth += 1 }
-                else if c == "]" { bracketDepth = max(0, bracketDepth - 1) }
-                else if c == "," && bracketDepth == 0 {
+                if c == "[" {
+                    bracketDepth += 1
+                } else if c == "]" {
+                    bracketDepth = max(0, bracketDepth - 1)
+                } else if c == "," && bracketDepth == 0 {
                     let seq = input[start..<i]
                     if !seq.isEmpty {
                         parts.append(seq)
@@ -583,21 +586,21 @@ public enum RenderBlockContent: Equatable {
             }
         }
     }
-    
+
     /// An item in a list.
     public struct ListItem: Codable, Equatable {
         /// The item content.
         public var content: [RenderBlockContent]
         /// If this list item is a task list item, whether the task should be checked off.
         public var checked: Bool?
-        
+
         /// Creates a new list item with the given content.
         public init(content: [RenderBlockContent], checked: Bool? = nil) {
             self.content = content
             self.checked = checked
         }
     }
-    
+
     /// A type the describes an aside style.
     public struct AsideStyle: Codable, Equatable {
 
@@ -608,7 +611,7 @@ public enum RenderBlockContent: Equatable {
         /// - Parameters:
         ///   - lhs: An aside style to compare.
         ///   - rhs: Another aside style to compare.
-        public static func ==(lhs: AsideStyle, rhs: AsideStyle) -> Bool {
+        public static func == (lhs: AsideStyle, rhs: AsideStyle) -> Bool {
             lhs.rawValue.caseInsensitiveCompare(rhs.rawValue) == .orderedSame
         }
 
@@ -651,7 +654,7 @@ public enum RenderBlockContent: Equatable {
         public init(asideKind: Markdown.Aside.Kind) {
             self.init(rawValue: asideKind.rawValue)
         }
-        
+
         /// Encodes the aside style into the specified encoder.
         /// - Parameter encoder: The encoder to write data to.
         public func encode(to encoder: any Encoder) throws {
@@ -671,7 +674,7 @@ public enum RenderBlockContent: Equatable {
             self.init(rawValue: try container.decode(String.self))
         }
     }
-    
+
     /// The table headers style.
     public enum HeaderType: String, Codable, Equatable {
         /// The first row in the table contains column headers.
@@ -695,20 +698,20 @@ public enum RenderBlockContent: Equatable {
         /// Leave text alignment to the default.
         case unset
     }
-    
+
     /// A table row that contains a list of row cells.
     public struct TableRow: Codable, Equatable {
         /// A list of rendering block elements.
         public typealias Cell = [RenderBlockContent]
         /// The list of row cells.
         public var cells: [Cell]
-        
+
         /// Creates a new table row.
         /// - Parameter cells: The list of row cells to use.
         public init(cells: [Cell]) {
             self.cells = cells
         }
-        
+
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.singleValueContainer()
             try container.encode(cells)
@@ -741,15 +744,17 @@ public enum RenderBlockContent: Equatable {
         /// cell "spans over" other cells in later rows.
         public let rowspan: UInt
 
-        public init(rowIndex: Int, columnIndex: Int,
-                    colspan: UInt, rowspan: UInt) {
+        public init(
+            rowIndex: Int, columnIndex: Int,
+            colspan: UInt, rowspan: UInt
+        ) {
             self.rowIndex = rowIndex
             self.columnIndex = columnIndex
             self.colspan = colspan
             self.rowspan = rowspan
         }
     }
-    
+
     /// A term definition.
     ///
     /// Includes a named term and its definition, that look like:
@@ -770,13 +775,13 @@ public enum RenderBlockContent: Equatable {
             /// The definition content.
             public var content: [RenderBlockContent]
         }
-        
+
         /// The term in the term-list item.
         public var term: Term
         /// The definition in the term-list item.
         public var definition: Definition
     }
-    
+
     /// A row in a grid-based layout system that describes a collection of columns.
     public struct Row: Codable, Equatable {
         /// The number of columns that should be rendered in this row.
@@ -785,7 +790,7 @@ public enum RenderBlockContent: Equatable {
         /// individual columns that span multiple columns (specified with the column's
         /// ``Column/size`` property) or the row could be not fully filled with columns.
         public var numberOfColumns: Int
-        
+
         /// The columns that should be rendered in this row.
         public var columns: [Column]
 
@@ -811,7 +816,7 @@ public enum RenderBlockContent: Equatable {
             }
         }
     }
-    
+
     /// A paragraph of small print content that should be rendered in a small font.
     ///
     /// Small is based on HTML's `<small>` tag and could contain content like legal,
@@ -820,22 +825,22 @@ public enum RenderBlockContent: Equatable {
         /// The inline content that should be rendered.
         public var inlineContent: [RenderInlineContent]
     }
-    
+
     /// A collection of content that should be rendered in a tab-based layout.
     public struct TabNavigator: Codable, Equatable {
         /// The tabs that make up this tab navigator.
         public var tabs: [Tab]
-        
+
         /// A titled tab inside a tab-based layout container.
         public struct Tab: Codable, Equatable {
             /// The title that should be used to identify this tab.
             public var title: String
-            
+
             /// The content that should be rendered in this tab.
             public var content: [RenderBlockContent]
         }
     }
-    
+
     /// A collection of authored links that should be rendered in a similar style
     /// to links in an on-page Topics section.
     public struct Links: Codable, Equatable {
@@ -843,37 +848,37 @@ public enum RenderBlockContent: Equatable {
         public enum Style: String, Codable, Equatable {
             /// A list of the linked pages, including their full declaration and abstract.
             case list
-            
+
             /// A grid of items based on the card image for the linked pages.
             case compactGrid
-            
+
             /// A grid of items based on the card image for the linked pages.
             ///
             /// Unlike ``compactGrid``, this style includes the abstract for each page.
             case detailedGrid
         }
-        
+
         /// The style that should be used when rendering the link items.
         public var style: Style
-        
+
         /// The topic render references for the pages that should be rendered in this links block.
         public var items: [String]
-        
+
         /// Create a new links block with the given style and topic render references.
         public init(style: RenderBlockContent.Links.Style, items: [String]) {
             self.style = style
             self.items = items
         }
     }
-    
+
     /// A video with an optional caption.
     public struct Video: Codable, Equatable {
         /// A reference to the video media that should be rendered in this block.
         public let identifier: RenderReferenceIdentifier
-        
+
         /// Any metadata associated with this video, like a caption.
         public var metadata: RenderContentMetadata?
-        
+
         /// Create a new video with the given identifier and metadata.
         public init(identifier: RenderReferenceIdentifier, metadata: RenderContentMetadata? = nil) {
             self.identifier = identifier
@@ -884,7 +889,8 @@ public enum RenderBlockContent: Equatable {
 
 extension RenderBlockContent.Table: Equatable {
     public static func == (lhs: RenderBlockContent.Table, rhs: RenderBlockContent.Table) -> Bool {
-        guard lhs.header == rhs.header
+        guard
+            lhs.header == rhs.header
                 && lhs.extendedData == rhs.extendedData
                 && lhs.metadata == rhs.metadata
                 && lhs.rows == rhs.rows
@@ -927,8 +933,9 @@ extension RenderBlockContent.Table: Codable {
         init?(stringValue: String) {
             let coordinates = stringValue.split(separator: "_")
             guard coordinates.count == 2,
-                  let rowIndex = Int(coordinates.first!),
-                  let columnIndex = Int(coordinates.last!) else {
+                let rowIndex = Int(coordinates.first!),
+                let columnIndex = Int(coordinates.last!)
+            else {
                 return nil
             }
             row = rowIndex
@@ -964,10 +971,12 @@ extension RenderBlockContent.Table: Codable {
 
             for index in dataContainer.allKeys {
                 let cellContainer = try dataContainer.nestedContainer(keyedBy: ExtendedDataCodingKeys.self, forKey: index)
-                extendedData.insert(.init(rowIndex: index.row,
-                                          columnIndex: index.column,
-                                          colspan: try cellContainer.decode(UInt.self, forKey: .colspan),
-                                          rowspan: try cellContainer.decode(UInt.self, forKey: .rowspan)))
+                extendedData.insert(
+                    .init(
+                        rowIndex: index.row,
+                        columnIndex: index.column,
+                        colspan: try cellContainer.decode(UInt.self, forKey: .colspan),
+                        rowspan: try cellContainer.decode(UInt.self, forKey: .rowspan)))
             }
         }
         self.extendedData = extendedData
@@ -985,8 +994,9 @@ extension RenderBlockContent.Table: Codable {
         if !extendedData.isEmpty {
             var dataContainer = container.nestedContainer(keyedBy: DynamicIndexCodingKey.self, forKey: .extendedData)
             for data in extendedData {
-                var cellContainer = dataContainer.nestedContainer(keyedBy: ExtendedDataCodingKeys.self,
-                                                                  forKey: .init(row: data.rowIndex, column: data.columnIndex))
+                var cellContainer = dataContainer.nestedContainer(
+                    keyedBy: ExtendedDataCodingKeys.self,
+                    forKey: .init(row: data.rowIndex, column: data.columnIndex))
                 try cellContainer.encode(data.colspan, forKey: .colspan)
                 try cellContainer.encode(data.rowspan, forKey: .rowspan)
             }
@@ -1025,13 +1035,13 @@ extension RenderBlockContent: Codable {
         case tabs
         case identifier
     }
-    
+
     static let isExperimentalCodeBlockAnnotationsEnabledUserInfoKey = CodingUserInfoKey(rawValue: "isExperimentalCodeBlockAnnotationsEnabled")!
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BlockType.self, forKey: .type)
-        
+
         switch type {
         case .paragraph:
             self = try .paragraph(.init(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent)))
@@ -1060,29 +1070,32 @@ extension RenderBlockContent: Codable {
             } else {
                 options = nil
             }
-            self = try .codeListing(.init(
-                syntax: container.decodeIfPresent(String.self, forKey: .syntax),
-                code: container.decode([String].self, forKey: .code),
-                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
-                options: options
-            ))
+            self = try .codeListing(
+                .init(
+                    syntax: container.decodeIfPresent(String.self, forKey: .syntax),
+                    code: container.decode([String].self, forKey: .code),
+                    metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
+                    options: options
+                ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:
-            self = try .orderedList(.init(
-                items: container.decode([ListItem].self, forKey: .items),
-                startIndex: container.decodeIfPresent(UInt.self, forKey: .start) ?? 1
-            ))
+            self = try .orderedList(
+                .init(
+                    items: container.decode([ListItem].self, forKey: .items),
+                    startIndex: container.decodeIfPresent(UInt.self, forKey: .start) ?? 1
+                ))
         case .unorderedList:
             self = try .unorderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .step:
             self = try .step(.init(content: container.decode([RenderBlockContent].self, forKey: .content), caption: container.decodeIfPresent([RenderBlockContent].self, forKey: .caption) ?? [], media: container.decode(RenderReferenceIdentifier?.self, forKey: .media), code: container.decode(RenderReferenceIdentifier?.self, forKey: .code), runtimePreview: container.decode(RenderReferenceIdentifier?.self, forKey: .runtimePreview)))
         case .endpointExample:
-            self = try .endpointExample(.init(
-                summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary),
-                request: container.decode(CodeExample.self, forKey: .request),
-                response: container.decode(CodeExample.self, forKey: .response)
-            ))
+            self = try .endpointExample(
+                .init(
+                    summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary),
+                    request: container.decode(CodeExample.self, forKey: .request),
+                    response: container.decode(CodeExample.self, forKey: .response)
+                ))
         case .dictionaryExample:
             self = try .dictionaryExample(.init(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example)))
         case .table:
@@ -1125,11 +1138,11 @@ extension RenderBlockContent: Codable {
             self = .thematicBreak
         }
     }
-    
+
     private enum BlockType: String, Codable {
         case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links, video, thematicBreak
     }
-    
+
     private var type: BlockType {
         switch self {
         case .paragraph: return .paragraph
@@ -1152,11 +1165,11 @@ extension RenderBlockContent: Codable {
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)
-        
+
         switch self {
         case .paragraph(let p):
             try container.encode(p.inlineContent, forKey: .inlineContent)

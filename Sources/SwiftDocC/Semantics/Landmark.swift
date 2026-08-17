@@ -14,10 +14,10 @@ public import Markdown
 public protocol Landmark {
     /// The document cursor range that the landmark contains.
     var range: SourceRange? { get }
-    
+
     /// The title of the landmark.
     var title: String { get }
-    
+
     /// The content of the landmark.
     var markup: any Markup { get }
 }

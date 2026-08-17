@@ -22,613 +22,614 @@ import Markdown
 import DocCCommon
 
 extension DocCHTMLTestSuites {
-struct MarkdownRendererTests {
-    @Test
-    func renderingParagraphsWithFormattedText() {
-        assert(
-            rendering: "This is a paragraph with _emphasized_ and **strong** text.",
-            matches: "<p>This is a paragraph with <i>emphasized</i> and <b>strong</b> text.</p>"
-        )
-        
-        assert(
-            rendering: "This is a paragraph with ~strikethrough~ and `pre-formatted` text.",
-            matches: "<p>This is a paragraph with <s>strikethrough</s> and <code>pre-formatted</code> text.</p>"
-        )
-        
-        assert(
-            rendering: #"This is a paragraph with "double" and 'single' quoted text."#,
-            matches: "<p>This is a paragraph with “double” and ‘single’ quoted text.</p>"
-        )
-    }
-    
-    @Test
-    func renderingHeadings() {
-        assert(
-            rendering: """
-            # One
-            
-            ## Two
-            
-            ### Three
-            """,
-            prettyFormatted: true,
-            matches: """
-            <h1 id="One">
-              <a href="#One">One</a>
-            </h1>
-            <h2 id="Two">
-              <a href="#Two">Two</a>
-            </h2>
-            <h3 id="Three">
-              <a href="#Three">Three</a>
-            </h3>
-            """
-        )
-        
-        assert(
-            rendering: """
-            One
-            ===
-            
-            Two
-            ---
-            """,
-            prettyFormatted: true,
-            matches: """
-            <h1 id="One">
-              <a href="#One">One</a>
-            </h1>
-            <h2 id="Two">
-              <a href="#Two">Two</a>
-            </h2>
-            """
-        )
-        
-        assert(
-            rendering: """
-            # _One_
-            
-            ## **Two**
-            
-            ### `Three`
-            """,
-            prettyFormatted: true,
-            matches: """
-            <h1 id="One">
-              <a href="#One">
-                <i>One</i>
-              </a>
-            </h1>
-            <h2 id="Two">
-              <a href="#Two">
-                <b>Two</b>
-              </a>
-            </h2>
-            <h3 id="Three">
-              <a href="#Three">
-                <code>Three</code>
-              </a>
-            </h3>
-            """
-        )
-    }
-    
-    @Test
-    func renderingTables() {
-        assert(
-            rendering: """
-            First   | Second  | 
-            ------- | ------- |
-            **One** | _Two_   | 
-            """,
-            prettyFormatted: true,
-            matches: """
-            <table>
-              <thead>
-                <tr>
-                  <th>First</th>
-                  <th>Second</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <b>One</b>
-                  </td>
-                  <td>
-                    <i>Two</i>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            """
-        )
-        
-        assert(
-            rendering: """
-            First | Second | Third |
-            ----- | ------ | ----- |
-            One           || Two   |
-            Three | Four          ||
-            Five                 |||
-            """,
-            prettyFormatted: true,
-            matches: """
-            <table>
-              <thead>
-                <tr>
-                  <th>First</th>
-                  <th>Second</th>
-                  <th>Third</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="2">One</td>
-                  <td>Two</td>
-                </tr>
-                <tr>
-                  <td>Three</td>
-                  <td colspan="2">Four</td>
-                </tr>
-                <tr>
-                  <td colspan="3">Five</td>
-                </tr>
-              </tbody>
-            </table>
-            """
-        )
-        
-        assert(
-            rendering: """
-            First | Second | Third | Fourth 
-            ----- | ------ | ----- | ------
-            One   | Two    | Three | Four
-            ^     | Five   | ^     | Six
-            Seven | ^      | ^     | Eight
-            """,
-            prettyFormatted: true,
-            matches: """
-            <table>
-              <thead>
-                <tr>
-                  <th>First</th>
-                  <th>Second</th>
-                  <th>Third</th>
-                  <th>Fourth</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td rowspan="2">One</td>
-                  <td>Two</td>
-                  <td rowspan="3">Three</td>
-                  <td>Four</td>
-                </tr>
-                <tr>
-                  <td rowspan="2">Five</td>
-                  <td>Six</td>
-                </tr>
-                <tr>
-                  <td>Seven</td>
-                  <td>Eight</td>
-                </tr>
-              </tbody>
-            </table>
-            """
-        )
-    }
-    
-    @Test
-    func renderingLists() {
-        assert(
-            rendering: """
-            - First
-            - Second
-              + A
-              + B
-            - Third
-              1. One
-              2. Two
-                 * Inner
-            """,
-            prettyFormatted: true,
-            matches: """
-            <ul>
-              <li>
-                <p>First</p>
-              </li>
-              <li>
-                <p>Second</p>
-                <ul>
-                  <li>
-                    <p>A</p>
-                  </li>
-                  <li>
-                    <p>B</p>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <p>Third</p>
-                <ol>
-                  <li>
-                    <p>One</p>
-                  </li>
-                  <li>
-                    <p>Two</p>
+    struct MarkdownRendererTests {
+        @Test
+        func renderingParagraphsWithFormattedText() {
+            assert(
+                rendering: "This is a paragraph with _emphasized_ and **strong** text.",
+                matches: "<p>This is a paragraph with <i>emphasized</i> and <b>strong</b> text.</p>"
+            )
+
+            assert(
+                rendering: "This is a paragraph with ~strikethrough~ and `pre-formatted` text.",
+                matches: "<p>This is a paragraph with <s>strikethrough</s> and <code>pre-formatted</code> text.</p>"
+            )
+
+            assert(
+                rendering: #"This is a paragraph with "double" and 'single' quoted text."#,
+                matches: "<p>This is a paragraph with “double” and ‘single’ quoted text.</p>"
+            )
+        }
+
+        @Test
+        func renderingHeadings() {
+            assert(
+                rendering: """
+                    # One
+
+                    ## Two
+
+                    ### Three
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <h1 id="One">
+                      <a href="#One">One</a>
+                    </h1>
+                    <h2 id="Two">
+                      <a href="#Two">Two</a>
+                    </h2>
+                    <h3 id="Three">
+                      <a href="#Three">Three</a>
+                    </h3>
+                    """,
+            )
+
+            assert(
+                rendering: """
+                    One
+                    ===
+
+                    Two
+                    ---
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <h1 id="One">
+                      <a href="#One">One</a>
+                    </h1>
+                    <h2 id="Two">
+                      <a href="#Two">Two</a>
+                    </h2>
+                    """,
+            )
+
+            assert(
+                rendering: """
+                    # _One_
+
+                    ## **Two**
+
+                    ### `Three`
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <h1 id="One">
+                      <a href="#One">
+                        <i>One</i>
+                      </a>
+                    </h1>
+                    <h2 id="Two">
+                      <a href="#Two">
+                        <b>Two</b>
+                      </a>
+                    </h2>
+                    <h3 id="Three">
+                      <a href="#Three">
+                        <code>Three</code>
+                      </a>
+                    </h3>
+                    """,
+            )
+        }
+
+        @Test
+        func renderingTables() {
+            assert(
+                rendering: """
+                    First   | Second  | 
+                    ------- | ------- |
+                    **One** | _Two_   | 
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>First</th>
+                          <th>Second</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <b>One</b>
+                          </td>
+                          <td>
+                            <i>Two</i>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    """,
+            )
+
+            assert(
+                rendering: """
+                    First | Second | Third |
+                    ----- | ------ | ----- |
+                    One           || Two   |
+                    Three | Four          ||
+                    Five                 |||
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>First</th>
+                          <th>Second</th>
+                          <th>Third</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td colspan="2">One</td>
+                          <td>Two</td>
+                        </tr>
+                        <tr>
+                          <td>Three</td>
+                          <td colspan="2">Four</td>
+                        </tr>
+                        <tr>
+                          <td colspan="3">Five</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    """,
+            )
+
+            assert(
+                rendering: """
+                    First | Second | Third | Fourth 
+                    ----- | ------ | ----- | ------
+                    One   | Two    | Three | Four
+                    ^     | Five   | ^     | Six
+                    Seven | ^      | ^     | Eight
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>First</th>
+                          <th>Second</th>
+                          <th>Third</th>
+                          <th>Fourth</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td rowspan="2">One</td>
+                          <td>Two</td>
+                          <td rowspan="3">Three</td>
+                          <td>Four</td>
+                        </tr>
+                        <tr>
+                          <td rowspan="2">Five</td>
+                          <td>Six</td>
+                        </tr>
+                        <tr>
+                          <td>Seven</td>
+                          <td>Eight</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    """,
+            )
+        }
+
+        @Test
+        func renderingLists() {
+            assert(
+                rendering: """
+                    - First
+                    - Second
+                      + A
+                      + B
+                    - Third
+                      1. One
+                      2. Two
+                         * Inner
+                    """,
+                prettyFormatted: true,
+                matches: """
                     <ul>
                       <li>
-                        <p>Inner</p>
+                        <p>First</p>
+                      </li>
+                      <li>
+                        <p>Second</p>
+                        <ul>
+                          <li>
+                            <p>A</p>
+                          </li>
+                          <li>
+                            <p>B</p>
+                          </li>
+                        </ul>
+                      </li>
+                      <li>
+                        <p>Third</p>
+                        <ol>
+                          <li>
+                            <p>One</p>
+                          </li>
+                          <li>
+                            <p>Two</p>
+                            <ul>
+                              <li>
+                                <p>Inner</p>
+                              </li>
+                            </ul>
+                          </li>
+                        </ol>
                       </li>
                     </ul>
-                  </li>
-                </ol>
-              </li>
-            </ul>
-            """
-        )
-    }
-    
-    @Test
-    func renderingAsides() async throws {
-        assert(
-            rendering: """
-            > Note: Something noteworthy
-            >
-            > > Important: Something important
-            """,
-            prettyFormatted: true,
-            matches: """
-            <aside class="note">
-              <p class="label">
-                Note
-              </p>
-              <p>Something noteworthy</p>
-              <aside class="important">
-                <p class="label">
-                  Important
-                </p>
-                <p>Something important</p>
-              </aside>
-            </aside>
-            """
-        )
-    }
-    
-    @Test
-    func renderingSmallDirective() async throws {
-        assert(
-            rendering: """
-            @Small {
-                Licensed under Apache License v2.0
-            }
-            """,
-            matches: "<p><small>Licensed under Apache License v2.0</small></p>")
-    }
-    
-    @Test
-    func renderingCodeBlocks() async throws {
-        assert(
-            rendering: """
-            ~~~
-            Some block of code
-            ~~~
-            """,
-            prettyFormatted: true,
-            matches: """
-            <pre><code>Some block of code
-            </code></pre>
-            """
-        )
-        
-        assert(
-            rendering: """
-                Some block of code
-            """,
-            prettyFormatted: true,
-            matches: """
-            <pre><code>Some block of code
-            </code></pre>
-            """
-        )
-        
-        assert(
-            rendering: """
-            ```lang
-            Some block of code
-            ```
-            """,
-            prettyFormatted: true,
-            matches: """
-            <pre class="lang"><code>Some block of code
-            </code></pre>
-            """
-        )
-    }
-    
-    @Test
-    func renderingMiscellaneousElements() {
-        assert(
-            rendering: "First\nSecond", // new lines usually have no special meaning in markdown...
-            matches: "<p>First Second</p>"
-        )
-        
-        assert(
-            rendering: "First  \nSecond", // ... but with two trailing spaces they are treated as line breaks
-            matches: "<p>First<br>Second</p>"
-        )
-        
-        assert(
-            rendering: """
-            -------
-            """,
-            matches: "<hr>"
-        )
-    }
-    
-    @Test
-    func renderingRelativeLinksToOtherPages() throws {
-        // Link to article
-        assert(
-            rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
-            elementToReturn: .init(
-                path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeArticle/index.html")),
-                names: .single(.conceptual("Some Article Title")),
-                subheadings: .single(.conceptual("Some Article Title")), // Not relevant for inline links
-                abstract: nil // Not relevant for inline links
-            ),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <a href="../somearticle/index.html">Some Article Title</a>
-            </p>
-            """
-        )
-        
-        // Link to single-language symbol
-        assert(
-            rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
-            elementToReturn: .init(
-                path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
-                names: .single(.symbol("someMethod(_:_:)")),
-                subheadings: .single(.symbol([ // Not relevant for inline links
-                    .init(text: "func ", kind: .decorator),
-                    .init(text: "someMethod", kind: .identifier),
-                    .init(text: "(_:_:)", kind: .decorator),
-                ])),
-                abstract: nil // Not relevant for inline links
-            ),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <a href="../someclass/somemethod(_:_:)/index.html">
-                <code>
-                  some<wbr>Method(<wbr>_:<wbr>_:)
-                </code>
-              </a>
-            </p>
-            """
-        )
-        
-        // Link to symbol with multiple language representation
-        assert(
-            rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
-            elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <a href="../someclass/somemethod(_:_:)/index.html">
-                <code class="swift-only">
-                  do<wbr>Something(<wbr>with:<wbr>and:)
-                </code>
-                <code class="occ-only">
-                  do<wbr>Something<wbr>With<wbr>First:<wbr>and<wbr>Second:
-                </code>
-              </a>
-            </p>
-            """
-        )
-        
-        // Link with custom title
-        assert(
-            rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
-            elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <a href="../someclass/somemethod(_:_:)/index.html">
-                Custom <i>formatted</i> title
-              </a>
-            </p>
-            """
-        )
-        
-        // Link with custom symbol-like title
-        assert(
-            rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
-            elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
-            matches: """
-            <p><a href="../someclass/somemethod(_:_:)/index.html">Some <code>Custom<wbr>Symbol<wbr>Name</code> title</a></p>
-            """
-        )
-        
-        // Unresolved documentation link with fallback link text
-        assert(
-            rendering: "<doc://com.example.test/documentation/Something/NotFound>", // Simulate a link that's unresolved
-            elementToReturn: nil,
-            fallbackLinkTextToReturn: "Some fallback link text",
-            prettyFormatted: true,
-            matches: """
-            <p>Some fallback link text</p>
-            """
-        )
-        // Unresolved _symbol_ link with fallback link text
-        assert(
-            rendering: "``ModuleName/NotFoundClass/someMethod(_:)-h1a2s3h``", // Simulate a symbol link that's unresolved
-            elementToReturn: nil,
-            fallbackLinkTextToReturn: "Some fallback link text",
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <code>Some fallback link text</code>
-            </p>
-            """
-        )
-    }
-    
-    @Test
-    func renderingRelativeLinksToImages() throws {
-        // Only a single image representation
-        assert(
-            rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(files: [
-                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))]
-            ]),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png">
-              </picture>
-            </p>
-            """
-        )
-        
-        // Only light mode image representations
-        assert(
-            rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(files: [
-                .light: [
-                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
-                ]
-            ]),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
-              </picture>
-            </p>
-            """
-        )
-        
-        // Only a single scale factor
-        assert(
-            rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(files: [
-                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))],
-                .dark:  [1: try #require(URL(string: "images/com.test.example/some-image~dark.png"))],
-            ]),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png">
-                <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
-            """
-        )
-        
-        // Multiple styles and scale factors
-        assert(
-            rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(files: [
-                .light: [
-                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
-                ],
-                .dark: [
-                    1: try #require(URL(string: "images/com.test.example/some-image~dark.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image~dark@2x.png")),
-                ],
-            ]),
-            prettyFormatted: true,
-            matches: """
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
-            """
-        )
-    }
-    
-    @Test
-    func parsesAndPreservesHTMLExceptComments() {
-        assert(
-            rendering: "This is a <!-- inline comment --><strong>formatted</strong> paragraph.",
-            matches: "<p>This is a <strong>formatted</strong> paragraph.</p>"
-        )
-        
-        assert(
-            rendering: "This<br/> is a <em><!-- multi\n line\n comment-->formatted</em> paragraph.",
-            matches: "<p>This<br> is a <em>formatted</em> paragraph.</p>"
-        )
-        
-        assert(
-            rendering: "This is a <span style=\"color: red\"><!-- before -->custom formatted<!-- after --></span> paragraph.",
-            matches: "<p>This is a <span style=\"color: red\">custom formatted</span> paragraph.</p>"
-        )
-        
-        // This markup doesn't properly close the `<strong>` tag (it uses an `</em>` tag.
-        // In this case we drop both tags but not their content in between. This matches what DocC does for inline HTML with regards to the Render JSON output.
-        assert(
-            rendering: "This is a <strong>custom formatted</em> paragraph.",
-            matches: "<p>This is a custom formatted paragraph.</p>"
-        )
-        
-        // Any content _within_ HTML tags in the markdown isn't parsed as markdown content.
-        assert(
-            rendering: "This is a <span>custom **not** formatted</span> paragraph.",
-            matches: "<p>This is a <span>custom **not** formatted</span> paragraph.</p>"
-        )
-        
-        assert(
-            rendering: """
-            <details>
-                <summary>Some summary<!-- comment in summary--></summary>
-                <!-- comment between elements -->
-                <p><!-- comment before -->Some longer<!-- comment between words --> description<!-- comment after --></p>
-            </details>
-            <!-- comment after block element -->
-            """,
-            matches: """
-            <details><summary>Some summary</summary><p>Some longer description</p></details>
-            """
-        )
-    }
-    
-    private func assert(
-        rendering markdownContent: String,
-        elementToReturn: LinkedElement? = nil,
-        assetToReturn: LinkedAsset? = nil,
-        fallbackLinkTextToReturn: String? = nil,
-        prettyFormatted: Bool = false,
-        matches expectedHTML: String,
-        sourceLocation: Testing.SourceLocation = #_sourceLocation
-    ) {
-        let renderer = MarkdownRenderer(
-            path: URL(string: "/documentation/Something/ThisPage/index.html")!,
-            goal: .richness,
-            linkProvider: SingleValueLinkProvider(
-                elementToReturn: elementToReturn,
-                assetToReturn: assetToReturn,
-                fallbackLinkTextToReturn: fallbackLinkTextToReturn
+                    """,
             )
-        )
-        let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
-        htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)
-    }
-    
-    private func makeExampleMethodWithDifferentLanguageRepresentations() -> LinkedElement {
-        // swift-format-ignore
-        LinkedElement(
+        }
+
+        @Test
+        func renderingAsides() async throws {
+            assert(
+                rendering: """
+                    > Note: Something noteworthy
+                    >
+                    > > Important: Something important
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <aside class="note">
+                      <p class="label">
+                        Note
+                      </p>
+                      <p>Something noteworthy</p>
+                      <aside class="important">
+                        <p class="label">
+                          Important
+                        </p>
+                        <p>Something important</p>
+                      </aside>
+                    </aside>
+                    """
+            )
+        }
+
+        @Test
+        func renderingSmallDirective() async throws {
+            assert(
+                rendering: """
+                    @Small {
+                        Licensed under Apache License v2.0
+                    }
+                    """,
+                matches: "<p><small>Licensed under Apache License v2.0</small></p>")
+        }
+
+        @Test
+        func renderingCodeBlocks() async throws {
+            assert(
+                rendering: """
+                    ~~~
+                    Some block of code
+                    ~~~
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <pre><code>Some block of code
+                    </code></pre>
+                    """
+            )
+
+            assert(
+                rendering: """
+                        Some block of code
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <pre><code>Some block of code
+                    </code></pre>
+                    """
+            )
+
+            assert(
+                rendering: """
+                    ```lang
+                    Some block of code
+                    ```
+                    """,
+                prettyFormatted: true,
+                matches: """
+                    <pre class="lang"><code>Some block of code
+                    </code></pre>
+                    """
+            )
+        }
+
+        @Test
+        func renderingMiscellaneousElements() {
+            assert(
+                rendering: "First\nSecond",  // new lines usually have no special meaning in markdown...
+                matches: "<p>First Second</p>"
+            )
+
+            assert(
+                rendering: "First  \nSecond",  // ... but with two trailing spaces they are treated as line breaks
+                matches: "<p>First<br>Second</p>"
+            )
+
+            assert(
+                rendering: """
+                    -------
+                    """,
+                matches: "<hr>"
+            )
+        }
+
+        @Test
+        func renderingRelativeLinksToOtherPages() throws {
+            // Link to article
+            assert(
+                rendering: "<doc://com.example.test/documentation/Something/SomeArticle>",  // Simulate a link that's been locally resolved already
+                elementToReturn: .init(
+                    path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeArticle/index.html")),
+                    names: .single(.conceptual("Some Article Title")),
+                    subheadings: .single(.conceptual("Some Article Title")),  // Not relevant for inline links
+                    abstract: nil  // Not relevant for inline links
+                ),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <a href="../somearticle/index.html">Some Article Title</a>
+                    </p>
+                    """
+            )
+
+            // Link to single-language symbol
+            assert(
+                rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>",  // Simulate a link that's been locally resolved already
+                elementToReturn: .init(
+                    path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
+                    names: .single(.symbol("someMethod(_:_:)")),
+                    subheadings: .single(
+                        .symbol([  // Not relevant for inline links
+                            .init(text: "func ", kind: .decorator),
+                            .init(text: "someMethod", kind: .identifier),
+                            .init(text: "(_:_:)", kind: .decorator),
+                        ])),
+                    abstract: nil  // Not relevant for inline links
+                ),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <a href="../someclass/somemethod(_:_:)/index.html">
+                        <code>
+                          some<wbr>Method(<wbr>_:<wbr>_:)
+                        </code>
+                      </a>
+                    </p>
+                    """
+            )
+
+            // Link to symbol with multiple language representation
+            assert(
+                rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>",  // Simulate a link that's been locally resolved already
+                elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <a href="../someclass/somemethod(_:_:)/index.html">
+                        <code class="swift-only">
+                          do<wbr>Something(<wbr>with:<wbr>and:)
+                        </code>
+                        <code class="occ-only">
+                          do<wbr>Something<wbr>With<wbr>First:<wbr>and<wbr>Second:
+                        </code>
+                      </a>
+                    </p>
+                    """
+            )
+
+            // Link with custom title
+            assert(
+                rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))",  // Simulate a link that's been locally resolved already
+                elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <a href="../someclass/somemethod(_:_:)/index.html">
+                        Custom <i>formatted</i> title
+                      </a>
+                    </p>
+                    """
+            )
+
+            // Link with custom symbol-like title
+            assert(
+                rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))",  // Simulate a link that's been locally resolved already
+                elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
+                matches: """
+                    <p><a href="../someclass/somemethod(_:_:)/index.html">Some <code>Custom<wbr>Symbol<wbr>Name</code> title</a></p>
+                    """
+            )
+
+            // Unresolved documentation link with fallback link text
+            assert(
+                rendering: "<doc://com.example.test/documentation/Something/NotFound>",  // Simulate a link that's unresolved
+                elementToReturn: nil,
+                fallbackLinkTextToReturn: "Some fallback link text",
+                prettyFormatted: true,
+                matches: """
+                    <p>Some fallback link text</p>
+                    """
+            )
+            // Unresolved _symbol_ link with fallback link text
+            assert(
+                rendering: "``ModuleName/NotFoundClass/someMethod(_:)-h1a2s3h``",  // Simulate a symbol link that's unresolved
+                elementToReturn: nil,
+                fallbackLinkTextToReturn: "Some fallback link text",
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <code>Some fallback link text</code>
+                    </p>
+                    """
+            )
+        }
+
+        @Test
+        func renderingRelativeLinksToImages() throws {
+            // Only a single image representation
+            assert(
+                rendering: "![Some alt text](some-image.png)",
+                assetToReturn: .init(files: [
+                    .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))]
+                ]),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <picture>
+                        <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png">
+                      </picture>
+                    </p>
+                    """
+            )
+
+            // Only light mode image representations
+            assert(
+                rendering: "![Some alt text](some-image.png)",
+                assetToReturn: .init(files: [
+                    .light: [
+                        1: try #require(URL(string: "images/com.test.example/some-image.png")),
+                        2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
+                    ]
+                ]),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <picture>
+                        <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
+                      </picture>
+                    </p>
+                    """
+            )
+
+            // Only a single scale factor
+            assert(
+                rendering: "![Some alt text](some-image.png)",
+                assetToReturn: .init(files: [
+                    .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))],
+                    .dark: [1: try #require(URL(string: "images/com.test.example/some-image~dark.png"))],
+                ]),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <picture>
+                        <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png">
+                        <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png">
+                        <img alt="Some alt text" decoding="async" loading="lazy">
+                      </picture>
+                    </p>
+                    """
+            )
+
+            // Multiple styles and scale factors
+            assert(
+                rendering: "![Some alt text](some-image.png)",
+                assetToReturn: .init(files: [
+                    .light: [
+                        1: try #require(URL(string: "images/com.test.example/some-image.png")),
+                        2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
+                    ],
+                    .dark: [
+                        1: try #require(URL(string: "images/com.test.example/some-image~dark.png")),
+                        2: try #require(URL(string: "images/com.test.example/some-image~dark@2x.png")),
+                    ],
+                ]),
+                prettyFormatted: true,
+                matches: """
+                    <p>
+                      <picture>
+                        <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
+                        <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x">
+                        <img alt="Some alt text" decoding="async" loading="lazy">
+                      </picture>
+                    </p>
+                    """
+            )
+        }
+
+        @Test
+        func parsesAndPreservesHTMLExceptComments() {
+            assert(
+                rendering: "This is a <!-- inline comment --><strong>formatted</strong> paragraph.",
+                matches: "<p>This is a <strong>formatted</strong> paragraph.</p>"
+            )
+
+            assert(
+                rendering: "This<br/> is a <em><!-- multi\n line\n comment-->formatted</em> paragraph.",
+                matches: "<p>This<br> is a <em>formatted</em> paragraph.</p>"
+            )
+
+            assert(
+                rendering: "This is a <span style=\"color: red\"><!-- before -->custom formatted<!-- after --></span> paragraph.",
+                matches: "<p>This is a <span style=\"color: red\">custom formatted</span> paragraph.</p>"
+            )
+
+            // This markup doesn't properly close the `<strong>` tag (it uses an `</em>` tag.
+            // In this case we drop both tags but not their content in between. This matches what DocC does for inline HTML with regards to the Render JSON output.
+            assert(
+                rendering: "This is a <strong>custom formatted</em> paragraph.",
+                matches: "<p>This is a custom formatted paragraph.</p>"
+            )
+
+            // Any content _within_ HTML tags in the markdown isn't parsed as markdown content.
+            assert(
+                rendering: "This is a <span>custom **not** formatted</span> paragraph.",
+                matches: "<p>This is a <span>custom **not** formatted</span> paragraph.</p>"
+            )
+
+            assert(
+                rendering: """
+                    <details>
+                        <summary>Some summary<!-- comment in summary--></summary>
+                        <!-- comment between elements -->
+                        <p><!-- comment before -->Some longer<!-- comment between words --> description<!-- comment after --></p>
+                    </details>
+                    <!-- comment after block element -->
+                    """,
+                matches: """
+                    <details><summary>Some summary</summary><p>Some longer description</p></details>
+                    """
+            )
+        }
+
+        private func assert(
+            rendering markdownContent: String,
+            elementToReturn: LinkedElement? = nil,
+            assetToReturn: LinkedAsset? = nil,
+            fallbackLinkTextToReturn: String? = nil,
+            prettyFormatted: Bool = false,
+            matches expectedHTML: String,
+            sourceLocation: Testing.SourceLocation = #_sourceLocation
+        ) {
+            let renderer = MarkdownRenderer(
+                path: URL(string: "/documentation/Something/ThisPage/index.html")!,
+                goal: .richness,
+                linkProvider: SingleValueLinkProvider(
+                    elementToReturn: elementToReturn,
+                    assetToReturn: assetToReturn,
+                    fallbackLinkTextToReturn: fallbackLinkTextToReturn
+                )
+            )
+            let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
+            htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)
+        }
+
+        private func makeExampleMethodWithDifferentLanguageRepresentations() -> LinkedElement {
+            // swift-format-ignore
+            LinkedElement(
             path: URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")!,
             names: .languageSpecificSymbol([
                 .swift:      "doSomething(with:and:)",
@@ -653,8 +654,8 @@ struct MarkdownRendererTests {
             ]),
             abstract: nil // Not relevant for inline links
         )
+        }
     }
-}
 }
 
 // MARK: Helpers
@@ -663,13 +664,13 @@ extension XMLNode {
     func assertMatches(prettyFormatted: Bool, expected: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
         #expect(rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) == expected, sourceLocation: sourceLocation)
     }
-    
+
     fileprivate func rendered(prettyFormatted: Bool, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> String {
         guard let htmlNode = HTMLNode(from: self) else {
             Issue.record("Failed to convert node \(self.xmlString(options: .nodeCompactEmptyElement)) to HTML node", sourceLocation: sourceLocation)
             return ""
         }
-        
+
         return String(decoding: HTMLFormatter.format(htmlNode, options: prettyFormatted ? .prettyPrint : []), as: UTF8.self)
     }
 }
@@ -678,7 +679,7 @@ extension Sequence<XMLNode> {
     func assertMatches(prettyFormatted: Bool, expected: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
         #expect(rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) == expected, sourceLocation: sourceLocation)
     }
-    
+
     private func rendered(prettyFormatted: Bool, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> String {
         map { $0.rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) }
             .joined(separator: prettyFormatted ? "\n" : "")
@@ -690,17 +691,17 @@ struct SingleValueLinkProvider: LinkProvider {
     func element(for path: URL) -> LinkedElement? {
         elementToReturn
     }
-    
+
     var pathToReturn: URL?
     func pathForSymbolID(_ usr: String) -> URL? {
         pathToReturn
     }
-    
+
     var assetToReturn: LinkedAsset?
     func assetNamed(_ assetName: String) -> LinkedAsset? {
         assetToReturn
     }
-    
+
     var fallbackLinkTextToReturn: String?
     func fallbackLinkText(linkString: String) -> String {
         fallbackLinkTextToReturn ?? linkString

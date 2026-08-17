@@ -21,17 +21,17 @@ class SmallTests: XCTestCase {
             @Small
             """
         }
-        
+
         XCTAssertNotNil(small)
-        
+
         XCTAssertEqual(
             diagnostics,
             ["1: warning – org.swift.docc.Small.HasContent"]
         )
-        
+
         XCTAssertEqual(renderBlockContent, [])
     }
-    
+
     func testHasContent() async throws {
         do {
             let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
@@ -41,49 +41,52 @@ class SmallTests: XCTestCase {
                 }
                 """
             }
-            
+
             XCTAssertNotNil(small)
-            
+
             XCTAssertEqual(diagnostics, [])
-            
+
             XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
                 renderBlockContent.first,
-                .small(RenderBlockContent.Small(
-                    inlineContent: [.text("This is my copyright text.")]
-                ))
+                .small(
+                    RenderBlockContent.Small(
+                        inlineContent: [.text("This is my copyright text.")]
+                    ))
             )
         }
-        
+
         do {
             let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
-                
+
                     And a second line of copyright text.
                 }
                 """
             }
-            
+
             XCTAssertNotNil(small)
-            
+
             XCTAssertEqual(diagnostics, [])
-            
+
             XCTAssertEqual(renderBlockContent.count, 2)
             XCTAssertEqual(
                 renderBlockContent,
                 [
-                    .small(RenderBlockContent.Small(
-                        inlineContent: [.text("This is my copyright text.")]
-                    )),
-                    .small(RenderBlockContent.Small(
-                        inlineContent: [.text("And a second line of copyright text.")]
-                    )),
+                    .small(
+                        RenderBlockContent.Small(
+                            inlineContent: [.text("This is my copyright text.")]
+                        )),
+                    .small(
+                        RenderBlockContent.Small(
+                            inlineContent: [.text("And a second line of copyright text.")]
+                        )),
                 ]
             )
         }
-        
+
         do {
             let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
                 """
@@ -92,57 +95,58 @@ class SmallTests: XCTestCase {
                 }
                 """
             }
-            
+
             XCTAssertNotNil(small)
-            
+
             XCTAssertEqual(diagnostics, [])
-            
+
             XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
                 renderBlockContent.first,
-                .small(RenderBlockContent.Small(
-                    inlineContent: [
-                        .text("This is my "),
-                        .emphasis(inlineContent: [.text("formatted")]),
-                        .text(" "),
-                        .codeVoice(code: "copyright"),
-                        .text(" "),
-                        .strong(inlineContent: [.text("text")]),
-                        .text(".")
-                    ]
-                ))
+                .small(
+                    RenderBlockContent.Small(
+                        inlineContent: [
+                            .text("This is my "),
+                            .emphasis(inlineContent: [.text("formatted")]),
+                            .text(" "),
+                            .codeVoice(code: "copyright"),
+                            .text(" "),
+                            .strong(inlineContent: [.text("text")]),
+                            .text(".")
+                        ]
+                    ))
             )
         }
     }
-    
+
     func testEmitsWarningWhenContainsStructuredMarkup() async throws {
         do {
             let (renderBlockContent, diagnostics, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
-                
+
                     @Row {
                         @Column {
                             This is copyright text in a column.
                         }
-                
+
                         @Column {
                             Second column.
                         }
                     }
-                
+
                     And final copyright text.
                 }
                 """
             }
-            
+
             XCTAssertNotNil(small)
             XCTAssertEqual(diagnostics, ["4: warning – org.swift.docc.HasOnlyKnownDirectives"])
             XCTAssertEqual(renderBlockContent.count, 3)
         }
     }
-    
+
     func testSmallInsideOfColumn() async throws {
         do {
             let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
@@ -150,49 +154,51 @@ class SmallTests: XCTestCase {
                 @Row {
                     @Column {
                         Regular text.
-                
+
                         @Small {
                             Small text.
                         }
                     }
-                
+
                     @Column {
                         Second column of regular text.
                     }
                 }
                 """
             }
-            
+
             XCTAssertNotNil(row)
             XCTAssertEqual(diagnostics, [])
             XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
                 renderBlockContent.first,
-                .row(RenderBlockContent.Row(
-                    numberOfColumns: 2,
-                    columns: [
-                        RenderBlockContent.Row.Column(
-                            size: 1,
-                            alignment: .leading,
-                            content: [
-                                "Regular text.",
-                                .small(RenderBlockContent.Small(
-                                    inlineContent: [.text("Small text.")]
-                                )),
-                            ]
-                        ),
-                        
-                        RenderBlockContent.Row.Column(
-                            size: 1,
-                            alignment: .leading,
-                            content: [
-                                "Second column of regular text.",
-                            ]
-                        ),
-                    ]
-                ))
+                .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 2,
+                        columns: [
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .leading,
+                                content: [
+                                    "Regular text.",
+                                    .small(
+                                        RenderBlockContent.Small(
+                                            inlineContent: [.text("Small text.")]
+                                        ))
+                                ]
+                            ),
+
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .leading,
+                                content: [
+                                    "Second column of regular text.",
+                                ]
+                            ),
+                        ]
+                    )),
             )
-            
+
         }
     }
 }

@@ -14,34 +14,34 @@ import ArgumentParser
 extension Docc.ProcessArchive {
     /// Emits a statically hostable website from a DocC Archive.
     struct TransformForStaticHosting: AsyncParsableCommand {
-        
+
         static var configuration = CommandConfiguration(
             commandName: "transform-for-static-hosting",
             abstract: "Transform an existing DocC Archive into one that supports a static hosting environment.")
-        
+
         @OptionGroup()
         var documentationArchive: DocCArchiveOption
-        
+
         /// A user-provided location where the archive output will be put
         @Option(
             name: [.customLong("output-path")],
             help: ArgumentHelp(
-                           "The location where docc writes the transformed archive.",
-                           discussion: "If no output-path is provided, docc will perform an in-place transformation of the provided DocC Archive."
-                       ),
+                "The location where docc writes the transformed archive.",
+                discussion: "If no output-path is provided, docc will perform an in-place transformation of the provided DocC Archive."
+            ),
             transform: URL.init(fileURLWithPath:)
         )
         var outputURL: URL?
-        
+
         /// A user-provided relative path to be used in the archived output
         @Option(
             name: [.customLong("hosting-base-path")],
             help: ArgumentHelp(
-                            "The base path your documentation website will be hosted at.",
-                            discussion: "For example, to deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.")
+                "The base path your documentation website will be hosted at.",
+                discussion: "For example, to deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.")
         )
         var hostingBasePath: String?
-        
+
         /// The user-provided path to an HTML documentation template.
         @OptionGroup()
         var templateOption: TemplateOption
@@ -52,7 +52,7 @@ extension Docc.ProcessArchive {
                 throw TemplateOption.missingHTMLTemplate(at: TemplateOption.defaultTemplateURL)
             }
             try TemplateOption.validateRequiredFile(fileName: HTMLTemplate.templateFileName.rawValue, inHTMLTemplateAt: templateURL)
-            
+
             let action = try TransformForStaticHostingAction(
                 documentationBundleURL: documentationArchive.urlOrFallback,
                 outputURL: outputURL,
@@ -63,4 +63,3 @@ extension Docc.ProcessArchive {
         }
     }
 }
-

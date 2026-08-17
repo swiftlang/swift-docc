@@ -14,18 +14,18 @@ import Foundation
 @main
 struct BenchmarkCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
-            abstract: "A utility for performing benchmarks for Swift-DocC.",
-            subcommands: [Measure.self, Diff.self, CompareTo.self, MeasureCommits.self, RenderTrend.self],
-            defaultSubcommand: Measure.self)
+        abstract: "A utility for performing benchmarks for Swift-DocC.",
+        subcommands: [Measure.self, Diff.self, CompareTo.self, MeasureCommits.self, RenderTrend.self],
+        defaultSubcommand: Measure.self)
 }
 
 let doccProjectRootURL: URL = {
     let url = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent() // Commands.swift
-        .deletingLastPathComponent() // benchmark
-        .deletingLastPathComponent() // Sources
-        .deletingLastPathComponent() // benchmark
-        .deletingLastPathComponent() // bin
+        .deletingLastPathComponent()  // Commands.swift
+        .deletingLastPathComponent()  // benchmark
+        .deletingLastPathComponent()  // Sources
+        .deletingLastPathComponent()  // benchmark
+        .deletingLastPathComponent()  // bin
     guard FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) else {
         fatalError("The path to the Swift-DocC source root has changed. This should only happen if the benchmark sources have moved relative to the Swift-DocC repo.")
     }

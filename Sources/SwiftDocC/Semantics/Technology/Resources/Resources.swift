@@ -18,30 +18,30 @@ public import Markdown
 public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redirected {
     public static let directiveName = "Resources"
     public static let introducedVersion = "5.5"
-    
+
     /// A user-facing title that describes the directive.
     public static let title = "Resources"
-    
+
     public let originalMarkup: BlockDirective
-    
+
     /// Introductory content to display before the tiles.
     public let content: MarkupContainer
-    
+
     /// The ``Tile``s to display on the resources section.
     public let tiles: [Tile]
-        
+
     override var children: [Semantic] {
         return [content as Semantic] + tiles
     }
-    
+
     public var abstract: Paragraph? {
         return content.first as? Paragraph
     }
-    
+
     public let redirects: [Redirect]?
-    
+
     /// Creates a new resources section from the given parameters.
-    /// 
+    ///
     /// - Parameters:
     ///   - originalMarkup: A directive that represents the section.
     ///   - content: The section's introductory content.
@@ -53,7 +53,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         self.tiles = tiles
         self.redirects = redirects
     }
-    
+
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         var diagnostics = [Diagnostic]()
@@ -62,10 +62,10 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         }
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
-    
+
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Resources.directiveName)
-        
+
         var remainder: [any Markup]
         let requiredParagraph: Paragraph?
         if let firstParagraph = directive.child(at: 0) as? Paragraph {
@@ -79,7 +79,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         }
 
         Semantic.Analyses.HasOnlyKnownDirectives<Resources>(severityIfFound: .warning, allowedDirectives: Tile.DirectiveNames.allCases.map { $0.rawValue } + [Redirect.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
-        
+
         let redirects: [Redirect]
         (redirects, remainder) = remainder.categorize { child -> Redirect? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
@@ -87,7 +87,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             }
             return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
-        
+
         let tiles: [Tile]
         (tiles, remainder) = remainder.categorize { child -> Tile? in
             guard let childDirective = child as? BlockDirective, Tile.DirectiveNames(rawValue: childDirective.name) != nil else {
@@ -95,44 +95,45 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             }
             return Tile(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
-        
+
         var seenTileDirectiveNames = Set<String>()
         let tilesWithoutDuplicates = tiles.filter { tile in
             let tileName = tile.originalMarkup.name
             guard !seenTileDirectiveNames.contains(tile.title) else {
                 if !tileName.isEmpty,
-                    let range = tile.originalMarkup.range {
+                    let range = tile.originalMarkup.range
+                {
                     let solution = Solution.init(summary: "Remove extraneous \(tileName.singleQuoted) directive", replacements: [.init(range: range, replacement: "")])
                     let diagnostic = Diagnostic(source: source, severity: .warning, range: tile.originalMarkup.range, identifier: "org.swift.docc.Resources.DuplicateTile", summary: "Duplicate child directive \(tileName.singleQuoted) in \(Resources.directiveName.singleQuoted)", solutions: [solution])
                     diagnostics.append(diagnostic)
                 }
                 return false
             }
-            
+
             seenTileDirectiveNames.insert(tileName)
             return true
         }
-        
+
         for extraneousElement in remainder {
-            let solutions: [Solution] = if let range = extraneousElement.range {
-                [Solution(summary: "Remove extraneous element", replacements: [.init(range: range, replacement: "")])]
-            } else {
-                []
-            }
+            let solutions: [Solution] =
+                if let range = extraneousElement.range {
+                    [Solution(summary: "Remove extraneous element", replacements: [.init(range: range, replacement: "")])]
+                } else {
+                    []
+                }
             diagnostics.append(
                 Diagnostic(source: source, severity: .warning, range: extraneousElement.range, identifier: "org.swift.docc.Resources.ExtraneousContent", summary: "Extraneous child element of \(Resources.directiveName.singleQuoted) directive", solutions: solutions)
             )
         }
-        
+
         guard let paragraph = requiredParagraph else {
             return nil
         }
-        
+
         self.init(originalMarkup: directive, content: MarkupContainer(paragraph), tiles: tilesWithoutDuplicates, redirects: redirects.isEmpty ? nil : redirects)
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitResources(self)
     }
 }
-

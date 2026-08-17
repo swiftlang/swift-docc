@@ -19,13 +19,14 @@ extension Semantic.Analyses {
         let additionalContext: String
         public init(additionalContext: String? = nil) {
             if let additionalContext,
-                !additionalContext.isEmpty {
+                !additionalContext.isEmpty
+            {
                 self.additionalContext = "; \(additionalContext)"
             } else {
                 self.additionalContext = ""
             }
         }
-        
+
         @available(*, deprecated, renamed: "analyze(_:children:source:diagnostics:)", message: "Use 'analyze(_:children:source:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) -> MarkupContainer {
             var diagnostics = [Diagnostic]()
@@ -34,14 +35,13 @@ extension Semantic.Analyses {
             }
             return analyze(directive, children: children, source: source, diagnostics: &diagnostics)
         }
-        
+
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, diagnostics: inout [Diagnostic]) -> MarkupContainer {
             let children = Array(children)
             guard children.isEmpty else {
                 return MarkupContainer(children)
             }
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(Parent.self).HasContent"
-                , summary: "\(Parent.directiveName.singleQuoted) directive has no content\(additionalContext)")
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(Parent.self).HasContent", summary: "\(Parent.directiveName.singleQuoted) directive has no content\(additionalContext)")
             diagnostics.append(diagnostic)
             return MarkupContainer()
         }

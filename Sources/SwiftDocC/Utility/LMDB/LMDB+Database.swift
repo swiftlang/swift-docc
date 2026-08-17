@@ -12,20 +12,20 @@ import Foundation
 import CLMDB
 
 extension LMDB {
-    
+
     /**
     A `Database` is a single LMDB database which can be used to store and retrieve data.
-    
+
     - Note: It requires an environment to work.
     */
     class Database {
-        
+
         /// The set of flags used by the database.
         /// - Note: [Original documentation](http://www.lmdb.tech/doc/group__mdb__dbi__open.html).
         public struct Flags: OptionSet {
             public let rawValue: Int32
-            public init(rawValue: Int32) { self.rawValue = rawValue}
-            
+            public init(rawValue: Int32) { self.rawValue = rawValue }
+
             public static let reverseKey = Flags(rawValue: MDB_REVERSEKEY)
             public static let duplicateSort = Flags(rawValue: MDB_DUPSORT)
             public static let integerKey = Flags(rawValue: MDB_INTEGERKEY)
@@ -34,13 +34,13 @@ extension LMDB {
             public static let reverseDuplicate = Flags(rawValue: MDB_REVERSEDUP)
             public static let create = Flags(rawValue: MDB_CREATE)
         }
-        
+
         /// The set of flags used by the database when writing a value.
         /// - Note: [Original documentation](http://www.lmdb.tech/doc/group__mdb__put.html).
         public struct WriteFlags: OptionSet {
             public let rawValue: Int32
-            public init(rawValue: Int32) { self.rawValue = rawValue}
-            
+            public init(rawValue: Int32) { self.rawValue = rawValue }
+
             public static let noOverwrite = WriteFlags(rawValue: MDB_NOOVERWRITE)
             public static let noDuplicateData = WriteFlags(rawValue: MDB_NODUPDATA)
             public static let current = WriteFlags(rawValue: MDB_CURRENT)
@@ -49,16 +49,16 @@ extension LMDB {
             public static let appendDuplicate = WriteFlags(rawValue: MDB_APPENDDUP)
             public static let multiple = WriteFlags(rawValue: MDB_MULTIPLE)
         }
-        
+
         /// A handle for an individual database in the DB environment.
         var handle: MDB_dbi = MDB_dbi()
-        
+
         /// The environment to which the database is related to.
         public let environment: Environment
-        
+
         internal init(environment: Environment, name: String?, flags: Flags = [.create]) throws {
             self.environment = environment
-            
+
             let result = try Transaction(environment: environment).run { (txn) in
                 return mdb_dbi_open(txn.opaquePointer, name, UInt32(flags.rawValue), &self.handle)
             }
@@ -66,12 +66,12 @@ extension LMDB {
                 throw Error(errorCode: result)
             }
         }
-        
+
         // MARK: - Convenience Methods
-        
+
         /**
         Returns the value from a given database associated with a given key, converting it to the given type.
-        
+
         - Parameters:
            - type: The expected type of the returned object.
            - key: The key of the value associated with.
@@ -83,10 +83,10 @@ extension LMDB {
             }
             return result ?? nil
         }
-        
+
         /**
         Inserts a value with the given key inside a database.
-        
+
         - Parameters:
            - key: The key of the value.
            - value: The value to be insert inside the database.
@@ -98,10 +98,10 @@ extension LMDB {
                 try $0.put(key: key, value: value, in: self, flags: flags)
             }
         }
-        
+
         /**
         Deletes a value from the database associated with a given key.
-        
+
         - Parameters:
            - key: The key of the value.
         - Throws: An error in case a read-only transaction has been used or an invalid parameter has been specified.
@@ -111,6 +111,6 @@ extension LMDB {
                 try $0.delete(key, from: self)
             }
         }
-        
+
     }
 }

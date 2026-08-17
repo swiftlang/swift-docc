@@ -31,12 +31,12 @@ public enum RenderHierarchy: Codable, Equatable {
             decoder.registerReferences(tutorialsHierarchy.paths.flatMap { $0 })
             return
         }
-        
+
         let referenceHierarchy = try RenderReferenceHierarchy(from: decoder)
         self = .reference(referenceHierarchy)
         decoder.registerReferences(referenceHierarchy.paths.flatMap { $0 })
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -58,7 +58,7 @@ extension RenderHierarchy: RenderJSONDiffable {
         case (let .reference(selfReferenceHierarchy), let .reference(otherReferenceHierarchy)):
             differences.append(contentsOf: selfReferenceHierarchy.difference(from: otherReferenceHierarchy, at: path))
         case (.tutorials(_), _), (_, .tutorials(_)):
-            return differences // Diffing tutorials is not currently supported
+            return differences  // Diffing tutorials is not currently supported
         }
         return differences
     }
@@ -68,7 +68,7 @@ extension RenderHierarchy: RenderJSONDiffable {
         case (let .reference(selfReferenceHierarchy), let .reference(otherReferenceHierarchy)):
             return selfReferenceHierarchy.isSimilar(to: otherReferenceHierarchy)
         case (.tutorials(_), _), (_, .tutorials(_)):
-            return false // Diffing tutorials is not currently supported
+            return false  // Diffing tutorials is not currently supported
         }
     }
 }

@@ -15,18 +15,20 @@ import DocCTestUtilities
 
 class MarkupReferenceResolverTests: XCTestCase {
     func testArbitraryReferenceInComment() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName"))
-        ])
-        
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName"))
+            ])
+
         let (_, context) = try await loadBundle(catalog: catalog)
         let source = """
-        @Comment {
-            ``hello`` and ``world`` are 2 arbitrary symbol links.
-            <doc:NOT-EXISTS-DESTINATION#UNKNOWN>
-            But since they are under a comment block, no reference resolve problem should be emitted.
-        }
-        """
+            @Comment {
+                ``hello`` and ``world`` are 2 arbitrary symbol links.
+                <doc:NOT-EXISTS-DESTINATION#UNKNOWN>
+                But since they are under a comment block, no reference resolve problem should be emitted.
+            }
+            """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         var resolver = MarkupReferenceResolver(context: context, rootReference: context.rootModules[0])
         _ = resolver.visit(document)

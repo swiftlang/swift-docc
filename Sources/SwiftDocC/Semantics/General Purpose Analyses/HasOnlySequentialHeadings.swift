@@ -14,9 +14,9 @@ public import Markdown
 extension Semantic.Analyses {
     /**
       Checks for any direct heading children that do not meet the minimum heading level (`startingFromLevel`) or that exceed the level of a previous _valid_ heading by more than one.
-         
+
       For example, when `startingFromLevel` is `2`:
-      
+
       ```markdown
       # H1 <- invalid, too low
       ## H2 <- valid, meets minimum
@@ -34,7 +34,7 @@ extension Semantic.Analyses {
             self.severityIfFound = severityIfFound
             self.startingFromLevel = startingFromLevel
         }
-        
+
         @available(*, deprecated, renamed: "analyze(_:children:source:for:diagnostics:)", message: "Use 'analyze(_:children:source:for:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         @discardableResult
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for unusedBundle: DocumentationBundle, problems: inout [Problem]) -> [Heading] {
@@ -44,7 +44,7 @@ extension Semantic.Analyses {
             }
             return analyze(directive, children: children, source: source, for: unusedBundle, diagnostics: &diagnostics)
         }
-        
+
         /// Returns all valid headings.
         @discardableResult
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, diagnostics: inout [Diagnostic]) -> [Heading] {
@@ -68,9 +68,8 @@ extension Semantic.Analyses {
                     diagnostics.append(diagnostic)
                 }
             }
-            
+
             return headings
         }
     }
 }
-

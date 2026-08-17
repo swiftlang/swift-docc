@@ -15,13 +15,13 @@ import XCTest
 class RESTBodyRenderSectionTests: XCTestCase {
     func value() throws -> RESTBodyRenderSection {
         let jsonData = """
-        {
-            "kind": "restBody",
-            "title": "title",
-            "mimeType": "mimeType",
-            "bodyContentType": []
-        }
-        """.data(using: .utf8)!
+            {
+                "kind": "restBody",
+                "title": "title",
+                "mimeType": "mimeType",
+                "bodyContentType": []
+            }
+            """.data(using: .utf8)!
 
         return try JSONDecoder().decode(RESTBodyRenderSection.self, from: jsonData)
     }

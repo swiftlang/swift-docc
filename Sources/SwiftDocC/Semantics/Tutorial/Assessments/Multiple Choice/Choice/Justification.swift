@@ -17,38 +17,38 @@ public import Markdown
 public final class Justification: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// The explanatory content for this justification.
     @ChildMarkup(numberOfParagraphs: .zeroOrMore)
     public private(set) var content: MarkupContainer
-    
+
     /// The reaction to the reader selecting the containing ``Choice``. Defaults to nil.
     @DirectiveArgumentWrapped
     public private(set) var reaction: String? = nil
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "content"   : \Justification._content,
         "reaction"  : \Justification._reaction
     ]
-    
+
     override var children: [Semantic] {
         return [content]
     }
-    
+
     init(originalMarkup: BlockDirective, content: MarkupContainer, reaction: String?) {
         self.originalMarkup = originalMarkup
         super.init()
-        
+
         self.content = content
         self.reaction = reaction
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitJustification(self)
     }

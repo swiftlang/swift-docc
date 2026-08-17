@@ -15,43 +15,43 @@ public import Markdown
 public final class Stack: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// The stack's children.
     ///
     /// A list of media items with attached descriptions.
     @ChildDirective(requirements: .oneOrMore)
     public private(set) var contentAndMedia: [ContentAndMedia]
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "contentAndMedia" : \Stack._contentAndMedia,
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "contentAndMedia": \Stack._contentAndMedia
     ]
-    
+
     override var children: [Semantic] {
         return contentAndMedia
     }
-    
+
     init(originalMarkup: BlockDirective, contentAndMedias: [ContentAndMedia]) {
         self.originalMarkup = originalMarkup
         super.init()
         self.contentAndMedia = contentAndMedias
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
-    
+
     static let childrenLimit = 3
-    
+
     func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         if contentAndMedia.count > Stack.childrenLimit {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.HasAtMost<\(Stack.self), \(ContentAndMedia.self)>(\(Stack.childrenLimit))", summary: "\(Stack.directiveName.singleQuoted) directive accepts at most \(Stack.childrenLimit) \(ContentAndMedia.directiveName.singleQuoted) child directives")
             diagnostics.append(diagnostic)
         }
-        
+
         return true
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitStack(self)
     }

@@ -17,16 +17,18 @@ class NodeTagsTests: XCTestCase {
     func testSPIMetadata() async throws {
         let spiSGURL = Bundle.module.url(
             forResource: "SPI.symbols", withExtension: "json", subdirectory: "Test Resources")!
-        
-        let bundleFolder = Folder(name: "unit-tests.docc", content: [
-            InfoPlist(displayName: "spi", identifier: "com.tests.spi"),
-            CopyOfFile(original: spiSGURL),
-        ])
+
+        let bundleFolder = Folder(
+            name: "unit-tests.docc",
+            content: [
+                InfoPlist(displayName: "spi", identifier: "com.tests.spi"),
+                CopyOfFile(original: spiSGURL),
+            ])
         let tempURL = try createTemporaryDirectory().appendingPathComponent("unit-tests.docc")
         try bundleFolder.write(to: tempURL)
-        
+
         let (_, _, context) = try await loadBundle(from: tempURL)
-        
+
         // Verify that `Test` is marked as SPI.
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
@@ -48,7 +50,7 @@ class NodeTagsTests: XCTestCase {
         var moduleTranslator = RenderNodeTranslator(context: context, identifier: node.reference)
         let moduleRenderNode = try XCTUnwrap(moduleTranslator.visit(moduleSymbol) as? RenderNode)
         let linkReference = try XCTUnwrap(moduleRenderNode.references["doc://com.tests.spi/documentation/Minimal_docs/Test"] as? TopicRenderReference)
-        
+
         XCTAssertEqual(linkReference.tags, [.spi])
     }
 }

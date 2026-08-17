@@ -49,4 +49,3 @@ public struct CoverageAction: AsyncAction {
         return ActionResult(didEncounterError: false, outputs: [])
     }
 }
-

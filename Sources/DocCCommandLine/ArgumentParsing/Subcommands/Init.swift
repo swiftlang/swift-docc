@@ -14,15 +14,15 @@ private import SwiftDocC
 extension Docc {
     public struct Init: AsyncParsableCommand {
         public init() {}
-        
+
         public static var configuration: CommandConfiguration = CommandConfiguration(
             abstract: "Generate a documentation catalog from the selected template."
         )
-        
+
         /// The options used for configuring the init action.
         @OptionGroup
         public var initOptions: InitOptions
-        
+
         public func run() async throws {
             let initAction = try InitAction(
                 catalogOutputDirectory: initOptions.providedCatalogOutputDirURL,

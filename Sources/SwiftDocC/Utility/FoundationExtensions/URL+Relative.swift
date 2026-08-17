@@ -26,7 +26,7 @@ extension URL {
         let commonPrefixLength = Array(zip(components, otherComponents).prefix { lhs, rhs in lhs == rhs }).count
 
         let relativeComponents = repeatElement("..", count: otherComponents.count - commonPrefixLength) + components.dropFirst(commonPrefixLength)
-       
+
         urlComponents.path = relativeComponents.joined(separator: "/")
         return urlComponents.url
     }

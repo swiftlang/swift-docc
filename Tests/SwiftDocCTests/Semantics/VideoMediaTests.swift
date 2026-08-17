@@ -17,8 +17,8 @@ import DocCCommon
 class VideoMediaTests: XCTestCase {
     func testEmpty() async throws {
         let source = """
-@Video
-"""
+            @Video
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -29,13 +29,13 @@ class VideoMediaTests: XCTestCase {
         XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.source")
     }
-    
+
     func testValid() async throws {
         let videoSource = "/path/to/video"
         let poster = "/path/to/poster"
         let source = """
-@Video(source: "\(videoSource)", poster: "\(poster)")
-"""
+            @Video(source: "\(videoSource)", poster: "\(poster)")
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -53,8 +53,8 @@ class VideoMediaTests: XCTestCase {
         for videoSource in ["my image.mov", "my%20image.mov"] {
             let poster = videoSource.replacingOccurrences(of: ".mov", with: ".png")
             let source = """
-            @Video(source: "\(videoSource)", poster: "\(poster)")
-            """
+                @Video(source: "\(videoSource)", poster: "\(poster)")
+                """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
             let context = try await makeEmptyContext()
@@ -68,12 +68,12 @@ class VideoMediaTests: XCTestCase {
             }
         }
     }
-    
+
     func testIncorrectArgumentLabels() async throws {
         let source = """
-        @Video(sourceURL: "/video/path", posterURL: "/poster/path")
-        """
-        
+            @Video(sourceURL: "/video/path", posterURL: "/poster/path")
+            """
+
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -82,81 +82,87 @@ class VideoMediaTests: XCTestCase {
         XCTAssertNil(video)
         XCTAssertEqual(3, diagnostics.count)
         XCTAssertFalse(diagnostics.containsAnyError)
-        
-        XCTAssertEqual(diagnostics.map(\.identifier), [
-            "org.swift.docc.UnknownArgument",
-            "org.swift.docc.UnknownArgument",
-            "org.swift.docc.HasArgument.source",
-        ])
+
+        XCTAssertEqual(
+            diagnostics.map(\.identifier),
+            [
+                "org.swift.docc.UnknownArgument",
+                "org.swift.docc.UnknownArgument",
+                "org.swift.docc.HasArgument.source",
+            ])
     }
-    
-    private let catalog = Folder(name: "unit-test.docc", content: [
-        DataFile(name: "introposter.png", data: Data()),
-        DataFile(name: "introvideo.mp4", data: Data()),
-        DataFile(name: "introvideo~dark.mp4", data: Data()),
-    ])
-    
+
+    private let catalog = Folder(
+        name: "unit-test.docc",
+        content: [
+            DataFile(name: "introposter.png", data: Data()),
+            DataFile(name: "introvideo.mp4", data: Data()),
+            DataFile(name: "introvideo~dark.mp4", data: Data()),
+        ])
+
     func testRenderVideoDirectiveInReferenceMarkup() async throws {
-        
+
         do {
             let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "introvideo")
                 """
             }
-            
+
             XCTAssertNotNil(video)
-            
+
             XCTAssertEqual(diagnostics, [])
-            
+
             XCTAssertEqual(
                 renderedContent,
                 [
-                    RenderBlockContent.video(RenderBlockContent.Video(
-                        identifier: RenderReferenceIdentifier("introvideo"),
-                        metadata: nil
-                    ))
+                    RenderBlockContent.video(
+                        RenderBlockContent.Video(
+                            identifier: RenderReferenceIdentifier("introvideo"),
+                            metadata: nil
+                        ))
                 ]
             )
         }
-        
+
         do {
             let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "unknown-video")
                 """
             }
-            
+
             XCTAssertNotNil(video)
-            
+
             XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.unresolvedResource.Video"])
-            
+
             XCTAssertEqual(renderedContent, [])
         }
-        
+
         do {
             let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "introvideo", poster: "unknown-poster")
                 """
             }
-            
+
             XCTAssertNotNil(video)
-            
+
             XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.unresolvedResource.Image"])
-            
+
             XCTAssertEqual(
                 renderedContent,
                 [
-                    RenderBlockContent.video(RenderBlockContent.Video(
-                        identifier: RenderReferenceIdentifier("introvideo"),
-                        metadata: nil
-                    ))
+                    RenderBlockContent.video(
+                        RenderBlockContent.Video(
+                            identifier: RenderReferenceIdentifier("introvideo"),
+                            metadata: nil
+                        ))
                 ]
             )
         }
     }
-    
+
     func testRenderVideoDirectiveWithCaption() async throws {
         let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
@@ -165,22 +171,23 @@ class VideoMediaTests: XCTestCase {
             }
             """
         }
-        
+
         XCTAssertNotNil(video)
-        
+
         XCTAssertEqual(diagnostics, [])
-        
+
         XCTAssertEqual(
             renderedContent,
             [
-                RenderBlockContent.video(RenderBlockContent.Video(
-                    identifier: RenderReferenceIdentifier("introvideo"),
-                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
-                ))
+                RenderBlockContent.video(
+                    RenderBlockContent.Video(
+                        identifier: RenderReferenceIdentifier("introvideo"),
+                        metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                    ))
             ]
         )
     }
-    
+
     func testRenderVideoDirectiveWithCaptionAndPosterImage() async throws {
         let (renderedContent, diagnostics, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
@@ -189,81 +196,84 @@ class VideoMediaTests: XCTestCase {
             }
             """
         }
-        
+
         XCTAssertNotNil(video)
-        
+
         XCTAssertEqual(diagnostics, [])
-        
+
         XCTAssertEqual(
             renderedContent,
             [
-                RenderBlockContent.video(RenderBlockContent.Video(
-                    identifier: RenderReferenceIdentifier("introvideo"),
-                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
-                ))
+                RenderBlockContent.video(
+                    RenderBlockContent.Video(
+                        identifier: RenderReferenceIdentifier("introvideo"),
+                        metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                    ))
             ]
         )
-        
+
         XCTAssertEqual(references.count, 2)
-        
+
         let videoReference = try XCTUnwrap(references["introvideo"] as? VideoReference)
         XCTAssertEqual(videoReference.poster, RenderReferenceIdentifier("introposter"))
         XCTAssertEqual(videoReference.altText, "An introductory video")
-        
+
         XCTAssertTrue(references.keys.contains("introposter"))
     }
-    
+
     func testVideoMediaDiagnosesDeviceFrameByDefault() async throws {
         let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo", deviceFrame: watch)
             """
         }
-        
+
         XCTAssertNotNil(video)
-        
+
         XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.UnknownArgument"])
-        
+
         XCTAssertEqual(
             renderedContent,
             [
-                RenderBlockContent.video(RenderBlockContent.Video(
-                    identifier: RenderReferenceIdentifier("introvideo"),
-                    metadata: nil
-                ))
+                RenderBlockContent.video(
+                    RenderBlockContent.Video(
+                        identifier: RenderReferenceIdentifier("introvideo"),
+                        metadata: nil
+                    ))
             ]
         )
     }
-    
+
     func testRenderVideoDirectiveWithDeviceFrame() async throws {
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
-        
+
         let (renderedContent, diagnostics, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog, configuration: configuration) {
             """
             @Video(source: "introvideo", deviceFrame: watch)
             """
         }
-        
+
         XCTAssertNotNil(video)
-        
+
         XCTAssertEqual(diagnostics, [])
-        
+
         XCTAssertEqual(
             renderedContent,
             [
-                RenderBlockContent.video(RenderBlockContent.Video(
-                    identifier: RenderReferenceIdentifier("introvideo"),
-                    metadata: RenderContentMetadata(deviceFrame: "watch")
-                ))
+                RenderBlockContent.video(
+                    RenderBlockContent.Video(
+                        identifier: RenderReferenceIdentifier("introvideo"),
+                        metadata: RenderContentMetadata(deviceFrame: "watch")
+                    ))
             ]
         )
     }
-    
+
     func testRenderVideoDirectiveWithCaptionAndDeviceFrame() async throws {
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
-        
+
         let (renderedContent, diagnostics, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog, configuration: configuration) {
             """
             @Video(source: "introvideo", alt: "An introductory video", poster: "introposter", deviceFrame: laptop) {
@@ -271,30 +281,31 @@ class VideoMediaTests: XCTestCase {
             }
             """
         }
-        
+
         XCTAssertNotNil(video)
-        
+
         XCTAssertEqual(diagnostics, [])
-        
+
         XCTAssertEqual(
             renderedContent,
             [
-                RenderBlockContent.video(RenderBlockContent.Video(
-                    identifier: RenderReferenceIdentifier("introvideo"),
-                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")], deviceFrame: "laptop")
-                ))
+                RenderBlockContent.video(
+                    RenderBlockContent.Video(
+                        identifier: RenderReferenceIdentifier("introvideo"),
+                        metadata: RenderContentMetadata(abstract: [.text("This is my caption.")], deviceFrame: "laptop")
+                    ))
             ]
         )
-        
+
         XCTAssertEqual(references.count, 2)
-        
+
         let videoReference = try XCTUnwrap(references["introvideo"] as? VideoReference)
         XCTAssertEqual(videoReference.poster, RenderReferenceIdentifier("introposter"))
         XCTAssertEqual(videoReference.altText, "An introductory video")
-        
+
         XCTAssertTrue(references.keys.contains("introposter"))
     }
-    
+
     func testVideoDirectiveDoesNotResolveImageMedia() async throws {
         // The rest of the test in this file will fail if 'introposter' and 'introvideo'
         // do not exist. We just reverse them here to make sure the reference resolving is
@@ -304,9 +315,9 @@ class VideoMediaTests: XCTestCase {
             @Video(source: "introposter", poster: "introvideo")
             """
         }
-        
+
         XCTAssertNotNil(video)
-        
+
         XCTAssertEqual(
             diagnostics,
             [
@@ -314,20 +325,22 @@ class VideoMediaTests: XCTestCase {
                 "1: warning – org.swift.docc.unresolvedResource.Video"
             ]
         )
-        
+
         XCTAssertEqual(renderedContent, [])
     }
-    
+
     func testVideoDirectiveWithAltText() async throws {
         let source = """
-        @Video(source: "introvideo", alt: "A short video of a sloth jumping down from a branch and smiling.")
-        """
+            @Video(source: "introvideo", alt: "A short video of a sloth jumping down from a branch and smiling.")
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await loadBundle(
-            catalog: Folder(name: "unit-test.docc", content: [
-                DataFile(name: "introvideo.mov", data: Data())
-            ])
+            catalog: Folder(
+                name: "unit-test.docc",
+                content: [
+                    DataFile(name: "introvideo.mov", data: Data())
+                ])
         )
         var diagnostics = [Diagnostic]()
         let video = VideoMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)

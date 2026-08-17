@@ -13,27 +13,27 @@ private import Foundation
 //TODO: rdar://166607119 consider an alternative to a semantic visitor for this work
 /// Visits the semantic structure of a documentation node and returns a ``MarkdownOutputNode``
 struct MarkdownOutputSemanticVisitor: SemanticVisitor {
-    
+
     let context: DocumentationContext
     let documentationNode: DocumentationNode
     let identifier: ResolvedTopicReference
     var markdownWalker: MarkdownOutputMarkupWalker
     var manifest: MarkdownOutputManifest?
-    
+
     init(context: DocumentationContext, node: DocumentationNode) {
         self.context = context
         self.documentationNode = node
         self.identifier = node.reference
         self.markdownWalker = MarkdownOutputMarkupWalker(context: context, identifier: identifier)
     }
-    
+
     typealias Result = MarkdownOutputNode?
-    
+
     // Tutorial processing
     private var sectionIndex = 0
     private var stepIndex = 0
     private var lastCode: Code?
-    
+
     mutating func createOutput() -> MarkdownOutputNode? {
         visit(documentationNode.semantic)
     }
@@ -52,15 +52,15 @@ extension MarkdownOutputNode.Metadata {
 
 // MARK: - Manifest construction
 extension MarkdownOutputSemanticVisitor {
-    
+
     mutating func add(target: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
         add(targetIdentifier: target.path, type: type, subtype: subtype)
     }
-    
+
     mutating func add(fallbackTarget: String, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
         add(targetIdentifier: fallbackTarget, type: type, subtype: subtype)
     }
-    
+
     mutating func add(targetIdentifier: String, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
         let relationship = MarkdownOutputManifest.Relationship(sourceIdentifier: identifier.path, relationshipType: type, subtype: subtype, targetIdentifier: targetIdentifier)
         manifest?.relationships.insert(relationship)
@@ -69,20 +69,20 @@ extension MarkdownOutputSemanticVisitor {
 
 // MARK: Article Output
 extension MarkdownOutputSemanticVisitor {
-    
+
     mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
         var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: context.inputs, reference: identifier, title: article.title?.plainText ?? identifier.lastPathComponent)
-                
+
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,
             documentType: .article,
             title: metadata.title
         )
-        
+
         manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
-        
+
         if let metadataAvailability = article.metadata?.availability,
-           !metadataAvailability.isEmpty
+            !metadataAvailability.isEmpty
         {
             metadata.availability = metadataAvailability.map { .init($0) }
         }
@@ -90,14 +90,14 @@ extension MarkdownOutputSemanticVisitor {
         markdownWalker.visit(article.title)
         markdownWalker.visit(article.abstract)
         markdownWalker.visit(section: article.discussion)
-        
+
         // Only care about references from these sections
         markdownWalker.outgoingReferences = []
         markdownWalker.withRenderingLinkList {
             $0.visit(section: article.topics, addingHeading: "Topics")
             $0.visit(section: article.seeAlso, addingHeading: "See Also")
         }
-        
+
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
@@ -107,25 +107,25 @@ import Markdown
 
 // MARK: Symbol Output
 extension MarkdownOutputSemanticVisitor {
-    
+
     mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         let bundle = context.inputs
         var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier, title: symbol.title)
-        
+
         metadata.symbol = .init(symbol, context: context, bundle: bundle)
         metadata.role = symbol.kind.displayName
-        
+
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,
             documentType: .symbol,
             title: metadata.title
         )
         manifest = MarkdownOutputManifest(title: bundle.displayName, documents: [document])
-        
+
         // Availability - defaults, overridden with symbol, overridden with metadata
-        
+
         var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
-        
+
         let symbolAvailability = symbol.availability?.availability ?? []
         // Framework defaults only apply if there are no specific availabilities at symbol level.
         if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
@@ -134,32 +134,33 @@ extension MarkdownOutputSemanticVisitor {
                 availabilities[meta.platform] = meta
             }
         }
-        
+
         for availability in symbolAvailability {
             let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
         }
-        
+
         for availability in documentationNode.metadata?.availability ?? [] {
             let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
         }
-        
+
         metadata.availability = availabilities.values.sorted(by: \.platform)
-         
+
         // Content
-        
+
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
         markdownWalker.visit(symbol.abstract)
         // TODO: rdar://166606746 include alternate declarations
         if let declarationFragments = symbol.declaration.first?.value.declarationFragments {
-            let declaration = declarationFragments
+            let declaration =
+                declarationFragments
                 .map { $0.spelling }
                 .joined()
             let code = CodeBlock(declaration)
             markdownWalker.visit(code)
         }
-        
+
         if let parametersSection = symbol.parametersSection, parametersSection.parameters.isEmpty == false {
             markdownWalker.visit(Heading(level: 2, Text(ParametersSection.title ?? "Parameters")))
             for parameter in parametersSection.parameters {
@@ -167,19 +168,19 @@ extension MarkdownOutputSemanticVisitor {
                 markdownWalker.visit(container: MarkupContainer(parameter.contents))
             }
         }
-        
+
         markdownWalker.visit(section: symbol.returnsSection)
-        
+
         markdownWalker.visit(section: symbol.discussion, addingHeading: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
-        
+
         markdownWalker.outgoingReferences = []
         markdownWalker.withRenderingLinkList {
             $0.visit(section: symbol.topics, addingHeading: "Topics")
             $0.visit(section: symbol.seeAlso, addingHeading: "See Also")
         }
-        
+
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
-        
+
         if symbol.relationships.groups.isEmpty == false {
             markdownWalker.visit(Heading(level: 2, Text(RelationshipsSection.title)))
         }
@@ -190,12 +191,12 @@ extension MarkdownOutputSemanticVisitor {
                 case .success(let resolved):
                     // Add the relationship to the manifest
                     add(target: resolved, type: .relatedSymbol, subtype: relationshipGroup.kind)
-                    
+
                     // Add the relationship to the markdown
                     markdownWalker.startNewParagraphIfRequired()
                     let link = Link(destination: resolved.path, title: resolved.lastPathComponent, [InlineCode(resolved.lastPathComponent)])
                     markdownWalker.defaultVisit(link)
-                    
+
                 case .failure:
                     if let fallback = symbol.relationships.targetFallbacks[destination] {
                         add(fallbackTarget: fallback, type: .relatedSymbol, subtype: relationshipGroup.kind)
@@ -207,7 +208,7 @@ extension MarkdownOutputSemanticVisitor {
         }
         // TODO: add support for missing sections rdar://166124742
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
-        
+
     }
 }
 
@@ -215,7 +216,7 @@ import SymbolKit
 
 private extension MarkdownOutputNode.Metadata.Symbol {
     init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationBundle) {
-                
+
         // Gather modules
         var modules = [String]()
 
@@ -245,7 +246,7 @@ private extension MarkdownOutputNode.Metadata.Availability {
             unavailable: item.obsoletedVersion != nil
         )
     }
-    
+
     // From the info.plist of the module
     init(_ availability: DefaultAvailability.ModuleAvailability) {
         self.init(
@@ -255,7 +256,7 @@ private extension MarkdownOutputNode.Metadata.Availability {
             unavailable: availability.versionInformation == .unavailable
         )
     }
-    
+
     init(_ availability: Metadata.Availability) {
         self.init(
             platform: availability.platform.rawValue,
@@ -272,52 +273,52 @@ extension MarkdownOutputSemanticVisitor {
     func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
         let title = tutorial.intro.title.isEmpty ? identifier.lastPathComponent : tutorial.intro.title
         let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: context.inputs, reference: identifier, title: title)
-        
+
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,
             documentType: .tutorial,
             title: metadata.title
         )
-        
+
         manifest = MarkdownOutputManifest(title: metadata.title, documents: [document])
-        
+
         sectionIndex = 0
         for child in tutorial.children {
             _ = visit(child)
         }
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
-    
+
     mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> MarkdownOutputNode? {
         sectionIndex += 1
-        
+
         markdownWalker.visit(Heading(level: 2, Text("Section \(sectionIndex): \(tutorialSection.title)")))
         for child in tutorialSection.children {
             _ = visit(child)
         }
         return nil
     }
-    
+
     mutating func visitSteps(_ steps: Steps) -> MarkdownOutputNode? {
         stepIndex = 0
         for child in steps.children {
             _ = visit(child)
         }
-        
+
         if let code = lastCode {
             markdownWalker.visit(code)
             lastCode = nil
         }
-        
+
         return nil
     }
-    
+
     mutating func visitStep(_ step: Step) -> MarkdownOutputNode? {
-        
+
         // Check if the step contains another version of the current code reference
         if let code = lastCode {
             if let stepCode = step.code {
@@ -331,9 +332,9 @@ extension MarkdownOutputSemanticVisitor {
                 lastCode = nil
             }
         }
-        
+
         lastCode = step.code
-        
+
         stepIndex += 1
         markdownWalker.visit(Heading(level: 3, Text("Step \(stepIndex)")))
         for child in step.children {
@@ -344,109 +345,108 @@ extension MarkdownOutputSemanticVisitor {
         }
         return nil
     }
-    
+
     mutating func visitIntro(_ intro: Intro) -> MarkdownOutputNode? {
-        
+
         markdownWalker.visit(Heading(level: 1, Text(intro.title)))
-        
+
         for child in intro.children {
             _ = visit(child)
         }
         return nil
     }
-    
+
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> MarkdownOutputNode? {
         markdownWalker.withRemoveIndentation(from: markupContainer.elements.first) {
             $0.visit(container: markupContainer)
         }
         return nil
     }
-    
+
     mutating func visitImageMedia(_ imageMedia: ImageMedia) -> MarkdownOutputNode? {
         markdownWalker.visit(imageMedia)
         return nil
     }
-    
+
     mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> MarkdownOutputNode? {
         markdownWalker.visit(videoMedia)
         return nil
     }
-    
+
     mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> MarkdownOutputNode? {
         for child in contentAndMedia.children {
             _ = visit(child)
         }
         return nil
     }
-    
+
     mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
         // Code rendering is handled in visitStep(_:)
         return nil
     }
 }
 
-
 // MARK: Visitors not currently used for markdown output
 extension MarkdownOutputSemanticVisitor {
-        
+
     mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitAssessments(_ assessments: Assessments) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitJustification(_ justification: Justification) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitChoice(_ choice: Choice) -> MarkdownOutputNode? {
         return nil
     }
-        
+
     mutating func visitTechnology(_ technology: TutorialTableOfContents) -> MarkdownOutputNode? {
         return nil
     }
-        
+
     mutating func visitVolume(_ volume: Volume) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitChapter(_ chapter: Chapter) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitResources(_ resources: Resources) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitTile(_ tile: Tile) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitComment(_ comment: Comment) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     // TODO: Add support for tutorial articles rdar://166124907
     mutating func visitTutorialArticle(_ article: TutorialArticle) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     // TODO: Add support for stacks rdar://166608793
     mutating func visitStack(_ stack: Stack) -> MarkdownOutputNode? {
         return nil
     }
-    
+
     mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> MarkdownOutputNode? {
         return nil
     }
@@ -456,7 +456,7 @@ struct CollectedMarkdownOutput {
     let identifier: ResolvedTopicReference
     let node: MarkdownOutputNode
     let manifest: MarkdownOutputManifest?
-    
+
     var writable: WritableMarkdownOutputNode {
         WritableMarkdownOutputNode(identifier: identifier, node: node)
     }

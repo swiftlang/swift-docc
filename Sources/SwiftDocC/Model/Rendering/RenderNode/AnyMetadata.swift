@@ -12,7 +12,7 @@
 public struct AnyMetadata {
     /// The metadata value.
     public var value: Any
-    
+
     public init(_ value: Any) {
         self.value = value
     }
@@ -68,9 +68,9 @@ extension AnyMetadata: Codable {
 }
 
 extension AnyMetadata: CustomDebugStringConvertible {
-    
+
     public var debugDescription: String {
         return String(describing: value)
     }
-    
+
 }

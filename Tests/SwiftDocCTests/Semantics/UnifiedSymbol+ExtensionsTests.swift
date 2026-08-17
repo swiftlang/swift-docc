@@ -22,7 +22,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "swift", platform: "macOS")
         )
     }
-    
+
     func testDefaultSelectorReturnsSwiftWithAlphabeticallySmallestPlatform() throws {
         assertDefaultSelectorForSymbol(
             infos: [
@@ -32,7 +32,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "swift", platform: "iOS")
         )
     }
-    
+
     func testDefaultSelectorReturnsSwiftWithNilPlatform() throws {
         assertDefaultSelectorForSymbol(
             infos: [
@@ -42,7 +42,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "swift", platform: nil)
         )
     }
-    
+
     func testDefaultSelectorReturnsObjectiveCIfThereIsNoSwift() throws {
         assertDefaultSelectorForSymbol(
             infos: [
@@ -51,7 +51,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "occ", platform: "macOS")
         )
     }
-    
+
     func testDefaultSelectorReturnsSwiftSelectorWithTheMostCommonPlatforms() throws {
         assertDefaultSelectorForSymbol(
             infos: [
@@ -62,7 +62,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "swift", platform: "macOS")
         )
     }
-    
+
     func testDefaultSelectorReturnsSwiftSelectorWithAlphabeticallySmallestPlatformIfTheyHaveTheSameNumberOfCommonPlatforms() throws {
         assertDefaultSelectorForSymbol(
             infos: [
@@ -74,7 +74,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "swift", platform: nil)
         )
     }
-    
+
     func testDefaultSelectorIsMainGraphSelectorIfOneExists() throws {
         assertDefaultSelectorForSymbol(
             infos: [
@@ -84,7 +84,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "occ", platform: nil)
         )
     }
-    
+
     func testDefaultSelectorIsExtensionSelectorIfOneExists() throws {
         assertDefaultSelectorForSymbol(
             infos: [
@@ -94,7 +94,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             expectedDefaultSelector: .init(interfaceLanguage: "swift", platform: "macOS")
         )
     }
-    
+
     /// Creates a unified symbol with the given modules and returns its default selector's.
     func assertDefaultSelectorForSymbol(
         infos: [(language: String, platform: String?, isMainGraph: Bool)],
@@ -111,11 +111,11 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
                 mixins: [:]
             )
         }
-        
+
         guard let firstInfo = infos.first else {
             preconditionFailure("Argument 'info' must contain at least 1 element.")
         }
-        
+
         let unifiedSymbol = UnifiedSymbolGraph.Symbol(
             fromSingleSymbol: createSymbol(language: firstInfo.language),
             module: SymbolGraph.Module(
@@ -126,7 +126,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
             ),
             isMainGraph: firstInfo.isMainGraph
         )
-        
+
         let defaultSelector = infos.dropFirst().reduce(into: unifiedSymbol) { unifiedSymbol, info in
             unifiedSymbol.mergeSymbol(
                 symbol: createSymbol(language: info.language),
@@ -139,7 +139,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
                 isMainGraph: info.isMainGraph
             )
         }.defaultSelector
-        
+
         XCTAssertEqual(defaultSelector, expectedDefaultSelector)
     }
 }

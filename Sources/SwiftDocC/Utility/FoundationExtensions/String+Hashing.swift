@@ -9,13 +9,13 @@
 */
 
 extension String {
-    
+
     /// Returns an FNV1 hashed value of the string.
     internal func fnv1() -> UInt32 {
-        
+
         // Magic number for FNV hashing.
         let prime: UInt32 = 16777619
-        
+
         // Start with the FNV-1 init value and keep hashing into it;
         // the hash value will overflow.
         return utf8.reduce(2166136261) { (hash, byte) -> UInt32 in
@@ -24,7 +24,7 @@ extension String {
             return hval
         }
     }
-    
+
     /// FNV-1 hash string, folded to fit 24 bits, and then base36 encoded;
     /// - note: The FNV-1 algorithm is public domain.
     var stableHashString: String {

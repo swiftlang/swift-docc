@@ -22,7 +22,7 @@ struct EnglishLanguageTests {
     func usesOrSeparatorForOptionsLists(itemsCount: Int, expected: [String]) {
         #expect(NativeLanguage.english.listSeparators(itemsCount: itemsCount, listType: .options) == expected)
     }
-    
+
     @Test(arguments: [
         (0, []),
         (1, []),

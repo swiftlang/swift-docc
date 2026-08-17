@@ -30,7 +30,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
 
         let weight = 99
         mentions.article(article, didMention: symbol, weight: weight)
-        
+
         let gottenArticles = mentions.articlesMentioning(symbol)
         XCTAssertEqual(1, gottenArticles.count)
         let gottenArticle = try XCTUnwrap(gottenArticles.first)
@@ -63,14 +63,16 @@ class ArticleSymbolMentionsTests: XCTestCase {
         mentions.article(articles[3], didMention: symbol, weight: 14)
         mentions.article(articles[4], didMention: symbol, weight: 2)
         mentions.article(articles[5], didMention: symbol, weight: 6)
-        XCTAssertEqual(mentions.articlesMentioning(symbol), [
-            articles[1],
-            articles[3],
-            articles[0],
-            articles[5],
-            articles[4],
-            articles[2],
-        ])
+        XCTAssertEqual(
+            mentions.articlesMentioning(symbol),
+            [
+                articles[1],
+                articles[3],
+                articles[0],
+                articles[5],
+                articles[4],
+                articles[2],
+            ])
 
         // test that mentioning articles w/ same weights are sorted alphabetically
         //
@@ -102,7 +104,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
             bundleID: bundle.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
-        
+
         let mentions = context.articleSymbolMentions.articlesMentioning(mentionedSymbol)
         XCTAssertEqual(1, mentions.count)
         let gottenArticle = try XCTUnwrap(mentions.first)

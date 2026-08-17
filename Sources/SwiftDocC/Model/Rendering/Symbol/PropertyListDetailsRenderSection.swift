@@ -29,7 +29,7 @@ public struct PropertyListDetailsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .plistDetails
     /// A title for the section.
     public var title = "Details"
-    
+
     /// Details for a property list key.
     public struct Details: Codable, Equatable {
         /// The name of the key.
@@ -59,7 +59,7 @@ public struct PropertyListDetailsRenderSection: RenderSection, Equatable {
             self.titleStyle = titleStyle
         }
     }
-    
+
     /// The details of the property key.
     public let details: Details
 
@@ -80,7 +80,7 @@ extension PropertyListDetailsRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this PropertyListDetailsRenderSection is similar enough to the given one.
     func isSimilar(to other: PropertyListDetailsRenderSection) -> Bool {
         return self.title == other.title

@@ -102,10 +102,11 @@ struct URLReferenceTests {
         let object = try #require(try JSONSerialization.jsonObject(with: jsonData) as? [String: Any])
         let variants = try #require(object["variants"] as? [[String: Any]])
         let urls = variants.compactMap { $0["url"] as? String }
-        #expect(urls == [
-            "/images/com.example.bundle/overview.png",
-            "/images/com.example.bundle/overview~dark.png",
-        ])
+        #expect(
+            urls == [
+                "/images/com.example.bundle/overview.png",
+                "/images/com.example.bundle/overview~dark.png",
+            ])
     }
 
     @Test
@@ -126,10 +127,11 @@ struct URLReferenceTests {
         let object = try #require(try JSONSerialization.jsonObject(with: jsonData) as? [String: Any])
         let variants = try #require(object["variants"] as? [[String: Any]])
         let urls = variants.compactMap { $0["url"] as? String }
-        #expect(urls == [
-            "/videos/com.example.bundle/overview.mov",
-            "/videos/com.example.bundle/overview~dark.mov",
-        ])
+        #expect(
+            urls == [
+                "/videos/com.example.bundle/overview.mov",
+                "/videos/com.example.bundle/overview~dark.mov",
+            ])
     }
 
     @Test
@@ -149,10 +151,11 @@ struct URLReferenceTests {
         let jsonData = try encoder.encode(reference)
         let object = try #require(try JSONSerialization.jsonObject(with: jsonData) as? [String: Any])
         let variants = try #require(object["variants"] as? [[String: Any]])
-        #expect(variants.compactMap { $0["url"] as? String } == [
-            "/images/com.example.bundle/overview.png",
-            "/images/com.example.bundle/overview.png",
-        ])
+        #expect(
+            variants.compactMap { $0["url"] as? String } == [
+                "/images/com.example.bundle/overview.png",
+                "/images/com.example.bundle/overview.png",
+            ])
         #expect(variants.compactMap { $0["traits"] as? [String] } == [["2x", "dark"], ["2x", "light"]])
     }
 
@@ -173,10 +176,11 @@ struct URLReferenceTests {
         let jsonData = try encoder.encode(reference)
         let object = try #require(try JSONSerialization.jsonObject(with: jsonData) as? [String: Any])
         let variants = try #require(object["variants"] as? [[String: Any]])
-        #expect(variants.compactMap { $0["url"] as? String } == [
-            "/videos/com.example.bundle/overview.mov",
-            "/videos/com.example.bundle/overview.mov",
-        ])
+        #expect(
+            variants.compactMap { $0["url"] as? String } == [
+                "/videos/com.example.bundle/overview.mov",
+                "/videos/com.example.bundle/overview.mov",
+            ])
         #expect(variants.compactMap { $0["traits"] as? [String] } == [["2x", "dark"], ["2x", "light"]])
     }
 }

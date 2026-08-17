@@ -11,7 +11,6 @@
 public import Foundation
 public import Markdown
 
-
 /// A directive that specifies a previous URL for the page where the directive appears.
 ///
 /// If the page has moved more than once you can add multiple  `Redirected` directives, each specifying one previous URL. For example:
@@ -37,20 +36,19 @@ public final class Redirect: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public static let directiveName = "Redirected"
     public let originalMarkup: BlockDirective
-    
+
     /// The URL that redirects to the page associated with the directive.
     @DirectiveArgumentWrapped(name: .custom("from"))
     public private(set) var oldPath: URL
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "oldPath" : \Redirect._oldPath,
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "oldPath": \Redirect._oldPath
     ]
-    
+
     static var hiddenFromDocumentation = false
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
 }
-

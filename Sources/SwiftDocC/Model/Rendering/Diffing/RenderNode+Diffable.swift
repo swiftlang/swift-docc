@@ -9,27 +9,27 @@
 */
 
 extension RenderNode: RenderJSONDiffable {
-    
+
     /// Returns the differences between this RenderNode and the given one.
     public func _difference(from other: RenderNode) -> JSONPatchDifferences {
         self.difference(from: other, at: [])
     }
-    
+
     func difference(from other: RenderNode, at path: CodablePath) -> JSONPatchDifferences {
         var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
-        
+
         // MARK: General
-                
+
         diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
         diffBuilder.addDifferences(atKeyPath: \.schemaVersion, forKey: CodingKeys.schemaVersion)
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
         diffBuilder.addDifferences(atKeyPath: \.sections, forKey: CodingKeys.sections)
         diffBuilder.addDifferences(atKeyPath: \.references, forKey: CodingKeys.references)
         diffBuilder.addDifferences(atKeyPath: \.hierarchyVariants, forKey: CodingKeys.hierarchy)
-        diffBuilder.differences.append(contentsOf: metadata.difference(from: other.metadata, at: path + [CodingKeys.metadata])) // RenderMetadata isn't Equatable
-        
+        diffBuilder.differences.append(contentsOf: metadata.difference(from: other.metadata, at: path + [CodingKeys.metadata]))  // RenderMetadata isn't Equatable
+
         // MARK: Reference Documentation Data
-        
+
         diffBuilder.addDifferences(atKeyPath: \.abstract, forKey: CodingKeys.abstract)
         diffBuilder.addDifferences(atKeyPath: \.primaryContentSections, forKey: CodingKeys.primaryContentSections)
         diffBuilder.addDifferences(atKeyPath: \.topicSectionsStyle, forKey: CodingKeys.topicSectionsStyle)
@@ -42,13 +42,13 @@ extension RenderNode: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.diffAvailability, forKey: CodingKeys.diffAvailability)
 
         // MARK: Sample Code Data
-        
+
         diffBuilder.addDifferences(atKeyPath: \.sampleDownload, forKey: CodingKeys.sampleCodeDownload)
         diffBuilder.addDifferences(atKeyPath: \.downloadNotAvailableSummary, forKey: CodingKeys.downloadNotAvailableSummary)
-        
+
         return diffBuilder.differences
     }
-    
+
     func isSimilar(to other: RenderNode) -> Bool {
         return identifier == other.identifier
     }

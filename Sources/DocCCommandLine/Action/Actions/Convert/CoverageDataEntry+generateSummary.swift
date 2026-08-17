@@ -25,7 +25,7 @@ extension CoverageDataEntry {
             shouldGenerateDetailed: shouldGenerateDetailed
         )
     }
-    
+
     /// Outputs a short table summarizing the coverage statistics for a list of data entries in a file at the given URL.
     ///
     /// This is an internal version of the function that allows for mocking with the internal

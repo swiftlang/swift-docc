@@ -15,7 +15,7 @@ import DocCTestUtilities
 import DocCCommon
 
 class AutomaticSeeAlsoTests: XCTestCase {
-    
+
     /// Test that a symbol with no authored See Also and with no curated siblings
     /// does not have a See Also section.
     func testNoSeeAlso() async throws {
@@ -29,12 +29,12 @@ class AutomaticSeeAlsoTests: XCTestCase {
             - ``SideClass``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify there is no See Also
         XCTAssertEqual(renderNode.seeAlsoSections.count, 0)
     }
@@ -60,16 +60,16 @@ class AutomaticSeeAlsoTests: XCTestCase {
             - ``SideKit``
             """.write(to: root.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify there is an authored See Also from markdown
         XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
         guard renderNode.seeAlsoSections.count == 1 else { return }
-        
+
         XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
         XCTAssertFalse(renderNode.seeAlsoSections[0].generated)
@@ -103,39 +103,39 @@ class AutomaticSeeAlsoTests: XCTestCase {
             Side Article abstract.
             """.write(to: root.appendingPathComponent("documentation/sidearticle.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify there is an authored See Also & automatically created See Also
         XCTAssertEqual(renderNode.seeAlsoSections.count, 2)
         guard renderNode.seeAlsoSections.count == 2 else { return }
-        
+
         XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
 
         XCTAssertEqual(renderNode.seeAlsoSections[1].title, "Basics")
         XCTAssertEqual(renderNode.seeAlsoSections[1].identifiers, ["doc://org.swift.docc.example/documentation/Test-Bundle/sidearticle"])
         XCTAssertEqual(renderNode.seeAlsoSections[1].generated, true)
-        
+
         // Verify that articles get same automatic See Also sections as symbols
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
-            
+
             // Verify there is an automacially created See Also
             XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
             guard renderNode.seeAlsoSections.count == 1 else { return }
-            
+
             XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Basics")
             XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit/SideClass"])
             XCTAssertEqual(renderNode.seeAlsoSections[0].generated, true)
         }
     }
-    
+
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation disabled
     func testAuthoredSeeAlsoWithDisabledAutomaticSeeAlso() async throws {
@@ -154,11 +154,11 @@ class AutomaticSeeAlsoTests: XCTestCase {
             try """
             # ``SideKit/SideClass``
             SideClass abstract.
-            
+
             @Options {
                 @AutomaticSeeAlso(disabled)
             }
-            
+
             ## See Also
             - ``SideKit``
             """.write(to: root.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
@@ -166,20 +166,20 @@ class AutomaticSeeAlsoTests: XCTestCase {
             /// Article Sibling
             try """
             # Side Article
-            
+
             Side Article abstract.
             """.write(to: root.appendingPathComponent("documentation/sidearticle.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify there is an authored See Also but no automatically created See Also
         XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
         guard renderNode.seeAlsoSections.count == 1 else { return }
-        
+
         XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
 
@@ -188,17 +188,17 @@ class AutomaticSeeAlsoTests: XCTestCase {
             let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
-            
+
             // Verify there is an automacially created See Also
             XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
             guard renderNode.seeAlsoSections.count == 1 else { return }
-            
+
             XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Basics")
             XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit/SideClass"])
             XCTAssertEqual(renderNode.seeAlsoSections[0].generated, true)
         }
     }
-    
+
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation globally disabled
     func testAuthoredSeeAlsoWithGloballyDisabledAutomaticSeeAlso() async throws {
@@ -207,11 +207,11 @@ class AutomaticSeeAlsoTests: XCTestCase {
             try """
             # ``SideKit``
             SideKit module root symbol
-            
+
             @Options(scope: global) {
                 @AutomaticSeeAlso(disabled)
             }
-            
+
             ## Topics
             ### Basics
             - ``SideClass``
@@ -222,7 +222,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
             try """
             # ``SideKit/SideClass``
             SideClass abstract.
-            
+
             ## See Also
             - ``SideKit``
             """.write(to: root.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
@@ -230,20 +230,20 @@ class AutomaticSeeAlsoTests: XCTestCase {
             /// Article Sibling
             try """
             # Side Article
-            
+
             Side Article abstract.
             """.write(to: root.appendingPathComponent("documentation/sidearticle.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify there is an authored See Also but no automatically created See Also
         XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
         guard renderNode.seeAlsoSections.count == 1 else { return }
-        
+
         XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
 
@@ -252,7 +252,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
             let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
-            
+
             // Verify there is an automatically created See Also
             XCTAssertTrue(renderNode.seeAlsoSections.isEmpty)
         }
@@ -260,40 +260,48 @@ class AutomaticSeeAlsoTests: XCTestCase {
 
     func testSeeAlsoWithSymbolAndTutorial() async throws {
         let catalog = Folder(name: "MyKit.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "MyKit", symbols: [
-                makeSymbol(id: "some-class-id", kind: .case, pathComponents: ["MyClass"]),
-                makeSymbol(id: "some-method-id", kind: .case, pathComponents: ["MyClass", "myFunction()"]),
-            ], relationships: [
-                .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
-            ]))
-            
+            JSONFile(
+                symbolGraph: makeSymbolGraph(
+                    moduleName: "MyKit",
+                    symbols: [
+                        makeSymbol(id: "some-class-id", kind: .case, pathComponents: ["MyClass"]),
+                        makeSymbol(id: "some-method-id", kind: .case, pathComponents: ["MyClass", "myFunction()"]),
+                    ],
+                    relationships: [
+                        .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                    ]))
+
             // The tutorial has the same file name (excluding the file extension) as the module and as the bundle.
-            TextFile(name: "MyKit.tutorial", utf8Content: """
-            @Tutorials(name: "My Tutorials") {
-                @Intro(title: "My Intro") {
-                }
-            }
-            """)
-            
-            TextFile(name: "MyKit.md", utf8Content: """
-            # ``MyKit``
-            
-            Curate a symbol and a tutorial together so that the symbol's generated See Also section includes the tutorial.
-            
-            ## Topics
-            
-            - ``MyKit/MyClass/myFunction()``
-            - <doc:/tutorials/MyKit>
-            """)
+            TextFile(
+                name: "MyKit.tutorial",
+                utf8Content: """
+                    @Tutorials(name: "My Tutorials") {
+                        @Intro(title: "My Intro") {
+                        }
+                    }
+                    """)
+
+            TextFile(
+                name: "MyKit.md",
+                utf8Content: """
+                    # ``MyKit``
+
+                    Curate a symbol and a tutorial together so that the symbol's generated See Also section includes the tutorial.
+
+                    ## Topics
+
+                    - ``MyKit/MyClass/myFunction()``
+                    - <doc:/tutorials/MyKit>
+                    """)
         }
         let (_, context) = try await loadBundle(catalog: catalog)
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "MyKit", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify there is a See Also with the resolved tutorial reference
         XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
         XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers, ["doc://MyKit/tutorials/MyKit"])

@@ -115,19 +115,20 @@ extension Metadata {
 
 extension SemanticVersion: DirectiveArgumentValueConvertible {
     static let separator = "."
-    
+
     init?(rawDirectiveArgumentValue: String) {
         guard !rawDirectiveArgumentValue.hasSuffix(Self.separator),
-              !rawDirectiveArgumentValue.hasPrefix(Self.separator) else {
+            !rawDirectiveArgumentValue.hasPrefix(Self.separator)
+        else {
             return nil
         }
-        
+
         // Split the string into major, minor and patch components
         let availabilityComponents = rawDirectiveArgumentValue.split(separator: .init(Self.separator), maxSplits: 2)
         guard !availabilityComponents.isEmpty else {
             return nil
         }
-        
+
         // If any of the components are missing, default to 0
         var intAvailabilityComponents = [0, 0, 0]
         for (index, component) in availabilityComponents.enumerated() {
@@ -135,10 +136,10 @@ extension SemanticVersion: DirectiveArgumentValueConvertible {
             guard let intComponent = Int(component) else {
                 return nil
             }
-            
+
             intAvailabilityComponents[index] = intComponent
         }
-        
+
         self.major = intAvailabilityComponents[0]
         self.minor = intAvailabilityComponents[1]
         self.patch = intAvailabilityComponents[2]
@@ -147,7 +148,7 @@ extension SemanticVersion: DirectiveArgumentValueConvertible {
     static func allowedValues() -> [String]? {
         nil
     }
-    
+
     static func expectedFormat() -> String? {
         return "a semantic version number ('[0-9]+(.[0-9]+)?(.[0-9]+)?')"
     }

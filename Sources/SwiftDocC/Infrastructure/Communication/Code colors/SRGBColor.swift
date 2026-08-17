@@ -18,7 +18,7 @@ public struct SRGBColor: Codable, Equatable {
     public var blue: UInt8
     /// The alpha component of the color.
     public var alpha: Double
-    
+
     /// Creates a color value given individual RGBA values.
     /// - Parameters:
     ///   - red: The normalized red component of the color.

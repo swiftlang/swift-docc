@@ -18,7 +18,7 @@ class BidirectionalMapTests: XCTestCase {
 
         XCTAssertNil(map[0])
         XCTAssertNil(map[-100])
-        
+
         XCTAssertNil(map[""])
         XCTAssertNil(map["test"])
     }
@@ -29,7 +29,7 @@ class BidirectionalMapTests: XCTestCase {
         // Test 1:1 relationships
         map[0] = "Test Value"
         map[100] = "Another Value"
-        
+
         XCTAssertEqual(map[0], "Test Value")
         XCTAssertEqual(map["Test Value"], 0)
         XCTAssertEqual(map[100], "Another Value")
@@ -37,11 +37,11 @@ class BidirectionalMapTests: XCTestCase {
 
         // Update existing relationship
         map[0] = "Updated Value"
-        
+
         XCTAssertEqual(map[0], "Updated Value")
         XCTAssertEqual(map["Updated Value"], 0)
         XCTAssertNil(map["Test Value"])
-        
+
         // Update the updated relationship
         map["Updated Value"] = 3
         XCTAssertEqual(map["Updated Value"], 3)

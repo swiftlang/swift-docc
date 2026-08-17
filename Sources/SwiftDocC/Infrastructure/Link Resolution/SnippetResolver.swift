@@ -15,11 +15,11 @@ import Markdown
 /// A type that resolves snippet paths.
 final class SnippetResolver {
     typealias SnippetMixin = SymbolKit.SymbolGraph.Symbol.Snippet
-    typealias Explanation  = Markdown.Document
-    
+    typealias Explanation = Markdown.Document
+
     /// Information about a resolved snippet
     struct ResolvedSnippet {
-        fileprivate var path: String // For use in diagnostics
+        fileprivate var path: String  // For use in diagnostics
         var mixin: SnippetMixin
         var explanation: Explanation?
     }
@@ -28,78 +28,85 @@ final class SnippetResolver {
         case success(ResolvedSnippet)
         case failure(TopicReferenceResolutionErrorInfo)
     }
-    
+
     private var snippets: [String: ResolvedSnippet] = [:]
-    
+
     init(symbolGraphLoader: SymbolGraphLoader) {
         var snippets: [String: ResolvedSnippet] = [:]
-        
+
         for graph in symbolGraphLoader.snippetSymbolGraphs.values {
             for symbol in graph.symbols.values {
                 guard let snippetMixin = symbol[mixin: SnippetMixin.self] else { continue }
-                
-                let path: String = if symbol.pathComponents.first == "Snippets" {
-                    symbol.pathComponents.dropFirst().joined(separator: "/")
-                } else {
-                    symbol.pathComponents.joined(separator: "/")
-                }
-                
-                snippets[path] = .init(path: path, mixin: snippetMixin, explanation: symbol.docComment.map {
-                    Document(parsing: $0.lines.map(\.text).joined(separator: "\n"), options: .parseBlockDirectives)
-                })
+
+                let path: String =
+                    if symbol.pathComponents.first == "Snippets" {
+                        symbol.pathComponents.dropFirst().joined(separator: "/")
+                    } else {
+                        symbol.pathComponents.joined(separator: "/")
+                    }
+
+                snippets[path] = .init(
+                    path: path, mixin: snippetMixin,
+                    explanation: symbol.docComment.map {
+                        Document(parsing: $0.lines.map(\.text).joined(separator: "\n"), options: .parseBlockDirectives)
+                    })
             }
         }
-        
+
         self.snippets = snippets
     }
- 
+
     func resolveSnippet(path authoredPath: String) -> SnippetResolutionResult {
         // Snippet paths are relative to the root of the Swift Package.
         // The first two components are always the same (the package name followed by "Snippets").
         // The later components can either be subdirectories of the "Snippets" directory or the base name of a snippet '.swift' file (without the extension).
-          
+
         // Drop the common package name + "Snippets" prefix (that's always the same), if the authored path includes it.
         // This enables the author to omit this prefix (but include it for backwards compatibility with older DocC versions).
         var components = authoredPath.split(separator: "/", omittingEmptySubsequences: true)
-        
+
         // It's possible that the package name is "Snippets", resulting in two identical components. Skip until the last of those two.
         if let snippetsPrefixIndex = components.prefix(2).lastIndex(of: "Snippets"),
-           // Don't search for an empty string if the snippet happens to be named "Snippets"
-           let relativePathStart = components.index(snippetsPrefixIndex, offsetBy: 1, limitedBy: components.endIndex - 1)
+            // Don't search for an empty string if the snippet happens to be named "Snippets"
+            let relativePathStart = components.index(snippetsPrefixIndex, offsetBy: 1, limitedBy: components.endIndex - 1)
         {
             components.removeFirst(relativePathStart)
         }
-        
+
         let path = components.joined(separator: "/")
         if let found = snippets[path] {
             return .success(found)
         } else {
             let replacementRange = SourceRange.makeRelativeRange(startColumn: authoredPath.utf8.count - path.utf8.count, length: path.utf8.count)
-            
+
             let nearMisses = NearMiss.bestMatches(for: snippets.keys, against: path)
             let solutions = nearMisses.map { candidate in
-                Solution(summary: "\(Self.replacementOperationDescription(from: path, to: candidate))", replacements: [
-                    .init(range: replacementRange, replacement: candidate)
-                ])
+                Solution(
+                    summary: "\(Self.replacementOperationDescription(from: path, to: candidate))",
+                    replacements: [
+                        .init(range: replacementRange, replacement: candidate)
+                    ])
             }
-            
+
             return .failure(.init("Snippet named '\(path)' couldn't be found", solutions: solutions, rangeAdjustment: replacementRange))
         }
     }
-    
+
     func validate(slice: String, for resolvedSnippet: ResolvedSnippet) -> TopicReferenceResolutionErrorInfo? {
         guard resolvedSnippet.mixin.slices[slice] == nil else {
             return nil
         }
         let replacementRange = SourceRange.makeRelativeRange(startColumn: 0, length: slice.utf8.count)
-        
+
         let nearMisses = NearMiss.bestMatches(for: resolvedSnippet.mixin.slices.keys, against: slice)
         let solutions = nearMisses.map { candidate in
-            Solution(summary: "\(Self.replacementOperationDescription(from: slice, to: candidate))", replacements: [
-                .init(range: replacementRange, replacement: candidate)
-            ])
+            Solution(
+                summary: "\(Self.replacementOperationDescription(from: slice, to: candidate))",
+                replacements: [
+                    .init(range: replacementRange, replacement: candidate)
+                ])
         }
-        
+
         return .init("Slice named '\(slice)' doesn't exist in snippet '\(resolvedSnippet.path)'", solutions: solutions)
     }
 }
@@ -114,7 +121,7 @@ extension SnippetResolver {
     static func unresolvedSnippetPathDiagnostic(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Diagnostic {
         _diagnostic(source: source, range: range, errorInfo: errorInfo, id: "org.swift.docc.unresolvedSnippetPath")
     }
-    
+
     private static func _diagnostic(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo, id: String) -> Diagnostic {
         var solutions: [Solution] = []
         var notes: [Diagnostic.Note] = []
@@ -122,14 +129,16 @@ extension SnippetResolver {
             if let note = errorInfo.note, let source {
                 notes.append(.init(source: source, range: range, message: note))
             }
-            
+
             solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: range))
         }
-        
+
         let diagnosticRange: SourceRange?
         if var rangeAdjustment = errorInfo.rangeAdjustment, let range {
             rangeAdjustment.offsetWithRange(range)
-            assert(rangeAdjustment.lowerBound.column >= 0, """
+            assert(
+                rangeAdjustment.lowerBound.column >= 0,
+                """
                 Unresolved snippet reference range adjustment created range with negative column.
                 Source: \(source?.absoluteString ?? "nil")
                 Range: \(rangeAdjustment.lowerBound.description):\(rangeAdjustment.upperBound.description)
@@ -139,10 +148,10 @@ extension SnippetResolver {
         } else {
             diagnosticRange = range
         }
-        
+
         return Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: id, summary: errorInfo.message, notes: notes, solutions: solutions)
     }
-    
+
     private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol) -> String {
         if from.isEmpty {
             return "Insert \(to.singleQuoted)"

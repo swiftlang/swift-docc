@@ -13,16 +13,16 @@ import Foundation
 /// A swift source file.
 class SwiftFile {
     var contents = ""
-    
+
     init(imports: String) {
         contents = imports.appending("\n\n")
     }
-    
-    func append(_ block: ()->String) {
+
+    func append(_ block: () -> String) {
         contents.append(block())
         contents.append("\n")
     }
-    
+
     func write(to: URL) throws {
         let dirFolder = to.deletingLastPathComponent()
         if !FileManager.default.fileExists(atPath: dirFolder.path) {

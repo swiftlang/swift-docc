@@ -19,65 +19,73 @@ typealias Position = RenderBlockContent.CodeBlockOptions.Position
 
 class RenderContentCompilerTests: XCTestCase {
     func testLinkOverrideTitle() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "article.md", utf8Content: """
-            # First
-            """),
-            TextFile(name: "article2.md", utf8Content: """
-            # Second
-            """),
-            TextFile(name: "article3.md", utf8Content: """
-            # Third
-            """),
-            
-            InfoPlist(identifier: "org.swift.docc.example")
-        ])
-        
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(
+                    name: "article.md",
+                    utf8Content: """
+                        # First
+                        """),
+                TextFile(
+                    name: "article2.md",
+                    utf8Content: """
+                        # Second
+                        """),
+                TextFile(
+                    name: "article3.md",
+                    utf8Content: """
+                        # Third
+                        """),
+
+                InfoPlist(identifier: "org.swift.docc.example")
+            ])
+
         let (_, context) = try await loadBundle(catalog: catalog)
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
-        [Example](http://example.com)
-        
-        [Custom Title](doc:UNRESOVLED)
-        
-        [Custom Title](doc:article)
-        
-        [Custom Image Content ![random image](https://example.com/test.png)](doc:article2)
-        
-        <doc:UNRESOVLED>
-        
-        <doc:article3>
-        """
+            [Example](http://example.com)
+
+            [Custom Title](doc:UNRESOVLED)
+
+            [Custom Title](doc:article)
+
+            [Custom Image Content ![random image](https://example.com/test.png)](doc:article2)
+
+            <doc:UNRESOVLED>
+
+            <doc:article3>
+            """
         let document = Document(parsing: source)
         let expectedDump = """
-        Document
-        ├─ Paragraph
-        │  └─ Link destination: "http://example.com"
-        │     └─ Text "Example"
-        ├─ Paragraph
-        │  └─ Link destination: "doc:UNRESOVLED"
-        │     └─ Text "Custom Title"
-        ├─ Paragraph
-        │  └─ Link destination: "doc:article"
-        │     └─ Text "Custom Title"
-        ├─ Paragraph
-        │  └─ Link destination: "doc:article2"
-        │     ├─ Text "Custom Image Content "
-        │     └─ Image source: "https://example.com/test.png"
-        │        └─ Text "random image"
-        ├─ Paragraph
-        │  └─ Link destination: "doc:UNRESOVLED"
-        │     └─ Text "doc:UNRESOVLED"
-        └─ Paragraph
-           └─ Link destination: "doc:article3"
-              └─ Text "doc:article3"
-        """
+            Document
+            ├─ Paragraph
+            │  └─ Link destination: "http://example.com"
+            │     └─ Text "Example"
+            ├─ Paragraph
+            │  └─ Link destination: "doc:UNRESOVLED"
+            │     └─ Text "Custom Title"
+            ├─ Paragraph
+            │  └─ Link destination: "doc:article"
+            │     └─ Text "Custom Title"
+            ├─ Paragraph
+            │  └─ Link destination: "doc:article2"
+            │     ├─ Text "Custom Image Content "
+            │     └─ Image source: "https://example.com/test.png"
+            │        └─ Text "random image"
+            ├─ Paragraph
+            │  └─ Link destination: "doc:UNRESOVLED"
+            │     └─ Text "doc:UNRESOVLED"
+            └─ Paragraph
+               └─ Link destination: "doc:article3"
+                  └─ Text "doc:article3"
+            """
         XCTAssertEqual(document.debugDescription(), expectedDump)
 
         let result = document.children.flatMap { compiler.visit($0) }
         XCTAssertEqual(result.count, 6)
-        
+
         do {
             guard case let .paragraph(paragraph) = result[0] as? RenderBlockContent else {
                 XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
@@ -149,51 +157,51 @@ class RenderContentCompilerTests: XCTestCase {
             XCTAssertEqual(paragraph, RenderBlockContent.Paragraph(inlineContent: [link]))
         }
     }
-    
+
     func testLineBreak() async throws {
         let (_, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        Backslash before new line\
-        is an explicit hard line break.
+            Backslash before new line\
+            is an explicit hard line break.
 
-        Two spaces before new line  
-        is a hard line break.
+            Two spaces before new line  
+            is a hard line break.
 
-        Paragraph can't end with hard line break.\
+            Paragraph can't end with hard line break.\
 
-        # Headings can't end with hard line break.\
+            # Headings can't end with hard line break.\
 
-            Code blocks ignore\
-            hard line breaks.
+                Code blocks ignore\
+                hard line breaks.
 
-        A single space before new line
-        is a soft line break.
-        """#
+            A single space before new line
+            is a soft line break.
+            """#
         let document = Document(parsing: source)
         let expectedDump = #"""
-        Document
-        ├─ Paragraph
-        │  ├─ Text "Backslash before new line"
-        │  ├─ LineBreak
-        │  └─ Text "is an explicit hard line break."
-        ├─ Paragraph
-        │  ├─ Text "Two spaces before new line"
-        │  ├─ LineBreak
-        │  └─ Text "is a hard line break."
-        ├─ Paragraph
-        │  └─ Text "Paragraph can’t end with hard line break.\"
-        ├─ Heading level: 1
-        │  └─ Text "Headings can’t end with hard line break.\"
-        ├─ CodeBlock language: none
-        │  Code blocks ignore\
-        │  hard line breaks.
-        └─ Paragraph
-           ├─ Text "A single space before new line"
-           ├─ SoftBreak
-           └─ Text "is a soft line break."
-        """#
+            Document
+            ├─ Paragraph
+            │  ├─ Text "Backslash before new line"
+            │  ├─ LineBreak
+            │  └─ Text "is an explicit hard line break."
+            ├─ Paragraph
+            │  ├─ Text "Two spaces before new line"
+            │  ├─ LineBreak
+            │  └─ Text "is a hard line break."
+            ├─ Paragraph
+            │  └─ Text "Paragraph can’t end with hard line break.\"
+            ├─ Heading level: 1
+            │  └─ Text "Headings can’t end with hard line break.\"
+            ├─ CodeBlock language: none
+            │  Code blocks ignore\
+            │  hard line breaks.
+            └─ Paragraph
+               ├─ Text "A single space before new line"
+               ├─ SoftBreak
+               └─ Text "is a soft line break."
+            """#
         XCTAssertEqual(document.debugDescription(), expectedDump)
         let result = document.children.flatMap { compiler.visit($0) }
         XCTAssertEqual(result.count, 6)
@@ -214,30 +222,29 @@ class RenderContentCompilerTests: XCTestCase {
             XCTAssertEqual(paragraph.inlineContent[1], text)
         }
     }
-    
+
     func testThematicBreak() async throws {
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
-        
 
         let source = #"""
-        
-        ---
-        
-        """#
+
+            ---
+
+            """#
         let document = Document(parsing: source)
         let expectedDump = #"""
-        Document
-        └─ ThematicBreak
-        """#
+            Document
+            └─ ThematicBreak
+            """#
         XCTAssertEqual(document.debugDescription(), expectedDump)
         let result = document.children.flatMap { compiler.visit($0) }
         XCTAssertEqual(result.count, 1)
         do {
             let thematicBreak = RenderBlockContent.thematicBreak
-            
+
             let documentThematicBreak = try XCTUnwrap(result[0] as? RenderBlockContent)
-            
+
             XCTAssertEqual(documentThematicBreak, thematicBreak)
         }
     }
@@ -250,10 +257,10 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift
-        let x = 1
-        ```
-        """#
+            ```swift
+            let x = 1
+            ```
+            """#
         let document = Document(parsing: source)
 
         let result = document.children.flatMap { compiler.visit($0) }
@@ -275,10 +282,10 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, nocopy
-        let x = 1
-        ```
-        """#
+            ```swift, nocopy
+            let x = 1
+            ```
+            """#
         let document = Document(parsing: source)
 
         let result = document.children.flatMap { compiler.visit($0) }
@@ -300,10 +307,10 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```nocopy
-        let x = 1
-        ```
-        """#
+            ```nocopy
+            let x = 1
+            ```
+            """#
         let document = Document(parsing: source)
 
         let result = document.children.flatMap { compiler.visit($0) }
@@ -323,10 +330,10 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift
-        let x = 1
-        ```
-        """#
+            ```swift
+            let x = 1
+            ```
+            """#
         let document = Document(parsing: source)
         let result = document.children.flatMap { compiler.visit($0) }
 
@@ -344,10 +351,10 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, nocopy
-        let x = 1
-        ```
-        """#
+            ```swift, nocopy
+            let x = 1
+            ```
+            """#
         let document = Document(parsing: source)
 
         let result = document.children.flatMap { compiler.visit($0) }
@@ -370,14 +377,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, showLineNumbers
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```swift, showLineNumbers
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
         let document = Document(parsing: source)
 
         let result = document.children.flatMap { compiler.visit($0) }
@@ -399,14 +406,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, showlinenumbers
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```swift, showlinenumbers
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
         let document = Document(parsing: source)
 
         let result = document.children.flatMap { compiler.visit($0) }
@@ -428,14 +435,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, wrap=20, highlight=[2]
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```swift, wrap=20, highlight=[2]
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
 
         let document = Document(parsing: source)
 
@@ -450,10 +457,12 @@ class RenderContentCompilerTests: XCTestCase {
         XCTAssertEqual(codeListing.syntax, "swift")
         XCTAssertEqual(codeListing.options?.wrap, 20)
         let line = Position(line: 2)
-        XCTAssertEqual(codeListing.options?.lineAnnotations,
-            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line..<line
+        XCTAssertEqual(
+            codeListing.options?.lineAnnotations,
+            [
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line..<line
                 )
             ])
     }
@@ -466,14 +475,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, highlight=[2]
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```swift, highlight=[2]
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
 
         let document = Document(parsing: source)
 
@@ -487,11 +496,14 @@ class RenderContentCompilerTests: XCTestCase {
 
         XCTAssertEqual(codeListing.syntax, "swift")
         let line = Position(line: 2)
-        XCTAssertEqual(codeListing.options?.lineAnnotations,
-            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line..<line
-            )])
+        XCTAssertEqual(
+            codeListing.options?.lineAnnotations,
+            [
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line..<line
+                )
+            ])
     }
 
     func testHighlightNoFeatureFlag() async throws {
@@ -499,14 +511,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, highlight=[2]
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```swift, highlight=[2]
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
 
         let document = Document(parsing: source)
 
@@ -530,14 +542,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, highlight=[1, 2, 3]
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```swift, highlight=[1, 2, 3]
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
 
         let document = Document(parsing: source)
 
@@ -554,19 +566,21 @@ class RenderContentCompilerTests: XCTestCase {
         let line1 = Position(line: 1)
         let line2 = Position(line: 2)
         let line3 = Position(line: 3)
-        XCTAssertEqual(codeListing.options?.lineAnnotations,
-            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line1..<line1
-            ),
-             RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line2..<line2
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line3..<line3
-            )
+        XCTAssertEqual(
+            codeListing.options?.lineAnnotations,
+            [
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line1..<line1
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line2..<line2
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line3..<line3
+                )
             ])
     }
 
@@ -578,14 +592,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```swift, strikeout=[3,5], highlight=[1, 2, 3]
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```swift, strikeout=[3,5], highlight=[1, 2, 3]
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
 
         let document = Document(parsing: source)
 
@@ -603,27 +617,29 @@ class RenderContentCompilerTests: XCTestCase {
         let line2 = Position(line: 2)
         let line3 = Position(line: 3)
         let line5 = Position(line: 5)
-        XCTAssertEqual(codeListing.options?.lineAnnotations,
-         [RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line1..<line1
-            ),
-             RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line2..<line2
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line3..<line3
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "strikeout",
-                range: line3..<line3
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "strikeout",
-                range: line5..<line5
-            )
+        XCTAssertEqual(
+            codeListing.options?.lineAnnotations,
+            [
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line1..<line1
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line2..<line2
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line3..<line3
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "strikeout",
+                    range: line3..<line3
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "strikeout",
+                    range: line5..<line5
+                )
             ])
     }
 
@@ -635,14 +651,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```showLineNumbers, highlight=[1, 2, 3], swift, wrap=20, strikeout=[3]
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```showLineNumbers, highlight=[1, 2, 3], swift, wrap=20, strikeout=[3]
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
 
         let document = Document(parsing: source)
 
@@ -662,23 +678,25 @@ class RenderContentCompilerTests: XCTestCase {
         let line1 = Position(line: 1)
         let line2 = Position(line: 2)
         let line3 = Position(line: 3)
-        XCTAssertEqual(codeListing.options?.lineAnnotations,
-            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line1..<line1
-            ),
-             RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line2..<line2
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line3..<line3
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "strikeout",
-                range: line3..<line3
-            )
+        XCTAssertEqual(
+            codeListing.options?.lineAnnotations,
+            [
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line1..<line1
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line2..<line2
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line3..<line3
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "strikeout",
+                    range: line3..<line3
+                )
             ])
     }
 
@@ -690,14 +708,14 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```highlight=[5,3,4], strikeout=[3,1]
-        let a = 1
-        let b = 2
-        let c = 3
-        let d = 4
-        let e = 5
-        ```
-        """#
+            ```highlight=[5,3,4], strikeout=[3,1]
+            let a = 1
+            let b = 2
+            let c = 3
+            let d = 4
+            let e = 5
+            ```
+            """#
 
         let document = Document(parsing: source)
 
@@ -713,27 +731,29 @@ class RenderContentCompilerTests: XCTestCase {
         let line3 = Position(line: 3)
         let line4 = Position(line: 4)
         let line5 = Position(line: 5)
-        XCTAssertEqual(codeListing.options?.lineAnnotations,
-            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line5..<line5
-            ),
-             RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line3..<line3
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "highlight",
-                range: line4..<line4
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "strikeout",
-                range: line3..<line3
-            ),
-            RenderBlockContent.CodeBlockOptions.LineAnnotation(
-                style: "strikeout",
-                range: line1..<line1
-            )
+        XCTAssertEqual(
+            codeListing.options?.lineAnnotations,
+            [
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line5..<line5
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line3..<line3
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "highlight",
+                    range: line4..<line4
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "strikeout",
+                    range: line3..<line3
+                ),
+                RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                    style: "strikeout",
+                    range: line1..<line1
+                )
             ])
     }
 }

@@ -38,20 +38,21 @@ public import Markdown
 public final class TabNavigator: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
     public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
-    
+
     /// The tabs that make up this tab navigator.
     @ChildDirective(requirements: .oneOrMore)
     public private(set) var tabs: [Tab]
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "tabs" : \TabNavigator._tabs,
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "tabs": \TabNavigator._tabs
     ]
-    
+
     var childMarkup: [any Markup] {
         return tabs.flatMap(\.childMarkup)
     }
-    
-    @available(*, deprecated,
+
+    @available(
+        *, deprecated,
         message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'."
     )
     init(originalMarkup: BlockDirective) {
@@ -67,26 +68,27 @@ extension TabNavigator {
     public final class Tab: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
         public static let introducedVersion = "5.8"
         public let originalMarkup: BlockDirective
-        
+
         /// The title that should identify the content in this tab when rendered.
         @DirectiveArgumentWrapped(name: .unnamed)
         public private(set) var title: String
-        
+
         /// The markup content in this tab.
         @ChildMarkup(numberOfParagraphs: .oneOrMore, supportsStructure: true)
         public private(set) var content: MarkupContainer
-        
+
         // swift-format-ignore
         static var keyPaths: [String : AnyKeyPath] = [
             "title"      : \Tab._title,
             "content"   : \Tab._content,
         ]
-        
+
         var childMarkup: [any Markup] {
             return content.elements
         }
-        
-        @available(*, deprecated,
+
+        @available(
+            *, deprecated,
             message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'."
         )
         init(originalMarkup: BlockDirective) {
@@ -97,16 +99,16 @@ extension TabNavigator {
 
 extension TabNavigator: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
-         let renderedTabs = tabs.map { tab in
-             return RenderBlockContent.TabNavigator.Tab(
+        let renderedTabs = tabs.map { tab in
+            return RenderBlockContent.TabNavigator.Tab(
                 title: tab.title,
                 content: tab.content.elements.flatMap { markupElement in
                     return contentCompiler.visit(markupElement) as! [RenderBlockContent]
                 }
-             )
-         }
+            )
+        }
 
-         let renderedNavigator = RenderBlockContent.TabNavigator(tabs: renderedTabs)
-         return [RenderBlockContent.tabNavigator(renderedNavigator)]
-     }
- }
+        let renderedNavigator = RenderBlockContent.TabNavigator(tabs: renderedTabs)
+        return [RenderBlockContent.tabNavigator(renderedNavigator)]
+    }
+}

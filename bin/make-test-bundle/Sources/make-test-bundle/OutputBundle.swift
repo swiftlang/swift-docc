@@ -16,10 +16,10 @@ extension String: Error {}
 /// A bundle and its belonging documentation.
 class OutputBundle {
     // MARK: Configuration
-    
+
     let name = "TestFramework"
     let defaultImports = "import Foundation"
-    
+
     let outputURL: URL
     let docsURL: URL
     let imagesURL: URL
@@ -33,9 +33,9 @@ class OutputBundle {
     var topLevelStructs = WrappingEnumerator<StructNode>()
     var topLevelEnums = WrappingEnumerator<EnumNode>()
     var topLevelFuns = WrappingEnumerator<MethodNode>()
-    
+
     // MARK: Methods
-    
+
     /// Initializes a new framework and a docs bundle.
     init(outputURL originalOutputURL: URL, sizeFactor: UInt) {
         self.outputURL = originalOutputURL.appendingPathComponent(name)
@@ -44,7 +44,7 @@ class OutputBundle {
         self.sourceURL = outputURL.appendingPathComponent("Sources").appendingPathComponent(name)
         self.sizeFactor = sizeFactor
     }
-    
+
     /// Creates the output folder and initializes a package inside.
     func createOutputDirectory() throws {
         // Create output folder.
@@ -52,35 +52,35 @@ class OutputBundle {
             try FileManager.default.removeItem(at: outputURL)
         }
         try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: false, attributes: nil)
-        
+
         // Create docs folder
         try FileManager.default.createDirectory(at: docsURL, withIntermediateDirectories: false, attributes: nil)
         try FileManager.default.createDirectory(at: imagesURL, withIntermediateDirectories: false, attributes: nil)
-        
+
         // Initialize package
         try runTask(envURL, directory: outputURL, arguments: ["swift", "package", "init"])
     }
-    
+
     /// Create the output bundle's content.
     func createContent() throws {
         // Images
         topLevelImages.items = try createImages(imagesURL: imagesURL)
-        
+
         // Protocols
         topLevelProtocols.items = try createProtocols()
         try createDocExtensions(paths: topLevelProtocols.items.map({ $0.name }))
-        
+
         // Structs
         topLevelStructs.items = try createStructs()
         try createDocExtensions(paths: topLevelStructs.items.map({ $0.name }))
-        
+
         // Enums
         topLevelEnums.items = try createEnums()
         try createDocExtensions(paths: topLevelEnums.items.map({ $0.name }))
-        
+
         // Functions
         topLevelFuns.items = try createFuncs()
-        
+
         print("------------------")
         print("\(ImageFile.counter) images.")
         print("\(ProtocolNode.counter) protocols.")
@@ -91,13 +91,13 @@ class OutputBundle {
         print("\(MarkupFile.counter) markup files.")
         print("------------------")
     }
-    
+
     /// Creates markup files for the symbols with given paths.
     private func createDocExtensions(paths: [String]) throws {
         print("Creating documentation markup files.")
         var module = MarkupFile(kind: .docExt(name), bundle: self)
         try module.source().write(to: docsURL.appendingPathComponent(module.fileName), atomically: true, encoding: .utf8)
-        
+
         for path in paths {
             var ext = MarkupFile(kind: .docExt("\(name)/\(path)"), bundle: self)
             try ext.source().write(to: docsURL.appendingPathComponent(ext.fileName), atomically: true, encoding: .utf8)
@@ -110,9 +110,9 @@ class OutputBundle {
 
     private func createFuncs() throws -> [MethodNode] {
         print("Creating functions.")
-        
+
         var result = [MethodNode]()
-        for i in (0 ..< sizeFactor) {
+        for i in (0..<sizeFactor) {
             let fileURL = sourceURL.appendingPathComponent("Func\(i).swift")
             let file = SwiftFile(imports: defaultImports)
             file.append {
@@ -127,9 +127,9 @@ class OutputBundle {
 
     private func createEnums() throws -> [EnumNode] {
         print("Creating enums.")
-        
+
         var result = [EnumNode]()
-        for i in (0 ..< sizeFactor) {
+        for i in (0..<sizeFactor) {
             let fileURL = sourceURL.appendingPathComponent("Enum\(i).swift")
             let file = SwiftFile(imports: defaultImports)
             file.append {
@@ -153,15 +153,15 @@ class OutputBundle {
 
     private func createStructs() throws -> [StructNode] {
         print("Creating structs.")
-        
+
         var result = [StructNode]()
-        for i in (0 ..< sizeFactor) {
+        for i in (0..<sizeFactor) {
             let fileURL = sourceURL.appendingPathComponent("Struct\(i).swift")
             let file = SwiftFile(imports: defaultImports)
             file.append {
                 let structure = StructNode(nested: [.struct, .enum, .method, .property], implements: [topLevelProtocols.next(), topLevelProtocols.next()], parentPath: "\(name)", bundle: self)
                 result.append(structure)
-                
+
                 defer {
                     for var ext in structure.collectedExtensions {
                         try! ext.source().write(to: docsURL.appendingPathComponent(ext.fileName), atomically: true, encoding: .utf8)
@@ -170,7 +170,7 @@ class OutputBundle {
                         }
                     }
                 }
-                
+
                 return structure.source()
             }
             try file.write(to: fileURL)
@@ -180,9 +180,9 @@ class OutputBundle {
 
     private func createProtocols() throws -> [ProtocolNode] {
         print("Creating protocols.")
-        
+
         var result = [ProtocolNode]()
-        for i in (0 ..< sizeFactor) {
+        for i in (0..<sizeFactor) {
             let fileURL = sourceURL.appendingPathComponent("Protocol\(i).swift")
             let file = SwiftFile(imports: defaultImports)
             file.append {
@@ -197,7 +197,7 @@ class OutputBundle {
                         }
                     }
                 }
-                
+
                 var source = proto.source()
                 source += proto.extension()
                 return source
@@ -210,7 +210,7 @@ class OutputBundle {
     /// Creates image files in the given output folder.
     private func createImages(imagesURL: URL) throws -> [ImageFile] {
         print("Creating image files.")
-        
+
         return try (0..<sizeFactor)
             .map { _ -> ImageFile in
                 let image = ImageFile()
@@ -219,27 +219,29 @@ class OutputBundle {
                 return image
             }
     }
-    
+
     private let bytesInMB = 1048576
-    
+
     func summary() -> String? {
-        guard let enumerator = FileManager.default.enumerator(
+        guard
+            let enumerator = FileManager.default.enumerator(
                 at: outputURL,
                 includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey],
                 options: .skipsHiddenFiles,
-                errorHandler: nil) else { return nil }
-            
+                errorHandler: nil)
+        else { return nil }
+
         var bytes: UInt64 = 0
         var count = 0
         for case let url as URL in enumerator {
             count += 1
             bytes += UInt64((try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0)
         }
-        
+
         let size = Double(bytes) / Double(bytesInMB)
         return String(format: "%i files (%.2fMB)", count, size)
     }
-    
+
     func createSymbolGraph() throws {
         // Build the package
         print("Building \(name)...")
@@ -252,36 +254,41 @@ class OutputBundle {
 
         let swiftInfo = try JSONDecoder().decode(
             SwiftTarget.self,
-            from: try runTask(envURL, directory: outputURL, arguments: [
-                "swiftc",
-                "-print-target-info"
-            ]).data(using: .utf8)!)
-        
+            from: try runTask(
+                envURL, directory: outputURL,
+                arguments: [
+                    "swiftc",
+                    "-print-target-info"
+                ]
+            ).data(using: .utf8)!)
+
         // Extract the package symbol graph
         print("Extracting symbol graph...")
-        try runTask(envURL, directory: outputURL, arguments: [
-            "swift",
-            "symbolgraph-extract",
-            "-module-name",
-            name,
-            "-target",
-            swiftInfo.target.triple,
-            "-I",
-            binPath.appending("/Modules"),
-            "-sdk",
-            sdkPath,
-            "-output-dir",
-            docsURL.path
-        ])
+        try runTask(
+            envURL, directory: outputURL,
+            arguments: [
+                "swift",
+                "symbolgraph-extract",
+                "-module-name",
+                name,
+                "-target",
+                swiftInfo.target.triple,
+                "-I",
+                binPath.appending("/Modules"),
+                "-sdk",
+                sdkPath,
+                "-output-dir",
+                docsURL.path
+            ])
     }
-    
+
     struct BundleInfoPlist: Encodable {
         let CFBundleName: String
         let CFBundleDisplayName: String
         let CFBundleIdentifier: String
         let CFBundleVersion: String
     }
-    
+
     func createInfoPlist() throws {
         print("Creating Info.plist ...")
         let plist = BundleInfoPlist(CFBundleName: "TestFramework", CFBundleDisplayName: "TestFramework", CFBundleIdentifier: "org.swift.TestFramework", CFBundleVersion: "0.1.0")
@@ -307,7 +314,7 @@ extension OutputBundle {
         guard task.terminationStatus == 0 else {
             throw "Exit status (\(task.terminationStatus)) \(task.terminationReason)"
         }
-        
+
         let outputData = stdout.fileHandleForReading.readDataToEndOfFile()
         return String(decoding: outputData, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
     }

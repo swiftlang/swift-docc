@@ -12,7 +12,7 @@ private import SymbolKit
 import DocCCommon
 
 extension PathHierarchyBasedLinkResolver {
-    
+
     /// Finds the canonical path, also called "breadcrumbs", to the given symbol in the path hierarchy.
     /// The path is a list of references that describe a walk through the path hierarchy descending from the module down to, but not including, the given `reference`.
     ///
@@ -22,12 +22,12 @@ extension PathHierarchyBasedLinkResolver {
     /// - Returns: The canonical path to the given symbol reference, or `nil` if the reference isn't a symbol or if the symbol doesn't have a representation in the given source language.
     func breadcrumbs(of reference: ResolvedTopicReference, in sourceLanguage: SourceLanguage) -> [ResolvedTopicReference]? {
         guard let nodeID = resolvedReferenceMap[reference] else { return nil }
-        var node = pathHierarchy.lookup[nodeID]! // Only the path hierarchy can create its IDs and a created ID always matches a node
-        
+        var node = pathHierarchy.lookup[nodeID]!  // Only the path hierarchy can create its IDs and a created ID always matches a node
+
         func matchesRequestedLanguage(_ node: PathHierarchy.Node) -> Bool {
-             node.languages.contains(sourceLanguage)
+            node.languages.contains(sourceLanguage)
         }
-        
+
         if !matchesRequestedLanguage(node) {
             guard let counterpart = node.counterpart, matchesRequestedLanguage(counterpart) else {
                 // Neither this symbol, nor its counterpart matched the requested language
@@ -36,7 +36,7 @@ extension PathHierarchyBasedLinkResolver {
             // Traverse from the counterpart instead because it matches the requested language
             node = counterpart
         }
-        
+
         // Traverse up the hierarchy and gather each reference
         return sequence(first: node, next: \.parent)
             // The hierarchy traversal happened from the starting point up, but the callers of `breadcrumbs(of:in:)`
@@ -59,17 +59,17 @@ extension PathHierarchyBasedLinkResolver {
     /// - Returns: The  canonical containers for the different language representations of a given symbol, or `nil` if the reference is a module or a non-symbol.
     func nearestContainers(ofSymbol reference: ResolvedTopicReference) -> (main: ResolvedTopicReference, counterpart: ResolvedTopicReference?)? {
         guard let nodeID = resolvedReferenceMap[reference] else { return nil }
-        
-        let node = pathHierarchy.lookup[nodeID]! // Only the path hierarchy can create its IDs and a created ID always matches a node
+
+        let node = pathHierarchy.lookup[nodeID]!  // Only the path hierarchy can create its IDs and a created ID always matches a node
         guard node.symbol != nil else { return nil }
-        
+
         func containerReference(_ node: PathHierarchy.Node) -> ResolvedTopicReference? {
             guard let containerID = node.parent?.identifier else { return nil }
             return resolvedReferenceMap[containerID]
         }
-        
+
         guard let main = containerReference(node) else { return nil }
-        
+
         return (main, node.counterpart.flatMap(containerReference))
     }
 }

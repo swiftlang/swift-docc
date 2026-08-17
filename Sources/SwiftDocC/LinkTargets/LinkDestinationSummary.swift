@@ -73,33 +73,33 @@ public import DocCCommon
 ///  - In a task group, the ``title`` and ``abstract`` is displayed together to give more context about this element and the element may be marked as deprecated
 ///    based on the values of its  ``platforms`` and other metadata about the current versions of the platforms.
 ///
-/// The summary may include content that vary based on the source language. The content that is different in another source language is specified in a ``Variant``. Any property on the variant that is `nil` has the same value as the summarized element's value. 
+/// The summary may include content that vary based on the source language. The content that is different in another source language is specified in a ``Variant``. Any property on the variant that is `nil` has the same value as the summarized element's value.
 public struct LinkDestinationSummary: Codable, Equatable {
     /// The kind of the summarized element.
     public let kind: DocumentationNode.Kind
-    
+
     /// The language of the summarized element.
     public let language: SourceLanguage
-    
+
     /// The relative presentation URL for this element.
     public let relativePresentationURL: URL
-    
+
     /// The absolute presentation URL for this element, or `nil` if only the _relative_ presentation URL is known.
     ///
     /// - Note: The absolute presentation URL (if one exists) and the relative presentation URL will always have the same path and fragment components.
     let absolutePresentationURL: URL?
-    
+
     /// The resolved topic reference URL to this element.
     public var referenceURL: URL
-    
+
     /// The title of the summarized element.
     public let title: String
-    
+
     /// An abstract is a single paragraph of rendered inline content.
     public typealias Abstract = [RenderInlineContent]
     /// The abstract of the summarized element.
     public let abstract: Abstract?
-    
+
     /// All the languages in which the summarized element is available.
     public let availableLanguages: Set<SourceLanguage>
 
@@ -107,20 +107,20 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public typealias PlatformAvailability = AvailabilityRenderItem
     /// Information about the platforms for which the summarized element is available.
     public let platforms: [PlatformAvailability]?
-    
+
     // Note to implementors when adding new properties:
     //  Any new property that DocC doesn't need to get back when resolving references should be optional
     //  so that external documentation sources don't need to provide that data.
     //  Adding new required properties is considered breaking change since existing external documentation sources
     //  wouldn't necessarily meet these new requirements.
     //  Make sure to update the encoding, decoding and Equatable implementations when adding new properties.
-    
+
     /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     public let usr: String?
-    
+
     /// The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
     public let plainTextDeclaration: String?
-    
+
     /// The rendered fragments of a symbol's declaration.
     public typealias DeclarationFragments = [DeclarationRenderSection.Token]
     /// The simplified "subheading" declaration fragments for this symbol, or `nil` if the summarized element isn't a symbol.
@@ -143,55 +143,55 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///
     /// A web server can use this list of URLs to redirect to the current URL.
     public let redirects: [URL]?
-        
+
     /// Images that are used to represent the summarized element.
     public let topicImages: [TopicImage]?
-    
+
     /// References used in the content of the summarized element.
     ///
     /// This includes the element's ``topicImages`` or references from the element's ``abstract``.
     /// This also includes any references for all variants' content.
     public var references: [any RenderReference]?
-    
+
     /// A variant of content for a summarized element.
     ///
     /// - Note: All properties except for ``traits`` are optional. If a property is `nil` it means that the value is the same as the summarized element's value.
     public struct Variant: Codable, Equatable {
         /// The traits of the variant.
         public let traits: [RenderNode.Variant.Trait]
-        
+
         /// A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the summarized element.
         ///
         /// This alias is used to make the property declarations more explicit while at the same time offering the convenient syntax of optionals.
         public typealias VariantValue = Optional
-        
+
         /// The kind of the variant or `nil` if the kind is the same as the summarized element.
         public let kind: VariantValue<DocumentationNode.Kind>
-        
+
         /// The source language of the variant or `nil` if the kind is the same as the summarized element.
         public let language: VariantValue<SourceLanguage>
-        
+
         /// The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
         public let relativePresentationURL: VariantValue<URL>
-        
+
         /// The title of the variant or `nil` if the title is the same as the summarized element.
         public let title: VariantValue<String>
-        
+
         /// The abstract of the variant or `nil` if the abstract is the same as the summarized element.
         ///
         /// If the summarized element has an abstract but the variant doesn't, this property will be `Optional.some(nil)`.
         public let abstract: VariantValue<Abstract?>
-        
+
         /// The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
         /// If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)`.
         public let usr: VariantValue<String?>
-        
+
         /// The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
         /// If the summarized element has a plain text declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let plainTextDeclaration: VariantValue<String?>
-        
+
         /// The simplified "subheading" declaration fragments for this symbol, or `nil` if the declaration is the same as the summarized element.
         ///
         /// These subheading fragments are suitable to use to refer to a symbol that's linked to in a topic group.
@@ -205,9 +205,9 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///
         /// If the summarized element has a navigator title but the variant doesn't, this property will be `Optional.some(nil)`.
         public let navigatorDeclarationFragments: VariantValue<DeclarationFragments?>
-        
+
         /// Creates a new summary variant with the values that are different from the main summarized values.
-        /// 
+        ///
         /// - Parameters:
         ///   - traits: The traits of the variant.
         ///   - kind: The kind of the variant or `nil` if the kind is the same as the summarized element.
@@ -243,10 +243,10 @@ public struct LinkDestinationSummary: Codable, Equatable {
             self.navigatorDeclarationFragments = navigatorDeclarationFragments
         }
     }
-    
+
     /// The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
     public let variants: [Variant]
-    
+
     /// Creates a new summary of an element that can be linked to from outside the local documentation.
     ///
     /// - Parameters:
@@ -322,15 +322,15 @@ public extension DocumentationNode {
         }
         let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
         let relativePresentationURL = urlGenerator.presentationURLForReference(reference).withoutHostAndPortAndScheme()
-        
+
         var compiler = RenderContentCompiler(context: context, identifier: reference)
 
         let platforms = renderNode.metadata.platforms
-        
+
         let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).compactMap {
             LinkDestinationSummary(landmark: $0, relativeParentPresentationURL: relativePresentationURL, page: self, platforms: platforms, compiler: &compiler)
         }
-        
+
         return [
             LinkDestinationSummary(
                 documentationNode: self,
@@ -359,7 +359,7 @@ extension Abstracted {
 }
 
 extension LinkDestinationSummary {
-    
+
     /// Creates a link destination summary for this page.
     ///
     /// - Parameters:
@@ -375,19 +375,20 @@ extension LinkDestinationSummary {
     ) {
         let redirects = (documentationNode.semantic as? (any Redirected))?.redirects?.map { $0.oldPath }
         let referenceURL = documentationNode.reference.url
-        
+
         let topicImages = renderNode.metadata.images
         var referenceIdentifiers = Set(topicImages.map(\.identifier))
         for case .reference(identifier: let identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) in renderNode.abstract ?? [] {
             referenceIdentifiers.insert(identifier)
         }
-        
+
         guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.sourceLanguage == documentationNode.sourceLanguage }) else {
             // Only symbol documentation currently support multi-language variants (rdar://86580915)
-            let references = referenceIdentifiers
+            let references =
+                referenceIdentifiers
                 .compactMap { renderNode.references[$0.identifier] }
                 .sorted(by: \.identifier.identifier)
-            
+
             self.init(
                 kind: documentationNode.kindForLinkDestinationSummary,
                 language: documentationNode.sourceLanguage,
@@ -406,45 +407,46 @@ extension LinkDestinationSummary {
             )
             return
         }
-        
+
         // Precompute the summarized elements information so that variants can compare their information against it and remove redundant duplicate information.
-        
+
         // Multi-language symbols need to access the default content via the variant accessors (rdar://86580516)
         let kind = DocumentationNode.kind(forKind: (symbol.kindVariants[summaryTrait] ?? symbol.kind).identifier)
         let title = symbol.proseTitleVariants[summaryTrait] ?? symbol.title
-        
+
         func renderSymbolAbstract(_ symbolAbstract: Paragraph?) -> Abstract? {
             guard let abstractParagraph = symbolAbstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstractParagraph).first else {
                 return nil
             }
             return p.inlineContent
         }
-        
+
         let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
         let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalID
         let plainTextDeclaration = symbol.plainTextDeclaration(for: summaryTrait)
         let language = documentationNode.sourceLanguage
         // If no abbreviated declaration fragments are available, use the full declaration fragments instead.
         // In this case, they are assumed to be the same.
-        let subheadingDeclarationFragments = symbol.subHeadingVariants[summaryTrait]?.renderDeclarationTokens()
-                                          ?? symbol.declarationVariants[summaryTrait]?.renderDeclarationTokens()
-        let navigatorDeclarationFragments  = symbol.navigatorVariants[summaryTrait]?.renderDeclarationTokens()
+        let subheadingDeclarationFragments =
+            symbol.subHeadingVariants[summaryTrait]?.renderDeclarationTokens()
+            ?? symbol.declarationVariants[summaryTrait]?.renderDeclarationTokens()
+        let navigatorDeclarationFragments = symbol.navigatorVariants[summaryTrait]?.renderDeclarationTokens()
 
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
             // Skip the variant for the summarized elements source language.
             guard let sourceLanguage = trait.sourceLanguage, sourceLanguage != documentationNode.sourceLanguage else {
                 return nil
             }
-            
+
             let abstractVariant: Variant.VariantValue<Abstract?> = symbol.abstractVariants[trait].map { renderSymbolAbstract($0) }
-            
+
             func nilIfEqual<Value: Equatable>(main: Value, variant: Value?) -> Value? {
                 return main == variant ? nil : variant
             }
-            
+
             let plainTextDeclarationVariant = symbol.plainTextDeclaration(for: trait)
             let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(sourceLanguage.id)]
-            
+
             // Use the abbreviated declaration fragments instead of the full declaration fragments.
             // These have been derived from the symbol's subheading declaration fragments as part of rendering.
             // We only want an abbreviated version of the declaration in the link summary (for display in Topic sections, the navigator, etc.).
@@ -452,27 +454,29 @@ extension LinkDestinationSummary {
             //
             // However if no abbreviated declaration fragments are available, use the full declaration fragments instead.
             // In this case, they are assumed to be the same.
-            let subheadingDeclarationFragmentsVariant = symbol.subHeadingVariants[trait]?.renderDeclarationTokens()
-                                                     ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
-            let navigatorDeclarationFragmentsVariant  = symbol.navigatorVariants[trait]?.renderDeclarationTokens()
+            let subheadingDeclarationFragmentsVariant =
+                symbol.subHeadingVariants[trait]?.renderDeclarationTokens()
+                ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
+            let navigatorDeclarationFragmentsVariant = symbol.navigatorVariants[trait]?.renderDeclarationTokens()
             return Variant(
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
                 language: nilIfEqual(main: language, variant: sourceLanguage),
-                relativePresentationURL: nil, // The symbol variant uses the same relative path
+                relativePresentationURL: nil,  // The symbol variant uses the same relative path
                 title: nilIfEqual(main: title, variant: symbol.proseTitleVariants[trait]),
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
-                usr: nil, // The symbol variant uses the same USR
+                usr: nil,  // The symbol variant uses the same USR
                 plainTextDeclaration: nilIfEqual(main: plainTextDeclaration, variant: plainTextDeclarationVariant),
                 subheadingDeclarationFragments: nilIfEqual(main: subheadingDeclarationFragments, variant: subheadingDeclarationFragmentsVariant),
                 navigatorDeclarationFragments: nilIfEqual(main: navigatorDeclarationFragments, variant: navigatorDeclarationFragmentsVariant)
             )
         }
-        
-        let references = referenceIdentifiers
+
+        let references =
+            referenceIdentifiers
             .compactMap { renderNode.references[$0.identifier] }
             .sorted(by: \.identifier.identifier)
-        
+
         self.init(
             kind: kind,
             language: language,
@@ -495,7 +499,7 @@ extension LinkDestinationSummary {
 }
 
 extension LinkDestinationSummary {
-    
+
     /// Creates a link destination summary for a landmark on a page.
     ///
     /// - Parameters:
@@ -505,15 +509,17 @@ extension LinkDestinationSummary {
     ///   - compiler: The content compiler that's used to render the section's abstract.
     init?(landmark: any Landmark, relativeParentPresentationURL: URL, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let anchor = urlReadableFragment(landmark.title)
-        
-        guard let relativePresentationURL: URL = {
-            var components = URLComponents(url: relativeParentPresentationURL, resolvingAgainstBaseURL: false)
-            components?.fragment = anchor // use an in-page anchor for the landmark's path
-            return components?.url
-        }() else {
+
+        guard
+            let relativePresentationURL: URL = {
+                var components = URLComponents(url: relativeParentPresentationURL, resolvingAgainstBaseURL: false)
+                components?.fragment = anchor  // use an in-page anchor for the landmark's path
+                return components?.url
+            }()
+        else {
             return nil
         }
-        
+
         let abstract: Abstract?
         if let abstracted = landmark as? (any Abstracted) {
             abstract = abstracted.renderedAbstract(using: &compiler) ?? []
@@ -522,7 +528,7 @@ extension LinkDestinationSummary {
         } else {
             abstract = nil
         }
-        
+
         self.init(
             kind: .onPageLandmark,
             language: page.sourceLanguage,
@@ -532,11 +538,11 @@ extension LinkDestinationSummary {
             abstract: abstract,
             availableLanguages: page.availableSourceLanguages,
             platforms: platforms,
-            usr: nil, // Only symbols have a USR
-            subheadingDeclarationFragments: nil, // Only symbols have declarations
+            usr: nil,  // Only symbols have a USR
+            subheadingDeclarationFragments: nil,  // Only symbols have declarations
             redirects: (landmark as? (any Redirected))?.redirects?.map { $0.oldPath },
-            topicImages: nil, // Landmarks doesn't have topic images
-            references: nil, // Landmarks have no references, since only topic image references is currently supported
+            topicImages: nil,  // Landmarks doesn't have topic images
+            references: nil,  // Landmarks have no references, since only topic image references is currently supported
             variants: []
         )
     }
@@ -552,7 +558,7 @@ extension LinkDestinationSummary {
         case subheadingDeclarationFragments = "fragments"
         case navigatorDeclarationFragments = "navigatorFragments"
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         if DocumentationNode.Kind.allKnownValues.contains(kind) {
@@ -585,12 +591,12 @@ extension LinkDestinationSummary {
         try container.encodeIfPresent(redirects, forKey: .redirects)
         try container.encodeIfPresent(topicImages, forKey: .topicImages)
         try container.encodeIfPresent(references?.map { CodableRenderReference($0) }, forKey: .references)
-        
+
         if !variants.isEmpty {
             try container.encode(variants, forKey: .variants)
         }
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         // Kind can either be a known identifier or a full structure
@@ -605,7 +611,7 @@ extension LinkDestinationSummary {
         }
         let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
         (relativePresentationURL, absolutePresentationURL) = Self.checkIfDecodedURLWasAbsolute(decodedURL)
-        
+
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
@@ -619,7 +625,7 @@ extension LinkDestinationSummary {
         } catch DecodingError.typeMismatch {
             language = try container.decode(SourceLanguage.self, forKey: .language)
         }
-          
+
         // The set of languages can be a mix of identifiers and full structure
         var languagesContainer = try container.nestedUnkeyedContainer(forKey: .availableLanguages)
         var decodedLanguages = Set<SourceLanguage>()
@@ -629,13 +635,13 @@ extension LinkDestinationSummary {
                 guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
                     throw DecodingError.dataCorruptedError(forKey: .availableLanguages, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
                 }
-                decodedLanguages.insert( foundLanguage )
+                decodedLanguages.insert(foundLanguage)
             } catch DecodingError.typeMismatch {
-                decodedLanguages.insert( try languagesContainer.decode(SourceLanguage.self) )
+                decodedLanguages.insert(try languagesContainer.decode(SourceLanguage.self))
             }
         }
         availableLanguages = decodedLanguages
-        
+
         platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
         plainTextDeclaration = try container.decodeIfPresent(String.self, forKey: .plainTextDeclaration)
@@ -646,10 +652,10 @@ extension LinkDestinationSummary {
         references = try container.decodeIfPresent([CodableRenderReference].self, forKey: .references).map { decodedReferences in
             decodedReferences.map(\.reference)
         }
-        
+
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
     }
-    
+
     // swift-format-ignore
     private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
         guard decodedURL.isAbsoluteWebURL,
@@ -658,18 +664,18 @@ extension LinkDestinationSummary {
             // If the decoded URL isn't an absolute web URL that's valid according to RFC 3986, then treat it as relative.
             return (relative: decodedURL, absolute: nil)
         }
-        
+
         // Remove the scheme, user, port, and host to create a relative URL.
         components.scheme = nil
         components.user   = nil
         components.host   = nil
         components.port   = nil
-            
+
         guard let relativeURL = components.url else {
             // If we can't create a relative URL that's valid according to RFC 3986, then treat the original as relative.
             return (relative: decodedURL, absolute: nil)
         }
-        
+
         return (relative: relativeURL, absolute: decodedURL)
     }
 }
@@ -681,7 +687,7 @@ extension LinkDestinationSummary.Variant {
         case declarationFragments = "fragments"
         case navigatorDeclarationFragments = "navigatorFragments"
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(traits, forKey: .traits)
@@ -707,11 +713,11 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(navigatorDeclarationFragments, forKey: .navigatorDeclarationFragments)
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         traits = try container.decode([RenderNode.Variant.Trait].self, forKey: .traits)
-        
+
         if container.contains(.kind) {
             // The kind can either be a known identifier or a full structure
             do {
@@ -726,7 +732,7 @@ extension LinkDestinationSummary.Variant {
         } else {
             kind = nil
         }
-        
+
         if container.contains(.language) {
             // Language can either be an identifier of a known language or a full structure
             do {
@@ -747,7 +753,8 @@ extension LinkDestinationSummary.Variant {
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         plainTextDeclaration = try container.decodeIfPresent(String?.self, forKey: .plainTextDeclaration)
         subheadingDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
-        navigatorDeclarationFragments = try container
+        navigatorDeclarationFragments =
+            try container
             .decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)
     }
 }
@@ -762,7 +769,7 @@ extension LinkDestinationSummary {
         // If those are different the other data-like properties would also be different.
         guard lhs.referenceURL == rhs.referenceURL else { return false }
         guard lhs.usr == rhs.usr else { return false }
-        
+
         // Compare the data-like properties in the order that they are declared (above).
         guard lhs.kind == rhs.kind else { return false }
         guard lhs.language == rhs.language else { return false }
@@ -778,7 +785,7 @@ extension LinkDestinationSummary {
         guard lhs.redirects == rhs.redirects else { return false }
         guard lhs.topicImages == rhs.topicImages else { return false }
         guard lhs.variants == rhs.variants else { return false }
-        
+
         // Since `RenderReference` doesn't conform to Equatable, the `references` need to be compared manually.
         // There's a known number of render references types for the various `RenderReferenceType` cases.
         guard lhs.references?.count == rhs.references?.count else { return false }
@@ -787,45 +794,45 @@ extension LinkDestinationSummary {
             case let (lhsImageRef, rhsImageRef) as (ImageReference, ImageReference):
                 guard lhsImageRef == rhsImageRef else { return false }
                 continue
-                
+
             case let (lhsVideoRef, rhsVideoRef) as (VideoReference, VideoReference):
                 guard lhsVideoRef == rhsVideoRef else { return false }
                 continue
-                
+
             case let (lhsFileRef, rhsFileRef) as (FileReference, FileReference):
                 guard lhsFileRef == rhsFileRef else { return false }
                 continue
-                
+
             case let (lhsFileTypeRef, rhsFileTypeRef) as (FileTypeReference, FileTypeReference):
                 guard lhsFileTypeRef == rhsFileTypeRef else { return false }
                 continue
-                
+
             case let (lhsXcodeRequirementRef, rhsXcodeRequirementRef) as (XcodeRequirementReference, XcodeRequirementReference):
                 guard lhsXcodeRequirementRef == rhsXcodeRequirementRef else { return false }
                 continue
-                
+
             // This case covers both `topic` and `section` render references. See CodableRenderReference.
             case let (lhsTopicRef, rhsTopicRef) as (TopicRenderReference, TopicRenderReference):
                 guard lhsTopicRef == rhsTopicRef else { return false }
                 continue
-                
+
             case let (lhsDownloadRef, rhsDownloadRef) as (DownloadReference, DownloadReference):
                 guard lhsDownloadRef == rhsDownloadRef else { return false }
                 continue
-                    
+
             case let (lhsLinkRef, rhsLinkRef) as (LinkReference, LinkReference):
                 guard lhsLinkRef == rhsLinkRef else { return false }
                 continue
-                
+
             case let (lhsUnresolvedRef, rhsUnresolvedRef) as (UnresolvedRenderReference, UnresolvedRenderReference):
                 guard lhsUnresolvedRef == rhsUnresolvedRef else { return false }
                 continue
-                
+
             default:
                 return false
             }
         }
-        
+
         return true
     }
 }
@@ -853,8 +860,9 @@ private extension DocumentationNode {
         // This ensures that linkable entities have the same kind detection logic as the rendering system,
         // fixing cross-framework references where API Collections were incorrectly showing as articles.
         if baseKind == .article,
-           let article = semantic as? Article,
-           DocumentationContentRenderer.roleForArticle(article, nodeKind: kind) == .collectionGroup {
+            let article = semantic as? Article,
+            DocumentationContentRenderer.roleForArticle(article, nodeKind: kind) == .collectionGroup
+        {
             return .collectionGroup
         }
 

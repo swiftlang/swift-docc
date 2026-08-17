@@ -22,7 +22,7 @@ extension DocumentationContext {
         ///
         /// If a reference is found, ``valuesByReference``  will also have a value for that reference because ``add(_:reference:symbolID:)`` is the only place that writes to this lookup and it always adds the reference-value pair to ``valuesByReference``.
         private(set) var referencesBySymbolID = [String: ResolvedTopicReference]()
-        
+
         /// Accesses the value for a given reference.
         /// - Parameter reference: The reference to find in the cache.
         subscript(reference: ResolvedTopicReference) -> Value? {
@@ -30,7 +30,7 @@ extension DocumentationContext {
             _read { yield valuesByReference[reference] }
             _modify { yield &valuesByReference[reference] }
         }
-        
+
         /// Adds a value to the cache for a given reference _and_ symbol ID.
         /// - Parameters:
         ///   - value: The value to add to the cache.
@@ -40,20 +40,20 @@ extension DocumentationContext {
             referencesBySymbolID[symbolID] = reference
             valuesByReference[reference] = value
         }
-        
+
         /// Accesses the reference for a given symbol ID.
         /// - Parameter symbolID: The symbol ID to find in the cache.
         func reference(symbolID: String) -> ResolvedTopicReference? {
             referencesBySymbolID[symbolID]
         }
-        
+
         /// Accesses the value for a given symbol ID.
         /// - Parameter symbolID: The symbol ID to find in the cache.
         subscript(symbolID: String) -> Value? {
             // Avoid copying the values if possible
             _read { yield referencesBySymbolID[symbolID].map { valuesByReference[$0]! } }
         }
-        
+
         /// Reserves enough space to store the specified number of values and symbol IDs.
         ///
         /// If you are adding a known number of values pairs to a cache, use this method to avoid multiple reallocations.
@@ -64,15 +64,15 @@ extension DocumentationContext {
         mutating func reserveCapacity(_ minimumCapacity: Int) {
             valuesByReference.reserveCapacity(minimumCapacity)
             // The only place that currently calls expects reserve the same capacity for both stored properties.
-            // This is because symbols are 
+            // This is because symbols are
             referencesBySymbolID.reserveCapacity(minimumCapacity)
         }
-        
+
         /// Returns a list of all the references in the cache.
         var allReferences: some Collection<ResolvedTopicReference> {
             return valuesByReference.keys
         }
-        
+
         /// Returns a list of all the references in the cache.
         var symbolReferences: some Collection<ResolvedTopicReference> {
             return referencesBySymbolID.values
@@ -85,23 +85,23 @@ extension DocumentationContext.ContentCache: Collection {
     typealias Wrapped = [ResolvedTopicReference: Value]
     typealias Index = Wrapped.Index
     typealias Element = Wrapped.Element
-    
+
     func makeIterator() -> Wrapped.Iterator {
         valuesByReference.makeIterator()
     }
-    
+
     var startIndex: Wrapped.Index {
         valuesByReference.startIndex
     }
-    
+
     var endIndex: Wrapped.Index {
         valuesByReference.endIndex
     }
-    
+
     func index(after i: Wrapped.Index) -> Wrapped.Index {
         valuesByReference.index(after: i)
     }
-    
+
     subscript(position: Wrapped.Index) -> Wrapped.Element {
         _read { yield valuesByReference[position] }
     }

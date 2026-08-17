@@ -19,7 +19,7 @@ public struct CodeExample: Codable, Equatable {
         /// A list of code lines.
         let code: [String]
     }
-    
+
     /// An optional type for the example.
     public let type: String?
     /// An optional source language for syntax highlighting.

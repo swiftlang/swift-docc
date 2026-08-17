@@ -13,21 +13,21 @@ import Markdown
 @testable import SwiftDocC
 
 class SeeAlsoInTopicsHeadingCheckerTests: XCTestCase {
-    
+
     func testSeeAlsoInTopics() throws {
         let source = """
-# Title
-Abstract
+            # Title
+            Abstract
 
-## Topics
-An overview
+            ## Topics
+            An overview
 
-### Discussion
-A discussion
+            ### Discussion
+            A discussion
 
-### See Also
-- ``RelatedSymbol``
-"""
+            ### See Also
+            - ``RelatedSymbol``
+            """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         var checker = SeeAlsoInTopicsHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null"))
         checker.visit(document)
@@ -44,7 +44,7 @@ A discussion
 
         let solutions = diagnostic.solutions
         XCTAssertEqual(solutions.count, 2)
-        
+
         let levelSolution = solutions[0]
         let levelReplacements = levelSolution.replacements
         XCTAssertEqual(levelReplacements.count, 1)
@@ -55,7 +55,7 @@ A discussion
         XCTAssertEqual(levelReplacementRange.lowerBound.column, 1)
         XCTAssertEqual(levelReplacementRange.upperBound.line, 10)
         XCTAssertEqual(levelReplacementRange.upperBound.column, 13)
-        
+
         let nameSolution = solutions[1]
         let nameReplacements = nameSolution.replacements
         XCTAssertEqual(nameReplacements.count, 1)

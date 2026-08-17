@@ -22,7 +22,7 @@ public struct RenderReferenceStore: Codable {
     public var topics: [ResolvedTopicReference: TopicContent]
     /// The assets in the store.
     public var assets: [AssetReference: DataAsset]
-    
+
     /// Creates a new render reference store given resolved topics and their reference information.
     public init(
         topics: [ResolvedTopicReference: TopicContent] = [:],
@@ -31,12 +31,12 @@ public struct RenderReferenceStore: Codable {
         self.topics = topics
         self.assets = assets
     }
-    
+
     /// Returns render reference information for the given topic.
     public func content(for topic: ResolvedTopicReference) -> TopicContent? {
         topics[topic]
     }
-    
+
     /// Returns asset information for the given asset name.
     public func content(forAssetNamed assetName: String, bundleID: DocumentationBundle.Identifier) -> DataAsset? {
         assets[AssetReference(assetName: assetName, bundleID: bundleID)]
@@ -58,11 +58,11 @@ public extension RenderReferenceStore {
         public let source: URL?
         /// Whether the topic is a documentation extension.
         public let isDocumentationExtensionContent: Bool
-        
+
         private enum CodingKeys: CodingKey {
             case renderReference, canonicalPath, taskGroups, source, isDocumentationExtensionContent, renderReferenceDependencies
         }
-        
+
         /// Creates a new content value given a render reference, canonical path, and task group information.
         /// - Parameters:
         ///   - renderReference: The topic render reference.
@@ -86,26 +86,27 @@ public extension RenderReferenceStore {
             self.isDocumentationExtensionContent = isDocumentationExtensionContent
             self.renderReferenceDependencies = renderReferenceDependencies
         }
-        
+
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            
+
             renderReference = try container.decode(
-                CodableRenderReference.self, forKey: .renderReference).reference
-            
+                CodableRenderReference.self, forKey: .renderReference
+            ).reference
+
             canonicalPath = try container.decodeIfPresent(
                 [ResolvedTopicReference].self, forKey: .canonicalPath)
-            
+
             taskGroups = try container.decodeIfPresent(
                 [DocumentationContentRenderer.ReferenceGroup].self, forKey: .taskGroups)
-            
+
             source = try container.decodeIfPresent(URL.self, forKey: .source)
-            
+
             isDocumentationExtensionContent = try container.decode(Bool.self, forKey: .isDocumentationExtensionContent)
-            
+
             renderReferenceDependencies = try container.decodeIfPresent(RenderReferenceDependencies.self, forKey: .renderReferenceDependencies) ?? RenderReferenceDependencies()
         }
-        
+
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(CodableRenderReference(renderReference), forKey: .renderReference)

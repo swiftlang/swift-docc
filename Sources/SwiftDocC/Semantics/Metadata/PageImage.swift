@@ -30,11 +30,11 @@ public import Markdown
 public final class PageImage: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
-    
+
     /// The image's purpose.
     @DirectiveArgumentWrapped
     public private(set) var purpose: Purpose
-    
+
     /// The base file name of an image in your documentation catalog.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
@@ -42,27 +42,27 @@ public final class PageImage: Semantic, AutomaticDirectiveConvertible {
         }
     )
     public private(set) var source: ResourceReference
-    
+
     /// Alternative text that describes the image to screen readers.
     @DirectiveArgumentWrapped
     public private(set) var alt: String? = nil
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "purpose"   : \PageImage._purpose,
         "source"    : \PageImage._source,
         "alt"       : \PageImage._alt,
     ]
-    
+
     /// The name of the display style for this image.
     public enum Purpose: String, CaseIterable, DirectiveArgumentValueConvertible {
         /// The image will be used when representing the page as an icon, such as in the navigation sidebar.
         case icon
-        
+
         /// The image will be used when representing the page as a card, such as in grid styled Topics sections.
         case card
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup

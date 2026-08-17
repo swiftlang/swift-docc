@@ -20,13 +20,13 @@ class IndexActionTests: XCTestCase {
     func testIndexActionOutputIsDeterministic() async throws {
         // Convert a test bundle as input for the IndexAction
         let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        
+
         let targetURL = try createTemporaryDirectory()
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
-        
+
         let targetBundleURL = targetURL.appendingPathComponent("Result.builtdocs")
-        
+
         let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
@@ -38,18 +38,18 @@ class IndexActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory()
         )
         _ = try await action.perform(logHandle: .none)
-        
+
         let bundleIdentifier = "org.swift.docc.example"
-        
+
         // Repeatedly index the same bundle and verify that the result is the same every time.
-        
+
         var resultIndexDumps = Set<String>()
-        
+
         for iteration in 1...10 {
             let indexURL = targetURL.appendingPathComponent("index_\(iteration)")
-            
+
             let engine = DiagnosticEngine(filterLevel: .warning)
-            
+
             let indexAction = IndexAction(
                 archiveURL: targetBundleURL,
                 outputURL: indexURL,
@@ -57,19 +57,19 @@ class IndexActionTests: XCTestCase {
                 diagnosticEngine: engine
             )
             _ = try await indexAction.perform(logHandle: .none)
-            
+
             let index = try NavigatorIndex.readNavigatorIndex(url: indexURL)
-            
+
             resultIndexDumps.insert(index.navigatorTree.root.dumpTree())
             XCTAssert(engine.diagnostics.isEmpty, "Unexpected problems:\n\(engine.diagnostics.map(\.summary).joined(separator: "\n"))")
             XCTAssertTrue(engine.diagnostics.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
         }
-        
+
         // All dumps should be the same, so there should only be one unique index dump
         XCTAssertEqual(resultIndexDumps.count, 1)
     }
     #endif
-    
+
     func testIndexActionOutputContainsInterfaceLanguageContent() async throws {
         // Convert a test bundle as input for the IndexAction
         let bundleURL = Bundle.module.url(

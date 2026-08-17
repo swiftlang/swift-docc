@@ -19,16 +19,16 @@ public struct VersionTriplet: Equatable, Comparable {
         if lhs.major != rhs.major { return lhs.major < rhs.major }
         if lhs.minor != rhs.minor { return lhs.minor < rhs.minor }
         if lhs.patch != rhs.patch { return lhs.patch < rhs.patch }
-        return false // The version are equal
+        return false  // The version are equal
     }
-    
+
     /// The major component, for example, "1" in "1.2.3".
     let major: Int
     /// The minor component, for example, "2" in "1.2.3".
     let minor: Int
     /// The patch component, for example, "3" in "1.2.3".
     let patch: Int
-    
+
     /// Creates a new version triplet with the given major, minor, and patch components.
     /// - Parameters:
     ///   - major: The major component.
@@ -52,7 +52,7 @@ public struct PlatformVersion: Equatable {
     public let version: VersionTriplet
     /// If `true`, this is a beta version.
     public let beta: Bool
-    
+
     /// Creates a new version and beta pair for a platform.
     /// - Parameters:
     ///   - version: The version number for the platform.
@@ -70,13 +70,13 @@ public struct ExternalMetadata {
     /// If the version that a symbol was introduced for a given platform (as indicated by the availability information in the symbol graph file) matches the
     /// current version for that platform (as indicated by this metadata) and the current version is in beta, then that symbol is also considered in beta.
     public var currentPlatforms: [String: PlatformVersion]?
-    
+
     /// If `true`, inherited symbols retain their original docs.
     public var inheritDocs = false
 
     /// If `true`, there is no source bundle on disk and the inputs were passed via command line parameters.
     public var isGeneratedBundle = false
-    
+
     /// The granularity of diagnostics to emit via the engine.
     public var diagnosticLevel: DiagnosticSeverity = .warning
 }

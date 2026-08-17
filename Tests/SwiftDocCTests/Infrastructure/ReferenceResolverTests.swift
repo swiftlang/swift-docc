@@ -18,37 +18,37 @@ import DocCTestUtilities
 class ReferenceResolverTests: XCTestCase {
     func testResolvesMediaForIntro() async throws {
         let source = """
-@Intro(
-       title: x) {
-   
-   @Image(source: missingimage.png, alt: missing)
-}
-"""
+            @Intro(
+                   title: x) {
+               
+               @Image(source: missingimage.png, alt: missing)
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
         var diagnostics = [Diagnostic]()
         let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)!
-        
+
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitIntro(intro)
         XCTAssertEqual(resolver.diagnostics.count, 1)
     }
-    
+
     func testResolvesMediaForContentAndMedia() async throws {
         let source = """
-@ContentAndMedia {
-   Blah blah.
+            @ContentAndMedia {
+               Blah blah.
 
-   @Image(source: missing.png)
-}
-"""
+               @Image(source: missing.png)
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
         var diagnostics = [Diagnostic]()
         let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)!
-        
+
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visit(contentAndMedia)
         XCTAssertEqual(resolver.diagnostics.count, 1)
@@ -56,28 +56,29 @@ class ReferenceResolverTests: XCTestCase {
 
     func testResolvesExternalLinks() async throws {
         let source = """
-    @Intro(title: "Technology X") {
-       Info at: <https://www.wikipedia.org>.
-    }
-    """
+            @Intro(title: "Technology X") {
+               Info at: <https://www.wikipedia.org>.
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
         var diagnostics = [Diagnostic]()
         let intro = Intro(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)!
-        
+
         var resolver = ReferenceResolver(context: context)
-        
+
         guard let container = resolver.visit(intro).children.first as? MarkupContainer,
-              let firstElement = container.elements.first,
-              firstElement.childCount > 2 else {
-                XCTFail("Unexpected markup result")
-                return
+            let firstElement = container.elements.first,
+            firstElement.childCount > 2
+        else {
+            XCTFail("Unexpected markup result")
+            return
         }
-        
+
         XCTAssertEqual((firstElement.child(at: 1) as? Link)?.destination, "https://www.wikipedia.org")
     }
-    
+
     // Tests all reference syntax formats to a child symbol
     func testReferencesToChildFromFramework() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
@@ -100,12 +101,12 @@ class ReferenceResolverTests: XCTestCase {
 
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify resolved links
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 9)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.allSatisfy { $0 == "doc://org.swift.docc.example/documentation/SideKit/SideClass" }, true)
@@ -126,17 +127,17 @@ class ReferenceResolverTests: XCTestCase {
             - ``/documentation/SideKit/SideClass/myFunction()``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify resolved links
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.allSatisfy { $0 == "doc://org.swift.docc.example/documentation/SideKit/SideClass/myFunction()" }, true)
     }
-    
+
     // Test references to a sibling symbol
     func testReferencesToSiblingFromFramework() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
@@ -152,12 +153,12 @@ class ReferenceResolverTests: XCTestCase {
             - ``/documentation/SideKit/SideClass/path``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify resolved links
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.allSatisfy { $0 == "doc://org.swift.docc.example/documentation/SideKit/SideClass/path" }, true)
@@ -178,12 +179,12 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:/Test-Bundle/TestTutorial>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify resolved links
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.allSatisfy { $0 == "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial" }, true)
@@ -203,12 +204,12 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:/tutorials/TestOverview>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify resolved links
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 3)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.allSatisfy { $0 == "doc://org.swift.docc.example/tutorials/TestOverview" }, true)
@@ -229,24 +230,24 @@ class ReferenceResolverTests: XCTestCase {
             - <https://www.example.com/MyKit>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify resolved links
         let discussion = renderNode.primaryContentSections.mapFirst { section in
             return section as? ContentRenderSection
         }!
-        
+
         let items = discussion.content.mapFirst(where: { block -> [RenderBlockContent.ListItem]? in
             guard case RenderBlockContent.unorderedList(let l) = block else {
                 return nil
             }
             return l.items
         })!
-        
+
         let inlineItems = items.compactMap { listItem in
             return listItem.content.mapFirst { block -> RenderInlineContent? in
                 guard case RenderBlockContent.paragraph(let p) = block else {
@@ -255,27 +256,28 @@ class ReferenceResolverTests: XCTestCase {
                 return p.inlineContent.first
             }
         }
-        
+
         guard inlineItems.count == 5 else {
             XCTFail("Expected to convert all links but not found the same amount")
             return
         }
-        
+
         XCTAssertEqual(inlineItems[0], .text("doc://blip_blop/documentation/MyKit"))
-        
+
         if case let .reference(referenceIdentifier, _, _, _) = inlineItems[1] {
             XCTAssertEqual((renderNode.references[referenceIdentifier.identifier] as? LinkReference)?.url, "blip://blip_blop/documentation/MyKit")
         } else {
             XCTFail("The unknown blip:// link should have been converted to a `LinkReference`.")
         }
-        
+
         do {
             guard case RenderInlineContent.reference(identifier: let refID, _, let overridingTitle, let overridingTitleInlineContent) = inlineItems[2],
-            let reference = renderNode.references[refID.identifier] as? LinkReference else {
+                let reference = renderNode.references[refID.identifier] as? LinkReference
+            else {
                 XCTFail("[Example](https://www.example.com) wasn't converted to a reference")
                 return
             }
-            
+
             XCTAssertEqual(reference.title, "Example")
             XCTAssertEqual(reference.titleInlineContent, [.text("Example")])
             XCTAssertEqual(reference.url, "https://www.example.com")
@@ -285,71 +287,84 @@ class ReferenceResolverTests: XCTestCase {
 
         do {
             guard case RenderInlineContent.reference(identifier: let refID, _, let overridingTitle, let overridingTitleInlineContent) = inlineItems[3],
-            let reference = renderNode.references[refID.identifier] as? LinkReference else {
+                let reference = renderNode.references[refID.identifier] as? LinkReference
+            else {
                 XCTFail("[https://www.example.com](https://www.example.com) wasn't converted to a reference")
                 return
             }
-            
+
             XCTAssertEqual(overridingTitle, "https://www.example.com")
             XCTAssertEqual(overridingTitleInlineContent, [.text("https://www.example.com")])
             XCTAssertEqual(reference.url, "https://www.example.com")
         }
-        
+
         do {
             guard case RenderInlineContent.reference(identifier: let refID, _, _, _) = inlineItems[4],
-            let reference = renderNode.references[refID.identifier] as? LinkReference else {
+                let reference = renderNode.references[refID.identifier] as? LinkReference
+            else {
                 XCTFail("[https://www.example.com/MyKit](https://www.example.com/MyKit) wasn't converted to a reference")
                 return
             }
-            
+
             XCTAssertEqual(reference.title, "https://www.example.com/MyKit")
             XCTAssertEqual(reference.titleInlineContent, [.text("https://www.example.com/MyKit")])
             XCTAssertEqual(reference.url, "https://www.example.com/MyKit")
         }
     }
-    
+
     func testWarningsAboutArticleNotInDocumentationHierarchy() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            // This setup is not supported and only happens if the developer manually mixes symbol inputs from different builds.
-            JSONFile(name: "FirstModuleName.symbols.json", content: makeSymbolGraph(moduleName: "FirstModuleName")),
-            JSONFile(name: "SecondModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SecondModuleName")),
-            
-            TextFile(name: "FirstModule.md", utf8Content:"""
-            # ``FirstModuleName``
-            
-            Referencing an article not in the documentation hierarchy raises a warning: <doc:UncuratedArticle>
-            """),
-            
-            TextFile(name: "UncuratedArticle.md", utf8Content:"""
-            # Unregistered and Uncurated Article
-            
-            This article isn't automatically curated or registered in the topic graph.
-            
-            Its references aren't resolved, so this won't raise a warning: <doc:NotFoundThatWillNotWarn>
-            """),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                // This setup is not supported and only happens if the developer manually mixes symbol inputs from different builds.
+                JSONFile(name: "FirstModuleName.symbols.json", content: makeSymbolGraph(moduleName: "FirstModuleName")),
+                JSONFile(name: "SecondModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SecondModuleName")),
+
+                TextFile(
+                    name: "FirstModule.md",
+                    utf8Content: """
+                        # ``FirstModuleName``
+
+                        Referencing an article not in the documentation hierarchy raises a warning: <doc:UncuratedArticle>
+                        """),
+
+                TextFile(
+                    name: "UncuratedArticle.md",
+                    utf8Content: """
+                        # Unregistered and Uncurated Article
+
+                        This article isn't automatically curated or registered in the topic graph.
+
+                        Its references aren't resolved, so this won't raise a warning: <doc:NotFoundThatWillNotWarn>
+                        """),
+            ])
         let (_, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
-        
+
         let diagnostics = context.diagnostics.sorted(by: { $0.source?.lastPathComponent ?? "" < $1.source?.lastPathComponent ?? "" })
-        XCTAssertEqual(diagnostics.map(\.identifier), ["MultipleModules", "UnfindableArticle", "ArticleNotInDocumentationHierarchy"],
-                       "Encountered unexpected diagnostics: \(context.diagnostics.map(\.summary))")
-        
+        XCTAssertEqual(
+            diagnostics.map(\.identifier), ["MultipleModules", "UnfindableArticle", "ArticleNotInDocumentationHierarchy"],
+            "Encountered unexpected diagnostics: \(context.diagnostics.map(\.summary))")
+
         do {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst().first)
             XCTAssertEqual(diagnostic.source?.lastPathComponent, "FirstModule.md")
             XCTAssertEqual(diagnostic.summary, "Article is not findable in invalid documentation hierarchy with 2 roots")
-            XCTAssertEqual(diagnostic.explanation, """
+            XCTAssertEqual(
+                diagnostic.explanation,
+                """
                 Documentation with 2 roots ('FirstModuleName' and 'SecondModuleName') has a disjoint and unsupported documentation hierarchy.
                 Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
                 As a consequence, the 'Unregistered and Uncurated Article' article (UncuratedArticle.md) is not findable and has no page in the output.
                 """)
         }
-        
+
         do {
             let diagnostic = try XCTUnwrap(diagnostics.last)
             XCTAssertEqual(diagnostic.source?.lastPathComponent, "UncuratedArticle.md")
             XCTAssertEqual(diagnostic.summary, "Article 'UncuratedArticle.md' has no default location in invalid documentation hierarchy with 2 roots")
-            XCTAssertEqual(diagnostic.explanation, """
+            XCTAssertEqual(
+                diagnostic.explanation,
+                """
                 A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
                 Documentation with 2 roots ('FirstModuleName' and 'SecondModuleName') has a disjoint and unsupported documentation hierarchy.
                 Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
@@ -357,61 +372,61 @@ class ReferenceResolverTests: XCTestCase {
                 """)
         }
     }
-    
+
     func testRelativeReferencesToExtensionSymbols() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
             // We don't want the external target to be part of the archive as that is not
             // officially supported yet.
             try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))
-            
+
             try """
             # ``BundleWithRelativePathAmbiguity/Dependency``
 
             ## Overview
-            
+
             ### Module Scope Links
-            
+
             - ``BundleWithRelativePathAmbiguity/Dependency``
             - ``BundleWithRelativePathAmbiguity/Dependency/AmbiguousType``
             - ``BundleWithRelativePathAmbiguity/Dependency/AmbiguousType/foo()``
-            
+
             ### Extended Module Scope Links
-            
+
             - ``Dependency``
             - ``Dependency/AmbiguousType``
             - ``Dependency/AmbiguousType/foo()``
-            
+
             ### Local Scope Links
-            
+
             - ``Dependency``
             - ``AmbiguousType``
             - ``AmbiguousType/foo()``
             """.write(to: root.appendingPathComponent("Article.md"), atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         let content = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection).content
-        
+
         let expectedReferences = [
             "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency",
             "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType",
             "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType/foo()",
         ]
-        
+
         let sectionContents = [
             content.contents(of: "Module Scope Links"),
             content.contents(of: "Extended Module Scope Links"),
             content.contents(of: "Local Scope Links"),
         ]
-        
+
         let sectionReferences = try sectionContents.map { sectionContent in
             try sectionContent.listItems().map { item in try XCTUnwrap(item.firstReference(), "found no reference for \(item)") }
         }
-            
+
         for resolvedReferencesOfSection in sectionReferences {
             for (resolved, expected) in zip(resolvedReferencesOfSection, expectedReferences) {
                 XCTAssertEqual(resolved.identifier, expected)
@@ -428,9 +443,11 @@ class ReferenceResolverTests: XCTestCase {
 
         // The only children of the root topic should be the `MyNamespace` enum - i.e. the Swift
         // "Extended Module" page and its Array "Extended Structure" page should be removed.
-        XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
-            "doc://org.swift.docc.example/documentation/ModuleWithSingleExtension/MyNamespace"
-        ])
+        XCTAssertEqual(
+            renderNode.topicSections.first?.identifiers,
+            [
+                "doc://org.swift.docc.example/documentation/ModuleWithSingleExtension/MyNamespace"
+            ])
 
         // Make sure that the symbol added in the extension is still present in the topic graph,
         // even though its synthetic "extended symbol" parents are not
@@ -450,7 +467,7 @@ class ReferenceResolverTests: XCTestCase {
         }
 
         // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
-        let diagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
+        let diagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination" }))
         XCTAssertEqual(diagnostic.solutions.count, 1)
         let solution = try XCTUnwrap(diagnostic.solutions.first)
         XCTAssertEqual(solution.replacements.count, 1)
@@ -470,11 +487,13 @@ class ReferenceResolverTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
-        XCTAssertEqual(renderNode.abstract, [
-            .text("This is a test module with an extension to "),
-            .codeVoice(code: "Swift/Array"),
-            .text(".")
-        ])
+        XCTAssertEqual(
+            renderNode.abstract,
+            [
+                .text("This is a test module with an extension to "),
+                .codeVoice(code: "Swift/Array"),
+                .text(".")
+            ])
     }
 
     func testCuratedExtensionWithDanglingReferenceToFragment() async throws {
@@ -561,16 +580,16 @@ class ReferenceResolverTests: XCTestCase {
         // the resulting documentation should be empty
         XCTAssertEqual(renderNode.topicSections.count, 0)
     }
-    
+
     func testUnresolvedTutorialReferenceIsWarning() async throws {
         let source = """
-@Chapter(name: "SwiftUI Essentials") {
+            @Chapter(name: "SwiftUI Essentials") {
 
-  Learn how to use SwiftUI to compose rich views out of simple ones.
+              Learn how to use SwiftUI to compose rich views out of simple ones.
 
-  @TutorialReference(tutorial: "doc:does-not-exist")
-}
-"""
+              @TutorialReference(tutorial: "doc:does-not-exist")
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (_, context) = try await testBundleAndContext()
@@ -583,27 +602,27 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(resolver.diagnostics.count, 1)
         XCTAssertEqual(resolver.diagnostics.filter({ $0.severity == .warning }).count, 1)
     }
-    
+
     func testResolvesArticleContent() async throws {
         let source = """
-        # An Article
-        
-        Abstract link to ``MyKit``.
-        
-        Discussion link to ``SideKit``.
-        """
-        
+            # An Article
+
+            Abstract link to ``MyKit``.
+
+            Discussion link to ``SideKit``.
+            """
+
         let (_, context) = try await testBundleAndContext()
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
-        
+
         var resolver = ReferenceResolver(context: context)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)
         let abstractSection = try XCTUnwrap(resolvedArticle.abstractSection)
-        
+
         // Check abstract for unresolved links
         var foundSymbolAbstractLink = false
-        for index in 0 ..< abstractSection.paragraph.childCount {
+        for index in 0..<abstractSection.paragraph.childCount {
             if let link = abstractSection.paragraph.child(at: index) as? SymbolLink, let destination = link.destination {
                 XCTAssertNotNil(URL(string: destination))
                 foundSymbolAbstractLink = true
@@ -615,7 +634,7 @@ class ReferenceResolverTests: XCTestCase {
 
         // Check discussion for unresolved links
         var foundSymbolDiscussionLink = false
-        for index in 0 ..< discussion.childCount {
+        for index in 0..<discussion.childCount {
             if let link = discussion.child(at: index) as? SymbolLink, let destination = link.destination {
                 XCTAssertNotNil(URL(string: destination))
                 foundSymbolDiscussionLink = true
@@ -623,14 +642,14 @@ class ReferenceResolverTests: XCTestCase {
         }
         XCTAssertTrue(foundSymbolDiscussionLink)
     }
-    
+
     func testForwardsSymbolPropertiesThatAreUnmodifiedDuringLinkResolution() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        
+
         var resolver = ReferenceResolver(context: context)
-        
+
         let symbol = try XCTUnwrap(context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
-        
+
         /// Verifies the given assertion on a variants property of the given symbols.
         func assertSymbolVariants<Variant>(
             _ symbol1: Symbol,
@@ -642,13 +661,13 @@ class ReferenceResolverTests: XCTestCase {
         ) {
             let variants1Values = symbol1[keyPath: keyPath].allValues
             let variants2Values = symbol2[keyPath: keyPath].allValues
-            
+
             XCTAssertEqual(
                 variants1Values.count, variants2Values.count,
                 "The two symbols have a different number of variants for the key path '\(keyPath)'.",
                 file: file, line: line
             )
-            
+
             for (variants1Value, variants2Value) in zip(variants1Values, variants2Values) {
                 XCTAssertEqual(
                     variants1Value.trait, variants2Value.trait,
@@ -658,7 +677,7 @@ class ReferenceResolverTests: XCTestCase {
                 assertion(variants1Value.variant, variants2Value.variant)
             }
         }
-        
+
         /// Populates the symbol with an Objective-C variant and returns an assertion that checks that another symbol
         /// has the same variants.
         func populateObjCVariantAndCreateAssertion<Variant>(
@@ -668,7 +687,7 @@ class ReferenceResolverTests: XCTestCase {
             line: UInt = #line
         ) -> ((_ resolvedSymbol: Symbol) -> Void) {
             symbol[keyPath: keyPath][.objectiveC] = symbol[keyPath: keyPath].firstValue
-            
+
             return { resolvedSymbol in
                 assertSymbolVariants(
                     symbol,
@@ -680,7 +699,7 @@ class ReferenceResolverTests: XCTestCase {
                 )
             }
         }
-        
+
         /// Populates the symbol with an Objective-C variant and returns an assertion that checks that another symbol
         /// has the same variants.
         ///
@@ -694,11 +713,11 @@ class ReferenceResolverTests: XCTestCase {
         ) -> ((_ resolvedSymbol: Symbol) -> Void) {
             populateObjCVariantAndCreateAssertion(keyPath: keyPath, assertion: assertion)
         }
-        
+
         let assertions = [
             // For variants properties that hold an Equatable value, populate the Objective-C variant and create
             // an assertion that verifies that the resolved symbol contains the same variants as the original symbol.
-            
+
             populateObjCVariantAndCreateAssertion(keyPath: \.kindVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.titleVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.subHeadingVariants),
@@ -709,10 +728,10 @@ class ReferenceResolverTests: XCTestCase {
             populateObjCVariantAndCreateAssertion(keyPath: \.externalIDVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.accessLevelVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.originVariants),
-            
+
             // Otherwise, for variants properties that don't a value that is Equatable, populate the Objective-C variant
             // and specify an assertion.
-            
+
             populateObjCVariantAndCreateAssertion(keyPath: \.availabilityVariants) { value1, value2 in
                 XCTAssertEqual(value1.availability.count, value2.availability.count)
             },
@@ -740,55 +759,64 @@ class ReferenceResolverTests: XCTestCase {
                 XCTAssertEqual(value1.map { $0.renderPositionPreference }, value2.map { $0.renderPositionPreference })
             },
         ]
-        
+
         let resolvedSymbol = try XCTUnwrap(resolver.visitSymbol(symbol) as? Symbol)
-        
+
         // Assert symbol variant values that are Equatable.
         for assertion in assertions {
             assertion(resolvedSymbol)
         }
     }
-    
+
     func testEmitsDiagnosticsForEachDocumentationChunk() async throws {
         let catalog = Folder(name: "SomeCatalog.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["Something"], docComment: """
-                Some description of this class
-                
-                These links to ``NotFoundSymbol`` and <doc:NotFoundArticle> won't resolve.
-                
-                This image name won't resolve: ![Some image that's not found](not-found-image)
-                """)
-            ]))
-            
-            TextFile(name: "Something.md", utf8Content: """
-            # ``Something``
-            
-            Continue the documentation for the "something" class.
-            
-            These other links to ``OtherNotFoundSymbol`` and <doc:OtherNotFoundArticle> also won't resolve.
-            
-            This other image name also won't resolve: ![Some other image that's not found](other-not-found-image)
-            """)
+            JSONFile(
+                symbolGraph: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(
+                            id: "some-symbol-id", kind: .class, pathComponents: ["Something"],
+                            docComment: """
+                                Some description of this class
+
+                                These links to ``NotFoundSymbol`` and <doc:NotFoundArticle> won't resolve.
+
+                                This image name won't resolve: ![Some image that's not found](not-found-image)
+                                """)
+                    ]))
+
+            TextFile(
+                name: "Something.md",
+                utf8Content: """
+                    # ``Something``
+
+                    Continue the documentation for the "something" class.
+
+                    These other links to ``OtherNotFoundSymbol`` and <doc:OtherNotFoundArticle> also won't resolve.
+
+                    This other image name also won't resolve: ![Some other image that's not found](other-not-found-image)
+                    """)
         }
         let (_, context) = try await loadBundle(catalog: catalog)
-        XCTAssertEqual(context.diagnostics.map(\.summary).sorted(), [
-            "'NotFoundArticle' doesn't exist at '/ModuleName/Something'",
-            "'NotFoundSymbol' doesn't exist at '/ModuleName/Something'",
-            "'OtherNotFoundArticle' doesn't exist at '/ModuleName/Something'",
-            "'OtherNotFoundSymbol' doesn't exist at '/ModuleName/Something'",
-            "Resource 'not-found-image' couldn't be found",
-            "Resource 'other-not-found-image' couldn't be found",
-        ])
+        XCTAssertEqual(
+            context.diagnostics.map(\.summary).sorted(),
+            [
+                "'NotFoundArticle' doesn't exist at '/ModuleName/Something'",
+                "'NotFoundSymbol' doesn't exist at '/ModuleName/Something'",
+                "'OtherNotFoundArticle' doesn't exist at '/ModuleName/Something'",
+                "'OtherNotFoundSymbol' doesn't exist at '/ModuleName/Something'",
+                "Resource 'not-found-image' couldn't be found",
+                "Resource 'other-not-found-image' couldn't be found",
+            ])
         let node = try XCTUnwrap(context.documentationCache["some-symbol-id"])
         XCTAssertEqual(node.docChunks.count, 2, "This node has content from both the in-source comment and the documentation extension file.")
-        
+
         var resolver = ReferenceResolver(context: context)
         _ = resolver.visitSymbol(node.semantic as! Symbol)
-        
+
         let diagnostics = resolver.diagnostics.sorted(by: \.summary)
         XCTAssertEqual(diagnostics.count, 6)
-        
+
         // These links to ``NotFoundSymbol`` and <doc:NotFoundArticle> won't resolve.
         do {
             let diagnostic = try XCTUnwrap(diagnostics.first)
@@ -810,7 +838,7 @@ class ReferenceResolverTests: XCTestCase {
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 18)
             XCTAssertEqual(diagnostic.range?.upperBound.column, 32)
         }
-        
+
         // These other links to ``OtherNotFoundSymbol`` and <doc:OtherNotFoundArticle> also won't resolve.
         do {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst(2).first)
@@ -830,7 +858,7 @@ class ReferenceResolverTests: XCTestCase {
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 24)
             XCTAssertEqual(diagnostic.range?.upperBound.column, 43)
         }
-        
+
         // This image name won't resolve: ![Some image that's not found](some-not-found-image)
         do {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst(4).first)
@@ -842,7 +870,7 @@ class ReferenceResolverTests: XCTestCase {
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 32)
             XCTAssertEqual(diagnostic.range?.upperBound.column, 79)
         }
-        
+
         // This other image name also won't resolve: ![Some other image that's not found](other-not-found-image)
         do {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst(5).first)
@@ -863,27 +891,32 @@ private extension DocumentationDataVariantsTrait {
 private extension Collection<RenderBlockContent> {
     func contents(of heading: String) -> Slice<Self> {
         var headingLevel: Int = 1
-        
-        guard let headingIndex = self.firstIndex(where: { element in
-            if case let .heading(value) = element {
-                headingLevel = value.level
-                return heading == value.text
-            }
-            return false
-        }) else {
+
+        guard
+            let headingIndex = self.firstIndex(where: { element in
+                if case let .heading(value) = element {
+                    headingLevel = value.level
+                    return heading == value.text
+                }
+                return false
+            })
+        else {
             return Slice(base: self, bounds: self.startIndex..<self.startIndex)
         }
-        
+
         let contentStart = self.index(after: headingIndex)
-        
-        return Slice(base: self, bounds: contentStart..<(self[contentStart...].firstIndex(where: { element in
-            if case let .heading(value) = element {
-                return value.level <= headingLevel
-            }
-            return false
-        }) ?? self.endIndex))
+
+        return Slice(
+            base: self,
+            bounds:
+                contentStart..<(self[contentStart...].firstIndex(where: { element in
+                    if case let .heading(value) = element {
+                        return value.level <= headingLevel
+                    }
+                    return false
+                }) ?? self.endIndex))
     }
-    
+
     func listItems() -> [RenderBlockContent.ListItem] {
         self.compactMap { block -> [RenderBlockContent.ListItem]? in
             if case let .unorderedList(value) = block {
@@ -900,12 +933,12 @@ private extension RenderBlockContent.ListItem {
             guard case let .paragraph(value) = block else {
                 return nil
             }
-            
+
             return value.inlineContent.compactMap { content in
                 guard case let .reference(identifier, _, _, _) = content else {
                     return nil
                 }
-                
+
                 return identifier
             }.first
         }.first

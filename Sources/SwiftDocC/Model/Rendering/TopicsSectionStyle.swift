@@ -13,17 +13,17 @@ extension RenderNode {
     public enum TopicsSectionStyle: String, Codable {
         /// A list of the page's topics, including their full declaration and abstract.
         case list
-        
+
         /// A grid of items based on the card image for each page.
         ///
         /// Includes each page’s title and card image but excludes their abstracts.
         case compactGrid
-        
+
         /// A grid of items based on the card image for each page.
         ///
         /// Unlike ``compactGrid``, this style includes the abstract for each page.
         case detailedGrid
-        
+
         /// Do not show child pages anywhere on the page.
         case hidden
     }

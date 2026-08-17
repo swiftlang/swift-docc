@@ -13,7 +13,7 @@ import Foundation
 /// An enum source node.
 class EnumNode: TypeNode {
     override class func keyword() -> String { return "enum" }
-    
+
     override func source() -> String {
         var result = super.source()
         let closingBracket = result.index(before: result.lastIndex(of: "}")!)

@@ -13,7 +13,7 @@ public import Markdown
 private import SymbolKit
 
 public struct PropertyListPossibleValuesSection {
-    
+
     /// A possible value.
     ///
     /// Documentation about a  possible value of a symbol.
@@ -27,7 +27,7 @@ public struct PropertyListPossibleValuesSection {
         var nameRange: SourceRange?
         /// The text range where this parameter was parsed.
         var range: SourceRange?
-        
+
         init(value: String, contents: [any Markup], nameRange: SourceRange? = nil, range: SourceRange? = nil) {
             self.value = value
             self.contents = contents
@@ -35,12 +35,12 @@ public struct PropertyListPossibleValuesSection {
             self.range = range
         }
     }
-    
+
     public static let title = "Possible Values"
-    
+
     /// The list of possible values.
     public let possibleValues: [PossibleValue]
-    
+
     enum Validator {
         /// Creates a new diagnostic about documentation for a possible value that's not known to that symbol.
         ///
@@ -59,35 +59,38 @@ public struct PropertyListPossibleValuesSection {
         ///   - knownPossibleValues: All known possible value names for that symbol.
         /// - Returns: A new diagnostic that suggests that the developer removes the documentation for the unknown possible value.
         static func makeExtraPossibleValueDiagnostic(_ unknownPossibleValue: PossibleValue, knownPossibleValues: Set<String>, symbolName: String) -> Diagnostic {
-            
+
             let source = unknownPossibleValue.range?.source
             let summary = """
-            \(unknownPossibleValue.value.singleQuoted) is not a known possible value for \(symbolName.singleQuoted).
-            """
+                \(unknownPossibleValue.value.singleQuoted) is not a known possible value for \(symbolName.singleQuoted).
+                """
             let identifier = "org.swift.docc.DocumentedPossibleValueNotFound"
             let solutionSummary = """
-            Remove \(unknownPossibleValue.value.singleQuoted) possible value documentation or replace it with a known value.
-            """
+                Remove \(unknownPossibleValue.value.singleQuoted) possible value documentation or replace it with a known value.
+                """
             let nearMisses = NearMiss.bestMatches(for: knownPossibleValues, against: unknownPossibleValue.value)
-            
+
             if nearMisses.isEmpty {
                 // If this possible value doesn't resemble any of this symbols possible values, suggest to remove it.
-                return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary, solutions: [
-                    Solution(
-                        summary: solutionSummary,
-                        replacements: unknownPossibleValue.range.map { [.init(range: $0, replacement: "")] } ?? []
-                    )
-                ])
+                return Diagnostic(
+                    source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary,
+                    solutions: [
+                        Solution(
+                            summary: solutionSummary,
+                            replacements: unknownPossibleValue.range.map { [.init(range: $0, replacement: "")] } ?? []
+                        )
+                    ])
             }
             // Otherwise, suggest to replace the documented possible value name with the one of the similarly named possible values.
-            return Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.nameRange, identifier: identifier, summary: summary, solutions: nearMisses.map { candidate in
-                Solution(
-                    summary: "Replace \(unknownPossibleValue.value.singleQuoted) with \(candidate.singleQuoted)",
-                    replacements: unknownPossibleValue.nameRange.map { [.init(range: $0, replacement: candidate)] } ?? []
-                )
-            })
+            return Diagnostic(
+                source: source, severity: .warning, range: unknownPossibleValue.nameRange, identifier: identifier, summary: summary,
+                solutions: nearMisses.map { candidate in
+                    Solution(
+                        summary: "Replace \(unknownPossibleValue.value.singleQuoted) with \(candidate.singleQuoted)",
+                        replacements: unknownPossibleValue.nameRange.map { [.init(range: $0, replacement: candidate)] } ?? []
+                    )
+                })
         }
     }
 
 }
-

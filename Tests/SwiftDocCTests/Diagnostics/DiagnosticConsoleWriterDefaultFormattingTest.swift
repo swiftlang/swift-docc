@@ -37,12 +37,14 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
             consumer.receive([diagnostic])
             try? consumer.flush()
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;31merror: \(summary)\u{001B}[0;0m [\(identifier)]
-            \(explanation)
-            \(expectedPath)
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \u{001B}[1;31merror: \(summary)\u{001B}[0;0m [\(identifier)]
+                \(explanation)
+                \(expectedPath)
+
+                """)
         }
 
         do {
@@ -51,12 +53,14 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
             consumer.receive([diagnostic])
             try? consumer.flush()
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
-            \(explanation)
-            \(expectedPath)
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+                \(explanation)
+                \(expectedPath)
+
+                """)
         }
 
         do {
@@ -65,12 +69,14 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
             consumer.receive([diagnostic])
             try? consumer.flush()
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;39mnote: \(summary)\u{001B}[0;0m [\(identifier)]
-            \(explanation)
-            \(expectedPath)
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \u{001B}[1;39mnote: \(summary)\u{001B}[0;0m [\(identifier)]
+                \(explanation)
+                \(expectedPath)
+
+                """)
         }
     }
 
@@ -87,14 +93,16 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
         consumer.receive([diagnostic])
         try? consumer.flush()
-        XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
-        \(explanation)
-        --> file.md:1:8-10:21
-        
-        """)
+        XCTAssertEqual(
+            logger.output,
+            """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+            \(explanation)
+            --> file.md:1:8-10:21
+
+            """)
     }
-    
+
     func testDisplaysGroupIdentifier() {
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
@@ -106,14 +114,16 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "test-identifier", groupIdentifier: "test-group-identifier", summary: summary, explanation: explanation)
         consumer.receive([diagnostic])
         try? consumer.flush()
-        XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-group-identifier]
-        \(explanation)
-        --> /path/to/file.md:1:8-10:21
-        
-        """)
+        XCTAssertEqual(
+            logger.output,
+            """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-group-identifier]
+            \(explanation)
+            --> /path/to/file.md:1:8-10:21
+
+            """)
     }
-    
+
     func testDoesNotDisplayNotYetModernizedIdentifier() {
         let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
@@ -125,12 +135,14 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
         consumer.receive([diagnostic])
         try? consumer.flush()
-        XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
-        \(explanation)
-        --> /path/to/file.md:1:8-10:21
-        
-        """)
+        XCTAssertEqual(
+            logger.output,
+            """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> /path/to/file.md:1:8-10:21
+
+            """)
     }
 
     func testDisplaysNotes() {
@@ -158,13 +170,15 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         consumer.receive([diagnostic])
         try? consumer.flush()
 
-        XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
-        \(explanation)
-        /path/to/other/file.md:1:1: This is a note
-        --> /path/to/file.md:1:8-10:21
-        
-        """)
+        XCTAssertEqual(
+            logger.output,
+            """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+            \(explanation)
+            /path/to/other/file.md:1:1: This is a note
+            --> /path/to/file.md:1:8-10:21
+
+            """)
     }
 
     func testDisplaysMultipleDiagnosticsSorted() {
@@ -196,7 +210,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                 explanation: "Second diagnostic explanation"
             )
         }()
-        
+
         let thirdDiagnostic = Diagnostic(
             source: URL(fileURLWithPath: "/path/to/other/file.md"),
             severity: .warning,
@@ -211,27 +225,29 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
         consumer.receive([firstDiagnostic, secondDiagnostic, thirdDiagnostic])
         try? consumer.flush()
-        XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: First diagnostic summary\u{001B}[0;0m [test-identifier]
-        First diagnostic explanation
-        --> /path/to/file.md:1:8-10:21
+        XCTAssertEqual(
+            logger.output,
+            """
+            \u{001B}[1;33mwarning: First diagnostic summary\u{001B}[0;0m [test-identifier]
+            First diagnostic explanation
+            --> /path/to/file.md:1:8-10:21
 
-        \u{001B}[1;33mwarning: Second diagnostic summary\u{001B}[0;0m [test-group-identifier]
-        Second diagnostic explanation
-        --> /path/to/file.md:12:1-12:10
+            \u{001B}[1;33mwarning: Second diagnostic summary\u{001B}[0;0m [test-group-identifier]
+            Second diagnostic explanation
+            --> /path/to/file.md:12:1-12:10
 
-        \u{001B}[1;33mwarning: Third diagnostic summary\u{001B}[0;0m [test-identifier]
-        Third diagnostic explanation
-        --> /path/to/other/file.md
-        
-        """)
+            \u{001B}[1;33mwarning: Third diagnostic summary\u{001B}[0;0m [test-identifier]
+            Third diagnostic explanation
+            --> /path/to/other/file.md
+
+            """)
     }
 
     func testDisplaysSource() {
         let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
-        let baseURL =  Bundle.module.url(
+        let baseURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
         let range = SourceLocation(line: 44, column: 59, source: source)..<SourceLocation(line: 44, column: 138, source: source)
@@ -242,44 +258,52 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
         consumer.receive([diagnostic])
         try? consumer.flush()
-        
-        XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
-        \(explanation)
-          --> TestTutorial.tutorial:44:59-44:138
-        42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
-        43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-        44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
-        45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
-        46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
-        
-        """)
+
+        XCTAssertEqual(
+            logger.output,
+            """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+            \(explanation)
+              --> TestTutorial.tutorial:44:59-44:138
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+            43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
+            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
+            45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
+            46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+
+            """)
     }
 
     func testDisplaysSourceAndProperlyHighlightsRangesSpanningEmoji() throws {
         let fs = try TestFileSystem(folders: [
-            Folder(name: "Something.docc", content: [
-                Folder(name: "Nested folder", content: [
-                    TextFile(name: "Article.md", utf8Content: """
-                    # Title
-                    
-                    A short abstract with emoji 💻 in it.
-                    
-                    @Metadata {
-                      @TechnologyRoot
-                    }
-                    
-                    """)
+            Folder(
+                name: "Something.docc",
+                content: [
+                    Folder(
+                        name: "Nested folder",
+                        content: [
+                            TextFile(
+                                name: "Article.md",
+                                utf8Content: """
+                                    # Title
+
+                                    A short abstract with emoji 💻 in it.
+
+                                    @Metadata {
+                                      @TechnologyRoot
+                                    }
+
+                                    """)
+                        ])
                 ])
-            ])
         ])
-        
+
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
-        
+
         let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
-        
+
         let baseURL = bundle.baseURL
         let source = try XCTUnwrap(bundle.markupURLs.first)
         let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 36, source: source)
@@ -290,30 +314,32 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
         consumer.receive([diagnostic])
         try consumer.flush()
-        
-        XCTAssertEqual(logStorage.text, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
-        \(explanation)
-         --> Something.docc/Nested folder/Article.md:3:18-3:36
-        1 | # Title
-        2 |
-        3 + A short abstract \u{001B}[1;32mwith emoji 💻 in\u{001B}[0;0m it.
-        4 |
-        5 | @Metadata {
-        
-        """)
+
+        XCTAssertEqual(
+            logStorage.text,
+            """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Nested folder/Article.md:3:18-3:36
+            1 | # Title
+            2 |
+            3 + A short abstract \u{001B}[1;32mwith emoji 💻 in\u{001B}[0;0m it.
+            4 |
+            5 | @Metadata {
+
+            """)
     }
 
     func testDisplaysPossibleSolutionsSummary() {
         let identifier = "test-identifier"
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
-        let baseURL =  Bundle.module.url(
+        let baseURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
         let diagnosticRange = SourceLocation(line: 44, column: 59, source: source)..<SourceLocation(line: 44, column: 138, source: source)
 
-        do { // Displays solutions with single replacement at the replacement's source.
+        do {  // Displays solutions with single replacement at the replacement's source.
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
 
@@ -333,46 +359,50 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([diagnostic])
             try? consumer.flush()
 
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
-            \(explanation)
-              --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
-            43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
-               |                                                           │  ╰─\u{001B}[1;39msuggestion: Other solution summary\u{001B}[0;0m
-               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
-            45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
-            46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+                \(explanation)
+                  --> TestTutorial.tutorial:44:59-44:138
+                42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+                43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
+                44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
+                   |                                                           │  ╰─\u{001B}[1;39msuggestion: Other solution summary\u{001B}[0;0m
+                   |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
+                45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
+                46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+
+                """)
         }
 
-        do { // Displays solution without replacement at the beginning of the diagnostic range.
+        do {  // Displays solution without replacement at the beginning of the diagnostic range.
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
 
             let solution = Solution(summary: "Solution summary", replacements: [])
-            
+
             let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
             consumer.receive([diagnostic])
             try? consumer.flush()
 
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
-            \(explanation)
-              --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
-            43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
-               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
-            45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
-            46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+                \(explanation)
+                  --> TestTutorial.tutorial:44:59-44:138
+                42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+                43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
+                44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
+                   |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
+                45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
+                46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+
+                """)
         }
 
-        do { // Displays solution with many replacements at the beginning of the diagnostic range.
+        do {  // Displays solution with many replacements at the beginning of the diagnostic range.
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
 
@@ -390,133 +420,155 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([diagnostic])
             try? consumer.flush()
 
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
-            \(explanation)
-              --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
-            43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
-               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
-            45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
-            46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [\(identifier)]
+                \(explanation)
+                  --> TestTutorial.tutorial:44:59-44:138
+                42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+                43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
+                44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
+                   |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
+                45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
+                46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+
+                """)
         }
     }
-    
+
     func testClampsDiagnosticRangeToSourceRange() throws {
         let fs = try TestFileSystem(folders: [
-            Folder(name: "Something.docc", content: [
-                TextFile(name: "Article.md", utf8Content: """
-                # Title
-                
-                A very short article with only an abstract.
-                """)
-            ])
+            Folder(
+                name: "Something.docc",
+                content: [
+                    TextFile(
+                        name: "Article.md",
+                        utf8Content: """
+                            # Title
+
+                            A very short article with only an abstract.
+                            """)
+                ])
         ])
-        
+
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
-        
+
         let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
-        
+
         let baseURL = bundle.baseURL
         let source = try XCTUnwrap(bundle.markupURLs.first)
-        
+
         typealias Location = (line: Int, column: Int)
         func logMessageFor(start: Location, end: Location) throws -> String {
             let range = SourceLocation(line: start.line, column: start.column, source: source)..<SourceLocation(line: end.line, column: end.column, source: source)
-            
+
             let logStorage = LogHandle.LogStorage()
             let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, dataProvider: fs)
-            
+
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "test-identifier", summary: summary, explanation: explanation)
             consumer.receive([diagnostic])
             try consumer.flush()
-            
+
             // There are no lines before line 1
             return logStorage.text
         }
-        
+
         // Highlight the "Title" word on line 1
-        XCTAssertEqual(try logMessageFor(start: (line: 1, column: 3), end: (line: 1, column: 8)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: 1, column: 3), end: (line: 1, column: 8)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:1:3-1:8
             1 + # \u{001B}[1;32mTitle\u{001B}[0;0m
             2 |
             3 | A very short article with only an abstract.
-            
+
             """)
-                       
+
         // Highlight the "short" word on line 3
-        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 13)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 13)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:3:8-3:13
             1 | # Title
             2 |
             3 + A very \u{001B}[1;32mshort\u{001B}[0;0m article with only an abstract.
-            
+
             """)
-        
+
         // Extend the highlight beyond the end of that line
-        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 100)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 100)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:3:8-3:100
             1 | # Title
             2 |
             3 + A very \u{001B}[1;32mshort article with only an abstract.\u{001B}[0;0m
-            
+
             """)
-        
+
         // Extend the highlight beyond the start of that line
-        XCTAssertEqual(try logMessageFor(start: (line: 3, column: -4), end: (line: 3, column: 13)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: 3, column: -4), end: (line: 3, column: 13)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
              --> Something.docc/Article.md:3:1-3:13
             1 | # Title
             2 |
             3 + \u{001B}[1;32mA very short\u{001B}[0;0m article with only an abstract.
-            
+
             """)
-        
+
         // Highlight a line before the start of the file
-        XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: -4, column: 5)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: -4, column: 1), end: (line: -4, column: 5)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:1:1-1:5
-            
+
             """)
-        
+
         // Highlight a line after the end of the file
-        XCTAssertEqual(try logMessageFor(start: (line: 100, column: 1), end: (line: 100, column: 5)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: 100, column: 1), end: (line: 100, column: 5)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:100:1-100:5
-            
+
             """)
-        
+
         // Extended the highlighted lines before the start of the file
-        XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: 1, column: 5)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: -4, column: 1), end: (line: 1, column: 5)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:1:1-1:5
-            
+
             """)
-        
+
         // Extended the highlighted lines after the end of the file
-        XCTAssertEqual(try logMessageFor(start: (line: 1, column: 1), end: (line: 100, column: 5)), """
+        XCTAssertEqual(
+            try logMessageFor(start: (line: 1, column: 1), end: (line: 100, column: 5)),
+            """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m [test-identifier]
             \(explanation)
             --> Something.docc/Article.md:1:1-100:5
-            
+
             """)
     }
-    
+
     func testEmitAdditionReplacementSolution() throws {
         func diagnosticLoggerOutput(solutions: [Solution]) -> String {
             let logger = Logger()
@@ -530,15 +582,17 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let range = sourceLocation..<sourceLocation
         XCTAssertEqual(
             diagnosticLoggerOutput(solutions: [
-                Solution(summary: "Create a sloth.", replacements: [
-                    Solution.Replacement(
-                        range: range,
-                        replacement: """
-                        var slothName = "slothy"
-                        var slothDiet = .vegetarian
-                        """
-                    )
-                ])
+                Solution(
+                    summary: "Create a sloth.",
+                    replacements: [
+                        Solution.Replacement(
+                            range: range,
+                            replacement: """
+                                var slothName = "slothy"
+                                var slothDiet = .vegetarian
+                                """
+                        )
+                    ])
             ]),
             """
             \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m [test-identifier]
@@ -547,28 +601,30 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             suggestion:
             0 + var slothName = \"slothy\"
             1 + var slothDiet = .vegetarian
-            
+
             """
         )
-        
+
         XCTAssertEqual(
             diagnosticLoggerOutput(solutions: [
-                Solution(summary: "Create a sloth.", replacements: [
-                    Solution.Replacement(
-                        range: range,
-                        replacement: """
-                        var slothName = "slothy"
-                        var slothDiet = .vegetarian
-                        """
-                    ),
-                    Solution.Replacement(
-                        range: range,
-                        replacement: """
-                        var slothName = SlothGenerator().generateName()
-                        var slothDiet = SlothGenerator().generateDiet()
-                        """
-                    )
-                ])
+                Solution(
+                    summary: "Create a sloth.",
+                    replacements: [
+                        Solution.Replacement(
+                            range: range,
+                            replacement: """
+                                var slothName = "slothy"
+                                var slothDiet = .vegetarian
+                                """
+                        ),
+                        Solution.Replacement(
+                            range: range,
+                            replacement: """
+                                var slothName = SlothGenerator().generateName()
+                                var slothDiet = SlothGenerator().generateDiet()
+                                """
+                        )
+                    ])
             ]),
             """
             \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m [test-identifier]
@@ -580,30 +636,34 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             suggestion:
             0 + var slothName = SlothGenerator().generateName()
             1 + var slothDiet = SlothGenerator().generateDiet()
-            
+
             """
         )
-        
+
         XCTAssertEqual(
             diagnosticLoggerOutput(solutions: [
-                Solution(summary: "Create a sloth.", replacements: [
-                    Solution.Replacement(
-                        range: range,
-                        replacement: """
-                        var slothName = "slothy"
-                        var slothDiet = .vegetarian
-                        """
-                    ),
-                ]),
-                Solution(summary: "Create a bee.", replacements: [
-                    Solution.Replacement(
-                        range: range,
-                        replacement: """
-                        var beeName = "Bee"
-                        var beeDiet = .vegetarian
-                        """
-                    )
-                ])
+                Solution(
+                    summary: "Create a sloth.",
+                    replacements: [
+                        Solution.Replacement(
+                            range: range,
+                            replacement: """
+                                var slothName = "slothy"
+                                var slothDiet = .vegetarian
+                                """
+                        ),
+                    ]),
+                Solution(
+                    summary: "Create a bee.",
+                    replacements: [
+                        Solution.Replacement(
+                            range: range,
+                            replacement: """
+                                var beeName = "Bee"
+                                var beeDiet = .vegetarian
+                                """
+                        ),
+                    ])
             ]),
             """
             \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m [test-identifier]
@@ -616,7 +676,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             suggestion:
             0 + var beeName = "Bee"
             1 + var beeDiet = .vegetarian
-            
+
             """
         )
     }

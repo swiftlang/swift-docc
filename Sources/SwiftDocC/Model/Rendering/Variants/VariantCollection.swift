@@ -21,12 +21,12 @@ public struct VariantCollection<Value: Codable>: Codable {
     ///
     /// Clients should decide whether the `defaultValue` or a value in ``variants`` is appropriate in their context.
     public var defaultValue: Value
-    
+
     /// Trait-specific overrides for the default value.
     ///
     /// Clients should decide whether the `defaultValue` or a value in ``variants`` is appropriate in their context.
     public var variants: [Variant]
-    
+
     /// Creates a variant collection given a default value and an array of trait-specific overrides.
     ///
     /// - Parameters:
@@ -36,21 +36,21 @@ public struct VariantCollection<Value: Codable>: Codable {
         self.defaultValue = defaultValue
         self.variants = variants
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.defaultValue = try container.decode(Value.self)
-        
+
         // When decoding a render node, the variants overrides stored in the `RenderNode.variantOverrides` property.
         self.variants = []
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(defaultValue)
         addVariantsToEncoder(encoder, isDefaultValueEncoded: true)
     }
-    
+
     /// Adds the variants of the collection to the given encoder.
     ///
     /// - Parameters:
@@ -68,17 +68,15 @@ public struct VariantCollection<Value: Codable>: Codable {
                 traits: variant.traits,
                 patch: variant.patch.map { patchOperation in
                     var patchOperation = patchOperation
-                    
+
                     // If the default value for this variant collection wasn't encoded in the JSON and the
                     // patch operation is a 'replace', change it to an 'add' since there's no value to replace.
                     if !isDefaultValueEncoded, case .replace(let value) = patchOperation {
                         patchOperation = .add(value: value)
                     }
-                    
-                    let jsonPointer = (
-                        pointer ?? JSONPointer(from: encoder.codingPath)
-                    ).prependingPathComponents(encoder.baseJSONPatchPath ?? [])
-                    
+
+                    let jsonPointer = (pointer ?? JSONPointer(from: encoder.codingPath)).prependingPathComponents(encoder.baseJSONPatchPath ?? [])
+
                     return JSONPatchOperation(
                         variantPatchOperation: patchOperation,
                         pointer: jsonPointer
@@ -86,10 +84,10 @@ public struct VariantCollection<Value: Codable>: Codable {
                 }
             )
         }
-        
+
         encoder.userInfoVariantOverrides?.add(contentsOf: overrides)
     }
-    
+
     /// Returns a variant collection containing the results of calling the given transformation with each value of this variant collection.
     public func mapValues<TransformedValue>(
         _ transform: (Value) -> TransformedValue
@@ -107,7 +105,7 @@ extension VariantCollection: Equatable where Value: Equatable {
     public static func == (lhs: VariantCollection<Value>, rhs: VariantCollection<Value>) -> Bool {
         guard lhs.defaultValue == rhs.defaultValue else { return false }
         guard lhs.variants == rhs.variants else { return false }
-        
+
         return true
     }
 }

@@ -17,50 +17,50 @@ import DocCCommon
 class SemaToRenderNodeDictionaryDataTests: XCTestCase {
     func testBaseRenderNodeFromDictionaryData() async throws {
         let (_, context) = try await testBundleAndContext(named: "DictionaryData")
-        
-        let expectedPageUSRsAndLangs: [String : Set<SourceLanguage>] = [
+
+        let expectedPageUSRsAndLangs: [String: Set<SourceLanguage>] = [
             // Artist dictionary - ``Artist``:
             "data:test:Artist": [.data],
-            
+
             // Genre string type - ``Genre``:
             "data:test:Genre": [.data],
-            
+
             // Module - ``DictionaryData``:
             "DictionaryData": [.data, .swift, .objectiveC],
-            
+
             // ObjC class - ``FooObjC``:
             "c:FooObjC": [.objectiveC],
-            
+
             // Swift class - ``FooSwift``:
             "s:FooSwift": [.swift],
-            
+
             // Month dictionary - ``Month``:
             "data:test:Month": [.data],
         ]
-        
+
         let expectedPageUSRs: Set<String> = Set(expectedPageUSRsAndLangs.keys)
-        
+
         let expectedNonpageUSRs: Set<String> = [
             // Name string field - ``name``:
             "data:test:Artist@name",
-            
+
             // Genre string field - ``genre``:
             "data:test:Artist@genre",
-            
+
             // Month of birth string field - ``monthOfBirth``:
             "data:test:Artist@monthOfBirth",
-            
+
             // Age integer field - ``age``:
             "data:test:Artist@age",
         ]
-        
+
         // Verify we have the right number of cached nodes.
         XCTAssertEqual(context.documentationCache.count, expectedPageUSRsAndLangs.count + expectedNonpageUSRs.count)
-        
+
         // Verify each node matches the expectations.
         for (_, documentationNode) in context.documentationCache {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
-            
+
             if documentationNode.kind.isPage {
                 XCTAssertTrue(
                     expectedPageUSRs.contains(symbolUSR),
@@ -81,7 +81,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         let frameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "DictionaryData"
         )
-        
+
         assertExpectedContent(
             frameworkRenderNode,
             sourceLanguage: "swift",  // Swift wins default when multiple languages present
@@ -115,9 +115,9 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "'DictionaryData' module has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         let objcFrameworkNode = try renderNodeApplying(variant: "occ", to: frameworkRenderNode)
-        
+
         assertExpectedContent(
             objcFrameworkNode,
             sourceLanguage: "occ",
@@ -152,11 +152,11 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             }
         )
     }
-    
+
     func testDictionaryRenderNodeHasExpectedContent() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "DictionaryData")
         let artistRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Artist")
-        
+
         assertExpectedContent(
             artistRenderNode,
             sourceLanguage: "data",
@@ -185,25 +185,25 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "'Artist' symbol has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         guard let propertiesSection = (artistRenderNode.primaryContentSections[1] as? PropertiesRenderSection) else {
             XCTFail("Second primary content section not a render section")
             return
         }
-        
+
         XCTAssertEqual(propertiesSection.kind, .properties)
         XCTAssertEqual(propertiesSection.items.count, 4)
-        
+
         let ageProperty = propertiesSection.items[0]
         XCTAssertEqual(ageProperty.name, "age")
         XCTAssertTrue(ageProperty.deprecated ?? false)
-        var attributeTitles = ageProperty.attributes?.map{$0.title.lowercased()}.sorted() ?? []
+        var attributeTitles = ageProperty.attributes?.map { $0.title.lowercased() }.sorted() ?? []
         XCTAssertEqual(attributeTitles, ["maximum", "minimum"])
-        
+
         let genreProperty = propertiesSection.items[1]
         XCTAssertEqual(genreProperty.name, "genre")
         XCTAssertTrue(genreProperty.readOnly ?? false)
-        attributeTitles = genreProperty.attributes?.map{$0.title.lowercased()}.sorted() ?? []
+        attributeTitles = genreProperty.attributes?.map { $0.title.lowercased() }.sorted() ?? []
         XCTAssertEqual(attributeTitles, ["default value", "possible values"])
         let genrePropertyAttributes = try XCTUnwrap(genreProperty.attributes)
         let genrePropertyAllowedValues = genrePropertyAttributes.filter {
@@ -219,7 +219,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             XCTAssertEqual(values[1], "Folk")
             XCTAssertEqual(values[2], "null")
         }
-        
+
         let monthProperty = propertiesSection.items[2]
         XCTAssertEqual(monthProperty.name, "monthOfBirth")
         XCTAssertNotNil(monthProperty.typeDetails)
@@ -228,27 +228,27 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             XCTAssertEqual(details[0].baseType, "integer")
             XCTAssertEqual(details[1].baseType, "string")
         }
-        attributeTitles = monthProperty.attributes?.map{$0.title.lowercased()}.sorted() ?? []
+        attributeTitles = monthProperty.attributes?.map { $0.title.lowercased() }.sorted() ?? []
         XCTAssertEqual(attributeTitles, ["possible types"])
         for case let .allowedTypes(decls) in monthProperty.attributes ?? [] {
             XCTAssertEqual(decls.count, 2)
             XCTAssertEqual(decls[0][0].text, "integer")
             XCTAssertEqual(decls[1][0].text, "string")
         }
-        
+
         let nameProperty = propertiesSection.items[3]
         XCTAssertEqual(nameProperty.name, "name")
         XCTAssertTrue(nameProperty.required ?? false)
         XCTAssert((nameProperty.attributes ?? []).isEmpty)
     }
-    
+
     func testTypeRenderNodeHasExpectedContent() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "DictionaryData")
         let genreRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Genre")
-        
+
         let type1 = DeclarationRenderSection.Token(fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .text, spelling: "string", preciseIdentifier: nil), identifier: nil)
         let type2 = DeclarationRenderSection.Token(fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .text, spelling: "GENCODE", preciseIdentifier: nil), identifier: nil)
-        
+
         assertExpectedContent(
             genreRenderNode,
             sourceLanguage: "data",

@@ -24,16 +24,16 @@ enum SVGIDExtractor {
             guard let idAttributeRange = data.firstRange(of: Data(" \(capitalization)=\"".utf8), in: data.indices) else {
                 continue
             }
-            
+
             guard let endQuote = data.firstRange(of: Data("\"".utf8), in: idAttributeRange.upperBound...) else {
                 continue
             }
-            
-            return String(data: data[idAttributeRange.endIndex ..< endQuote.lowerBound], encoding: .utf8)
+
+            return String(data: data[idAttributeRange.endIndex..<endQuote.lowerBound], encoding: .utf8)
         }
         return nil
     }
-    
+
     /// Returns the first `id` attribute found in the given SVG, if any.
     ///
     /// Returns nil if any errors are encountered or if an `id` attribute is
@@ -42,7 +42,7 @@ enum SVGIDExtractor {
         guard let data = try? Data(contentsOf: svg) else {
             return nil
         }
-        
+
         return _extractID(from: data)
     }
 }

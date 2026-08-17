@@ -13,7 +13,7 @@ private import Markdown
 
 struct DirectiveMirror {
     let reflectedDirective: ReflectedDirective
-    
+
     init(reflecting directive: any AutomaticDirectiveConvertible.Type) {
         let mirror = Mirror(
             reflecting: directive.init(
@@ -23,21 +23,21 @@ struct DirectiveMirror {
                 )
             )
         )
-        
+
         let reflectedArguments = mirror.children.compactMap { child -> ReflectedArgument? in
             guard let argument = child.value as? (any _DirectiveArgumentProtocol) else {
                 return nil
             }
-            
+
             guard var label = child.label else {
                 return nil
             }
-            
+
             // Property wrappers have underscore-prefixed names
             if label.first == "_" {
                 label.removeFirst()
             }
-            
+
             let unnamed: Bool
             let argumentName: String
             switch argument.name {
@@ -51,7 +51,7 @@ struct DirectiveMirror {
                 unnamed = false
                 argumentName = label
             }
-            
+
             return ReflectedArgument(
                 storedAsOptional: argument.storedAsOptional,
                 required: argument.required,
@@ -65,21 +65,21 @@ struct DirectiveMirror {
                 parseArgument: argument.parseArgument
             )
         }
-        
+
         let reflectedChildDirectives = mirror.children.compactMap { child -> ReflectedChildDirective? in
             guard let childDirective = child.value as? (any _ChildDirectiveProtocol) else {
                 return nil
             }
-            
+
             guard var label = child.label else {
                 return nil
             }
-            
+
             // Property wrappers have underscore-prefixed names
             if label.first == "_" {
                 label.removeFirst()
             }
-            
+
             let requirements: ReflectedChildDirective.Requirements
             switch childDirective.requirements {
             case .zeroOrMore:
@@ -91,7 +91,7 @@ struct DirectiveMirror {
             case .oneOrMore:
                 requirements = .oneOrMore
             }
-            
+
             return ReflectedChildDirective(
                 type: childDirective.directiveConvertible,
                 requirements: requirements,
@@ -101,36 +101,34 @@ struct DirectiveMirror {
                 childDirective: childDirective
             )
         }
-        
-        
-        
+
         let reflectedMarkupContainerRequirements = mirror.children.compactMap { child -> ReflectedChildMarkup? in
             guard let childMarkup = child.value as? (any _ChildMarkupProtocol) else {
                 return nil
             }
-            
+
             guard var label = child.label else {
                 return nil
             }
-            
+
             // Property wrappers have underscore-prefixed names
             if label.first == "_" {
                 label.removeFirst()
             }
-            
+
             return ReflectedChildMarkup(
                 propertyLabel: label,
                 markup: childMarkup
             )
         }
-        
+
         let childMarkupSupport: ReflectedDirective.ChildMarkupSupport
         if !reflectedMarkupContainerRequirements.isEmpty {
             childMarkupSupport = .supportsMarkup(reflectedMarkupContainerRequirements)
         } else {
             childMarkupSupport = .disallowsMarkup
         }
-        
+
         self.reflectedDirective = ReflectedDirective(
             arguments: reflectedArguments,
             childDirectives: reflectedChildDirectives,
@@ -143,13 +141,13 @@ struct DirectiveMirror {
 extension DirectiveMirror {
     struct ReflectedArgument {
         let storedAsOptional: Bool
-        
+
         /// Whether or not this argument is required.
         let required: Bool
-        
+
         /// The name of this argument's type for use in diagnostics and documentation.
         let typeDisplayName: String
-        
+
         var labelDisplayName: String {
             if unnamed {
                 return "_ \(propertyLabel)"
@@ -157,23 +155,23 @@ extension DirectiveMirror {
                 return name
             }
         }
-        
+
         var hiddenFromDocumentation: Bool {
             return argument.hiddenFromDocumentation
         }
-        
+
         let name: String
-        
+
         let unnamed: Bool
-        
+
         let allowedValues: [String]?
         let expectedFormat: String?
-        
+
         let propertyLabel: String
         let argument: any _DirectiveArgumentProtocol
-        
+
         let parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?)
-        
+
         func setValue(
             on containingDirective: some AutomaticDirectiveConvertible,
             to any: Any
@@ -185,34 +183,34 @@ extension DirectiveMirror {
             )
         }
     }
-    
+
     struct ReflectedChildDirective {
         enum Requirements {
             case zeroOrOne
             case one
-            
+
             case zeroOrMore
             case oneOrMore
         }
-        
+
         let type: any DirectiveConvertible.Type
-        
+
         let requirements: Requirements
-        
+
         var storedAsArray: Bool
         var storedAsOptional: Bool
-        
+
         var name: String {
             return type.directiveName
         }
-        
+
         var required: Bool {
             return requirements == .one || requirements == .oneOrMore
         }
-        
+
         let propertyLabel: String
         let childDirective: any _ChildDirectiveProtocol
-        
+
         func setValue(
             on containingDirective: some AutomaticDirectiveConvertible,
             to any: Any
@@ -224,7 +222,7 @@ extension DirectiveMirror {
             )
         }
     }
-    
+
     struct ReflectedDirective {
         var name: String {
             return type.directiveName
@@ -232,18 +230,18 @@ extension DirectiveMirror {
         var introducedVersion: String {
             return type.introducedVersion
         }
-        
+
         let arguments: [ReflectedArgument]
-        
+
         let childDirectives: [ReflectedChildDirective]
-        
+
         enum ChildMarkupSupport {
             case supportsMarkup([ReflectedChildMarkup])
             case disallowsMarkup
         }
-        
+
         let childMarkupSupport: ChildMarkupSupport
-        
+
         var allowsMarkup: Bool {
             switch childMarkupSupport {
             case .supportsMarkup:
@@ -252,7 +250,7 @@ extension DirectiveMirror {
                 return false
             }
         }
-        
+
         var allowsStructuredMarkup: Bool {
             switch childMarkupSupport {
             case .supportsMarkup(let markupRequirements):
@@ -261,7 +259,7 @@ extension DirectiveMirror {
                 return false
             }
         }
-        
+
         var requiresMarkup: Bool {
             switch childMarkupSupport {
             case .supportsMarkup(let markupRequirements):
@@ -270,14 +268,14 @@ extension DirectiveMirror {
                 return false
             }
         }
-        
+
         var hiddenFromDocumentation: Bool {
             (type as? (any AutomaticDirectiveConvertible.Type))?.hiddenFromDocumentation ?? false
         }
-        
+
         let type: any DirectiveConvertible.Type
     }
-    
+
     struct ReflectedChildMarkup {
         let propertyLabel: String
         var required: Bool {
@@ -292,9 +290,9 @@ extension DirectiveMirror {
                 return value > 0
             }
         }
-        
+
         let markup: any _ChildMarkupProtocol
-        
+
         func setValue(
             on containingDirective: some AutomaticDirectiveConvertible,
             to any: Any

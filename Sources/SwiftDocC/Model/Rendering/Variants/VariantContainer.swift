@@ -28,14 +28,14 @@ public extension VariantContainer {
             self[keyPath: keyPath] = newValue.map { VariantCollection<Value>.init(defaultValue: $0) }
         }
     }
-    
+
     /// Returns the default value of the variant collection at the given key path, if present.
     func getVariantDefaultValue<Value>(
         keyPath: WritableKeyPath<Self, VariantCollection<Value>?>
     ) -> Value? {
         self[keyPath: keyPath]?.defaultValue
     }
-    
+
     /// Sets the given value as the default value of the variant collection at the given key path.
     mutating func setVariantDefaultValue<Value>(
         _ newValue: Value,
@@ -43,7 +43,7 @@ public extension VariantContainer {
     ) {
         self[keyPath: keyPath].defaultValue = newValue
     }
-    
+
     /// Returns the default value of the variant collection at the given key path.
     func getVariantDefaultValue<Value>(
         keyPath: WritableKeyPath<Self, VariantCollection<Value>>

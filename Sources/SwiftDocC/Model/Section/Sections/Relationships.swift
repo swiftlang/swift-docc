@@ -42,37 +42,37 @@ extension Relationship {
 /// * `MutableCollection`
 /// * `RangeReplaceableCollection`
 public struct RelationshipsGroup {
-    
+
     /// Possible symbol relationships.
     public enum Kind: String, Sendable {
         /// One or more protocols to which a type conforms.
         case conformsTo
-        
+
         /// One or more types that conform to a protocol.
         case conformingTypes
-        
+
         /// One or more types that are parents of the symbol.
         case inheritsFrom
-        
+
         /// One or more types that are children of the symbol.
         case inheritedBy
     }
-    
+
     /// Creates a new relationship group of the given kind, and with the given symbols.
     public init(kind: Kind, destinations: [TopicReference]) {
         self.kind = kind
         self.destinations = Set(destinations)
     }
-    
+
     let kind: Kind
-    
+
     /// Rendering of the group's title as a heading.
     var heading: Heading {
         return Heading(level: 3, Text(sectionTitle))
     }
-    
+
     fileprivate(set) var destinations = Set<TopicReference>()
-    
+
     /// The plain-text group title.
     var sectionTitle: String {
         switch kind {
@@ -82,7 +82,7 @@ public struct RelationshipsGroup {
         case .inheritedBy: return "Inherited By"
         }
     }
-    
+
     /// A sorting order for the group.
     var sectionOrder: Int {
         switch kind {
@@ -112,16 +112,16 @@ extension TopicReference {
 /// types for the this protocol.
 public struct RelationshipsSection {
     public static let title = "Relationships"
-    
+
     /// All relationship groups in the section.
     public var groups = [RelationshipsGroup]()
-    
+
     /// Any fallback symbol names for symbols when available.
     var targetFallbacks = [TopicReference: String]()
-    
+
     /// Generics constraints to attach to a destination
     var constraints = [TopicReference: [SymbolGraph.Symbol.Swift.GenericConstraint]]()
-    
+
     /// Adds a new relationship to the given symbol reference.
     /// - Parameters:
     ///   - reference: A topic reference for the target symbol of the relationship.
@@ -141,21 +141,21 @@ public struct RelationshipsSection {
             groups.append(group)
         }
     }
-    
+
     /// Adds a new relationship to the section.
     mutating func addRelationship(_ relationship: Relationship) {
         switch relationship {
         case let .conformsTo(reference, constraints),
-             let .conformingType(reference, constraints):
-            
+            let .conformingType(reference, constraints):
+
             addReference(reference: reference, groupKind: relationship.groupKind!)
             self.constraints[reference] = constraints
-            
+
         case let .inheritsFrom(reference),
-             let .inheritedBy(reference):
-            
+            let .inheritedBy(reference):
+
             addReference(reference: reference, groupKind: relationship.groupKind!)
-            
+
         default: break
         }
     }

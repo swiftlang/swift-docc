@@ -16,21 +16,21 @@ class NonOverviewHeadingCheckerTests: XCTestCase {
 
     func testFindNonOverviewH2() throws {
         let source = """
-# Title
-Abstract
+            # Title
+            Abstract
 
-## Overview
-An overview
+            ## Overview
+            An overview
 
-## Discussion
-A discussion
+            ## Discussion
+            A discussion
 
-### Discussion subsection
-A subsection
+            ### Discussion subsection
+            A subsection
 
-## Topics
-- ``SymoblLink``
-"""
+            ## Topics
+            - ``SymoblLink``
+            """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         var checker = NonOverviewHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null"))
         checker.visit(document)
@@ -62,13 +62,13 @@ A subsection
 
     func testWithNoOverviewSection() throws {
         let source = """
-# Title
-Abstract
+            # Title
+            Abstract
 
-## Discussion
-A discussion
+            ## Discussion
+            A discussion
 
-"""
+            """
         let document = Document(parsing: source)
         var checker = NonOverviewHeadingChecker(sourceFile: nil)
         checker.visit(document)

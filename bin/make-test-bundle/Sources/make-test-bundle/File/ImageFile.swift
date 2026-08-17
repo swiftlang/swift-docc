@@ -14,14 +14,14 @@ import Foundation
 struct ImageFile {
     static var counter = 0
     let name: String
-    
+
     static let data = try! Data(contentsOf: URL(fileURLWithPath: #file).deletingLastPathComponent().appendingPathComponent("image@2x.png"))
-    
+
     init() {
         Self.counter += 1
         name = "image\(Self.counter).png"
     }
-    
+
     func write(to: URL) throws {
         try Self.data.write(to: to)
     }

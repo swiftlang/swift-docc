@@ -18,8 +18,8 @@ class SnippetTests: XCTestCase {
     func testWarningAboutMissingPathPath() async throws {
         let context = try await makeEmptyContext()
         let source = """
-        @Snippet()
-        """
+            @Snippet()
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var diagnostics = [Diagnostic]()
@@ -32,10 +32,10 @@ class SnippetTests: XCTestCase {
     func testWarningAboutInnerContent() async throws {
         let context = try await makeEmptyContext()
         let source = """
-        @Snippet(path: "path/to/snippet") {
-            This content shouldn't be here.
-        }
-        """
+            @Snippet(path: "path/to/snippet") {
+                This content shouldn't be here.
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var diagnostics = [Diagnostic]()
@@ -48,8 +48,8 @@ class SnippetTests: XCTestCase {
     func testParsesPath() async throws {
         let context = try await makeEmptyContext()
         let source = """
-        @Snippet(path: "Test/Snippets/MySnippet")
-        """
+            @Snippet(path: "Test/Snippets/MySnippet")
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var diagnostics = [Diagnostic]()
@@ -60,35 +60,35 @@ class SnippetTests: XCTestCase {
     }
     func testLinkResolvesWithoutOptionalPrefix() async throws {
         let (_, context) = try await testBundleAndContext(named: "Snippets")
-        
+
         for snippetPath in [
             "/Test/Snippets/MySnippet",
-             "Test/Snippets/MySnippet",
-                  "Snippets/MySnippet",
-                           "MySnippet",
+            "Test/Snippets/MySnippet",
+            "Snippets/MySnippet",
+            "MySnippet",
         ] {
             let source = """
-            @Snippet(path: "\(snippetPath)")
-            """
+                @Snippet(path: "\(snippetPath)")
+                """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             var resolver = MarkupReferenceResolver(context: context, rootReference: try XCTUnwrap(context.soleRootModuleReference))
             _ = resolver.visit(document)
             XCTAssertTrue(resolver.diagnostics.isEmpty, "Unexpected diagnostics: \(resolver.diagnostics.map(\.summary))")
         }
     }
-    
+
     func testWarningAboutUnresolvedSnippetPath() async throws {
         let (_, context) = try await testBundleAndContext(named: "Snippets")
-        
+
         for snippetPath in [
             "/Test/Snippets/DoesNotExist",
-             "Test/Snippets/DoesNotExist",
-                  "Snippets/DoesNotExist",
-                           "DoesNotExist",
+            "Test/Snippets/DoesNotExist",
+            "Snippets/DoesNotExist",
+            "DoesNotExist",
         ] {
             let source = """
-            @Snippet(path: "\(snippetPath)")
-            """
+                @Snippet(path: "\(snippetPath)")
+                """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             var resolver = MarkupReferenceResolver(context: context, rootReference: try XCTUnwrap(context.soleRootModuleReference))
             _ = resolver.visit(document)
@@ -99,12 +99,12 @@ class SnippetTests: XCTestCase {
             XCTAssertEqual(diagnostic.solutions.count, 0)
         }
     }
-    
+
     func testParsesSlice() async throws {
         let context = try await makeEmptyContext()
         let source = """
-        @Snippet(path: "Test/Snippets/MySnippet", slice: "foo")
-        """
+            @Snippet(path: "Test/Snippets/MySnippet", slice: "foo")
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var diagnostics = [Diagnostic]()

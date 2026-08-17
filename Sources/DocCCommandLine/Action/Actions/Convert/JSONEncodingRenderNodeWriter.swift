@@ -19,7 +19,7 @@ class JSONEncodingRenderNodeWriter {
     private let transformForStaticHostingIndexHTML: URL?
     private let fileManager: any FileManagerProtocol
     private let renderReferenceCache = RenderReferenceCache([:])
-    
+
     /// Creates a writer object that write render node JSON into a given folder.
     ///
     /// - Parameters:
@@ -30,10 +30,10 @@ class JSONEncodingRenderNodeWriter {
         self.transformForStaticHostingIndexHTML = transformForStaticHostingIndexHTML
         self.fileManager = fileManager
     }
-    
+
     // The already created directories on disk
     let directoryIndex = Synchronized(Set<URL>())
-    
+
     /// Writes a render node to a JSON file at a location based on the node's relative URL.
     ///
     /// If the target path to the JSON file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
@@ -47,17 +47,17 @@ class JSONEncodingRenderNodeWriter {
             renderNode.identifier,
             lowercased: true
         )
-        
+
         try write(
             renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache),
             // The path on disk to write the render node JSON file at.
             toFileSafePath: "data/\(fileSafePath).json"
         )
-        
+
         guard let indexHTML = transformForStaticHostingIndexHTML else {
             return
         }
-        
+
         let htmlTargetFolderURL = targetFolder.appendingPathComponent(
             fileSafePath,
             isDirectory: true
@@ -66,7 +66,7 @@ class JSONEncodingRenderNodeWriter {
             HTMLTemplate.indexFileName.rawValue,
             isDirectory: false
         )
-        
+
         // Note that it doesn't make sense to use the above-described `directoryIndex` for this use
         // case since we expect every 'index.html' file to require the creation of
         // its own unique parent directory.
@@ -75,7 +75,7 @@ class JSONEncodingRenderNodeWriter {
             withIntermediateDirectories: true,
             attributes: nil
         )
-        
+
         do {
             try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
         } catch let error as NSError where error.code == NSFileWriteFileExistsError {
@@ -88,7 +88,7 @@ class JSONEncodingRenderNodeWriter {
             try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
         }
     }
-    
+
     /// Writes a markdown node to a file at a location based on the node's relative URL.
     ///
     /// If the target path to the markdown file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
@@ -101,18 +101,18 @@ class JSONEncodingRenderNodeWriter {
             markdownNode.identifier,
             lowercased: true
         )
-        
+
         try write(
             markdownNode.node.generateDataRepresentation(),
             toFileSafePath: "data/\(fileSafePath).md"
         )
     }
-    
+
     func write(_ data: Data, toFileSafePath fileSafePath: String) throws {
         // The path on disk to write the data at.
         let fileURL = targetFolder.appendingPathComponent(fileSafePath, isDirectory: false)
         let containingFolderURL = fileURL.deletingLastPathComponent()
-        
+
         // On Linux sometimes it takes a moment for the directory to be created and that leads to
         // errors when trying to write files concurrently in the same target location.
         // We keep an index in `directoryIndex` and create new sub-directories as needed.
@@ -128,7 +128,7 @@ class JSONEncodingRenderNodeWriter {
                 )
             }
         }
-        
+
         try fileManager.createFile(at: fileURL, contents: data, options: nil)
     }
 }

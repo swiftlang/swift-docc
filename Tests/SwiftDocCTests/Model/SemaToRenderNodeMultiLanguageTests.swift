@@ -18,35 +18,35 @@ import DocCCommon
 class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() async throws {
         let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
-        
+
         for (_, documentationNode) in context.documentationCache where documentationNode.kind.isSymbol {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
-            
+
             let expectedSwiftOnlyUSRs: Set<String> = [
                 // Swift-only struct - ``SwiftOnlyStruct``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV",
-                
+
                 // Swift-only class - ``SwiftOnlyClass``:
                 "s:22MixedLanguageFramework15SwiftOnlyClassV",
-                
+
                 // Member of Swift-only struct - ``SwiftOnlyStruct/tada()``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF",
-                
+
                 // Swift-only synthesized struct initializer - ``Foo/init(rawValue:)``:
                 "s:So3FooV8rawValueABSu_tcfc",
             ]
-            
+
             let expectedObjectiveCOnlyUSRs: Set<String> = [
                 // Objective-C only variable - ``_MixedLanguageFrameworkVersionNumber``:
                 "c:@MixedLanguageFrameworkVersionNumber",
-                
+
                 // Objective-C only variable - ``_MixedLanguageFrameworkVersionString``:
                 "c:@MixedLanguageFrameworkVersionString",
-                
+
                 // Objective-C only typealias - ``Foo-c.typealias``
                 "c:MixedLanguageFramework.h@T@Foo",
             ]
-            
+
             if expectedSwiftOnlyUSRs.contains(symbolUSR) {
                 XCTAssertEqual(
                     documentationNode.availableSourceLanguages,
@@ -67,10 +67,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 )
             }
         }
-        
+
         for (_, documentationNode) in context.documentationCache
-            where !documentationNode.kind.isSymbol && documentationNode.kind.isPage
-        {
+        where !documentationNode.kind.isSymbol && documentationNode.kind.isPage {
             XCTAssertEqual(
                 documentationNode.availableSourceLanguages,
                 [.swift, .objectiveC],
@@ -84,24 +83,25 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             for: "MixedLanguageFramework",
             configureBundle: { bundleURL in
                 // Update the clang symbol graph with the Objective-C identifier given in variantInterfaceLanguage.
-                
-                let clangSymbolGraphLocation = bundleURL
+
+                let clangSymbolGraphLocation =
+                    bundleURL
                     .appendingPathComponent("symbol-graphs")
                     .appendingPathComponent("clang")
                     .appendingPathComponent("MixedLanguageFramework.symbols.json")
-                
+
                 var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
-                
+
                 clangSymbolGraph.symbols = clangSymbolGraph.symbols.mapValues { symbol in
                     var symbol = symbol
                     symbol.identifier.interfaceLanguage = variantInterfaceLanguage
                     return symbol
                 }
-                
+
                 try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
             }
         )
-        
+
         XCTAssertEqual(
             Set(
                 outputConsumer.renderNodes(withInterfaceLanguages: ["swift"])
@@ -110,18 +110,18 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             [
                 // Swift-only struct - ``SwiftOnlyStruct``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV",
-                
+
                 // Swift-only class - ``SwiftOnlyClass``:
                 "s:22MixedLanguageFramework15SwiftOnlyClassV",
-                
+
                 // Member of Swift-only struct - ``SwiftOnlyStruct/tada()``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF",
-                
+
                 // Swift-only synthesized struct initializer - ``Foo/init(rawValue:)``:
                 "s:So3FooV8rawValueABSu_tcfc",
             ]
         )
-        
+
         XCTAssertEqual(
             Set(
                 outputConsumer.renderNodes(withInterfaceLanguages: ["occ"])
@@ -130,15 +130,15 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             [
                 // Objective-C only variable - ``_MixedLanguageFrameworkVersionNumber``:
                 "c:@MixedLanguageFrameworkVersionNumber",
-                
+
                 // Objective-C only variable - ``_MixedLanguageFrameworkVersionString``:
                 "c:@MixedLanguageFrameworkVersionString",
-                
+
                 // Objective-C only typealias - ``Foo-c.typealias``
                 "c:MixedLanguageFramework.h@T@Foo",
             ]
         )
-        
+
         XCTAssertEqual(
             Set(
                 outputConsumer.renderNodes(withInterfaceLanguages: ["swift", "occ"])
@@ -158,7 +158,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
                 "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
                 "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
-                
+
                 "MixedLanguageProtocol Implementations",
                 "Article",
                 "Article curated in a single-language page",
@@ -216,7 +216,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         let mixedLanguageFrameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "MixedLanguageFramework"
         )
-        
+
         assertExpectedContent(
             mixedLanguageFrameworkRenderNode,
             sourceLanguage: "swift",
@@ -244,10 +244,10 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "APICollection",
                 "Article",
                 "Bar",
-                "Foo", // Foo.swift.struct
+                "Foo",  // Foo.swift.struct
                 // This assertion is misleading because the RenderNode "references" are shared across all variants.
                 // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
-                "Foo", // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
+                "Foo",  // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
                 "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
@@ -272,17 +272,17 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 typedef enum Foo : NSString {
                     ...
                 } Foo;
-                """, // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
+                """,  // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
             ],
             failureMessage: { fieldName in
                 "Swift variant of 'MixedLanguageFramework' module has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(
             to: mixedLanguageFrameworkRenderNode
         )
-        
+
         assertExpectedContent(
             objectiveCVariantNode,
             sourceLanguage: "occ",
@@ -312,10 +312,10 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "APICollection",
                 "Article",
                 "Bar",
-                "Foo", // Foo.swift.struct
+                "Foo",  // Foo.swift.struct
                 // This assertion is misleading because the RenderNode "references" are shared across all variants.
                 // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
-                "Foo", // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
+                "Foo",  // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
                 "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
@@ -340,18 +340,18 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 typedef enum Foo : NSString {
                     ...
                 } Foo;
-                """, // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
+                """,  // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
             ],
             failureMessage: { fieldName in
                 "Objective-C variant of 'MixedLanguageFramework' module has unexpected content for '\(fieldName)'."
             }
         )
     }
-    
+
     func testObjectiveCAuthoredRenderNodeHasExpectedContentAcrossLanguages() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
         let fooRenderNode = try outputConsumer.renderNode(withIdentifier: "c:@E@Foo")
-        
+
         assertExpectedContent(
             fooRenderNode,
             sourceLanguage: "swift",
@@ -395,9 +395,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "Swift variant of 'Foo' symbol has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: fooRenderNode)
-        
+
         assertExpectedContent(
             objectiveCVariantNode,
             sourceLanguage: "occ",
@@ -448,81 +448,83 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             }
         )
     }
-    
+
     func testSymbolLinkWorkInMultipleLanguages() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
-            
+
             Test that symbol references using multi source language spellings all resolve successfully.
-            
+
             ## Topics
-            
+
             ### Symbol links in multiple source languages
-            
+
             - ``MixedLanguageFramework/Bar/myStringFunction(_:)``
             - ``myStringFunction(_:)``
             - ``MixedLanguageFramework/Bar/myStringFunction:error:``
             - ``myStringFunction:error:``
             """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
         }
-        
+
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        
+
         XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics)")
-        
+
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
-        
+
         XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics)")
-        
+
         // These two references are equivalent and depending on the order that the symbols are processed, either one of them could be considered the canonical reference.
         let referenceAliases = [
             "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)",
             "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
         ]
-        
+
         // Find which alias is the canonical reference and which is the other
         let canonicalReference = try XCTUnwrap(referenceAliases.first(where: { renderNode.references.keys.contains($0) }))
         let nonCanonicalReference = try XCTUnwrap(referenceAliases.filter { $0 != canonicalReference }.first)
-        
+
         XCTAssertNotNil(renderNode.references[canonicalReference])
         XCTAssertNil(renderNode.references[nonCanonicalReference], "The non canonical reference shouldn't have its own entry in the render node's references.")
-        
+
         XCTAssertEqual(renderNode.topicSections.count, 1)
         let topicGroup = try XCTUnwrap(renderNode.topicSections.first)
-        
+
         XCTAssertEqual(topicGroup.identifiers.count, 4)
-        XCTAssertEqual(topicGroup.identifiers, [
-            canonicalReference,
-            canonicalReference,
-            canonicalReference,
-            canonicalReference,
-        ], "Both spellings of the symbol link should resolve to the canonical reference.")
+        XCTAssertEqual(
+            topicGroup.identifiers,
+            [
+                canonicalReference,
+                canonicalReference,
+                canonicalReference,
+                canonicalReference,
+            ], "Both spellings of the symbol link should resolve to the canonical reference.")
     }
-    
+
     func testArticleInMixedLanguageFramework() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework") { url in
             try """
             # MyArticle
-            
+
             An article in a mixed-language framework. This symbol link should display the correct title depending on \
             the language we're browsing this article in: ``MixedLanguageFramework/Bar/myStringFunction(_:)``.
             """.write(to: url.appendingPathComponent("my-article.md"), atomically: true, encoding: .utf8)
         }
-        
+
         let articleRenderNode = try outputConsumer.renderNode(withTitle: "MyArticle")
-        
+
         assertExpectedContent(
             articleRenderNode,
             sourceLanguage: "swift",
             title: "MyArticle",
             navigatorTitle: nil,
             abstract: """
-            An article in a mixed-language framework. This symbol link should display the correct title depending on \
-            the language we’re browsing this article in: .
-            """,
+                An article in a mixed-language framework. This symbol link should display the correct title depending on \
+                the language we’re browsing this article in: .
+                """,
             declarationTokens: nil,
             discussionSection: nil,
             topicSectionIdentifiers: [],
@@ -537,18 +539,18 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "Swift variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: articleRenderNode)
-        
+
         assertExpectedContent(
             objectiveCVariantNode,
             sourceLanguage: "occ",
             title: "MyArticle",
             navigatorTitle: nil,
             abstract: """
-            An article in a mixed-language framework. This symbol link should display the correct title depending on \
-            the language we’re browsing this article in: .
-            """,
+                An article in a mixed-language framework. This symbol link should display the correct title depending on \
+                the language we’re browsing this article in: .
+                """,
             declarationTokens: nil,
             discussionSection: nil,
             topicSectionIdentifiers: [],
@@ -564,12 +566,12 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             }
         )
     }
-    
+
     func testAPICollectionInMixedLanguageFramework() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
-        
+
         let articleRenderNode = try outputConsumer.renderNode(withTitle: "APICollection")
-        
+
         assertExpectedContent(
             articleRenderNode,
             sourceLanguage: "swift",
@@ -598,9 +600,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "Swift variant of 'APICollection' article has unexpected content for '\(fieldName)'."
             }
         )
-        
+
         let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: articleRenderNode)
-        
+
         assertExpectedContent(
             objectiveCVariantNode,
             sourceLanguage: "occ",
@@ -629,12 +631,12 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             }
         )
     }
-    
+
     func testGeneratedImplementationsCollectionIsCuratedInAllAvailableLanguages() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
-        
+
         let protocolRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageClassConformingToProtocol")
-        
+
         XCTAssertEqual(
             protocolRenderNode.topicSections.flatMap(\.identifiers),
             [
@@ -642,9 +644,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
             ]
         )
-        
+
         let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: protocolRenderNode)
-        
+
         XCTAssertEqual(
             objectiveCVariantNode.topicSections.flatMap(\.identifiers),
             [
@@ -653,31 +655,32 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             ]
         )
     }
-    
+
     func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFramework",
             configureBundle: { bundleURL in
                 // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
                 // available in Swift only.
-                
-                let clangSymbolGraphLocation = bundleURL
+
+                let clangSymbolGraphLocation =
+                    bundleURL
                     .appendingPathComponent("symbol-graphs")
                     .appendingPathComponent("clang")
                     .appendingPathComponent("MixedLanguageFramework.symbols.json")
-                
+
                 var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
-                
+
                 clangSymbolGraph.symbols = clangSymbolGraph.symbols.filter { preciseIdentifier, _ in
                     !preciseIdentifier.contains("mixedLanguageMethod")
                 }
-                
+
                 try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
             }
         )
-        
+
         let protocolRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageClassConformingToProtocol")
-        
+
         XCTAssertEqual(
             protocolRenderNode.topicSections.flatMap(\.identifiers),
             [
@@ -685,9 +688,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
             ]
         )
-        
+
         let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: protocolRenderNode)
-        
+
         XCTAssertEqual(
             objectiveCVariantNode.topicSections.flatMap(\.identifiers),
             [
@@ -699,7 +702,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
 
     func testAutomaticSeeAlsoOnlyShowsAPIsAvailableInParentsLanguageForSymbol() async throws {
         let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
-        
+
         // Swift-only symbol.
         XCTAssertEqual(
             try outputConsumer.renderNode(withTitle: "SwiftOnlyClass")
@@ -710,7 +713,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
             ]
         )
-        
+
         // Objective-C–only symbol.
         XCTAssertEqual(
             try outputConsumer.renderNode(withTitle: "_MixedLanguageFrameworkVersionString")
@@ -721,7 +724,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
             ]
         )
-        
+
         // Swift variant of mixed-language symbol.
         XCTAssertEqual(
             try outputConsumer.renderNode(withTitle: "Bar")
@@ -732,7 +735,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
             ]
         )
-        
+
         // Objective-C variant of mixed-language symbol.
         XCTAssertEqual(
             try renderNodeApplyingObjectiveCVariantOverrides(to: outputConsumer.renderNode(withTitle: "Bar"))
@@ -743,7 +746,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
             ]
         )
-        
+
         // Swift variant of mixed-language article.
         XCTAssertEqual(
             try outputConsumer.renderNode(withTitle: "Article")
@@ -754,7 +757,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
             ]
         )
-        
+
         // Objective-C variant of mixed-language article.
         XCTAssertEqual(
             try renderNodeApplyingObjectiveCVariantOverrides(to: outputConsumer.renderNode(withTitle: "Article"))
@@ -766,14 +769,14 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             ]
         )
     }
-    
+
     func testMultiLanguageChildOfSingleParentSymbolIsCuratedInMultiLanguage() async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkSingleLanguageParent"
         )
-        
+
         let topLevelFrameworkPage = try outputConsumer.renderNode(withTitle: "MixedLanguageFramework")
-        
+
         XCTAssertEqual(
             topLevelFrameworkPage.topicSections.flatMap(\.identifiers),
             [
@@ -782,9 +785,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyErrorDomain",
             ]
         )
-        
+
         let objectiveCTopLevelFrameworkPage = try renderNodeApplyingObjectiveCVariantOverrides(to: topLevelFrameworkPage)
-        
+
         XCTAssertEqual(
             objectiveCTopLevelFrameworkPage.topicSections.flatMap(\.identifiers),
             [
@@ -793,14 +796,14 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             ]
         )
     }
-    
+
     func testMultiLanguageSymbolWithLanguageSpecificRelationships() async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkWithLanguageSpecificRelationships"
         )
-        
+
         let symbol = try outputConsumer.renderNode(withTitle: "SymbolWithLanguageSpecificRelationships")
-        
+
         XCTAssertEqual(
             symbol.relationshipSections.flatMap { [$0.title] + $0.identifiers },
             [
@@ -810,9 +813,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/SH"
             ]
         )
-        
+
         let objectiveCSymbol = try renderNodeApplyingObjectiveCVariantOverrides(to: symbol)
-        
+
         XCTAssertEqual(
             objectiveCSymbol.relationshipSections.flatMap { [$0.title] + $0.identifiers },
             [
@@ -821,14 +824,14 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             ]
         )
     }
-    
+
     func testMultiLanguageSymbolWithLanguageSpecificProtocolRequirements() async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkWithLanguageSpecificRelationships"
         )
-        
+
         let symbol = try outputConsumer.renderNode(withTitle: "myMethod")
-        
+
         XCTAssertEqual(
             symbol.defaultImplementationsSections.flatMap { [$0.title] + $0.identifiers },
             [
@@ -836,17 +839,17 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SymbolWithLanguageSpecificRelationships/myMethodDefaultImplementation",
             ]
         )
-        
+
         let objectiveCSymbol = try renderNodeApplyingObjectiveCVariantOverrides(to: symbol)
-        
+
         XCTAssert(objectiveCSymbol.relationshipSections.isEmpty)
     }
-    
+
     func testArticlesWithSupportedLanguagesDirective() async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkWithArticlesUsingSupportedLanguages"
         )
-        
+
         assertIsAvailableInLanguages(
             try outputConsumer.renderNode(
                 withTitle: "ArticleWithoutSupportedLanguages"
@@ -854,7 +857,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             languages: ["swift", "occ"],
             defaultLanguage: .swift
         )
-        
+
         assertIsAvailableInLanguages(
             try outputConsumer.renderNode(
                 withTitle: "SwiftArticle"
@@ -862,7 +865,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             languages: ["swift"],
             defaultLanguage: .swift
         )
-        
+
         assertIsAvailableInLanguages(
             try outputConsumer.renderNode(
                 withTitle: "ObjCArticle"
@@ -870,7 +873,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             languages: ["occ"],
             defaultLanguage: .objectiveC
         )
-        
+
         assertIsAvailableInLanguages(
             try outputConsumer.renderNode(
                 withTitle: "SwiftAndObjCArticle"
@@ -909,29 +912,44 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testEmptyAutomaticTaskGroupIsOmitted() async throws {
-        let (_, context) = try await loadBundle(catalog:
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName-swift.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-class", language: .swift, kind: .class, pathComponents: ["SomeClass"]),
-                ])),
-                JSONFile(name: "ModuleName-objc.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-class", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"]),
-                ])),
-                TextFile(name: "ModuleName.md", utf8Content: """
-                # ``ModuleName``
+        let (_, context) = try await loadBundle(
+            catalog:
+                Folder(
+                    name: "unit-test.docc",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName-swift.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-class", language: .swift, kind: .class, pathComponents: ["SomeClass"]),
+                                ])),
+                        JSONFile(
+                            name: "ModuleName-objc.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-class", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"]),
+                                ])),
+                        TextFile(
+                            name: "ModuleName.md",
+                            utf8Content: """
+                                # ``ModuleName``
 
-                A mixed-language framework with Swift-only articles.
-                """),
-                TextFile(name: "SwiftOnlyArticle.md", utf8Content: """
-                # SwiftOnlyArticle
+                                A mixed-language framework with Swift-only articles.
+                                """),
+                        TextFile(
+                            name: "SwiftOnlyArticle.md",
+                            utf8Content: """
+                                # SwiftOnlyArticle
 
-                @Metadata {
-                    @SupportedLanguage(swift)
-                }
+                                @Metadata {
+                                    @SupportedLanguage(swift)
+                                }
 
-                This article is only available in Swift.
-                """),
-            ])
+                                This article is only available in Swift.
+                                """),
+                    ])
         )
 
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -953,24 +971,33 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testAutomaticSeeAlsoSectionElementLimit() async throws {
-        let (_, context) = try await loadBundle(catalog:
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: (1...50).map {
-                    makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])
-                })),
+        let (_, context) = try await loadBundle(
+            catalog:
+                Folder(
+                    name: "unit-test.docc",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: (1...50).map {
+                                    makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])
+                                })),
 
-                TextFile(name: "ModuleName.md", utf8Content: """
-                # ``ModuleName``
-                
-                A topic section with many elements
-                
-                ## Topics
-                
-                ### Many symbols
-                
-                \((1...50).map { "- ``SymbolName\($0)``" }.joined(separator: "\n"))
-                """),
-            ])
+                        TextFile(
+                            name: "ModuleName.md",
+                            utf8Content: """
+                                # ``ModuleName``
+
+                                A topic section with many elements
+
+                                ## Topics
+
+                                ### Many symbols
+
+                                \((1...50).map { "- ``SymbolName\($0)``" }.joined(separator: "\n"))
+                                """),
+                    ])
         )
 
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -991,7 +1018,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func renderNodeApplyingObjectiveCVariantOverrides(to renderNode: RenderNode) throws -> RenderNode {
         return try renderNodeApplying(variant: "occ", to: renderNode)
     }
-    
+
     func assertIsAvailableInLanguages(
         _ renderNode: RenderNode,
         languages: Set<String>,
@@ -1004,13 +1031,13 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                         guard case .interfaceLanguage(let language) = variant.traits.first else {
                             return nil
                         }
-                        
+
                         return language
                     }
             ),
             languages
         )
-        
+
         XCTAssertEqual(renderNode.identifier.sourceLanguage, defaultLanguage)
     }
 }

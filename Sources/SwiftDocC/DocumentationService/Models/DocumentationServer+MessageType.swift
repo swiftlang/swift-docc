@@ -13,22 +13,23 @@ public extension DocumentationServer {
     ///
     /// The type of a service message is used to determine which service a server should invoke to process the message.
     struct MessageType: Codable, RawRepresentable, Hashable, CustomDebugStringConvertible,
-                               ExpressibleByStringLiteral, Equatable, Sendable {
+        ExpressibleByStringLiteral, Equatable, Sendable
+    {
         /// The string representation of the message.
         public var rawValue: String
-        
+
         /// Creates a type from its string representation.
         public init(rawValue: String) {
             self.rawValue = rawValue
         }
-        
+
         public init(stringLiteral value: StringLiteralType) {
             self.init(rawValue: value)
         }
-        
+
         /// A type used to indicate error messages.
         public static let error = MessageType(rawValue: "error")
-        
+
         public var debugDescription: String {
             "MessageType(\(rawValue))"
         }

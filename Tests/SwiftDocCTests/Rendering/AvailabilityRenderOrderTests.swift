@@ -17,7 +17,7 @@ import DocCCommon
 class AvailabilityRenderOrderTests: XCTestCase {
     let availabilitySGFURL = Bundle.module.url(
         forResource: "Availability.symbols", withExtension: "json", subdirectory: "Test Resources")!
-    
+
     func testSortingAtRenderTime() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             let availabilitySymbolGraphURL = url.appendingPathComponent("Availability.symbols.json")
@@ -64,25 +64,27 @@ class AvailabilityRenderOrderTests: XCTestCase {
         }
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
-        
+
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
-        
+
         // Verify that all the symbol's availabilities were sorted into the order
         // they need to appear for rendering (they are not in the symbol graph fixture).
         // Additionally verify all the platforms have their correctly spelled name including spaces.
         // Finally, the invalid item added above should be filtered out.
-        XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), [
-            "iOS 12.0", "iOS App Extension 12.0",
-            "iPadOS 12.0",
-            "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
-            "macOS 10.12", "macOS App Extension 10.12",
-            "tvOS 12.0", "tvOS App Extension 12.0",
-            "visionOS 12.0",
-            "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2"
-        ])
-        
+        XCTAssertEqual(
+            renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }),
+            [
+                "iOS 12.0", "iOS App Extension 12.0",
+                "iPadOS 12.0",
+                "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
+                "macOS 10.12", "macOS App Extension 10.12",
+                "tvOS 12.0", "tvOS App Extension 12.0",
+                "visionOS 12.0",
+                "watchOS 6.0", "watchOS App Extension 6.0",
+                "Swift 4.2"
+            ])
+
         // Test roundtrip to verify availability items are correctly
         // initialized from the display name that's used for render JSON
         // instead of the platform key which is used in the symbol graph.
@@ -90,15 +92,17 @@ class AvailabilityRenderOrderTests: XCTestCase {
         XCTAssertNoThrow(try RenderNode.decode(fromJSON: roundtripData))
 
         let roundtripNode = try RenderNode.decode(fromJSON: roundtripData)
-        XCTAssertEqual(roundtripNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), [
-            "iOS 12.0", "iOS App Extension 12.0",
-            "iPadOS 12.0",
-            "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
-            "macOS 10.12", "macOS App Extension 10.12",
-            "tvOS 12.0", "tvOS App Extension 12.0",
-            "visionOS 12.0",
-            "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2"
-        ])
+        XCTAssertEqual(
+            roundtripNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }),
+            [
+                "iOS 12.0", "iOS App Extension 12.0",
+                "iPadOS 12.0",
+                "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
+                "macOS 10.12", "macOS App Extension 10.12",
+                "tvOS 12.0", "tvOS App Extension 12.0",
+                "visionOS 12.0",
+                "watchOS 6.0", "watchOS App Extension 6.0",
+                "Swift 4.2"
+            ])
     }
 }

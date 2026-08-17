@@ -15,8 +15,8 @@ private import DocCCommon
 /// A rendering-friendly representation of a external node.
 package struct ExternalRenderNode {
     private var entity: LinkResolver.ExternalEntity
-    private var topicRenderReference:  TopicRenderReference
-    
+    private var topicRenderReference: TopicRenderReference
+
     /// The bundle identifier for this external node.
     private var bundleIdentifier: DocumentationBundle.Identifier
 
@@ -30,7 +30,7 @@ package struct ExternalRenderNode {
         self.bundleIdentifier = bundleIdentifier
         self.topicRenderReference = externalEntity.makeTopicRenderReference()
     }
-    
+
     /// The identifier of the external render node.
     package var identifier: ResolvedTopicReference {
         ResolvedTopicReference(
@@ -45,38 +45,38 @@ package struct ExternalRenderNode {
     var kind: RenderNode.Kind {
         topicRenderReference.kind
     }
-    
+
     /// The symbol kind of this documentation node.
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     var symbolKind: SymbolGraph.Symbol.KindIdentifier? {
         DocumentationNode.symbolKind(for: entity.kind)
     }
-    
+
     /// The additional "role" assigned to the symbol, if any
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     var role: String? {
         topicRenderReference.role
     }
-    
+
     /// The variants of the title.
     var titleVariants: VariantCollection<String> {
         topicRenderReference.titleVariants
     }
-    
+
     /// The variants of the abbreviated declaration of the symbol to display in navigation.
     var navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> {
         topicRenderReference.navigatorTitleVariants
     }
-    
+
     /// The variants of the abbreviated declaration of the symbol to display in links and fall-back to in navigation.
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     var fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> {
         topicRenderReference.fragmentsVariants
     }
-    
+
     /// Author provided images that represent this page.
     var images: [TopicImage] {
         entity.topicImages ?? []
@@ -93,7 +93,7 @@ package struct ExternalRenderNode {
             RenderNode.Variant(traits: [.interfaceLanguage($0.id)], paths: [topicRenderReference.url])
         }
     }
-    
+
     /// A value that indicates whether this symbol is built for a beta platform
     ///
     /// This value is `false` if the referenced page is not a symbol.
@@ -110,26 +110,27 @@ struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
     }
     var kind: RenderNode.Kind
     var metadata: ExternalRenderNodeMetadataRepresentation
-    
+
     // Values that don't affect how the node is rendered in the sidebar.
     // These are needed to conform to the navigator indexable protocol.
-    var references: [String : any RenderReference] = [:]
+    var references: [String: any RenderReference] = [:]
     var sections: [any RenderSection] = []
     var topicSections: [TaskGroupRenderSection] = []
     var defaultImplementationsSections: [TaskGroupRenderSection] = []
-    
+
     init(renderNode: ExternalRenderNode, trait: RenderNode.Variant.Trait? = nil) {
         // Compute the source language of the node based on the trait to know which variant to apply.
-        let traitLanguage = if case .interfaceLanguage(let id) = trait {
-            SourceLanguage(id: id)
-        } else {
-            renderNode.identifier.sourceLanguage
-        }
+        let traitLanguage =
+            if case .interfaceLanguage(let id) = trait {
+                SourceLanguage(id: id)
+            } else {
+                renderNode.identifier.sourceLanguage
+            }
         let traits = trait.map { [$0] } ?? []
 
         self._identifier = renderNode.identifier.withSourceLanguages([traitLanguage])
         self.kind = renderNode.kind
-        
+
         self.metadata = ExternalRenderNodeMetadataRepresentation(
             title: renderNode.titleVariants.value(for: traits),
             navigatorTitle: renderNode.navigatorTitleVariants.value(for: traits),

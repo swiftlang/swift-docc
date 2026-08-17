@@ -43,7 +43,7 @@ public import Markdown
 /// ```
 public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.8"
-    
+
     /// The kind of action the link is referencing.
     public enum Purpose: String, CaseIterable, DirectiveArgumentValueConvertible {
         /// References a link to download an associated asset, like a sample project.
@@ -81,7 +81,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         "purpose"  : \CallToAction._purpose,
         "label"    : \CallToAction._label,
     ]
-    
+
     /// The label that should be used when rendering the user-interface for this call to action button.
     ///
     /// This can be provided directly via the ``label`` parameter or indirectly via the given ``purpose`` and
@@ -102,38 +102,41 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         var isValid = true
 
         if self.url == nil && self.file == nil {
-            diagnostics.append(.init(
-                source: source,
-                severity: .warning,
-                range: originalMarkup.range,
-                identifier: "org.swift.docc.\(CallToAction.self).missingLink",
-                summary: "\(CallToAction.directiveName.singleQuoted) directive requires `url` or `file` argument",
-                explanation: "The Call to Action requires a link to direct the user to."
-            ))
+            diagnostics.append(
+                .init(
+                    source: source,
+                    severity: .warning,
+                    range: originalMarkup.range,
+                    identifier: "org.swift.docc.\(CallToAction.self).missingLink",
+                    summary: "\(CallToAction.directiveName.singleQuoted) directive requires `url` or `file` argument",
+                    explanation: "The Call to Action requires a link to direct the user to."
+                ))
 
             isValid = false
         } else if self.url != nil && self.file != nil {
-            diagnostics.append(.init(
-                source: source,
-                severity: .warning,
-                range: originalMarkup.range,
-                identifier: "org.swift.docc.\(CallToAction.self).tooManyLinks",
-                summary: "\(CallToAction.directiveName.singleQuoted) directive requires only one of `url` or `file`",
-                explanation: "Both the `url` and `file` arguments specify the link in the heading; specifying both of them creates ambiguity in where the call should link."
-            ))
+            diagnostics.append(
+                .init(
+                    source: source,
+                    severity: .warning,
+                    range: originalMarkup.range,
+                    identifier: "org.swift.docc.\(CallToAction.self).tooManyLinks",
+                    summary: "\(CallToAction.directiveName.singleQuoted) directive requires only one of `url` or `file`",
+                    explanation: "Both the `url` and `file` arguments specify the link in the heading; specifying both of them creates ambiguity in where the call should link."
+                ))
 
             isValid = false
         }
 
         if self.purpose == nil && self.label == nil {
-            diagnostics.append(.init(
-                source: source,
-                severity: .warning,
-                range: originalMarkup.range,
-                identifier: "org.swift.docc.\(CallToAction.self).missingLabel",
-                summary: "\(CallToAction.directiveName.singleQuoted) directive requires `purpose` or `label` argument",
-                explanation: "Without a `purpose` or `label`, the Call to Action has no label to apply to the link."
-            ))
+            diagnostics.append(
+                .init(
+                    source: source,
+                    severity: .warning,
+                    range: originalMarkup.range,
+                    identifier: "org.swift.docc.\(CallToAction.self).missingLabel",
+                    summary: "\(CallToAction.directiveName.singleQuoted) directive requires `purpose` or `label` argument",
+                    explanation: "Without a `purpose` or `label`, the Call to Action has no label to apply to the link."
+                ))
 
             isValid = false
         }
@@ -157,16 +160,17 @@ extension CallToAction {
     ) -> ResourceReference? {
         if let file = self.file {
             if context.resolveAsset(named: file.url.lastPathComponent, in: bundle.rootReference) == nil {
-                diagnostics.append(Diagnostic(
-                    source: url,
-                    severity: .warning,
-                    range: originalMarkup.range,
-                    identifier: "org.swift.docc.Project.ProjectFilesNotFound",
-                    summary: "\(file.path) file reference not found in \(CallToAction.directiveName.singleQuoted) directive",
-                    solutions: [
-                        Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
-                    ]
-                ))
+                diagnostics.append(
+                    Diagnostic(
+                        source: url,
+                        severity: .warning,
+                        range: originalMarkup.range,
+                        identifier: "org.swift.docc.Project.ProjectFilesNotFound",
+                        summary: "\(file.path) file reference not found in \(CallToAction.directiveName.singleQuoted) directive",
+                        solutions: [
+                            Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
+                        ]
+                    ))
             } else {
                 self.file = ResourceReference(bundleID: file.bundleID, path: file.url.lastPathComponent)
             }

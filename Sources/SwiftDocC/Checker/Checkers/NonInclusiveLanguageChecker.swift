@@ -49,8 +49,8 @@ public struct NonInclusiveLanguageChecker: Checker {
     public mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
         // Need to offset the lines by +1 to take into account the start of the code block (``` or ~~~)
         let offset = SourceLocation(line: 1, column: 0, source: nil)
-        let offsetRange = offset ..< offset
-        
+        let offsetRange = offset..<offset
+
         for term in terms {
             for var range in matchingRanges(for: term, in: codeBlock.code, of: codeBlock) {
                 range.offsetWithRange(offsetRange)
@@ -62,8 +62,8 @@ public struct NonInclusiveLanguageChecker: Checker {
     public mutating func visitInlineCode(_ inlineCode: InlineCode) {
         // Need to offset the columns by +1 to account for the inline code start delimiter (`)
         let offset = SourceLocation(line: 0, column: 1, source: nil)
-        let offsetRange = offset ..< offset
-        
+        let offsetRange = offset..<offset
+
         for term in terms {
             for var range in matchingRanges(for: term, in: inlineCode.code, of: inlineCode) {
                 range.offsetWithRange(offsetRange)
@@ -93,9 +93,13 @@ public struct NonInclusiveLanguageChecker: Checker {
                 identifier: "NonInclusiveLanguage",
                 summary: "Documentation should use inclusive language",
                 explanation: term.message,
-                solutions: [Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [
-                    .init(range: range, replacement: term.replacement)
-                ])]
+                solutions: [
+                    Solution(
+                        summary: "Replace with \(term.replacement.singleQuoted)",
+                        replacements: [
+                            .init(range: range, replacement: term.replacement)
+                        ])
+                ]
             )
         )
     }
@@ -113,15 +117,16 @@ public struct NonInclusiveLanguageChecker: Checker {
     private func matchingRanges(for term: Term, in text: String, of markup: any Markup) -> [SourceRange] {
         var ranges = [SourceRange]()
 
-        let regex = try! defaultRegularExpressions[term.expression]
+        let regex =
+            try! defaultRegularExpressions[term.expression]
             ?? NSRegularExpression(pattern: term.expression, options: [.caseInsensitive])
         let range = NSRange(text.startIndex..., in: text)
         let matches = regex.matches(in: text, range: range)
 
         for match in matches {
             if let startCursor = PrintCursor(offset: match.range.location, in: text),
-               let endCursor = PrintCursor(offset: NSMaxRange(match.range), in: text),
-               let markupRange = markup.range
+                let endCursor = PrintCursor(offset: NSMaxRange(match.range), in: text),
+                let markupRange = markup.range
             {
                 let start = SourceLocation(
                     line: markupRange.lowerBound.line + startCursor.line - 1,
@@ -133,7 +138,7 @@ public struct NonInclusiveLanguageChecker: Checker {
                     column: start.column + match.range.length,
                     source: sourceFile
                 )
-                ranges.append(start ..< end)
+                ranges.append(start..<end)
             }
         }
 

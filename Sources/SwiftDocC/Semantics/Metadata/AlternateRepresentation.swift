@@ -11,7 +11,6 @@
 import Foundation
 public import Markdown
 
-
 /// A directive that configures an alternate language representation of a symbol.
 ///
 /// An API that can be called from more than one source language has more than one language representation.
@@ -52,7 +51,7 @@ public import Markdown
 /// either from in-source annotations or from a previous `@AlternateRepresentation` directive.
 public final class AlternateRepresentation: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "6.1"
-            
+
     // Directive parameter definition
 
     /// A link to another symbol that should be considered an alternate language representation of the current symbol.
@@ -74,12 +73,12 @@ public final class AlternateRepresentation: Semantic, AutomaticDirectiveConverti
     )
     public internal(set) var reference: TopicReference
 
-    static var keyPaths: [String : AnyKeyPath] = [
-        "reference" : \AlternateRepresentation._reference
+    static var keyPaths: [String: AnyKeyPath] = [
+        "reference": \AlternateRepresentation._reference
     ]
 
     // Boiler-plate required by conformance to AutomaticDirectiveConvertible
-    
+
     public var originalMarkup: Markdown.BlockDirective
 
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible")

@@ -16,9 +16,10 @@ extension URL {
     /// - Returns: A Boolean value indicating whether the url is an absolute web URL.
     var isAbsoluteWebURL: Bool {
         guard !isFileURL,
-              let scheme ,
-              !scheme.isEmpty,
-              scheme != ResolvedTopicReference.urlScheme else {
+            let scheme,
+            !scheme.isEmpty,
+            scheme != ResolvedTopicReference.urlScheme
+        else {
             return false
         }
         return true

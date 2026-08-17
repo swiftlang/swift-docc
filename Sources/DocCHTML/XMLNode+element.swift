@@ -30,14 +30,14 @@ extension XMLNode {
         } else {
             attributeNodes = nil
         }
-        
+
         return XMLNode.element(
             withName: name,
             children: children,
             attributes: attributeNodes
         ) as! XMLElement
     }
-    
+
     /// Creates a new XML text node that wraps the given string.
     package static func text(_ value: some StringProtocol) -> XMLNode {
         XMLNode.text(withStringValue: String(value)) as! XMLNode

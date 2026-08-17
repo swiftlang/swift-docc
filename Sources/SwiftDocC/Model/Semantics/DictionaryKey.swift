@@ -21,7 +21,7 @@ public struct DictionaryKey {
     public var symbol: SymbolGraph.Symbol?
     /// The required status of the dictionary key.
     public var required: Bool
-    
+
     /// Initialize a value to describe documentation about a dictionary key for a symbol.
     /// - Parameters:
     ///   - name: The name of this dictionary key.

@@ -17,27 +17,30 @@ class SubscriptSuperscriptElementsTests: XCTestCase {
         let subscriptSuperscriptElementsURL = Bundle.module.url(
             forResource: "subscript-superscript-elements", withExtension: "json",
             subdirectory: "Rendering Fixtures")!
-        
+
         let data = try Data(contentsOf: subscriptSuperscriptElementsURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         guard let discussion = symbol.primaryContentSections.first as? ContentRenderSection,
-            discussion.content.count == 2 else {
+            discussion.content.count == 2
+        else {
             XCTFail("Discussion section not decoded")
             return
         }
-        
+
         guard case RenderBlockContent.paragraph(let contentParagraph) = discussion.content[1],
-              contentParagraph.inlineContent.count == 5 else {
+            contentParagraph.inlineContent.count == 5
+        else {
             XCTFail("Didn't find a paragraph element in discussion")
             return
         }
-        XCTAssertEqual([
-            RenderInlineContent.text("Use "),
-            RenderInlineContent.subscript(inlineContent: [.text("sub")]),
-            RenderInlineContent.text(" and "),
-            RenderInlineContent.superscript(inlineContent: [.text("sup")]),
-            RenderInlineContent.text(" to render attributed text."),
-        ], contentParagraph.inlineContent)
+        XCTAssertEqual(
+            [
+                RenderInlineContent.text("Use "),
+                RenderInlineContent.subscript(inlineContent: [.text("sub")]),
+                RenderInlineContent.text(" and "),
+                RenderInlineContent.superscript(inlineContent: [.text("sup")]),
+                RenderInlineContent.text(" to render attributed text."),
+            ], contentParagraph.inlineContent)
     }
 }

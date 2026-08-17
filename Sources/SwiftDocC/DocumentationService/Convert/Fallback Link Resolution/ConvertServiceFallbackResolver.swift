@@ -20,28 +20,28 @@
 /// > Note: The ``ConvertService`` only renders the one page that it provided inputs for. Because of this, the content that this fallback resolver returns is considered
 /// "external" content, even if it represents pages that would be "local" if the full project was built together.
 protocol ConvertServiceFallbackResolver {
-    
+
     /// The bundle identifier for the fallback resolver.
     ///
     /// The fallback resolver will only resolve links with this bundle identifier.
     var bundleID: DocumentationBundle.Identifier { get }
-    
+
     // MARK: References
-    
+
     /// Attempts to resolve an unresolved reference for a page that couldn't be resolved locally.
     ///
     /// - Parameter reference: The unresolved local reference.
     /// - Returns: The resolved reference, or information about why the resolver failed to resolve the reference.
     func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult
-    
+
     /// Returns an external entity with the documentation content for a local resolved reference if the reference was previously resolved by this resolver.
     ///
     /// - Parameter reference: The local reference that this resolver may have previously resolved.
     /// - Returns: An entity with the documentation content for the referenced page or landmark, or `nil` if the reference wasn't previously resolved by this resolver.
     func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity?
-    
+
     // MARK:  Assets
-    
+
     /// Attempts to resolve an asset that couldn't be resolved locally.
     ///
     /// - Parameter assetName: The name of the local asset to resolve.

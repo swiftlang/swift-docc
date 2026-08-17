@@ -14,7 +14,7 @@ public import Markdown
 public protocol Section {
     /// The title of the section.
     static var title: String? { get }
-    
+
     /// The section's markup content.
     var content: [any Markup] { get }
 }
@@ -22,7 +22,7 @@ public protocol Section {
 extension Markup {
     /**
      Returns the index of the first child element that is a heading with the given level and text.
-     
+
      - parameter level: The level of the heading.
      - parameter name: The text of the heading.
      - returns: The index of the first child element that is a heading with the given level and text.
@@ -31,9 +31,10 @@ extension Markup {
     func sectionHeadingIndex(level: Int, named name: String? = nil) -> Int? {
         return (0..<childCount).first { index -> Bool in
             guard let child = child(at: index),
-                  let heading = child as? Heading,
-                heading.level == level else {
-                    return false
+                let heading = child as? Heading,
+                heading.level == level
+            else {
+                return false
             }
             if let name {
                 guard heading.plainText == name else {
@@ -43,10 +44,10 @@ extension Markup {
             return true
         }
     }
-    
+
     /**
      Returns the index of the first child element that is a heading with the given level, starting the search at the given index.
-     
+
      - parameter startIndex: The index from which to start the search.
      - parameter level: The level of the heading.
      - returns: The index of the first child element that is a heading of the given level.
@@ -56,9 +57,10 @@ extension Markup {
 
         return (startIndex..<childCount).first { index -> Bool in
             guard let child = child(at: index),
-                  let heading = child as? Heading,
-                heading.level == level else {
-                    return false
+                let heading = child as? Heading,
+                heading.level == level
+            else {
+                return false
             }
             return true
         }

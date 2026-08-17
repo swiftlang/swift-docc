@@ -63,7 +63,7 @@ struct JSONPatchApplierTests {
     func appliesPatchOperation(input: Model, patch: JSONPatchOperation, expected: Model) throws {
         #expect(try apply(patch, to: input) == expected)
     }
-    
+
     @Test
     func appliesMultiplePatchOperations() throws {
         #expect(
@@ -74,13 +74,14 @@ struct JSONPatchApplierTests {
                     baz: "qux",
                     foo: [8, 9]
                 )
-            ) == Model(
-                baz: "boo",
-                foo: [9]
             )
+                == Model(
+                    baz: "boo",
+                    foo: [9]
+                )
         )
     }
-    
+
     @Test(arguments: [
         (
             input: Model(baz: "qux", foo: [8, 9]),
@@ -111,19 +112,19 @@ struct JSONPatchApplierTests {
             #expect(error.localizedDescription == expectedError)
         }
     }
-    
+
     private func apply(_ patch: JSONPatchOperation..., to model: Model) throws -> Model {
         try JSONDecoder().decode(
             Model.self,
             from: JSONPatchApplier().apply(patch, to: JSONEncoder().encode(model))
         )
     }
-    
+
     struct Model: Codable, Equatable {
         var baz: String?
         var foo: [Int] = []
         var bar: [Model] = []
-        
+
         struct Model: Codable, Equatable {
             var bar: String? = nil
             var foo: String? = nil

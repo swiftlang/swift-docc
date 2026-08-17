@@ -12,13 +12,13 @@
 import NIOHTTP1
 
 extension HTTPResponseHead {
-    
+
     /// Creates a new response head to answer a given request.
     ///
     /// Handles the difference between HTTP versions 1.0 and 1.1 for the Connection HTTP header.
     init(matchingRequestHead request: HTTPRequestHead, status: HTTPResponseStatus, headers: HTTPHeaders = HTTPHeaders()) {
         self.init(version: request.version, status: status, headers: headers)
-        
+
         let connectionHeaders = headers[canonicalForm: "connection"].map { $0.lowercased() }
 
         if !connectionHeaders.contains("keep-alive") && !connectionHeaders.contains("close") {

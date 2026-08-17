@@ -9,7 +9,7 @@
 */
 
 /// Protocol that provides merging and updating capabilities for list item entities that merge content between markdown files and symbol graphs.
-/// 
+///
 /// The single property, ``listItemIdentifier`` returns the value that uniquely identifies the entity within the list item markdown.
 protocol ListItemUpdatable {
     associatedtype IdentifierType: Comparable, CustomStringConvertible
@@ -18,15 +18,15 @@ protocol ListItemUpdatable {
 
 extension Array where Element: ListItemUpdatable {
     /// Merge a list values with the current array of values, updating the content of existing elements if they have the same identifier as new values, returning a new list.
-    /// 
+    ///
     /// If both lists are sorted, any new elements that don't match existing elements will be inserted to preserve a sorted list, otherwise they are appended.
     func insertAndUpdate(_ newElements: [Element], updater: (Element, Element) -> Element) -> [Element] {
         // Build a lookup table of the new elements
         var newElementLookup = [String: Element]()
         for newElement in newElements {
-           newElementLookup[newElement.listItemIdentifier.description] = newElement
+            newElementLookup[newElement.listItemIdentifier.description] = newElement
         }
-        
+
         // Update existing elements with new data being passed in.
         var updatedElements = self.map { existingElement -> Element in
             if let newElement = newElementLookup.removeValue(forKey: existingElement.listItemIdentifier.description) {
@@ -34,7 +34,7 @@ extension Array where Element: ListItemUpdatable {
             }
             return existingElement
         }
-        
+
         // Are there any extra elements that didn't match existing set?
         if newElementLookup.count > 0 {
             // If documented elements are in alphabetical order, merge new ones in rather than append them.
@@ -48,7 +48,7 @@ extension Array where Element: ListItemUpdatable {
 
         return updatedElements
     }
-    
+
     /// Checks whether the array of values are sorted alphabetically according to their `listItemIdentifier`.
     private var isSortedByIdentifier: Bool {
         if self.count < 2 { return true }
@@ -57,11 +57,11 @@ extension Array where Element: ListItemUpdatable {
             self[$0 - 1].listItemIdentifier <= self[$0].listItemIdentifier
         }
     }
-    
+
     /// Insert a set of sorted elements at the correct locations of the existing sorted list.
     private mutating func insertSortedElements(_ newElements: [Element]) {
         self.reserveCapacity(self.count + newElements.count)
-        
+
         var insertionPoint = 0
         var newElementPoint = 0
         while newElementPoint < newElements.count {
@@ -78,5 +78,5 @@ extension Array where Element: ListItemUpdatable {
             insertionPoint += 1
         }
     }
-    
+
 }

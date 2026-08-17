@@ -13,7 +13,7 @@ import XCTest
 import Markdown
 
 class TileTests: XCTestCase {
-    
+
     func testComplex() async throws {
         let directiveNamesAndTitles = [
             (Tile.DirectiveNames.documentation, Tile.Semantics.Title.documentation),
@@ -31,22 +31,24 @@ class TileTests: XCTestCase {
                 let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(2, diagnostics.count)
-                XCTAssertEqual(diagnostics.map(\.identifier), [
-                    "org.swift.docc.Resources.\(directiveName).HasContent",
-                    "org.swift.docc.Resources.\(directiveName).HasLinks",
-                ])
+                XCTAssertEqual(
+                    diagnostics.map(\.identifier),
+                    [
+                        "org.swift.docc.Resources.\(directiveName).HasContent",
+                        "org.swift.docc.Resources.\(directiveName).HasLinks",
+                    ])
             }
-            
+
             do {
                 // Valid
                 let destination = URL(string: "https://www.example.com/documentation/arkit")!
                 let source = """
-@\(directiveName)(destination: "\(destination)") {
-   Browse and search detailed API documentation.
-   - <doc://org.swift.docc/arkit/augmented_reality_with_the_back_camera>
-   - <doc://org.swift.docc/arkit/augmented_reality_with_the_front_camera>
-}
-"""
+                    @\(directiveName)(destination: "\(destination)") {
+                       Browse and search detailed API documentation.
+                       - <doc://org.swift.docc/arkit/augmented_reality_with_the_back_camera>
+                       - <doc://org.swift.docc/arkit/augmented_reality_with_the_front_camera>
+                    }
+                    """
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
                 let context = try await makeEmptyContext()
@@ -61,14 +63,14 @@ class TileTests: XCTestCase {
             }
         }
     }
-    
+
     func testGeneric() async throws {
         let directiveNamesAndTitles = [
             (Tile.DirectiveNames.downloads, Tile.Semantics.Title.downloads),
             (Tile.DirectiveNames.videos, Tile.Semantics.Title.videos),
             (Tile.DirectiveNames.forums, Tile.Semantics.Title.forums),
         ].map { ($0.0.rawValue, $0.1.rawValue) }
-        
+
         for (directiveName, title) in directiveNamesAndTitles {
             do {
                 // Empty
@@ -80,21 +82,23 @@ class TileTests: XCTestCase {
                 let tile = Tile(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(1, diagnostics.count)
-                XCTAssertEqual(diagnostics.map(\.identifier), [
-                    "org.swift.docc.Resources.\(directiveName).HasContent",
-                ])
+                XCTAssertEqual(
+                    diagnostics.map(\.identifier),
+                    [
+                        "org.swift.docc.Resources.\(directiveName).HasContent",
+                    ])
             }
-            
+
             do {
                 // Valid
                 let destination = URL(string: "https://www.example.com/documentation/arkit")!
                 let source = """
-@\(directiveName)(destination: "\(destination.absoluteString)") {
-   Browse and search detailed API documentation.
-   - <doc://org.swift.docc/arkit/augmented_reality_with_the_back_camera>
-   - <doc://org.swift.docc/arkit/augmented_reality_with_the_front_camera>
-}
-"""
+                    @\(directiveName)(destination: "\(destination.absoluteString)") {
+                       Browse and search detailed API documentation.
+                       - <doc://org.swift.docc/arkit/augmented_reality_with_the_back_camera>
+                       - <doc://org.swift.docc/arkit/augmented_reality_with_the_front_camera>
+                    }
+                    """
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
                 let context = try await makeEmptyContext()
@@ -109,15 +113,15 @@ class TileTests: XCTestCase {
             }
         }
     }
-    
+
     func testDestination() async throws {
         do {
             let destination = URL(string: "https://www.example.com/documentation/technology")!
             let source = """
-    @SampleCode(destination: "\(destination.absoluteString)") {
-    Browse and search detailed API documentation.
-    }
-    """
+                @SampleCode(destination: "\(destination.absoluteString)") {
+                Browse and search detailed API documentation.
+                }
+                """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
             let context = try await makeEmptyContext()
@@ -126,14 +130,14 @@ class TileTests: XCTestCase {
             // Destination is set.
             XCTAssertEqual(destination, tile?.destination)
         }
-        
+
         do {
             let source = """
-    @SampleCode {
-    Browse and search detailed API documentation.
-    - <doc://org.swift.docc/arkit/augmented_reality_with_the_back_camera>
-    }
-    """
+                @SampleCode {
+                Browse and search detailed API documentation.
+                - <doc://org.swift.docc/arkit/augmented_reality_with_the_back_camera>
+                }
+                """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
             let context = try await makeEmptyContext()
@@ -144,7 +148,7 @@ class TileTests: XCTestCase {
             XCTAssertEqual(nil, tile?.destination)
         }
     }
-    
+
     func testUnknownTile() async throws {
         let source = "@UnknownTile"
         let document = Document(parsing: source, options: .parseBlockDirectives)

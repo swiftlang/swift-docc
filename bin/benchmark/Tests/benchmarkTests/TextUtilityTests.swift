@@ -12,13 +12,13 @@ import XCTest
 @testable import benchmark
 
 final class TextUtilityTests: XCTestCase {
-    
+
     func testSuperScript() {
         XCTAssertEqual(DiffResultsTable.superscript(1234), "¹²³⁴")
         XCTAssertEqual(DiffResultsTable.superscript(99), "⁹⁹")
         XCTAssertEqual(DiffResultsTable.superscript(400), "⁴⁰⁰")
         XCTAssertEqual(DiffResultsTable.superscript(1), "¹")
-        
+
         XCTAssertEqual(DiffResultsTable.superscript(0), "")
         XCTAssertEqual(DiffResultsTable.superscript(-1), "")
     }

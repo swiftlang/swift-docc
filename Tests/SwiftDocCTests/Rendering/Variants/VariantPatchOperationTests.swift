@@ -31,21 +31,22 @@ struct VariantPatchOperationTests {
         let variant = makeVariantCollection([1, 2, 3], patch: patch)
         #expect(variant.value(for: testTraits) == expected)
     }
-    
-    @Test(arguments: zip(
-        0...8,
-        [
-            "A",
-            "ABC",
-            "",
-            "DEF",
-            "DEFGHI",
-            "JKL",
-            "",
-            "MNO",
-            "MNOPQR",
-        ]
-    ))
+
+    @Test(
+        arguments: zip(
+            0...8,
+            [
+                "A",
+                "ABC",
+                "",
+                "DEF",
+                "DEFGHI",
+                "JKL",
+                "",
+                "MNO",
+                "MNOPQR",
+            ]
+        ))
     func appliesPrefixOfPatchOperationsCumulatively(prefixLength: Int, expected: String) {
         let stringPatches: [VariantPatchOperation<String>] = [
             .replace(value: "ABC"),
@@ -60,37 +61,39 @@ struct VariantPatchOperationTests {
         let variant = makeVariantCollection("A", patch: Array(stringPatches.prefix(prefixLength)))
         #expect(variant.value(for: testTraits) == expected)
     }
-    
+
     @Test
     func mapsValueOfReplaceAndAddOperationsAndPreservesRemove() {
         let transform: (String) -> String = { "\($0) transformed" }
-        
+
         let replace = VariantPatchOperation<String>.replace(value: "replace")
         guard case .replace(let value) = replace.map(transform) else {
             Issue.record("Expected replace operation")
             return
         }
         #expect(value == "replace transformed")
-        
+
         let add = VariantPatchOperation<String>.add(value: "add")
         guard case .add(let value) = add.map(transform) else {
             Issue.record("Expected add operation")
             return
         }
         #expect(value == "add transformed")
-        
+
         let remove = VariantPatchOperation<String>.remove.map(transform)
         guard case .remove = remove else {
             Issue.record("Expected remove operation")
             return
         }
     }
-    
+
     private let testTraits = [RenderNode.Variant.Trait.interfaceLanguage("unit-test")]
-    
+
     private func makeVariantCollection<Value>(_ original: Value, patch: [VariantPatchOperation<Value>]) -> VariantCollection<Value> {
-        VariantCollection(defaultValue: original, variants: [
-            .init(traits: testTraits, patch: patch)
-        ])
+        VariantCollection(
+            defaultValue: original,
+            variants: [
+                .init(traits: testTraits, patch: patch)
+            ])
     }
 }

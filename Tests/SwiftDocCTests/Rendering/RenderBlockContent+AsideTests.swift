@@ -251,7 +251,7 @@ struct RenderBlockContent_AsideTests {
             }
             """
         aside = try decodeAsideRenderBlock(json)
-        #expect(aside.style.rawValue == "note") // coerced to lowercase
+        #expect(aside.style.rawValue == "note")  // coerced to lowercase
         #expect(aside.name == name)
         #expect(aside.content == [testBlock])
 
@@ -380,7 +380,7 @@ struct RenderBlockContent_AsideTests {
             }
             """
         var aside = try decodeAsideRenderBlock(json)
-        #expect(aside.style.rawValue == "note") // not "custom"
+        #expect(aside.style.rawValue == "note")  // not "custom"
         #expect(aside.name == "Custom")
         #expect(aside.content == [testBlock])
 
@@ -402,8 +402,8 @@ struct RenderBlockContent_AsideTests {
             }
             """
         aside = try decodeAsideRenderBlock(json)
-        #expect(aside.style.rawValue == "note") // not "custom"
-        #expect(aside.name == "Note") // discard the invalid style in this case
+        #expect(aside.style.rawValue == "note")  // not "custom"
+        #expect(aside.name == "Note")  // discard the invalid style in this case
         #expect(aside.content == [testBlock])
     }
 
@@ -453,7 +453,7 @@ struct RenderBlockContent_AsideTests {
             }
             """
         aside = try decodeAsideRenderBlock(json)
-        #expect(aside.style.rawValue == "note") // coerced to "note"
+        #expect(aside.style.rawValue == "note")  // coerced to "note"
         #expect(aside.name == "Custom")
         #expect(aside.content == [testBlock])
     }

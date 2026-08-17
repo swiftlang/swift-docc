@@ -14,20 +14,19 @@ public struct LinkReference: RenderReference, Equatable {
     ///
     /// This value is always `.link`.
     public var type: RenderReferenceType = .link
-    
+
     /// The identifier of this reference.
     public var identifier: RenderReferenceIdentifier
-    
+
     /// The plain text title of the destination page.
     public var title: String
-    
+
     /// The formatted title of the destination page.
     public var titleInlineContent: [RenderInlineContent]
-    
+
     /// The topic url for the destination page.
     public var url: String
-    
-    
+
     /// Creates a new link reference with its initial values.
     ///
     /// - Parameters:
@@ -41,18 +40,18 @@ public struct LinkReference: RenderReference, Equatable {
         self.titleInlineContent = titleInlineContent ?? [.text(title)]
         self.url = url
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case type, identifier, title, titleInlineContent, url
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
         identifier = try values.decode(RenderReferenceIdentifier.self, forKey: .identifier)
-        
+
         let urlPath = try values.decode(String.self, forKey: .url)
-        
+
         if let formattedTitle = try values.decodeIfPresent([RenderInlineContent].self, forKey: .titleInlineContent) {
             self.titleInlineContent = formattedTitle
             self.title = try values.decodeIfPresent(String.self, forKey: .title) ?? formattedTitle.plainText
@@ -63,13 +62,13 @@ public struct LinkReference: RenderReference, Equatable {
             self.titleInlineContent = [.text(urlPath)]
             self.title = urlPath
         }
-        
+
         url = urlPath
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(type, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
         try container.encode(title, forKey: .title)

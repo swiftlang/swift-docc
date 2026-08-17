@@ -10,7 +10,7 @@
 
 package import Foundation
 
-@_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
+@_spi(ExternalLinks)  // SPI to set `context.linkResolver.dependencyArchives`
 public import SwiftDocC
 private import Markdown
 private import DocCHTML
@@ -22,11 +22,11 @@ private import os
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {
     private let signposter = ConvertActionConverter.signposter
-    
+
     let rootURL: URL?
     let targetDirectory: URL
     let htmlTemplateDirectory: URL?
-    
+
     private let emitDigest: Bool
     private let outputFormat: Docc.Convert.OutputFormat
     let treatWarningsAsErrors: Bool
@@ -39,16 +39,16 @@ public struct ConvertAction: AsyncAction {
     private let transformForStaticHosting: Bool
     private let includeContentInEachHTMLFile: Bool
     private let hostingBasePath: String?
-    
+
     let sourceRepository: SourceRepository?
-    
+
     private var fileManager: any FileManagerProtocol
     private let temporaryDirectory: URL
-    
+
     private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
     /// Initializes the action with the given validated options.
-    /// 
+    ///
     /// - Parameters:
     ///   - documentationBundleURL: The root of the documentation catalog to convert.
     ///   - outOfProcessResolver: An out-of-process resolver that
@@ -58,7 +58,7 @@ public struct ConvertAction: AsyncAction {
     ///   - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
     ///   - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
     ///   - buildIndex: Whether or not the convert action should emit an LMDB representation of the navigator index.
-    /// 
+    ///
     ///     A JSON representation is built and emitted regardless of this value.
     ///   - fileManager: The file manager that the convert action uses to create directories and write data to files.
     ///   - outputFormat: The format that the convert action will output the documentation in when writing to the output location.
@@ -89,7 +89,7 @@ public struct ConvertAction: AsyncAction {
         targetDirectory: URL,
         htmlTemplateDirectory: URL?,
         emitDigest: Bool,
-        currentPlatforms: [String : PlatformVersion]?,
+        currentPlatforms: [String: PlatformVersion]?,
         buildIndex: Bool = false,
         fileManager: any FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
@@ -127,14 +127,14 @@ public struct ConvertAction: AsyncAction {
         self.includeContentInEachHTMLFile = includeContentInEachHTMLFile
         self.hostingBasePath = hostingBasePath
         self.sourceRepository = sourceRepository
-        
+
         let filterLevel: DiagnosticSeverity
         if analyze {
             filterLevel = .information
         } else {
             filterLevel = DiagnosticSeverity(diagnosticLevel) ?? .warning
         }
-        
+
         let formattingOptions: DiagnosticFormattingOptions
         if formatConsoleOutputForTools || diagnosticFilePath != nil {
             formattingOptions = [.formatConsoleOutputForTools]
@@ -145,12 +145,12 @@ public struct ConvertAction: AsyncAction {
             formattingOptions,
             documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
         )
-        
+
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
-        
+
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         // Set these properties even if the caller passed a base diagnostic engine
         engine.filterLevel = filterLevel
@@ -160,12 +160,12 @@ public struct ConvertAction: AsyncAction {
         if let diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: fileManager))
         }
-        
+
         self.diagnosticEngine = engine
-        
+
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags = featureFlags
-        
+
         configuration.externalMetadata.diagnosticLevel = filterLevel
         // Inject current platform versions if provided
         if var currentPlatforms {
@@ -178,39 +178,39 @@ public struct ConvertAction: AsyncAction {
 
         // Inject user-set flags.
         configuration.externalMetadata.inheritDocs = inheritDocs
-        
+
         switch documentationCoverageOptions.level {
         case .detailed, .brief:
             configuration.experimentalCoverageConfiguration.shouldStoreManuallyCuratedReferences = true
         case .none:
             break
         }
-        
+
         if let outOfProcessResolver {
             configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleID] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
-        
+
         let (bundle, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
             try DocumentationContext.InputsProvider(fileManager: fileManager)
-            .inputsAndDataProvider(
-                startingPoint: documentationBundleURL,
-                allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
-                options: bundleDiscoveryOptions
-            )
+                .inputsAndDataProvider(
+                    startingPoint: documentationBundleURL,
+                    allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
+                    options: bundleDiscoveryOptions
+                )
         }
 
         self.configuration = configuration
-        
+
         self.inputs = bundle
         self.dataProvider = dataProvider
     }
-    
+
     let configuration: DocumentationContext.Configuration
     private let inputs: DocumentationBundle
     private let dataProvider: any DataProvider
-    
+
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
 
@@ -218,13 +218,13 @@ public struct ConvertAction: AsyncAction {
     ///
     /// Tests that don't verify the contents of the navigator index can set this to `true` so that they can use a virtual, in-memory, file system.
     var _completelySkipBuildingIndex: Bool = false
-    
+
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         try await perform(logHandle: &logHandle).0
     }
-    
+
     func perform(logHandle: inout LogHandle) async throws -> (ActionResult, DocumentationContext) {
         // FIXME: Use `defer` again when the asynchronous defer-statement miscompilation (rdar://137774949) is fixed.
         let temporaryFolder: URL
@@ -237,7 +237,7 @@ public struct ConvertAction: AsyncAction {
                 try fileManager.createFile(at: temporaryFolder.appendingPathComponent(file.filename), contents: file.data)
             }
         }
-        
+
         do {
             let result = try await _perform(logHandle: &logHandle, temporaryFolder: temporaryFolder)
             diagnosticEngine.flush()
@@ -249,13 +249,13 @@ public struct ConvertAction: AsyncAction {
             throw error
         }
     }
-    
+
     private func _perform(logHandle: inout LogHandle, temporaryFolder: URL) async throws -> (ActionResult, DocumentationContext) {
         let convertSignpostHandle = signposter.beginInterval("Convert", id: signposter.makeSignpostID())
         defer {
             signposter.endInterval("Convert", convertSignpostHandle)
         }
-        
+
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -267,25 +267,25 @@ public struct ConvertAction: AsyncAction {
                 )
             )
         }
-        
+
         // The converter has already emitted its diagnostics to the diagnostic engine.
         // Track additional diagnostics separately to avoid repeating the converter's diagnostics.
         var postConversionDiagnostics: [Diagnostic] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
-        
+
         // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
-//        defer {
-//            diagnosticEngine.flush()
-//        }
-        
+        //        defer {
+        //            diagnosticEngine.flush()
+        //        }
+
         // Run any extra work that the test may have injected
         await _extraTestWork?()
-        
+
         // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
-//        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
-//        defer {
-//            try? fileManager.removeItem(at: temporaryFolder)
-//        }
+        //        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        //        defer {
+        //            try? fileManager.removeItem(at: temporaryFolder)
+        //        }
 
         let indexHTML: URL?
         if let htmlTemplateDirectory, outputFormat == .json {
@@ -302,17 +302,17 @@ public struct ConvertAction: AsyncAction {
                     with: hostingBasePath,
                     fileManager: fileManager
                 )
-                
+
                 // A hosting base path was provided which means we need to replace the standard
                 // 'index.html' file with the transformed one.
                 try fileManager.createFile(at: indexHTMLUrl, contents: data)
             }
-            
+
             let indexHTMLTemplateURL = temporaryFolder.appendingPathComponent(
                 HTMLTemplate.templateFileName.rawValue,
                 isDirectory: false
             )
-            
+
             // Delete any existing 'index-template.html' file that
             // was copied into the temporary output directory with the
             // HTML template.
@@ -320,7 +320,7 @@ public struct ConvertAction: AsyncAction {
         } else {
             indexHTML = nil
         }
-        
+
         let coverageAction = CoverageAction(
             documentationCoverageOptions: documentationCoverageOptions,
             workingDirectory: temporaryFolder,
@@ -331,7 +331,7 @@ public struct ConvertAction: AsyncAction {
         let registerInterval = signposter.beginInterval("Register", id: signposter.makeSignpostID())
         let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         signposter.endInterval("Register", registerInterval)
-        
+
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
             bundleRootFolder: rootURL,
@@ -343,13 +343,13 @@ public struct ConvertAction: AsyncAction {
             transformForStaticHostingIndexHTML: transformForStaticHosting && !includeContentInEachHTMLFile ? indexHTML : nil,
             bundleID: inputs.id
         )
-        
+
         let htmlConsumer: (any HTMLContentConsumer)?
         if outputFormat == .experimentalHTML {
             htmlConsumer = try FullPageHTMLContentConsumer(
                 targetFolder: temporaryFolder,
                 fileManager: fileManager,
-                prettyPrint: shouldPrettyPrintOutputJSON, // Use the same configuration as the JSON output to make it convenient for the developer.
+                prettyPrint: shouldPrettyPrintOutputJSON,  // Use the same configuration as the JSON output to make it convenient for the developer.
                 customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
                 customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
             )
@@ -374,7 +374,7 @@ public struct ConvertAction: AsyncAction {
                 try? data.write(to: url, options: .atomic)
             }
         }
-        
+
         do {
             let processInterval = signposter.beginInterval("Process", id: signposter.makeSignpostID())
             try await ConvertActionConverter.convert(
@@ -422,35 +422,35 @@ public struct ConvertAction: AsyncAction {
                 )
             )
         }
-        
+
         // If we're building a navigation index, finalize the process and collect encountered diagnostics.
         if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
-            
+
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
             let indexerProblems = signposter.withIntervalSignpost("Finalize navigator index") {
                 indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             }
             postConversionDiagnostics.append(contentsOf: indexerProblems)
-            
+
             benchmark(end: finalizeNavigationIndexMetric)
         }
-        
+
         // Output the diagnostics encountered during the convert process to the user.
         diagnosticEngine.emit(postConversionDiagnostics)
 
         // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
         // New tasks and computations should be added above this line so that they're included in the benchmark.
         benchmark(end: totalTimeMetric)
-        
+
         if !didEncounterError {
             let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
             postConversionDiagnostics.append(contentsOf: coverageResults.diagnostics)
         }
-        
+
         didEncounterError = didEncounterError || postConversionDiagnostics.containsAnyError
-        
+
         // We should generally only replace the current build output if we didn't encounter errors during conversion.
         // However, if the `emitDigest` flag is true, we should replace the current output with our digest of diagnostics.
         // FIXME: We no longer output a diagnostics file in the output. We can remove the `emitDigest` check below.
@@ -476,7 +476,7 @@ public struct ConvertAction: AsyncAction {
                 )
             )
         )
-        
+
         if Benchmark.main.isEnabled {
             // Write the benchmark files directly in the target directory.
 
@@ -495,11 +495,11 @@ public struct ConvertAction: AsyncAction {
 
         return (ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory]), context)
     }
-    
+
     func createTempFolder(with templateURL: URL?) throws -> URL {
         return try Self.createUniqueDirectory(inside: temporaryDirectory, template: templateURL, fileManager: fileManager)
     }
-    
+
     func moveOutput(from: URL, to: URL) throws {
         try signposter.withIntervalSignpost("Move output") {
             try Self.moveOutput(from: from, to: to, fileManager: fileManager)

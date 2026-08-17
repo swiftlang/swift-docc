@@ -121,9 +121,10 @@ extension DocumentationContext.InputsProvider {
             throw MultipleCatalogsError(startingPoint: startingPoint, catalogs: foundCatalogs)
         }
 
-        let catalogURL = foundCatalogs.first
-        // If the provider didn't find a catalog, check if the root should be treated as a catalog
-        ?? (allowArbitraryCatalogDirectories ? startingPoint : nil)
+        let catalogURL =
+            foundCatalogs.first
+            // If the provider didn't find a catalog, check if the root should be treated as a catalog
+            ?? (allowArbitraryCatalogDirectories ? startingPoint : nil)
 
         return catalogURL.map(CatalogURL.init)
     }
@@ -140,7 +141,7 @@ extension DocumentationContext.InputsProvider {
     package typealias Options = BundleDiscoveryOptions
 
     /// Creates a collection of documentation inputs from the content of the given documentation catalog.
-    /// 
+    ///
     /// - Parameters:
     ///   - catalogURL: The location of a discovered documentation catalog.
     ///   - options: Options to configure how the provider creates the documentation inputs.
@@ -148,7 +149,8 @@ extension DocumentationContext.InputsProvider {
     func makeInputs(contentOf catalogURL: CatalogURL, options: Options) throws -> DocumentationContext.Inputs {
         let url = catalogURL.url
         let shallowContent = try fileManager.contentsOfDirectory(at: url, options: [.skipsHiddenFiles]).files
-        let infoPlistData = try shallowContent
+        let infoPlistData =
+            try shallowContent
             .first(where: FileTypes.isInfoPlistFile)
             .map { try fileManager.contents(of: $0) }
 
@@ -224,18 +226,19 @@ extension DocumentationContext.InputsProvider {
         let derivedDisplayName = moduleNames.count == 1 ? moduleNames.first : nil
 
         let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
-        
+
         let topLevelPages: [URL]
         let provider: any DataProvider
         if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName, let url = URL(string: "in-memory-data://\(moduleName).md") {
-            let synthesizedExtensionFileData = Data("""
+            let synthesizedExtensionFileData = Data(
+                """
                 # ``\(moduleName)``
-                
+
                 @Metadata {
                   @DisplayName("\(info.displayName)")
                 }
                 """.utf8)
-            
+
             topLevelPages = [url]
             provider = InMemoryDataProvider(
                 files: [url: synthesizedExtensionFileData],
@@ -277,7 +280,7 @@ private struct SymbolGraphModuleContainer: Decodable {
 extension DocumentationContext.InputsProvider {
     /// A pair of documentation inputs and a corresponding data provider for those input files.
     package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: any DataProvider)
-    
+
     /// Traverses the file system from the given starting point to find a documentation catalog and creates a collection of documentation inputs from that catalog.
     ///
     /// If the provider can't find a catalog, it will try to create documentation inputs from the option's symbol graph files.
@@ -297,7 +300,7 @@ extension DocumentationContext.InputsProvider {
         if let startingPoint, let catalogURL = try findCatalog(startingPoint: startingPoint, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories) {
             return (inputs: try makeInputs(contentOf: catalogURL, options: options), dataProvider: fileManager)
         }
-        
+
         do {
             if let generated = try makeInputsFromSymbolGraphs(options: options) {
                 return generated
@@ -305,60 +308,64 @@ extension DocumentationContext.InputsProvider {
         } catch {
             throw InputsFromSymbolGraphError(underlyingError: error)
         }
-        
+
         throw NotEnoughInformationError(startingPoint: startingPoint, additionalSymbolGraphFiles: options.additionalSymbolGraphFiles, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
     }
-    
+
     private static let insufficientInputsErrorMessageBase = "The information provided as command line arguments isn't enough to generate documentation.\n"
-    
+
     struct InputsFromSymbolGraphError: DescribedError {
         var underlyingError: any Error
-        
+
         var errorDescription: String {
             "\(DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase)\n\(underlyingError.localizedDescription)"
         }
     }
-    
+
     struct NotEnoughInformationError: DescribedError {
         var startingPoint: URL?
         var additionalSymbolGraphFiles: [URL]
         var allowArbitraryCatalogDirectories: Bool
-        
+
         var errorDescription: String {
             var message = DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase
             if let startingPoint {
-                message.append("""
-                
-                The `<catalog-path>` positional argument \(startingPoint.path.singleQuoted) isn't a documentation catalog (`.docc` directory) \
-                and its directory sub-hierarchy doesn't contain a documentation catalog (`.docc` directory).
-                
-                """)
-                if !allowArbitraryCatalogDirectories {
-                    message.append("""
-                    
-                    To build documentation for the files in \(startingPoint.path.singleQuoted), \
-                    either give it a `.docc` file extension to make it a documentation catalog \
-                    or pass the `--allow-arbitrary-catalog-directories` flag to treat it as a documentation catalog, \
-                    regardless of file extension.
-                    
+                message.append(
+                    """
+
+                    The `<catalog-path>` positional argument \(startingPoint.path.singleQuoted) isn't a documentation catalog (`.docc` directory) \
+                    and its directory sub-hierarchy doesn't contain a documentation catalog (`.docc` directory).
+
                     """)
+                if !allowArbitraryCatalogDirectories {
+                    message.append(
+                        """
+
+                        To build documentation for the files in \(startingPoint.path.singleQuoted), \
+                        either give it a `.docc` file extension to make it a documentation catalog \
+                        or pass the `--allow-arbitrary-catalog-directories` flag to treat it as a documentation catalog, \
+                        regardless of file extension.
+
+                        """)
                 }
             }
             if additionalSymbolGraphFiles.isEmpty {
                 if CommandLine.arguments.contains("--additional-symbol-graph-dir") {
-                    message.append("""
+                    message.append(
+                        """
 
-                    The provided `--additional-symbol-graph-dir` directory doesn't contain any symbol graph files (with a `.symbols.json` file extension).
-                    """)
+                        The provided `--additional-symbol-graph-dir` directory doesn't contain any symbol graph files (with a `.symbols.json` file extension).
+                        """)
                 } else {
-                    message.append("""
-                    
-                    To build documentation using only in-source documentation comments, \
-                    pass a directory of symbol graph files (with a `.symbols.json` file extension) for the `--additional-symbol-graph-dir` argument.
-                    """)
+                    message.append(
+                        """
+
+                        To build documentation using only in-source documentation comments, \
+                        pass a directory of symbol graph files (with a `.symbols.json` file extension) for the `--additional-symbol-graph-dir` argument.
+                        """)
                 }
             }
-            
+
             return message
         }
     }

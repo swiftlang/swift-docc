@@ -18,7 +18,7 @@ import ArgumentParser
 class ConvertSubcommandTests: XCTestCase {
     private let testBundleURL = Bundle.module.url(
         forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-    
+
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources")!
 
@@ -53,7 +53,7 @@ class ConvertSubcommandTests: XCTestCase {
         // create source bundle directory
         let sourceURL = try createTemporaryDirectory(named: "documentation")
         try "".write(to: sourceURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
-        
+
         // create template dir
         let rendererTemplateDirectory = try createTemporaryDirectory()
         try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
@@ -61,25 +61,27 @@ class ConvertSubcommandTests: XCTestCase {
         // Tests a single input.
         do {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
-            XCTAssertNoThrow(try Docc.Convert.parse([
-                sourceURL.path,
-            ]))
+            XCTAssertNoThrow(
+                try Docc.Convert.parse([
+                    sourceURL.path,
+                ]))
         }
-        
+
         // Test no inputs.
         do {
             UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
             XCTAssertNoThrow(try Docc.Convert.parse([]))
         }
-        
+
         // Test missing input folder throws
         do {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
-            XCTAssertThrowsError(try Docc.Convert.parse([
-                URL(fileURLWithPath: "123").path,
-            ]))
+            XCTAssertThrowsError(
+                try Docc.Convert.parse([
+                    URL(fileURLWithPath: "123").path,
+                ]))
         }
-        
+
         // Test input folder is file throws
         do {
             let sourceAsSingleFileURL = sourceURL.appendingPathComponent("file-name.txt")
@@ -87,35 +89,38 @@ class ConvertSubcommandTests: XCTestCase {
             defer {
                 try? FileManager.default.removeItem(at: sourceAsSingleFileURL)
             }
-            
+
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
-            XCTAssertThrowsError(try Docc.Convert.parse([
-                sourceAsSingleFileURL.path,
-            ]))
+            XCTAssertThrowsError(
+                try Docc.Convert.parse([
+                    sourceAsSingleFileURL.path,
+                ]))
         }
-        
-        
+
         // Test no template folder does not throw
         do {
             UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
-            XCTAssertNoThrow(try Docc.Convert.parse([
-                sourceURL.path,
-            ]))
+            XCTAssertNoThrow(
+                try Docc.Convert.parse([
+                    sourceURL.path,
+                ]))
         }
-        
+
         // Test default template
         do {
             UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
             let tempFolder = try createTemporaryDirectory()
-            let doccExecutableLocation = tempFolder
+            let doccExecutableLocation =
+                tempFolder
                 .appendingPathComponent("bin")
                 .appendingPathComponent("docc-executable-name")
-            let defaultTemplateDir = tempFolder
+            let defaultTemplateDir =
+                tempFolder
                 .appendingPathComponent("share")
                 .appendingPathComponent("docc")
                 .appendingPathComponent("render", isDirectory: true)
             let originalDoccExecutableLocation = TemplateOption.doccExecutableLocation
-            
+
             TemplateOption.doccExecutableLocation = doccExecutableLocation
             defer {
                 TemplateOption.doccExecutableLocation = originalDoccExecutableLocation
@@ -125,7 +130,7 @@ class ConvertSubcommandTests: XCTestCase {
                 try? FileManager.default.removeItem(at: defaultTemplateDir)
             }
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
-            
+
             let convert = try Docc.Convert.parse([
                 testBundleURL.path,
             ])
@@ -139,22 +144,23 @@ class ConvertSubcommandTests: XCTestCase {
                 defaultTemplateDir.standardizedFileURL
             )
         }
-        
+
         // Test bad template folder throws
         do {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, URL(fileURLWithPath: "123").path)
-            XCTAssertThrowsError(try Docc.Convert.parse([
-                sourceURL.path,
-            ]))
+            XCTAssertThrowsError(
+                try Docc.Convert.parse([
+                    sourceURL.path,
+                ]))
         }
-        
+
         // Test default target folder.
         do {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             let parseResult = try Docc.Convert.parse([
                 sourceURL.path,
             ])
-            
+
             XCTAssertEqual(parseResult.outputURL, sourceURL.appendingPathComponent(".docc-build"))
         }
     }
@@ -180,10 +186,11 @@ class ConvertSubcommandTests: XCTestCase {
         // Test throws on non-existing parent folder.
         for outputOption in ["-o", "--output-path"] {
             for path in ["/tmp/output", "/tmp", "/"] {
-                XCTAssertThrowsError(try Docc.Convert.parse([
-                    outputOption, fakeRootPath + path,
-                    testBundleURL.path,
-                ]), "Did not refuse target folder path '\(path)'")
+                XCTAssertThrowsError(
+                    try Docc.Convert.parse([
+                        outputOption, fakeRootPath + path,
+                        testBundleURL.path,
+                    ]), "Did not refuse target folder path '\(path)'")
             }
         }
     }
@@ -192,22 +199,22 @@ class ConvertSubcommandTests: XCTestCase {
         let convertOptions = try Docc.Convert.parse([
             testBundleURL.path,
         ])
-        
+
         XCTAssertFalse(convertOptions.diagnosticOptions.analyze)
     }
-    
+
     func testInfoPlistFallbacks() throws {
         // Default to nil when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
                 testBundleURL.path,
             ])
-            
+
             XCTAssertNil(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName)
             XCTAssertNil(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier)
             XCTAssertNil(convertOptions.infoPlistFallbacks.defaultCodeListingLanguage)
         }
-        
+
         // Are set when passed (old name, to be removed rdar://72449411)
         do {
             let convertOptions = try Docc.Convert.parse([
@@ -216,12 +223,12 @@ class ConvertSubcommandTests: XCTestCase {
                 "--bundle-identifier", "com.example.test",
                 "--default-code-listing-language", "swift",
             ])
-            
+
             XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier, "com.example.test")
             XCTAssertEqual(convertOptions.infoPlistFallbacks.defaultCodeListingLanguage, "swift")
         }
-        
+
         // Are set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
@@ -230,23 +237,23 @@ class ConvertSubcommandTests: XCTestCase {
                 "--fallback-bundle-identifier", "com.example.test",
                 "--default-code-listing-language", "swift",
             ])
-            
+
             XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier, "com.example.test")
             XCTAssertEqual(convertOptions.infoPlistFallbacks.defaultCodeListingLanguage, "swift")
         }
     }
-    
+
     func testAdditionalSymbolGraphFiles() throws {
         // Default to [] when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
                 testBundleURL.path,
             ])
-            
+
             XCTAssertEqual(convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory, nil)
         }
-        
+
         // Is set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
@@ -254,13 +261,13 @@ class ConvertSubcommandTests: XCTestCase {
                 "--additional-symbol-graph-dir",
                 "/path/to/folder-of-symbol-graph-files",
             ])
-            
+
             XCTAssertEqual(
                 convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory,
                 URL(fileURLWithPath: "/path/to/folder-of-symbol-graph-files")
             )
         }
-        
+
         // Is recursively scanned to find symbol graph files set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
@@ -269,60 +276,64 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
             ])
 
-            XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
-                "FillIntroduced.symbols.json",
-                "MyKit@SideKit.symbols.json",
-                "mykit-iOS.symbols.json",
-                "sidekit.symbols.json",
-            ])
+            XCTAssertEqual(
+                convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(),
+                [
+                    "FillIntroduced.symbols.json",
+                    "MyKit@SideKit.symbols.json",
+                    "mykit-iOS.symbols.json",
+                    "sidekit.symbols.json",
+                ])
         }
     }
-    
+
     func testEmitLMDBIndex() throws {
         let convertOptions = try Docc.Convert.parse([
             testBundleURL.path,
             "--emit-lmdb-index",
         ])
-        
+
         XCTAssertTrue(convertOptions.featureFlags.emitLMDBIndex)
-        
+
         let action = try ConvertAction(fromConvertCommand: convertOptions)
-        
+
         XCTAssertTrue(action.buildLMDBIndex)
     }
-    
+
     func testWithoutBundle() throws {
         let convertOptions = try Docc.Convert.parse([
             "--fallback-display-name", "DisplayName",
             "--fallback-bundle-identifier", "com.example.test",
-            
+
             "--additional-symbol-graph-dir",
             testBundleURL.path,
         ])
-        
+
         // Verify the options
-        
+
         XCTAssertNil(convertOptions.inputsAndOutputs.documentationCatalog.url)
-        
+
         XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName, "DisplayName")
         XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier, "com.example.test")
-        
+
         XCTAssertEqual(
             convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory,
             testBundleURL
         )
-        
+
         // Verify the action
-        
+
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         XCTAssertNil(action.rootURL)
-        
-        XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
-            "FillIntroduced.symbols.json",
-            "MyKit@SideKit.symbols.json",
-            "mykit-iOS.symbols.json",
-            "sidekit.symbols.json",
-        ])
+
+        XCTAssertEqual(
+            convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(),
+            [
+                "FillIntroduced.symbols.json",
+                "MyKit@SideKit.symbols.json",
+                "mykit-iOS.symbols.json",
+                "sidekit.symbols.json",
+            ])
     }
 
     func testExperimentalEnableCustomTemplatesFlag() throws {
@@ -339,10 +350,10 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(commandWithFlag.featureFlags.experimentalEnableCustomTemplates)
         XCTAssertTrue(actionWithFlag.experimentalEnableCustomTemplates)
     }
-    
+
     func testExperimentalEnableDeviceFrameSupportFlag() throws {
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalDeviceFrameSupport)
         XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled)
 
@@ -354,10 +365,10 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalDeviceFrameSupport)
         XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled)
     }
-    
+
     func testExperimentalEnableExternalLinkSupportFlag() throws {
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
         XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
 
@@ -369,10 +380,10 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
         XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
     }
-    
+
     func testExperimentalEnableOverloadedSymbolPresentation() throws {
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalOverloadedSymbolPresentation)
         XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled)
 
@@ -384,7 +395,7 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalOverloadedSymbolPresentation)
         XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled)
     }
-    
+
     func testLinkDependencyValidation() throws {
         let originalErrorLogHandle = Docc.Convert._errorLogHandle
         let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
@@ -393,7 +404,7 @@ class ConvertSubcommandTests: XCTestCase {
             Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
         }
         Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
-        
+
         let rendererTemplateDirectory = try createTemporaryDirectory()
         try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
@@ -401,60 +412,66 @@ class ConvertSubcommandTests: XCTestCase {
         let dependencyDir = try createTemporaryDirectory()
             .appendingPathComponent("SomeDependency.doccarchive", isDirectory: true)
         let fileManager = FileManager.default
-        
+
         let argumentsToParse = [
             testBundleURL.path,
             "--dependency",
             dependencyDir.path
         ]
-        
+
         // The dependency doesn't exist
         do {
             let logStorage = LogHandle.LogStorage()
             Docc.Convert._errorLogHandle = .memory(logStorage)
-            
+
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
-            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: No documentation archive exist at '\(dependencyDir.path)'.
-            """)
+            XCTAssertEqual(
+                logStorage.text.trimmingCharacters(in: .newlines),
+                """
+                warning: No documentation archive exist at '\(dependencyDir.path)'.
+                """)
         }
         // The dependency is a file instead of a directory
         do {
             let logStorage = LogHandle.LogStorage()
             Docc.Convert._errorLogHandle = .memory(logStorage)
-            
+
             try "Some text".write(to: dependencyDir, atomically: true, encoding: .utf8)
-            
+
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
-            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: Dependency at '\(dependencyDir.path)' is not a directory.
-            """)
-            
+            XCTAssertEqual(
+                logStorage.text.trimmingCharacters(in: .newlines),
+                """
+                warning: Dependency at '\(dependencyDir.path)' is not a directory.
+                """)
+
             try fileManager.removeItem(at: dependencyDir)
         }
         // The dependency doesn't have the necessary files
         do {
             let logStorage = LogHandle.LogStorage()
             Docc.Convert._errorLogHandle = .memory(logStorage)
-            
+
             try fileManager.createDirectory(at: dependencyDir, withIntermediateDirectories: false)
-            
+
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
-            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'linkable-entities.json' file.
-            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'link-hierarchy.json' file.
-            """)
+            XCTAssertEqual(
+                logStorage.text.trimmingCharacters(in: .newlines),
+                """
+                warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'linkable-entities.json' file.
+                warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'link-hierarchy.json' file.
+                """)
         }
         do {
             let logStorage = LogHandle.LogStorage()
             Docc.Convert._errorLogHandle = .memory(logStorage)
-            
+
             try "".write(to: dependencyDir.appendingPathComponent("linkable-entities.json"), atomically: true, encoding: .utf8)
             try "".write(to: dependencyDir.appendingPathComponent("link-hierarchy.json"), atomically: true, encoding: .utf8)
-            
+
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [dependencyDir])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), "")
@@ -462,28 +479,28 @@ class ConvertSubcommandTests: XCTestCase {
     }
 }
 
-@Suite(.serialized) // These tests all modify global state on the Convert action and can only be run one at a time.
+@Suite(.serialized)  // These tests all modify global state on the Convert action and can only be run one at a time.
 class ConvertSubcommandFlagParsingTests {
     private let originalTemplatePath: String?
     private let originalLogHandle: LogHandle
-    
+
     init() throws {
         // By default, send all warnings to `.none` instead of filling the
         // test console output with unrelated messages.
         originalLogHandle = Docc.Convert._errorLogHandle
         Docc.Convert._errorLogHandle = .none
-        
+
         // Set the documentation template to a well-defined default so that options parsing isn't
         // affected by other tests' changing it.
         originalTemplatePath = ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey]
         let testTemplate = try #require(Bundle.module.url(forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources"))
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplate.path)
     }
-    
+
     deinit {
         // Reset the log handle
         Docc.Convert._errorLogHandle = originalLogHandle
-        
+
         // Reset the template
         if let originalTemplatePath {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, originalTemplatePath)
@@ -491,107 +508,108 @@ class ConvertSubcommandFlagParsingTests {
             UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
         }
     }
-    
+
     @Test
     func parsingTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
         UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
-        
+
         // Since there's no custom template set (and relative HTML template lookup isn't supported in the test harness),
         // we expect `transformForStaticHosting` to be false in every possible scenario of the flag, even when explicitly requested.
-        
+
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.hostingOptions.transformForStaticHosting == false)
-        
+
         let enableFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting"])
         #expect(enableFlagConvert.hostingOptions.transformForStaticHosting == false)
-        
+
         let disableFlagConvert = try Docc.Convert.parse(["--no-transform-for-static-hosting"])
         #expect(disableFlagConvert.hostingOptions.transformForStaticHosting == false)
     }
-    
+
     @Test
     func parsingTransformForStaticHostingFlagWithHTMLTemplate() throws {
         // Since we've provided an HTML template, we expect `transformForStaticHosting` to be true by default, and when explicitly requested.
         // It should only be false when `--no-transform-for-static-hosting` is passed.
-        
+
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.hostingOptions.transformForStaticHosting)
-        
+
         let enableFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting"])
         #expect(enableFlagConvert.hostingOptions.transformForStaticHosting)
-        
+
         let disableFlagConvert = try Docc.Convert.parse(["--no-transform-for-static-hosting"])
         #expect(disableFlagConvert.hostingOptions.transformForStaticHosting == false)
     }
-    
+
     @Test
     func parsingTreatWarningAsErrorsFlag() throws {
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.diagnosticOptions.warningsAsErrors == false)
-        
+
         let warningsAsErrorsConvert = try Docc.Convert.parse(["--warnings-as-errors"])
         #expect(warningsAsErrorsConvert.diagnosticOptions.warningsAsErrors)
     }
-    
+
     @Test
     func parsingParameterValidationFeatureFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.featureFlags.enableParametersAndReturnsValidation)
-        
+
         // It's allowed to pass the redundant "--enable-..." flag.
         let enabledFlagConvert = try Docc.Convert.parse(["--enable-parameters-and-returns-validation"])
         #expect(enabledFlagConvert.featureFlags.enableParametersAndReturnsValidation)
-        
+
         // Passing the "--disable-..." flag turns of the feature.
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-parameters-and-returns-validation"])
         #expect(disabledFlagConvert.featureFlags.enableParametersAndReturnsValidation == false)
     }
-    
+
     @Test
     func parsingMentionedInFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.featureFlags.enableMentionedIn)
-        
+
         // It's allowed to pass the previous "--enable-experimental-..." flag.
         let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-mentioned-in"])
         #expect(oldFlagConvert.featureFlags.enableMentionedIn)
-        
+
         // It's allowed to pass the redundant "--enable-..." flag.
         let enabledFlagConvert = try Docc.Convert.parse(["--enable-mentioned-in"])
         #expect(enabledFlagConvert.featureFlags.enableMentionedIn)
-        
+
         // Passing the "--disable-..." flag turns of the feature.
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-mentioned-in"])
         #expect(disabledFlagConvert.featureFlags.enableMentionedIn == false)
     }
-    
+
     @Test
     func parsingStaticHostingWithContentFlag() throws {
         // The feature is disabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent == false)
-        
+
         let enabledFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
         #expect(enabledFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent)
-        
+
         // The '...-transform...-with-content' flag also implies the base '--transform-...' flag.
         do {
             let logStorage = LogHandle.LogStorage()
             Docc.Convert._errorLogHandle = .memory(logStorage)
             Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
-            
+
             let conflictingFlagsConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content", "--no-transform-for-static-hosting"])
             #expect(conflictingFlagsConvert.hostingOptions.experimentalTransformForStaticHostingWithContent)
             #expect(conflictingFlagsConvert.hostingOptions.transformForStaticHosting)
-            
-            #expect(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines) == """
-            warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
-            """)
+
+            #expect(
+                logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines) == """
+                    warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
+                    """)
         }
     }
-    
+
     // swift-format-ignore
     @Test
     func parsingExplicitDiagnosticSeverities() throws {
@@ -599,41 +617,41 @@ class ConvertSubcommandFlagParsingTests {
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.diagnosticOptions.warningGroupsWithErrorSeverity == [])
         #expect(noFlagConvert.diagnosticOptions.warningGroupsWithWarningSeverity == [])
-        
+
         // The flags can be used to specify explicit diagnostic severities
         let explicitlySetSeverities = try Docc.Convert.parse(["--Wwarning", "First", "--Wwarning", "Second", "--Werror", "Third"])
         #expect(explicitlySetSeverities.diagnosticOptions.warningGroupsWithErrorSeverity   == ["Third"])
         #expect(explicitlySetSeverities.diagnosticOptions.warningGroupsWithWarningSeverity == ["First", "Second"])
-        
+
         let explicitlySetSeveritiesWithSingleDash = try Docc.Convert.parse(["-Wwarning", "First", "-Wwarning", "Second", "-Werror", "Third"])
         #expect(explicitlySetSeveritiesWithSingleDash.diagnosticOptions.warningGroupsWithErrorSeverity   == ["Third"])
         #expect(explicitlySetSeveritiesWithSingleDash.diagnosticOptions.warningGroupsWithWarningSeverity == ["First", "Second"])
-        
+
         // It's allowed (but redundant) to repeat the same configuration
         let repeatedSeverity = try Docc.Convert.parse(["--Wwarning", "Something", "--Wwarning", "Something"])
         #expect(repeatedSeverity.diagnosticOptions.warningGroupsWithErrorSeverity   == [])
         #expect(repeatedSeverity.diagnosticOptions.warningGroupsWithWarningSeverity == ["Something", "Something"], "The duplication doesn't matter. Later stages turn this into a Set")
-        
+
         // Specifying both an explicit warning severity and error severity for the same diagnostic raises a warning.
         let conflictingSeverity = try Docc.Convert.parse(["--Wwarning", "First", "--Werror", "First", "--Werror", "Second"])
         #expect(conflictingSeverity.diagnosticOptions.warningGroupsWithErrorSeverity   == ["Second"], "'First' is excluded from both lists")
         #expect(conflictingSeverity.diagnosticOptions.warningGroupsWithWarningSeverity == [],         "'First' is excluded from both lists")
     }
-    
+
     @Test
     func parsingOutputFormat() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.inputsAndOutputs.outputFormat == .json)
-        
+
         // It's allowed (but redundant) to explicitly specify "json" as the output format
         let redundantJSONOutput = try Docc.Convert.parse(["--output-format", "json"])
         #expect(redundantJSONOutput.inputsAndOutputs.outputFormat == .json)
-        
+
         // At this stage, the static HTML output format is spelled very verbosely and explicitly to dissuade general usage (in addition to the option is hidden)
         let htmlOutput = try Docc.Convert.parse(["--output-format", "experimental-html-for-development"])
         #expect(htmlOutput.inputsAndOutputs.outputFormat == .experimentalHTML)
-        
+
         // Any shorter and less explicit spelling raises an error.
         #expect(throws: (any Error).self) {
             try Docc.Convert.parse(["--output-format", "experimental-html"])
@@ -642,15 +660,15 @@ class ConvertSubcommandFlagParsingTests {
             try Docc.Convert.parse(["--output-format", "html"])
         }
     }
-    
+
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated) // We'll probably keep this deprecated property for a long time for backwards compatibility.
+    @available(*, deprecated)  // We'll probably keep this deprecated property for a long time for backwards compatibility.
     @Test
     func parsingDeprecatedVersionFlag() throws {
         let noFlagConvert = try Docc.Convert.parse([])
         #expect(noFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility == nil)
-        
+
         let enabledFlagConvert = try Docc.Convert.parse(["--fallback-bundle-version", "1.2.3"])
         #expect(enabledFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility == "1.2.3")
     }

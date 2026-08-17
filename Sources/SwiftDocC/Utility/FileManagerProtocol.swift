@@ -23,7 +23,7 @@ package import Foundation
 /// protocol implementations to manage files in memory,
 /// on a network, in a database, or elsewhere.
 package protocol FileManagerProtocol: DataProvider {
-    
+
     /// Returns the data content of a file at the given path, if it exists.
     func contents(atPath: String) -> Data?
     /// Compares the contents of two files at the given paths.
@@ -31,7 +31,7 @@ package protocol FileManagerProtocol: DataProvider {
 
     /// The *current* directory path.
     var currentDirectoryPath: String { get }
-    
+
     /// Returns `true` if a file or a directory exists at the given path.
     func fileExists(atPath: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool
     /// Returns `true` if a directory exists at the given path.
@@ -39,22 +39,22 @@ package protocol FileManagerProtocol: DataProvider {
     /// Returns `true` if a file exists at the given path.
     func fileExists(atPath: String) -> Bool
     /// Copies a file from one location on the file-system to another.
-    func _copyItem(at: URL, to: URL) throws // Use a different name than FileManager to work around https://github.com/swiftlang/swift-foundation/issues/1125
+    func _copyItem(at: URL, to: URL) throws  // Use a different name than FileManager to work around https://github.com/swiftlang/swift-foundation/issues/1125
     /// Moves a file from one location on the file-system to another.
     func moveItem(at: URL, to: URL) throws
     /// Creates a new file folder at the given location.
-    func createDirectory(at: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]?) throws
+    func createDirectory(at: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey: Any]?) throws
     /// Removes a file from the given location.
     func removeItem(at: URL) throws
     /// Returns a list of items in a directory
     func contentsOfDirectory(atPath path: String) throws -> [String]
     func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL]
-    
+
     /// Returns a unique temporary directory.
     ///
     /// Each call to this function will return a new temporary directory.
-    func uniqueTemporaryDirectory() -> URL // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol
-    
+    func uniqueTemporaryDirectory() -> URL  // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol
+
     /// Creates a file with the specified `contents` at the specified location.
     ///
     /// - Parameters:
@@ -66,7 +66,7 @@ package protocol FileManagerProtocol: DataProvider {
     ///
     /// - Throws: If the file couldn't be created with the specified contents.
     func createFile(at: URL, contents: Data) throws
-    
+
     /// Returns the data content of a file at the given URL.
     ///
     /// - Parameters:
@@ -77,7 +77,7 @@ package protocol FileManagerProtocol: DataProvider {
     ///
     /// - Throws: If the file couldn't be read.
     func contents(of url: URL) throws -> Data
-    
+
     /// Creates a file with the given contents at the given url with the specified
     /// writing options.
     ///
@@ -113,12 +113,12 @@ extension FileManager: FileManagerProtocol {
     package func contents(of url: URL) throws -> Data {
         return try Data(contentsOf: url)
     }
-    
+
     // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
     package func createFile(at location: URL, contents: Data) throws {
         try contents.write(to: location, options: .atomic)
     }
-    
+
     package func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
         if let writingOptions {
             try contents.write(to: location, options: writingOptions)
@@ -126,7 +126,7 @@ extension FileManager: FileManagerProtocol {
             try contents.write(to: location)
         }
     }
-    
+
     // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol/
     package func uniqueTemporaryDirectory() -> URL {
         temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)
@@ -145,7 +145,7 @@ extension FileManager: FileManagerProtocol {
             directories: Array( allContents[partitionIndex...] )
         )
     }
-    
+
     package func _copyItem(at source: URL, to destination: URL) throws {
         // Call `NSFileManager/copyItem(at:to:)` and catch the error to workaround https://github.com/swiftlang/swift-foundation/issues/1125
         do {
@@ -154,7 +154,7 @@ extension FileManager: FileManagerProtocol {
             // In Swift 6 on Linux, `FileManager/copyItem(at:to:)` raises an error _after_ successfully copying the files when it's moving over file attributes from the source to the destination.
             // To workaround this issue, we check if the destination exists and the error wasn't that the destination _already_ existed.
             if error.code != CocoaError.Code.fileWriteFileExists,
-               fileExists(atPath: destination.path)
+                fileExists(atPath: destination.path)
             {
                 // The destination exists, but the copy may be incomplete if the error occurred mid-copy
                 // (e.g., when copying a directory and fchown fails on the first child item).

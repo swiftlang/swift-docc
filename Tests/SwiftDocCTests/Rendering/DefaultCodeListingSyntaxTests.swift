@@ -18,7 +18,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         let codeListing = try await makeCodeBlock(fenceLanguage: nil, infoPlistLanguage: nil)
         XCTAssertEqual(codeListing.language, nil)
     }
-    
+
     func testExplicitFencedCodeBlockLanguage() async throws {
         let codeListing = try await makeCodeBlock(fenceLanguage: "swift", infoPlistLanguage: nil)
         XCTAssertEqual(codeListing.language, "swift")
@@ -38,29 +38,33 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         var language: String?
         var lines: [String]
     }
-    
+
     private func makeCodeBlock(fenceLanguage: String?, infoPlistLanguage: String?) async throws -> CodeListing {
-        let catalog = Folder(name: "Something.docc", content: [
-            InfoPlist(defaultCodeListingLanguage: infoPlistLanguage),
-            
-            TextFile(name: "Root.md", utf8Content: """
-            # Root
-                
-            This article contains a code block
-            
-            ```\(fenceLanguage ?? "")
-            Some code goes 
-            ```
-            """)
-        ])
-        
+        let catalog = Folder(
+            name: "Something.docc",
+            content: [
+                InfoPlist(defaultCodeListingLanguage: infoPlistLanguage),
+
+                TextFile(
+                    name: "Root.md",
+                    utf8Content: """
+                        # Root
+                            
+                        This article contains a code block
+
+                        ```\(fenceLanguage ?? "")
+                        Some code goes 
+                        ```
+                        """)
+            ])
+
         let (_, context) = try await loadBundle(catalog: catalog)
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let converter = DocumentationNodeConverter(context: context)
-        
+
         let renderNode = converter.convert(try context.entity(with: reference))
         let renderSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
-        
+
         guard case .codeListing(let codeListing)? = renderSection.content.last else {
             struct Error: DescribedError {
                 let errorDescription = "Didn't fide code block is known markup"

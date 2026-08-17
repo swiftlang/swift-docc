@@ -18,27 +18,27 @@ public struct FileReference: RenderReference, Equatable {
     ///
     /// This value is always `.file`.
     public var type: RenderReferenceType = .file
-    
+
     /// The identifier of this reference.
     public var identifier: RenderReferenceIdentifier
-    
+
     /// The name of the file.
     public var fileName: String
-    
+
     /// The type of the file, typically represented by its file extension.
     public var fileType: String
-    
+
     /// The syntax for the content in the file, for example "swift".
     ///
     /// You can use this value to identify the syntax of the content. This would allow, for example, a renderer to perform syntax highlighting of the file's content.
     public var syntax: String
-    
+
     /// The line-by-line contents of the file.
     public var content: [String]
-    
+
     /// The line highlights for this file.
     public var highlights: [LineHighlighter.Highlight] = []
-    
+
     /// Creates a new file reference.
     ///
     /// - Parameters:
@@ -63,7 +63,7 @@ public struct FileReference: RenderReference, Equatable {
         self.content = content
         self.highlights = highlights
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
@@ -89,7 +89,7 @@ extension FileReference: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.syntax, forKey: CodingKeys.syntax)
         diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
         diffBuilder.addDifferences(atKeyPath: \.highlights, forKey: CodingKeys.highlights)
-        
+
         return diffBuilder.differences
     }
 }
@@ -100,16 +100,16 @@ extension FileReference: RenderJSONDiffable {
 /// alongside the content of that file. For example, a property list file icon alongside the content of a specific property list file.
 public struct FileTypeReference: RenderReference, Equatable {
     public var type: RenderReferenceType = .fileType
-    
+
     /// The identifier of this reference.
     public var identifier: RenderReferenceIdentifier
-    
+
     /// The display name of the file type.
     public var displayName: String
-    
+
     /// The icon for this file type, encoded in Base64.
     public var iconBase64: Data
-    
+
     /// Creates a new file type reference.
     /// - Parameters:
     ///   - identifier: The identifier of this reference.

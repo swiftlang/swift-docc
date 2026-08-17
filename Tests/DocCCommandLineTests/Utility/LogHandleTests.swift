@@ -17,9 +17,9 @@ class LogHandleTests: XCTestCase {
     /// Test that ``LogHandle`` doesn't append extra newlines to output
     /// - Bug: rdar://73462272
     func testWriteToStandardOutput() throws {
-#if os(Windows)
+        #if os(Windows)
         try XCTSkipIf(true, "cannot reassign file handles on Windows")
-#else
+        #else
         let pipe = Pipe()
 
         // dup stdout to restore later
@@ -29,9 +29,9 @@ class LogHandleTests: XCTestCase {
         // so when LogHandle writes to stdout, it'll be writing to pipe's write handle as well.
         dup2(pipe.fileHandleForWriting.fileDescriptor, FileHandle.standardOutput.fileDescriptor)
 
-
         var handle = LogHandle.standardOutput
-        handle.write("""
+        handle.write(
+            """
             ========================================
             Starting Local Preview Server
                 Address: http://localhost:8080/documentation/my-framework
@@ -46,20 +46,22 @@ class LogHandleTests: XCTestCase {
 
         let text = String(data: pipe.fileHandleForReading.availableData, encoding: .utf8)
 
-        XCTAssertEqual(text, """
+        XCTAssertEqual(
+            text,
+            """
             ========================================
             Starting Local Preview Server
                 Address: http://localhost:8080/documentation/my-framework
             ========================================
             """
         )
-#endif
+        #endif
     }
 
     func testFlushesStandardOutput() throws {
-#if os(Windows)
+        #if os(Windows)
         try XCTSkipIf(true, "cannot reassign file handles on Windows")
-#else
+        #else
         let pipe = Pipe()
 
         // dup stdout to restore later
@@ -70,17 +72,17 @@ class LogHandleTests: XCTestCase {
         handle.write("No newlines here")
 
         dup2(stdoutCopy, FileHandle.standardOutput.fileDescriptor)
-        
+
         let data = pipe.fileHandleForReading.availableData
         let text = String(data: data, encoding: .utf8)
         XCTAssertEqual(text, "No newlines here", "\(LogHandle.self) didn't flush stdout")
-#endif
+        #endif
     }
 
     func testFlushesStandardError() throws {
-#if os(Windows)
+        #if os(Windows)
         try XCTSkipIf(true, "cannot reassign file handles on Windows")
-#else
+        #else
         let pipe = Pipe()
 
         // dup stdout to restore later
@@ -95,6 +97,6 @@ class LogHandleTests: XCTestCase {
         let data = pipe.fileHandleForReading.availableData
         let text = String(data: data, encoding: .utf8)
         XCTAssertEqual(text, "No newlines here", "\(LogHandle.self) didn't flush stderr")
-#endif
+        #endif
     }
 }

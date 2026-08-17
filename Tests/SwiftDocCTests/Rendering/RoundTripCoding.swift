@@ -19,7 +19,7 @@ func assertRoundTripCoding<Value: Equatable & Codable>(_ value: Value, sourceLoc
     let encoded = try encoder.encode(value)
     let decoded = try decoder.decode(Value.self, from: encoded)
     #expect(value == decoded, sourceLocation: sourceLocation)
-    
+
     // Decode a second time to ensure no data is lost during the round-trip
     let reEncoded = try encoder.encode(decoded)
     let reDecoded = try decoder.decode(Value.self, from: reEncoded)
@@ -27,74 +27,74 @@ func assertRoundTripCoding<Value: Equatable & Codable>(_ value: Value, sourceLoc
 }
 
 extension XCTestCase {
-/// Asserts that the implementation of the `Codable` for the given value is correct, by encoding and decoding the values, and checking whether
-/// the original and decoded `Data` are equal.
-/// - Parameter value: The value to test.
-/// - Throws: An error if encoding or decoding of the given value failed.
-func assertRoundTripCoding<Value: Equatable>(
-    _ value: Value,
-    file: StaticString = #filePath,
-    line: UInt = #line
-) throws where Value: Codable {
-    let encoder = JSONEncoder()
-    let decoder = JSONDecoder()
+    /// Asserts that the implementation of the `Codable` for the given value is correct, by encoding and decoding the values, and checking whether
+    /// the original and decoded `Data` are equal.
+    /// - Parameter value: The value to test.
+    /// - Throws: An error if encoding or decoding of the given value failed.
+    func assertRoundTripCoding<Value: Equatable>(
+        _ value: Value,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws where Value: Codable {
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
 
-    // Decode one time
-    let encoded = try encoder.encode(value)
-    let decoded = try decoder.decode(Value.self, from: encoded)
-    XCTAssertEqual(value, decoded, file: file, line: line)
-    
-    // Decode a second time to ensure no data is lost during the round-trip
-    let reEncoded = try encoder.encode(decoded)
-    let reDecoded = try decoder.decode(Value.self, from: reEncoded)
-    XCTAssertEqual(decoded, reDecoded, file: file, line: line)
-}
+        // Decode one time
+        let encoded = try encoder.encode(value)
+        let decoded = try decoder.decode(Value.self, from: encoded)
+        XCTAssertEqual(value, decoded, file: file, line: line)
 
-/// Asserts that the given value and its JSON representation are equal, by decoding the given JSON into the value's type.
-/// - Parameters:
-///   - value: The value to test.
-///   - json: A JSON encoding of the value after being serialized.
-/// - Throws: An error if decoding the given JSON failed.
-func assertJSONRepresentation<Value: Decodable & Equatable>(
-    _ value: Value,
-    _ json: String,
-    file: StaticString = #filePath,
-    line: UInt = #line
-) throws {
-    let decoder = JSONDecoder()
-
-    var decoded: Value? = nil
-    
-    let encoding: String.Encoding
-    #if os(Linux) || os(Android) || os(Windows)
-    // Work around a JSON decoding issue on Linux (github.com/apple/swift/issues/57362).
-    encoding = .utf8
-    #else
-    encoding = json.fastestEncoding
-    #endif
-    XCTAssertNoThrow(decoded = try decoder.decode(Value.self, from: XCTUnwrap(json.data(using: encoding))))
-
-    XCTAssertEqual(decoded, value, file: (file), line: line)
-}
-
-/// Asserts that the given value and its JSON representation are equal, by encoding the given value into JSON.
-/// - Parameters:
-///   - value: The value to test.
-///   - json: The expected JSON, encoded without whitespace and with sorted keys.
-/// - Throws: An error if encoding the given value failed.
-func assertJSONEncoding<Value: Encodable & Equatable>(
-    _ value: Value,
-    jsonSortedKeysNoWhitespace: String,
-    file: StaticString = #filePath,
-    line: UInt = #line
-) throws {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = .sortedKeys
-    let encoded = try encoder.encode(value)
-    guard let json = String(data: encoded, encoding: .utf8) else {
-        XCTFail("Invalid encoded data", file: file, line: line)
-        return
+        // Decode a second time to ensure no data is lost during the round-trip
+        let reEncoded = try encoder.encode(decoded)
+        let reDecoded = try decoder.decode(Value.self, from: reEncoded)
+        XCTAssertEqual(decoded, reDecoded, file: file, line: line)
     }
-    XCTAssertEqual(json, jsonSortedKeysNoWhitespace, file: file, line: line)
-}
+
+    /// Asserts that the given value and its JSON representation are equal, by decoding the given JSON into the value's type.
+    /// - Parameters:
+    ///   - value: The value to test.
+    ///   - json: A JSON encoding of the value after being serialized.
+    /// - Throws: An error if decoding the given JSON failed.
+    func assertJSONRepresentation<Value: Decodable & Equatable>(
+        _ value: Value,
+        _ json: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        let decoder = JSONDecoder()
+
+        var decoded: Value? = nil
+
+        let encoding: String.Encoding
+        #if os(Linux) || os(Android) || os(Windows)
+        // Work around a JSON decoding issue on Linux (github.com/apple/swift/issues/57362).
+        encoding = .utf8
+        #else
+        encoding = json.fastestEncoding
+        #endif
+        XCTAssertNoThrow(decoded = try decoder.decode(Value.self, from: XCTUnwrap(json.data(using: encoding))))
+
+        XCTAssertEqual(decoded, value, file: (file), line: line)
+    }
+
+    /// Asserts that the given value and its JSON representation are equal, by encoding the given value into JSON.
+    /// - Parameters:
+    ///   - value: The value to test.
+    ///   - json: The expected JSON, encoded without whitespace and with sorted keys.
+    /// - Throws: An error if encoding the given value failed.
+    func assertJSONEncoding<Value: Encodable & Equatable>(
+        _ value: Value,
+        jsonSortedKeysNoWhitespace: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        let encoded = try encoder.encode(value)
+        guard let json = String(data: encoded, encoding: .utf8) else {
+            XCTFail("Invalid encoded data", file: file, line: line)
+            return
+        }
+        XCTAssertEqual(json, jsonSortedKeysNoWhitespace, file: file, line: line)
+    }
 }

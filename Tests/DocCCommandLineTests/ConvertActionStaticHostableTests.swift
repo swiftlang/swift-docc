@@ -17,14 +17,14 @@ import DocCTestUtilities
 class ConvertActionStaticHostableTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archives it with options  to produce static content which is then validated.
     func testConvertActionStaticHostableTestOutput() async throws {
-        
+
         let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
-            
+
         let fileManager = FileManager.default
-        
+
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
-        
+
         let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         let templateFolder = Folder.testHTMLTemplateDirectory
         try templateFolder.write(to: testTemplateURL)
@@ -45,33 +45,34 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             hostingBasePath: basePath
         )
         _ = try await action.perform(logHandle: .none)
-        
+
         // Test the content of the output folder.
-        var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json" ,"videos", "index.html", "index"]
-        expectedContent += templateFolder.content.filter { $0 is Folder }.map{ $0.name }
-        
+        var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json", "videos", "index.html", "index"]
+        expectedContent += templateFolder.content.filter { $0 is Folder }.map { $0.name }
+
         let output = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
         XCTAssertEqual(Set(output), Set(expectedContent), "Unexpected output")
-    
+
         for item in output {
-            
+
             // Test the content of the documentation and tutorial folders match the expected content from the doccarchive.
             switch item {
             case "documentation":
-                compareJSONFolder(fileManager: fileManager,
-                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
-                               indexHTML: indexHTML)
+                compareJSONFolder(
+                    fileManager: fileManager,
+                    output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                    input: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                    indexHTML: indexHTML)
             case "tutorials":
-                compareJSONFolder(fileManager: fileManager,
-                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
-                               indexHTML: indexHTML)
+                compareJSONFolder(
+                    fileManager: fileManager,
+                    output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                    input: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                    indexHTML: indexHTML)
             default:
                 continue
             }
         }
-        
+
     }
 }
-

@@ -50,30 +50,30 @@ extension Collection<Double> {
         // series shows some signs of having linear bias in its data.
         //
         // We only care about linear bias because it could be an indication that the measurements are impacted by thermal throttling.
-        
+
         let (_, slope) = fitSimpleLinearRegression(Array(self))
-        
+
         let (_, minMaxSlope) = fitSimpleLinearRegression([
             (x: 0.0, y: self.min()!),
             (x: Double(self.count), y: self.max()!)
         ])
-        
+
         if (self.max()! - self.min()!) < self.mean().ulp {
             // The range of the samples is smaller than the precision of the mean value. A series of values like that looks reasonably non-biased.
             return true
         }
-        
+
         return slope.magnitude < (minMaxSlope.magnitude * 0.5)
     }
-    
+
     func mean() -> Double {
         precondition(!isEmpty, "Can't calculate the mean/average of an empty collection. Benchmark values should never be empty.")
         return reduce(0.0, +) / Double(count)
     }
-    
+
     func standardDeviation(degreesOfFreedom: Int) -> Double {
         let mean = self.mean()
-        let v = self.reduce(0, { $0 + ($1-mean)*($1-mean) })
+        let v = self.reduce(0, { $0 + ($1 - mean) * ($1 - mean) })
         return (v / Double(self.count - degreesOfFreedom)).squareRoot()
     }
 }
@@ -92,23 +92,23 @@ func fitSimpleLinearRegression(_ values: [Double]) -> (constant: Double, slope: 
 /// - Returns: The constant and slope for the line that best fit this series of points.
 func fitSimpleLinearRegression(_ points: [(x: Double, y: Double)]) -> (constant: Double, slope: Double) {
     let n = Double(points.count)
-        
+
     var sumX = 0.0
     var sumY = 0.0
     var sumXsquare = 0.0
     var sumYsquare = 0.0
     var sumXY = 0.0
-    
+
     for (x, y) in points {
         sumX += x
         sumY += y
-        sumXsquare += x*x
-        sumYsquare += y*y
-        sumXY += x*y
+        sumXsquare += x * x
+        sumYsquare += y * y
+        sumXY += x * y
     }
-    
+
     let slope = (n * sumXY - sumX * sumY) / (n * sumXsquare - sumX * sumX)
-    let constant = (1.0/n) * (sumY - slope * sumX)
-    
+    let constant = (1.0 / n) * (sumY - slope * sumX)
+
     return (constant, slope)
 }

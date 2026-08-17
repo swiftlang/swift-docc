@@ -38,15 +38,15 @@ public final class DeprecationSummary: Semantic, AutomaticDirectiveConvertible {
     /// The contents of the summary.
     @ChildMarkup
     public private(set) var content: MarkupContainer
-    
+
     override var children: [Semantic] {
         return [content]
     }
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "content" : \DeprecationSummary._content
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "content": \DeprecationSummary._content
     ]
-    
+
     /// Creates a new deprecation summary from the content of the given directive.
     /// - Parameters:
     ///   - originalMarkup: The source markup as a directive.
@@ -56,14 +56,14 @@ public final class DeprecationSummary: Semantic, AutomaticDirectiveConvertible {
         super.init()
         self.content = content
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
         super.init()
     }
-    
-    public override func accept<V>(_ visitor: inout V) -> V.Result where V : SemanticVisitor {
+
+    public override func accept<V>(_ visitor: inout V) -> V.Result where V: SemanticVisitor {
         return visitor.visitDeprecationSummary(self)
     }
 }

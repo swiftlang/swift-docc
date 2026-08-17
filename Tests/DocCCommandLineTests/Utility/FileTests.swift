@@ -18,11 +18,11 @@ class FileTests: XCTestCase {
         XCTAssertEqual(CopyOfFile(original: URL(fileURLWithPath: "myfile.txt")).absoluteURL.path, "/myfile.txt")
         XCTAssertEqual(CopyOfFile(original: URL(fileURLWithPath: "myfile.txt"), newName: "yourfile.txt").absoluteURL.path, "/yourfile.txt")
     }
-    
+
     func testCreateFromDisk() throws {
         let testBundleURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        
+
         // Generates a list of all paths recursively inside a folder
         func pathsIn(folder: Folder, url: URL) -> [String] {
             var result = [String]()
@@ -30,9 +30,9 @@ class FileTests: XCTestCase {
                 result.append(url.appendingPathComponent(file.name).path)
 
                 switch file {
-                    case let folder as Folder:
-                        result.append(contentsOf: pathsIn(folder: folder, url: url.appendingPathComponent(file.name)))
-                    default: break
+                case let folder as Folder:
+                    result.append(contentsOf: pathsIn(folder: folder, url: url.appendingPathComponent(file.name)))
+                default: break
                 }
             }
             return result
@@ -44,56 +44,64 @@ class FileTests: XCTestCase {
             return
         }
         let diskPaths = Set(diskContent.map({ $0.path.replacingOccurrences(of: testBundleURL.path, with: "") })).sorted()
-        
+
         // Load the disk folder in a `Folder` instance
         let folder = try Folder.createFromDisk(url: testBundleURL)
         let folderPaths = pathsIn(folder: folder, url: URL(string: "/")!).sorted()
-        
+
         // Compare the paths from disk and in the `Folder` are identical
         XCTAssertEqual(diskPaths.count, folderPaths.count)
         XCTAssertEqual(diskPaths, folderPaths)
     }
-    
+
     func testMakingDirectoryStructure() throws {
-        XCTAssertEqual(Folder.makeStructure(filePaths: ["one/two/a.json", "one/two/b.json"]).first!.dump(), """
-        one/
-        ╰─ two/
-           ├─ a.json
-           ╰─ b.json
-        """)
-        
-        XCTAssertEqual(Folder.makeStructure(filePaths: ["one/two.json", "one/two/three.json"]).first!.dump(), """
-        one/
-        ├─ two.json
-        ╰─ two/
-           ╰─ three.json
-        """)
-        
-        XCTAssertEqual(Folder.makeStructure(filePaths: [
-            "documentation/first/index.html",
-            "documentation/first/abc-page/index.html",
-            "documentation/first/xyz-page/index.html",
-        ]).first!.dump(), """
-        documentation/
-        ╰─ first/
-           ├─ abc-page/
-           │  ╰─ index.html
-           ├─ index.html
-           ╰─ xyz-page/
-              ╰─ index.html
-        """)
-        
-        XCTAssertEqual(Folder.makeStructure(filePaths: [
-            "data/documentation/first.json",
-            "data/documentation/first/abc-page.json",
-            "data/documentation/first/xyz-page.json",
-        ]).first!.dump(), """
-        data/
-        ╰─ documentation/
-           ├─ first.json
-           ╰─ first/
-              ├─ abc-page.json
-              ╰─ xyz-page.json
-        """)
+        XCTAssertEqual(
+            Folder.makeStructure(filePaths: ["one/two/a.json", "one/two/b.json"]).first!.dump(),
+            """
+            one/
+            ╰─ two/
+               ├─ a.json
+               ╰─ b.json
+            """)
+
+        XCTAssertEqual(
+            Folder.makeStructure(filePaths: ["one/two.json", "one/two/three.json"]).first!.dump(),
+            """
+            one/
+            ├─ two.json
+            ╰─ two/
+               ╰─ three.json
+            """)
+
+        XCTAssertEqual(
+            Folder.makeStructure(filePaths: [
+                "documentation/first/index.html",
+                "documentation/first/abc-page/index.html",
+                "documentation/first/xyz-page/index.html",
+            ]).first!.dump(),
+            """
+            documentation/
+            ╰─ first/
+               ├─ abc-page/
+               │  ╰─ index.html
+               ├─ index.html
+               ╰─ xyz-page/
+                  ╰─ index.html
+            """)
+
+        XCTAssertEqual(
+            Folder.makeStructure(filePaths: [
+                "data/documentation/first.json",
+                "data/documentation/first/abc-page.json",
+                "data/documentation/first/xyz-page.json",
+            ]).first!.dump(),
+            """
+            data/
+            ╰─ documentation/
+               ├─ first.json
+               ╰─ first/
+                  ├─ abc-page.json
+                  ╰─ xyz-page.json
+            """)
     }
 }

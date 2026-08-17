@@ -12,13 +12,13 @@ import Foundation
 private import CLMDB
 
 extension LMDB {
-    
+
     /**
      A convenience Error enum to handle potential LMDB errors.
      - Note: [List of return codes](http://www.lmdb.tech/doc/group__errors.html).
      */
     public enum Error: Swift.Error, Equatable {
-        
+
         // LMDB defined errors.
         case keyExists
         case notFound
@@ -40,18 +40,18 @@ extension LMDB {
         case badTransaction
         case badValueSize
         case badDBI
-        
+
         // System Errors
         case invalidParameter
         case accessError
         case synchronizationError
         case readOnlyFileSystem
-        
+
         case other(errorCode: Int32)
-        
+
         init(errorCode: Int32) {
             switch errorCode {
-            
+
             case MDB_KEYEXIST: self = .keyExists
             case MDB_NOTFOUND: self = .notFound
             case MDB_PAGE_NOTFOUND: self = .pageNotFound
@@ -72,19 +72,19 @@ extension LMDB {
             case MDB_BAD_TXN: self = .badTransaction
             case MDB_BAD_VALSIZE: self = .badValueSize
             case MDB_BAD_DBI: self = .badDBI
-                
+
             // System Errors
             case EINVAL: self = .invalidParameter
             case EACCES: self = .accessError
             case EIO: self = .synchronizationError
             case EROFS: self = .readOnlyFileSystem
-                
+
             // Proxy the original code if it's another error.
             default:
                 self = .other(errorCode: errorCode)
             }
 
         }
-        
+
     }
 }

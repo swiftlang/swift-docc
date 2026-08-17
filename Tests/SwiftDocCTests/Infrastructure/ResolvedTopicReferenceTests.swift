@@ -23,7 +23,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
             sourceLanguage: .swift
         )
         XCTAssertEqual(firstTopicReference.absoluteString, "doc://bundleID/path/sub-path#fragment")
-        
+
         let secondTopicReference = ResolvedTopicReference(
             bundleID: "new-bundleID",
             path: "/new-path/sub-path",
@@ -31,43 +31,43 @@ class ResolvedTopicReferenceTests: XCTestCase {
             sourceLanguage: firstTopicReference.sourceLanguage
         )
         XCTAssertEqual(secondTopicReference.absoluteString, "doc://new-bundleID/new-path/sub-path#fragment")
-        
+
         let thirdTopicReference = secondTopicReference.withFragment(nil)
         XCTAssertEqual(thirdTopicReference.absoluteString, "doc://new-bundleID/new-path/sub-path")
-        
+
         // Changing the language does not change the url
         XCTAssertEqual(thirdTopicReference.addingSourceLanguages([.metal]).absoluteString, "doc://new-bundleID/new-path/sub-path")
     }
-    
+
     func testAppendingReferenceWithEmptyPath() {
         // An empty path
         do {
             let resolvedOriginal = ResolvedTopicReference(bundleID: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
-            
+
             let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://host-name")!)
             XCTAssert(unresolved.path.isEmpty)
-            
+
             let appended = resolvedOriginal.appendingPathOfReference(unresolved)
             XCTAssertEqual(appended.path, resolvedOriginal.path)
         }
-        
+
         // A path with no url path allowed characters
         do {
             let resolvedOriginal = ResolvedTopicReference(bundleID: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
-            
+
             var components = URLComponents()
             components.scheme = "doc"
             components.host = "host.name"
-            components.percentEncodedPath = "%20%20%20" // 3 spaces 
-            
+            components.percentEncodedPath = "%20%20%20"  // 3 spaces
+
             let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(components: components))
             XCTAssertFalse(unresolved.path.isEmpty)
-            
+
             let appended = resolvedOriginal.appendingPathOfReference(unresolved)
             XCTAssertEqual(appended.path, resolvedOriginal.appendingPath("---").path)
         }
     }
-    
+
     func testStorageIsConcurrentlyAccessible() throws {
         let topicReference = ResolvedTopicReference(
             bundleID: "com.apple.example",
@@ -75,7 +75,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
             fragment: nil,
             sourceLanguage: .swift
         )
-        
+
         // TSan should not report a data race for these three accesses.
         // TODO: Run TSan in Swift-CI (rdar://90157829).
         DispatchQueue.concurrentPerform(iterations: 5) { _ in
@@ -84,7 +84,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
             _ = topicReference.absoluteString
         }
     }
-    
+
     func testDifferentReferencesAreNotEqual() {
         // swift-format-ignore
         XCTAssertNotEqual(

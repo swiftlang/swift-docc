@@ -20,14 +20,14 @@ public internal(set) var shouldPrettyPrintOutputJSON = NSString(string: ProcessI
 extension CodingUserInfoKey {
     /// A user info key to indicate that Render JSON references should not be encoded.
     static let skipsEncodingReferences = CodingUserInfoKey(rawValue: "skipsEncodingReferences")!
-    
+
     /// A user info key that encapsulates variant overrides.
     ///
     /// This key is used by encoders to accumulate language-specific variants of documentation in a ``VariantOverrides`` value.
     static let variantOverrides = CodingUserInfoKey(rawValue: "variantOverrides")!
-    
+
     static let baseEncodingPath = CodingUserInfoKey(rawValue: "baseEncodingPath")!
-    
+
     /// A user info key to indicate a base path for local asset URLs.
     static let assetPrefixComponent = CodingUserInfoKey(rawValue: "assetPrefixComponent")!
 }
@@ -37,20 +37,20 @@ extension Encoder {
     var userInfoVariantOverrides: VariantOverrides? {
         userInfo[.variantOverrides] as? VariantOverrides
     }
-    
+
     /// The base path to use when creating dynamic JSON pointers
     /// with this encoder.
     var baseJSONPatchPath: [String]? {
         userInfo[.baseEncodingPath] as? [String]
     }
-    
+
     /// A Boolean that is true if this encoder skips the encoding of any render references.
     ///
     /// These references will then be encoded at a later stage by `TopicRenderReferenceEncoder`.
     var skipsEncodingReferences: Bool {
         userInfo[.skipsEncodingReferences] as? Bool ?? false
     }
-    
+
     /// A base path to use when creating destination URLs for local assets (images, videos, downloads, etc.)
     var assetPrefixComponent: String? {
         userInfo[.assetPrefixComponent] as? String
@@ -67,7 +67,7 @@ extension JSONEncoder {
             userInfo[.variantOverrides] = newValue
         }
     }
-    
+
     /// The base path to use when creating dynamic JSON pointers
     /// with this encoder.
     var baseJSONPatchPath: [String]? {
@@ -78,7 +78,7 @@ extension JSONEncoder {
             userInfo[.baseEncodingPath] = newValue
         }
     }
-    
+
     /// A Boolean that is true if this encoder skips the encoding any render references.
     ///
     /// These references will then be encoded at a later stage by `TopicRenderReferenceEncoder`.
@@ -112,20 +112,21 @@ public enum RenderJSONEncoder {
         assetPrefixComponent: String? = nil
     ) -> JSONEncoder {
         let encoder = JSONEncoder()
-        
-        encoder.outputFormatting = if prettyPrint {
-            [.prettyPrinted, .sortedKeys]
-        } else {
-            [.sortedKeys]
-        }
-        
+
+        encoder.outputFormatting =
+            if prettyPrint {
+                [.prettyPrinted, .sortedKeys]
+            } else {
+                [.sortedKeys]
+            }
+
         if emitVariantOverrides {
             encoder.userInfo[.variantOverrides] = VariantOverrides()
         }
         if let bundleIdentifier = assetPrefixComponent {
             encoder.userInfo[.assetPrefixComponent] = bundleIdentifier
         }
-        
+
         return encoder
     }
 }
@@ -148,7 +149,7 @@ public extension RenderNode {
         case decoding(description: String, context: DecodingError.Context)
         /// A render node value could not be encoded as JSON.
         case encoding(description: String, context: EncodingError.Context)
-        
+
         /// A user-facing description of the coding error.
         public var errorDescription: String {
             switch self {
@@ -162,9 +163,9 @@ public extension RenderNode {
                 return "\(description)\nKeypath: \(contextMessage)"
             }
         }
-        
+
     }
-    
+
     /// Decodes a render node value from the given JSON data.
     ///
     /// - Parameters:
@@ -195,7 +196,7 @@ public extension RenderNode {
             throw error
         }
     }
-    
+
     /// Encodes a render node value as JSON data.
     ///
     /// - Parameters:
@@ -214,11 +215,11 @@ public extension RenderNode {
             guard let renderReferenceCache else {
                 return try encoder.encode(self)
             }
-            
+
             // Since we're using a reference cache, skip encoding the references and encode them separately.
             encoder.skipsEncodingReferences = true
             var renderNodeData = try encoder.encode(self)
-            
+
             // Add render references, using the encoder cache.
             try TopicRenderReferenceEncoder.addRenderReferences(
                 to: &renderNodeData,
@@ -227,7 +228,7 @@ public extension RenderNode {
                 encoder: encoder,
                 renderReferenceCache: renderReferenceCache
             )
-            
+
             return renderNodeData
 
         } catch {
@@ -240,7 +241,7 @@ public extension RenderNode {
                     throw error
                 }
             }
-            
+
             // Re-throws if any other error happens.
             throw error
         }

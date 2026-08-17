@@ -15,7 +15,7 @@ public import Markdown
 public final class TutorialReference: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public var originalMarkup: BlockDirective
-    
+
     /// The tutorial page or tutorial article to which this refers.
     @DirectiveArgumentWrapped(
         name: .custom("tutorial"),
@@ -27,25 +27,24 @@ public final class TutorialReference: Semantic, AutomaticDirectiveConvertible {
         }
     )
     public private(set) var topic: TopicReference
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "topic" : \TutorialReference._topic
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "topic": \TutorialReference._topic
     ]
-    
+
     init(originalMarkup: BlockDirective, tutorial: TopicReference) {
         self.originalMarkup = originalMarkup
         super.init()
-        
+
         self.topic = tutorial
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitTutorialReference(self)
     }
 }
-

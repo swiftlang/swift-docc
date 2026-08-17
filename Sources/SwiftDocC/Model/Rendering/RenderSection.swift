@@ -15,7 +15,7 @@ public protocol RenderSection: Codable, TextIndexing {
 public enum RenderSectionKind: String, Codable {
     // Article render sections
     case hero, intro, tasks, assessments, volume, contentAndMedia, contentAndMediaGroup, callToAction, tile, articleBody, resources
-    
+
     // Symbol render sections
     case mentions, discussion, content, taskGroup, relationships, declarations, parameters, sampleDownload, row
 

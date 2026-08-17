@@ -15,11 +15,11 @@ protocol DirectiveArgument<ArgumentValue> {
     associatedtype ArgumentValue: DirectiveArgumentValueConvertible = String
     /// The expected `BlockDirective` argument's name.
     static var argumentName: String { get }
-    
+
     /// If non-`nil`, the list of allowed values the argument can take on,
     /// suggested to the author as possible solutions
     static func allowedValues() -> [String]?
-    
+
     /// If non-`nil`, a string describing the expected format for the argument value,
     /// shown to the author as part of the diagnostic summary when an invalid value is provided.
     static func expectedFormat() -> String?
@@ -53,7 +53,7 @@ extension Semantic.Analyses {
         public init(severityIfNotFound: DiagnosticSeverity?) {
             self.severityIfNotFound = severityIfNotFound
         }
-        
+
         func analyze(_ directive: BlockDirective, arguments: [String: Markdown.DirectiveArgument], diagnostics: inout [Diagnostic]) -> Converter.ArgumentValue? {
             return ArgumentValueParser<Parent>.init(
                 severityIfNotFound: severityIfNotFound,
@@ -65,7 +65,7 @@ extension Semantic.Analyses {
             ).analyze(directive, arguments: arguments, diagnostics: &diagnostics) as? Converter.ArgumentValue
         }
     }
-    
+
     struct ArgumentValueParser<Parent: Semantic & DirectiveConvertible> {
         let severityIfNotFound: DiagnosticSeverity?
         let argumentName: String
@@ -73,7 +73,7 @@ extension Semantic.Analyses {
         let expectedFormat: String?
         let convert: (String) -> (Any?)
         let valueTypeDiagnosticName: String
-        
+
         func analyze(
             _ directive: BlockDirective,
             arguments: [String: Markdown.DirectiveArgument],
@@ -82,22 +82,24 @@ extension Semantic.Analyses {
             let arguments = directive.arguments(diagnostics: &diagnostics)
             let source = directive.range?.lowerBound.source
             let diagnosticArgumentName = argumentName.isEmpty ? "unlabeled" : argumentName
-            let diagnosticArgumentDescription = if argumentName.isEmpty {
-                "an unnamed parameter"
-            } else {
-                "the \(argumentName.singleQuoted) parameter"
-            }
-            let diagnosticExplanation = if let expectedFormat {
-                """
-                \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
-                that's convertible to \(expectedFormat)
-                """
-            } else {
-                """
-                \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
-                that's convertible to \(valueTypeDiagnosticName.singleQuoted)
-                """
-            }
+            let diagnosticArgumentDescription =
+                if argumentName.isEmpty {
+                    "an unnamed parameter"
+                } else {
+                    "the \(argumentName.singleQuoted) parameter"
+                }
+            let diagnosticExplanation =
+                if let expectedFormat {
+                    """
+                    \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
+                    that's convertible to \(expectedFormat)
+                    """
+                } else {
+                    """
+                    \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
+                    that's convertible to \(valueTypeDiagnosticName.singleQuoted)
+                    """
+                }
             guard let argument = arguments[argumentName] else {
                 if let severity = severityIfNotFound {
                     let diagnostic = Diagnostic(
@@ -121,19 +123,19 @@ extension Semantic.Analyses {
                         return Solution(summary: "Use allowed value \(allowedValue.singleQuoted)", replacements: [.init(range: range, replacement: allowedValue)])
                     }
                 }
-                diagnostics.append(Diagnostic(
-                    source: source,
-                    severity: .warning,
-                    range: argument.valueRange,
-                    identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed",
-                    summary: "Cannot convert \(argument.value.singleQuoted) to type \(valueTypeDiagnosticName.singleQuoted)",
-                    explanation: diagnosticExplanation,
-                    solutions: solutions ?? []
-                ))
+                diagnostics.append(
+                    Diagnostic(
+                        source: source,
+                        severity: .warning,
+                        range: argument.valueRange,
+                        identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed",
+                        summary: "Cannot convert \(argument.value.singleQuoted) to type \(valueTypeDiagnosticName.singleQuoted)",
+                        explanation: diagnosticExplanation,
+                        solutions: solutions ?? []
+                    ))
                 return nil
             }
             return value
         }
     }
 }
-

@@ -13,7 +13,7 @@ public import Markdown
 public struct DiscussionSection: Section {
     public static let title: String? = "Discussion"
     public var content: [any Markup]
-    
+
     /// Creates a new discussion section with the given markup content.
     public init(content: [any Markup]) {
         self.content = content

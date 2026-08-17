@@ -12,7 +12,7 @@ import Testing
 @testable import SwiftDocC
 
 struct String_WhitespaceTests {
-    
+
     @Test(arguments: [
         ("Words separated by spaces", "Words-separated-by-spaces"),
         ("Words_separated_by_underscores", "Words-separated-by-underscores"),
@@ -24,7 +24,7 @@ struct String_WhitespaceTests {
     func replacesEachSeparatorCharacterWithGivenString(input: String, expected: String) {
         #expect(input.replacingWhitespaceAndPunctuation(with: "-") == expected)
     }
-    
+
     @Test(arguments: [
         ("Words   separated by    multiple  spaces", "Words-separated-by-multiple-spaces"),
         ("Words___separated_by____multiple__underscrores", "Words-separated-by-multiple-underscrores"),
@@ -33,7 +33,7 @@ struct String_WhitespaceTests {
     func collapsesConsecutiveSeparators(input: String, expected: String) {
         #expect(input.replacingWhitespaceAndPunctuation(with: "-") == expected)
     }
-    
+
     @Test(arguments: [
         ("", "", ""),
         ("ABC", "ABC", "ABC"),

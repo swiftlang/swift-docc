@@ -17,15 +17,15 @@ class KeyedEncodingContainerTests: XCTestCase {
     struct EncodingStruct: Codable {
         var age: Int
         var names: [String]
-        
+
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
-            
+
             try container.encode(age, forKey: .age)
             try container.encodeIfNotEmpty(names, forKey: .names)
         }
     }
-    
+
     func testEncodeIfNotEmpty() throws {
         do {
             // Test when the array is not empty
@@ -35,7 +35,7 @@ class KeyedEncodingContainerTests: XCTestCase {
                 XCTFail("Failed to decode test structure")
                 return
             }
-            
+
             XCTAssertEqual(dictionary["age"] as? Int, 10)
             XCTAssertEqual(dictionary["names"] as? [String], ["Winston", "Smith"])
         }
@@ -48,7 +48,7 @@ class KeyedEncodingContainerTests: XCTestCase {
                 XCTFail("Failed to decode test structure")
                 return
             }
-            
+
             XCTAssertEqual(dictionary["age"] as? Int, 10)
             XCTAssertNil(dictionary["names"])
         }

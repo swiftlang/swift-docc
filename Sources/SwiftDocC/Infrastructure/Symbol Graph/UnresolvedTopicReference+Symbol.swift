@@ -22,8 +22,7 @@ extension UnresolvedTopicReference {
         if !components.path.hasPrefix("/") {
             components.path.insert("/", at: components.path.startIndex)
         }
-        
+
         self.topicURL = ValidatedURL(components: components)
     }
 }
-

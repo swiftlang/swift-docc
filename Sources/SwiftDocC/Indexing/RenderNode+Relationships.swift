@@ -9,17 +9,18 @@
 */
 
 extension RenderNode {
-    
+
     /**
     Return the project files for a given `RenderNode`, if possible.
-     
+
      - Returns: The single `DownloadReference` listed as `projectFiles` in the Intro section.
     */
     public func projectFiles() -> DownloadReference? {
         // sampleDownload is provided by pages which are of type "sample code".
         // This section provides an action which includes a download reference.
         if let sampleDownload, case let RenderInlineContent.reference(identifier, _, _, _) = sampleDownload.action,
-           let reference = references[identifier.identifier] {
+            let reference = references[identifier.identifier]
+        {
             return reference as? DownloadReference
         }
         // In case we can't find a sample code reference, we fallback to look for
@@ -29,10 +30,10 @@ extension RenderNode {
         guard let reference = references[projectFiles.identifier] else { return nil }
         return reference as? DownloadReference
     }
-    
+
     /**
      Return all the download references found in a single `RenderNode`.
-     
+
      - Returns: A list of `DownloadReference` for all the content that can be downloaded from the page.
      */
     public func downloadReferences() -> [DownloadReference] {
@@ -49,16 +50,16 @@ public struct RenderRelationshipsGroup {
 
     /// The optional name of the group of references.
     public let name: String?
-    
+
     /// The optional abstract of the group of references.
     public let abstract: String?
-    
+
     /// The `TopicRenderReferences`related to the `RenderNode`.
     public let references: [TopicRenderReference]
-    
+
     /// Indicates if the group should nest sub-references or not. Default: false.
     public let referencesAreNested: Bool
-    
+
     public init(name: String?, abstract: String?, references: [TopicRenderReference], referencesAreNested: BooleanLiteralType = false) {
         self.name = name
         self.abstract = abstract
@@ -66,4 +67,3 @@ public struct RenderRelationshipsGroup {
         self.referencesAreNested = referencesAreNested
     }
 }
-

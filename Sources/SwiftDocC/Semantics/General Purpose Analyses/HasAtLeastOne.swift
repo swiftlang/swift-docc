@@ -22,7 +22,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
             self.featureFlags = featureFlags
         }
-        
+
         @available(*, deprecated, renamed: "analyze(_:children:source:for:diagnostics:)", message: "Use analyze(_:children:source:for:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             var diagnostics = [Diagnostic]()
@@ -31,7 +31,7 @@ extension Semantic.Analyses {
             }
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
-        
+
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> ([Child], remainder: MarkupContainer) {
             Semantic.Analyses.extractAtLeastOne(
                 childType: Child.self,
@@ -45,7 +45,7 @@ extension Semantic.Analyses {
             ) as! ([Child], MarkupContainer)
         }
     }
-    
+
     static func extractAtLeastOne(
         childType: any DirectiveConvertible.Type,
         parentDirective: BlockDirective,
@@ -60,11 +60,11 @@ extension Semantic.Analyses {
             guard let childDirective = child as? BlockDirective,
                 childType.canConvertDirective(childDirective)
             else {
-                    return nil
+                return nil
             }
             return childDirective
         }
-        
+
         if matches.isEmpty, let severityIfNotFound {
             let diagnostic = Diagnostic(
                 source: source,
@@ -80,7 +80,7 @@ extension Semantic.Analyses {
             )
             diagnostics.append(diagnostic)
         }
-        
+
         let converted = matches.compactMap { childDirective -> (any DirectiveConvertible)? in
             return childType.init(
                 from: childDirective,
@@ -90,8 +90,7 @@ extension Semantic.Analyses {
                 diagnostics: &diagnostics
             )
         }
-        
+
         return (converted, remainder: MarkupContainer(remainder))
     }
 }
-

@@ -18,7 +18,7 @@ class HasContentTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
@@ -27,17 +27,17 @@ class HasContentTests: XCTestCase {
             XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.Intro.HasContent")
         }
     }
-    
+
     func testHasContent() throws {
         let source = """
-@dir {
-   Some content here.
-}
-"""
+            @dir {
+               Some content here.
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)

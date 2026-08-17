@@ -11,10 +11,10 @@
 /// A section of documentation content.
 public struct ContentRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind
-    
+
     /// Arbitrary content for this section.
     public var content: [RenderBlockContent]
-    
+
     /// Creates a new content section
     /// - Parameters:
     ///   - kind: The kind of the new section.
@@ -27,7 +27,7 @@ public struct ContentRenderSection: RenderSection, Equatable {
             self.content.insert(RenderBlockContent.heading(.init(level: 2, text: heading, anchor: urlReadableFragment(heading.lowercased()))), at: 0)
         }
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         kind = try container.decode(RenderSectionKind.self, forKey: .kind)
@@ -46,7 +46,7 @@ extension ContentRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this ContentRenderSection is similar enough to the given one.
     func isSimilar(to other: ContentRenderSection) -> Bool {
         return self.content == other.content

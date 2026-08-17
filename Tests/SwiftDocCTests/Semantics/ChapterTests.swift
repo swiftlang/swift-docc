@@ -17,8 +17,8 @@ import DocCTestUtilities
 class ChapterTests: XCTestCase {
     func testEmpty() async throws {
         let source = """
-@Chapter
-"""
+            @Chapter
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -26,23 +26,25 @@ class ChapterTests: XCTestCase {
         let chapter = Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(chapter)
         XCTAssertEqual(3, diagnostics.count)
-        XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
-            "org.swift.docc.HasArgument.name",
-            "org.swift.docc.HasAtLeastOne<\(Chapter.self), \(TutorialReference.self)>",
-            "org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.Missing",
-        ])
+        XCTAssertEqual(
+            diagnostics.map(\.identifier).sorted(),
+            [
+                "org.swift.docc.HasArgument.name",
+                "org.swift.docc.HasAtLeastOne<\(Chapter.self), \(TutorialReference.self)>",
+                "org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.Missing",
+            ])
         XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
     }
-    
+
     func testMultipleMedia() async throws {
         let chapterName = "Chapter 1"
         let source = """
-@Chapter(name: "\(chapterName)") {
-   @Image(source: test.png, alt: test)
-   @Image(source: test2.png, alt: test2)
-   @TutorialReference(tutorial: "MyTutorial")
-}
-"""
+            @Chapter(name: "\(chapterName)") {
+               @Image(source: test.png, alt: test)
+               @Image(source: test2.png, alt: test2)
+               @TutorialReference(tutorial: "MyTutorial")
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -50,7 +52,7 @@ class ChapterTests: XCTestCase {
         let chapter = Chapter(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.DuplicateChildren")
-        
+
         XCTAssertNotNil(chapter)
         if let chapter {
             XCTAssertEqual(chapterName, chapter.name)
@@ -61,15 +63,15 @@ class ChapterTests: XCTestCase {
             }
         }
     }
-    
+
     func testValid() async throws {
         let chapterName = "Chapter 1"
         let source = """
-@Chapter(name: "\(chapterName)") {
-   @Image(source: test.png, alt: test)
-   @TutorialReference(tutorial: "MyTutorial")
-}
-"""
+            @Chapter(name: "\(chapterName)") {
+               @Image(source: test.png, alt: test)
+               @TutorialReference(tutorial: "MyTutorial")
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -82,48 +84,52 @@ class ChapterTests: XCTestCase {
             XCTAssertEqual(1, chapter.topicReferences.count)
         }
     }
-    
+
     func testDuplicateTutorialReferences() async throws {
         // The catalog contains two `@TutorialReference` directives in a single chapter
         // that resolve to the same tutorial: "doc:TestTutorial" and "doc:/TestTutorial".
         // Even though they're spelled differently, they should be treated as duplicates.
         let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "TestOverview.tutorial", utf8Content: """
-            @Tutorials(name: "Technology X") {
-               @Intro(title: "Technology X") {
-                  You'll learn all about Technology X.
-               }
-               @Volume(name: "Volume 1") {
-                  @Chapter(name: "Chapter 1") {
-                     @Image(source: image.png, alt: image)
-                     @TutorialReference(tutorial: "doc:TestTutorial")
-                     @TutorialReference(tutorial: "doc:/TestTutorial")
-                  }
-               }
-            }
-            """)
-            TextFile(name: "TestTutorial.tutorial", utf8Content: """
-            @Tutorial(time: 1) {
-               @Intro(title: "Tutorial") {
-                  An intro.
-               }
-               @Section(title: "Section") {
-                  @ContentAndMedia {
-                     Content.
-                  }
-                  @Steps {
-                     @Step {
-                        Do something.
-                        @Image(source: image.png, alt: image)
-                     }
-                  }
-               }
-            }
-            """)
+            TextFile(
+                name: "TestOverview.tutorial",
+                utf8Content: """
+                    @Tutorials(name: "Technology X") {
+                       @Intro(title: "Technology X") {
+                          You'll learn all about Technology X.
+                       }
+                       @Volume(name: "Volume 1") {
+                          @Chapter(name: "Chapter 1") {
+                             @Image(source: image.png, alt: image)
+                             @TutorialReference(tutorial: "doc:TestTutorial")
+                             @TutorialReference(tutorial: "doc:/TestTutorial")
+                          }
+                       }
+                    }
+                    """)
+            TextFile(
+                name: "TestTutorial.tutorial",
+                utf8Content: """
+                    @Tutorial(time: 1) {
+                       @Intro(title: "Tutorial") {
+                          An intro.
+                       }
+                       @Section(title: "Section") {
+                          @ContentAndMedia {
+                             Content.
+                          }
+                          @Steps {
+                             @Step {
+                                Do something.
+                                @Image(source: image.png, alt: image)
+                             }
+                          }
+                       }
+                    }
+                    """)
             DataFile(name: "image.png", data: Data())
         }
         let (_, context) = try await loadBundle(catalog: catalog)
-        
+
         let duplicateDiagnostic = context.diagnostics.filter { $0.identifier == "org.swift.docc.Chapter.Duplicate\(TutorialReference.self)" }
         XCTAssertEqual(1, duplicateDiagnostic.count)
     }

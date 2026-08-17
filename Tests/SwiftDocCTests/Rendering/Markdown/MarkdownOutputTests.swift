@@ -16,9 +16,9 @@ import SymbolKit
 import DocCCommon
 
 struct MarkdownOutputTests {
-    
+
     // MARK: - Test conveniences
-    
+
     private func markdownOutput(catalog: Folder, path: String) async throws -> (MarkdownOutputNode, MarkdownOutputManifest) {
         let context = try await load(catalog: catalog)
         var path = path
@@ -33,105 +33,115 @@ struct MarkdownOutputTests {
         let manifest = try #require(visitor.manifest)
         return (markdownNode, manifest)
     }
-    
-    private func catalog(files: [any File] = []) -> Folder {
-        Folder(name: "MarkdownOutput.docc", content: [
-            TextFile(name: "Article.md", utf8Content: """
-                # Article
 
-                A mostly empty article to make sure paths are formatted correctly. 
-                
-                If we create a test catalog with a single file, then the reference for that file is doc://MarkdownOutput/documentation/FileName, instead of doc://MarkdownOutput/documentation/MarkdownOutput/Filename
-                
-                ## Overview
-                
-                Nothing to see here
-                """)
+    private func catalog(files: [any File] = []) -> Folder {
+        Folder(
+            name: "MarkdownOutput.docc",
+            content: [
+                TextFile(
+                    name: "Article.md",
+                    utf8Content: """
+                        # Article
+
+                        A mostly empty article to make sure paths are formatted correctly. 
+
+                        If we create a test catalog with a single file, then the reference for that file is doc://MarkdownOutput/documentation/FileName, instead of doc://MarkdownOutput/documentation/MarkdownOutput/Filename
+
+                        ## Overview
+
+                        Nothing to see here
+                        """)
             ] + files
         )
     }
-    
+
     // MARK: Directive special processing
-    
+
     @Test
     func rowsAndColumnsAreRenderedAsParagraphs() async throws {
-        
+
         let catalog = catalog(files: [
-            TextFile(name: "RowsAndColumns.md", utf8Content: """
-                # Rows and Columns
+            TextFile(
+                name: "RowsAndColumns.md",
+                utf8Content: """
+                    # Rows and Columns
 
-                Demonstrates how row and column directives are rendered as markdown
+                    Demonstrates how row and column directives are rendered as markdown
 
-                ## Overview
+                    ## Overview
 
-                @Row {
-                    @Column {
-                        I am the content of column one
+                    @Row {
+                        @Column {
+                            I am the content of column one
+                        }
+                        @Column {
+                            I am the content of column two
+                        }
                     }
-                    @Column {
-                        I am the content of column two
-                    }
-                }
-                """)
+                    """)
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "RowsAndColumns")
         let expected = "I am the content of column one\n\nI am the content of column two"
         #expect(node.markdown.contains(expected))
     }
-    
+
     @Test
     func curatedArticlesDisplayLinksAndAbstractAsSeparateParagraphs() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "RowsAndColumns.md", utf8Content: """
-                # Rows and Columns
-                
-                Abstract rendered when curated
-                
-                ## Overview
-                
-                My section header will be specifically linked below
-                
-                ## Multi-word heading
-                
-                My section header is also linked below, and it has a hyphen in it and multiple words
-                """),
-            TextFile(name: "Links.md", utf8Content: """
-                # Links
+            TextFile(
+                name: "RowsAndColumns.md",
+                utf8Content: """
+                    # Rows and Columns
 
-                Tests the appearance of inline and linked lists
+                    Abstract rendered when curated
 
-                ## Overview
+                    ## Overview
 
-                This is an inline link: <doc:RowsAndColumns>
-                This is an inline link with a heading: <doc:RowsAndColumns#Overview>
-                This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+                    My section header will be specifically linked below
 
-                ## Topics
+                    ## Multi-word heading
 
-                ### Links with abstracts
+                    My section header is also linked below, and it has a hyphen in it and multiple words
+                    """),
+            TextFile(
+                name: "Links.md",
+                utf8Content: """
+                    # Links
 
-                - <doc:RowsAndColumns>
-                - <doc:RowsAndColumns#Overview>
-                
-                ### No more links
-                
-                Empty section
-                """)
-            ])
-        
+                    Tests the appearance of inline and linked lists
+
+                    ## Overview
+
+                    This is an inline link: <doc:RowsAndColumns>
+                    This is an inline link with a heading: <doc:RowsAndColumns#Overview>
+                    This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+
+                    ## Topics
+
+                    ### Links with abstracts
+
+                    - <doc:RowsAndColumns>
+                    - <doc:RowsAndColumns#Overview>
+
+                    ### No more links
+
+                    Empty section
+                    """),
+        ])
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
         let expectedInline = "inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
         #expect(node.markdown.contains(expectedInline))
-        
+
         let expectedInlineAnchor = "inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)"
         #expect(node.markdown.contains(expectedInlineAnchor))
         let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
         #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
-        
+
         let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nAbstract rendered when curated"
         #expect(node.markdown.contains(expectedLinkList))
-        
+
         // No abstract
         let expectedLinkListAnchor = "[Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
         #expect(node.markdown.contains(expectedLinkListAnchor))
@@ -140,32 +150,36 @@ struct MarkdownOutputTests {
     @Test
     func articleInListItemIsTitleAndLink() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "RowsAndColumns.md", utf8Content: """
-                # Rows and Columns
-                
-                Just here for the links
-                
-                ## Overview
-                
-                Section is linked below
-                
-                ## Multi-word heading
-                
-                Multi-word section is linked below
-                """),
-            TextFile(name: "Links.md", utf8Content: """
-                # Links
+            TextFile(
+                name: "RowsAndColumns.md",
+                utf8Content: """
+                    # Rows and Columns
 
-                - This is an inline link: <doc:RowsAndColumns>
-                  - This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
-                - This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
-                
-                1. This is an inline link: <doc:RowsAndColumns>
-                    1. This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
-                    2. Here is it again <doc:RowsAndColumns#Overview>
-                2. This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
-                """)
-            ])
+                    Just here for the links
+
+                    ## Overview
+
+                    Section is linked below
+
+                    ## Multi-word heading
+
+                    Multi-word section is linked below
+                    """),
+            TextFile(
+                name: "Links.md",
+                utf8Content: """
+                    # Links
+
+                    - This is an inline link: <doc:RowsAndColumns>
+                      - This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                    - This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+
+                    1. This is an inline link: <doc:RowsAndColumns>
+                        1. This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                        2. Here is it again <doc:RowsAndColumns#Overview>
+                    2. This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+                    """)
+        ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
         let expectedInline = "- This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
@@ -177,75 +191,83 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
 
         let expectedOrdered = """
-        1. This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)
-           1. This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
-           2. Here is it again [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
-        2. This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)
-        """
+            1. This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)
+               1. This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+               2. Here is it again [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+            2. This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)
+            """
         #expect(node.markdown.contains(expectedOrdered))
     }
 
     @Test
     func nestedListsRetainNesting() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "NestedLists.md", utf8Content: """
-                # Nested Lists
-                
-                - This is a top-level list item
-                  - This is a nested list item
-                  - This is another nested list item
-                - This is back to the top-level
-                """)
-            ])
+            TextFile(
+                name: "NestedLists.md",
+                utf8Content: """
+                    # Nested Lists
+
+                    - This is a top-level list item
+                      - This is a nested list item
+                      - This is another nested list item
+                    - This is back to the top-level
+                    """)
+        ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "NestedLists")
         let expectedOutput = """
-        - This is a top-level list item
-          - This is a nested list item
-          - This is another nested list item
-        - This is back to the top-level
-        """
+            - This is a top-level list item
+              - This is a nested list item
+              - This is another nested list item
+            - This is back to the top-level
+            """
         #expect(node.markdown.contains(expectedOutput))
     }
-    
-    @Test 
+
+    @Test
     func curatedSymbolDisplaysLinkAndAbstractAsSeparateParagraphs() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "Links.md", utf8Content: """
-                # Links
+            TextFile(
+                name: "Links.md",
+                utf8Content: """
+                    # Links
 
-                Tests the appearance of inline and linked lists
+                    Tests the appearance of inline and linked lists
 
-                ## Overview
+                    ## Overview
 
-                This is an inline link: ``MarkdownSymbol``
-                
-                This is an unresolvable link: ``Unresolvable``
-                
-                This is a list of things that have links:
-                
-                - You can use ``MarkdownSymbol`` to do interesting things
+                    This is an inline link: ``MarkdownSymbol``
 
-                ## Topics
+                    This is an unresolvable link: ``Unresolvable``
 
-                ### Links with abstracts
+                    This is a list of things that have links:
 
-                - ``MarkdownSymbol``
-                - ``UnresolvableInList``
-                
-                """),
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
-            ]))
+                    - You can use ``MarkdownSymbol`` to do interesting things
+
+                    ## Topics
+
+                    ### Links with abstracts
+
+                    - ``MarkdownSymbol``
+                    - ``UnresolvableInList``
+
+                    """),
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                    ]))
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
         let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"
         #expect(node.markdown.contains(expectedInline))
-        
+
         let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output"
         #expect(node.markdown.contains(expectedLinkList))
-        
+
         let unresolvableLink = "[`Unresolvable`]"
         #expect(node.markdown.contains(unresolvableLink) == false)
         let unresolvableAsCodeVoice = "unresolvable link: `Unresolvable`"
@@ -255,75 +277,89 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedUnorderedListContent))
 
     }
-    
-    @Test 
+
+    @Test
     func curatedPageWithLinkInAbstractDoesNotRecurse() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "Links.md", utf8Content: """
-                # Links
+            TextFile(
+                name: "Links.md",
+                utf8Content: """
+                    # Links
 
-                Tests the appearance of inline and linked lists
+                    Tests the appearance of inline and linked lists
 
-                ## Overview
+                    ## Overview
 
-                This is an inline link: ``MarkdownSymbol``
+                    This is an inline link: ``MarkdownSymbol``
 
-                ## Topics
+                    ## Topics
 
-                ### Links with abstracts
+                    ### Links with abstracts
 
-                - ``MarkdownSymbol``
-                - ``OtherMarkdownSymbol``
-                """),
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``OtherMarkdownSymbol``"),
-                makeSymbol(id: "other-markdown-symbol-id", kind: .struct, pathComponents: ["OtherMarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``MarkdownSymbol``")
-            ]))
+                    - ``MarkdownSymbol``
+                    - ``OtherMarkdownSymbol``
+                    """),
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``OtherMarkdownSymbol``"),
+                        makeSymbol(id: "other-markdown-symbol-id", kind: .struct, pathComponents: ["OtherMarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``MarkdownSymbol``")
+                    ]))
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
         let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"
         #expect(node.markdown.contains(expectedInline))
-        
+
         let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](/documentation/MarkdownOutput/OtherMarkdownSymbol)"
         #expect(node.markdown.contains(expectedLinkList))
     }
-    
+
     @Test
     func linkTitlesAreRetained() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "RootDocument.md", utf8Content: """
-                # Links
-                
-                Tests the processing of named links
-                
-                ## Overview
-                
-                This is a [named *link*](doc:LinkDestination)
-                This is not <doc:LinkDestination>
-                
-                This is a [named symbol link](doc:MarkdownSymbol)
-                This is not <doc:MarkdownSymbol>
-                
-                This has an empty title [](doc:LinkDestination)
-                
-                This is a reference link with an empty title [][link-id]
-                This is a reference link with a title [title][link-id]
-                
-                [link-id]: doc:LinkDestination
-                """),
-            TextFile(name: "LinkDestination.md", utf8Content: """
-                # Link Destination
-                
-                This document title should not replace the specific title in the link
-                """),
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output."),
-            ]))
+            TextFile(
+                name: "RootDocument.md",
+                utf8Content: """
+                    # Links
+
+                    Tests the processing of named links
+
+                    ## Overview
+
+                    This is a [named *link*](doc:LinkDestination)
+                    This is not <doc:LinkDestination>
+
+                    This is a [named symbol link](doc:MarkdownSymbol)
+                    This is not <doc:MarkdownSymbol>
+
+                    This has an empty title [](doc:LinkDestination)
+
+                    This is a reference link with an empty title [][link-id]
+                    This is a reference link with a title [title][link-id]
+
+                    [link-id]: doc:LinkDestination
+                    """),
+            TextFile(
+                name: "LinkDestination.md",
+                utf8Content: """
+                    # Link Destination
+
+                    This document title should not replace the specific title in the link
+                    """),
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output."),
+                    ]))
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "RootDocument")
-        
+
         let expectedLinks = [
             "This is a [named *link*](/documentation/MarkdownOutput/LinkDestination",
             "This is not [Link Destination](/documentation/MarkdownOutput/LinkDestination",
@@ -333,146 +369,160 @@ struct MarkdownOutputTests {
             "This is a reference link with an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination)",
             "This is a reference link with a title [title](/documentation/MarkdownOutput/LinkDestination)",
         ]
-        
+
         for expectedLink in expectedLinks {
             #expect(node.markdown.contains(expectedLink))
         }
     }
-        
+
     @Test
     func languageTabOnlyIncludesPrimaryLanguage() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "Tabs.md", utf8Content: """
-                # Tabs
+            TextFile(
+                name: "Tabs.md",
+                utf8Content: """
+                    # Tabs
 
-                Showing how language tabs only render the primary language
+                    Showing how language tabs only render the primary language
 
-                ## Overview
+                    ## Overview
 
-                @TabNavigator {
-                    @Tab("Objective-C") {
-                        ```objc
-                        I am an Objective-C code block
-                        ```
+                    @TabNavigator {
+                        @Tab("Objective-C") {
+                            ```objc
+                            I am an Objective-C code block
+                            ```
+                        }
+                        @Tab("Swift") {
+                            ```swift
+                            I am a Swift code block
+                            ```
+                        }
                     }
-                    @Tab("Swift") {
-                        ```swift
-                        I am a Swift code block
-                        ```
-                    }
-                }
-                """)
+                    """)
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
         #expect(node.markdown.contains("I am an Objective-C code block") == false)
         #expect(node.markdown.contains("I am a Swift code block"))
     }
-    
+
     @Test
     func nonLanguageTabIncludesAllEntries() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "Tabs.md", utf8Content: """
-                # Tabs
+            TextFile(
+                name: "Tabs.md",
+                utf8Content: """
+                    # Tabs
 
-                Showing how non-language tabs render all instances.
+                    Showing how non-language tabs render all instances.
 
-                ## Overview
+                    ## Overview
 
-                @TabNavigator {
-                    @Tab("Left") {
-                        Left text
+                    @TabNavigator {
+                        @Tab("Left") {
+                            Left text
+                        }
+                        @Tab("Right") {
+                            Right text
+                        }
                     }
-                    @Tab("Right") {
-                        Right text
-                    }
-                }
-                """)
+                    """)
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
         #expect(node.markdown.contains("**Left:**\n\nLeft text"))
         #expect(node.markdown.contains("**Right:**\n\nRight text"))
     }
-    
+
     @Test
     func tutorialCodeHasFinalStageOnly() async throws {
-        
-        let tutorial = TextFile(name: "Tutorial.tutorial", utf8Content: """
-            @Tutorial(time: 30) {
-                @Intro(title: "Tutorial Title") {
-                    A tutorial for testing markdown output.
+
+        let tutorial = TextFile(
+            name: "Tutorial.tutorial",
+            utf8Content: """
+                @Tutorial(time: 30) {
+                    @Intro(title: "Tutorial Title") {
+                        A tutorial for testing markdown output.
+                        
+                        @Image(source: placeholder.png, alt: "Alternative text")
+                    }
                     
-                    @Image(source: placeholder.png, alt: "Alternative text")
-                }
-                
-                @Section(title: "The first section") {
-                    
-                    Here is some free floating content
-                    
-                    @Steps {
-                        @Step {
-                            Do the first set of things
-                            @Code(name: "File.swift", file: 01-step-01.swift)
-                        }
+                    @Section(title: "The first section") {
                         
-                        Inter-step content 
+                        Here is some free floating content
                         
-                        @Step {
-                            Do the second set of things
-                            @Code(name: "File.swift", file: 01-step-02.swift)
-                        }
-                        
-                        @Step {
-                            Do the third set of things
-                            @Code(name: "File.swift", file: 01-step-03.swift)
-                        }
-                        
-                        @Step {
-                            Do the fourth set of things
-                            @Code(name: "File2.swift", file: 02-step-01.swift)
+                        @Steps {
+                            @Step {
+                                Do the first set of things
+                                @Code(name: "File.swift", file: 01-step-01.swift)
+                            }
+                            
+                            Inter-step content 
+                            
+                            @Step {
+                                Do the second set of things
+                                @Code(name: "File.swift", file: 01-step-02.swift)
+                            }
+                            
+                            @Step {
+                                Do the third set of things
+                                @Code(name: "File.swift", file: 01-step-03.swift)
+                            }
+                            
+                            @Step {
+                                Do the fourth set of things
+                                @Code(name: "File2.swift", file: 02-step-01.swift)
+                            }
                         }
                     }
                 }
-            }
-            """
+                """
         )
-        
-        let codeOne = TextFile(name: "01-step-01.swift", utf8Content: """
-            struct StartCode {
-                // STEP ONE
-            }
-            """)
-        
-        let codeTwo = TextFile(name: "01-step-02.swift", utf8Content: """
-            struct StartCode {
-                // STEP TWO
-                let property1: Int
-            }
-            """)
-        
-        let codeThree = TextFile(name: "01-step-03.swift", utf8Content: """
-            struct StartCode {
-                // STEP THREE
-                let property1: Int
-                let property2: Int
-            }
-            """)
-        
-        let codeFour = TextFile(name: "02-step-01.swift", utf8Content: """
-            struct StartCodeAgain {
-                
-            }
-            """)
-        
+
+        let codeOne = TextFile(
+            name: "01-step-01.swift",
+            utf8Content: """
+                struct StartCode {
+                    // STEP ONE
+                }
+                """)
+
+        let codeTwo = TextFile(
+            name: "01-step-02.swift",
+            utf8Content: """
+                struct StartCode {
+                    // STEP TWO
+                    let property1: Int
+                }
+                """)
+
+        let codeThree = TextFile(
+            name: "01-step-03.swift",
+            utf8Content: """
+                struct StartCode {
+                    // STEP THREE
+                    let property1: Int
+                    let property2: Int
+                }
+                """)
+
+        let codeFour = TextFile(
+            name: "02-step-01.swift",
+            utf8Content: """
+                struct StartCodeAgain {
+                    
+                }
+                """)
+
         let codeFolder = Folder(name: "code-files", content: [codeOne, codeTwo, codeThree, codeFour])
         let resourceFolder = Folder(name: "Resources", content: [codeFolder])
-                
+
         let catalog = catalog(files: [
             tutorial,
             resourceFolder
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/tutorials/MarkdownOutput/Tutorial")
         #expect(node.markdown.contains("// STEP ONE") == false, "Non-final code versions are not included")
         #expect(node.markdown.contains("// STEP TWO") == false, "Non-final code versions are not included")
@@ -481,129 +531,137 @@ struct MarkdownOutputTests {
         #expect(codeIndex.lowerBound < step4Index.lowerBound, "Code reference is added after the last step that references it")
         #expect(node.markdown.contains("struct StartCodeAgain {"), "New file reference is included")
     }
-    
+
     @Test
     func snippetCodeIsIncluded() async throws {
-        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
-            # Snippets
-            
-            Here is an article with some snippets
-            
-            ## Overview
-            
-            @Snippet(path: "MarkdownOutput/SnippetA")
-            
-            Post snippet content
-            """)
-        
+        let articleWithSnippet = TextFile(
+            name: "SnippetArticle.md",
+            utf8Content: """
+                # Snippets
+
+                Here is an article with some snippets
+
+                ## Overview
+
+                @Snippet(path: "MarkdownOutput/SnippetA")
+
+                Post snippet content
+                """)
+
         let snippetContent = """
-        import Foundation
-        // I am a code snippet
-        """
-        
+            import Foundation
+            // I am a code snippet
+            """
+
         let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: nil, code: snippetContent)
         let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
-        
+
         let asMarkdown = "```swift\n\(snippetContent)\n```"
         let catalog = catalog(files: [articleWithSnippet, graph])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
         #expect(node.markdown.contains(asMarkdown))
     }
-    
+
     @Test
     func snippetCodeWithSliceOnlyRendersSlice() async throws {
-        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
-            # Snippets
-            
-            Here is an article with some snippets
-            
-            ## Overview
-            
-            @Snippet(path: "MarkdownOutput/SnippetA", slice: "sliceOne")
-            
-            Post snippet content
-            """)
-        
+        let articleWithSnippet = TextFile(
+            name: "SnippetArticle.md",
+            utf8Content: """
+                # Snippets
+
+                Here is an article with some snippets
+
+                ## Overview
+
+                @Snippet(path: "MarkdownOutput/SnippetA", slice: "sliceOne")
+
+                Post snippet content
+                """)
+
         let snippetContent = """
-        import Foundation
-        // I am a code snippet
-        
-        // snippet.sliceOne
-        // I am slice one
-        """
-        
+            import Foundation
+            // I am a code snippet
+
+            // snippet.sliceOne
+            // I am slice one
+            """
+
         let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: nil, code: snippetContent, slices: ["sliceOne": 4..<5])
         let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
-        
+
         let catalog = catalog(files: [articleWithSnippet, graph])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
         #expect(node.markdown.contains("// I am slice one"))
         #expect(node.markdown.contains("// I am a code snippet") == false)
     }
-    
+
     @Test
     func snippetCodeDoesNotIncludeHiddenContent() async throws {
-        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
-            # Snippets
-            
-            Here is an article with some snippets
-            
-            ## Overview
-            
-            @Snippet(path: "MarkdownOutput/SnippetA", slice: "sliceOne")
-            
-            Post snippet content
-            """)
-        
+        let articleWithSnippet = TextFile(
+            name: "SnippetArticle.md",
+            utf8Content: """
+                # Snippets
+
+                Here is an article with some snippets
+
+                ## Overview
+
+                @Snippet(path: "MarkdownOutput/SnippetA", slice: "sliceOne")
+
+                Post snippet content
+                """)
+
         let snippetContent = """
-        import Foundation
-        // I am a code snippet
-        
-        // snippet.hide
-        // I am hidden content
-        """
-        
+            import Foundation
+            // I am a code snippet
+
+            // snippet.hide
+            // I am hidden content
+            """
+
         let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: nil, code: snippetContent)
         let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
-        
+
         let catalog = catalog(files: [articleWithSnippet, graph])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
         #expect(node.markdown.contains("// I am hidden content") == false)
     }
-    
+
     @Test
     func snippetExplanationIsRenderedBeforeCode() async throws {
-        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
-            # Snippets
-            
-            Here is an article with some snippets
-            
-            ## Overview
-            
-            @Snippet(path: "MarkdownOutput/SnippetA")
-            
-            Post snippet content
-            """)
-        
+        let articleWithSnippet = TextFile(
+            name: "SnippetArticle.md",
+            utf8Content: """
+                # Snippets
+
+                Here is an article with some snippets
+
+                ## Overview
+
+                @Snippet(path: "MarkdownOutput/SnippetA")
+
+                Post snippet content
+                """)
+
         let snippetContent = """
-        import Foundation
-        // I am a code snippet
-        """
-        
+            import Foundation
+            // I am a code snippet
+            """
+
         let explanation = """
-        I am the explanatory text.
-        I am two lines long.
-        """
+            I am the explanatory text.
+            I am two lines long.
+            """
         let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: explanation, code: snippetContent)
         let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
-        
+
         let catalog = catalog(files: [articleWithSnippet, graph])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
         let codeRange = try #require(node.markdown.range(of: snippetContent), "Code not included in snippet output")
         let explanationRange = try #require(node.markdown.range(of: explanation), "Explanation not included in snippet output")
         #expect(explanationRange.lowerBound < codeRange.lowerBound)
     }
-      
+
     private func makeSnippet(
         pathComponents: [String],
         explanation: String?,
@@ -624,27 +682,29 @@ struct MarkdownOutputTests {
             ]
         )
     }
-    
+
     @Test
     func tableWithSpanningCellInLastColumnDoNotCrash() async throws {
         let catalog = catalog(files: [
             // It's the || that causes the problem - there is no issue if there is a space between the characters
-            TextFile(name: "DodgyTables.md", utf8Content: """
-                # Tables
+            TextFile(
+                name: "DodgyTables.md",
+                utf8Content: """
+                    # Tables
 
-                Demonstrates how markdown tables that are badly formatted dont crash the export
+                    Demonstrates how markdown tables that are badly formatted dont crash the export
 
-                ## Overview
+                    ## Overview
 
-                | Parameter | Description |
-                |:----------|:------------|
-                | `a` | The first parameter |
-                | `b` | The second parameter || `c` | The third parameter |
-                
-                end of the table
-                """)
+                    | Parameter | Description |
+                    |:----------|:------------|
+                    | `a` | The first parameter |
+                    | `b` | The second parameter || `c` | The third parameter |
+
+                    end of the table
+                    """)
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "DodgyTables")
         let expected = """
             # Tables
@@ -657,45 +717,47 @@ struct MarkdownOutputTests {
             |:--------|:-------------------|
             |`a`      |The first parameter |
             |`b`      |The second parameter|
-            
+
             end of the table
             """
-        
+
         #expect(node.markdown == expected)
     }
-        
+
     @Test
     func imagesUseArchiveRelativePathsForLocalFiles() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "ImageArticle.md", utf8Content: """
-                # Images
-                
-                ![Alternative Title](image.png)
-                ![](image.png)
-                ![Web Image](https://www.example.com/webimage.png)
-                ![Unresolved Image](unresolved.png)
-                """),
+            TextFile(
+                name: "ImageArticle.md",
+                utf8Content: """
+                    # Images
+
+                    ![Alternative Title](image.png)
+                    ![](image.png)
+                    ![Web Image](https://www.example.com/webimage.png)
+                    ![Unresolved Image](unresolved.png)
+                    """),
             Folder(name: "Resources") {
                 Folder(name: "Images") {
                     DataFile(name: "image.png", data: Data())
                 }
             }
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageArticle")
         #expect(node.markdown.contains("![Alternative Title](images/MarkdownOutput/image.png"))
         #expect(node.markdown.contains("![](images/MarkdownOutput/image.png"))
         #expect(node.markdown.contains("![Web Image](https://www.example.com/webimage.png)"))
         #expect(node.markdown.contains("![Unresolved Image](unresolved.png)"))
     }
-    
+
     @Test(arguments: 1...10)
-    func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {      
+    func imagesUseSameVariantOverMultipleRuns(run: Int) async throws {
         // swift-format-ignore
         let catalog = catalog(files: [
             TextFile(name: "ImageVariants.md", utf8Content: """
             # Image variants
-            
+
             ![Image Title](image.png)
             """),
             Folder(name: "Resources") {
@@ -708,78 +770,80 @@ struct MarkdownOutputTests {
                 }
             }
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageVariants")
         #expect(node.markdown.contains("![Image Title](images/MarkdownOutput/image.png)"), "Expected to choose the first variant matching in order of DataTraitCollection.allCases.")
     }
-    
+
     @Test
     func asidesAreRenderedLikeSource() async throws {
         let content = """
-        # Asides
-        
-        Shows how asides are represented in markdown output
-        
-        ## Overview
-        
-        Here is some content
-        
-        > Tip: This is an aside
-        
-        Here is some post-aside content
-        """
+            # Asides
+
+            Shows how asides are represented in markdown output
+
+            ## Overview
+
+            Here is some content
+
+            > Tip: This is an aside
+
+            Here is some post-aside content
+            """
         let catalog = catalog(files: [
             TextFile(name: "AsideArticle.md", utf8Content: content)
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "AsideArticle")
         #expect(node.markdown == content)
     }
-    
+
     @Test
     func rawHTMLBlocksAndCommentsAreRemoved() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "Comments.md", utf8Content: """
-                # Comments
+            TextFile(
+                name: "Comments.md",
+                utf8Content: """
+                    # Comments
 
-                Showing how comments are removed from the markdown export
+                    Showing how comments are removed from the markdown export
 
-                ## Overview
+                    ## Overview
 
-                @Comment {
-                    COMMENT CONTENT 1
-                }
-                
-                This text is fine
-                
-                <!-- COMMENT CONTENT 2 -->
-                
-                Comments in code blocks should be kept
-                
-                ```
-                <h1>Text in a code block HTML</h1>
-                <!-- COMMENT CONTENT 3 -->
-                ```
-                
-                Raw HTML in the body should not be kept
-                                
-                <h1>More Complex example</h1>
+                    @Comment {
+                        COMMENT CONTENT 1
+                    }
 
-                <!-- COMMENT CONTENT 4 -->
+                    This text is fine
 
-                <p>This paragraph is invisible.</p>
+                    <!-- COMMENT CONTENT 2 -->
 
-                <!--
-                  COMMENT CONTENT 5
-                  COMMENT CONTENT 6
-                -->
+                    Comments in code blocks should be kept
 
-                <p>This paragraph is also invisible. <!-- COMMENT CONTENT 7 --></p>
-                
-                Inline HTML is <em>EMPHASISED</em> stripped of tags
-                """)
+                    ```
+                    <h1>Text in a code block HTML</h1>
+                    <!-- COMMENT CONTENT 3 -->
+                    ```
+
+                    Raw HTML in the body should not be kept
+                                    
+                    <h1>More Complex example</h1>
+
+                    <!-- COMMENT CONTENT 4 -->
+
+                    <p>This paragraph is invisible.</p>
+
+                    <!--
+                      COMMENT CONTENT 5
+                      COMMENT CONTENT 6
+                    -->
+
+                    <p>This paragraph is also invisible. <!-- COMMENT CONTENT 7 --></p>
+
+                    Inline HTML is <em>EMPHASISED</em> stripped of tags
+                    """)
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Comments")
         let markdown = node.markdown
         #expect(markdown.contains("COMMENT CONTENT 1") == false)
@@ -795,32 +859,36 @@ struct MarkdownOutputTests {
         #expect(markdown.contains("Text in a code block HTML"))
         #expect(markdown.contains("Inline HTML is EMPHASISED stripped of tags"))
     }
-    
+
     @Test
     func termListRemovesTermNotation() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "TermList.md", utf8Content: """
-                # Term Lists
-                                
-                - term Spring: The first season of the year 
-                - term Summer: The second season of the year
-                - term `Code`: A code voice item used as a term
-                """)
+            TextFile(
+                name: "TermList.md",
+                utf8Content: """
+                    # Term Lists
+                                    
+                    - term Spring: The first season of the year 
+                    - term Summer: The second season of the year
+                    - term `Code`: A code voice item used as a term
+                    """)
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "TermList")
         let expectedList = """
-        - Spring: The first season of the year
-        - Summer: The second season of the year
-        - `Code`: A code voice item used as a term
-        """
+            - Spring: The first season of the year
+            - Summer: The second season of the year
+            - `Code`: A code voice item used as a term
+            """
         #expect(node.markdown.contains(expectedList))
     }
-    
+
     @Test
     func protocolRelationshipsIncludedInExport() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content:
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content:
                     makeSymbolGraph(
                         moduleName: "MarkdownOutput",
                         symbols: [
@@ -833,7 +901,7 @@ struct MarkdownOutputTests {
                         ]
                     ))
         ])
-        
+
         let (conformerNode, _) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
         let conformerMarkdown = conformerNode.markdown
         #expect(conformerMarkdown.contains(RelationshipsGroup(kind: .conformsTo, destinations: []).sectionTitle))
@@ -842,18 +910,20 @@ struct MarkdownOutputTests {
         let externalProtocolLink = "\n[`Hashable`](/documentation/Swift/Hashable)"
         #expect(conformerMarkdown.contains(externalProtocolLink) == false)
         #expect(conformerMarkdown.contains("\n`Swift.Hashable`"))
-        
+
         let (protocolNode, _) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
         let protocolMarkdown = protocolNode.markdown
         #expect(protocolMarkdown.contains(RelationshipsGroup(kind: .conformingTypes, destinations: []).sectionTitle))
         let conformerLink = "\n[`LocalConformer`](/documentation/MarkdownOutput/LocalConformer)"
         #expect(protocolMarkdown.contains(conformerLink))
     }
-        
+
     @Test
     func inheritanceRelationshipsIncludedInExport() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content:
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content:
                     makeSymbolGraph(
                         moduleName: "MarkdownOutput",
                         symbols: [
@@ -865,20 +935,20 @@ struct MarkdownOutputTests {
                         ]
                     ))
         ])
-        
+
         let (inheritorNode, _) = try await markdownOutput(catalog: catalog, path: "LocalSub")
         let inheritorMarkdown = inheritorNode.markdown
         #expect(inheritorMarkdown.contains(RelationshipsGroup(kind: .inheritsFrom, destinations: []).sectionTitle))
         let superclassLink = "\n[`LocalSuper`](/documentation/MarkdownOutput/LocalSuper)"
         #expect(inheritorMarkdown.contains(superclassLink))
-        
+
         let (superclassNode, _) = try await markdownOutput(catalog: catalog, path: "LocalSuper")
         let superclassMarkdown = superclassNode.markdown
         #expect(superclassMarkdown.contains(RelationshipsGroup(kind: .inheritedBy, destinations: []).sectionTitle))
         let subclassLink = "\n[`LocalSub`](/documentation/MarkdownOutput/LocalSub)"
         #expect(superclassMarkdown.contains(subclassLink))
     }
-     
+
     @Test
     func sectionsThatAreEmptyAfterFilteringDoNotHaveHeadingsAdded() async throws {
         let catalog = catalog(files: [
@@ -887,62 +957,68 @@ struct MarkdownOutputTests {
                 content: makeSymbolGraph(
                     moduleName: "MarkdownOutput",
                     symbols: [
-                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: """
-                            Abstract.
-                                                        
-                            The next heading will appear in the output as it does not imply a `Section` in the document so is just markdown content. The last two headings should not appear, because they are `Section`s, but have no section content.
-                            
-                            ## Random heading
-                            
-                            ## Topics
-                            
-                            ## See Also
-                            
-                            @Comment {
-                                This should be removed, but should not lead to a See Also heading.
-                            }
-                            """),
-                        makeSymbol(id: "markdown-symbol-my-function-id", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
-                    Everything is described in the abstract.
-                    
-                    - Parameters:
-                      - arg: The first argument. 
-                    
-                    @Comment {
-                        This should be removed, but should not lead to a discussion heading.
-                    }
-                    """)
+                        makeSymbol(
+                            id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"],
+                            docComment: """
+                                Abstract.
+                                                            
+                                The next heading will appear in the output as it does not imply a `Section` in the document so is just markdown content. The last two headings should not appear, because they are `Section`s, but have no section content.
+
+                                ## Random heading
+
+                                ## Topics
+
+                                ## See Also
+
+                                @Comment {
+                                    This should be removed, but should not lead to a See Also heading.
+                                }
+                                """),
+                        makeSymbol(
+                            id: "markdown-symbol-my-function-id", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"],
+                            docComment: """
+                                Everything is described in the abstract.
+
+                                - Parameters:
+                                  - arg: The first argument. 
+
+                                @Comment {
+                                    This should be removed, but should not lead to a discussion heading.
+                                }
+                                """)
                     ],
                     relationships: [
                         .init(source: "markdown-symbol-my-function-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil)
                     ]
-            ))
+                ))
         ])
         let (functionNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
         #expect(functionNode.markdown.contains("## Parameters"))
         #expect(functionNode.markdown.contains("## Discussion") == false)
-        
+
         let (structNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         #expect(structNode.markdown.contains("## Overview"))
         #expect(structNode.markdown.contains("## Random heading"))
         #expect(structNode.markdown.contains("## Topics") == false)
         #expect(structNode.markdown.contains("## See Also") == false)
     }
-    
+
     // MARK: - Metadata
-    
-    @Test 
+
+    @Test
     func metadataForArticleHasArticleTypeAndRole() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "ArticleRole.md", utf8Content: """
-                # Article Role
-                
-                This article will have the correct document type and role
-                
-                ## Overview
-                
-                Content
-                """)
+            TextFile(
+                name: "ArticleRole.md",
+                utf8Content: """
+                    # Article Role
+
+                    This article will have the correct document type and role
+
+                    ## Overview
+
+                    Content
+                    """)
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ArticleRole")
         #expect(node.metadata.documentType == .article)
@@ -951,82 +1027,98 @@ struct MarkdownOutputTests {
         #expect(node.metadata.identifier == "/documentation/MarkdownOutput/ArticleRole")
         #expect(node.metadata.framework == "MarkdownOutput")
     }
-    
+
     @Test
     func apiCollectionHasCollectionGroupRole() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "APICollection.md", utf8Content: """
-                # API Collection
+            TextFile(
+                name: "APICollection.md",
+                utf8Content: """
+                    # API Collection
 
-                This is an API collection
+                    This is an API collection
 
-                ## Topics
+                    ## Topics
 
-                ### Topic subgroup
+                    ### Topic subgroup
 
-                -<doc:Links>
-                -<doc:RowsAndColumns>
+                    -<doc:Links>
+                    -<doc:RowsAndColumns>
 
-                """),
-            TextFile(name: "Links.md", utf8Content: """
-                # Links
+                    """),
+            TextFile(
+                name: "Links.md",
+                utf8Content: """
+                    # Links
 
-                An article to be linked to
-                """),
-            TextFile(name: "RowsAndColumns.md", utf8Content: """
-                # Rows and Columns
+                    An article to be linked to
+                    """),
+            TextFile(
+                name: "RowsAndColumns.md",
+                utf8Content: """
+                    # Rows and Columns
 
-                An article to be linked to
-                """)
-            
+                    An article to be linked to
+                    """),
+
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "APICollection")
         #expect(node.metadata.role == RenderMetadata.Role.collectionGroup.rawValue)
     }
-        
+
     @Test
     func articleAvailabilityIsRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "AvailabilityArticle.md", utf8Content: """
-                # Availability Demonstration
+            TextFile(
+                name: "AvailabilityArticle.md",
+                utf8Content: """
+                    # Availability Demonstration
 
-                @Metadata {
-                    @PageKind(sampleCode)
-                    @Available(Xcode, introduced: "14.3")
-                    @Available(macOS, introduced: "13.0")
-                }
+                    @Metadata {
+                        @PageKind(sampleCode)
+                        @Available(Xcode, introduced: "14.3")
+                        @Available(macOS, introduced: "13.0")
+                    }
 
-                This article demonstrates platform availability defined in metadata
+                    This article demonstrates platform availability defined in metadata
 
-                ## Overview
+                    ## Overview
 
-                Some stuff
-                """)
+                    Some stuff
+                    """)
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "AvailabilityArticle")
         #expect(node.metadata.availability(for: "Xcode")?.introduced == "14.3.0")
         #expect(node.metadata.availability(for: "macOS")?.introduced == "13.0.0")
     }
-    
+
     @Test
     func symbolDocumentHasSymbolType() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
-            ]))
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                    ]))
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         #expect(node.metadata.documentType == .symbol)
     }
-    
+
     @Test
     func symbolDocumentPopulatesMetadata() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
-                makeSymbol(id: "markdown-symbol-init-name-id", kind: .`init`, pathComponents: ["MarkdownSymbol", "init(name:)"])
-            ]))
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                        makeSymbol(id: "markdown-symbol-init-name-id", kind: .`init`, pathComponents: ["MarkdownSymbol", "init(name:)"])
+                    ]))
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/init(name:)")
         #expect(node.metadata.title == "init(name:)")
@@ -1034,81 +1126,99 @@ struct MarkdownOutputTests {
         #expect(node.metadata.role == "Initializer")
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput"])
     }
-        
+
     @Test
     func symbolExtendedModulePopulatesMetadata() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "array-asdf-id", kind: .property, pathComponents: ["Swift", "Array", "asdf"], otherMixins: [SymbolGraph.Symbol.Swift.Extension(extendedModule: "Swift", constraints: [])])
-                ])
-             )
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "array-asdf-id", kind: .property, pathComponents: ["Swift", "Array", "asdf"], otherMixins: [SymbolGraph.Symbol.Swift.Extension(extendedModule: "Swift", constraints: [])])
+                    ])
+            )
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Swift/Array/asdf")
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput", "Swift"])
     }
-    
+
     private let iOSPlatform = SymbolGraph.Platform(operatingSystem: .init(name: "ios"))
     private let macOSPlatform = SymbolGraph.Platform(operatingSystem: .init(name: "macosx"))
-    
+
     @Test
     func symbolMetadataGetsDefaultAvailability() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
-            ])),
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput", platform: iOSPlatform,
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                    ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                "MarkdownOutput": [.init(platformName: .iOS, platformVersion: "1.0.0")]
             ])
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
         #expect(availability.contains(.init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false)))
     }
-    
+
     @Test
     func symbolMetadataGetsSymbolLevelAvailability() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output", availability: [.init(domainName: "iOS", introduced: .init(string: "2.0.0"), deprecated: nil)])
-            ])),
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput", platform: iOSPlatform,
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output", availability: [.init(domainName: "iOS", introduced: .init(string: "2.0.0"), deprecated: nil)])
+                    ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                "MarkdownOutput": [.init(platformName: .iOS, platformVersion: "1.0.0")]
             ])
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
         #expect(availability.contains(.init(platform: "iOS", introduced: "2.0.0", deprecated: nil, unavailable: false)))
     }
-    
+
     @Test
     func symbolAvailabilityIsCapturedFromMetadataBlock() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
-            ])),
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput", platform: iOSPlatform,
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                    ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                "MarkdownOutput": [.init(platformName: .iOS, platformVersion: "1.0.0")]
             ]),
-            TextFile(name: "MarkdownSymbol.md", utf8Content: """
-                # ``MarkdownSymbol``
-                
-                @Metadata {
-                    @Available(iOS, introduced: "13.1")
-                }
-                
-                A basic symbol to test markdown output
-                
-                ## Overview
-                
-                Overview goes here
-                """)
+            TextFile(
+                name: "MarkdownSymbol.md",
+                utf8Content: """
+                    # ``MarkdownSymbol``
+
+                    @Metadata {
+                        @Available(iOS, introduced: "13.1")
+                    }
+
+                    A basic symbol to test markdown output
+
+                    ## Overview
+
+                    Overview goes here
+                    """)
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
         let expected = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "13.1.0", deprecated: nil, unavailable: false)
         #expect(availability.contains(expected))
     }
-    
+
     @Test
     func symbolAvailabilityOnePlatformDoesntUseDefaults() async throws {
         // A symbol that only exists in the macOS graph should not show as available on iOS.
@@ -1135,19 +1245,19 @@ struct MarkdownOutputTests {
                     symbols: []
                 )),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [
+                "MarkdownOutput": [
                     .init(platformName: .iOS, platformVersion: "1.0.0"),
                     .init(platformName: .macOS, platformVersion: "1.0.0"),
                 ]
             ]),
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
         #expect(availability.count == 1)
         #expect(availability.first?.platform == "macOS")
     }
-    
+
     @Test(arguments: [
         ("iOS: 14.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: nil, unavailable: false)),
         ("iOS: 14.0 - 15.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false)),
@@ -1158,7 +1268,7 @@ struct MarkdownOutputTests {
         let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: representation)
         #expect(availability == expected)
     }
- 
+
     @Test(arguments: [
         (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", unavailable: false), "iOS: 14.0 -"),
         (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false), "iOS: 14.0 - 15.0"),
@@ -1168,203 +1278,233 @@ struct MarkdownOutputTests {
     func stringRepresentationFromAvailability(_ availability: MarkdownOutputNode.Metadata.Availability, _ expected: String) async throws {
         #expect(availability.stringRepresentation == expected)
     }
-    
+
     @Test
     func symbolDeprecationRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
-                makeSymbol(
-                    id: "markdown-symbol_full-name-id",
-                    kind: .property,
-                    pathComponents: ["MarkdownSymbol", "fullName"],
-                    docComment: "A basic property to test markdown output",
-                    availability: [
-                        .init(domain: .init(rawValue: "iOS"),
-                              introducedVersion: .init(string: "1.0.0"),
-                              deprecatedVersion: .init(string: "4.0.0"),
-                              obsoletedVersion: nil,
-                              message: nil,
-                              renamed: nil,
-                              isUnconditionallyDeprecated: false,
-                              isUnconditionallyUnavailable: false,
-                              willEventuallyBeDeprecated: false
-                             ),
-                        .init(domain: .init(rawValue: "macOS"),
-                              introducedVersion: .init(string: "2.0.0"),
-                              deprecatedVersion: .init(string: "4.0.0"),
-                              obsoletedVersion: nil,
-                              message: nil,
-                              renamed: nil,
-                              isUnconditionallyDeprecated: false,
-                              isUnconditionallyUnavailable: false,
-                              willEventuallyBeDeprecated: false
-                             ),
-                        .init(domain: .init(rawValue: "visionOS"),
-                              introducedVersion: .init(string: "2.0.0"),
-                              deprecatedVersion: .init(string: "4.0.0"),
-                              obsoletedVersion: .init(string: "5.0.0"),
-                              message: nil,
-                              renamed: nil,
-                              isUnconditionallyDeprecated: false,
-                              isUnconditionallyUnavailable: false,
-                              willEventuallyBeDeprecated: false
-                             )
-                    ])
-            ]))
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                        makeSymbol(
+                            id: "markdown-symbol_full-name-id",
+                            kind: .property,
+                            pathComponents: ["MarkdownSymbol", "fullName"],
+                            docComment: "A basic property to test markdown output",
+                            availability: [
+                                .init(
+                                    domain: .init(rawValue: "iOS"),
+                                    introducedVersion: .init(string: "1.0.0"),
+                                    deprecatedVersion: .init(string: "4.0.0"),
+                                    obsoletedVersion: nil,
+                                    message: nil,
+                                    renamed: nil,
+                                    isUnconditionallyDeprecated: false,
+                                    isUnconditionallyUnavailable: false,
+                                    willEventuallyBeDeprecated: false
+                                ),
+                                .init(
+                                    domain: .init(rawValue: "macOS"),
+                                    introducedVersion: .init(string: "2.0.0"),
+                                    deprecatedVersion: .init(string: "4.0.0"),
+                                    obsoletedVersion: nil,
+                                    message: nil,
+                                    renamed: nil,
+                                    isUnconditionallyDeprecated: false,
+                                    isUnconditionallyUnavailable: false,
+                                    willEventuallyBeDeprecated: false
+                                ),
+                                .init(
+                                    domain: .init(rawValue: "visionOS"),
+                                    introducedVersion: .init(string: "2.0.0"),
+                                    deprecatedVersion: .init(string: "4.0.0"),
+                                    obsoletedVersion: .init(string: "5.0.0"),
+                                    message: nil,
+                                    renamed: nil,
+                                    isUnconditionallyDeprecated: false,
+                                    isUnconditionallyUnavailable: false,
+                                    willEventuallyBeDeprecated: false
+                                )
+                            ])
+                    ]))
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/fullName")
         let availability = try #require(node.metadata.availability(for: "iOS"))
         #expect(availability.introduced == "1.0.0")
         #expect(availability.deprecated == "4.0.0")
         #expect(availability.unavailable == false)
-        
+
         let macAvailability = try #require(node.metadata.availability(for: "macOS"))
         #expect(macAvailability.introduced == "2.0.0")
         #expect(macAvailability.deprecated == "4.0.0")
         #expect(macAvailability.unavailable == false)
-        
+
         let visionAvailability = try #require(node.metadata.availability(for: "visionOS"))
         #expect(visionAvailability.unavailable)
     }
-    
-    
+
     @Test
     func symbolIdentifierMatchesSymbolGraph() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
-            ]))
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                    ]))
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         #expect(node.metadata.symbol?.preciseIdentifier == "markdown-symbol-id")
     }
-    
+
     @Test
     func tutorialPopulatesMetadata() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "Tutorial.tutorial", utf8Content: """
-            @Tutorial(time: 30) {
-                @Intro(title: "Tutorial Title") {
-                    A tutorial for testing markdown output.
-                    
-                    @Image(source: placeholder.png, alt: "Alternative text")
-                }
-                
-                @Section(title: "The first section") {
-                                        
-                    @Steps {
-                        @Step {
-                            Do the first set of things
+            TextFile(
+                name: "Tutorial.tutorial",
+                utf8Content: """
+                    @Tutorial(time: 30) {
+                        @Intro(title: "Tutorial Title") {
+                            A tutorial for testing markdown output.
+                            
+                            @Image(source: placeholder.png, alt: "Alternative text")
+                        }
+                        
+                        @Section(title: "The first section") {
+                                                
+                            @Steps {
+                                @Step {
+                                    Do the first set of things
+                                }
+                            }
                         }
                     }
-                }
-            }
-            """
+                    """
             )
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/tutorials/MarkdownOutput/Tutorial")
         #expect(node.metadata.documentType == .tutorial)
         #expect(node.metadata.title == "Tutorial Title")
     }
-          
+
     // MARK: - Encoding / Decoding
     @Test
     func markdownSurvivesCodingRoundTrip() async throws {
         let catalog = catalog(files: [
-            TextFile(name: "Links.md", utf8Content: """
-                # Links
+            TextFile(
+                name: "Links.md",
+                utf8Content: """
+                    # Links
 
-                Tests the appearance of inline and linked lists
+                    Tests the appearance of inline and linked lists
 
-                ## Overview
+                    ## Overview
 
-                This is an inline link: ``MarkdownSymbol``
+                    This is an inline link: ``MarkdownSymbol``
 
-                ## Topics
+                    ## Topics
 
-                ### Links with abstracts
+                    ### Links with abstracts
 
-                - ``MarkdownSymbol``
-                """),
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
-            ]))
+                    - ``MarkdownSymbol``
+                    """),
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                    ]))
         ])
-        
+
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let data = try node.generateDataRepresentation()
         let fromData = try MarkdownOutputNode(data)
         #expect(node.markdown == fromData.markdown)
         #expect(node.metadata.identifier == fromData.metadata.identifier)
     }
-    
+
     // MARK: - Manifest
-    @Test 
+    @Test
     func manifestIncludesRelationshipsForCuratedPages() async throws {
-        
+
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
-            ])),
-            TextFile(name: "RowsAndColumns.md", utf8Content: """
-                # Rows and Columns
-                
-                Just here for the links
-                """),
-            TextFile(name: "APICollection.md", utf8Content: """
-                # API Collection
-                
-                An API collection
-                
-                ## Topics
-                
-                - <doc:RowsAndColumns>
-                """),
-            TextFile(name: "Links.md", utf8Content: """
-                # Links
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                    ])),
+            TextFile(
+                name: "RowsAndColumns.md",
+                utf8Content: """
+                    # Rows and Columns
 
-                Tests the appearance of inline and linked lists
+                    Just here for the links
+                    """),
+            TextFile(
+                name: "APICollection.md",
+                utf8Content: """
+                    # API Collection
 
-                ## Overview
+                    An API collection
 
-                This is an inline link: <doc:RowsAndColumns>
-                This is an inline link: ``MarkdownSymbol``
-                This is a link that isn't curated in a topic so shouldn't come up in the manifest: <doc:APICollection>.
+                    ## Topics
 
-                ## Topics
+                    - <doc:RowsAndColumns>
+                    """),
+            TextFile(
+                name: "Links.md",
+                utf8Content: """
+                    # Links
 
-                ### Links with abstracts
+                    Tests the appearance of inline and linked lists
 
-                - <doc:RowsAndColumns>
-                - ``MarkdownSymbol``
-                """)
+                    ## Overview
+
+                    This is an inline link: <doc:RowsAndColumns>
+                    This is an inline link: ``MarkdownSymbol``
+                    This is a link that isn't curated in a topic so shouldn't come up in the manifest: <doc:APICollection>.
+
+                    ## Topics
+
+                    ### Links with abstracts
+
+                    - <doc:RowsAndColumns>
+                    - ``MarkdownSymbol``
+                    """)
         ])
-        
+
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "Links")
         let rows = MarkdownOutputManifest.Relationship(
             sourceIdentifier: "/documentation/MarkdownOutput/RowsAndColumns",
             relationshipType: .belongsToTopic,
             targetIdentifier: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
         )
-        
+
         let symbol = MarkdownOutputManifest.Relationship(
             sourceIdentifier: "/documentation/MarkdownOutput/MarkdownSymbol",
             relationshipType: .belongsToTopic,
             targetIdentifier: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
         )
-        
+
         #expect(manifest.relationships.contains(rows))
         #expect(manifest.relationships.contains(symbol))
     }
-        
+
     @Test
     func symbolInheritancePopulatesManifest() async throws {
-        
+
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content:
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content:
                     makeSymbolGraph(
                         moduleName: "MarkdownOutput",
                         symbols: [
@@ -1376,26 +1516,29 @@ struct MarkdownOutputTests {
                         ]
                     ))
         ])
-        
-        
+
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalSubclass")
         let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(related.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == .inheritsFrom
-        }))
-        
+        #expect(
+            related.contains(where: {
+                $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == .inheritsFrom
+            }))
+
         let (_, parentManifest) = try await markdownOutput(catalog: catalog, path: "LocalSuperclass")
         let parentRelated = parentManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(parentRelated.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == .inheritedBy
-        }))
+        #expect(
+            parentRelated.contains(where: {
+                $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == .inheritedBy
+            }))
     }
-        
+
     @Test
     func symbolConformancePopulatesManifest() async throws {
-                
+
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content:
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content:
                     makeSymbolGraph(
                         moduleName: "MarkdownOutput",
                         symbols: [
@@ -1409,29 +1552,32 @@ struct MarkdownOutputTests {
                         ]
                     ))
         ])
-        
+
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
         let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(related.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == .conformsTo
-        }))
-        
+        #expect(
+            related.contains(where: {
+                $0.targetIdentifier == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == .conformsTo
+            }))
+
         let (_, protocolManifest) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
         let protocolRelated = protocolManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(protocolRelated.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == .conformingTypes
-        }))
-        
+        #expect(
+            protocolRelated.contains(where: {
+                $0.targetIdentifier == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == .conformingTypes
+            }))
+
         let (_, externalManifest) = try await markdownOutput(catalog: catalog, path: "ExternalConformer")
         let externalRelated = externalManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         // Unresolved symbol should use the fallback identifier
-        #expect(externalRelated.contains(where: {
-            $0.targetIdentifier == "Swift.Hashable" && $0.subtype == .conformsTo
-        }))
+        #expect(
+            externalRelated.contains(where: {
+                $0.targetIdentifier == "Swift.Hashable" && $0.subtype == .conformsTo
+            }))
     }
 }
 
-extension MarkdownOutputNode.Metadata {    
+extension MarkdownOutputNode.Metadata {
     func availability(for platform: String) -> Availability? {
         availability?.first(where: { $0.platform == platform })
     }

@@ -15,10 +15,10 @@ extension ConvertService {
     static func makeBundleAndInMemoryDataProvider(_ request: ConvertRequest) -> (bundle: DocumentationBundle, provider: InMemoryDataProvider) {
         var files: [URL: Data] = [:]
         files.reserveCapacity(
-              request.symbolGraphs.count
-            + request.markupFiles.count
-            + request.tutorialFiles.count
-            + request.miscResourceURLs.count
+            request.symbolGraphs.count
+                + request.markupFiles.count
+                + request.tutorialFiles.count
+                + request.miscResourceURLs.count
         )
         for markupFile in request.markupFiles {
             files[makeURL().appendingPathExtension(DocumentationBundleFileTypes.referenceFileExtension)] = markupFile
@@ -27,7 +27,7 @@ extension ConvertService {
             files[makeURL().appendingPathExtension(DocumentationBundleFileTypes.tutorialFileExtension)] = tutorialFile
         }
         let markupFileURL = Array(files.keys)
-        
+
         var symbolGraphURLs: [URL] = []
         symbolGraphURLs.reserveCapacity(request.symbolGraphs.count)
         for symbolGraph in request.symbolGraphs {
@@ -35,7 +35,7 @@ extension ConvertService {
             symbolGraphURLs.append(url)
             files[url] = symbolGraph
         }
-        
+
         return (
             DocumentationBundle(
                 info: request.bundleInfo,
@@ -49,7 +49,7 @@ extension ConvertService {
             )
         )
     }
-    
+
     private static func makeURL() -> URL {
         URL(string: "docc-service:/\(UUID().uuidString)")!
     }

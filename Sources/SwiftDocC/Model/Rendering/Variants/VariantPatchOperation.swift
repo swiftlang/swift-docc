@@ -16,15 +16,15 @@ public enum VariantPatchOperation<Value: Codable> {
     ///
     /// - Parameter value: The value to use in the replacement.
     case replace(value: Value)
-    
+
     /// An addition operation.
     ///
     /// - Parameter value: The value to use in the addition.
     case add(value: Value)
-    
+
     /// A removal operation.
     case remove
-    
+
     /// The operation to apply.
     public var operation: PatchOperation {
         switch self {
@@ -36,7 +36,7 @@ public enum VariantPatchOperation<Value: Codable> {
             return .remove
         }
     }
-    
+
     /// Returns a new patch operation with its value transformed using the given closure.
     ///
     /// If the patch operation doesn't have a value---for example, if it's a removal operation---the operation is returned unmodified.
@@ -46,10 +46,10 @@ public enum VariantPatchOperation<Value: Codable> {
         switch self {
         case .replace(let value):
             return VariantPatchOperation<TransformedValue>.replace(value: transform(value))
-            
+
         case .add(let value):
             return VariantPatchOperation<TransformedValue>.add(value: transform(value))
-            
+
         case .remove:
             return .remove
         }
@@ -75,7 +75,7 @@ extension Optional: VariantCollectionPatchable where Wrapped: VariantCollectionP
         wrapped.add(other)
         self = wrapped
     }
-    
+
     mutating func remove() {
         self = nil
     }
@@ -85,7 +85,7 @@ extension Array: VariantCollectionPatchable {
     mutating func add(_ other: [Element]) {
         append(contentsOf: other)
     }
-    
+
     mutating func remove() {
         self.removeAll()
     }
@@ -95,7 +95,7 @@ extension String: VariantCollectionPatchable {
     mutating func add(_ other: String) {
         append(contentsOf: other)
     }
-    
+
     mutating func remove() {
         self.removeAll()
     }
@@ -108,8 +108,8 @@ extension VariantCollection where Value: VariantCollectionPatchable {
     /// - Returns: The transformed value, or the default value if no variants match the given source language.
     func value(for language: SourceLanguage) -> Value {
         applied(to: defaultValue, for: [.interfaceLanguage(language.id)])
-    } 
-    
+    }
+
     /// Returns the transformed value after applying the patch operations for all variants that match the given traits to the default value.
     /// - Parameters:
     ///   - traits: The traits that determine what variant's patches to apply to the default value.
@@ -117,7 +117,7 @@ extension VariantCollection where Value: VariantCollectionPatchable {
     func value(for traits: [RenderNode.Variant.Trait]) -> Value {
         applied(to: defaultValue, for: traits)
     }
-    
+
     /// Returns the transformed value after applying the patch operations for all variants that match the given traits to the original value.
     /// - Parameters:
     ///   - originalValue: The original value to transform.

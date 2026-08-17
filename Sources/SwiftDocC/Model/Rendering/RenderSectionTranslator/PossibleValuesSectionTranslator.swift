@@ -14,25 +14,27 @@ private import Markdown
 
 /// Translates a symbol's possible values into a render nodes's section.
 struct PossibleValuesSectionTranslator: RenderSectionTranslator {
-    
+
     func translateSection(for symbol: Symbol, renderNode: inout RenderNode, renderNodeTranslator: inout RenderNodeTranslator) -> VariantCollection<CodableContentSection?>? {
         guard let possibleValuesSection = symbol.possibleValuesSection else { return nil }
-        
-        return VariantCollection(defaultValue: CodableContentSection(
-            // Render the possible values with the matching description from the
-            // possible values listed in the markdown.
-            PossibleValuesRenderSection(
-                title: PropertyListPossibleValuesSection.title,
-                values: possibleValuesSection.possibleValues.map { possibleValueTag in
-                    let valueContent = renderNodeTranslator.visitMarkupContainer(
-                        MarkupContainer(possibleValueTag.contents)
-                    ) as! [RenderBlockContent]
-                    return PossibleValuesRenderSection.NamedValue(
-                        name: possibleValueTag.value,
-                        content: valueContent
-                    )
-                }
-            )
-        ))
+
+        return VariantCollection(
+            defaultValue: CodableContentSection(
+                // Render the possible values with the matching description from the
+                // possible values listed in the markdown.
+                PossibleValuesRenderSection(
+                    title: PropertyListPossibleValuesSection.title,
+                    values: possibleValuesSection.possibleValues.map { possibleValueTag in
+                        let valueContent =
+                            renderNodeTranslator.visitMarkupContainer(
+                                MarkupContainer(possibleValueTag.contents)
+                            ) as! [RenderBlockContent]
+                        return PossibleValuesRenderSection.NamedValue(
+                            name: possibleValueTag.value,
+                            content: valueContent
+                        )
+                    }
+                )
+            ))
     }
 }

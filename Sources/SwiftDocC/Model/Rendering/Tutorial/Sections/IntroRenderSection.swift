@@ -11,46 +11,46 @@
 /// A generic high impact section that may be rendered differently depending on the page type.
 public struct IntroRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind = .hero
-    
+
     /// The title of the intro.
     public var title: String
-    
+
     /// If defined for a Tutorial page, the parent chapter of the tutorial.
     public var chapter: String?
-    
+
     /// An estimation, in minutes, of how much time is needed to read a documentation page.
     public var estimatedTimeInMinutes: Int?
-    
+
     /// An Xcode requirement.
     ///
     /// This is the minimum version of Xcode that is required in order to follow this tutorial.
     public var xcodeRequirement: RenderReferenceIdentifier?
-    
+
     /// An image to display behind the section.
     public var backgroundImage: RenderReferenceIdentifier?
-    
+
     /// An action to perform.
     public var action: RenderInlineContent?
-    
+
     /// A key image to display.
     public var image: RenderReferenceIdentifier?
-    
+
     /// A video to display modally.
     public var video: RenderReferenceIdentifier?
-    
+
     /// A project download reference, if available.
     public var projectFiles: RenderReferenceIdentifier?
-    
+
     /// Arbitrary content to display under the subheading.
     public var content: [RenderBlockContent] = []
-    
+
     /// Creates a new generic introductory section.
-    /// 
+    ///
     /// - Parameter title: The title of the section.
     public init(title: String) {
         self.title = title
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)

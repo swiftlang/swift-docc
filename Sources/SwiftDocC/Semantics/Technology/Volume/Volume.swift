@@ -19,26 +19,26 @@ public final class Volume: Semantic, DirectiveConvertible, Abstracted, Redirecte
 
     /// The name of this volume.
     public let name: String?
-    
+
     /// An image representing this volume.
     public let image: ImageMedia?
-    
+
     /// The content describing what you'll learn in this volume.
     public let content: MarkupContainer?
-    
+
     /// A list of chapters to complete.
     public let chapters: [Chapter]
-    
+
     override var children: [Semantic] {
         return content.map { [$0] } ?? [] + chapters
     }
-    
+
     var abstract: Paragraph? {
         return content?.first as? Paragraph
     }
 
     public let redirects: [Redirect]?
-    
+
     /// Creates a new volume from the given parameters.
     ///
     /// - Parameters:
@@ -56,13 +56,13 @@ public final class Volume: Semantic, DirectiveConvertible, Abstracted, Redirecte
         self.chapters = chapters
         self.redirects = redirects
     }
-    
+
     enum Semantics {
         enum Name: DirectiveArgument {
             static let argumentName = "name"
         }
     }
-    
+
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         var diagnostics = [Diagnostic]()
@@ -71,27 +71,27 @@ public final class Volume: Semantic, DirectiveConvertible, Abstracted, Redirecte
         }
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
-    
+
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Volume.directiveName)
-        
+
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<Volume>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
-        
+
         Semantic.Analyses.HasOnlyKnownDirectives<Volume>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, Chapter.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
-        
+
         let requiredName = Semantic.Analyses.HasArgument<Volume, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
-        
+
         let image: ImageMedia?
         var remainder: MarkupContainer
         (image, remainder) = Semantic.Analyses.HasExactlyOne<Volume, ImageMedia>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
-        
+
         let chapters: [Chapter]
         (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Volume, Chapter>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
         _ = Semantic.Analyses.HasContent<Volume>(additionalContext: "A \(Volume.directiveName.singleQuoted) directive should at least have a sentence summarizing what the reader will learn").analyze(directive, children: remainder, source: source, diagnostics: &diagnostics)
-        
+
         let redirects: [Redirect]
         (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
-        
+
         guard let name = requiredName else {
             return nil
         }

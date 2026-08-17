@@ -11,51 +11,51 @@
 /// A section that checks the user's understanding of the concepts presented in a tutorial.
 public struct TutorialAssessmentsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .assessments
-    
-    /// The questions for this assessment section. 
+
+    /// The questions for this assessment section.
     public var assessments: [Assessment]
-    
+
     /// An identifier for this section of the page.
     ///
     /// The identifier can be used to construct an anchor link to this section of the page.
     public var anchor: String
-    
+
     /// The display title for an assessments section.
     public static let title = "Check Your Understanding"
-    
+
     /// A render-friendly representation of an assessment question.
     public struct Assessment: Codable, TextIndexing, Equatable {
         /// The type of assessment question.
         ///
         /// The default value is `multiple-choice`.
         public var type = "multiple-choice"
-        
+
         /// The title of the assessment.
         public var title: [RenderBlockContent]
-        
+
         /// The content of this question.
         ///
         /// This content includes the phrasing of the question.
         public var content: [RenderBlockContent]?
-        
+
         /// The possible answers to this multiple-choice question.
         public var choices: [Choice]
-        
+
         /// A render-friendly representation of an answer to a
         /// multiple-choice assessment question.
         public struct Choice: Codable, Equatable {
             /// The content of the choice.
             public var content: [RenderBlockContent]
-            
+
             /// A Boolean value that determines whether this choice is correct.
             public var isCorrect: Bool
-            
+
             /// An explanation of why this choice is correct or incorrect.
             public var justification: [RenderBlockContent]?
-            
+
             /// Additional text that can be displayed if this choice is selected.
             public var reaction: String?
-            
+
             /// Creates a new choice from the given parameters.
             ///
             /// - Parameters:
@@ -69,7 +69,7 @@ public struct TutorialAssessmentsRenderSection: RenderSection, Equatable {
                 self.justification = justification
             }
         }
-        
+
         /// Creates a new multiple-choice assessment question from the given parameters.
         ///
         /// - Parameters:

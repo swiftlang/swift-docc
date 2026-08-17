@@ -9,24 +9,24 @@
 */
 
 extension Message: Codable {
-    
+
     enum CodingKeys: String, CodingKey {
         case type
         case data
         case identifier
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.type = try container.decode(MessageType.self, forKey: .type)
         self.identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
-        
+
         self.data = try decodeDataIfPresent(for: type, from: container)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(type, forKey: .type)
         try container.encode(data, forKey: .data)
         try container.encode(identifier, forKey: .identifier)

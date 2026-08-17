@@ -14,28 +14,28 @@ import XCTest
 class GroupedSequenceTests: XCTestCase {
     /// A grouped sequence of strings, with their number of characters as the key.
     var groupedSequence = GroupedSequence<Int, String>(deriveKey: \.count)
-    
+
     func testAppends() {
         groupedSequence.append("a")
         groupedSequence.append("aa")
-        
+
         XCTAssertEqual(groupedSequence[1], "a")
         XCTAssertEqual(groupedSequence[2], "aa")
-        
+
         groupedSequence.append("b")
         XCTAssertEqual(groupedSequence[1], "b")
     }
-    
+
     func testAppendContentsOf() {
         groupedSequence.append(contentsOf: ["a", "aa"])
-        
+
         XCTAssertEqual(groupedSequence[1], "a")
         XCTAssertEqual(groupedSequence[2], "aa")
     }
-    
+
     func testIterator() {
         groupedSequence.append(contentsOf: ["a", "aa"])
-        
+
         for (index, item) in groupedSequence.sorted().enumerated() {
             switch index {
             case 0:
@@ -48,4 +48,3 @@ class GroupedSequenceTests: XCTestCase {
         }
     }
 }
-

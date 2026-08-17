@@ -14,16 +14,17 @@ extension DocumentationBundle {
     /// A stable and locally unique identifier for a collection of documentation inputs.
     public struct Identifier: RawRepresentable {
         public let rawValue: String
-        
+
         public init(rawValue: String) {
             // To ensure that the identifier can be used as a valid "host" component of a resolved topic reference's url,
             // replace any consecutive sequence of unsupported characters with a "-".
-            self.rawValue = rawValue
+            self.rawValue =
+                rawValue
                 .components(separatedBy: Self.charactersToReplace)
                 .filter { !$0.isEmpty }
                 .joined(separator: "-")
         }
-        
+
         private static let charactersToReplace = CharacterSet.urlHostAllowed.inverted.union([":"])
     }
 }
@@ -59,7 +60,7 @@ extension DocumentationBundle.Identifier: Codable {
         let rawValue = try container.decode(String.self)
         self.init(rawValue: rawValue)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)

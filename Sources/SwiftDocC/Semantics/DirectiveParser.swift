@@ -13,7 +13,7 @@ import Markdown
 
 /// A utility type for parsing directives from markup.
 struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
-    
+
     /// Returns a directive of the given type if found in the given sequence of markup elements and the remaining markup.
     ///
     /// If there are multiple instances of the same directive type, this functions returns the first instance
@@ -29,7 +29,7 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
     ) -> Directive? {
         let (directiveElements, remainder) = markupElements.categorize { markup -> Directive? in
             guard let childDirective = markup as? BlockDirective,
-                  childDirective.name == Directive.directiveName
+                childDirective.name == Directive.directiveName
             else {
                 return nil
             }
@@ -41,9 +41,9 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
                 diagnostics: &diagnostics
             )
         }
-        
+
         let directive = directiveElements.first
-        
+
         for extraDirective in directiveElements.dropFirst() {
             diagnostics.append(
                 Diagnostic(
@@ -56,9 +56,9 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
                 )
             )
         }
-        
+
         markupElements = remainder
-        
+
         return directive
     }
 }

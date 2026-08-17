@@ -26,7 +26,7 @@ extension Markup {
         }
         return nil
     }
-    
+
     /// Returns true if the directive contains any children.
     var hasChildren: Bool {
         return childCount > 0

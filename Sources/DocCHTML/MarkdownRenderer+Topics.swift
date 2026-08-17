@@ -28,14 +28,14 @@ package extension MarkdownRenderer {
         package var content: [any Markup]
         /// A list of already resolved references that the renderer should display, in order, for this group.
         package var references: [URL]
-        
+
         package init(title: String?, content: [any Markup], references: [URL]) {
             self.title = title
             self.content = content
             self.references = references
         }
     }
-    
+
     /// Creates a grouped section with a given name, for example "topics" or "see also" that describes and organizes groups of related API.
     ///
     /// If each language representation of the API has its own task groups, pass the task groups for each language representation.
@@ -44,34 +44,35 @@ package extension MarkdownRenderer {
     /// This produces a named section that doesn't hide any task groups for any of the languages (the same as if the symbol only had one language representation).
     func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> [XMLNode] {
         let taskGroups = RenderHelpers.sortedLanguageSpecificValues(taskGroups)
-        
-        let items: [XMLElement] = if taskGroups.count == 1 {
-            taskGroups.first!.value.flatMap { taskGroup in
-                _singleTaskGroupElements(for: taskGroup)
-            }
-        } else {
-            // TODO: As a future improvement we could diff the references and only mark them as language-specific if the group and reference doesn't appear in all languages.
-            taskGroups.flatMap { language, taskGroups in
-                let attribute = XMLNode.attribute(withName: "class", stringValue: "\(language.id)-only") as! XMLNode
-                
-                let elements = taskGroups.flatMap { _singleTaskGroupElements(for: $0) }
-                for element in elements {
-                    element.addAttribute(attribute)
+
+        let items: [XMLElement] =
+            if taskGroups.count == 1 {
+                taskGroups.first!.value.flatMap { taskGroup in
+                    _singleTaskGroupElements(for: taskGroup)
                 }
-                return elements
+            } else {
+                // TODO: As a future improvement we could diff the references and only mark them as language-specific if the group and reference doesn't appear in all languages.
+                taskGroups.flatMap { language, taskGroups in
+                    let attribute = XMLNode.attribute(withName: "class", stringValue: "\(language.id)-only") as! XMLNode
+
+                    let elements = taskGroups.flatMap { _singleTaskGroupElements(for: $0) }
+                    for element in elements {
+                        element.addAttribute(attribute)
+                    }
+                    return elements
+                }
             }
-        }
-        
+
         return selfReferencingSection(named: sectionName, content: items)
     }
-    
+
     private func _singleTaskGroupElements(for taskGroup: TaskGroupInfo) -> [XMLElement] {
         let listItems = taskGroup.references.compactMap { reference in
             linkProvider.element(for: reference).map { _taskGroupItem(for: $0) }
         }
         // Don't return a title or abstract/discussion if this group has no links to display.
         guard !listItems.isEmpty else { return [] }
-        
+
         var items: [XMLElement] = []
         // Title
         if let title = taskGroup.title {
@@ -89,10 +90,10 @@ package extension MarkdownRenderer {
         }
         // Links
         items.append(.element(named: "ul", children: listItems))
-        
+
         return items
     }
-    
+
     private func _taskGroupItem(for element: LinkedElement) -> XMLElement {
         let items: [XMLNode]
         switch element.subheadings {
@@ -103,43 +104,47 @@ package extension MarkdownRenderer {
                 item.addAttributes(["class": "api-collection"])
             }
             items = [item]
-            
+
         case .single(.symbol(let fragments)):
-            items = switch goal {
-            case .conciseness:
-                [ .element(named: "code", children: [.text(fragments.map(\.text).joined())]) ]
-            case .richness:
-                [ _symbolSubheading(fragments, languageFilter: nil) ]
-            }
-            
+            items =
+                switch goal {
+                case .conciseness:
+                    [.element(named: "code", children: [.text(fragments.map(\.text).joined())])]
+                case .richness:
+                    [_symbolSubheading(fragments, languageFilter: nil)]
+                }
+
         case .languageSpecificSymbol(let fragmentsByLanguage):
             let fragmentsByLanguage = RenderHelpers.sortedLanguageSpecificValues(fragmentsByLanguage)
-            items = if fragmentsByLanguage.count == 1 {
-                [ _symbolSubheading(fragmentsByLanguage.first!.value, languageFilter: nil) ]
-            } else if goal == .conciseness, let fragments = fragmentsByLanguage.first?.value {
-                // On the rendered page, language specific symbol names _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
-                // So that tools don't need to filter out language specific names themselves, include only the primary language's subheading.
-                [ _symbolSubheading(fragments, languageFilter: nil) ]
-            } else {
-                fragmentsByLanguage.map { language, fragments in
-                    _symbolSubheading(fragments, languageFilter: language)
+            items =
+                if fragmentsByLanguage.count == 1 {
+                    [_symbolSubheading(fragmentsByLanguage.first!.value, languageFilter: nil)]
+                } else if goal == .conciseness, let fragments = fragmentsByLanguage.first?.value {
+                    // On the rendered page, language specific symbol names _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
+                    // So that tools don't need to filter out language specific names themselves, include only the primary language's subheading.
+                    [_symbolSubheading(fragments, languageFilter: nil)]
+                } else {
+                    fragmentsByLanguage.map { language, fragments in
+                        _symbolSubheading(fragments, languageFilter: language)
+                    }
                 }
-            }
         }
-        
-        let listItem = XMLNode.element(named: "li", children: [
-            // DocC-Render only makes the item's name an anchor, not its abstract
-            .element(named: "a", children: items, attributes: ["href": path(to: element.path)])
-        ])
-        
+
+        let listItem = XMLNode.element(
+            named: "li",
+            children: [
+                // DocC-Render only makes the item's name an anchor, not its abstract
+                .element(named: "a", children: items, attributes: ["href": path(to: element.path)])
+            ])
+
         // Add the formatted abstract if the linked element has one.
         if let abstract = element.abstract {
             listItem.addChild(visit(abstract))
         }
-        
+
         return listItem
     }
-    
+
     /// Transforms the symbol name fragments into a `<code>` HTML element that represents a symbol's subheading.
     ///
     /// When the renderer has a ``RenderGoal/richness`` goal, it creates one `<span>` HTML element per fragment that could be styled differently through CSS:

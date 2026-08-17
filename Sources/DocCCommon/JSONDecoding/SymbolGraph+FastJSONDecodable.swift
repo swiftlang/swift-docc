@@ -269,8 +269,7 @@ extension SymbolGraph.OperatingSystem: FastJSONDecodable {
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("name") {
                 name = try decoder.decode(String.self)
-            }
-            else if decoder.matchKey("minimumVersion") {
+            } else if decoder.matchKey("minimumVersion") {
                 minimumVersion = try decoder.decode(SymbolGraph.SemanticVersion?.self)
             }
             // Do nothing for all unknown keys
@@ -303,7 +302,7 @@ extension SymbolGraph.Relationship: FastJSONDecodable {
         var kind:   _MaybeDecodedValue<Kind>   = nil
         // 1 property with a default value
         var targetFallback: String? = nil
-        
+
         var mixins: [String: any Mixin] = [:]
 
         // Decode each field of this JSON object in the order they appear in the data
@@ -350,7 +349,7 @@ extension SymbolGraph.Relationship: FastJSONDecodable {
         guard let kind else {
             throw decoder.makeKeyNotFoundError("kind")
         }
-        
+
         self.init(
             source:         consume source,
             target:         consume target,
@@ -373,7 +372,7 @@ extension SymbolGraph.Relationship.SourceOrigin: FastJSONDecodable {
         typealias _MaybeDecodedValue = Optional
 
         // 2 required properties
-        var identifier:  _MaybeDecodedValue<String> = nil
+        var identifier: _MaybeDecodedValue<String> = nil
         var displayName: _MaybeDecodedValue<String> = nil
 
         // Decode each field of this JSON object in the order they appear in the data
@@ -381,8 +380,7 @@ extension SymbolGraph.Relationship.SourceOrigin: FastJSONDecodable {
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("identifier") {
                 identifier = try decoder.decode(String.self)
-            }
-            else if decoder.matchKey("displayName") {
+            } else if decoder.matchKey("displayName") {
                 displayName = try decoder.decode(String.self)
             }
             // Do nothing for all unknown keys
@@ -400,7 +398,7 @@ extension SymbolGraph.Relationship.SourceOrigin: FastJSONDecodable {
         }
 
         self.init(
-            identifier:  consume identifier,
+            identifier: consume identifier,
             displayName: consume displayName
         )
     }
@@ -421,7 +419,7 @@ extension SymbolGraph.Symbol: FastJSONDecodable {
         var type:       String?               = nil
         var docComment: SymbolGraph.LineList? = nil
         var isVirtual:  Bool                  = false
-        
+
         var mixins: [String: any Mixin] = [:]
 
         // Decode each field of this JSON object in the order they appear in the data
@@ -571,7 +569,7 @@ extension SymbolGraph.Symbol: FastJSONDecodable {
         guard let accessLevel else {
             throw decoder.makeKeyNotFoundError("accessLevel")
         }
-                
+
         self.init(
             identifier:     consume identifier,
             names:          consume names,
@@ -630,7 +628,7 @@ extension SymbolGraph.Symbol.Kind: FastJSONDecodable {
         typealias _MaybeDecodedValue = Optional
 
         // 2 required properties
-        var identifier:  _MaybeDecodedValue<String> = nil
+        var identifier: _MaybeDecodedValue<String> = nil
         var displayName: _MaybeDecodedValue<String> = nil
 
         // Decode each field of this JSON object in the order they appear in the data
@@ -638,8 +636,7 @@ extension SymbolGraph.Symbol.Kind: FastJSONDecodable {
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("identifier") {
                 identifier = try decoder.decode(String.self)
-            }
-            else if decoder.matchKey("displayName") {
+            } else if decoder.matchKey("displayName") {
                 displayName = try decoder.decode(String.self)
             }
             // Do nothing for all unknown keys
@@ -655,7 +652,7 @@ extension SymbolGraph.Symbol.Kind: FastJSONDecodable {
         guard let displayName else {
             throw decoder.makeKeyNotFoundError("displayName")
         }
-        
+
         // swift-format-ignore
         self.init(
             rawIdentifier: consume identifier,
@@ -809,7 +806,7 @@ extension SymbolGraph.LineList: FastJSONDecodable {
         guard let lines else {
             throw decoder.makeKeyNotFoundError("lines")
         }
-        
+
         self.init(
             consume lines,
             uri:        consume uri,
@@ -832,8 +829,7 @@ extension SymbolGraph.LineList.Line: FastJSONDecodable {
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("text") {
                 text = try decoder.decode(String.self)
-            }
-            else if decoder.matchKey("range") {
+            } else if decoder.matchKey("range") {
                 range = try decoder.decode(SymbolGraph.LineList.SourceRange?.self)
             }
             // Do nothing for all unknown keys
@@ -846,9 +842,9 @@ extension SymbolGraph.LineList.Line: FastJSONDecodable {
         guard let text else {
             throw decoder.makeKeyNotFoundError("text")
         }
-        
+
         self.init(
-            text:  consume text,
+            text: consume text,
             range: consume range
         )
     }
@@ -1083,7 +1079,7 @@ extension SymbolGraph.Symbol.FunctionSignature.FunctionParameter: FastJSONDecoda
         guard let name else {
             throw decoder.makeKeyNotFoundError("name")
         }
-            
+
         if let internalName {
             self.init(
                 name:                 consume internalName,
@@ -1240,7 +1236,7 @@ extension SymbolGraph.Symbol.Swift.GenericConstraint.Kind: FastJSONDecodable {
 extension SymbolGraph.Symbol.Swift.Generics: FastJSONDecodable {
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 2 properties with default values
-        var parameters:  [SymbolGraph.Symbol.Swift.GenericParameter]  = []
+        var parameters: [SymbolGraph.Symbol.Swift.GenericParameter] = []
         var constraints: [SymbolGraph.Symbol.Swift.GenericConstraint] = []
 
         // Decode each field of this JSON object in the order they appear in the data
@@ -1248,8 +1244,7 @@ extension SymbolGraph.Symbol.Swift.Generics: FastJSONDecodable {
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("parameters") {
                 parameters = try decoder.decode([SymbolGraph.Symbol.Swift.GenericParameter].self)
-            }
-            else if decoder.matchKey("constraints") {
+            } else if decoder.matchKey("constraints") {
                 constraints = try decoder.decode([SymbolGraph.Symbol.Swift.GenericConstraint].self)
             }
             // Do nothing for all unknown keys
@@ -1261,7 +1256,7 @@ extension SymbolGraph.Symbol.Swift.Generics: FastJSONDecodable {
         // No required properties to unwrap
 
         self.init(
-            parameters:  consume parameters,
+            parameters: consume parameters,
             constraints: consume constraints
         )
     }
@@ -1349,7 +1344,7 @@ extension SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol: FastJSONDecodable
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 1 property with a default value
         var docComment: SymbolGraph.LineList? = nil
-        
+
         var mixins: [String: any Mixin] = [:]
 
         // Decode each field of this JSON object in the order they appear in the data
@@ -1357,11 +1352,9 @@ extension SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol: FastJSONDecodable
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("docComment") {
                 docComment = try decoder.decode(SymbolGraph.LineList?.self)
-            }
-            else if decoder.matchKey("functionSignature") {
+            } else if decoder.matchKey("functionSignature") {
                 mixins["functionSignature"] = try decoder.decode(SymbolGraph.Symbol.FunctionSignature.self)
-            }
-            else if decoder.matchKey("declarationFragments") {
+            } else if decoder.matchKey("declarationFragments") {
                 let decoded = try decoder.decode([SymbolGraph.Symbol.DeclarationFragments.Fragment].self)
                 mixins["declarationFragments"] = SymbolGraph.Symbol.DeclarationFragments(declarationFragments: consume decoded)
             }
@@ -1372,7 +1365,7 @@ extension SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol: FastJSONDecodable
         }
 
         // No required properties to unwrap
-        
+
         // swift-format-ignore
         self.init(
             docComment: consume docComment,
@@ -1385,11 +1378,11 @@ extension SymbolGraph.Symbol.OverloadData: FastJSONDecodable {
     // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
-        
+
         // 2 required properties
         var overloadGroupIdentifier: _MaybeDecodedValue<String> = nil
         var overloadGroupIndex:      _MaybeDecodedValue<Int>    = nil
-        
+
         // Decode each field of this JSON object in the order they appear in the data
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
@@ -1404,7 +1397,7 @@ extension SymbolGraph.Symbol.OverloadData: FastJSONDecodable {
                 try decoder.ignoreValue()
             }
         }
-        
+
         // Unwrap all required properties
         guard let overloadGroupIdentifier else {
             throw decoder.makeKeyNotFoundError("overloadGroupIdentifier")
@@ -1412,7 +1405,7 @@ extension SymbolGraph.Symbol.OverloadData: FastJSONDecodable {
         guard let overloadGroupIndex else {
             throw decoder.makeKeyNotFoundError("overloadGroupIndex")
         }
-        
+
         self.init(
             overloadGroupIdentifier: consume overloadGroupIdentifier,
             overloadGroupIndex:      overloadGroupIndex
@@ -1424,13 +1417,13 @@ extension SymbolGraph.Symbol.Snippet: FastJSONDecodable {
     // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
-        
+
         // 1 required property
         var lines: _MaybeDecodedValue<[String]> = nil
         // 2 properties with default values
         var language: String?              = nil
         var slices:   [String: Range<Int>] = [:]
-        
+
         // Decode each field of this JSON object in the order they appear in the data
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
@@ -1448,12 +1441,12 @@ extension SymbolGraph.Symbol.Snippet: FastJSONDecodable {
                 try decoder.ignoreValue()
             }
         }
-        
+
         // Unwrap the required property
         guard let lines else {
             throw decoder.makeKeyNotFoundError("lines")
         }
-        
+
         self.init(
             language: consume language,
             lines:    consume lines,
@@ -1466,14 +1459,14 @@ extension SymbolGraph.Symbol.PlistDetails: FastJSONDecodable {
     // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
-        
+
         // 1 required property
         var rawKey: _MaybeDecodedValue<String> = nil
         // 3 properties with default values
         var customTitle: String? = nil
         var baseType:    String? = nil
         var arrayMode:   Bool?   = nil
-        
+
         // Decode each field of this JSON object in the order they appear in the data
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
@@ -1494,12 +1487,12 @@ extension SymbolGraph.Symbol.PlistDetails: FastJSONDecodable {
                 try decoder.ignoreValue()
             }
         }
-        
+
         // Unwrap the required property
         guard let rawKey else {
             throw decoder.makeKeyNotFoundError("rawKey")
         }
-        
+
         self.init(
             rawKey:      consume rawKey,
             customTitle: consume customTitle,
@@ -1513,14 +1506,14 @@ extension SymbolGraph.Symbol.HTTP.Endpoint: FastJSONDecodable {
     // swift-format-ignore
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
-        
+
         // 3 required properties
         var method:  _MaybeDecodedValue<String> = nil
         var baseURL: _MaybeDecodedValue<URL>    = nil
         var path:    _MaybeDecodedValue<String> = nil
         // 1 property with a default value
         var sandboxURL: URL? = nil
-        
+
         // Decode each field of this JSON object in the order they appear in the data
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
@@ -1541,7 +1534,7 @@ extension SymbolGraph.Symbol.HTTP.Endpoint: FastJSONDecodable {
                 try decoder.ignoreValue()
             }
         }
-        
+
         // Unwrap the required property
         guard let method else {
             throw decoder.makeKeyNotFoundError("method")
@@ -1552,7 +1545,7 @@ extension SymbolGraph.Symbol.HTTP.Endpoint: FastJSONDecodable {
         guard let path else {
             throw decoder.makeKeyNotFoundError("path")
         }
-        
+
         self.init(
             method:     consume method,
             baseURL:    consume baseURL,
@@ -1569,7 +1562,7 @@ extension SymbolGraph.Symbol.TypeDetail: FastJSONDecodable {
         var fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]? = nil
         var baseType:  String?                                             = nil
         var arrayMode: Bool?                                               = nil
-        
+
         // Decode each field of this JSON object in the order they appear in the data
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
@@ -1582,15 +1575,15 @@ extension SymbolGraph.Symbol.TypeDetail: FastJSONDecodable {
             else if decoder.matchKey("arrayMode") {
                 arrayMode = try decoder.decode(Bool?.self)
             }
-            
+
             // Do nothing for all unknown keys
             else {
                 try decoder.ignoreValue()
             }
         }
-        
+
         // No required property to unwrap
-        
+
         self.init(
             fragments: consume fragments,
             baseType:  consume baseType,

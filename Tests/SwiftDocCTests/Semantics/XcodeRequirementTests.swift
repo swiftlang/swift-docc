@@ -18,35 +18,37 @@ class XcodeRequirementTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let context = try await makeEmptyContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             XCTAssertEqual(XcodeRequirement.directiveName, directive.name)
             let requirement = XcodeRequirement(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(requirement)
             XCTAssertEqual(2, diagnostics.count)
-            XCTAssertEqual(diagnostics.map(\.identifier), [
-                "org.swift.docc.HasArgument.title",
-                "org.swift.docc.HasArgument.destination",
-            ])
+            XCTAssertEqual(
+                diagnostics.map(\.identifier),
+                [
+                    "org.swift.docc.HasArgument.title",
+                    "org.swift.docc.HasArgument.destination",
+                ])
             XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
         }
     }
-    
+
     func testValid() async throws {
         let title = "Xcode 10.2 Beta 3"
         let destination = "https://www.example.com/download"
         let source = """
-@XcodeRequirement(title: "\(title)", destination: "\(destination)")
-"""
+            @XcodeRequirement(title: "\(title)", destination: "\(destination)")
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let context = try await makeEmptyContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             XCTAssertEqual(XcodeRequirement.directiveName, directive.name)

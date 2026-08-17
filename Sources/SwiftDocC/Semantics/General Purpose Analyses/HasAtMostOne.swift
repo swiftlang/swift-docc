@@ -17,7 +17,7 @@ extension Semantic.Analyses {
      */
     public struct HasAtMostOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible> {
         let featureFlags: FeatureFlags
-        
+
         @available(*, deprecated, renamed: "analyze(_:children:source:for:diagnostics:)", message: "Use 'analyze(_:children:source:for:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
             var diagnostics = [Diagnostic]()
@@ -26,7 +26,7 @@ extension Semantic.Analyses {
             }
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
-        
+
         func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> (Child?, remainder: MarkupContainer) {
             return Semantic.Analyses.extractAtMostOne(
                 childType: Child.self,
@@ -39,7 +39,7 @@ extension Semantic.Analyses {
             ) as! (Child?, MarkupContainer)
         }
     }
-    
+
     static func extractAtMostOne(
         childType: any DirectiveConvertible.Type,
         parentDirective: BlockDirective,
@@ -52,16 +52,17 @@ extension Semantic.Analyses {
     ) -> ((any DirectiveConvertible)?, remainder: MarkupContainer) {
         let (matches, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
-                  childType.canConvertDirective(childDirective) else {
+                childType.canConvertDirective(childDirective)
+            else {
                 return nil
             }
             return childDirective
         }
-        
+
         guard let match = matches.first else {
             return (nil, MarkupContainer(remainder))
         }
-        
+
         // Even if a single child is optional, having duplicates is thus far always an error
         // because it would become ambiguous which child to choose as the one.
         for match in matches.suffix(from: 1) {
@@ -75,12 +76,11 @@ extension Semantic.Analyses {
                     The \(parentDirective.name.singleQuoted) directive must have at most \
                     one \(childType.directiveName.singleQuoted) child directive
                     """
-                )
-            
+            )
+
             diagnostics.append(diagnostic)
         }
-        
+
         return (childType.init(from: match, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics), MarkupContainer(remainder))
     }
 }
-

@@ -17,8 +17,8 @@ import DocCCommon
 class VolumeTests: XCTestCase {
     func testEmpty() async throws {
         let source = """
-@Volume
-"""
+            @Volume
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -26,30 +26,32 @@ class VolumeTests: XCTestCase {
         let volume = Volume(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(volume)
         XCTAssertEqual(4, diagnostics.count)
-        XCTAssertEqual(diagnostics.map(\.identifier), [
-            "org.swift.docc.HasArgument.name",
-            "org.swift.docc.HasExactlyOne<\(Volume.self), \(ImageMedia.self)>.Missing",
-            "org.swift.docc.HasAtLeastOne<\(Volume.self), \(Chapter.self)>",
-            "org.swift.docc.Volume.HasContent",
-        ])
+        XCTAssertEqual(
+            diagnostics.map(\.identifier),
+            [
+                "org.swift.docc.HasArgument.name",
+                "org.swift.docc.HasExactlyOne<\(Volume.self), \(ImageMedia.self)>.Missing",
+                "org.swift.docc.HasAtLeastOne<\(Volume.self), \(Chapter.self)>",
+                "org.swift.docc.Volume.HasContent",
+            ])
     }
-    
+
     func testValid() async throws {
         let name = "Always Be Voluming"
         let expectedContent = "Here is some content explaining what this volume is."
         let source = """
-@Volume(name: "\(name)") {
-   \(expectedContent)
-        
-   @Image(source: "figure1.png", alt: "whatever")
+            @Volume(name: "\(name)") {
+               \(expectedContent)
+                    
+               @Image(source: "figure1.png", alt: "whatever")
 
-   @Chapter(name: "Chapter 1") {
-      This is Chapter 1.
-      @Image(source: test.png, alt: test)
-      @TutorialReference(tutorial: Tutorial1)
-   }
-}
-"""
+               @Chapter(name: "Chapter 1") {
+                  This is Chapter 1.
+                  @Image(source: test.png, alt: test)
+                  @TutorialReference(tutorial: Tutorial1)
+               }
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -66,38 +68,42 @@ class VolumeTests: XCTestCase {
     func testChapterWithSameName() async throws {
         let name = "Always Be Voluming"
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "TestOverview.tutorial", utf8Content: """
-            @Tutorials(name: "Technology X") {
-               @Intro(title: "Technology X") {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(
+                    name: "TestOverview.tutorial",
+                    utf8Content: """
+                        @Tutorials(name: "Technology X") {
+                           @Intro(title: "Technology X") {
 
-                  You'll learn all about Technology X.
+                              You'll learn all about Technology X.
 
-                  @Video(source: introvideo.mp4, poster: introposter.png)
-                  @Image(source: intro.png, alt: intro)
-               }
+                              @Video(source: introvideo.mp4, poster: introposter.png)
+                              @Image(source: intro.png, alt: intro)
+                           }
 
-               @Volume(name: "\(name)") {
+                           @Volume(name: "\(name)") {
 
-                 This is a `Volume`.
+                             This is a `Volume`.
 
-                 @Image(source: figure1.png, alt: "Figure 1")
+                             @Image(source: figure1.png, alt: "Figure 1")
 
-                 @Chapter(name: "\(name)") {
+                             @Chapter(name: "\(name)") {
 
-                    This is a `Chapter`.
+                                This is a `Chapter`.
 
-                    @Image(source: figure1.png, alt: "Figure 1")
+                                @Image(source: figure1.png, alt: "Figure 1")
 
-                    @TutorialReference(tutorial: "doc:TestTutorial")
-                 }
-               }
+                                @TutorialReference(tutorial: "doc:TestTutorial")
+                             }
+                           }
 
-               @Resources {}
-            }
-            """)
-        ])
-        
+                           @Resources {}
+                        }
+                        """)
+            ])
+
         let (bundle, context) = try await loadBundle(catalog: catalog)
         let node = try context.entity(
             with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)

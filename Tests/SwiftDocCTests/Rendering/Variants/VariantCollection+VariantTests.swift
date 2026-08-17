@@ -21,7 +21,7 @@ struct VariantCollection_VariantTests {
             .remove,
         ]
     )
-    
+
     @Test
     func mapsPatchValues() {
         #expect(

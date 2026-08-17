@@ -19,19 +19,19 @@ import DocCCommon
 class DocumentationNodeTests: XCTestCase {
     func testH4AndUpAnchorSections() throws {
         let articleSource = """
-        # Title
+            # Title
 
-        ## Heading2
+            ## Heading2
 
-        ### Heading3
-        
-        #### Heading4
-        
-        ##### Heading5
+            ### Heading3
 
-        ###### Heading6
-        """
-        
+            #### Heading4
+
+            ##### Heading5
+
+            ###### Heading6
+            """
+
         let article = Article(markup: Document(parsing: articleSource, options: []), metadata: nil, redirects: nil, options: [:])
         let node = try DocumentationNode(
             reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift),
@@ -44,7 +44,7 @@ class DocumentationNodeTests: XCTestCase {
             XCTAssertEqual(anchorSection.reference, node.reference.withFragment(expectedTitle))
         }
     }
-    
+
     func testDocumentationKindToSymbolKindMapping() throws {
         // Testing all symbol kinds map to a documentation kind
         for symbolKind in SymbolGraph.Symbol.KindIdentifier.allCases {
@@ -52,11 +52,11 @@ class DocumentationNodeTests: XCTestCase {
             guard documentationKind != .unknown else {
                 continue
             }
-        
+
             let roundtrippedSymbolKind = DocumentationNode.symbolKind(for: documentationKind)
             XCTAssertEqual(symbolKind, roundtrippedSymbolKind)
         }
-        
+
         // Testing that documentation kinds correctly map to a symbol kind
         // Sometimes there are multiple mappings from DocumentationKind -> SymbolKind, exclude those here and test them separately
         let documentationKinds = DocumentationNode.Kind.allKnownValues
@@ -71,7 +71,7 @@ class DocumentationNodeTests: XCTestCase {
                 XCTAssertNil(symbolKind)
             }
         }
-        
+
         // Test the exception documentation kinds
         XCTAssertEqual(DocumentationNode.symbolKind(for: .localVariable), .var)
         XCTAssertEqual(DocumentationNode.symbolKind(for: .typeDef), .typealias)
@@ -91,7 +91,7 @@ class DocumentationNodeTests: XCTestCase {
 
         // Test if symbols contain all available source languages
         let symbol = makeSymbol(id: "blah", kind: .class, pathComponents: ["blah"])
-        
+
         let module = SymbolGraph.Module(name: "SomeModuleName", platform: .init(operatingSystem: .init(name: "macosx")))
         let symbolNode = DocumentationNode(
             reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/SomeModuleName/blah", sourceLanguages: sourceLanguages),

@@ -27,16 +27,16 @@ extension FileManagerProtocol {
 /// An iterator that traverses the directory structure and returns the files in breadth-first order.
 package struct _FilesIterator: IteratorProtocol {
     /// The file manager that the iterator uses to traverse the directory structure.
-    private var fileManager: any FileManagerProtocol // This can't be a generic because of https://github.com/swiftlang/swift/issues/77955
+    private var fileManager: any FileManagerProtocol  // This can't be a generic because of https://github.com/swiftlang/swift/issues/77955
     private var options: FileManager.DirectoryEnumerationOptions
-    
+
     private var foundFiles: [URL]
     private var foundDirectories: [URL]
-    
+
     fileprivate init(fileManager: any FileManagerProtocol, startingPoint: URL, options: FileManager.DirectoryEnumerationOptions) {
         self.fileManager = fileManager
         self.options = options
-        
+
         // Check if the starting point is a file or a directory.
         // swift-format-ignore
         if fileManager.directoryExists(atPath: startingPoint.path) {
@@ -47,28 +47,28 @@ package struct _FilesIterator: IteratorProtocol {
             foundDirectories = []
         }
     }
-    
+
     package mutating func next() -> URL? {
         // If the iterator has already found some files, return those first
         if !foundFiles.isEmpty {
             return foundFiles.removeFirst()
         }
-        
+
         // Otherwise, check the next found directory and add its contents
         guard !foundDirectories.isEmpty else {
             // Traversed the entire directory structure
             return nil
         }
-        
+
         let directory = foundDirectories.removeFirst()
         guard let (newFiles, newDirectories) = try? fileManager.contentsOfDirectory(at: directory, options: options) else {
             // The iterator protocol doesn't have a mechanism for raising errors. If an error occurs we
             return nil
         }
-        
+
         foundFiles.append(contentsOf: newFiles)
         foundDirectories.append(contentsOf: newDirectories)
-        
+
         // Iterate again after adding new found files and directories.
         // This enables the iterator do recurse multiple layers of directories until it finds a file.
         return next()

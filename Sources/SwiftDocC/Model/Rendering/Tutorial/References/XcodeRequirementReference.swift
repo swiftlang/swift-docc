@@ -13,15 +13,15 @@ public import Foundation
 /// A reference to a version of Xcode that users of your documentation must use.
 public struct XcodeRequirementReference: RenderReference, Equatable {
     public var type: RenderReferenceType = .xcodeRequirement
-    
+
     public let identifier: RenderReferenceIdentifier
-    
+
     /// A presentation-friendly title for the version of Xcode required for users of your documentation.
     public let title: String
-    
+
     /// A download URL for the version of Xcode required for users of your documentation.
     public let url: URL
-    
+
     /// Creates a reference to a version of Xcode that users of your documentation must use.
     ///
     /// - Parameters:

@@ -19,7 +19,7 @@ public struct SeeAlsoInTopicsHeadingChecker: Checker {
         }
         return seeAlsoInTopicsHeadings.compactMap { heading -> Diagnostic? in
             guard let headingRange = heading.range else { return nil }
-            
+
             return Diagnostic(
                 source: sourceFile,
                 severity: .warning,
@@ -34,7 +34,7 @@ public struct SeeAlsoInTopicsHeadingChecker: Checker {
                     ),
                     Solution(
                         summary: "Change heading name",
-                        replacements: [.init(range: headingRange, replacement: "### <#name#>" )]
+                        replacements: [.init(range: headingRange, replacement: "### <#name#>")]
                     ),
                 ]
             )

@@ -17,12 +17,12 @@ package import os
 private import DocCHTML
 
 package enum ConvertActionConverter {
-#if canImport(os)
+    #if canImport(os)
     static package let signposter = OSSignposter(subsystem: "org.swift.docc", category: "Convert")
-#else
+    #else
     static package let signposter = NoOpSignposterShim()
-#endif
-    
+    #endif
+
     /// Converts the documentation in the given context and passes its output to a given consumer.
     ///
     /// - Parameters:
@@ -41,22 +41,22 @@ package enum ConvertActionConverter {
         documentationCoverageOptions: DocumentationCoverageOptions
     ) async throws {
         let signposter = Self.signposter
-        
+
         defer {
             signposter.withIntervalSignpost("Display diagnostics", id: signposter.makeSignpostID()) {
                 context.diagnosticEngine.flush()
             }
         }
-        
+
         let processingDurationMetric = benchmark(begin: Benchmark.Duration(id: "documentation-processing"))
         defer {
             benchmark(end: processingDurationMetric)
         }
-        
+
         guard !context.diagnosticEngine.diagnostics.containsAnyError else {
             return
         }
-        
+
         // FIXME: Don't create a (JSON) RenderContext when the output format is static HTML. (rdar://177867282)
         // Precompute the render context
         let renderContext = signposter.withIntervalSignpost("Build RenderContext", id: signposter.makeSignpostID()) {
@@ -66,23 +66,23 @@ package enum ConvertActionConverter {
 
         // Copy images, sample files, and other static assets.
         try outputConsumer.consume(assetsInBundle: context.inputs)
-        
+
         let converter = DocumentationContextConverter(
             context: context,
             renderContext: renderContext,
             sourceRepository: sourceRepository
         )
-        
+
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         let featureFlags = context.configuration.featureFlags
-        
+
         // Render all pages and gather their supplementary "digest" information if enabled.
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
         let supplementaryRenderInfo = try await context.knownPages._concurrentPerform(
             taskName: "Render",
             batchWork: { slice in
                 var supplementaryRenderInfo = SupplementaryRenderInformation()
-                
+
                 for identifier in slice {
                     try autoreleasepool {
                         let entity = try context.entity(with: identifier)
@@ -91,7 +91,7 @@ package enum ConvertActionConverter {
                             // TODO: Design a better way to indicate a primary output format and which "render" steps does and doesn't need (rdar://177867282)
                             let isStaticHTMLOutput = htmlContentConsumer._isPrimaryOutputFormat
                             var renderer = HTMLRenderer(reference: identifier, context: context, goal: isStaticHTMLOutput ? .richness : .conciseness, featureFlags: featureFlags)
-                            
+
                             if let symbol = entity.semantic as? Symbol {
                                 let renderedPageInfo = renderer.renderSymbol(symbol)
                                 try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
@@ -99,9 +99,9 @@ package enum ConvertActionConverter {
                                 let renderedPageInfo = renderer.renderArticle(article)
                                 try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
                             }
-                            
+
                             if isStaticHTMLOutput {
-                                return // Don't create a (JSON) render node for this page
+                                return  // Don't create a (JSON) render node for this page
                             }
                         }
 
@@ -109,14 +109,14 @@ package enum ConvertActionConverter {
                             // No render node was produced for this entity, so just skip it.
                             return
                         }
-                        
+
                         if featureFlags.isExperimentalMarkdownOutputEnabled,
-                           let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
-                           let markdownNode = converter.markdownOutput(for: entity)
+                            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
+                            let markdownNode = converter.markdownOutput(for: entity)
                         {
                             try markdownConsumer.consume(markdownNode: markdownNode.writable)
                             if featureFlags.isExperimentalMarkdownOutputManifestEnabled,
-                               let manifest = markdownNode.manifest
+                                let manifest = markdownNode.manifest
                             {
                                 supplementaryRenderInfo.markdownManifestDocuments.formUnion(manifest.documents)
                                 supplementaryRenderInfo.markdownManifestRelationships.formUnion(manifest.relationships)
@@ -134,23 +134,23 @@ package enum ConvertActionConverter {
                         case .none:
                             break
                         }
-                        
+
                         // FIXME: Read all linkable entity information from the documentation node rather than the JSON render node. (rdar://177867335)
                         if emitDigest {
                             let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
-                            
+
                             supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                             supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
                         } else if featureFlags.isExperimentalLinkHierarchySerializationEnabled {
                             let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-                            
+
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                         }
                     }
                 }
-                
+
                 return supplementaryRenderInfo
             },
             initialResult: SupplementaryRenderInformation(),
@@ -163,11 +163,11 @@ package enum ConvertActionConverter {
                 accumulated.markdownManifestRelationships.formUnion(partialResult.markdownManifestRelationships)
             }
         )
-        
+
         signposter.endInterval("Render", renderSignpostHandle)
-        
+
         guard !Task.isCancelled else { return }
-        
+
         // Consumes all external links and adds them into the sidebar.
         // This consumes all external links referenced across all content, and indexes them so they're available for reference in the navigator.
         // This is not ideal as it means that links outside of the Topics section can impact the content of the navigator.
@@ -196,20 +196,20 @@ package enum ConvertActionConverter {
                 try outputConsumer.consume(assets: supplementaryRenderInfo.assets)
             }
         }
-        
+
         if featureFlags.isExperimentalLinkHierarchySerializationEnabled {
             try signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
                 let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
                 try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                
+
                 if !emitDigest {
                     try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
                 }
             }
         }
-        
+
         if featureFlags.isExperimentalMarkdownOutputManifestEnabled,
-           let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
+            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
         {
             try markdownConsumer.consume(
                 markdownManifest: MarkdownOutputManifest(
@@ -226,9 +226,9 @@ package enum ConvertActionConverter {
         case .none:
             break
         }
-        
+
         try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: context.inputs.displayName, bundleID: context.inputs.id))
-        
+
         // Log the finalized topic graph checksum.
         benchmark(add: Benchmark.TopicGraphHash(context: context))
         // Log the finalized list of topic anchor sections.
@@ -243,7 +243,7 @@ package enum ConvertActionConverter {
 private struct SupplementaryRenderInformation {
     var indexingRecords = [IndexingRecord]()
     var linkSummaries = [LinkDestinationSummary]()
-    var assets = [RenderReferenceType : [any RenderReference]]()
+    var assets = [RenderReferenceType: [any RenderReference]]()
     var coverageInfo = [CoverageDataEntry]()
     var markdownManifestDocuments = Set<MarkdownOutputManifest.Document>()
     var markdownManifestRelationships = Set<MarkdownOutputManifest.Relationship>()

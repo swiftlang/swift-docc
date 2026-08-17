@@ -27,9 +27,9 @@ struct ParseDirectiveArgumentsTests {
         let document = Document(parsing: invalidMarkup, options: .parseBlockDirectives)
         var diagnostics = [Diagnostic]()
         _ = (document.child(at: 0) as? BlockDirective)?.arguments(diagnostics: &diagnostics)
-        
+
         let diagnostic = try #require(diagnostics.first)
-        
+
         #expect(diagnostic.identifier == expectedDiagnosticID)
         #expect(diagnostic.severity == .warning)
     }

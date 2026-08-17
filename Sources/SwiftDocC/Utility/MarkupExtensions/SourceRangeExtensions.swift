@@ -17,14 +17,14 @@ extension SourceRange {
     mutating func offsetWithRange(_ range: SymbolGraph.LineList.SourceRange) {
         self.offsetWithRange(SourceRange(from: range))
     }
-    
+
     /// Initialize a `SourceRange` from a SymbolKit `SourceRange`.
     init(from symbolGraphRange: SymbolGraph.LineList.SourceRange) {
         let start = SourceLocation(line: symbolGraphRange.start.line, column: symbolGraphRange.start.character, source: nil)
         // swift-format-ignore
         let end =   SourceLocation(line: symbolGraphRange.end.line,   column: symbolGraphRange.end.character,   source: nil)
-        
-        self = start ..< end
+
+        self = start..<end
     }
 
     /// Offsets the `SourceRange` using another `SourceRange`.
@@ -35,18 +35,18 @@ extension SourceRange {
         let start = SourceLocation(line: lowerBound.line + range.lowerBound.line, column: lowerBound.column + range.lowerBound.column, source: lowerBound.source)
         // swift-format-ignore
         let end   = SourceLocation(line: upperBound.line + range.lowerBound.line, column: upperBound.column + range.lowerBound.column, source: upperBound.source)
-        
-        self = start ..< end
+
+        self = start..<end
     }
-    
+
     /// The source file for which this range applies, if it came from an accessible location.
     var source: URL? {
         lowerBound.source ?? upperBound.source
     }
-    
+
     /// Creates an empty range a the start of the file
     static func makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: URL?) -> SourceRange {
         let location = SourceLocation(line: 1, column: 1, source: source)
-        return location ..< location
+        return location..<location
     }
 }

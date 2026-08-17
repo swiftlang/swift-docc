@@ -13,16 +13,16 @@ extension TutorialSectionsRenderSection {
         return tasks.map { section -> IndexingRecord in
             let sectionReference = page.withFragment(section.anchor)
             let summary: String
-            
+
             switch section.contentSection.first {
-                case .some(.contentAndMedia(let contentAndMedia)):
+            case .some(.contentAndMedia(let contentAndMedia)):
                 summary = contentAndMedia.content.firstParagraph.rawIndexableTextContent(references: references)
-                case .some(.fullWidth(let content)):
+            case .some(.fullWidth(let content)):
                 summary = content.firstParagraph.rawIndexableTextContent(references: references)
-                case .some(.columns), nil:
+            case .some(.columns), nil:
                 summary = ""
             }
-            
+
             return IndexingRecord(kind: .tutorialSection, location: .contained(sectionReference, inPage: page), title: section.title, summary: summary, headings: section.headings, rawIndexableTextContent: section.rawIndexableTextContent(references: references))
         }
     }

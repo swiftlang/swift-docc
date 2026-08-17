@@ -21,13 +21,13 @@ struct ReturnsSectionTranslator: RenderSectionTranslator {
             documentationDataVariants: symbol.returnsSectionVariants
         ) { _, returns in
             guard !returns.content.isEmpty,
-                  let returnsContent = renderNodeTranslator.visitMarkupContainer(
+                let returnsContent = renderNodeTranslator.visitMarkupContainer(
                     MarkupContainer(returns.content)
-                  ) as? [RenderBlockContent]
+                ) as? [RenderBlockContent]
             else {
                 return nil
             }
-            
+
             return ContentRenderSection(kind: .content, content: returnsContent.capitalizingFirstWord(), heading: "Return Value")
         }
     }

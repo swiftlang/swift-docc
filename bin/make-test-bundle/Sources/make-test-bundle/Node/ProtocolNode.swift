@@ -15,12 +15,12 @@ class ProtocolNode: TypeNode {
     var implementations = [String]()
 
     override class func keyword() -> String { return "protocol" }
-    
+
     override func source() -> String {
         var result = ""
         result += Text.docs(for: name, bundle: bundle)
         result += "public \(Self.keyword()) \(name) {\n"
-        
+
         // Properties
         if nested.contains(.property) {
             result += (0...5).reduce("") { result, _ -> String in
@@ -29,7 +29,7 @@ class ProtocolNode: TypeNode {
                 return result.appending(property.source())
             }
         }
-        
+
         // Methods
         if nested.contains(.method) {
             result += (0...5).reduce("") { result, _ -> String in
@@ -38,16 +38,16 @@ class ProtocolNode: TypeNode {
                 return result.appending(method.source())
             }
         }
-        
+
         result += "}\n\n"
         return result
     }
-    
+
     func `extension`() -> String {
         var result = ""
         result += Text.docs(for: name, bundle: bundle)
         result += "public extension \(name) {\n"
-        
+
         // Default implementations for non-required methods
         if nested.contains(.method) {
             result += (0...5).reduce("") { result, _ -> String in
@@ -55,7 +55,7 @@ class ProtocolNode: TypeNode {
                 return result.appending(method.source())
             }
         }
-        
+
         result += "}\n\n"
         return result
     }

@@ -34,35 +34,35 @@ class DeclarationsRenderSectionTests: XCTestCase {
 
         for (token, string) in values {
             let jsonData = """
-            {
-                "kind": "declarations",
-                "declarations": [
-                    {
-                        "platforms": [],
-                        "tokens": [
-                            {
-                                "text": "",
-                                "kind": "\(string)"
-                            }
-                        ],
-                        "otherDeclarations": {
-                            "declarations": [
+                {
+                    "kind": "declarations",
+                    "declarations": [
+                        {
+                            "platforms": [],
+                            "tokens": [
                                 {
-                                    "identifier": "identifier",
-                                    "tokens": [
-                                        {
-                                            "text": "",
-                                            "kind": "\(string)"
-                                        }
-                                    ]
+                                    "text": "",
+                                    "kind": "\(string)"
                                 }
                             ],
-                            "displayIndex": 0
+                            "otherDeclarations": {
+                                "declarations": [
+                                    {
+                                        "identifier": "identifier",
+                                        "tokens": [
+                                            {
+                                                "text": "",
+                                                "kind": "\(string)"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "displayIndex": 0
+                            }
                         }
-                    }
-                ]
-            }
-            """.data(using: .utf8)!
+                    ]
+                }
+                """.data(using: .utf8)!
 
             XCTAssertEqual(
                 try JSONDecoder().decode(DeclarationsRenderSection.self, from: jsonData),
@@ -90,10 +90,11 @@ class DeclarationsRenderSectionTests: XCTestCase {
                     languages: nil,
                     platforms: [],
                     tokens: [.init(text: "", kind: .string)]
-                )]
+                )
+            ]
             )
         )
-        
+
         let encodedJsonString = try XCTUnwrap(String(data: encodedData, encoding: .utf8))
         XCTAssertFalse(encodedJsonString.contains("otherDeclarations"))
         XCTAssertFalse(encodedJsonString.contains("indexInOtherDeclarations"))
@@ -101,35 +102,35 @@ class DeclarationsRenderSectionTests: XCTestCase {
 
     func testRoundTrip() throws {
         let jsonData = """
-        {
-            "kind": "declarations",
-            "declarations": [
-                {
-                    "platforms": [],
-                    "tokens": [
-                        {
-                            "text": "",
-                            "kind": "label"
-                        }
-                    ],
-                    "otherDeclarations": {
-                        "declarations": [
+            {
+                "kind": "declarations",
+                "declarations": [
+                    {
+                        "platforms": [],
+                        "tokens": [
                             {
-                                "identifier": "identifier",
-                                "tokens": [
-                                    {
-                                        "text": "",
-                                        "kind": "label"
-                                    }
-                                ]
+                                "text": "",
+                                "kind": "label"
                             }
                         ],
-                        "displayIndex": 0
+                        "otherDeclarations": {
+                            "declarations": [
+                                {
+                                    "identifier": "identifier",
+                                    "tokens": [
+                                        {
+                                            "text": "",
+                                            "kind": "label"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayIndex": 0
+                        }
                     }
-                }
-            ]
-        }
-        """.data(using: .utf8)!
+                ]
+            }
+            """.data(using: .utf8)!
 
         let value = try JSONDecoder().decode(DeclarationsRenderSection.self, from: jsonData)
         try assertRoundTripCoding(value)
@@ -145,14 +146,16 @@ class DeclarationsRenderSectionTests: XCTestCase {
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
         // Verify that the symbol has the expected data
         XCTAssertEqual(symbol.alternateDeclarationVariants.allValues.count, 2)
-        XCTAssert(symbol.alternateDeclarationVariants.allValues.allSatisfy({
-            $0.trait == .fallback || Set($0.variant.keys) == [[.iOS, .macOS]]
-        }))
+        XCTAssert(
+            symbol.alternateDeclarationVariants.allValues.allSatisfy({
+                $0.trait == .fallback || Set($0.variant.keys) == [[.iOS, .macOS]]
+            }))
         XCTAssertEqual(symbol.alternateSignatureVariants.allValues.count, 2)
-        XCTAssert(symbol.alternateSignatureVariants.allValues.allSatisfy({
-            $0.trait == .fallback || Set($0.variant.keys) == [[.iOS, .macOS]]
-        }))
-        
+        XCTAssert(
+            symbol.alternateSignatureVariants.allValues.allSatisfy({
+                $0.trait == .fallback || Set($0.variant.keys) == [[.iOS, .macOS]]
+            }))
+
         // Verify that the rendered symbol displays both signatures
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
@@ -206,11 +209,13 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // nondeterminism failure in a unit-test environment, but it does make it
             // much more likely. Make sure that the order of the platform-specific
             // declarations is consistent between runs.
-            let catalog = Folder(name: "unit-test.docc", content: [
-                InfoPlist(displayName: "PlatformSpecificDeclarations", identifier: "com.test.example"),
-                JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content: symbolGraph1),
-                JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
-            ])
+            let catalog = Folder(
+                name: "unit-test.docc",
+                content: [
+                    InfoPlist(displayName: "PlatformSpecificDeclarations", identifier: "com.test.example"),
+                    JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content: symbolGraph1),
+                    JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
+                ])
 
             let (bundle, context) = try await loadBundle(catalog: catalog)
 
@@ -226,11 +231,13 @@ class DeclarationsRenderSectionTests: XCTestCase {
             XCTAssertEqual(declarationsSection.declarations.count, 2)
 
             XCTAssertEqual(Set(declarationsSection.declarations[0].platforms), Set([.iOS, .iPadOS, .catalyst]))
-            XCTAssertEqual(declarationsSection.declarations[0].tokens.map(\.text).joined(),
-                           "init(_ content: OtherClass) throws")
+            XCTAssertEqual(
+                declarationsSection.declarations[0].tokens.map(\.text).joined(),
+                "init(_ content: OtherClass) throws")
             XCTAssertEqual(declarationsSection.declarations[1].platforms, [.macOS])
-            XCTAssertEqual(declarationsSection.declarations[1].tokens.map(\.text).joined(),
-                           "init(_ content: MyClass) throws")
+            XCTAssertEqual(
+                declarationsSection.declarations[1].tokens.map(\.text).joined(),
+                "init(_ content: MyClass) throws")
         }
 
         try await runAssertions(forwards: true)
@@ -247,10 +254,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
-            CopyOfFile(original: symbolGraphFile),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
+                CopyOfFile(original: symbolGraphFile),
+            ])
 
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
@@ -457,10 +466,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
         })
         let symbolGraph = makeSymbolGraph(moduleName: "FancierOverloads", symbols: symbols)
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "FancierOverloads", identifier: "com.test.example"),
-            JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "FancierOverloads", identifier: "com.test.example"),
+                JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
+            ])
 
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
@@ -473,12 +484,14 @@ class DeclarationsRenderSectionTests: XCTestCase {
             XCTAssertEqual(declarationsSection.declarations.count, 1, file: file, line: line)
             let declarations = try XCTUnwrap(declarationsSection.declarations.first, file: file, line: line)
 
-            XCTAssertEqual(declarationsAndHighlights(for: declarations), [
-                "init(_ content: MyClass) throws",
-                "                ~~~~~~~~ ~~~~~~",
-                "init(_ content: some ConvertibleToMyClass)",
-                "                ~~~~ ~~~~~~~~~~~~~~~~~~~~~",
-            ], file: file, line: line)
+            XCTAssertEqual(
+                declarationsAndHighlights(for: declarations),
+                [
+                    "init(_ content: MyClass) throws",
+                    "                ~~~~~~~~ ~~~~~~",
+                    "init(_ content: some ConvertibleToMyClass)",
+                    "                ~~~~ ~~~~~~~~~~~~~~~~~~~~~",
+                ], file: file, line: line)
         }
 
         for i in 0...overloadsCount {
@@ -494,10 +507,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
-            CopyOfFile(original: symbolGraphFile),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
+                CopyOfFile(original: symbolGraphFile),
+            ])
 
         let (bundle, context) = try await loadBundle(catalog: catalog)
 
@@ -528,10 +543,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "ConformanceOverloads", identifier: "com.test.example"),
-            CopyOfFile(original: symbolGraphFile),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "ConformanceOverloads", identifier: "com.test.example"),
+                CopyOfFile(original: symbolGraphFile),
+            ])
 
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
@@ -553,12 +570,14 @@ class DeclarationsRenderSectionTests: XCTestCase {
         let otherDeclarations = try XCTUnwrap(declarations.otherDeclarations)
         XCTAssertEqual(otherDeclarations.declarations.count, 1)
 
-        XCTAssertEqual(otherDeclarations.declarations.first?.conformance?.constraints, [
-            .codeVoice(code: "T"),
-            .text(" conforms to "),
-            .codeVoice(code: "Equatable"),
-            .text("."),
-        ])
+        XCTAssertEqual(
+            otherDeclarations.declarations.first?.conformance?.constraints,
+            [
+                .codeVoice(code: "T"),
+                .text(" conforms to "),
+                .codeVoice(code: "Equatable"),
+                .text("."),
+            ])
     }
 }
 
@@ -610,12 +629,14 @@ struct DeclarationsRenderSectionTests_new {
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "macos.symbols.json", content: graph(platform: "macos", default: ".standard")),
-            JSONFile(name: "tvos.symbols.json", content: graph(platform: "tvos", default: ".compact")),
-            JSONFile(name: "watchos.symbols.json", content: graph(platform: "watchos", default: ".mini")),
-            JSONFile(name: "visionos.symbols.json", content: graph(platform: "visionos", default: ".immersive")),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                JSONFile(name: "macos.symbols.json", content: graph(platform: "macos", default: ".standard")),
+                JSONFile(name: "tvos.symbols.json", content: graph(platform: "tvos", default: ".compact")),
+                JSONFile(name: "watchos.symbols.json", content: graph(platform: "watchos", default: ".mini")),
+                JSONFile(name: "visionos.symbols.json", content: graph(platform: "visionos", default: ".immersive")),
+            ])
         let context = try await load(catalog: catalog, configuration: configuration)
 
         let reference = try #require(context.documentationCache.reference(symbolID: "main"))
@@ -626,11 +647,12 @@ struct DeclarationsRenderSectionTests_new {
 
         // The macOS declaration must be used to compute the LCS, where only the parameter type differs.
         // If a different platform is used, the sibling overload gets highlighted differently here.
-        #expect(declarationsAndHighlights(for: try #require(section.declarations.first)) == [
-            "func make(_ value: Other = .standard)",
-            "                   ~~~~~             ",
-            "func make(_ value: Value = .standard)",
-            "                   ~~~~~             ",
-        ])
+        #expect(
+            declarationsAndHighlights(for: try #require(section.declarations.first)) == [
+                "func make(_ value: Other = .standard)",
+                "                   ~~~~~             ",
+                "func make(_ value: Value = .standard)",
+                "                   ~~~~~             ",
+            ])
     }
 }

@@ -31,17 +31,18 @@ extension Collection where Index == Int, Self: SendableMetatype {
     /// > Warning: As multiple copies of `block` are executed concurrently, mutating shared state outside the closure is not safe.
     func concurrentMap<Result>(
         batches: UInt = UInt(ProcessInfo.processInfo.processorCount * 4),
-        block: (Element) -> Result) -> [Result] {
-        
+        block: (Element) -> Result
+    ) -> [Result] {
+
         // If concurrency is disabled fall back on `map`.
         guard useConcurrentCollectionExtensions else { return map(block) }
-        
+
         guard !isEmpty else { return [] }
         precondition(batches > 0, "The number of concurrent batches should be greater than zero.")
-        
+
         let batchElementCount = Int(Double(count) / Double(batches) + 1)
         let allResults = Synchronized<[Int: [Result]]>([:])
-        
+
         // Concurrently run `block` over slices of the collection.
         DispatchQueue.concurrentPerform(iterations: Int(batches)) { batch in
             // Determine the start index and the elements count of each batch.
@@ -52,16 +53,16 @@ extension Collection where Index == Int, Self: SendableMetatype {
             // Create a new array to collect results within this batch.
             var batchResults = [Result]()
             batchResults.reserveCapacity(batchCount)
-            
+
             // Run serially `block` over the elements
-            for offset in startOffset ..< startOffset + batchCount {
+            for offset in startOffset..<startOffset + batchCount {
                 batchResults.append(block(self[offset]))
             }
-            
+
             // Add the batch results to a dictionary keyed by the batch number
             allResults.sync({ $0[batch] = batchResults })
         }
-        
+
         // Stitch together the batch results in the correct order
         return allResults.sync({ allResults in
             // Sort the keys to preserve the original element order.
@@ -79,14 +80,15 @@ extension Collection where Index == Int, Self: SendableMetatype {
     ///         to the order of elements in the results array.
     func concurrentPerform(
         batches: UInt = UInt(ProcessInfo.processInfo.processorCount * 4),
-        block: (Element) -> Void) {
+        block: (Element) -> Void
+    ) {
 
         // If concurrency is disabled fall back on `forEach`.
         guard useConcurrentCollectionExtensions else { return forEach(block) }
 
         let _ = concurrentPerform { element, _ in block(element) } as [Void]
     }
-    
+
     /// Concurrently performs a block over the elements of the collection and collects any results.
     /// - Parameters:
     ///   - batches: The number of batches to split the elements.
@@ -106,8 +108,9 @@ extension Collection where Index == Int, Self: SendableMetatype {
     ///         to the order of elements in the results array.
     func concurrentPerform<Result>(
         batches: UInt = UInt(ProcessInfo.processInfo.processorCount * 4),
-        block: (Element, inout [Result]) -> Void) -> [Result] {
-        
+        block: (Element, inout [Result]) -> Void
+    ) -> [Result] {
+
         // If concurrency is disabled fall back on `forEach`.
         guard useConcurrentCollectionExtensions else {
             var results = [Result]()
@@ -117,10 +120,10 @@ extension Collection where Index == Int, Self: SendableMetatype {
 
         guard !isEmpty else { return [] }
         precondition(batches > 0, "The number of concurrent batches should be greater than zero.")
-        
+
         let batchElementCount = Int(Double(count) / Double(batches) + 1)
         let allResults = Synchronized<[Result]>([])
-        
+
         // Concurrently run `block` over slices of the collection.
         DispatchQueue.concurrentPerform(iterations: Int(batches)) { batch in
             // Determine the start index and the elements count of each batch.
@@ -131,15 +134,15 @@ extension Collection where Index == Int, Self: SendableMetatype {
             // Create a new array to collect results within this batch.
             var batchResults = [Result]()
             batchResults.reserveCapacity(batchCount)
-            
+
             // Run serially `block` over the elements
-            for offset in startOffset ..< startOffset + batchCount {
+            for offset in startOffset..<startOffset + batchCount {
                 block(self[offset], &batchResults)
             }
-            
+
             allResults.sync({ $0.append(contentsOf: batchResults) })
         }
-        
+
         // Return the collected results from all batches.
         return allResults.sync({ $0 })
     }
@@ -167,7 +170,7 @@ extension Collection {
             try await withoutActuallyEscaping(combineResults) { combineResults in
                 try await withThrowingTaskGroup(of: PartialResult.self, returning: Result.self) { taskGroup in
                     var remaining = self[...]
-                    
+
                     // Don't run more tasks in parallel than there are cores to run them
                     let maxParallelTasks: Int = ProcessInfo.processInfo.processorCount
                     // Finding the right number of tasks is a balancing act.
@@ -187,9 +190,9 @@ extension Collection {
                     //
                     let numberOfElementsPerTask: Int = Swift.max(
                         Int(Double(remaining.count) / Double(maxParallelTasks * 10) + 1),
-                        20 // (this is a completely arbitrary task size threshold)
+                        20  // (this is a completely arbitrary task size threshold)
                     )
-                    
+
                     // Start the first round of work.
                     // If the collection is big, this will add one task per core.
                     // If the collection is small, this will only add a few tasks.
@@ -197,7 +200,7 @@ extension Collection {
                         if !remaining.isEmpty {
                             let slice = remaining.prefix(numberOfElementsPerTask)
                             remaining = remaining.dropFirst(numberOfElementsPerTask)
-                            
+
                             // Start work of one slice of the known pages
                             #if compiler(<6.2)
                             taskGroup.addTask {
@@ -210,21 +213,21 @@ extension Collection {
                             #endif
                         }
                     }
-                    
+
                     var result = initialResult
-                    
+
                     for try await partialResult in taskGroup {
                         // Check if the larger task group has been cancelled and if so, avoid doing any further work.
                         try Task.checkCancellation()
-                        
+
                         combineResults(&result, partialResult)
-                        
+
                         // Now that one task has finished, and one core is available for work,
                         // see if we have more slices to process and add one more task to process that slice.
                         if !remaining.isEmpty {
                             let slice = remaining.prefix(numberOfElementsPerTask)
                             remaining = remaining.dropFirst(numberOfElementsPerTask)
-                            
+
                             // Start work of one slice of the known pages
                             #if compiler(<6.2)
                             taskGroup.addTask {
@@ -237,7 +240,7 @@ extension Collection {
                             #endif
                         }
                     }
-                    
+
                     return result
                 }
             }

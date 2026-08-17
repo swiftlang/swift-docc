@@ -48,47 +48,48 @@ final class PreviewServer {
         case cannotStartServer(port: Int)
         /// The given port is not available
         case portNotAvailable(port: Int)
-        
+
         var errorDescription: String {
             switch self {
-                case .failedToStart: return "Failed to start preview server"
-                case .pathNotFound(let path): return "The preview content path '\(path)' is not found"
-                case .cannotStartServer(let port): return "Can't start the preview server on port \(port)"
-                case .portNotAvailable(let port): return "Port \(port) is not available at the moment, "
+            case .failedToStart: return "Failed to start preview server"
+            case .pathNotFound(let path): return "The preview content path '\(path)' is not found"
+            case .cannotStartServer(let port): return "Can't start the preview server on port \(port)"
+            case .portNotAvailable(let port):
+                return "Port \(port) is not available at the moment, "
                     + "try a different port number by adding the option '--port XXXX' "
                     + "to your command invocation where XXXX is the desired (free) port."
             }
         }
     }
-    
+
     private struct State {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
         let threadPool = NIOThreadPool(numberOfThreads: System.coreCount)
-        
+
         var bootstrap: ServerBootstrap!
         var channel: (any Channel)!
     }
-    
+
     private var state = Synchronized(State())
-    
+
     @_spi(Testing)
     public var _boundPort: Int? {
         state.sync {
             $0.channel.localAddress?.port
         }
     }
-    
+
     private let contentURL: URL
     private let fileManager: any FileManagerProtocol
-    
+
     /// A list of server-bind destinations.
     public enum Bind: CustomStringConvertible {
         /// A port on the local machine.
         case localhost(port: Int)
-        
+
         /// A file socket on disk.
         case socket(path: String)
-        
+
         var description: String {
             switch self {
             case .localhost(port: let port):
@@ -98,13 +99,13 @@ final class PreviewServer {
             }
         }
     }
-    
+
     /// Where to try binding the server; can be an ip address or a socket.
     private let bindTo: Bind
-    
+
     /// The output to write log messages to.
     private var logHandle: LogHandle
-    
+
     /// Creates a new preview server with the given content directory, bind destination, and credentials.
     ///
     /// - Parameters:
@@ -118,7 +119,7 @@ final class PreviewServer {
         guard contentPathExists && isDirectory.boolValue else {
             throw Error.pathNotFound(contentURL.path)
         }
-        
+
         self.contentURL = contentURL
         self.bindTo = bindTo
         self.logHandle = logHandle
@@ -151,10 +152,10 @@ final class PreviewServer {
                 .childChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
                 .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 16)
                 .childChannelOption(ChannelOptions.allowRemoteHalfClosure, value: true)
-            
+
             // Start the server
             $0.threadPool.start()
-            
+
             switch bindTo {
             case .localhost(let port):
                 // Customize the errors when binding to a localhost port
@@ -165,25 +166,25 @@ final class PreviewServer {
                 } catch {
                     throw Error.cannotStartServer(port: port)
                 }
-                
+
             case .socket(let path):
                 $0.channel = try $0.bootstrap.bind(unixDomainSocketPath: path).wait()
             }
-            
+
             guard let _ = $0.channel.localAddress else {
                 throw Error.failedToStart
             }
-            
+
             // Return the closeFuture so that we can `wait()` it outside the synchronization scope.
             return $0.channel.closeFuture
         }
-        
+
         onReady?()
-        
+
         // This will block until the server is stopped
         try closeFuture.wait()
     }
-    
+
     /// Stops the current preview server.
     /// - throws: If the server fails to close the communication channel or the async infrastructure.
     func stop() throws {
@@ -196,7 +197,7 @@ final class PreviewServer {
         }
         print("Stopped preview server at \(bindTo)", to: &logHandle)
     }
-    
+
     deinit {
         // Only synchronize around the `isWritable` check (as opposed to the full deinitialization scope).
         // The synchronization lock isn't reentrant and `stop()` also acquires the lock to close and shut down.

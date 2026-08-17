@@ -25,7 +25,7 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
             atomically: true,
             encoding: .utf8
         )
-        
+
         // Setting up the URL generator with a lengthy target folder path
         // that is guaranteed to throw if we try writing a file.
         let writer = JSONEncodingRenderNodeWriter(
@@ -33,13 +33,13 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
             fileManager: FileManager.default,
             transformForStaticHostingIndexHTML: indexHTML
         )
-        
+
         let renderNode = RenderNode(identifier: .init(bundleID: "com.test", path: "/documentation/test", sourceLanguage: .swift), kind: .article)
-        
+
         // We take precautions in case we deadlock to stop the execution with a failing code.
         // In case the original issue is present and we deadlock, we fatalError from a bg thread.
         let didReleaseExecution = expectation(description: "Did release execution")
-        
+
         DispatchQueue.global(qos: .default).async {
             do {
                 try writer.write(renderNode, encoder: RenderJSONEncoder.makeEncoder())
@@ -48,7 +48,7 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
                 didReleaseExecution.fulfill()
             }
         }
-        
+
         waitForExpectations(timeout: 2.0)
     }
 }

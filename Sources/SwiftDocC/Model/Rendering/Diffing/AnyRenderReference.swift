@@ -13,21 +13,21 @@
 /// An `AnyRenderReference` value forwards difference operations to the underlying base type, which implement the difference differently.
 struct AnyRenderReference: Encodable, Equatable, RenderJSONDiffable {
     var value: any (RenderReference & Codable)
-    
+
     init(_ value: any (RenderReference & Codable)) {
         self.value = value
     }
-    
+
     func encode(to encoder: any Encoder) throws {
         try value.encode(to: encoder)
     }
-    
+
     /// Forwards the difference methods on to the correct concrete type.
     func difference(from other: AnyRenderReference, at path: CodablePath) -> JSONPatchDifferences {
         switch (self.value.type, other.value.type) {
-            
+
         // MARK: References
-            
+
         case (.file, .file):
             return (value as! FileReference).difference(from: (other.value as! FileReference), at: path)
         case (.fileType, .fileType):
@@ -42,14 +42,14 @@ struct AnyRenderReference: Encodable, Equatable, RenderJSONDiffable {
             return (value as! UnresolvedRenderReference).difference(from: (other.value as! UnresolvedRenderReference), at: path)
         case (.video, .video):
             return (value as! VideoReference).difference(from: (other.value as! VideoReference), at: path)
-            
+
         // MARK: Tutorial References
-            
+
         case (.download, .download):
             return (value as! DownloadReference).difference(from: (other.value as! DownloadReference), at: path)
         case (.xcodeRequirement, .xcodeRequirement):
             return (value as! XcodeRequirementReference).difference(from: (other.value as! XcodeRequirementReference), at: path)
-            
+
         default:
             assertionFailure("Case diffing \(value) with \(other.value) is not implemented.")
             return []
@@ -58,9 +58,9 @@ struct AnyRenderReference: Encodable, Equatable, RenderJSONDiffable {
 
     static func == (lhs: AnyRenderReference, rhs: AnyRenderReference) -> Bool {
         switch (lhs.value.type, rhs.value.type) {
-            
+
         // MARK: References
-          
+
         case (.file, .file):
             return (lhs.value as! FileReference) == (rhs.value as! FileReference)
         case (.fileType, .fileType):
@@ -75,20 +75,20 @@ struct AnyRenderReference: Encodable, Equatable, RenderJSONDiffable {
             return (lhs.value as! UnresolvedRenderReference) == (rhs.value as! UnresolvedRenderReference)
         case (.video, .video):
             return (lhs.value as! VideoReference) == (rhs.value as! VideoReference)
-        
+
         // MARK: Tutorial References
-            
+
         case (.download, .download):
             return (lhs.value as! DownloadReference) == (rhs.value as! DownloadReference)
         case (.xcodeRequirement, .xcodeRequirement):
             return (lhs.value as! XcodeRequirementReference) == (rhs.value as! XcodeRequirementReference)
-        
+
         default:
             assertionFailure("Case diffing \(lhs.value) with \(rhs.value) is not implemented.")
             return false
         }
     }
-    
+
     func isSimilar(to other: AnyRenderReference) -> Bool {
         return self.value.identifier == other.value.identifier
     }

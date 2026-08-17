@@ -14,24 +14,24 @@ public import Foundation
 ///
 /// You can use log handle objects to write to standard output, standard error, or any given file handle.
 public enum LogHandle: TextOutputStream {
-    
+
     /// A log handle that will perform writes to standard output.
     case standardOutput
-    
+
     /// A log handle that will perform writes to standard error.
     case standardError
-    
+
     /// A log handle that will ignore all write requests.
     ///
     /// This log handle's intended use case is for testing scenarios when logs can be ignored.
     case none
-    
+
     /// A log handle that will write to the given file handle.
     case file(FileHandle)
-    
+
     /// A log handle that writes to an NSString reference.
     case memory(LogStorage)
-    
+
     /// A by-reference string storage.
     public class LogStorage {
         var _text = Synchronized("")
@@ -39,7 +39,7 @@ public enum LogHandle: TextOutputStream {
             _text.sync { $0 }
         }
     }
-    
+
     /// Writes the given string to the log handle.
     public mutating func write(_ string: String) {
         switch self {
@@ -58,4 +58,3 @@ public enum LogHandle: TextOutputStream {
         }
     }
 }
-

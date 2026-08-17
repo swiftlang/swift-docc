@@ -54,7 +54,7 @@ extension DirectedGraph {
         }
         return nil
     }
-    
+
     /// Returns a list of all the "unique" cycles in the graph encountered through breadth first traversal from a given starting point.
     ///
     /// Each cycle starts at the earliest repeated node and ends with the node that links back to the repeated node.
@@ -155,7 +155,7 @@ extension DirectedGraph {
     /// ```
     func cycles(from startingPoint: Node) -> [Path] {
         var cycles = [Path]()
-        
+
         for case let (path, _, cycleStartIndex?) in accumulatingPaths(from: startingPoint) {
             let cycle = path[cycleStartIndex...]
             guard !cycles.contains(where: { areSameCycle(cycle, $0) }) else {
@@ -163,21 +163,21 @@ extension DirectedGraph {
             }
             cycles.append(Array(cycle))
         }
-        
+
         return cycles
     }
-    
+
     private func areSameCycle(_ lhs: Path.SubSequence, _ rhs: Path) -> Bool {
         // Check if the cycles have the same start and end points.
         // A cycle has to contain at least one node, so it's always safe to unwrap 'first' and 'last'.
         if lhs.first! == rhs.first!, lhs.last! == rhs.last! {
             return true
         }
-        
+
         // Check if the cycles are rotations of each other
         if lhs.count == rhs.count {
             let rhsStart = rhs.first!
-            
+
             // swift-format-ignore
             return (lhs + lhs)                   // Repeat one of the cycles once
                 .drop(while: { $0 != rhsStart }) // Align it with the other cycle by removing its leading nodes

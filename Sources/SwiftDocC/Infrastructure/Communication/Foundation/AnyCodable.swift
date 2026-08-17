@@ -14,12 +14,12 @@
 public struct AnyCodable: Codable, CustomDebugStringConvertible {
     /// The base encodable value.
     public var value: any Encodable
-    
+
     /// Creates a codable value that wraps the given base.
     public init(_ encodable: any Encodable) {
         value = encodable
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if container.decodeNil() {
@@ -28,11 +28,11 @@ public struct AnyCodable: Codable, CustomDebugStringConvertible {
             value = try container.decode(JSON.self)
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         try value.encode(to: encoder)
     }
-    
+
     public var debugDescription: String {
         return String(describing: value)
     }

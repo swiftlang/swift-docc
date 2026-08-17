@@ -24,10 +24,12 @@ class TutorialSectionTests: XCTestCase {
         let section = TutorialSection(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(section)
         XCTAssertEqual(2, diagnostics.count)
-        XCTAssertEqual(diagnostics.map(\.identifier), [
-            "org.swift.docc.HasArgument.title",
-            "org.swift.docc.HasExactlyOne<Section, Steps>.Missing",
-        ])
+        XCTAssertEqual(
+            diagnostics.map(\.identifier),
+            [
+                "org.swift.docc.HasArgument.title",
+                "org.swift.docc.HasExactlyOne<Section, Steps>.Missing",
+            ])
         XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
     }
 }

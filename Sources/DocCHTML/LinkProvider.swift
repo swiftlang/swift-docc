@@ -16,13 +16,13 @@ package import DocCCommon
 package protocol LinkProvider {
     /// Provide information about another page or on-page element, or `nil` if the other page can't be found.
     func element(for path: URL) -> LinkedElement?
-    
+
     /// Provide the path for a symbol based on its unique identifier, or `nil` if the other symbol with that identifier can't be found.
     func pathForSymbolID(_ usr: String) -> URL?
-    
+
     /// Provide information about an asset (for example an image or video), or `nil` if the asset can't be found.
     func assetNamed(_ assetName: String) -> LinkedAsset?
-    
+
     /// Fallback link text for a link string that the provider couldn't provide any information for.
     func fallbackLinkText(linkString: String) -> String
 }
@@ -49,7 +49,7 @@ package struct LinkedElement {
         self.subheadings = subheadings
         self.abstract = abstract
     }
-    
+
     /// The single name or language-specific names to use when referring to a linked element in inline content.
     package enum Names {
         /// This element has the same name in all language representations
@@ -65,7 +65,7 @@ package struct LinkedElement {
         /// The name refers to a symbol's subheading declaration and should display in a monospaced font.
         case symbol(String)
     }
-    
+
     /// The single subheading or language-specific subheadings to use when referring to a linked element in either a Topics section, See Also section, or in a `@Links` directive.
     package enum Subheadings {
         /// This element has the same name in all language representations
@@ -81,19 +81,19 @@ package struct LinkedElement {
         /// The name refers to a symbol's subheading declaration and should display in a monospaced font.
         case symbol([SymbolNameFragment])
     }
-    
+
     /// A fragment in a symbol's name
     package struct SymbolNameFragment {
         /// The textual spelling of this fragment
         package var text: String
         /// The kind of fragment
         package var kind: Kind
-        
+
         /// The display kind of a single  symbol name fragment
         package enum Kind: String {
             case identifier, decorator
         }
-        
+
         package init(text: String, kind: Kind) {
             self.text = text
             self.kind = kind
@@ -105,11 +105,11 @@ package struct LinkedElement {
 package struct LinkedAsset {
     /// The path within the output archive to each file for this asset, grouped by their light/dark style and display scale.
     package var files: [ColorStyle: [Int /* display scale*/: URL]]
-    
-    package init(files: [ColorStyle : [Int /* display scale*/: URL]]) {
+
+    package init(files: [ColorStyle: [Int /* display scale*/: URL]]) {
         self.files = files
     }
-    
+
     package enum ColorStyle: String {
         case light, dark
     }

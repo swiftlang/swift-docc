@@ -12,7 +12,7 @@ import Testing
 @testable import SwiftDocC
 
 struct String_SlashTests {
-    
+
     @Test(arguments: [
         ("", "/"),
         ("path", "/path"),
@@ -21,7 +21,7 @@ struct String_SlashTests {
     func prependsLeadingSlashWhenMissing(input: String, expected: String) {
         #expect(input.prependingLeadingSlash == expected)
     }
-    
+
     @Test(arguments: [
         ("/", ""),
         ("/path", "path"),

@@ -38,12 +38,12 @@ public enum RenderInlineContent: Equatable {
     case strong(inlineContent: [RenderInlineContent])
     /// An image element.
     case image(identifier: RenderReferenceIdentifier, metadata: RenderContentMetadata?)
-    
+
     /// A reference to another resource.
     case reference(identifier: RenderReferenceIdentifier, isActive: Bool, overridingTitle: String?, overridingTitleInlineContent: [RenderInlineContent]?)
     /// A piece of plain text.
     case text(String)
-    
+
     /// A piece of content that introduces a new term.
     case newTerm(inlineContent: [RenderInlineContent])
     /// An inline heading.
@@ -61,11 +61,11 @@ extension RenderInlineContent: Codable {
     private enum InlineType: String, Codable {
         case codeVoice, emphasis, strong, image, reference, text, newTerm, inlineHead, `subscript`, superscript, strikethrough
     }
-    
+
     private enum CodingKeys: CodingKey {
         case type, code, inlineContent, identifier, title, destination, text, isActive, overridingTitle, overridingTitleInlineContent, metadata
     }
-    
+
     private var type: InlineType {
         switch self {
         case .codeVoice: return .codeVoice
@@ -81,7 +81,7 @@ extension RenderInlineContent: Codable {
         case .strikethrough: return .strikethrough
         }
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(InlineType.self, forKey: .type)
@@ -94,14 +94,14 @@ extension RenderInlineContent: Codable {
             self = try .strong(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
         case .image:
             self = try .image(
-                identifier: container.decode(RenderReferenceIdentifier.self, forKey: . identifier),
+                identifier: container.decode(RenderReferenceIdentifier.self, forKey: .identifier),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
             )
         case .reference:
             let identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
             let overridingTitle: String?
             let overridingTitleInlineContent: [RenderInlineContent]?
-            
+
             if let formattedOverridingTitle = try container.decodeIfPresent([RenderInlineContent].self, forKey: .overridingTitleInlineContent) {
                 overridingTitleInlineContent = formattedOverridingTitle
                 overridingTitle = try container.decodeIfPresent(String.self, forKey: .overridingTitle) ?? formattedOverridingTitle.plainText
@@ -113,10 +113,11 @@ extension RenderInlineContent: Codable {
                 overridingTitle = nil
             }
 
-            self = try .reference(identifier: identifier,
-                                  isActive: container.decode(Bool.self, forKey: .isActive),
-                                  overridingTitle: overridingTitle,
-                                  overridingTitleInlineContent: overridingTitleInlineContent)
+            self = try .reference(
+                identifier: identifier,
+                isActive: container.decode(Bool.self, forKey: .isActive),
+                overridingTitle: overridingTitle,
+                overridingTitleInlineContent: overridingTitleInlineContent)
             decoder.registerReferences([identifier.identifier])
         case .text:
             self = try .text(container.decode(String.self, forKey: .text))
@@ -132,7 +133,7 @@ extension RenderInlineContent: Codable {
             self = try .strikethrough(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)

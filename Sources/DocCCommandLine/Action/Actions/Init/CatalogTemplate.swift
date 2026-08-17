@@ -9,10 +9,10 @@
 */
 
 struct CatalogTemplate {
-    
+
     let files: [String: String]
     let additionalDirectories: [String]
-    
+
     /// Creates a Catalog Template using one of the provided template kinds.
     init(_ templateKind: CatalogTemplateKind, title: String) throws {
         switch templateKind {
@@ -22,7 +22,7 @@ struct CatalogTemplate {
         case .tutorial:
             self.files = CatalogTemplateKind.tutorialTemplateFiles(title)
             self.additionalDirectories = ["Resources", "Chapter01/Resources"]
-            
+
         }
     }
 }

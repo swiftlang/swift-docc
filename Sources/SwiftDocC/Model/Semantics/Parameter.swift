@@ -22,7 +22,7 @@ public struct Parameter {
     var range: SourceRange?
     /// Whether the parameter is documented standalone or as a member of a parameters outline.
     var isStandalone: Bool
-    
+
     /// Initialize a value to describe documentation about a parameter for a symbol.
     /// - Parameters:
     ///   - name: The name of this parameter.
@@ -46,6 +46,6 @@ public struct Parameter {
         self.nameRange = nil
         self.contents = Array(doxygenParameter.children)
         self.range = doxygenParameter.range
-        self.isStandalone = true // Each Doxygen parameter has a `\param` command.
+        self.isStandalone = true  // Each Doxygen parameter has a `\param` command.
     }
 }

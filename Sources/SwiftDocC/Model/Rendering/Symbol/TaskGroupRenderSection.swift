@@ -11,7 +11,7 @@
 /// A task group section that contains links to other symbols.
 public struct TaskGroupRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind = .taskGroup
-    
+
     /// An optional title for the section.
     public var title: String?
     /// An optional abstract summary for the section.
@@ -31,14 +31,14 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
     }
 
     private var typeErasedSection: AnyRenderSection?
-    
+
     /// A list of topic graph references.
     public let identifiers: [String]
     /// If true, this is an automatically generated group. If false, this is an authored group.
     public let generated: Bool
     /// An optional anchor that can be used to link to the task group.
     public let anchor: String?
-    
+
     /// Creates a new task group.
     /// - Parameters:
     ///   - title: An optional title for the section.
@@ -55,15 +55,15 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
         self.anchor = anchor ?? title.map(urlReadableFragment)
         self.discussion = discussion
     }
-    
+
     /// The list of keys you use to encode or decode this section.
     private enum CodingKeys: CodingKey {
         case title, abstract, discussion, identifiers, generated, anchor
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
         try container.encodeIfPresent(discussion.map(CodableRenderSection.init), forKey: .discussion)
@@ -73,10 +73,10 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
         }
         try container.encodeIfPresent(anchor, forKey: .anchor)
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         title = try container.decodeIfPresent(String.self, forKey: .title)
         abstract = try container.decodeIfPresent([RenderInlineContent].self, forKey: .abstract)
         identifiers = try container.decode([String].self, forKey: .identifiers)
@@ -113,14 +113,12 @@ extension TaskGroupRenderSection: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.discussion, forKey: CodingKeys.discussion)
         diffBuilder.addDifferences(atKeyPath: \.identifiers, forKey: CodingKeys.identifiers)
         diffBuilder.addDifferences(atKeyPath: \.generated, forKey: CodingKeys.generated)
-        
+
         return diffBuilder.differences
     }
 
     /// Returns if this TaskGroupRenderSection is similar enough to the given one.
     func isSimilar(to other: TaskGroupRenderSection) -> Bool {
-        return ((self.title != nil) && self.title == other.title) ||
-               ((self.abstract != nil) && self.abstract == other.abstract) ||
-               self.identifiers == other.identifiers
+        return ((self.title != nil) && self.title == other.title) || ((self.abstract != nil) && self.abstract == other.abstract) || self.identifiers == other.identifiers
     }
 }

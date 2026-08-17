@@ -26,7 +26,7 @@ package extension MarkdownRenderer {
         package var deprecated: String?
         /// A Boolean value indicating if the platform is currently in beta.
         package var isBeta: Bool
-        
+
         package init(name: String, introduced: String? = nil, deprecated: String? = nil, isBeta: Bool) {
             self.name = name
             self.introduced = introduced
@@ -34,15 +34,15 @@ package extension MarkdownRenderer {
             self.isBeta = isBeta
         }
     }
-    
+
     /// Creates an HTML element that describes the versions that a piece of API is available for the platforms described in the given availability information.
     func availability(_ info: [AvailabilityInfo]) -> XMLNode {
         let items: [XMLNode] = info.map {
             var text = $0.name
-            
+
             let description: String
             if let introduced = $0.introduced {
-                if let deprecated  = $0.deprecated{
+                if let deprecated = $0.deprecated {
                     text += " \(introduced)–\(deprecated)"
                     description = "Introduced in \($0.name) \(introduced) and deprecated in \($0.name) \(deprecated)"
                 } else {
@@ -52,7 +52,7 @@ package extension MarkdownRenderer {
             } else {
                 description = "Available on \($0.name)"
             }
-            
+
             var attributes = [
                 "aria-label": "\(text), \(description)",
                 "title": description
@@ -62,10 +62,10 @@ package extension MarkdownRenderer {
             } else if $0.deprecated != nil {
                 attributes["class"] = "deprecated"
             }
-            
+
             return .element(named: "li", children: [.text(text)], attributes: goal == .richness ? attributes : [:])
         }
-        
+
         return .element(
             named: "ul",
             children: items,

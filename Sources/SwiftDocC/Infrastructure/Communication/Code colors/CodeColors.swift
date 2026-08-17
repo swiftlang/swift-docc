@@ -13,102 +13,102 @@ public struct CodeColors: Equatable {
 
     /// The content color customizations for this collection.
     public var colors = [CodeColorsPreferenceKey: SRGBColor]()
-    
+
     /// The color the renderer uses for code area backgrounds.
     public var background: SRGBColor? {
         get { return colors[.background] }
         set { colors[.background] = newValue }
     }
-    
+
     /// The color the renderer uses for highlighted lines.
     public var lineHighlight: SRGBColor? {
         get { return colors[.lineHighlight] }
         set { colors[.lineHighlight] = newValue }
     }
-    
+
     /// The color the renderer uses for plain text.
     public var text: SRGBColor? {
         get { return colors[.text] }
         set { colors[.text] = newValue }
     }
-    
+
     /// The color the renderer uses for keywords.
     public var keyword: SRGBColor? {
         get { return colors[.keyword] }
         set { colors[.keyword] = newValue }
     }
-    
+
     /// The color the renderer uses for identifiers.
     public var identifier: SRGBColor? {
         get { return colors[.identifier] }
         set { colors[.identifier] = newValue }
     }
-    
+
     /// The color the renderer uses for parameter names.
     public var parameterName: SRGBColor? {
         get { return colors[.parameterName] }
         set { colors[.parameterName] = newValue }
     }
-    
+
     /// The color the renderer uses for number literals.
     public var numberLiteral: SRGBColor? {
         get { return colors[.numberLiteral] }
         set { colors[.numberLiteral] = newValue }
     }
-    
+
     /// The color the renderer uses for string literals.
     public var stringLiteral: SRGBColor? {
         get { return colors[.stringLiteral] }
         set { colors[.stringLiteral] = newValue }
     }
-    
+
     /// The color the renderer uses for type annotations.
     public var typeAnnotation: SRGBColor? {
         get { return colors[.typeAnnotation] }
         set { colors[.typeAnnotation] = newValue }
     }
-    
+
     /// The color the renderer uses for documentation comments.
     public var docComment: SRGBColor? {
         get { return colors[.docComment] }
         set { colors[.docComment] = newValue }
     }
-    
+
     /// The color the renderer uses for documentation comment fields.
     public var docCommentField: SRGBColor? {
         get { return colors[.docCommentField] }
         set { colors[.docCommentField] = newValue }
     }
-    
+
     /// The color the renderer uses for comments.
     public var comment: SRGBColor? {
         get { return colors[.comment] }
         set { colors[.comment] = newValue }
     }
-    
+
     /// The color the renderer uses for URLs in comments.
     public var commentURL: SRGBColor? {
         get { return colors[.commentURL] }
         set { colors[.commentURL] = newValue }
     }
-    
+
     /// The color the renderer uses for keywords in build configuration code.
     public var buildConfigKeyword: SRGBColor? {
         get { return colors[.buildConfigKeyword] }
         set { colors[.buildConfigKeyword] = newValue }
     }
-    
+
     /// The color the renderer uses for identifiers in build-configuration code.
     public var buildConfigId: SRGBColor? {
         get { return colors[.buildConfigId] }
         set { colors[.buildConfigId] = newValue }
     }
-    
+
     /// Creates a collection of colors given key-color pairs.
     public init(colors: [CodeColorsPreferenceKey: SRGBColor] = [:]) {
         self.colors = colors
     }
-    
+
     /// Creates a collection of colors given the given values.
     /// - Parameters:
     ///   - background: The background color of the code area.
@@ -177,10 +177,10 @@ extension CodeColors: Codable {
         case buildConfigKeyword
         case buildConfigId
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.background = try container.decodeIfPresent(SRGBColor.self, forKey: .background)
         self.lineHighlight = try container.decodeIfPresent(SRGBColor.self, forKey: .lineHighlight)
         self.text = try container.decodeIfPresent(SRGBColor.self, forKey: .text)
@@ -197,7 +197,7 @@ extension CodeColors: Codable {
         self.buildConfigKeyword = try container.decodeIfPresent(SRGBColor.self, forKey: .buildConfigKeyword)
         self.buildConfigId = try container.decodeIfPresent(SRGBColor.self, forKey: .buildConfigId)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(background, forKey: .background)

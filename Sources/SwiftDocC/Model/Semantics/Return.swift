@@ -16,7 +16,7 @@ public struct Return {
     public var contents: [any Markup]
     /// The text range where this return value was parsed.
     var range: SourceRange?
-    
+
     /// Initialize a value to describe documentation about a symbol's return value.
     /// - Parameters:
     ///   - contents: The content that describe the return value for this symbol.

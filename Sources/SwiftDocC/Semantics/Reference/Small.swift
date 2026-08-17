@@ -22,7 +22,7 @@ public import Markdown
 /// You can create a sloth using the ``init(name:color:power:)``
 /// initializer, or create randomly generated sloth using a
 /// ``SlothGenerator``:
-///    
+///
 ///    let slothGenerator = MySlothGenerator(seed: randomSeed())
 ///    let habitat = Habitat(isHumid: false, isWarm: true)
 ///
@@ -35,24 +35,25 @@ public import Markdown
 public final class Small: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
     public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
-    
+
     /// The inline markup that should be rendered in a small font.
     @ChildMarkup(numberOfParagraphs: .oneOrMore)
     public private(set) var content: MarkupContainer
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "content" : \Small._content,
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "content": \Small._content
     ]
-    
+
     override var children: [Semantic] {
         return [content]
     }
-    
+
     var childMarkup: [any Markup] {
         return content.elements
     }
-    
-    @available(*, deprecated,
+
+    @available(
+        *, deprecated,
         message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'."
     )
     init(originalMarkup: BlockDirective) {
@@ -66,16 +67,16 @@ extension Small: RenderableDirectiveConvertible {
         let renderBlockContent = content.elements.flatMap { markupElement in
             return contentCompiler.visit(markupElement) as! [RenderBlockContent]
         }
-        
+
         // Transform every paragraph in the render block content to a small paragraph
         let transformedRenderBlockContent = renderBlockContent.map { block -> RenderBlockContent in
             guard case let .paragraph(paragraph) = block else {
                 return block
             }
-            
+
             return .small(RenderBlockContent.Small(inlineContent: paragraph.inlineContent))
         }
-        
+
         return transformedRenderBlockContent
     }
 }

@@ -69,7 +69,7 @@ extension BlockDirective {
         Volume.directiveName,
         XcodeRequirement.directiveName
     ]
-    
+
     /// Directives which are removed from the markdown content after being parsed.
     static let directivesRemovedFromContent: [String] = [
         Comment.directiveName,

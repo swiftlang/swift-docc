@@ -24,4 +24,3 @@ package extension AsyncAction {
         return try await perform(logHandle: &logHandle)
     }
 }
-

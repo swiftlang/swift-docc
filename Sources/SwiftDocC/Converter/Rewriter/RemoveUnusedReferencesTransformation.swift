@@ -12,7 +12,7 @@
 public struct RemoveUnusedReferencesTransformation: RenderNodeTransforming {
     /// Initializes a new transformer.
     public init() {}
-    
+
     /// Removes references that are unreferenced in a given context from the given render node.
     ///
     /// A reference is considered "unreferenced" if the reference count for that reference in the transformation context is zero.

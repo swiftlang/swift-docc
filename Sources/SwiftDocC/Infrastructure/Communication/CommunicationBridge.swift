@@ -14,10 +14,10 @@
 public protocol CommunicationBridge {
     /// Handler for sending messages.
     associatedtype SendHandler
-    
+
     /// A closure that the communication bridge calls when it receives a message.
     var onReceiveMessage: ((Message) -> ())? { get set }
-    
+
     /// Sends a message to the documentation renderer using the given handler.
     /// - Parameter message: The message to send to the renderer.
     /// - Parameter handler: A closure that performs the sending operation.

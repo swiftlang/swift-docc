@@ -15,24 +15,24 @@ import class Foundation.ProcessInfo
 func swiftSettings(_ languageMode: SwiftLanguageMode) -> [SwiftSetting] {
     var settings: [SwiftSetting] = [
         .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
-        
+
         .swiftLanguageMode(languageMode),
-        
-        .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
-        .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
+
+        .enableUpcomingFeature("ExistentialAny"),  // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
+        .enableUpcomingFeature("InternalImportsByDefault"),  // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
     ]
-    
+
     // Some upcoming language features are enabled by default in the Swift 6 language mode and warn if they're redundantly explicitly enabled.
-    
+
     switch languageMode {
     case .v4, .v4_2, .v5:
         settings.append(
-            .enableUpcomingFeature("ConciseMagicFile") // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
+            .enableUpcomingFeature("ConciseMagicFile")  // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
         )
     default:
         break
     }
-    
+
     return settings
 }
 

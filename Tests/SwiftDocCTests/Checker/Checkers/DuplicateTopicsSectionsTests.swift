@@ -16,73 +16,72 @@ import Markdown
 struct DuplicateTopicsSectionsTests {
     // This file is never read, it's only used as the source of diagnostics and notes
     private let sourceFileForDiagnosticMessages = URL(fileURLWithPath: "/path/to/some-fake-file.md")
-    
+
     @Test
     func doesNotWarnForEmptyDocument() {
         var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(Document())
         #expect(checker.diagnostics.isEmpty)
     }
-    
+
     @Test
     func doesNotWarnForSingleTopicsSection() {
         let markupSource = """
-        # Title
+            # Title
 
-        Blah
+            Blah
 
-        ## Topics
-        """
+            ## Topics
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(document)
         #expect(checker.diagnostics.isEmpty)
     }
-    
+
     @Test
     func warnsAboutMultipleTopicsSection() throws {
         let markupSource = """
-        # Title
+            # Title
 
-        ## Topics
-        ### Topic A
+            ## Topics
+            ### Topic A
 
-        ## Topics
-        ### Topic B
-        
-        ## Topics
-        ### Topic C
-        """
+            ## Topics
+            ### Topic B
+
+            ## Topics
+            ### Topic C
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
         checker.visit(document)
-        
+
         #expect(checker.foundTopicsHeadings.count == 3)
-        let firstTopicsHeading  = try #require(document.child(at: 1) as? Heading)
+        let firstTopicsHeading = try #require(document.child(at: 1) as? Heading)
         let secondTopicsHeading = try #require(document.child(at: 3) as? Heading)
-        let thirdTopicsHeading  = try #require(document.child(at: 5) as? Heading)
-        
+        let thirdTopicsHeading = try #require(document.child(at: 5) as? Heading)
+
         #expect(checker.diagnostics.count == 2)
         for (diagnostics, expectedDiagnosticRange) in zip(checker.diagnostics, [secondTopicsHeading.range, thirdTopicsHeading.range]) {
             #expect(diagnostics.summary == "Topics section can only appear once per page")
             #expect(diagnostics.explanation == "A second-level heading named 'Topics' is reserved for the section you use to organize your documentation hierarchy. Each page can only have a single Topics section.")
-            
-            
+
             #expect(diagnostics.solutions.count == 2)
             let firstSolution = try #require(diagnostics.solutions.first)
             #expect(firstSolution.summary == "Change heading name")
             #expect(firstSolution.replacements.count == 1)
             #expect(firstSolution.replacements.first?.range == expectedDiagnosticRange)
             #expect(firstSolution.replacements.first?.replacement == "## <#New heading name#>")
-            
+
             let secondSolution = try #require(diagnostics.solutions.last)
             #expect(secondSolution.summary == "Move this section's content under the first Topics section")
             #expect(secondSolution.replacements.count == 0)
-            
+
             let diagnostic = diagnostics
             #expect(diagnostic.identifier == "MultipleTopicsSections")
             #expect(diagnostics.range == expectedDiagnosticRange)
-            
+
             let note = try #require(diagnostic.notes.first)
             #expect(note.range == firstTopicsHeading.range)
             #expect(note.message == "Topics section starts here")

@@ -11,7 +11,7 @@
 /// Represents a volume containing a grouped list of tutorials.
 public struct VolumeRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .volume
-    
+
     /// A group in a volume.
     public struct Chapter: Codable, TextIndexing, Equatable {
         /// The name of the chapter.
@@ -20,15 +20,15 @@ public struct VolumeRenderSection: RenderSection, Equatable {
         public var content: [RenderBlockContent] = []
         /// The (ordered) tutorials in a chapter.
         public var tutorials: [RenderReferenceIdentifier] = []
-        
+
         /// An image for the chapter.
         public var image: RenderReferenceIdentifier?
-        
+
         public var headings: [String] {
             return name.map { [$0] } ?? [] + content.headings
         }
 
-        public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+        public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
             return content.rawIndexableTextContent(references: references)
         }
 
@@ -39,26 +39,26 @@ public struct VolumeRenderSection: RenderSection, Equatable {
             self.name = name
         }
     }
-    
+
     /// The title of the volume section.
     public var name: String?
-    
+
     /// An image for the volume.
     public var image: RenderReferenceIdentifier?
-    
+
     /// Content that appears under the title of the chapters section.
     public var content: [RenderBlockContent]? = nil
-    
+
     /// The chapters/groups in this section.
     public var chapters: [Chapter] = []
-    
+
     /// Creates a new volume with the given name.
     ///
     /// - Parameter name: The name of the volume.
     public init(name: String?) {
         self.name = name
     }
-    
+
     enum CodingKeys: CodingKey {
         case kind
         case name
@@ -66,7 +66,7 @@ public struct VolumeRenderSection: RenderSection, Equatable {
         case content
         case chapters
     }
-    
+
     // Override encode(to:) to explicitly encode 'null' when 'name' is nil, for anonymous volumes.
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

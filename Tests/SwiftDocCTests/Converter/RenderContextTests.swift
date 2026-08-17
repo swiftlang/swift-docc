@@ -16,17 +16,20 @@ import DocCTestUtilities
 class RenderContextTests: XCTestCase {
     func testCreatesRenderReferences() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "MyKit", symbols: [
-                makeSymbol(id: "s:6MyKit5MyClassC", kind: .class, pathComponents: ["MyClass"]),
-            ]))
+            JSONFile(
+                symbolGraph: makeSymbolGraph(
+                    moduleName: "MyKit",
+                    symbols: [
+                        makeSymbol(id: "s:6MyKit5MyClassC", kind: .class, pathComponents: ["MyClass"]),
+                    ]))
             DataFile(name: "image.png", data: Data())
         }
         let (_, context) = try await loadBundle(catalog: catalog)
         let renderContext = RenderContext(documentationContext: context)
-        
+
         // Verify render references are created for all topics
         XCTAssertEqual(Array(renderContext.store.topics.keys.sorted(by: { $0.absoluteString < $1.absoluteString })), context.knownIdentifiers.sorted(by: { $0.absoluteString < $1.absoluteString }), "Didn't create render references for all context topics.")
-        
+
         // Verify render references are created for all assets
         XCTAssertEqual(
             renderContext.store.assets.keys.map(\.assetName).sorted(),

@@ -13,7 +13,7 @@ public struct ParametersRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .parameters
     /// The list of parameter sub-sections.
     public var parameters: [ParameterRenderSection]
-    
+
     /// Creates a new parameters section with the given list.
     public init(parameters: [ParameterRenderSection]) {
         self.parameters = parameters

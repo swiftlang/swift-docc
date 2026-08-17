@@ -14,7 +14,7 @@ public import Foundation
 public struct RenderNodeVariantOverridesApplier {
     /// Creates a variant overrides applier.
     public init() {}
-    
+
     /// Applies variant overrides of the given trait to the given encoded render node.
     /// - Parameters:
     ///   - renderNodeData: The render node on which to apply the variant override, encoded in JSON.
@@ -25,19 +25,19 @@ public struct RenderNodeVariantOverridesApplier {
             RenderNodeVariantsProxy.self,
             from: renderNodeData
         ).variantOverrides
-        
+
         guard let patch = variantOverrides?.values.first(where: { $0.traits == traits })?.patch else {
             return renderNodeData
         }
-        
+
         // Remove the `variantOverrides` property of the render node.
         let removeVariantOverridesPatch = JSONPatchOperation.remove(
             pointer: JSONPointer(pathComponents: ["variantOverrides"])
         )
-        
+
         return try JSONPatchApplier().apply(patch + [removeVariantOverridesPatch], to: renderNodeData)
     }
-    
+
     /// A proxy type for decoding only the variant overrides of a render node.
     private struct RenderNodeVariantsProxy: Codable {
         var variantOverrides: VariantOverrides?

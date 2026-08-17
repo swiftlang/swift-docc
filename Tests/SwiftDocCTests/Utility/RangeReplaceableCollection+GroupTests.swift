@@ -15,19 +15,22 @@ class RangeReplaceableCollection_GroupTests: XCTestCase {
 
     func testGroupingEverythingIndividual() {
         let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        XCTAssertEqual(numbers.group(asLongAs: { _, _ in false }),
-                       [[1], [2], [3], [4], [5], [6], [7], [8], [9]])
+        XCTAssertEqual(
+            numbers.group(asLongAs: { _, _ in false }),
+            [[1], [2], [3], [4], [5], [6], [7], [8], [9]])
     }
-    
+
     func testGroupingEverythingGrouped() {
         let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        XCTAssertEqual(numbers.group(asLongAs: { _, _ in true }),
-                       [[1, 2, 3, 4, 5, 6, 7, 8, 9]])
+        XCTAssertEqual(
+            numbers.group(asLongAs: { _, _ in true }),
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9]])
     }
 
     func testGroupingEqualElementsGrouped() {
         let numbers = [0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0]
-        XCTAssertEqual(numbers.group(asLongAs: { previous, current in previous == current }),
-                       [[0], [1, 1], [0], [1], [0, 0, 0], [1], [0, 0]])
+        XCTAssertEqual(
+            numbers.group(asLongAs: { previous, current in previous == current }),
+            [[0], [1, 1], [0], [1], [0, 0, 0], [1], [0, 0]])
     }
 }

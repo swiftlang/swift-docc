@@ -14,7 +14,7 @@ import SymbolKit
 extension SemanticVersion {
     enum Precision: Int {
         case all = 0, patch, minor
-        
+
         fileprivate var componentsToRemove: Int {
             switch self {
             case .minor:
@@ -24,7 +24,7 @@ extension SemanticVersion {
             }
         }
     }
-    
+
     /// Renders a lossless version string up to a given component precision.
     ///
     /// In case there are non-zero components after the `precisionUpToNonsignificant` index
@@ -38,13 +38,13 @@ extension SemanticVersion {
     func stringRepresentation(precisionUpToNonsignificant precision: Precision = .all) -> String {
         let components = [major, minor, patch]
         let lastIndex = components.count - 1
-        let lastNonZeroIndex = components.lastIndex(where: { $0>0 }) ?? 0
+        let lastNonZeroIndex = components.lastIndex(where: { $0 > 0 }) ?? 0
         let renderUpToIndex = max(lastIndex - precision.componentsToRemove, lastNonZeroIndex)
         return components[0...renderUpToIndex]
             .map { "\($0)" }
             .joined(separator: ".")
     }
-    
+
     init(_ semanticVersion: SymbolGraph.SemanticVersion) {
         self.major = semanticVersion.major
         self.minor = semanticVersion.minor
@@ -58,39 +58,39 @@ extension SemanticVersion {
 public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     /// The name of the platform on which the symbol is available.
     public var name: String?
-    
+
     /// The version of the platform SDK introducing the symbol.
     public var introduced: String?
-    
+
     /// The version of the platform SDK deprecating the symbol.
     public var deprecated: String?
-    
+
     /// The version of the platform SDK marking the symbol as obsolete.
     public var obsoleted: String?
-    
+
     /// A message associated with the availability of the symbol.
     ///
     /// Use this property to provide a deprecation reason or instructions how to
     /// update code that uses this symbol.
     public var message: String?
-    
+
     /// The new name of the symbol, if it was renamed.
     public var renamed: String?
-    
+
     /// If `true`, the symbol is deprecated on this or all platforms.
     public var unconditionallyDeprecated: Bool?
-    
+
     /// If `true`, the symbol is unavailable on this or all platforms.
     public var unconditionallyUnavailable: Bool?
-    
+
     /// If `true`, the symbol is introduced in a beta version of this platform.
     public var isBeta: Bool?
-    
+
     private enum CodingKeys: String, CodingKey {
         case name, introducedAt, deprecatedAt, obsoletedAt, message, renamed, deprecated, unavailable
         case beta
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decodeIfPresent(String.self, forKey: .name)
@@ -103,10 +103,10 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         unconditionallyUnavailable = try container.decodeIfPresent(Bool.self, forKey: .unavailable)
         isBeta = try container.decodeIfPresent(Bool.self, forKey: .beta)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(introduced, forKey: .introducedAt)
         try container.encodeIfPresent(deprecated, forKey: .deprecatedAt)
@@ -117,14 +117,14 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         try container.encodeIfPresent(unconditionallyUnavailable, forKey: .unavailable)
         try container.encodeIfPresent(isBeta, forKey: .beta)
     }
-    
+
     /// Creates a new availability item with the given parameters.
     /// - Parameter availability: The symbol-graph availability item.
     /// - Parameter current: The target platform version, if available.
     init(_ availability: SymbolGraph.Symbol.Availability.AvailabilityItem, current: PlatformVersion?) {
         let platformName = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) })
         name = platformName?.displayName
-        
+
         let introducedVersion = availability.introducedVersion.flatMap { SemanticVersion($0) }
         introduced = introducedVersion?.stringRepresentation(precisionUpToNonsignificant: .minor)
         deprecated = availability.deprecatedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
@@ -143,7 +143,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         deprecated = availability.deprecated.flatMap { $0.stringRepresentation(precisionUpToNonsignificant: .minor) }
         isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
     }
-    
+
     private static func isBeta(introduced: SemanticVersion?, current: PlatformVersion?) -> Bool {
         guard let introduced, let current, current.beta else {
             return false
@@ -151,7 +151,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
 
         return introduced >= SemanticVersion(versionTriplet: current.version)
     }
-    
+
     init(
         name: String,
         introduced: String?,

@@ -16,10 +16,10 @@ class InvalidCodeBlockOptionTests: XCTestCase {
 
     func testNoOptions() {
         let markupSource = """
-```
-let a = 1
-```
-"""
+            ```
+            let a = 1
+            ```
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: nil)
         checker.visit(document)
@@ -28,10 +28,10 @@ let a = 1
 
     func testOption() {
         let markupSource = """
-```nocopy
-let a = 1
-```
-"""
+            ```nocopy
+            let a = 1
+            ```
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: nil)
         checker.visit(document)
@@ -40,14 +40,14 @@ let a = 1
 
     func testMultipleOptionTypos() {
         let markupSource = """
-```nocoy
-let b = 2
-```
+            ```nocoy
+            let b = 2
+            ```
 
-```nocoy
-let c = 3
-```
-"""
+            ```nocoy
+            let c = 3
+            ```
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
@@ -62,22 +62,22 @@ let c = 3
 
     func testOptionDifferentTypos() throws {
         let markupSource = """
-```swift, nocpy
-let d = 4
-```         
+            ```swift, nocpy
+            let d = 4
+            ```         
 
-```haskell, nocpoy
-let e = 5
-```
+            ```haskell, nocpoy
+            let e = 5
+            ```
 
-```nocopy
-let f = 6
-```   
+            ```nocopy
+            let f = 6
+            ```   
 
-```ncopy
-let g = 7
-```  
-"""
+            ```ncopy
+            let g = 7
+            ```  
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
@@ -85,11 +85,13 @@ let g = 7
         XCTAssertEqual(3, checker.diagnostics.count)
 
         let summaries = checker.diagnostics.map { $0.summary }
-        XCTAssertEqual(summaries, [
-            "Unknown option 'nocpy' in code block.",
-            "Unknown option 'nocpoy' in code block.",
-            "Unknown option 'ncopy' in code block.",
-        ])
+        XCTAssertEqual(
+            summaries,
+            [
+                "Unknown option 'nocpy' in code block.",
+                "Unknown option 'nocpoy' in code block.",
+                "Unknown option 'ncopy' in code block.",
+            ])
 
         for diagnostic in checker.diagnostics {
             XCTAssertEqual(diagnostic.identifier, "org.swift.docc.InvalidCodeBlockOption")
@@ -103,10 +105,10 @@ let g = 7
 
     func testLanguageNotFirst() {
         let markupSource = """
-```nocopy, swift, highlight=[1]
-let b = 2
-```
-"""
+            ```nocopy, swift, highlight=[1]
+            let b = 2
+            ```
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
@@ -121,10 +123,10 @@ let b = 2
 
     func testInvalidHighlightIndex() throws {
         let markupSource = """
-```swift, nocopy, highlight=[2]
-let b = 2
-```
-"""
+            ```swift, nocopy, highlight=[2]
+            let b = 2
+            ```
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
@@ -138,12 +140,12 @@ let b = 2
 
     func testInvalidHighlightAndStrikeoutIndex() throws {
         let markupSource = """
-```swift, nocopy, highlight=[0], strikeout=[-1, 4]
-let a = 1
-let b = 2
-let c = 3
-```
-"""
+            ```swift, nocopy, highlight=[0], strikeout=[-1, 4]
+            let a = 1
+            let b = 2
+            let c = 3
+            ```
+            """
         let document = Document(parsing: markupSource, options: [])
         var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
         checker.visit(document)
@@ -155,4 +157,3 @@ let c = 3
         XCTAssertEqual(checker.diagnostics.last?.solutions.map(\.summary), ["If you intended the last line, change '4' to 3."])
     }
 }
-

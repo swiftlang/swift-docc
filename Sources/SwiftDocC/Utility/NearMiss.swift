@@ -12,13 +12,13 @@
 //
 // This is meant mainly for diagnostics that wan't to offer meaning full suggestions to the end-user.
 enum NearMiss {
-    
+
     /// Returns the "best matches" among a list of possibilities based on how "similar" they are to a given string.
     static func bestMatches(for possibilities: some Sequence<String>, against authored: String) -> [String] {
         // There is no single right or wrong way to score changes. This implementation is completely arbitrary.
         // It's chosen because the relative scores that it computes provide "best match" results that are close
         // to what a person would expect. See ``NearMissTests``.
-        
+
         let goodMatches = possibilities.lazy
             .map { (text: String) -> (text: String, score: Double) in
                 (text, NearMiss.score(CollectionChanges(from: authored, to: text)))
@@ -29,11 +29,11 @@ enum NearMiss {
             }
             .sorted(by: { lhs, rhs in
                 if lhs.score == rhs.score {
-                    return lhs.text < rhs.text // Sort same score alphabetically
+                    return lhs.text < rhs.text  // Sort same score alphabetically
                 }
-                return lhs.score > rhs.score // Sort by high score
+                return lhs.score > rhs.score  // Sort by high score
             })
-        
+
         // Some common prefixes result in a large number of matches. For example, many types in Swift-DocC have
         // a "Documentation" prefix which yields a fairly high score in this implementation. To counteract this
         // we additionally filter out any match with a score that's less than 25% of the highest match's score.
@@ -41,32 +41,33 @@ enum NearMiss {
             return []
         }
         let matchThreshold = bestScore / 4
-        
-        return goodMatches
+
+        return
+            goodMatches
             .prefix(while: { matchThreshold < $0.score })
             // More than 10 results are likely not helpful to the user.
             .prefix(10)
             .map { $0.text }
     }
-    
+
     /// Computes the "score" for a collection of change segments.
     private static func score(_ changes: CollectionChanges) -> Double {
         // Again, there is no right or wrong way to score changes and this implementation is completely arbitrary.
-        
+
         // Give the first segment a bit more weight to its contribution to the total score
         guard let first = changes.segments.first else { return 0 }
         var score = NearMiss.score(first) * 1.75
-        
+
         for segment in changes.segments.dropFirst() {
             score += NearMiss.score(segment)
         }
         return score
     }
-        
+
     /// Computes the "score" for a single collection change segments.
     private static func score(_ segment: CollectionChanges.Segment) -> Double {
         // Again, there is no right or wrong way to score changes and this implementation is completely arbitrary.
-        
+
         // This implementation is built around a few basic ideas:
         //
         //  - Common segments _add_ to a change collection's score,
@@ -76,7 +77,7 @@ enum NearMiss {
         //    In other words; a 50% match is still "good".
         //  - The longer a common segment is, the more "similar" to two strings are.
         //  - A removed segment contribute more than an inserted segment (since the author had written those characters).
-        
+
         switch segment.kind {
         case .common:
             if segment.count < 3 {
@@ -87,7 +88,7 @@ enum NearMiss {
                 // and adds an arbitrary constant factor.
                 return Double((1...segment.count).sum()) + 3
             }
-            
+
         // Segments of removed or inserted characters contribute to the score no matter the segment length.
         //
         // The score is linear to the length with scale factors that are tweaked to provide "best match" results that are close

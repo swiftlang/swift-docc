@@ -12,15 +12,15 @@
 public struct RenderHierarchyTutorial: Codable, Equatable {
     /// The topic reference.
     public var reference: RenderReferenceIdentifier
-        
+
     /// The landmarks on the page.
     public var landmarks: [RenderHierarchyLandmark] = []
-    
+
     private enum CodingKeys: String, CodingKey {
         case reference
         case landmarks = "sections"
     }
-    
+
     /// Creates a new tutorial or tutorial article.
     /// - Parameter identifier: The topic reference.
     public init(identifier: RenderReferenceIdentifier) {

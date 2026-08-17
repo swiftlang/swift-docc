@@ -13,13 +13,13 @@ public import Foundation
 /// A container for a collection of data. Each data can have multiple variants.
 struct DataAssetManager {
     var storage = [String: DataAsset]()
-    
+
     // A "file name with no extension" to "file name with extension" index
     var fuzzyKeyIndex = [String: String]()
-    
+
     /**
      Returns the data that is registered to a data asset with the specified trait collection.
-     
+
      If no data is registered that exactly matches the trait collection, the data with the trait
      collection that best matches the requested trait collection is returned.
     */
@@ -27,30 +27,30 @@ struct DataAssetManager {
         return bestKey(forAssetName: name)
             .flatMap({ storage[$0]?.data(bestMatching: traitCollection) })
     }
-    
+
     /// Finds the best matching storage key for a given asset name.
     /// `name` is one of the following formats:
     /// - "image" - asset name without extension
     /// - "image.png" - asset name including extension
     func bestKey(forAssetName name: String) -> String? {
         guard !storage.keys.contains(name) else { return name }
-        
+
         // Try the fuzzy index
         return fuzzyKeyIndex[name]
     }
-    
+
     /**
      Returns all the data objects for a given name, respective of Bundle rules.
-     
+
      If multiple data objects are registered, the first one will be returned in a non-deterministic way.
      For example if figure1 is asked and the bundle has figure1.png and figure1.jpg, one of the two will be returned.
-     
+
      Returns `nil` if there is no asset registered with the `name` name.
      */
     func allData(named name: String) -> DataAsset? {
         return bestKey(forAssetName: name).flatMap({ storage[$0] })
     }
-    
+
     private let darkSuffix = "~dark"
     // These static regular expressions should always build successfully & therefore we used `try!`.
     private lazy var darkSuffixRegex: NSRegularExpression = {
@@ -59,11 +59,11 @@ struct DataAssetManager {
     private lazy var displayScaleRegex: NSRegularExpression = {
         try! NSRegularExpression(pattern: "(?!^)(?<=@)[1|2|3]x(?=\\.\\w*$)")
     }()
-    
+
     private mutating func referenceMetaInformationForDataURL(_ dataURL: URL) throws -> (reference: String, traits: DataTraitCollection, metadata: DataAsset.Metadata) {
         var dataReference = dataURL.path
         var traitCollection = DataTraitCollection()
-        
+
         var metadata = DataAsset.Metadata()
         if DocumentationContext.isFileExtension(dataURL.pathExtension, supported: .video) {
             // In case of a video read its traits: dark/light variants.
@@ -74,35 +74,35 @@ struct DataAssetManager {
                 dataReference = dataReference.replacingOccurrences(of: darkSuffix, with: "")
             }
             traitCollection = .init(userInterfaceStyle: userInterfaceStyle, displayScale: nil)
-        
+
         } else if DocumentationContext.isFileExtension(dataURL.pathExtension, supported: .image) {
-            
+
             // Process dark variants.
             let userInterfaceStyle: UserInterfaceStyle = darkSuffixRegex.matches(in: dataReference) ? .dark : .light
-            
+
             // Process variants with different scale if a file name modifier is found.
-            let displayScale = displayScaleRegex.firstMatch(in: dataReference)
+            let displayScale =
+                displayScaleRegex.firstMatch(in: dataReference)
                 .flatMap(DisplayScale.init(rawValue:)) ?? .standard
-            
+
             // Remove traits information from the image reference to store multiple variants.
             // Remove the dark suffix from the image reference.
             if userInterfaceStyle == .dark {
                 dataReference = dataReference.replacingOccurrences(of: darkSuffix, with: "")
             }
-            
+
             // Remove the display scale information from the image reference.
             dataReference = dataReference.replacingOccurrences(of: "@\(displayScale.rawValue)", with: "")
             traitCollection = .init(userInterfaceStyle: userInterfaceStyle, displayScale: displayScale)
-            
+
             if dataURL.pathExtension.lowercased() == "svg" {
                 metadata.svgID = SVGIDExtractor.extractID(from: dataURL)
             }
         }
-        
+
         return (reference: dataReference, traits: traitCollection, metadata: metadata)
     }
-    
-    
+
     /// Registers a collection of data and determines their trait collection.
     ///
     /// Data objects which have a file name ending with '~dark' are associated to their light variant.
@@ -111,23 +111,23 @@ struct DataAssetManager {
             let meta = try referenceMetaInformationForDataURL(dataURL)
 
             let referenceURL = URL(fileURLWithPath: meta.reference, isDirectory: false)
-            
+
             // Store the image with given scale information and display scale.
             let name = referenceURL.lastPathComponent
             storage[name, default: DataAsset()]
                 .register(dataURL, with: meta.traits, metadata: meta.metadata)
-            
+
             if name.contains(".") {
                 let nameNoExtension = referenceURL.deletingPathExtension().lastPathComponent
                 fuzzyKeyIndex[nameNoExtension] = name
             }
         }
     }
-    
+
     mutating func register(dataAsset: DataAsset, forName name: String) {
         storage[name] = dataAsset
     }
-    
+
     /// Replaces an existing asset with a new one.
     mutating func update(name: String, asset: DataAsset) {
         bestKey(forAssetName: name).flatMap({ storage[$0] = asset })
@@ -142,7 +142,7 @@ struct DataAssetManager {
 ///
 /// Each variant of an asset is identified by a ``DataTraitCollection`` and represents the best asset file for the given
 /// combination of traits, e.g. a 2x scale image when rendered for Dark Mode.
-/// 
+///
 /// ## Topics
 ///
 /// ### Asset Traits
@@ -156,33 +156,33 @@ public struct DataAsset: Codable, Equatable {
         /// An asset that a user intends to download.
         case download
     }
-    
+
     /// The variants associated with the resource.
     ///
     /// An asset can have multiple variants which you can use in different environments.
     /// For example, an image asset can have distinct light and dark variants, so a renderer can select the appropriate variant
     /// depending on the system's appearance.
     public var variants = [DataTraitCollection: URL]()
-    
+
     /// The metadata associated with each variant.
-    public var metadata = [URL : Metadata]()
-    
+    public var metadata = [URL: Metadata]()
+
     /// The context in which you intend to use the data asset.
     public var context = Context.display
-    
+
     /// Creates an empty asset.
     public init() {}
-    
+
     init(
-        variants: [DataTraitCollection : URL] = [DataTraitCollection: URL](),
-        metadata: [URL : DataAsset.Metadata] = [URL : Metadata](),
+        variants: [DataTraitCollection: URL] = [DataTraitCollection: URL](),
+        metadata: [URL: DataAsset.Metadata] = [URL: Metadata](),
         context: DataAsset.Context = Context.display
     ) {
         self.variants = variants
         self.metadata = metadata
         self.context = context
     }
-    
+
     /// Registers a variant of the asset.
     /// - Parameters:
     ///   - url: The location of the variant.
@@ -192,7 +192,7 @@ public struct DataAsset: Codable, Equatable {
         variants[traitCollection] = url
         self.metadata[url] = metadata
     }
-    
+
     /// Returns the data that is registered to the data asset that best matches the given trait collection.
     ///
     /// If no variant matches the given trait collection exactly, the closest variant is returned.
@@ -222,7 +222,7 @@ public struct DataAsset: Codable, Equatable {
         }!
         return BundleData(url: best.value, traitCollection: best.key)
     }
-    
+
 }
 
 extension DataAsset {
@@ -232,7 +232,7 @@ extension DataAsset {
         ///
         /// This value is nil if the data asset is not an SVG or if it is an SVG that does not contain an ID.
         public var svgID: String?
-        
+
         /// Create a new data asset metadata with the given SVG ID.
         public init(svgID: String? = nil) {
             self.svgID = svgID
@@ -248,16 +248,16 @@ extension DataAsset {
 public struct DataTraitCollection: Hashable, Codable {
     /// The style associated with the user-interface.
     public var userInterfaceStyle: UserInterfaceStyle?
-    
+
     /// The display-scale of the trait collection.
     public var displayScale: DisplayScale?
-    
+
     /// Creates a new trait collection with traits set to their default, unspecified, values.
     public init() {
         self.userInterfaceStyle = nil
         self.displayScale = nil
     }
-    
+
     /// Returns a new trait collection consisting of traits merged from a specified array of trait collections.
     public init(traitsFrom traitCollections: [DataTraitCollection]) {
         for trait in traitCollections {
@@ -265,7 +265,7 @@ public struct DataTraitCollection: Hashable, Codable {
             displayScale = trait.displayScale ?? displayScale
         }
     }
-    
+
     /// Creates a trait collection from an array of raw values.
     public init(from rawValues: [String]) {
         for value in rawValues {
@@ -282,34 +282,34 @@ public struct DataTraitCollection: Hashable, Codable {
         self.userInterfaceStyle = userInterfaceStyle
         self.displayScale = displayScale
     }
-    
+
     /// Returns an array of raw values associated with the trait collection.
     public func toArray() -> [String] {
         var result = [String]()
-        
+
         result.append((displayScale ?? .standard).rawValue)
-        
+
         if let rawUserInterfaceStyle = userInterfaceStyle?.rawValue {
             result.append(rawUserInterfaceStyle)
         }
-        
+
         return result
     }
-    
+
     /// Returns all the asset's registered variants.
     public static var allCases: [DataTraitCollection] {
         get { _allCases }
         @available(*, deprecated, message: "Create a new value instead of modifying this one. This deprecated setter will be removed after 6.5 is released.")
         set { _allCases = newValue }
     }
-    private static var _allCases: [DataTraitCollection] = UserInterfaceStyle.allCases.flatMap { style in DisplayScale.allCases.map { .init(userInterfaceStyle: style, displayScale: $0)}}
+    private static var _allCases: [DataTraitCollection] = UserInterfaceStyle.allCases.flatMap { style in DisplayScale.allCases.map { .init(userInterfaceStyle: style, displayScale: $0) } }
 }
 
 /// The interface style for a rendering context.
 public enum UserInterfaceStyle: String, CaseIterable, Codable {
     /// The light interface style.
     case light = "light"
-    
+
     /// The dark interface style.
     case dark = "dark"
 }
@@ -322,13 +322,13 @@ public enum UserInterfaceStyle: String, CaseIterable, Codable {
 public enum DisplayScale: String, CaseIterable, Codable {
     /// The 1x scale factor.
     case standard = "1x"
-    
+
     /// The 2x scale factor.
     case double = "2x"
-    
+
     /// The 3x scale factor.
     case triple = "3x"
-    
+
     /// The scale factor as an integer.
     var scaleFactor: Int {
         switch self {
@@ -343,12 +343,12 @@ public enum DisplayScale: String, CaseIterable, Codable {
 }
 
 fileprivate extension NSRegularExpression {
-    
+
     /// Returns a boolean indicating if a match has been found in the given string.
     func matches(in string: String) -> Bool {
         return firstMatch(in: string) != nil
     }
-    
+
     /// Returns a substring containing the first match found in a given string.
     func firstMatch(in string: String) -> String? {
         guard let match = firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)) else {
@@ -362,10 +362,10 @@ fileprivate extension NSRegularExpression {
 public struct AssetReference: Hashable, Codable {
     /// The name of the asset.
     public var assetName: String
-    
+
     /// The identifier of the bundle the asset is apart of.
     public let bundleID: DocumentationBundle.Identifier
-    
+
     /// Creates a reference from a given asset name and the bundle it is apart of.
     public init(assetName: String, bundleID: DocumentationBundle.Identifier) {
         self.assetName = assetName

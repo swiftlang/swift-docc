@@ -18,26 +18,26 @@ typealias Availability = SymbolGraph.Symbol.Availability
 class AvailabilityParserTests: XCTestCase {
     func testNoAvailability() throws {
         let json = """
-        []
-        """
+            []
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         let compiler = AvailabilityParser(availability)
         XCTAssertFalse(compiler.isDeprecated())
         XCTAssertNil(compiler.deprecationMessage())
     }
-    
+
     func testAvailable() throws {
         let json = """
-        [
-          {
-            "domain": "macOS",
-            "introduced" : { "major": 10, "minor": 17 }
-          }
-        ]
-        """
+            [
+              {
+                "domain": "macOS",
+                "introduced" : { "major": 10, "minor": 17 }
+              }
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         let compiler = AvailabilityParser(availability)
         XCTAssertFalse(compiler.isDeprecated())
         XCTAssertNil(compiler.deprecationMessage())
@@ -45,25 +45,25 @@ class AvailabilityParserTests: XCTestCase {
 
     func testAvailableAndDeprecatedOnPlatform() throws {
         let json = """
-        [
-            {
-                "domain": "macOS",
-                "introduced" : { "major": 10, "minor": 17 }
-            },
-            {
-                "domain": "watchOS",
-                "message": "deprecated",
-                "isUnconditionallyDeprecated" : true
-            }
-        ]
-        """
+            [
+                {
+                    "domain": "macOS",
+                    "introduced" : { "major": 10, "minor": 17 }
+                },
+                {
+                    "domain": "watchOS",
+                    "message": "deprecated",
+                    "isUnconditionallyDeprecated" : true
+                },
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertFalse(compiler.isDeprecated())
         XCTAssertNil(compiler.deprecationMessage())
-        
+
         /// Test watchOS
         XCTAssertTrue(compiler.isDeprecated(platform: "watchOS"))
         XCTAssertEqual(compiler.deprecationMessage(platform: "watchOS"), "deprecated")
@@ -75,20 +75,20 @@ class AvailabilityParserTests: XCTestCase {
 
     func testDeprecated() throws {
         let json = """
-        [
-            {
-                "domain": "macOS",
-                "isUnconditionallyUnavailable" : true
-            },
-            {
-                "domain": "watchOS",
-                "message": "deprecated",
-                "isUnconditionallyDeprecated" : true
-            }
-        ]
-        """
+            [
+                {
+                    "domain": "macOS",
+                    "isUnconditionallyUnavailable" : true
+                },
+                {
+                    "domain": "watchOS",
+                    "message": "deprecated",
+                    "isUnconditionallyDeprecated" : true
+                },
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertTrue(compiler.isDeprecated())
@@ -97,15 +97,15 @@ class AvailabilityParserTests: XCTestCase {
 
     func testDeprecatedNoPlatform() throws {
         let json = """
-        [
-            {
-                "message": "deprecated",
-                "isUnconditionallyDeprecated" : true
-            }
-        ]
-        """
+            [
+                {
+                    "message": "deprecated",
+                    "isUnconditionallyDeprecated" : true
+                }
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertTrue(compiler.isDeprecated())
@@ -114,19 +114,19 @@ class AvailabilityParserTests: XCTestCase {
 
     func testDeprecatedVersionNoMessage() throws {
         let json = """
-        [
-            {
-                "domain": "macOS",
-                "isUnconditionallyUnavailable" : true
-            },
-            {
-                "domain": "watchOS",
-                "deprecated": { "major": 10, "minor": 17 }
-            }
-        ]
-        """
+            [
+                {
+                    "domain": "macOS",
+                    "isUnconditionallyUnavailable" : true
+                },
+                {
+                    "domain": "watchOS",
+                    "deprecated": { "major": 10, "minor": 17 }
+                },
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertTrue(compiler.isDeprecated())
@@ -135,89 +135,89 @@ class AvailabilityParserTests: XCTestCase {
 
     func testDeprecatedVersionWithMessage() throws {
         let json = """
-        [
-            {
-                "domain": "macOS",
-                "isUnconditionallyUnavailable" : true
-            },
-            {
-                "domain": "watchOS",
-                "message" : "deprecated",
-                "deprecated": { "major": 10, "minor": 17 }
-            }
-        ]
-        """
+            [
+                {
+                    "domain": "macOS",
+                    "isUnconditionallyUnavailable" : true
+                },
+                {
+                    "domain": "watchOS",
+                    "message" : "deprecated",
+                    "deprecated": { "major": 10, "minor": 17 }
+                },
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertTrue(compiler.isDeprecated())
         XCTAssertEqual(compiler.deprecationMessage(), "deprecated")
     }
-    
+
     func testUnavailableIsNotDeprecated() throws {
         let json = """
-        [
-            {
-                "domain": "tvOS",
-                "isUnconditionallyUnavailable" : true
-            }
-        ]
-        """
+            [
+                {
+                    "domain": "tvOS",
+                    "isUnconditionallyUnavailable" : true
+                }
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertFalse(compiler.isDeprecated())
     }
-    
+
     func testAllPlatformsUnavailableOrDeprecatedIsMarkedDeprecated() throws {
         let json = """
-        [
-            {
-                "domain": "tvOS",
-                "isUnconditionallyUnavailable" : true
-            },
-            {
-                "domain": "macOS",
-                "message" : "deprecated",
-                "deprecated": { "major": 10, "minor": 17 }
-            },
-            {
-                "domain": "iOS",
-                "message" : "deprecated",
-                "deprecated": { "major": 10, "minor": 17 }
-            },
-            {
-                "domain": "watchOS",
-                "message" : "deprecated",
-                "deprecated": { "major": 10, "minor": 17 }
-            }
-        ]
-        """
+            [
+                {
+                    "domain": "tvOS",
+                    "isUnconditionallyUnavailable" : true
+                },
+                {
+                    "domain": "macOS",
+                    "message" : "deprecated",
+                    "deprecated": { "major": 10, "minor": 17 }
+                },
+                {
+                    "domain": "iOS",
+                    "message" : "deprecated",
+                    "deprecated": { "major": 10, "minor": 17 }
+                },
+                {
+                    "domain": "watchOS",
+                    "message" : "deprecated",
+                    "deprecated": { "major": 10, "minor": 17 }
+                },
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertTrue(compiler.isDeprecated())
         XCTAssertEqual(compiler.deprecationMessage(), "deprecated")
     }
-    
+
     func testADeprecatedAndObsolete() throws {
         let json = """
-        [
-            {
-                "domain": "tvOS",
-                "obsoleted": { "major": 10, "minor": 17 }
-            },
-            {
-                "domain": "macOS",
-                "deprecated": { "major": 10, "minor": 17 }
-            }
-        ]
-        """
+            [
+                {
+                    "domain": "tvOS",
+                    "obsoleted": { "major": 10, "minor": 17 }
+                },
+                {
+                    "domain": "macOS",
+                    "deprecated": { "major": 10, "minor": 17 }
+                },
+            ]
+            """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
-        
+
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
         XCTAssertTrue(compiler.isDeprecated())

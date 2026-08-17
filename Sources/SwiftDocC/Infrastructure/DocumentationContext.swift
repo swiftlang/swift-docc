@@ -44,31 +44,31 @@ public class DocumentationContext {
     public enum ContextError: DescribedError {
         /// The node couldn't be found in the documentation context.
         case notFound(URL)
-        
+
         /// The file wasn't UTF-8 encoded.
         case utf8StringDecodingFailed(url: URL)
-        
+
         /// We allow a symbol declaration with no OS (for REST & Plist symbols)
         /// but if such a declaration is found the symbol can have only one declaration.
         case unexpectedEmptyPlatformName(String)
-        
+
         /// The bundle registration operation is cancelled externally.
         case registrationDisabled
-        
+
         public var errorDescription: String {
             switch self {
-                case .notFound(let url):
-                    return "Couldn't find the requested node '\(url)' in the documentation context."
-                case .utf8StringDecodingFailed(let url):
-                    return "The file at '\(url)' could not be read because it was not valid UTF-8."
-                case .unexpectedEmptyPlatformName(let symbolIdentifier):
-                    return "Declaration without operating system name for symbol \(symbolIdentifier) cannot be merged with more declarations with operating system name for the same symbol"
-                case .registrationDisabled:
-                    return "The bundle registration operation is cancelled externally."
+            case .notFound(let url):
+                return "Couldn't find the requested node '\(url)' in the documentation context."
+            case .utf8StringDecodingFailed(let url):
+                return "The file at '\(url)' could not be read because it was not valid UTF-8."
+            case .unexpectedEmptyPlatformName(let symbolIdentifier):
+                return "Declaration without operating system name for symbol \(symbolIdentifier) cannot be merged with more declarations with operating system name for the same symbol"
+            case .registrationDisabled:
+                return "The bundle registration operation is cancelled externally."
             }
         }
     }
-    
+
     /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
     public var linkResolver: LinkResolver
 
@@ -80,18 +80,18 @@ public class DocumentationContext {
 
     /// A collection of configuration for this context.
     public let configuration: Configuration
-    
+
     /// The graph of all the documentation content and their relationships to each other.
     ///
     /// > Important: The topic graph has no awareness of source language specific edges.
     var topicGraph = TopicGraph()
-    
+
     /// Will be assigned during context initialization
     var snippetResolver: SnippetResolver!
-    
+
     /// User-provided global options for this documentation conversion.
     var options: Options?
-    
+
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
@@ -104,12 +104,12 @@ public class DocumentationContext {
             return node.reference
         }
     }
-    
+
     /// The root module nodes of the Topic Graph.
     ///
     /// This property is initialized during the registration of a documentation bundle.
     public private(set) var rootModules: [ResolvedTopicReference]!
-        
+
     /// The topic reference of the root module, if it's the only registered module.
     var soleRootModuleReference: ResolvedTopicReference? {
         guard rootModules.count > 1 else {
@@ -122,15 +122,15 @@ public class DocumentationContext {
         }
         return nonVirtualModules.count == 1 ? nonVirtualModules.first : nil
     }
-       
+
     typealias LocalCache = ContentCache<DocumentationNode>
     typealias ExternalCache = ContentCache<LinkResolver.ExternalEntity>
-    
+
     /// Map of document URLs to topic references.
     var documentLocationMap = BidirectionalMap<URL, ResolvedTopicReference>()
     /// A storage of already created documentation nodes for the local documentation content.
     ///
-    /// The documentation cache is built up incrementally as local content is registered with the documentation context. 
+    /// The documentation cache is built up incrementally as local content is registered with the documentation context.
     ///
     /// First, the context adds all symbols, with both their references and symbol IDs for lookup. The ``SymbolGraphRelationshipsBuilder`` looks up documentation
     /// nodes by their symbol's ID when it builds up in-memory relationships between symbols. Later, the context adds articles and other conceptual content with only their
@@ -140,7 +140,7 @@ public class DocumentationContext {
     var assetManagers = [DocumentationBundle.Identifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
-    
+
     /// A storage of externally resolved content.
     ///
     /// The external cache is built up in two steps;
@@ -154,12 +154,12 @@ public class DocumentationContext {
     func localOrExternalReference(symbolID: String) -> ResolvedTopicReference? {
         documentationCache.reference(symbolID: symbolID) ?? externalCache.reference(symbolID: symbolID)
     }
-    
+
     @available(*, deprecated, message: "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.")
     public var problems: [Problem] {
         return diagnosticEngine.problems
     }
-    
+
     /// A convenient accessor for the diagnostic engine's list of diagnostics.
     package var diagnostics: [Diagnostic] {
         diagnosticEngine.diagnostics
@@ -167,15 +167,15 @@ public class DocumentationContext {
 
     /// The engine that collects diagnostics encountered while registering and processing the documentation bundles in this context.
     public var diagnosticEngine: DiagnosticEngine
-    
+
     /// All the link references that have been resolved from external sources, either successfully or not.
     ///
     /// The unsuccessful links are tracked so that the context doesn't attempt to re-resolve the unsuccessful links during rendering which runs concurrently for each page.
     var externallyResolvedLinks = [ValidatedURL: TopicReferenceResolutionResult]()
-    
+
     /// The set of symbol graph platforms registered for each module.
     private(set) var registeredPlatformsPerModule: [String: Set<PlatformName>] = [:]
-    
+
     /// A temporary structure to hold a semantic value that hasn't yet had its links resolved.
     ///
     /// These temporary values are only expected to exist while the documentation is being built. Once the documentation bundles have been fully registered and the topic graph
@@ -183,14 +183,14 @@ public class DocumentationContext {
     struct SemanticResult<S: Semantic> {
         /// The ``Semantic`` value with unresolved links.
         var value: S
-        
+
         /// The source of the document that produces the ``value``.
         var source: URL
-        
+
         /// The Topic Graph node for this value.
         var topicGraphNode: TopicGraph.Node
     }
-    
+
     /// Temporary storage for articles before they are curated and moved to the documentation cache.
     ///
     /// This storage is only used while the documentation context is being built. Once the documentation bundles have been fully registered and the topic graph
@@ -198,7 +198,7 @@ public class DocumentationContext {
     ///
     /// The key to lookup an article is the reference to the article itself.
     var uncuratedArticles = [ResolvedTopicReference: SemanticResult<Article>]()
-    
+
     /// Temporary storage for documentation extension files before they are curated and moved to the documentation cache.
     ///
     /// This storage is only used while the documentation context is being built. Once the documentation bundles have been fully registered and the topic graph
@@ -227,19 +227,19 @@ public class DocumentationContext {
         self.inputs = inputs
         self.dataProvider = dataProvider
         self.diagnosticEngine = diagnosticEngine
-        
+
         var configuration = configuration
         if let bundleFlags = inputs.info.featureFlags {
             configuration.featureFlags.loadFlagsFromBundle(bundleFlags)
         }
         self.configuration = configuration
-        
+
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
         try await register()
     }
-        
+
     /// Performs semantic analysis on a given document at a given source location and reports any encountered issues to the given diagnostic engine.
     ///
     /// - Parameters:
@@ -253,7 +253,7 @@ public class DocumentationContext {
         engine.emit(analyzer.diagnostics)
         return result
     }
-    
+
     /// Perform global analysis of compiled Markup
     ///
     /// Global analysis differs from semantic analysis in that no transformation is expected to occur. The
@@ -284,10 +284,10 @@ public class DocumentationContext {
         checker.visit(document)
         diagnosticEngine.emit(checker.diagnostics)
     }
-    
+
     /// A cache of plain string module names, keyed by the module node reference.
     private var moduleNameCache: [ResolvedTopicReference: (displayName: String, symbolName: String)] = [:]
-    
+
     /// Find the known plain string module name for a given module reference.
     ///
     /// - Note: Looking up module names requires that the module names have been pre-resolved. This happens automatically at the end of bundle registration.
@@ -305,7 +305,7 @@ public class DocumentationContext {
         }
         fatalError("Incorrect use of API: '\(#function)' can only be used with known module references")
     }
-    
+
     /// Attempts to resolve the module names of all root modules.
     ///
     /// This allows the module names to quickly be looked up using ``moduleName(forModuleReference:)``
@@ -326,20 +326,21 @@ public class DocumentationContext {
     /// - Parameters:
     ///   - references: A list of references to local nodes to visit to collect links.
     private func preResolveExternalLinks(references: [ResolvedTopicReference]) {
-        preResolveExternalLinks(semanticObjects: references.compactMap({ reference -> ReferencedSemanticObject? in
-            guard let node = try? entity(with: reference), let semantic = node.semantic else { return nil }
-            return (reference: reference, semantic: semantic)
-        }))
+        preResolveExternalLinks(
+            semanticObjects: references.compactMap({ reference -> ReferencedSemanticObject? in
+                guard let node = try? entity(with: reference), let semantic = node.semantic else { return nil }
+                return (reference: reference, semantic: semantic)
+            }))
     }
-    
+
     /// A tuple of a semantic object and its reference in the topic graph.
     private typealias ReferencedSemanticObject = (reference: ResolvedTopicReference, semantic: Semantic)
-    
+
     /// Converts a semantic result to a referenced semantic object by removing the generic constraint.
     private func referencedSemanticObject(from: SemanticResult<some Semantic>) -> ReferencedSemanticObject {
         return (reference: from.topicGraphNode.reference, semantic: from.value)
     }
-    
+
     /// Attempts to resolve links external to the given bundle by visiting the given list of semantic objects.
     ///
     /// The resolved references are collected in ``externallyResolvedLinks``.
@@ -349,7 +350,7 @@ public class DocumentationContext {
     private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject]) {
         // If there are no external resolvers added we will not resolve any links.
         guard !configuration.externalDocumentationConfiguration.sources.isEmpty else { return }
-        
+
         let collectedExternalLinks = Synchronized([DocumentationBundle.Identifier: Set<UnresolvedTopicReference>]())
         semanticObjects.concurrentPerform { _, semantic in
             autoreleasepool {
@@ -359,7 +360,7 @@ public class DocumentationContext {
 
                 // Avoid any synchronization overhead if there are no references to add.
                 guard !externalLinksCollector.collectedExternalReferences.isEmpty else { return }
-                
+
                 // Add the link pairs to `collectedExternalLinks`.
                 collectedExternalLinks.sync {
                     for (bundleID, collectedLinks) in externalLinksCollector.collectedExternalReferences {
@@ -368,7 +369,7 @@ public class DocumentationContext {
                 }
             }
         }
-        
+
         for (bundleID, collectedLinks) in collectedExternalLinks.sync({ $0 }) {
             guard let externalResolver = configuration.externalDocumentationConfiguration.sources[bundleID] else {
                 continue
@@ -377,14 +378,15 @@ public class DocumentationContext {
                 let unresolvedURL = externalLink.topicURL
                 let result = externalResolver.resolve(.unresolved(externalLink))
                 externallyResolvedLinks[unresolvedURL] = result
-                
+
                 if case .success(let resolvedReference) = result {
                     // Add the resolved entity to the documentation cache.
                     if let externallyResolvedNode = externalEntity(with: resolvedReference) {
                         externalCache[resolvedReference] = externallyResolvedNode
                     }
                     if unresolvedURL.absoluteString != resolvedReference.absoluteString,
-                       let resolvedURL = ValidatedURL(resolvedReference.url) {
+                        let resolvedURL = ValidatedURL(resolvedReference.url)
+                    {
                         // If the resolved reference has a different URL than the authored link, cache both URLs so we can resolve both unresolved and resolved references.
                         //
                         // The two main examples when this would happen are:
@@ -396,7 +398,7 @@ public class DocumentationContext {
             }
         }
     }
-    
+
     /// A resolved documentation node along with any relevant diagnostics.
     private typealias LinkResolveResult = (reference: ResolvedTopicReference, node: DocumentationNode, diagnostics: [Diagnostic])
 
@@ -408,7 +410,7 @@ public class DocumentationContext {
         defer {
             signposter.endInterval("Resolve links", signpostHandle)
         }
-        
+
         let references = Array(curatedReferences)
         let results = Synchronized<[LinkResolveResult]>([])
         results.sync({ $0.reserveCapacity(references.count) })
@@ -416,27 +418,27 @@ public class DocumentationContext {
         func inheritsDocumentationFromOtherModule(_ documentationNode: DocumentationNode, symbolOriginReference: ResolvedTopicReference) -> Bool {
             // Check that this symbol only has documentation from an in-source documentation comment
             guard documentationNode.docChunks.count == 1,
-                  case .sourceCode = documentationNode.docChunks.first?.source
+                case .sourceCode = documentationNode.docChunks.first?.source
             else {
                 return false
             }
-            
+
             // Check that that documentation comment is inherited from a symbol belonging to another module
             guard let symbolSemantic = documentationNode.semantic as? Symbol,
-                  let originSymbolSemantic = documentationCache[symbolOriginReference]?.semantic as? Symbol
+                let originSymbolSemantic = documentationCache[symbolOriginReference]?.semantic as? Symbol
             else {
                 return false
             }
             return symbolSemantic.moduleReference != originSymbolSemantic.moduleReference
         }
-        
+
         let resolveNodeWithReference: (ResolvedTopicReference) -> Void = { [unowned self] reference in
             guard var documentationNode = try? entity(with: reference),
-                  documentationNode.semantic is Article || documentationNode.semantic is Symbol
+                documentationNode.semantic is Article || documentationNode.semantic is Symbol
             else {
                 return
             }
-                    
+
             let symbolOriginReference = (documentationNode.semantic as? Symbol)?.origin.flatMap { origin in
                 documentationCache.reference(symbolID: origin.identifier)
             }
@@ -448,16 +450,16 @@ public class DocumentationContext {
                 // Don't resolve any links for this symbol.
                 return
             }
-            
+
             var resolver = ReferenceResolver(context: self, rootReference: reference, inheritanceParentReference: symbolOriginReference)
-            
+
             // Update the node with the markup that contains resolved references instead of authored links.
-            documentationNode.semantic = autoreleasepool { 
+            documentationNode.semantic = autoreleasepool {
                 // We use an autorelease pool to release used memory as soon as possible, since the resolver will copy each semantic value
                 // to rewrite it and replace the authored links with resolved reference strings instead.
                 resolver.visit(documentationNode.semantic)
             }
-            
+
             // Also resolve the node's alternate representations. This isn't part of the node's 'semantic' value (resolved above).
             if let alternateRepresentations = documentationNode.metadata?.alternateRepresentations {
                 for alternateRepresentation in alternateRepresentations {
@@ -477,38 +479,39 @@ public class DocumentationContext {
                 diagnostics = resolver.diagnostics
             } else {
                 // Diagnostics for in-source documentation comments need to be offset based on the start location of the comment in the source file.
-                
+
                 // Get the source location
                 let inSourceDocumentationCommentInfo = documentationNode.inSourceDocumentationChunk
-                
+
                 // Post-process and filter out unwanted diagnostics (for example from inherited documentation comments)
                 diagnostics = resolver.diagnostics.compactMap { diagnostic in
                     guard let source = diagnostic.source else {
                         // Ignore any diagnostic without a source location. These can't be meaningfully presented to the user.
                         return nil
                     }
-                    
+
                     if source == inSourceDocumentationCommentInfo?.url, let offset = inSourceDocumentationCommentInfo?.offset {
                         // Diagnostics from an in-source documentation comment need to be offset based on the location of that documentation comment.
                         var modifiedProblem = diagnostic
                         modifiedProblem.offsetWithRange(offset)
                         return modifiedProblem
-                    } 
-                    
+                    }
+
                     // Diagnostics from documentation extension files have correct source ranges and don't need to be modified.
                     return diagnostic
                 }
             }
-            
+
             // Also resolve the node's page images. This isn't part of the node's 'semantic' value (resolved above).
-            let pageImageDiagnostics = documentationNode.metadata?.pageImages.compactMap { pageImage in
-                return resolver.resolve(
-                    resource: pageImage.source,
-                    range: pageImage.originalMarkup.range,
-                    severity: .warning
-                )
-            } ?? []
-            
+            let pageImageDiagnostics =
+                documentationNode.metadata?.pageImages.compactMap { pageImage in
+                    return resolver.resolve(
+                        resource: pageImage.source,
+                        range: pageImage.originalMarkup.range,
+                        severity: .warning
+                    )
+                } ?? []
+
             let result: LinkResolveResult = (reference: reference, node: documentationNode, diagnostics: diagnostics + pageImageDiagnostics)
             results.sync({ $0.append(result) })
         }
@@ -525,7 +528,7 @@ public class DocumentationContext {
                 // Record symbol links as symbol "mentions" for automatic cross references
                 // on rendered symbol documentation.
                 if let article = result.node.semantic as? Article,
-                   case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind) 
+                    case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind)
                 {
                     for markup in article.abstractSection?.content ?? [] {
                         var mentions = SymbolLinkCollector(context: self, article: result.node.reference, baseWeight: 2)
@@ -541,15 +544,15 @@ public class DocumentationContext {
             assert(
                 // If this is a symbol, verify that the reference exist in the in the symbolIndex
                 result.node.symbol.map { documentationCache.reference(symbolID: $0.identifier.precise) == result.reference }
-                ?? true, // Nothing to check for non-symbols
+                    ?? true,  // Nothing to check for non-symbols
                 "Previous versions stored symbolIndex and documentationCache separately and updated both. This assert verifies that that's no longer necessary."
             )
             diagnosticEngine.emit(result.diagnostics)
         }
-        
+
         mergeFallbackLinkResolutionResults()
     }
-    
+
     /// Attempt to resolve links in imported documentation, converting any ``TopicReferences`` from `.unresolved` to `.resolved` where possible.
     ///
     /// This function is passed pages that haven't been added to the topic graph yet. Calling this function will load the documentation entity for each of these pages
@@ -569,7 +572,7 @@ public class DocumentationContext {
         defer {
             signposter.endInterval("Resolve links", signpostHandle)
         }
-        
+
         let sourceLanguages = soleRootModuleReference.map { self.sourceLanguages(for: $0) } ?? [.swift]
 
         // Tutorial table-of-contents
@@ -580,10 +583,10 @@ public class DocumentationContext {
                 var resolver = ReferenceResolver(context: self)
                 let tableOfContents = resolver.visit(tableOfContentsResult.value) as! TutorialTableOfContents
                 diagnosticEngine.emit(resolver.diagnostics)
-                
+
                 // Add to document map
                 documentLocationMap[url] = tableOfContentsResult.topicGraphNode.reference
-                
+
                 let tableOfContentsReference = tableOfContentsResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
 
                 let tutorialTableOfContentsNode = DocumentationNode(
@@ -596,7 +599,7 @@ public class DocumentationContext {
                     semantic: tableOfContents
                 )
                 documentationCache[tableOfContentsReference] = tutorialTableOfContentsNode
-                
+
                 // Update the reference in the topic graph with the table-of-contents page's available languages.
                 topicGraph.updateReference(
                     tableOfContentsResult.topicGraphNode.reference,
@@ -604,16 +607,16 @@ public class DocumentationContext {
                 )
 
                 let anonymousVolumeName = "$volume"
-                
+
                 for volume in tableOfContents.volumes {
                     // Graph node: Volume
                     let volumeReference = tutorialTableOfContentsNode.reference.appendingPath(volume.name ?? anonymousVolumeName)
                     let volumeNode = TopicGraph.Node(reference: volumeReference, kind: .volume, source: .file(url: url), title: volume.name ?? anonymousVolumeName)
                     topicGraph.addNode(volumeNode)
-                    
+
                     // Graph edge: Tutorial table-of-contents -> Volume
                     topicGraph.addEdge(from: tableOfContentsResult.topicGraphNode, to: volumeNode)
-                    
+
                     for chapter in volume.chapters {
                         // Graph node: Module
                         let baseNodeReference: ResolvedTopicReference
@@ -626,14 +629,15 @@ public class DocumentationContext {
                         let chapterReference = baseNodeReference.appendingPath(chapter.name)
                         let chapterNode = TopicGraph.Node(reference: chapterReference, kind: .chapter, source: .file(url: url), title: chapter.name)
                         topicGraph.addNode(chapterNode)
-                        
+
                         // Graph edge: Volume -> Chapter
                         topicGraph.addEdge(from: volumeNode, to: chapterNode)
-                        
+
                         for tutorialReference in chapter.topicReferences {
                             guard case let .resolved(.success(tutorialReference)) = tutorialReference.topic,
-                                let tutorialNode = topicGraph.nodeWithReference(tutorialReference) else {
-                                    continue
+                                let tutorialNode = topicGraph.nodeWithReference(tutorialReference)
+                            else {
+                                continue
                             }
                             // Graph edge: Chapter -> Tutorial | TutorialArticle
                             topicGraph.addEdge(from: chapterNode, to: tutorialNode)
@@ -642,9 +646,9 @@ public class DocumentationContext {
                 }
             }
         }
-        
+
         // Tutorials
-        
+
         for tutorialResult in tutorials {
             autoreleasepool {
                 let url = tutorialResult.source
@@ -652,12 +656,12 @@ public class DocumentationContext {
                 var resolver = ReferenceResolver(context: self)
                 let tutorial = resolver.visit(unresolvedTutorial) as! Tutorial
                 diagnosticEngine.emit(resolver.diagnostics)
-                
+
                 // Add to document map
                 documentLocationMap[url] = tutorialResult.topicGraphNode.reference
-                
+
                 let tutorialReference = tutorialResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
-                
+
                 let tutorialNode = DocumentationNode(
                     reference: tutorialReference,
                     kind: .tutorial,
@@ -668,7 +672,7 @@ public class DocumentationContext {
                     semantic: tutorial
                 )
                 documentationCache[tutorialReference] = tutorialNode
-                
+
                 // Update the reference in the topic graph with the tutorial's available languages.
                 topicGraph.updateReference(
                     tutorialResult.topicGraphNode.reference,
@@ -676,9 +680,9 @@ public class DocumentationContext {
                 )
             }
         }
-        
+
         // Tutorial Articles
-        
+
         for articleResult in tutorialArticles {
             autoreleasepool {
                 let url = articleResult.source
@@ -686,12 +690,12 @@ public class DocumentationContext {
                 var resolver = ReferenceResolver(context: self)
                 let article = resolver.visit(unresolvedTutorialArticle) as! TutorialArticle
                 diagnosticEngine.emit(resolver.diagnostics)
-                            
+
                 // Add to document map
                 documentLocationMap[url] = articleResult.topicGraphNode.reference
 
                 let articleReference = articleResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
-                
+
                 let articleNode = DocumentationNode(
                     reference: articleReference,
                     kind: .tutorialArticle,
@@ -702,7 +706,7 @@ public class DocumentationContext {
                     semantic: article
                 )
                 documentationCache[articleReference] = articleNode
-                
+
                 // Update the reference in the topic graph with the article's available languages.
                 topicGraph.updateReference(
                     articleResult.topicGraphNode.reference,
@@ -710,10 +714,10 @@ public class DocumentationContext {
                 )
             }
         }
-        
+
         // Articles are resolved in a separate pass
     }
-    
+
     private func registerDocuments() throws -> (
         tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
         tutorials: [SemanticResult<Tutorial>],
@@ -728,20 +732,20 @@ public class DocumentationContext {
         var tutorialArticles = [SemanticResult<TutorialArticle>]()
         var articles = [SemanticResult<Article>]()
         var documentationExtensions = [SemanticResult<Article>]()
-        
+
         var fileByOutputPath: [String: URL] = [:]
 
         let decodeError = Synchronized<(any Error)?>(nil)
-        
+
         // Load and analyze documents concurrently
         let analyzedDocuments: [(URL, Semantic)] = inputs.markupURLs.concurrentPerform { url, results in
             guard decodeError.sync({ $0 == nil }) else { return }
-            
+
             do {
                 let data = try dataProvider.contents(of: url)
                 let source = String(decoding: data, as: UTF8.self)
                 let document = Document(parsing: source, source: url, options: [.parseBlockDirectives, .parseSymbolLinks])
-                
+
                 // Check for non-inclusive language in all types of docs if that diagnostic severity is required.
                 if configuration.externalMetadata.diagnosticLevel >= NonInclusiveLanguageChecker.severity {
                     var langChecker = NonInclusiveLanguageChecker(sourceFile: url)
@@ -752,28 +756,28 @@ public class DocumentationContext {
                 guard let analyzed = analyze(document, at: url, engine: diagnosticEngine) else {
                     return
                 }
-                
+
                 // Only check non-tutorial documents from markup.
                 if analyzed is Article {
                     check(document, at: url)
                 }
-                
+
                 results.append((url, analyzed))
             } catch {
                 decodeError.sync({ $0 = error })
             }
         }
-        
+
         // Rethrow the decoding error if decoding failed.
         if let error = decodeError.sync({ $0 }) {
             throw error
         }
-        
+
         // Order the documents by depth and then alphabetically. This both ensures a deterministic behavior and prefers shallower paths when two files have the same output path.
         let analyzedDocumentsSorted = analyzedDocuments.sorted(by: { lhs, rhs in
             let lhsDepth = lhs.0.pathComponents.count
             let rhsDepth = rhs.0.pathComponents.count
-            
+
             guard lhsDepth == rhsDepth else {
                 return lhsDepth < rhsDepth
             }
@@ -786,32 +790,32 @@ public class DocumentationContext {
 
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: inputs)
             var reference = ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguage: .swift)
-            
+
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
             let isDocumentationExtension = (analyzed as? Article)?.title?.startsWithAnyLink == true
-            
+
             if let firstFoundAtURL = fileByOutputPath[path.lowercased()], !isDocumentationExtension {
                 let thisRelativePath: String
                 let otherRelativePath: String
                 if let indexOfCatalog = url.standardizedFileURL.pathComponents.firstIndex(where: { $0.hasSuffix(".docc") }) {
-                    thisRelativePath  = url.standardizedFileURL.pathComponents.dropFirst(indexOfCatalog + 1).joined(separator: "/")
+                    thisRelativePath = url.standardizedFileURL.pathComponents.dropFirst(indexOfCatalog + 1).joined(separator: "/")
                     otherRelativePath = firstFoundAtURL.standardizedFileURL.pathComponents.dropFirst(indexOfCatalog + 1).joined(separator: "/")
                 } else {
-                    let this  = url.standardizedFileURL.pathComponents
+                    let this = url.standardizedFileURL.pathComponents
                     let other = firstFoundAtURL.standardizedFileURL.pathComponents
-                    
+
                     let commonPrefixLength = zip(this, other).prefix(while: { $0 == $1 }).count
-                    thisRelativePath  = this.dropFirst(commonPrefixLength).joined(separator: "/")
+                    thisRelativePath = this.dropFirst(commonPrefixLength).joined(separator: "/")
                     otherRelativePath = other.dropFirst(commonPrefixLength).joined(separator: "/")
                 }
-                
+
                 let isArticle = url.pathExtension == "md"
                 let fileDescription = isArticle ? "article" : "tutorial"
-                
+
                 let webURLPathComponent = urlReadablePath(url.deletingPathExtension().lastPathComponent).lowercased()
                 assert(webURLPathComponent == urlReadablePath(firstFoundAtURL.deletingPathExtension().lastPathComponent).lowercased(), "The two files didn't collide")
-                
+
                 // swift-format-ignore
                 let diagnostic = Diagnostic(
                     source: url,
@@ -839,11 +843,11 @@ public class DocumentationContext {
                 diagnosticEngine.emit(diagnostic)
                 continue
             }
-            
+
             if !isDocumentationExtension {
                 fileByOutputPath[path.lowercased()] = url
             }
-            
+
             /*
              Add all topic graph nodes up front before resolution starts, because
              there may be circular linking.
@@ -858,14 +862,14 @@ public class DocumentationContext {
                 topicGraph.addNode(topicGraphNode)
                 let result = SemanticResult(value: tutorial, source: url, topicGraphNode: topicGraphNode)
                 tutorials.append(result)
-                
+
                 insertLandmarks(tutorial.landmarks, from: topicGraphNode, source: url)
             } else if let tutorialArticle = analyzed as? TutorialArticle {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorialArticle, source: .file(url: url), title: tutorialArticle.title ?? "")
                 topicGraph.addNode(topicGraphNode)
                 let result = SemanticResult(value: tutorialArticle, source: url, topicGraphNode: topicGraphNode)
                 tutorialArticles.append(result)
-                
+
                 insertLandmarks(tutorialArticle.landmarks, from: topicGraphNode, source: url)
             } else if let article = analyzed as? Article {
                 // If the article contains any `@SupportedLanguage` directives in the metadata,
@@ -877,7 +881,7 @@ public class DocumentationContext {
                 // because we don't know where in the hierarchy the article belongs, we will add it later when crawling the manual curation via Topics task groups.
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: url), title: article.title!.plainText)
                 let result = SemanticResult(value: article, source: url, topicGraphNode: topicGraphNode)
-                
+
                 // Separate articles that look like documentation extension files from other articles, so that the documentation extension files can be matched up with a symbol.
                 // Some links might not resolve in the final documentation hierarchy and we will emit warnings for those later on when we finalize the bundle discovery phase.
                 if isDocumentationExtension {
@@ -899,32 +903,32 @@ public class DocumentationContext {
                 diagnosticEngine.emit(diagnostic)
             }
         }
-        
+
         return (tutorialTableOfContentsResults, tutorials, tutorialArticles, articles, documentationExtensions)
     }
-    
+
     private func insertLandmarks(_ landmarks: some Sequence<any Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
         for landmark in landmarks {
             guard let range = landmark.range else {
                 continue
             }
-            
+
             let landmarkReference = topicGraphNode.reference.withFragment(landmark.title)
-            
+
             // Graph node: Landmark
             let landmarkTopicGraphNode = TopicGraph.Node(reference: landmarkReference, kind: .onPageLandmark, source: .range(range, url: url), title: landmark.title)
             topicGraph.addNode(landmarkTopicGraphNode)
-            
+
             // Graph edge: Topic -> Landmark
             topicGraph.addEdge(from: topicGraphNode, to: landmarkTopicGraphNode)
-            
+
             documentationCache[landmarkReference] = DocumentationNode(reference: landmarkReference, kind: .onPageLandmark, sourceLanguage: .swift, name: .conceptual(title: landmark.title), markup: landmark.markup, semantic: nil)
         }
     }
-    
+
     /// A lookup of resolved references based on the reference's absolute string.
     private(set) var referenceIndex = [String: ResolvedTopicReference]()
-    
+
     private func nodeWithInitializedContent(
         reference: ResolvedTopicReference,
         match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?
@@ -932,7 +936,7 @@ public class DocumentationContext {
         guard var updatedNode = documentationCache[reference] else {
             fatalError("A topic reference that has already been resolved should always exist in the cache.")
         }
-        
+
         // Pull a matched article out of the cache and attach content to the symbol
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
@@ -943,11 +947,11 @@ public class DocumentationContext {
 
         return updatedNode
     }
-    
+
     /// Creates a topic graph node and a documentation node for the given symbol.
     private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithDiagnostics {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, moduleData: module, moduleReference: moduleReference)
-        let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
+        let source: TopicGraph.Node.ContentLocation  // TODO: use a list of URLs for the files in a unified graph
         if let symbolGraphURL {
             source = .file(url: symbolGraphURL)
         } else {
@@ -962,7 +966,7 @@ public class DocumentationContext {
     private typealias AddSymbolResult = (reference: ResolvedTopicReference, preciseIdentifier: String, topicGraphNode: TopicGraph.Node, node: DocumentationNode)
     /// An optional result of converting a symbol into a documentation along with any related diagnostics.
     private typealias AddSymbolResultWithDiagnostics = (AddSymbolResult, diagnostics: [Diagnostic])
-    
+
     /// Concurrently adds a symbol to the graph, index, and cache, or replaces an existing symbol with the same precise identifier
     /// (for light updates to symbols already in the graph).
     ///
@@ -989,14 +993,15 @@ public class DocumentationContext {
                 guard let reference = symbolReferences[symbol.defaultIdentifier] else {
                     fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
                 }
-                
-                results.append(preparedSymbolData(
-                    symbol,
-                    reference: reference,
-                    module: module,
-                    moduleReference: moduleReference,
-                    fileURL: url
-                ))
+
+                results.append(
+                    preparedSymbolData(
+                        symbol,
+                        reference: reference,
+                        module: module,
+                        moduleReference: moduleReference,
+                        fileURL: url
+                    ))
             }
         }
         for result in results {
@@ -1009,14 +1014,14 @@ public class DocumentationContext {
         let symbolData = result.0
         topicGraph.addNode(symbolData.topicGraphNode)
         documentationCache.add(symbolData.node, reference: symbolData.reference, symbolID: symbolData.preciseIdentifier)
-        
+
         for anchor in result.0.node.anchorSections {
             nodeAnchorSections[anchor.reference] = anchor
         }
-        
+
         diagnosticEngine.emit(result.diagnostics)
     }
-    
+
     /// Loads all graph files from the context's inputs and merges them together while building the symbol relationships and loading any available markdown documentation for those symbols.
     private func registerSymbols(
         symbolGraphLoader: SymbolGraphLoader,
@@ -1028,21 +1033,21 @@ public class DocumentationContext {
             defer {
                 signposter.endInterval("Register symbols", signpostHandle)
             }
-            
+
             /// We need only unique relationships so we'll collect them in a set.
             var combinedRelationshipsBySelector = [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]()
             /// Also track the unique relationships across all languages and platforms
             var uniqueRelationships = Set<SymbolGraph.Relationship>()
             /// Collect symbols from all symbol graphs.
             var combinedSymbols = [String: UnifiedSymbolGraph.Symbol]()
-            
+
             var moduleReferences = [String: ResolvedTopicReference]()
-            
+
             // Build references for all symbols in all of this module's symbol graphs.
             let symbolReferences = signposter.withIntervalSignpost("Disambiguate references") {
                 linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, context: self)
             }
-            
+
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             documentationCache.reserveCapacity(symbolReferences.count)
             documentLocationMap.reserveCapacity(symbolReferences.count)
@@ -1051,14 +1056,14 @@ public class DocumentationContext {
             combinedRelationshipsBySelector.reserveCapacity(symbolReferences.count)
             uniqueRelationships.reserveCapacity(symbolReferences.count)
             combinedSymbols.reserveCapacity(symbolReferences.count)
-            
+
             // Iterate over batches of symbol graphs, each batch describing one module.
             // Each batch contains one or more symbol graph files.
             for (moduleName, unifiedSymbolGraph) in symbolGraphLoader.unifiedGraphs {
                 try shouldContinueRegistration()
 
                 let fileURL = symbolGraphLoader.mainModuleURL(forModule: moduleName)
-                
+
                 let moduleInterfaceLanguages: Set<SourceLanguage>
                 // FIXME: Update with new SymbolKit API once available.
                 // This is a very inefficient way to gather the source languages
@@ -1067,50 +1072,50 @@ public class DocumentationContext {
                 let symbolGraphLanguages = Set(
                     unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
                 )
-                
+
                 // If the symbol graph has no symbols, we cannot determine what languages is it available for,
                 // so fall back to Swift.
                 moduleInterfaceLanguages = symbolGraphLanguages.isEmpty ? [.swift] : symbolGraphLanguages
-                
+
                 // If it's an existing module, update the interface languages
                 moduleReferences[moduleName] = moduleReferences[moduleName]?.addingSourceLanguages(moduleInterfaceLanguages)
-                
+
                 // Import the symbol graph symbols
                 let moduleReference: ResolvedTopicReference
-                
+
                 // If it's a repeating module, diff & merge matching declarations.
                 if let existingModuleReference = moduleReferences[moduleName] {
                     // This node is known to exist
                     moduleReference = existingModuleReference
-                    
+
                     try mergeSymbolDeclarations(from: unifiedSymbolGraph, references: symbolReferences, moduleReference: moduleReference, fileURL: fileURL)
                 } else {
                     guard symbolGraphLoader.hasPrimaryURL(moduleName: moduleName) else { continue }
-                    
+
                     // Create a module symbol
                     let moduleIdentifier = SymbolGraph.Symbol.Identifier(
                         precise: moduleName,
                         interfaceLanguage: moduleInterfaceLanguages.first!.id
                     )
-                    
+
                     // Use the default module kind for this bundle if one was provided,
                     // otherwise fall back to 'Framework'
                     let moduleKindDisplayName = inputs.info.defaultModuleKind ?? "Framework"
                     let moduleSymbol = SymbolGraph.Symbol(
-                            identifier: moduleIdentifier,
-                            names: SymbolGraph.Symbol.Names(title: moduleName, navigator: nil, subHeading: nil, prose: nil),
-                            pathComponents: [moduleName],
-                            docComment: nil,
-                            accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
-                            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
-                            mixins: [:])
+                        identifier: moduleIdentifier,
+                        names: SymbolGraph.Symbol.Names(title: moduleName, navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: [moduleName],
+                        docComment: nil,
+                        accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
+                        kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
+                        mixins: [:])
                     let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguages: moduleInterfaceLanguages, defaultSymbol: moduleSymbol)
                     moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: inputs)
-                    
+
                     signposter.withIntervalSignpost("Add symbols to topic graph", id: signposter.makeSignpostID()) {
                         addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference)
                     }
-                    
+
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
                         for relationship in relationships {
@@ -1118,7 +1123,7 @@ public class DocumentationContext {
                             if let sourceOrigin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
                                 // Check if it's a memberOf or implementation relationship.
                                 (relationship.kind == .memberOf || relationship.kind == .defaultImplementationOf)
-                            {    
+                            {
                                 SymbolGraphRelationshipsBuilder.addInheritedDefaultImplementation(
                                     sourceOrigin: sourceOrigin,
                                     inheritedSymbolID: relationship.source,
@@ -1131,11 +1136,13 @@ public class DocumentationContext {
                     }
 
                     let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
-                        $0.filter { $0.kind == .overloadOf }
-                    }).reduce(into: [:], { acc, relationship in
-                        acc[relationship.target, default: []].insert(relationship.source)
-                    })
+                        unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
+                            $0.filter { $0.kind == .overloadOf }
+                        }).reduce(
+                            into: [:],
+                            { acc, relationship in
+                                acc[relationship.target, default: []].insert(relationship.source)
+                            })
                     addOverloadGroupReferences(overloadGroups: overloadGroups)
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -1147,15 +1154,15 @@ public class DocumentationContext {
                     // Add this module to the dictionary of processed modules to keep track of repeat symbol graphs
                     moduleReferences[moduleName] = moduleReference
                 }
-                
+
                 // Collect symbols and relationships
                 combinedSymbols.merge(unifiedSymbolGraph.symbols, uniquingKeysWith: { $1 })
-                
+
                 for (selector, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
                     combinedRelationshipsBySelector[selector, default: []].formUnion(relationships)
                     uniqueRelationships.formUnion(relationships)
                 }
-                
+
                 // Keep track of relationships that refer to symbols that are absent from the symbol graph, so that
                 // we can diagnose them.
                 combinedRelationshipsBySelector[
@@ -1164,36 +1171,40 @@ public class DocumentationContext {
                 ].formUnion(unifiedSymbolGraph.orphanRelationships)
                 uniqueRelationships.formUnion(unifiedSymbolGraph.orphanRelationships)
             }
-            
+
             try shouldContinueRegistration()
-            
+
             // Only add the symbol mapping now if the path hierarchy based resolver is the main implementation.
             // If it is only used for mismatch checking then we must wait until the documentation cache code path has traversed and updated all the colliding nodes.
             // Otherwise the mappings will save the unmodified references and the hierarchy based resolver won't find the expected parent nodes when resolving links.
             linkResolver.localResolver.addMappingForSymbols(localCache: documentationCache)
-            
+
             // Track the symbols that have multiple matching documentation extension files for diagnostics.
             var symbolsWithMultipleDocumentationExtensionMatches = [ResolvedTopicReference: [SemanticResult<Article>]]()
             for documentationExtension in documentationExtensions {
                 guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
-                
+
                 guard let destination = link.destination else {
-                    let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.emptyLinkDestination", summary: """
-                        Documentation extension with an empty link doesn't correspond to any symbol.
-                        """, explanation: nil, notes: [])
+                    let diagnostic = Diagnostic(
+                        source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.emptyLinkDestination",
+                        summary: """
+                            Documentation extension with an empty link doesn't correspond to any symbol.
+                            """, explanation: nil, notes: [])
                     diagnosticEngine.emit(diagnostic)
                     continue
                 }
                 guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
-                    let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination", summary: """
-                        \(destination.singleQuoted) is not a valid RFC 3986 URL.
-                        """, explanation: nil, notes: [])
+                    let diagnostic = Diagnostic(
+                        source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination",
+                        summary: """
+                            \(destination.singleQuoted) is not a valid RFC 3986 URL.
+                            """, explanation: nil, notes: [])
                     diagnosticEngine.emit(diagnostic)
                     continue
                 }
-                
+
                 switch resolve(.unresolved(.init(topicURL: url)), in: inputs.rootReference, fromSymbolLink: true) {
                 case .success(let resolved):
                     if let existing = uncuratedDocumentationExtensions[resolved] {
@@ -1204,7 +1215,7 @@ public class DocumentationContext {
                     } else {
                         uncuratedDocumentationExtensions[resolved] = documentationExtension
                     }
-                    
+
                     if let technologyRoot = documentationExtension.value.metadata?.technologyRoot {
                         warnAboutTechnologyRoot(technologyRoot, inDocumentationExtension: documentationExtension, forSymbol: resolved)
                     }
@@ -1221,7 +1232,7 @@ public class DocumentationContext {
                         // the process that interacts with the convert service is responsible for maintaining it's own link resolutions implementation to match the behavior of a regular build.
                         // - Diagnosing documentation extension files that don't match any symbols.
                         let reference = documentationExtension.topicGraphNode.reference
-                        
+
                         let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
                         let symbolReference = ResolvedTopicReference(
                             bundleID: reference.bundleID,
@@ -1229,7 +1240,7 @@ public class DocumentationContext {
                             fragment: nil,
                             sourceLanguages: reference._sourceLanguages
                         )
-                        
+
                         if let existing = uncuratedDocumentationExtensions[symbolReference] {
                             if symbolsWithMultipleDocumentationExtensionMatches[symbolReference] == nil {
                                 symbolsWithMultipleDocumentationExtensionMatches[symbolReference] = [existing]
@@ -1240,10 +1251,10 @@ public class DocumentationContext {
                         }
                         continue
                     }
-                    
+
                     // Present a diagnostic specific to documentation extension files but get the solutions and notes from the general unresolved link problem.
                     let unresolvedLinkDiagnostic = unresolvedReferenceDiagnostic(source: documentationExtension.source, range: link.range, severity: .warning, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
-                    
+
                     diagnosticEngine.emit(
                         Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(destination.singleQuoted). \(errorInfo.message).", notes: unresolvedLinkDiagnostic.notes, solutions: unresolvedLinkDiagnostic.solutions)
                     )
@@ -1261,14 +1272,14 @@ public class DocumentationContext {
                     // Match the symbol's documentation extension and initialize the node content.
                     let match = uncuratedDocumentationExtensions[finalReference]
                     let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
-                    
+
                     return (
                         node: updatedNode,
                         matchedArticleURL: match?.source
                     )
                 }
             }
-            
+
             // Update cache with up-to-date nodes
             for (updatedNode, matchedArticleURL) in updatedNodes {
                 let reference = updatedNode.reference
@@ -1292,10 +1303,10 @@ public class DocumentationContext {
 
             // Resolve any external references first
             preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }))
-            
+
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
-            
+
             for (selector, relationships) in combinedRelationshipsBySelector {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector)
@@ -1388,7 +1399,7 @@ public class DocumentationContext {
             }
         }
     }
-    
+
     /// Identifies all the dictionary keys and records them in the appropriate target dictionaries.
     private func populateOnPageMemberRelationships(
         from relationships: Set<SymbolGraph.Relationship>,
@@ -1399,11 +1410,11 @@ public class DocumentationContext {
         var bodyByTarget = [String: HTTPBody]()
         var bodyParametersByTarget = [String: [HTTPParameter]]()
         var responsesByTarget = [String: [HTTPResponse]]()
-        
+
         for edge in relationships {
             if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
                 if let source = documentationCache[edge.source], let target = documentationCache[edge.target],
-                   let sourceSymbol = source.symbol
+                    let sourceSymbol = source.symbol
                 {
                     switch (source.kind, target.kind) {
                     case (.dictionaryKey, .dictionary):
@@ -1446,7 +1457,7 @@ public class DocumentationContext {
                 }
             }
         }
-        
+
         // Merge in all the dictionary keys for each target into their section variants.
         for (targetIdentifier, keys) in keysByTarget {
             let target = documentationCache[targetIdentifier]
@@ -1459,7 +1470,7 @@ public class DocumentationContext {
                 }
             }
         }
-        
+
         // Merge in all the parameters for each target into their section variants.
         for (targetIdentifier, parameters) in parametersByTarget {
             let target = documentationCache[targetIdentifier]
@@ -1472,7 +1483,7 @@ public class DocumentationContext {
                 }
             }
         }
-        
+
         // Merge in the body for each target into their section variants.
         for (targetIdentifier, body) in bodyByTarget {
             let target = documentationCache[targetIdentifier]
@@ -1489,7 +1500,7 @@ public class DocumentationContext {
                 }
             }
         }
-        
+
         // Merge in all the responses for each target into their section variants.
         for (targetIdentifier, responses) in responsesByTarget {
             let target = documentationCache[targetIdentifier]
@@ -1503,7 +1514,7 @@ public class DocumentationContext {
             }
         }
     }
-    
+
     /// Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph, using an `globalExternalSymbolResolver` (if not `nil`).
     func resolveExternalSymbols(
         in symbols: [String: UnifiedSymbolGraph.Symbol],
@@ -1513,10 +1524,10 @@ public class DocumentationContext {
             // Context has no mechanism for resolving external symbol links. No reason to gather any symbols to resolve.
             return
         }
-        
+
         // Gather all the references to symbols that don't exist in the combined symbol graph file and add then by resolving these "external" symbols.
         var symbolsToResolve = Set<String>()
-        
+
         // Add all the symbols that are the target of a relationship. These could for example be protocols that are being conformed to,
         // classes that are being subclassed, or methods that are being overridden.
         for (_, relationships) in relationships {
@@ -1524,7 +1535,7 @@ public class DocumentationContext {
                 symbolsToResolve.insert(edge.target)
             }
         }
-        
+
         // Add all the types that are referenced in a declaration. These could for example be the type of an argument or return value.
         for symbol in symbols.values {
             guard let defaultSymbol = symbol.defaultSymbol, let declaration = defaultSymbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self] else {
@@ -1537,9 +1548,9 @@ public class DocumentationContext {
                 symbolsToResolve.insert(preciseIdentifier)
             }
         }
-        
+
         // TODO: When the symbol graph includes the precise identifiers for conditional availability, those symbols should also be resolved (rdar://63768609).
-        
+
         func resolveSymbol(symbolID: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
             if let globalResult = configuration.externalDocumentationConfiguration.globalSymbolResolver?.symbolReferenceAndEntity(withPreciseIdentifier: symbolID) {
                 return globalResult
@@ -1551,7 +1562,7 @@ public class DocumentationContext {
             }
             return nil
         }
-        
+
         // Resolve all the collected symbol identifiers and add them do the topic graph.
         for symbolID in symbolsToResolve {
             if let (reference, entity) = resolveSymbol(symbolID: symbolID) {
@@ -1561,16 +1572,17 @@ public class DocumentationContext {
             // The build doesn't necessarily include all documentation dependencies that appear in declarations, conformances, etc.
         }
     }
-    
+
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
     func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], moduleReference: ResolvedTopicReference, fileURL otherSymbolGraphURL: URL?) throws {
         let mergeError = Synchronized<(any Error)?>(nil)
-        
+
         let results: [AddSymbolResultWithDiagnostics] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
             guard let defaultSymbol = symbol.defaultSymbol, let swiftSelector = symbol.defaultSelector, let module = symbol.modules[swiftSelector] else {
-                fatalError("""
+                fatalError(
+                    """
                     Only Swift symbols are currently supported. \
                     This initializer is only called with symbols from the symbol graph, which currently only supports Swift.
                     """
@@ -1581,17 +1593,17 @@ public class DocumentationContext {
                 diagnosticEngine.emit(Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"))
                 return
             }
-            
+
             guard let existingNode = documentationCache[symbol.uniqueIdentifier], existingNode.semantic is Symbol else {
                 // New symbols that didn't exist in the previous graphs should be added.
                 guard let reference = references[symbol.defaultIdentifier] else {
                     fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
                 }
-                
+
                 result.append(preparedSymbolData(symbol, reference: reference, module: module, moduleReference: moduleReference, fileURL: otherSymbolGraphURL))
                 return
             }
-            
+
             do {
                 // It's safe to force unwrap since we validated the data above.
                 // We update the node in place so avoid copying the data around.
@@ -1603,7 +1615,7 @@ public class DocumentationContext {
                 })
             }
         }
-        
+
         // If there was an invalid input error re-throw it.
         if let error = mergeError.sync({ $0 }) {
             throw error
@@ -1614,19 +1626,19 @@ public class DocumentationContext {
             addPreparedSymbolToContext(result)
         }
     }
-    
+
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
     // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
-    
+
     /// A type of asset.
     public enum AssetType: CustomStringConvertible {
         /// An image asset.
         case image
         /// A video asset.
         case video
-        
+
         public var description: String {
             switch self {
             case .image:
@@ -1646,16 +1658,16 @@ public class DocumentationContext {
     public static func isFileExtension(_ fileExtension: String, supported type: AssetType) -> Bool {
         let fileExtension = fileExtension.lowercased()
         switch type {
-            case .image: return supportedImageExtensions.contains(fileExtension)
-            case .video: return supportedVideoExtensions.contains(fileExtension)
+        case .image: return supportedImageExtensions.contains(fileExtension)
+        case .video: return supportedVideoExtensions.contains(fileExtension)
         }
     }
-    
+
     private func registerMiscResources() throws {
         let miscResources = Set(inputs.miscResourceURLs)
         try assetManagers[inputs.id, default: DataAssetManager()].register(data: miscResources)
     }
-    
+
     private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
         guard let resources = assetManagers[bundleID]?.storage.values else {
             return []
@@ -1680,7 +1692,7 @@ public class DocumentationContext {
     public func registeredImageAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
         registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleID)
     }
-    
+
     /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return video assets for.
@@ -1688,7 +1700,7 @@ public class DocumentationContext {
     public func registeredVideoAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
         registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleID)
     }
-    
+
     /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return download assets for.
@@ -1696,7 +1708,7 @@ public class DocumentationContext {
     public func registeredDownloadsAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
         registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleID)
     }
-    
+
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
     private typealias ArticlesTuple = (articles: Articles, rootPageArticles: Articles)
 
@@ -1709,31 +1721,31 @@ public class DocumentationContext {
             }
         }
     }
-    
+
     private func registerRootPages(from articles: Articles) {
         // Create a root leaf node for all root page articles
         for article in articles {
             // Create the documentation data
             guard let (documentation, title) = Self.documentationNodeAndTitle(for: article, kind: .collection, in: inputs) else { continue }
             let reference = documentation.reference
-            
+
             // Create the documentation node
             documentLocationMap[article.source] = reference
             let topicGraphKind = DocumentationNode.Kind.module
             let graphNode = TopicGraph.Node(reference: reference, kind: topicGraphKind, source: .file(url: article.source), title: title)
             topicGraph.addNode(graphNode)
             documentationCache[reference] = documentation
-            
+
             linkResolver.localResolver.addRootArticle(article, anchorSections: documentation.anchorSections)
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
-            
+
             // Remove the article from the context
             uncuratedArticles.removeValue(forKey: article.topicGraphNode.reference)
         }
     }
-    
+
     /// Adds articles that are not root pages to the documentation cache.
     ///
     /// This method adds all of the `articles` to the documentation cache and inserts a node representing
@@ -1757,35 +1769,40 @@ public class DocumentationContext {
             }
             return result
         }()
-                    
+
         return articles.compactMap { article in
-            guard let (documentation, title) = Self.documentationNodeAndTitle(
-                for: article,
-                // By default, articles are available in the languages the module that's being documented
-                // is available in. It's possible to override that behavior using the `@SupportedLanguage`
-                // directive though; see its documentation for more details.
-                availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
-                kind: .article,
-                in: inputs
-            ) else {
+            guard
+                let (documentation, title) = Self.documentationNodeAndTitle(
+                    for: article,
+                    // By default, articles are available in the languages the module that's being documented
+                    // is available in. It's possible to override that behavior using the `@SupportedLanguage`
+                    // directive though; see its documentation for more details.
+                    availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
+                    kind: .article,
+                    in: inputs
+                )
+            else {
                 return article
             }
             let reference = documentation.reference
-            
+
             if let existingSymbolReference = topLevelSymbolsThatCanCollideWithArticles[reference.path.lowercased()],
-               let existing = documentationCache[existingSymbolReference]
+                let existing = documentationCache[existingSymbolReference]
             {
                 // By the time we get here it's already to late to fix the collision. All we can do is make the author aware of it and handle the collision deterministically.
                 // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
                 diagnosticEngine.emit(
-                    Diagnostic(source: article.source, severity: .warning, identifier: "ArticleCollideWithSymbol", summary: """
-                        Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
-                        """, explanation: """
-                        DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
-                        Until rdar://79745455 (issue #593) is fixed, DocC favors the symbol in this collision and drops the article to have deterministic behavior.
-                        """,
+                    Diagnostic(
+                        source: article.source, severity: .warning, identifier: "ArticleCollideWithSymbol",
+                        summary: """
+                            Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
+                            """,
+                        explanation: """
+                            DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
+                            Until rdar://79745455 (issue #593) is fixed, DocC favors the symbol in this collision and drops the article to have deterministic behavior.
+                            """,
                         solutions: [
-                            Solution(summary: "Rename '\(article.source.lastPathComponent)'", replacements: [ /* Renaming a file isn't something that we can represent with a replacement */ ])
+                            Solution(summary: "Rename '\(article.source.lastPathComponent)'", replacements: [ /* Renaming a file isn't something that we can represent with a replacement */])
                         ]
                     )
                 )
@@ -1799,11 +1816,11 @@ public class DocumentationContext {
             } else {
                 documentationCache[reference] = documentation
             }
-            
+
             documentLocationMap[article.source] = reference
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)
             topicGraph.addNode(graphNode)
-            
+
             linkResolver.localResolver.addArticle(article, anchorSections: documentation.anchorSections)
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
@@ -1815,7 +1832,7 @@ public class DocumentationContext {
             return article
         }
     }
-    
+
     /// Registers a synthesized root page for a catalog with only non-root articles.
     ///
     /// If the catalog only has one article or has an article with the same name as the catalog itself, that article is turned into the root page instead of creating a new article.
@@ -1824,7 +1841,7 @@ public class DocumentationContext {
     ///   - articles: On input, a list of articles. If an article is used as a root it is removed from this list.
     private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>]) {
         let title = inputs.displayName
-        
+
         // An inner helper function to register a new root node from an article
         func registerAsNewRootNode(_ articleResult: SemanticResult<Article>) {
             uncuratedArticles.removeValue(forKey: articleResult.topicGraphNode.reference)
@@ -1838,15 +1855,19 @@ public class DocumentationContext {
             // Add the technology root to the article's metadata
             let metadataMarkup: BlockDirective
             if let markup = articleResult.value.metadata?.originalMarkup as? BlockDirective {
-                assert(!markup.children.contains(where: { ($0 as? BlockDirective)?.name == "TechnologyRoot" }),
-                       "Nothing should try to synthesize a root page if there's already an explicit authored root page")
-                metadataMarkup = markup.withUncheckedChildren(
-                    markup.children + [BlockDirective(name: "TechnologyRoot", children: [])]
-                ) as! BlockDirective
+                assert(
+                    !markup.children.contains(where: { ($0 as? BlockDirective)?.name == "TechnologyRoot" }),
+                    "Nothing should try to synthesize a root page if there's already an explicit authored root page")
+                metadataMarkup =
+                    markup.withUncheckedChildren(
+                        markup.children + [BlockDirective(name: "TechnologyRoot", children: [])]
+                    ) as! BlockDirective
             } else {
-                metadataMarkup = BlockDirective(name: "Metadata", children: [
-                    BlockDirective(name: "TechnologyRoot", children: [])
-                ])
+                metadataMarkup = BlockDirective(
+                    name: "Metadata",
+                    children: [
+                        BlockDirective(name: "TechnologyRoot", children: [])
+                    ])
             }
             let article = Article(
                 markup: articleResult.value.markup,
@@ -1854,11 +1875,11 @@ public class DocumentationContext {
                 redirects: articleResult.value.redirects,
                 options: articleResult.value.options
             )
-            
+
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: articleResult.topicGraphNode.source, title: title)
             registerRootPages(from: [.init(value: article, source: articleResult.source, topicGraphNode: graphNode)])
         }
-        
+
         if articles.count == 1 {
             // This catalog only has one article, so we make that the root.
             registerAsNewRootNode(articles.removeFirst())
@@ -1869,16 +1890,18 @@ public class DocumentationContext {
             // There's no particular article to make into the root. Instead, create a new minimal root page.
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
             let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
-            
+
             let reference = ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguages: [sourceLanguage])
-            
+
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
-            
+
             // Build up the "full" markup for an empty technology root article
-            let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
-                BlockDirective(name: "TechnologyRoot", children: [])
-            ])
+            let metadataDirectiveMarkup = BlockDirective(
+                name: "Metadata",
+                children: [
+                    BlockDirective(name: "TechnologyRoot", children: [])
+                ])
             let markup = Document(
                 Heading(level: 1, Text(title)),
                 metadataDirectiveMarkup
@@ -1897,7 +1920,7 @@ public class DocumentationContext {
             documentationCache[reference] = documentationNode
         }
     }
-    
+
     /// Creates a documentation node and title for the given article semantic result.
     ///
     /// - Parameters:
@@ -1914,16 +1937,16 @@ public class DocumentationContext {
         guard let articleMarkup = article.value.markup else {
             return nil
         }
-        
+
         let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: inputs)
-        
+
         // Use the languages specified by the `@SupportedLanguage` directives if present.
         let availableSourceLanguages = article.value.supportedLanguages ?? availableSourceLanguages
-        
+
         // If available source languages are provided and it contains Swift, use Swift as the default language of
         // the article.
         let defaultSourceLanguage = defaultLanguage(in: availableSourceLanguages)
-        
+
         let reference = ResolvedTopicReference(
             bundleID: inputs.id,
             path: path,
@@ -1932,9 +1955,9 @@ public class DocumentationContext {
                 // (github.com/swiftlang/swift-docc/issues/240).
                 ?? [.swift]
         )
-        
+
         let title = article.topicGraphNode.title
-        
+
         let documentationNode = DocumentationNode(
             reference: reference,
             kind: kind,
@@ -1944,10 +1967,10 @@ public class DocumentationContext {
             markup: articleMarkup,
             semantic: article.value
         )
-        
+
         return (documentationNode, title)
     }
-    
+
     /// Curates articles under the root module.
     ///
     /// This method creates a new task group under the root page containing references to all of the articles
@@ -1966,7 +1989,7 @@ public class DocumentationContext {
         guard !articlesToAutoCurate.isEmpty else {
             return []
         }
-        
+
         for article in articlesToAutoCurate {
             topicGraph.addEdge(from: rootNode, to: article.topicGraphNode)
             uncuratedArticles.removeValue(forKey: article.topicGraphNode.reference)
@@ -1978,15 +2001,15 @@ public class DocumentationContext {
         }
 
         let articleReferences = sortedArticles.map(\.topicGraphNode.reference)
-        
+
         let automaticTaskGroup = AutomaticTaskGroupSection(
             title: "Articles",
             references: articleReferences,
             renderPositionPreference: .top
         )
-            
+
         let node = try entity(with: rootNode.reference)
-        
+
         // If the node we're automatically curating the article under is a symbol, automatically curate the article
         // for each language it's available in.
         if let symbol = node.semantic as? Symbol {
@@ -1996,10 +2019,10 @@ public class DocumentationContext {
         } else if var taskGroupProviding = node.semantic as? (any AutomaticTaskGroupsProviding) {
             taskGroupProviding.automaticTaskGroups = [automaticTaskGroup]
         }
-        
+
         return articleReferences
     }
-    
+
     /**
      Register a documentation bundle with this context.
      */
@@ -2031,7 +2054,7 @@ public class DocumentationContext {
                 shouldCreateOverloadGroups: configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
-            
+
             try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
                 try autoreleasepool {
                     try symbolGraphLoader.loadAll()
@@ -2041,17 +2064,18 @@ public class DocumentationContext {
             try shouldContinueRegistration()
             let hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
                 autoreleasepool {
-                    PathHierarchyBasedLinkResolver(pathHierarchy: PathHierarchy(
-                        symbolGraphLoader: symbolGraphLoader,
-                        bundleName: urlReadablePath(inputs.displayName),
-                        knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents,
-                        isModuleNotFoundErrorsEnabled: configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled
-                    ))
+                    PathHierarchyBasedLinkResolver(
+                        pathHierarchy: PathHierarchy(
+                            symbolGraphLoader: symbolGraphLoader,
+                            bundleName: urlReadablePath(inputs.displayName),
+                            knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents,
+                            isModuleNotFoundErrorsEnabled: configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled
+                        ))
                 }
             }
-            
+
             let snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
-           
+
             return (symbolGraphLoader, hierarchyBasedResolver, snippetResolver)
         }()
 
@@ -2061,30 +2085,30 @@ public class DocumentationContext {
                 try self.registerMiscResources()
             }
         }
-        
+
         // Load documents
         async let loadDocuments = try signposter.withIntervalSignpost("Load documents", id: signposter.makeSignpostID()) {
             try autoreleasepool {
                 try self.registerDocuments()
             }
         }
-        
+
         // Load any external resolvers
         async let loadExternalResolvers: Void = try signposter.withIntervalSignpost("Load external resolvers", id: signposter.makeSignpostID()) {
             try autoreleasepool {
                 try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
             }
         }
-        
+
         // All discovery went well, process the inputs.
         let (tutorialTableOfContentsResults, tutorials, tutorialArticles, allArticles, documentationExtensions) = try await loadDocuments
         try shouldContinueRegistration()
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
-        
+
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
             return article.value.options[.global]
         }
-        
+
         if globalOptions.count > 1 {
             let extraGlobalOptionsDiagnostics = globalOptions.map { extraOptionsDirective -> Diagnostic in
                 var diagnostic = Diagnostic(
@@ -2094,29 +2118,30 @@ public class DocumentationContext {
                     identifier: "org.swift.docc.DuplicateGlobalOptions",
                     summary: "Duplicate \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
                     explanation: """
-                    A DocC catalog can only contain a single \(Options.directiveName.singleQuoted) \
-                    directive with the \(extraOptionsDirective.scope.rawValue.singleQuoted) scope.
-                    """
+                        A DocC catalog can only contain a single \(Options.directiveName.singleQuoted) \
+                        directive with the \(extraOptionsDirective.scope.rawValue.singleQuoted) scope.
+                        """
                 )
-                
+
                 if let range = extraOptionsDirective.originalMarkup.range {
-                    diagnostic.solutions.append(Solution(
-                        summary: "Remove extraneous \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
-                        replacements: [
-                            .init(range: range, replacement: "")
-                        ]
-                    ))
-                    
+                    diagnostic.solutions.append(
+                        Solution(
+                            summary: "Remove extraneous \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
+                            replacements: [
+                                .init(range: range, replacement: "")
+                            ]
+                        ))
+
                 }
-                
+
                 return diagnostic
             }
-            
+
             diagnosticEngine.emit(extraGlobalOptionsDiagnostics)
         } else {
             options = globalOptions.first
         }
-        
+
         let (symbolGraphLoader, hierarchyBasedResolver, snippetResolver) = try await loadSymbols
         try shouldContinueRegistration()
         self.linkResolver.localResolver = hierarchyBasedResolver
@@ -2131,25 +2156,25 @@ public class DocumentationContext {
         for tutorialTableOfContents in tutorialTableOfContentsResults {
             hierarchyBasedResolver.addTutorialTableOfContents(tutorialTableOfContents)
         }
-        
+
         registerRootPages(from: rootPageArticles)
-        
+
         // `registerSymbols(...)`, just below, calls `resolveExternalSymbols()` internally so we need to have finished loading the external symbol data before calling it.
         _ = try await loadExternalResolvers
-        
+
         try registerSymbols(symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
         // We don't need to keep the loader in memory after we've registered all symbols.
         _ = consume symbolGraphLoader
-        
+
         try shouldContinueRegistration()
-        
+
         if topicGraph.nodes.isEmpty,
-           !otherArticles.isEmpty,
-           !configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot
+            !otherArticles.isEmpty,
+            !configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot
         {
             synthesizeArticleOnlyRootPage(articles: &otherArticles)
         }
-            
+
         // Keep track of the root modules registered from symbol graph files, we'll need them to automatically
         // curate articles.
         rootModules = topicGraph.nodes.values.compactMap { node in
@@ -2167,22 +2192,21 @@ public class DocumentationContext {
             otherArticles = registerArticles(otherArticles)
             try shouldContinueRegistration()
         }
-        
+
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
-        preResolveExternalLinks(semanticObjects:
-            tutorialTableOfContentsResults.map(referencedSemanticObject) +
-            tutorials.map(referencedSemanticObject) +
-            tutorialArticles.map(referencedSemanticObject))
-        
+        preResolveExternalLinks(
+            semanticObjects:
+                tutorialTableOfContentsResults.map(referencedSemanticObject) + tutorials.map(referencedSemanticObject) + tutorialArticles.map(referencedSemanticObject))
+
         // References to resources aren't used until the links are resolved
         _ = try await loadResources
-        
+
         resolveLinks(
             tutorialTableOfContents: tutorialTableOfContentsResults,
             tutorials: tutorials,
             tutorialArticles: tutorialArticles
         )
-        
+
         // After the resolving links in tutorial content all the local references are known and can be added to the referenceIndex for fast lookup.
         referenceIndex.reserveCapacity(knownIdentifiers.count + nodeAnchorSections.count)
         for reference in knownIdentifiers {
@@ -2191,35 +2215,35 @@ public class DocumentationContext {
         for reference in nodeAnchorSections.keys {
             referenceIndex[reference.absoluteString] = reference
         }
-        
+
         linkResolver.localResolver.addAnchorForSymbols(localCache: documentationCache)
-        
+
         try shouldContinueRegistration()
         let topLevelSymbols = linkResolver.localResolver.topLevelSymbols()
         var allCuratedReferences = try crawlSymbolCuration(in: topLevelSymbols)
-        
+
         // Store the list of manually curated references if doc coverage is on.
         if configuration.experimentalCoverageConfiguration.shouldStoreManuallyCuratedReferences {
             manuallyCuratedReferences = allCuratedReferences
         }
-        
+
         try shouldContinueRegistration()
 
         // Fourth, automatically curate all symbols that haven't been curated manually
         let automaticallyCurated = signposter.withIntervalSignpost("Auto-curate symbols ", id: signposter.makeSignpostID()) {
             autoCurateSymbolsInTopicGraph()
         }
-        
+
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
         allCuratedReferences = try crawlSymbolCuration(in: Set(automaticallyCurated.map(\.symbol)).subtracting(topLevelSymbols), initial: allCuratedReferences)
-        
+
         // Automatically curate articles that haven't been manually curated
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
             allCuratedReferences = try crawlSymbolCuration(in: articleReferences, initial: allCuratedReferences)
         }
-        
+
         // Remove curation paths that have been created automatically above
         // but we've found manual curation for in the second crawl pass.
         removeUnneededAutomaticCuration(automaticallyCurated)
@@ -2231,7 +2255,7 @@ public class DocumentationContext {
 
         // Emit warnings for any remaining uncurated files.
         warnAboutArticlesOutsideTheDocumentationHierarchy()
-        
+
         // Fifth, resolve links in nodes that are added solely via curation
         preResolveExternalLinks(references: Array(allCuratedReferences))
         resolveLinks(curatedReferences: allCuratedReferences)
@@ -2242,25 +2266,25 @@ public class DocumentationContext {
             // the single page. To ensure that links are resolved, explicitly visit all pages.
             resolveLinks(curatedReferences: Set(knownPages))
         }
-        
+
         // We should use a read-only context during render time (rdar://65130130).
 
         // Sixth - fetch external entities and merge them in the context
         for case .success(let reference) in externallyResolvedLinks.values {
             referenceIndex[reference.absoluteString] = reference
         }
-        
+
         // Seventh, the complete topic graph—with all nodes and all edges added—is analyzed.
         signposter.withIntervalSignpost("Analyze topic graph", id: signposter.makeSignpostID()) {
             topicGraphGlobalAnalysis()
         }
-        
+
         preResolveModuleNames()
     }
-    
+
     /// Given a list of topics that have been automatically curated, checks if a topic has been additionally manually curated
     /// and if so removes the automatic curation.
-    /// 
+    ///
     /// During the first crawl pass we skip over all automatically curated nodes (as they are not in the topic graph yet.
     /// After adding all symbols automatically to their parents and running a second crawl pass we discover any manual
     /// curations that we could not crawl in the first pass.
@@ -2287,10 +2311,11 @@ public class DocumentationContext {
     /// Remove unneeded "Extended Symbol" pages whose children have been curated elsewhere.
     func trimEmptyExtendedSymbolPages(under nodeReference: ResolvedTopicReference) {
         // Get the children of this node that are an "Extended Symbol" page.
-        let extendedSymbolChildren = topicGraph.edges[nodeReference]?.filter({ childReference in
-            guard let childNode = topicGraph.nodeWithReference(childReference) else { return false }
-            return childNode.kind.isExtendedSymbolKind
-        }) ?? []
+        let extendedSymbolChildren =
+            topicGraph.edges[nodeReference]?.filter({ childReference in
+                guard let childNode = topicGraph.nodeWithReference(childReference) else { return false }
+                return childNode.kind.isExtendedSymbolKind
+            }) ?? []
 
         // First recurse to clean up the tree depth-first.
         for child in extendedSymbolChildren {
@@ -2300,29 +2325,31 @@ public class DocumentationContext {
         // Finally, if this node was left with no children and does not have an extension file,
         // remove it from the topic graph.
         if let node = topicGraph.nodeWithReference(nodeReference),
-           node.kind.isExtendedSymbolKind,
-           topicGraph[node].isEmpty,
-           documentationExtensionURL(for: nodeReference) == nil
+            node.kind.isExtendedSymbolKind,
+            topicGraph[node].isEmpty,
+            documentationExtensionURL(for: nodeReference) == nil
         {
             topicGraph.removeEdges(to: node)
             topicGraph.removeEdges(from: node)
             topicGraph.edges.removeValue(forKey: nodeReference)
             topicGraph.reverseEdges.removeValue(forKey: nodeReference)
 
-            topicGraph.replaceNode(node, with: .init(
-                reference: node.reference,
-                kind: node.kind,
-                source: node.source,
-                title: node.title,
-                isResolvable: false, // turn isResolvable off to prevent a link from being made
-                isVirtual: true, // set isVirtual to keep it from generating a page later on
-                isEmptyExtension: true
-            ))
+            topicGraph.replaceNode(
+                node,
+                with: .init(
+                    reference: node.reference,
+                    kind: node.kind,
+                    source: node.source,
+                    title: node.title,
+                    isResolvable: false,  // turn isResolvable off to prevent a link from being made
+                    isVirtual: true,  // set isVirtual to keep it from generating a page later on
+                    isEmptyExtension: true
+                ))
         }
     }
-    
+
     typealias AutoCuratedSymbolRecord = (symbol: ResolvedTopicReference, parent: ResolvedTopicReference, counterpartParent: ResolvedTopicReference?)
-    
+
     /// Curate all remaining uncurated symbols under their natural parent from the symbol graph.
     ///
     /// This will include all symbols that were not manually curated by the documentation author.
@@ -2331,21 +2358,21 @@ public class DocumentationContext {
         var automaticallyCuratedSymbols = [AutoCuratedSymbolRecord]()
         linkResolver.localResolver.traverseSymbolAndParents { reference, parentReference, counterpartParentReference in
             guard let topicGraphNode = topicGraph.nodeWithReference(reference),
-                  // Check that the node isn't already manually curated
-                  topicGraphNode.shouldAutoCurateInCanonicalLocation
+                // Check that the node isn't already manually curated
+                topicGraphNode.shouldAutoCurateInCanonicalLocation
             else { return }
-            
+
             // Check that the symbol doesn't already have parent's that aren't either language representation's hierarchical parent.
             // This for example happens for default implementation and symbols that are requirements of protocol conformances.
             guard parents(of: reference).allSatisfy({ $0 == parentReference || $0 == counterpartParentReference }) else {
                 return
             }
-            
+
             guard let topicGraphParentNode = topicGraph.nodeWithReference(parentReference) else {
                 preconditionFailure("Node with reference \(parentReference.absoluteString) exist in link resolver but not in topic graph.")
             }
             topicGraph.addEdge(from: topicGraphParentNode, to: topicGraphNode)
-            
+
             if let counterpartParentReference {
                 guard let topicGraphCounterpartParentNode = topicGraph.nodeWithReference(counterpartParentReference) else {
                     preconditionFailure("Node with reference \(counterpartParentReference.absoluteString) exist in link resolver but not in topic graph.")
@@ -2362,7 +2389,7 @@ public class DocumentationContext {
         guard configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
-        
+
         for (overloadGroupID, overloadSymbolIDs) in overloadGroups {
             guard overloadSymbolIDs.count > 1 else {
                 assertionFailure("Overload group \(overloadGroupID) contained \(overloadSymbolIDs.count) symbols, but should have more than one symbol to be valid.")
@@ -2388,7 +2415,8 @@ public class DocumentationContext {
                     return lhsIndex < rhsIndex
                 })
             } else {
-                assertionFailure("""
+                assertionFailure(
+                    """
                     Overload group \(overloadGroupNode.reference.absoluteString.singleQuoted) was not properly initialized with overload data from SymbolKit.
                     Symbols without overload data: \(Array(overloadSymbolNodes.filter({ ($0.semantic as? Symbol)?.overloadsVariants.firstValue == nil }).map(\.reference.absoluteString.singleQuoted)))
                     """)
@@ -2401,16 +2429,18 @@ public class DocumentationContext {
                 overloadSymbolReferences: [DocumentationNode]
             ) {
                 guard let symbol = documentationNode.semantic as? Symbol else {
-                    preconditionFailure("""
-                    Only symbols can be overloads. Found non-symbol overload for \(documentationNode.reference.absoluteString.singleQuoted).
-                    Non-symbols should already have been filtered out by SymbolKit.
-                    """)
+                    preconditionFailure(
+                        """
+                        Only symbols can be overloads. Found non-symbol overload for \(documentationNode.reference.absoluteString.singleQuoted).
+                        Non-symbols should already have been filtered out by SymbolKit.
+                        """)
                 }
                 guard documentationNode.reference.sourceLanguage == .swift else {
-                    assertionFailure("""
-                    Overload groups are only supported for Swift symbols.
-                    The symbol at \(documentationNode.reference.absoluteString.singleQuoted) is listed as \(documentationNode.reference.sourceLanguage.name).
-                    """)
+                    assertionFailure(
+                        """
+                        Overload groups are only supported for Swift symbols.
+                        The symbol at \(documentationNode.reference.absoluteString.singleQuoted) is listed as \(documentationNode.reference.sourceLanguage.name).
+                        """)
                     return
                 }
 
@@ -2432,7 +2462,7 @@ public class DocumentationContext {
             }
         }
     }
-    
+
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
     /// - Parameters:
     ///   - references: A list of references to crawl.
@@ -2444,7 +2474,7 @@ public class DocumentationContext {
         defer {
             signposter.endInterval("Curate symbols", signpostHandle)
         }
-        
+
         var crawler = DocumentationCurator(in: self, initial: initial)
 
         for reference in references {
@@ -2452,23 +2482,23 @@ public class DocumentationContext {
                 of: reference,
                 relateNodes: { container, descendant in
                     topicGraph.unsafelyAddEdge(source: container, target: descendant)
-                    
+
                     guard topicGraph.nodes[descendant]?.shouldAutoCurateInCanonicalLocation == true else {
                         // Descendant is already marked to be removed from automatic curation.
                         return
                     }
-                    
+
                     // An inner function called below
                     func stopAutoCuratingDescendant() {
                         topicGraph.nodes[descendant]?.shouldAutoCurateInCanonicalLocation = false
                     }
-                    
+
                     guard let (canonicalContainer, counterpartContainer) = linkResolver.localResolver.nearestContainers(ofSymbol: descendant) else {
                         // Any curation of a non-symbol removes it from automatic curation
                         stopAutoCuratingDescendant()
                         return
                     }
-                    
+
                     // For symbols we only stop automatic curation if they are curated within their canonical container's sub-hierarchy
                     // or if a top-level symbol is curated under another top-level symbol (more on that below).
                     //
@@ -2498,41 +2528,42 @@ public class DocumentationContext {
                     // The reason for this exception is to allow developers to group top-level types under one-another without requiring an API collection.
                     // For example, in DocC one could curate `DiagnosticConsumer`, `DiagnosticFormattingOptions`, and `Diagnostic` under `DiagnosticEngine`,
                     // treating the `DiagnosticEngine` as the top-level topic for all diagnostic related types.
-                    
-                    
+
                     // To determine if `container` exists in the curated symbol's canonical container's sub-hierarchy,
                     // first find its nearest container symbol (in case `container` is a series of API collections).
                     //
                     // If the `container` is a symbol, this returns the container.
-                    guard let nearestSymbolContainer = topicGraph.reverseEdgesGraph
-                        .breadthFirstSearch(from: container)
-                        .first(where: { topicGraph.nodes[$0]?.kind.isSymbol == true })
+                    guard
+                        let nearestSymbolContainer = topicGraph.reverseEdgesGraph
+                            .breadthFirstSearch(from: container)
+                            .first(where: { topicGraph.nodes[$0]?.kind.isSymbol == true })
                     else {
                         // The container doesn't exist in the same module as the curated symbol.
                         // Continue to automatically curate the descendant under its canonical container.
                         return
                     }
-                    
+
                     if nearestSymbolContainer == canonicalContainer || nearestSymbolContainer == counterpartContainer {
                         // The descendant is curated in its canonical container (in either language representation)
                         stopAutoCuratingDescendant()
                         return
                     }
-                    
+
                     // An inner function called below
                     func isModule(_ reference: ResolvedTopicReference) -> Bool {
                         topicGraph.nodes[reference]?.kind == .module
                     }
-                    
+
                     if isModule(canonicalContainer) || counterpartContainer.map(isModule) == true {
                         guard let curationLocationContainers = linkResolver.localResolver.nearestContainers(ofSymbol: nearestSymbolContainer) else {
-                            assertionFailure("""
+                            assertionFailure(
+                                """
                                 Unexpectedly didn't find any canonical containers for symbol \(nearestSymbolContainer.absoluteString.singleQuoted).
                                 Every non-module symbol should have a canonical container.
                                 """)
                             return
                         }
-                        
+
                         // swift-format-ignore
                         if canonicalContainer   == curationLocationContainers.main        ||
                            canonicalContainer   == curationLocationContainers.counterpart ||
@@ -2547,18 +2578,18 @@ public class DocumentationContext {
                 }
             )
         }
-        
+
         diagnosticEngine.emit(crawler.diagnostics)
-        
+
         return crawler.curatedNodes
     }
 
     /// Emits warnings for symbols that are matched by multiple documentation extensions.
-    private func emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with symbolsWithMultipleDocumentationExtensionMatches: [ResolvedTopicReference : [DocumentationContext.SemanticResult<Article>]]) {
+    private func emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with symbolsWithMultipleDocumentationExtensionMatches: [ResolvedTopicReference: [DocumentationContext.SemanticResult<Article>]]) {
         for (reference, documentationExtensions) in symbolsWithMultipleDocumentationExtensionMatches {
             let symbolPath = reference.url.pathComponents.dropFirst(2).joined(separator: "/")
             let firstExtension = documentationExtensions.first!
-            
+
             guard let link = firstExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                 fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(firstExtension.source.absoluteString.singleQuoted)")
             }
@@ -2568,42 +2599,43 @@ public class DocumentationContext {
                 }
                 return .init(source: documentationExtension.source, range: link.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil), message: "\(symbolPath.singleQuoted) is also documented here.")
             }
-            
+
             diagnosticEngine.emit(Diagnostic(source: firstExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.DuplicateMarkdownTitleSymbolReferences", summary: "Multiple documentation extensions matched \(symbolPath.singleQuoted).", notes: notes))
         }
     }
-    
+
     private func warnAboutArticlesOutsideTheDocumentationHierarchy() {
         let diagnosticID = "ArticleNotInDocumentationHierarchy"
         guard diagnosticEngine.willEmitDiagnostic(id: diagnosticID, defaultSeverity: .information) else {
             // Don't create a collection of diagnostics that the engine won't report to the developer.
             return
         }
-        
+
         let rootPageNames = sortedRootPageNames()
-        
+
         for article in uncuratedArticles.values {
-            diagnosticEngine.emit(Diagnostic(
-                source: article.source,
-                severity: .information,
-                identifier: diagnosticID,
-                summary: "Article '\(article.source.lastPathComponent)' has no default location in invalid documentation hierarchy with \(rootPageNames.count) roots",
-                explanation: """
-                A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
-                Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
-                Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
-                As a consequence, DocC cannot create a page for the '\(article.topicGraphNode.title)' article (\(article.source.lastPathComponent)).
-                """
-            ))
+            diagnosticEngine.emit(
+                Diagnostic(
+                    source: article.source,
+                    severity: .information,
+                    identifier: diagnosticID,
+                    summary: "Article '\(article.source.lastPathComponent)' has no default location in invalid documentation hierarchy with \(rootPageNames.count) roots",
+                    explanation: """
+                        A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
+                        Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
+                        Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
+                        As a consequence, DocC cannot create a page for the '\(article.topicGraphNode.title)' article (\(article.source.lastPathComponent)).
+                        """
+                ))
         }
     }
-    
+
     func sortedRootPageNames() -> [String] {
         linkResolver.localResolver.rootPages().map { reference in
             documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
         }.sorted()
     }
-    
+
     private func warnAboutTechnologyRoot(_ technologyRoot: TechnologyRoot, inDocumentationExtension documentationExtension: SemanticResult<Article>, forSymbol reference: ResolvedTopicReference) {
         // Customize the diagnostic with specific information about the exact symbol.
         let moduleName: String?
@@ -2612,7 +2644,7 @@ public class DocumentationContext {
         if let knownSymbol = documentationCache[reference] {
             isExtendingModule = knownSymbol.kind == .module
             symbolDescription = "the '\(knownSymbol.name.plainText)' \(knownSymbol.kind.name.lowercased())"
-            
+
             if isExtendingModule {
                 moduleName = knownSymbol.name.plainText
             } else {
@@ -2624,17 +2656,18 @@ public class DocumentationContext {
             moduleName = nil
             symbolDescription = nil
         }
-        
-        let explanationDetails = if isExtendingModule {
-            "\(moduleName.map { "The '\($0)' module" } ?? "This module") is already the root of the documentation hierarchy. Specifying a TechnologyRoot directive has no effect."
-        } else {
-            """
-            If \(symbolDescription ?? "this symbol") became a root page it would move out of \(moduleName.map { "the '\($0)' module" } ?? "its containing module"), \
-            creating a disjoint documentation hierarchy with two possible starting points, \
-            resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
-            """
-        }
-        
+
+        let explanationDetails =
+            if isExtendingModule {
+                "\(moduleName.map { "The '\($0)' module" } ?? "This module") is already the root of the documentation hierarchy. Specifying a TechnologyRoot directive has no effect."
+            } else {
+                """
+                If \(symbolDescription ?? "this symbol") became a root page it would move out of \(moduleName.map { "the '\($0)' module" } ?? "its containing module"), \
+                creating a disjoint documentation hierarchy with two possible starting points, \
+                resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                """
+            }
+
         let diagnostic = Diagnostic(
             source: documentationExtension.source,
             severity: .warning,
@@ -2642,28 +2675,32 @@ public class DocumentationContext {
             identifier: "TechnologyRootInExtensionFile",
             summary: "\(TechnologyRoot.directiveName) directive has no effect in documentation extension",
             explanation: """
-            Symbols inherently belong to a module \(moduleName.map { "(in this case '\($0)') " } ?? "")which is already the root of the documentation hierarchy.
-            A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages\(symbolDescription.map { " (in this case \($0))" } ?? "").
-            \(explanationDetails)
-            """,
+                Symbols inherently belong to a module \(moduleName.map { "(in this case '\($0)') " } ?? "")which is already the root of the documentation hierarchy.
+                A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages\(symbolDescription.map { " (in this case \($0))" } ?? "").
+                \(explanationDetails)
+                """,
             solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
         )
         diagnosticEngine.emit(diagnostic)
     }
 
     private func makeRemoveTechnologyRootSolutions(_ technologyRoot: TechnologyRoot) -> [Solution] {
-        [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: technologyRoot.originalMarkup.range.map { range in
-            [.init(range: range, replacement: "")]
-        } ?? [])]
+        [
+            Solution(
+                summary: "Remove \(TechnologyRoot.directiveName) directive",
+                replacements: technologyRoot.originalMarkup.range.map { range in
+                    [.init(range: range, replacement: "")]
+                } ?? [])
+        ]
     }
-    
+
     private func warnAboutMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
         let allRootPages = linkResolver.localResolver.rootPages()
         guard allRootPages.count > 1 else {
             // Don't perform any more detailed checks unless there's more than one root page.
             return
         }
-        
+
         let moduleNames: [String] = allRootPages.compactMap { reference in
             // Filter out any non-symbol technology root pages
             guard let node = documentationCache[reference], node.kind == .module else {
@@ -2674,18 +2711,18 @@ public class DocumentationContext {
 
         if moduleNames.count > 1 {
             let diagnostic = Diagnostic(
-                source: nil, // There's no meaningful source file to associate this warning with
+                source: nil,  // There's no meaningful source file to associate this warning with
                 severity: .warning,
                 identifier: "MultipleModules",
                 groupIdentifier: "MultipleRootPages",
                 summary: "Input files cannot describe more than one main module; got inputs for \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and))",
                 explanation: """
-                A single DocC build covers a single module (for example a framework, library, or executable).
-                To produce a documentation archive that covers \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and)); \
-                first document each module separately and then combine their individual archives into a single combined archive by running:
-                $ docc merge \(moduleNames.map { "/path/to/\($0).doccarchive" }.joined(separator: " "))
-                For more information, see the `docc merge --help` text.
-                """
+                    A single DocC build covers a single module (for example a framework, library, or executable).
+                    To produce a documentation archive that covers \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and)); \
+                    first document each module separately and then combine their individual archives into a single combined archive by running:
+                    $ docc merge \(moduleNames.map { "/path/to/\($0).doccarchive" }.joined(separator: " "))
+                    For more information, see the `docc merge --help` text.
+                    """
             )
             diagnosticEngine.emit(diagnostic)
         }
@@ -2695,7 +2732,7 @@ public class DocumentationContext {
                 Diagnostic.Note(source: article.source, range: range, message: "Root page also defined here")
             }
         }
-        
+
         if moduleNames.isEmpty {
             // There are multiple TechnologyRoot pages
             for article in rootPageArticles {
@@ -2703,7 +2740,7 @@ public class DocumentationContext {
                     assertionFailure("Misclassified '\(article.source.lastPathComponent)' as a custom root page. It doesn't contain a TechnologyRoot directive.")
                     continue
                 }
-                
+
                 let diagnostic = Diagnostic(
                     source: article.source,
                     severity: .warning,
@@ -2712,11 +2749,11 @@ public class DocumentationContext {
                     groupIdentifier: "MultipleRootPages",
                     summary: "Documentation hierarchy cannot have multiple root pages",
                     explanation: """
-                    A single article-only documentation catalog ('docc' directory) covers a single technology, with a single root page.
-                    This \(TechnologyRoot.directiveName) directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
-                    resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
-                    To resolve this issue; remove all \(TechnologyRoot.directiveName) directives except for one to use that as the root of your documentation hierarchy.
-                    """,
+                        A single article-only documentation catalog ('docc' directory) covers a single technology, with a single root page.
+                        This \(TechnologyRoot.directiveName) directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
+                        resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                        To resolve this issue; remove all \(TechnologyRoot.directiveName) directives except for one to use that as the root of your documentation hierarchy.
+                        """,
                     notes: allNotes.filter({ $0.source != article.source }),
                     solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
                 )
@@ -2725,13 +2762,13 @@ public class DocumentationContext {
         } else {
             // There's a mix of symbol roots (modules) and authored TechnologyRoot pages
             let modulesList = moduleNames.map(\.singleQuoted).list(finalConjunction: .or)
-            
+
             for article in rootPageArticles {
                 guard let technologyRoot = article.value.metadata?.technologyRoot else {
                     assertionFailure("Misclassified '\(article.source.lastPathComponent)' as a custom root page. It doesn't contain a TechnologyRoot directive.")
                     continue
                 }
-                
+
                 let diagnostic = Diagnostic(
                     source: article.source,
                     severity: .warning,
@@ -2740,12 +2777,12 @@ public class DocumentationContext {
                     groupIdentifier: "MultipleRootPages",
                     summary: "Documentation hierarchy cannot have additional root page; already has a symbol root",
                     explanation: """
-                    A single DocC build covers either a single module (for example a framework, library, or executable) or an article-only technology.
-                    Because DocC is passed symbol inputs; the documentation hierarchy already gets its root page (\(modulesList)) from those symbols.
-                    This \(TechnologyRoot.directiveName) directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
-                    resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
-                    To resolve this issue; remove all \(TechnologyRoot.directiveName) directives to use \(modulesList) as the root page.
-                    """,
+                        A single DocC build covers either a single module (for example a framework, library, or executable) or an article-only technology.
+                        Because DocC is passed symbol inputs; the documentation hierarchy already gets its root page (\(modulesList)) from those symbols.
+                        This \(TechnologyRoot.directiveName) directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
+                        resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                        To resolve this issue; remove all \(TechnologyRoot.directiveName) directives to use \(modulesList) as the root page.
+                        """,
                     notes: allNotes.filter({ $0.source != article.source }),
                     solutions: makeRemoveTechnologyRootSolutions(technologyRoot)
                 )
@@ -2769,10 +2806,10 @@ public class DocumentationContext {
             default: break
             }
         }
-        
+
         // Run analysis to determine whether manually configured alternate representations are valid.
         analyzeAlternateRepresentations()
-        
+
         // Run global ``TopicGraph`` global analysis.
         analyzeTopicGraph()
     }
@@ -2792,34 +2829,34 @@ public class DocumentationContext {
         guard let asset = assetManagers[identifier.bundleID]?.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
         }
-        
+
         let resource = asset.data(bestMatching: trait)
-        
+
         return try dataProvider.contents(of: resource.url)
     }
-    
+
     /// Returns true if a resource with the given identifier exists in the registered bundle.
     public func resourceExists(with identifier: ResourceReference, ofType expectedAssetType: AssetType? = nil) -> Bool {
         guard let assetManager = assetManagers[identifier.bundleID] else {
             return false
         }
-        
+
         guard let key = assetManager.bestKey(forAssetName: identifier.path) else {
             return false
         }
-        
+
         guard let expectedAssetType, let asset = assetManager.storage[key] else {
             return true
         }
-        
+
         return asset.hasVariant(withAssetType: expectedAssetType)
     }
-    
+
     private func externalEntity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
         return configuration.externalDocumentationConfiguration.sources[reference.bundleID].map({ $0.entity(with: reference) })
             ?? configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
     }
-    
+
     /**
      Look for a documentation node among the registered bundles and via any external resolvers.
 
@@ -2830,10 +2867,10 @@ public class DocumentationContext {
         if let cached = documentationCache[reference] {
             return cached
         }
-        
+
         throw ContextError.notFound(reference.url)
     }
-    
+
     private func knownEntityValue<Result>(
         reference: ResolvedTopicReference,
         valueInLocalEntity: (DocumentationNode) -> Result,
@@ -2854,7 +2891,7 @@ public class DocumentationContext {
             fatalError("Unexpected error when retrieving entity: \(error)")
         }
     }
-    
+
     /// Returns the set of languages the entity corresponding to the given reference is available in.
     ///
     /// - Precondition: The entity associated with the given reference must be registered in the context.
@@ -2865,7 +2902,7 @@ public class DocumentationContext {
             valueInExternalEntity: \.availableLanguages
         )
     }
-    
+
     /// Returns whether the given reference corresponds to a symbol.
     func isSymbol(reference: ResolvedTopicReference) -> Bool {
         knownEntityValue(
@@ -2881,7 +2918,7 @@ public class DocumentationContext {
     }
 
     // MARK: - Relationship queries
-    
+
     /// Fetch the child nodes of a documentation node with the given `reference`, optionally filtering to only children of the given `kind`.
     ///
     /// > Important: The returned list can't be used to determine source language specific children.
@@ -2904,7 +2941,7 @@ public class DocumentationContext {
             return nil
         }
     }
-    
+
     /// Fetches the parents of the documentation node with the given `reference`.
     ///
     /// - Parameter reference: The reference of the node to fetch parents for.
@@ -2912,7 +2949,7 @@ public class DocumentationContext {
     public func parents(of reference: ResolvedTopicReference) -> [ResolvedTopicReference] {
         return topicGraph.reverseEdges[reference] ?? []
     }
-    
+
     /// Returns the document URL for the given article or tutorial reference.
     ///
     /// - Parameter reference: The identifier for the topic whose file URL to locate.
@@ -2923,7 +2960,7 @@ public class DocumentationContext {
         }
         return nil
     }
-    
+
     /// Returns the URL of the documentation extension of the given reference.
     ///
     /// - Parameter reference: The reference to the symbol this function should return the documentation extension URL for.
@@ -2934,7 +2971,7 @@ public class DocumentationContext {
         }
         return documentLocationMap[reference]
     }
-    
+
     /// Attempt to locate the reference for a given file.
     ///
     /// - Parameter url: The file whose reference to locate.
@@ -2945,24 +2982,24 @@ public class DocumentationContext {
 
     /**
      Attempt to retrieve the title for a given `reference`.
-     
+
      - Parameter reference: The reference for the topic whose title is desired.
      - Returns: The title of the topic if it could be found, otherwise `nil`.
      */
     public func title(for reference: ResolvedTopicReference) -> String? {
         return topicGraph.nodes[reference]?.title
     }
-    
+
     /// Returns a sequence that traverses the topic graph in breadth first order from a given reference, without visiting the same node more than once.
     func breadthFirstSearch(from reference: ResolvedTopicReference) -> some Sequence<TopicGraph.Node> {
         topicGraph.breadthFirstSearch(from: reference)
     }
-    
+
     /**
      Attempt to resolve a ``TopicReference``.
-     
+
      > Note: If the reference is already resolved, the original reference is returned.
-     
+
      - Parameters:
        - reference: An unresolved (or resolved) reference.
        - parent: The *resolved* reference that serves as an enclosing search context, especially the parent reference's bundle identifier.
@@ -2973,13 +3010,13 @@ public class DocumentationContext {
         switch reference {
         case .unresolved(let unresolvedReference):
             return linkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
-            
+
         case .resolved(let resolved):
             // This reference is already resolved (either as a success or a failure), so don't change anything.
             return resolved
         }
     }
-    
+
     /// Update the asset with a new value given the assets name and the topic it's referenced in.
     ///
     /// - Parameters:
@@ -2989,7 +3026,7 @@ public class DocumentationContext {
     public func updateAsset(named name: String, asset: DataAsset, in parent: ResolvedTopicReference) {
         assetManagers[parent.bundleID]?.update(name: name, asset: asset)
     }
-    
+
     /// Attempt to resolve an asset given its name and the topic it's referenced in.
     ///
     /// - Parameters:
@@ -3000,7 +3037,7 @@ public class DocumentationContext {
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
         resolveAsset(named: name, bundleID: parent.bundleID, withType: type)
     }
-    
+
     func resolveAsset(named name: String, bundleID: DocumentationBundle.Identifier, withType expectedType: AssetType?) -> DataAsset? {
         if let localAsset = assetManagers[bundleID]?.allData(named: name) {
             if let expectedType {
@@ -3008,20 +3045,22 @@ public class DocumentationContext {
                     return nil
                 }
             }
-            
+
             return localAsset
         }
-        
+
         if let fallbackAssetResolver = configuration.convertServiceConfiguration.fallbackResolver,
-           let externallyResolvedAsset = fallbackAssetResolver.resolve(assetNamed: name) {
+            let externallyResolvedAsset = fallbackAssetResolver.resolve(assetNamed: name)
+        {
             assetManagers[bundleID, default: DataAssetManager()]
                 .register(dataAsset: externallyResolvedAsset, forName: name)
             return externallyResolvedAsset
         }
-        
+
         // If no fallbackAssetResolver is set, try to treat it as external media link
         if let externalMediaLink = URL(string: name),
-           externalMediaLink.isAbsoluteWebURL {
+            externalMediaLink.isAbsoluteWebURL
+        {
             var asset = DataAsset()
             asset.context = .display
             asset.register(externalMediaLink, with: DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard))
@@ -3029,9 +3068,9 @@ public class DocumentationContext {
         }
         return nil
     }
-    
+
     /// Finds the identifier for a given asset name.
-    /// 
+    ///
     /// `name` is one of the following formats:
     /// - "image" - asset name without extension
     /// - "image.png" - asset name including extension
@@ -3053,19 +3092,19 @@ public class DocumentationContext {
             return nil
         }
     }
-    
+
     /// The references of all nodes in the topic graph.
     public var knownIdentifiers: [ResolvedTopicReference] {
         return Array(topicGraph.nodes.keys)
     }
-    
+
     /// The references of all the pages in the topic graph.
     public var knownPages: [ResolvedTopicReference] {
         return topicGraph.nodes.values
             .filter { !$0.isVirtual && $0.kind.isPage }
             .map { $0.reference }
     }
-    
+
     func dumpGraph() -> String {
         return topicGraph.nodes.values
             .filter { parents(of: $0.reference).isEmpty }
@@ -3075,7 +3114,7 @@ public class DocumentationContext {
             }
             .joined()
     }
-    
+
     private static func defaultLanguage(in sourceLanguages: Set<SourceLanguage>?) -> SourceLanguage {
         sourceLanguages.map { sourceLanguages in
             if sourceLanguages.contains(.swift) {
@@ -3110,7 +3149,7 @@ extension DocumentationContext {
         }
         diagnosticEngine.emit(diagnostics)
     }
-        
+
     private func analyzeAlternateRepresentations() {
         var diagnostics = [Diagnostic]()
 
@@ -3118,93 +3157,101 @@ extension DocumentationContext {
             sourceLanguages.sorted().map(\.name).list(finalConjunction: .and)
         }
         func removeAlternateRepresentationSolution(_ alternateRepresentation: AlternateRepresentation) -> [Solution] {
-            [Solution(
-                summary: "Remove this alternate representation",
-                replacements: alternateRepresentation.originalMarkup.range.map { [.init(range: $0, replacement: "")] } ?? [])]
+            [
+                Solution(
+                    summary: "Remove this alternate representation",
+                    replacements: alternateRepresentation.originalMarkup.range.map { [.init(range: $0, replacement: "")] } ?? [])
+            ]
         }
 
         for reference in knownPages {
             guard let entity = try? self.entity(with: reference), let alternateRepresentations = entity.metadata?.alternateRepresentations else { continue }
-            
+
             var sourceLanguageToReference: [SourceLanguage: AlternateRepresentation] = [:]
             for alternateRepresentation in alternateRepresentations {
                 // Check if the entity is not a symbol, as only symbols are allowed to specify custom alternate representations
                 guard entity.symbol != nil else {
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
-                        summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
-                        explanation: "Alternate representations are only supported for symbols.",
-                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
-                    ))
+                    diagnostics.append(
+                        Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
+                            explanation: "Alternate representations are only supported for symbols.",
+                            solutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                        ))
                     continue
                 }
 
                 guard case .resolved(.success(let alternateRepresentationReference)) = alternateRepresentation.reference,
-                      let alternateRepresentationEntity = try? self.entity(with: alternateRepresentationReference) else {
+                    let alternateRepresentationEntity = try? self.entity(with: alternateRepresentationReference)
+                else {
                     continue
                 }
-                
+
                 // Check if the resolved entity is not a symbol, as only symbols are allowed as custom alternate representations
                 guard alternateRepresentationEntity.symbol != nil else {
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
-                        summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
-                        explanation: "Symbols can only specify other symbols as custom language representations.",
-                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
-                    ))
+                    diagnostics.append(
+                        Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
+                            explanation: "Symbols can only specify other symbols as custom language representations.",
+                            solutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                        ))
                     continue
                 }
-                
+
                 // Check if the documented symbol already has alternate representations from in-source annotations.
                 let duplicateSourceLanguages = alternateRepresentationEntity.availableSourceLanguages.intersection(entity.availableSourceLanguages)
                 if !duplicateSourceLanguages.isEmpty {
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
-                        summary: "\(entity.name.plainText.singleQuoted) already has a representation in \(listSourceLanguages(duplicateSourceLanguages))",
-                        explanation: "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.",
-                        solutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
-                    ))
+                    diagnostics.append(
+                        Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "\(entity.name.plainText.singleQuoted) already has a representation in \(listSourceLanguages(duplicateSourceLanguages))",
+                            explanation: "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.",
+                            solutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
+                        ))
                 }
-                
+
                 let duplicateAlternateLanguages = Set(sourceLanguageToReference.keys).intersection(alternateRepresentationEntity.availableSourceLanguages)
                 if !duplicateAlternateLanguages.isEmpty {
                     let notes: [Diagnostic.Note] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
                         guard let alreadyExistingRepresentation = sourceLanguageToReference[duplicateAlternateLanguage],
-                              let range = alreadyExistingRepresentation.originalMarkup.range,
-                              let source = range.source else {
+                            let range = alreadyExistingRepresentation.originalMarkup.range,
+                            let source = range.source
+                        else {
                             return nil
                         }
-                        
+
                         return .init(source: source, range: range, message: "This directive already specifies an alternate \(duplicateAlternateLanguage.name) representation.")
                     }
-                    diagnostics.append(Diagnostic(
-                        source: alternateRepresentation.originalMarkup.range?.source,
-                        severity: .warning,
-                        range: alternateRepresentation.originalMarkup.range,
-                        identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
-                        summary: "A custom alternate language representation for \(listSourceLanguages(duplicateAlternateLanguages)) has already been specified",
-                        explanation: "Only one custom alternate language representation can be specified per language.",
-                        notes: notes,
-                        solutions: removeAlternateRepresentationSolution(alternateRepresentation)
-                    ))
+                    diagnostics.append(
+                        Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "A custom alternate language representation for \(listSourceLanguages(duplicateAlternateLanguages)) has already been specified",
+                            explanation: "Only one custom alternate language representation can be specified per language.",
+                            notes: notes,
+                            solutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                        ))
                 }
-                
+
                 // Update mapping from source language to alternate declaration, for diagnostic purposes
                 for alreadySeenLanguage in alternateRepresentationEntity.availableSourceLanguages {
                     sourceLanguageToReference[alreadySeenLanguage] = alternateRepresentation
                 }
             }
         }
-        
+
         diagnosticEngine.emit(diagnostics)
     }
 }

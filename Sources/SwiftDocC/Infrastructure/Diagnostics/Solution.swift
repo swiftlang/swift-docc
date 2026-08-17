@@ -12,7 +12,7 @@
 public struct Solution: Hashable {
     /// A brief summary that describes what the solution is to the end-user.
     public var summary: String
-    
+
     /// A list of replacements that make up this solution to resolve the original problem or issue.
     ///
     /// This list may be empty if the solution cannot be described as a series of textual replacements.

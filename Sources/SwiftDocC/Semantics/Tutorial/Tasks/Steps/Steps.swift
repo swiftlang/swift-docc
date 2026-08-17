@@ -16,24 +16,24 @@ public final class Steps: Semantic, DirectiveConvertible {
     public static let directiveName = "Steps"
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// The ``Steps`` necessary to complete this section.
     public let content: [Semantic]
-    
+
     public override var children: [Semantic] {
         return content
     }
-    
+
     /// The child ``Step``s in this section.
     public var steps: [Step] {
         return content.compactMap { $0 as? Step }
     }
-    
+
     init(originalMarkup: BlockDirective, content: [Semantic]) {
         self.originalMarkup = originalMarkup
         self.content = content
     }
-    
+
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         var diagnostics = [Diagnostic]()
@@ -42,28 +42,29 @@ public final class Steps: Semantic, DirectiveConvertible {
         }
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
-    
+
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Steps.directiveName)
-        
+
         _ = Semantic.Analyses.HasOnlyKnownArguments<Steps>(severityIfFound: .warning, allowedArguments: [])
             .analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
-        
+
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialSection>(severityIfFound: .warning, allowedDirectives: [Step.directiveName])
             .analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
-            
+
         let stepsContent: [Semantic] = directive.children.compactMap { child -> Semantic? in
             if let directive = child as? BlockDirective,
-                directive.name == Step.directiveName {
+                directive.name == Step.directiveName
+            {
                 return Step(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
             } else {
                 return MarkupContainer(child)
             }
         }
-        
+
         self.init(originalMarkup: directive, content: stepsContent)
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitSteps(self)
     }

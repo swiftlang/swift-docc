@@ -27,26 +27,27 @@ package extension MarkdownRenderer {
     /// This produces a "returns" section that doesn't hide the return value content for any of the languages (same as if the symbol only had one language representation)
     func returns(_ languageSpecificSections: [SourceLanguage: [any Markup]]) -> [XMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(languageSpecificSections)
-        let items: [XMLNode] = if info.count == 1 {
-            info.first!.value.map { visit($0) }
-        } else {
-            info.flatMap { language, content in
-                let attributes = ["class": "\(language.id)-only"]
-                // Most return sections only have 1 paragraph of content with 2 and 3 paragraphs being increasingly uncommon.
-                // Avoid wrapping that content in a `<div>` or other container element and instead add the language specific class attribute to each paragraph.
-                return content.map { markup in
-                    let node = visit(markup)
-                    if let element = node as? XMLElement {
-                        element.addAttributes(attributes)
-                        return element
-                    } else {
-                        // Any text _should_ already be contained in a markdown paragraph, but if the input is unexpected, wrap the raw text in a paragraph here.
-                        return .element(named: "p", children: [node], attributes: attributes)
+        let items: [XMLNode] =
+            if info.count == 1 {
+                info.first!.value.map { visit($0) }
+            } else {
+                info.flatMap { language, content in
+                    let attributes = ["class": "\(language.id)-only"]
+                    // Most return sections only have 1 paragraph of content with 2 and 3 paragraphs being increasingly uncommon.
+                    // Avoid wrapping that content in a `<div>` or other container element and instead add the language specific class attribute to each paragraph.
+                    return content.map { markup in
+                        let node = visit(markup)
+                        if let element = node as? XMLElement {
+                            element.addAttributes(attributes)
+                            return element
+                        } else {
+                            // Any text _should_ already be contained in a markdown paragraph, but if the input is unexpected, wrap the raw text in a paragraph here.
+                            return .element(named: "p", children: [node], attributes: attributes)
+                        }
                     }
                 }
             }
-        }
-        
+
         return selfReferencingSection(named: "Return Value", content: items)
     }
 }

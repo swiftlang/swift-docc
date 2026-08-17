@@ -14,19 +14,19 @@ import Markdown
 import DocCCommon
 
 class RenderNodeCodableTests: XCTestCase {
-    
+
     var bareRenderNode = RenderNode(
         identifier: .init(bundleID: "com.bundle", path: "/", sourceLanguage: .swift),
         kind: .article
     )
-    
+
     var testVariantOverride = VariantOverride(
         traits: [.interfaceLanguage("objc")],
         patch: [
             .replace(pointer: JSONPointer(pathComponents: ["foo"]), encodableValue: "bar"),
         ]
     )
-    
+
     func testDataCorrupted() {
         XCTAssertThrowsError(try RenderNode.decode(fromJSON: corruptedJSON), "RenderNode decode didn't throw as expected.") { error in
             XCTAssertTrue(error is RenderNode.CodingError)
@@ -34,7 +34,7 @@ class RenderNodeCodableTests: XCTestCase {
             XCTAssertTrue(description.contains("The given data was not valid JSON."))
         }
     }
-    
+
     func testMissingKeyError() {
         do {
             let renderNode = try RenderNode.decode(fromJSON: emptyJSON)
@@ -51,7 +51,7 @@ class RenderNodeCodableTests: XCTestCase {
         let renderNode = try! RenderNode.decode(fromJSON: missingReferenceKeyJSON)
         XCTAssertNotNil(renderNode)
     }
-    
+
     func testTypeMismatchError() {
         do {
             let renderNode = try RenderNode.decode(fromJSON: typeMismatch)
@@ -67,7 +67,7 @@ class RenderNodeCodableTests: XCTestCase {
             XCTAssertTrue(description.contains("schemaVersion"))
         }
     }
-    
+
     func testPrettyPrintByDefaultOff() {
         let renderNode = bareRenderNode
         do {
@@ -78,7 +78,7 @@ class RenderNodeCodableTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
-    
+
     func testPrettyPrintedEncoder() {
         let renderNode = bareRenderNode
         do {
@@ -100,7 +100,7 @@ class RenderNodeCodableTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
-    
+
     func testSortedKeys() throws {
         // When prettyPrint is enabled, keys are sorted
         let encoderPretty = RenderJSONEncoder.makeEncoder(prettyPrint: true)
@@ -114,77 +114,77 @@ class RenderNodeCodableTests: XCTestCase {
     func testEncodesVariantOverridesSetAsProperty() throws {
         var renderNode = bareRenderNode
         renderNode.variantOverrides = VariantOverrides(values: [testVariantOverride])
-        
+
         let decodedNode = try encodeAndDecode(renderNode)
         try assertVariantOverrides(XCTUnwrap(decodedNode.variantOverrides))
     }
-    
+
     func testEncodesVariantOverridesAccumulatedInEncoder() throws {
         let encoder = RenderJSONEncoder.makeEncoder()
         (encoder.userInfo[.variantOverrides] as! VariantOverrides).add(testVariantOverride)
-        
+
         let decodedNode = try encodeAndDecode(bareRenderNode, encoder: encoder)
         try assertVariantOverrides(XCTUnwrap(decodedNode.variantOverrides))
     }
-    
+
     func testDoesNotEncodeVariantOverridesIfEmpty() throws {
         let encoder = RenderJSONEncoder.makeEncoder()
-        
+
         // Don't record any overrides.
-        
+
         let decodedNode = try encodeAndDecode(bareRenderNode, encoder: encoder)
         XCTAssertNil(decodedNode.variantOverrides)
     }
-    
+
     func testDecodingRenderNodeDoesNotCacheReferences() throws {
         let exampleRenderNodeJSON = Bundle.module.url(
             forResource: "Operator",
             withExtension: "json",
             subdirectory: "Test Resources"
         )!
-        
+
         let bundleID: DocumentationBundle.Identifier = #function
-        
+
         let renderNodeWithUniqueBundleID = try String(contentsOf: exampleRenderNodeJSON)
             .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)
-        
+
         _ = try JSONDecoder().decode(RenderNode.self, from: Data(renderNodeWithUniqueBundleID.utf8))
-        
+
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
     }
-    
+
     func testDecodeRenderNodeWithoutTopicSectionStyle() throws {
         let exampleRenderNodeJSON = Bundle.module.url(
             forResource: "Operator",
             withExtension: "json",
             subdirectory: "Test Resources"
         )!
-        
+
         let renderNodeData = try Data(contentsOf: exampleRenderNodeJSON)
-        
+
         let renderNode = try JSONDecoder().decode(RenderNode.self, from: renderNodeData)
         XCTAssertEqual(renderNode.topicSectionsStyle, .list)
     }
-    
+
     func testEncodeRenderNodeWithCustomTopicSectionStyle() async throws {
         let (_, context) = try await testBundleAndContext()
         var diagnostics = [Diagnostic]()
-        
+
         let source = """
             # My Great Article
-            
+
             A great article.
-            
+
             @Options {
                 @TopicsVisualStyle(compactGrid)
             }
             """
-        
+
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
             Article(from: document.root, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         )
-        
+
         let reference = ResolvedTopicReference(
             bundleID: "org.swift.docc.example",
             path: "/documentation/test/customTopicSectionStyle",
@@ -199,30 +199,30 @@ class RenderNodeCodableTests: XCTestCase {
             title: "My Article"
         )
         context.topicGraph.addNode(topicGraphNode)
-        
+
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         XCTAssertEqual(node.topicSectionsStyle, .compactGrid)
-        
+
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
-        
+
         let encodedNode = try encoder.encode(node)
         let decodedNode = try decoder.decode(RenderNode.self, from: encodedNode)
         XCTAssertEqual(decodedNode.topicSectionsStyle, .compactGrid)
     }
-    
+
     private func assertVariantOverrides(_ variantOverrides: VariantOverrides) throws {
         XCTAssertEqual(variantOverrides.values.count, 1)
         let variantOverride = try XCTUnwrap(variantOverrides.values.first)
         XCTAssertEqual(variantOverride.traits, testVariantOverride.traits)
-        
+
         XCTAssertEqual(variantOverride.patch.count, 1)
         let operation = try XCTUnwrap(variantOverride.patch.first)
         XCTAssertEqual(operation.operation, testVariantOverride.patch[0].operation)
         XCTAssertEqual(operation.pointer.pathComponents, testVariantOverride.patch[0].pointer.pathComponents)
     }
-    
+
     private func encodeAndDecode<Value: Codable>(_ value: Value, encoder: JSONEncoder = .init()) throws -> Value {
         try JSONDecoder().decode(Value.self, from: encoder.encode(value))
     }
@@ -230,9 +230,11 @@ class RenderNodeCodableTests: XCTestCase {
 
 fileprivate let corruptedJSON = Data("{{}".utf8)
 fileprivate let emptyJSON = Data("{}".utf8)
-fileprivate let typeMismatch = Data("""
-{"schemaVersion":{"major":"type mismatch","minor":0,"patch":0}}
-""".utf8)
-fileprivate let missingReferenceKeyJSON = Data("""
-{"kind":"article","identifier":{"interfaceLanguage":"","url":"doc://org.swift.docc.example/documentation/Test-Bundle/article"},"abstract":[],"metadata":{},"schemaVersion":{"minor":3,"patch":0,"major":0},"sections":[],"hierarchy":{"paths":[[]]}}
-""".utf8)
+fileprivate let typeMismatch = Data(
+    """
+    {"schemaVersion":{"major":"type mismatch","minor":0,"patch":0}}
+    """.utf8)
+fileprivate let missingReferenceKeyJSON = Data(
+    """
+    {"kind":"article","identifier":{"interfaceLanguage":"","url":"doc://org.swift.docc.example/documentation/Test-Bundle/article"},"abstract":[],"metadata":{},"schemaVersion":{"minor":3,"patch":0,"major":0},"sections":[],"hierarchy":{"paths":[[]]}}
+    """.utf8)

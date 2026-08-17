@@ -18,14 +18,14 @@ public struct HTTPResponse {
     /// The HTTP code description string.
     public var reason: String?
     /// The media type of the response.
-    /// 
+    ///
     /// Value might be undefined initially when first extracted from markdown.
     public var mediaType: String?
     /// The content that describe the response.
     public var contents: [any Markup]
     /// The symbol graph symbol representing this response.
     public var symbol: SymbolGraph.Symbol?
-    
+
     /// Initialize a value to describe documentation about a dictionary key for a symbol.
     /// - Parameters:
     ///   - statusCode: The status code of the response.

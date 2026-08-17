@@ -42,19 +42,19 @@ public struct RESTEndpointRenderSection: RenderSection, Equatable {
         public enum Kind: String, Codable {
             case method, baseURL, path, parameter, text
         }
-        
+
         /// The endpoint specific token kind.
         public let kind: Kind
         /// The plain text of the token.
         public let text: String
     }
-    
+
     /// The title for the section.
     public var title: String
-    
+
     /// The list of tokens.
     public let tokens: [Token]
-    
+
     /// Creates a new REST endpoint section.
     /// - Parameters:
     ///   - title: The title for the section.
@@ -77,7 +77,7 @@ extension RESTEndpointRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this RESTEndpointRenderSection is similar enough to the given one.
     func isSimilar(to other: RESTEndpointRenderSection) -> Bool {
         return self.title == other.title
@@ -95,7 +95,7 @@ extension RESTEndpointRenderSection.Token: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this Token is similar enough to the given one.
     func isSimilar(to other: RESTEndpointRenderSection.Token) -> Bool {
         return self.text == other.text

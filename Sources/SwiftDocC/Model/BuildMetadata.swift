@@ -12,20 +12,20 @@ import Foundation
 
 /// A value that encapsulates metadata for a documentation bundle that DocC built.
 public struct BuildMetadata: Codable {
-    
+
     /// The current version of the build metadata schema.
     public var schemaVersion = SemanticVersion(
         major: 0,
         minor: 1,
         patch: 0
     )
-    
+
     /// The display name of the documentation bundle that DocC built.
     public var bundleDisplayName: String
-    
+
     /// The bundle identifier of the documentation bundle that DocC built.
     public let bundleID: DocumentationBundle.Identifier
-    
+
     /// Creates a build metadata value for a documentation bundle built by DocC.
     ///
     /// - Parameters:

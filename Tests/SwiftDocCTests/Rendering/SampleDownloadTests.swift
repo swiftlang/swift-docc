@@ -18,66 +18,66 @@ class SampleDownloadTests: XCTestCase {
         let downloadSymbolURL = Bundle.module.url(
             forResource: "sample-download-symbol", withExtension: "json",
             subdirectory: "Rendering Fixtures")!
-        
+
         let data = try Data(contentsOf: downloadSymbolURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         //
         // Sample Download Details
         //
-        
+
         guard let section = symbol.sampleDownload else {
             XCTFail("Download section not decoded")
             return
         }
-        
+
         guard case RenderInlineContent.reference(let identifier, let isActive, let overridingTitle, let overridingTitleInlineContent) = section.action else {
             XCTFail("Could not decode action reference")
             return
         }
-        
+
         XCTAssertEqual(identifier.identifier, "doc://org.swift.docc.example/downloads/sample.zip")
         XCTAssertTrue(isActive)
         XCTAssertEqual(overridingTitle, "Download")
         XCTAssertEqual(overridingTitleInlineContent, [.text("Download")])
-        
+
         XCTAssertTrue(section.headings.isEmpty)
         XCTAssertTrue(section.rawIndexableTextContent(references: [:]).isEmpty)
         XCTAssertEqual(symbol.projectFiles()?.url.absoluteString, "/downloads/project.zip")
         XCTAssertEqual(symbol.projectFiles()?.checksum, "ad4adacc8ad53230b59d")
     }
-    
+
     func testDecodeSampleDownloadUnavailableSymbol() throws {
         let downloadSymbolURL = Bundle.module.url(
             forResource: "sample-download-unavailable-symbol", withExtension: "json",
             subdirectory: "Rendering Fixtures")!
-        
+
         let data = try Data(contentsOf: downloadSymbolURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         //
         // Unavailable Sample Download Details
         //
-        
+
         guard let section = symbol.downloadNotAvailableSummary else {
             XCTFail("Download not available section not decoded.")
             return
         }
-        
+
         XCTAssertEqual(section.count, 1)
-        
+
         guard case let .paragraph(contentParagraph) = section.first else {
             XCTFail("Section is not a paragraph.")
             return
         }
-        
+
         let text = contentParagraph.inlineContent.rawIndexableTextContent(references: symbol.references)
         XCTAssertEqual(text, "You can experiment with the code. Just use WiFi Access on your Mac to download WiFi access sample code.")
     }
 
     func testParseSampleDownload() async throws {
         let renderNode = try await renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MySample")
-        
+
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
         guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
             XCTFail("Unexpected action in callToAction")
@@ -88,7 +88,7 @@ class SampleDownloadTests: XCTestCase {
 
     func testParseSampleLocalDownload() async throws {
         let renderNode = try await renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MyLocalSample")
-        
+
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
         guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
             XCTFail("Unexpected action in callToAction")
@@ -106,7 +106,8 @@ class SampleDownloadTests: XCTestCase {
         let encodedNode = try encoder.encode(renderNode)
         let decodedNode = try decoder.decode(RenderNode.self, from: encodedNode)
 
-        guard case let .reference(
+        guard
+            case let .reference(
                 identifier: origIdent,
                 isActive: _,
                 overridingTitle: _,
@@ -125,7 +126,7 @@ class SampleDownloadTests: XCTestCase {
 
         XCTAssertEqual(origIdent, decodedIdent)
     }
-    
+
     private func renderNodeFromSampleBundle(at referencePath: String) async throws -> RenderNode {
         let (_, context) = try await testBundleAndContext(named: "SampleBundle")
         let reference = ResolvedTopicReference(
@@ -178,7 +179,7 @@ class SampleDownloadTests: XCTestCase {
 
         XCTAssertEqual(firstJson, finalJson)
     }
-    
+
     func testExternalLinkOnSampleCodePage() async throws {
         let renderNode = try await renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MyExternalSample")
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
@@ -186,12 +187,12 @@ class SampleDownloadTests: XCTestCase {
             XCTFail("Unexpected action in callToAction")
             return
         }
-        
+
         XCTAssertEqual(identifier.identifier, "https://www.example.com/source-repository.git")
         let reference = try XCTUnwrap(renderNode.references[identifier.identifier] as? DownloadReference)
         XCTAssertEqual(reference.url.description, "https://www.example.com/source-repository.git")
     }
-    
+
     func testExternalLinkOnRegularArticlePage() async throws {
         let renderNode = try await renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MyArticle")
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
@@ -199,7 +200,7 @@ class SampleDownloadTests: XCTestCase {
             XCTFail("Unexpected action in callToAction")
             return
         }
-        
+
         XCTAssertEqual(identifier.identifier, "https://www.example.com")
         let reference = try XCTUnwrap(renderNode.references[identifier.identifier] as? DownloadReference)
         XCTAssertEqual(reference.url.description, "https://www.example.com")
@@ -252,7 +253,7 @@ class SampleDownloadTests: XCTestCase {
         let externalReference = try XCTUnwrap(symbol.references[identifier.identifier] as? DownloadReference)
         XCTAssertEqual(externalReference.url.description, "https://example.com/ExternalLocation.zip")
     }
-    
+
     func testRoundTripDownloadReferenceWithModifiedUrl() throws {
         let identifier = RenderReferenceIdentifier("/test/sample.zip")
         let originalURL = try XCTUnwrap(URL(string: "/test/sample.zip"))

@@ -15,12 +15,12 @@ public import Markdown
 public struct DeprecatedSection: Section {
     public static let title: String? = "Deprecated"
     public var content: [any Markup]
-    
+
     /// Creates a new deprecation section with the given markup content.
     public init(content: [any Markup]) {
         self.content = content
     }
-    
+
     /// Creates a new deprecation section with the given plain text.
     public init(text: String) {
         self.content = [Paragraph(Text(text))]

@@ -17,16 +17,16 @@ extension DocumentationBundle {
     public struct Info: Codable, Equatable {
         /// The display name of the bundle.
         public var displayName: String
-        
+
         /// The unique identifier of the bundle.
         public var id: DocumentationBundle.Identifier
-        
+
         /// The default language identifier for code listings in the bundle.
         public var defaultCodeListingLanguage: String?
-        
+
         /// The default availability for the various modules in the bundle.
         public var defaultAvailability: DefaultAvailability?
-        
+
         /// The default kind for the various modules in the bundle.
         public var defaultModuleKind: String?
 
@@ -35,7 +35,7 @@ extension DocumentationBundle {
 
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .id]
-        
+
         package enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
             case id = "CFBundleIdentifier"
@@ -59,11 +59,11 @@ extension DocumentationBundle {
                 }
             }
         }
-        
+
         enum Error: DescribedError {
             case wrongType(expected: Any.Type, actual: Any.Type)
             case plistDecodingError(_ context: DecodingError.Context)
-            
+
             var errorDescription: String {
                 switch self {
                 case .wrongType(let expected, let actual):
@@ -75,7 +75,7 @@ extension DocumentationBundle {
                 }
             }
         }
-        
+
         /// Creates a new documentation bundle information value.
         /// - Parameters:
         ///   - displayName: The display name of the bundle.
@@ -99,7 +99,7 @@ extension DocumentationBundle {
                 featureFlags: nil
             )
         }
-        
+
         /// Creates documentation bundle information from the given Info.plist data, falling back to the values
         /// in the given bundle discovery options if necessary.
         init(
@@ -109,15 +109,15 @@ extension DocumentationBundle {
         ) throws {
             if let infoPlist {
                 let propertyListDecoder = PropertyListDecoder()
-                
+
                 if let options {
                     propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
                 }
-                
+
                 if let derivedDisplayName {
                     propertyListDecoder.userInfo[.derivedDisplayName] = derivedDisplayName
                 }
-                
+
                 do {
                     self = try propertyListDecoder.decode(
                         DocumentationBundle.Info.self,
@@ -126,7 +126,7 @@ extension DocumentationBundle {
                 } catch DecodingError.dataCorrupted(let context) {
                     throw Error.plistDecodingError(context)
                 }
-                
+
             } else {
                 try self.init(
                     with: nil,
@@ -135,18 +135,18 @@ extension DocumentationBundle {
                 )
             }
         }
-        
+
         public init(from decoder: any Decoder) throws {
             let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? BundleDiscoveryOptions
             let derivedDisplayName = decoder.userInfo[.derivedDisplayName] as? String
-            
+
             try self.init(
                 with: decoder.container(keyedBy: CodingKeys.self),
                 bundleDiscoveryOptions: bundleDiscoveryOptions,
                 derivedDisplayName: derivedDisplayName
             )
         }
-        
+
         private init(
             with values: KeyedDecodingContainer<DocumentationBundle.Info.CodingKeys>?,
             bundleDiscoveryOptions: BundleDiscoveryOptions?,
@@ -156,74 +156,74 @@ extension DocumentationBundle {
             // the decoding logic where we'll need to first check if the value
             // is in the Codable container, and then fall back to the
             // Info.plist fallbacks in the bundle discovery options if necessary.
-            
+
             /// Helper function that decodes a value of the given type for the given key,
             /// if present in either the Codable container or Info.plist fallbacks.
             func decodeOrFallbackIfPresent<T>(
                 _ expectedType: T.Type,
                 with key: CodingKeys
-            ) throws -> T? where T : Decodable {
+            ) throws -> T? where T: Decodable {
                 try values?.decodeIfPresent(T.self, forKey: key)
                     ?? bundleDiscoveryOptions?.infoPlistFallbacks.decodeIfPresent(T.self, forKey: key.rawValue)
             }
-            
+
             /// Helper function that decodes a value of the given type for the given key
             /// in either the Codable container or Info.plist fallbacks.
             func decodeOrFallback<T>(
                 _ expectedType: T.Type,
                 with key: CodingKeys
-            ) throws -> T where T : Decodable {
+            ) throws -> T where T: Decodable {
                 if let bundleDiscoveryOptions {
                     return try values?.decodeIfPresent(T.self, forKey: key)
-                    ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
+                        ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
                 } else if let values {
                     return try values.decode(T.self, forKey: key)
                 } else {
                     throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
                 }
             }
-            
+
             // Before decoding, confirm that all required keys are present
             // in either the decoding container or Info.plist fallbacks.
             //
             // This allows us to throw a more comprehensive error that includes
             // **all** missing required keys, instead of just the first one hit.
-            
+
             var givenKeys = Set(values?.allKeys ?? []).union(
                 bundleDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
                     CodingKeys(stringValue: $0)
                 } ?? []
             )
-            
+
             // If present, we can use `Info.displayName` as a fallback
             // for `Info.identifier`.
             if givenKeys.contains(.displayName) {
                 givenKeys.insert(.id)
             }
-            
+
             // If present, we can use the `derivedDisplayName`
             // as a fallback for the `Info.displayName` and `Info.identifier`.
             if derivedDisplayName != nil {
                 givenKeys.formUnion([.displayName, .id])
             }
-            
+
             let missingKeys = Self.requiredKeys.subtracting(givenKeys)
-            
+
             guard missingKeys.isEmpty else {
                 throw TypedValueError.missingRequiredKeys(missingKeys.sorted(by: \.rawValue))
             }
-            
+
             // Now that we've confirmed that all keys are here, begin
             // by decoding the required keys, throwing an error if we fail to
             // decode them for some reason.
-            
+
             // It's safe to unwrap `derivedDisplayName` because it will only be accessed if neither the decoding container nor the bundle discovery options
             // contain a display name. If they do but that value fails to decode, that error would be raised before accessing `derivedDisplayName`.
             self.displayName = try decodeOrFallbackIfPresent(String.self, with: .displayName) ?? derivedDisplayName!
             self.id = try decodeOrFallbackIfPresent(Identifier.self, with: .id) ?? .init(rawValue: self.displayName)
-            
+
             // Finally, decode the optional keys if they're present.
-            
+
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
@@ -250,10 +250,10 @@ extension DocumentationBundle {
 
 extension BundleDiscoveryOptions {
     /// Creates new bundle discovery options with the given information.
-    /// 
+    ///
     /// The given fallback values will be used if any of the discovered bundles are missing that
     /// value in their Info.plist configuration file.
-    /// 
+    ///
     /// - Parameters:
     ///   - fallbackDisplayName: A fallback display name for the bundle.
     ///   - fallbackIdentifier: A fallback identifier for the bundle.
@@ -273,10 +273,10 @@ extension BundleDiscoveryOptions {
         // to build up the dictionary of fallback options.
         // This ensures that when new coding keys are added, the compiler will enforce
         // that we handle them here as well.
-        
+
         let fallbacks = DocumentationBundle.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
             let value: Any?
-            
+
             switch key {
             case .displayName:
                 value = fallbackDisplayName
@@ -291,14 +291,14 @@ extension BundleDiscoveryOptions {
             case .featureFlags:
                 value = nil
             }
-            
+
             guard let unwrappedValue = value else {
                 return nil
             }
-            
+
             return (key.rawValue, unwrappedValue)
         }
-        
+
         self.init(
             infoPlistFallbacks: Dictionary(uniqueKeysWithValues: fallbacks),
             additionalSymbolGraphFiles: additionalSymbolGraphFiles

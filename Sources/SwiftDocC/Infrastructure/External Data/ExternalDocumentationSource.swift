@@ -27,7 +27,7 @@
 /// - ``GlobalExternalSymbolResolver``
 /// - ``TopicReferenceResolutionResult``
 public protocol ExternalDocumentationSource {
-    
+
     /// Attempts to resolve an unresolved reference for an external topic.
     ///
     /// Your implementation returns a resolved reference if the topic exists in the external source of documentation, or information about why the reference failed to resolve if the topic doesn't exist in the external source.
@@ -37,12 +37,12 @@ public protocol ExternalDocumentationSource {
     /// - Parameter reference: The unresolved external reference.
     /// - Returns: The resolved reference for the topic, or information about why the resolver failed to resolve the reference.
     func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult
-    
+
     /// Creates a new external entity with the documentation content for a previously resolved external reference.
     ///
     /// - Parameter reference: The external reference that this resolver previously resolved.
     /// - Returns: An external entity with the documentation content for the referenced topic.
     /// - Precondition: The `reference` was previously resolved by this resolver.
-    @_spi(ExternalLinks) // LinkResolver.ExternalEntity isn't stable API yet
+    @_spi(ExternalLinks)  // LinkResolver.ExternalEntity isn't stable API yet
     func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity
 }

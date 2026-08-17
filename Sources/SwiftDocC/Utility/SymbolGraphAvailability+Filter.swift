@@ -21,7 +21,7 @@ extension SymbolGraph.Symbol.Availability {
         return copy
     }
 }
-    
+
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// Returns `true` if the `AvailabilityItem` applies to a given platform.
     ///

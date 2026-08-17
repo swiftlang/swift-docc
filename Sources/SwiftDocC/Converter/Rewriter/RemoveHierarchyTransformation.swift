@@ -18,10 +18,10 @@ public struct RemoveHierarchyTransformation: RenderNodeTransforming {
 
     public func transform(renderNode: RenderNode, context: RenderNodeTransformationContext) -> RenderNodeTransformationResult {
         var (renderNode, context) = (renderNode, context)
-        
+
         let identifiersInHierarchy: Set<String> = {
             var collectedIdentifiers: Set<String> = []
-            
+
             // Using `mapValues` here as iteration because manually iterating over the patch structure of variant collections is hard.
             _ = renderNode.hierarchyVariants.mapValues { hierarchy in
                 switch hierarchy {
@@ -34,10 +34,10 @@ public struct RemoveHierarchyTransformation: RenderNodeTransforming {
                 }
                 return hierarchy
             }
-            
+
             return collectedIdentifiers
         }()
-        
+
         // Remove hierarchy.
         renderNode.hierarchyVariants = .init(defaultValue: nil)
 

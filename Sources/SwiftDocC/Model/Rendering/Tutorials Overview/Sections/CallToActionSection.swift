@@ -13,22 +13,22 @@ import Foundation
 /// A section that prompts the user to perform an action.
 public struct CallToActionSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .callToAction
-    
+
     /// The title of the section.
     public var title: String
-    
+
     /// The abstract to display under the title.
     public var abstract: [RenderInlineContent] = []
-    
+
     /// An intro-style image or video to display under the content.
     public var media: RenderReferenceIdentifier?
-    
+
     /// The content that describe the primary action.
     public var action: RenderInlineContent
-    
+
     /// A short description of the section.
     public var featuredEyebrow: String?
-    
+
     /// Creates a new call-to-action section from the given parameters.
     ///
     /// - Parameters:
@@ -44,7 +44,7 @@ public struct CallToActionSection: RenderSection, Equatable {
         self.action = action
         self.featuredEyebrow = featuredEyebrow
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)

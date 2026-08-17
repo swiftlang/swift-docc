@@ -39,7 +39,7 @@ public struct DocumentationBundle {
     public enum PropertyListError: DescribedError {
         case invalidVersionString(String)
         case keyNotFound(String)
-        
+
         public var errorDescription: String {
             switch self {
             case .invalidVersionString(let versionString):
@@ -49,20 +49,20 @@ public struct DocumentationBundle {
             }
         }
     }
-    
+
     /// Non-content information or metadata about this unit of documentation.
     public let info: Info
-    
+
     /// A human-readable display name for this unit of documentation.
     public var displayName: String {
         info.displayName
     }
-    
+
     /// The documentation bundle's stable and locally unique identifier.
     public var id: DocumentationBundle.Identifier {
         info.id
     }
-    
+
     /// Symbol graph JSON input files for the module that's represented by this unit of documentation.
     ///
     /// Tutorial or article-only documentation won't have any symbol graph JSON files.
@@ -71,7 +71,7 @@ public struct DocumentationBundle {
     ///
     /// - ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
     public let symbolGraphURLs: [URL]
-    
+
     /// Documentation markup input files for this unit of documentation.
     ///
     /// Documentation markup files include both articles, documentation extension files, and tutorial files.
@@ -80,7 +80,7 @@ public struct DocumentationBundle {
     ///
     /// - ``DocumentationBundleFileTypes/isMarkupFile(_:)``
     public let markupURLs: [URL]
-    
+
     /// Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.
     public let miscResourceURLs: [URL]
 
@@ -100,7 +100,7 @@ public struct DocumentationBundle {
     ///
     /// This is used when a built documentation is hosted in a known location.
     public let baseURL: URL
-    
+
     /// Creates a new collection of build inputs for a unit of documentation.
     ///
     /// - Parameters:
@@ -139,7 +139,7 @@ public struct DocumentationBundle {
         self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }
-    
+
     public private(set) var rootReference: ResolvedTopicReference
 
     /// Default path to resolve symbol links.

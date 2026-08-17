@@ -16,7 +16,7 @@ public import Foundation
 public struct JSONPatchApplier {
     /// Creates a new JSON patch applier.
     public init() {}
-    
+
     /// Applies the given patch onto the given JSON data.
     ///
     /// - Parameters:
@@ -26,7 +26,7 @@ public struct JSONPatchApplier {
     /// - Throws: This function throws an ``Error`` if the application was not successful.
     public func apply(_ patch: JSONPatch, to jsonData: Data) throws -> Data {
         var json = try JSONDecoder().decode(JSON.self, from: jsonData)
-        
+
         for operation in patch {
             guard let newValue = try apply(operation, to: json, originalPointer: operation.pointer) else {
                 // If the application of the operation onto the top-level JSON element results in a `nil` value (i.e.,
@@ -35,10 +35,10 @@ public struct JSONPatchApplier {
             }
             json = newValue
         }
-        
+
         return try JSONEncoder().encode(json)
     }
-    
+
     private func apply(_ operation: JSONPatchOperation, to json: JSON, originalPointer: JSONPointer) throws -> JSON? {
         // If the pointer has no path components left, this is the value we need to update.
         guard let component = operation.pointer.pathComponents.first else {
@@ -55,9 +55,9 @@ public struct JSONPatchApplier {
                 return nil
             }
         }
-        
+
         let nextOperation = operation.removingPointerFirstPathComponent()
-        
+
         // Traverse the JSON element and apply the operation recursively.
         switch json {
         case .dictionary(let dictionary):
@@ -84,7 +84,7 @@ public struct JSONPatchApplier {
             )
         }
     }
-    
+
     private func apply(
         _ operation: JSONPatchOperation,
         toDictionary dictionary: [String: JSON],
@@ -92,7 +92,7 @@ public struct JSONPatchApplier {
         originalPointer: JSONPointer
     ) throws -> JSON? {
         var dictionary = dictionary
-        
+
         func throwInvalidObjectPointerError() throws -> Never {
             throw Error.invalidObjectPointer(
                 originalPointer,
@@ -100,14 +100,14 @@ public struct JSONPatchApplier {
                 availableObjectKeys: dictionary.keys
             )
         }
-        
+
         switch operation.operation {
         case .replace:
             // If we're replacing, there must be an existing value for this key.
             guard let value = dictionary[component] else {
                 try throwInvalidObjectPointerError()
             }
-            
+
             dictionary[component] = try apply(operation, to: value, originalPointer: originalPointer)
         case .add:
             if let value = dictionary[component] {
@@ -120,7 +120,7 @@ public struct JSONPatchApplier {
                 // Otherwise, the pointer is invalid.
                 try throwInvalidObjectPointerError()
             }
-            
+
         case .remove:
             if let value = dictionary[component] {
                 // If there's a value at this key, remove its value recursively.
@@ -133,10 +133,10 @@ public struct JSONPatchApplier {
                 try throwInvalidObjectPointerError()
             }
         }
-        
+
         return .dictionary(dictionary)
     }
-    
+
     private func apply(
         _ operation: JSONPatchOperation,
         toArray array: [JSON],
@@ -144,7 +144,7 @@ public struct JSONPatchApplier {
         originalPointer: JSONPointer
     ) throws -> JSON? {
         var array = array
-        
+
         func throwInvalidArrayPointerError() throws -> Never {
             throw Error.invalidArrayPointer(
                 originalPointer,
@@ -152,7 +152,7 @@ public struct JSONPatchApplier {
                 arrayCount: array.count
             )
         }
-        
+
         guard let index = Int(component) else {
             throw Error.invalidArrayPointer(
                 originalPointer,
@@ -160,19 +160,19 @@ public struct JSONPatchApplier {
                 arrayCount: array.count
             )
         }
-        
+
         switch operation {
         case .replace:
             guard array.indices.contains(index),
-                  let newValue = try apply(operation, to: array[index], originalPointer: originalPointer)
+                let newValue = try apply(operation, to: array[index], originalPointer: originalPointer)
             else {
                 try throwInvalidArrayPointerError()
             }
-            
+
             array[index] = newValue
         case .add:
             if operation.pointer.pathComponents.isEmpty,
-               let newValue = try apply(operation, to: .array(array), originalPointer: originalPointer)
+                let newValue = try apply(operation, to: .array(array), originalPointer: originalPointer)
             {
                 if index == array.indices.endIndex {
                     array.append(newValue)
@@ -186,7 +186,7 @@ public struct JSONPatchApplier {
                     )
                 }
             } else if array.indices.contains(index),
-                      let newValue = try apply(operation, to: array[index], originalPointer: originalPointer)
+                let newValue = try apply(operation, to: array[index], originalPointer: originalPointer)
             {
                 array[index] = newValue
             } else {
@@ -194,7 +194,7 @@ public struct JSONPatchApplier {
             }
         case .remove:
             if array.indices.contains(index),
-               let newValue = try apply(operation, to: array[index], originalPointer: originalPointer)
+                let newValue = try apply(operation, to: array[index], originalPointer: originalPointer)
             {
                 array[index] = newValue
             } else if array.indices.contains(index), operation.pointer.pathComponents.isEmpty {
@@ -203,10 +203,10 @@ public struct JSONPatchApplier {
                 try throwInvalidArrayPointerError()
             }
         }
-        
+
         return .array(array)
     }
-    
+
     /// An error that occurred during the application of a JSON patch.
     public enum Error: DescribedError {
         /// An error indicating that the pointer of a patch operation is invalid for a JSON object.
@@ -215,8 +215,7 @@ public struct JSONPatchApplier {
         ///   - component: The component that's causing the pointer to be invalid in the JSON object.
         ///   - availableKeys: The keys available in the JSON object.
         case invalidObjectPointer(JSONPointer, component: String, availableKeys: [String])
-        
-        
+
         /// An error indicating that the pointer of a patch operation is invalid for a JSON object.
         ///
         /// - Parameters:
@@ -230,41 +229,41 @@ public struct JSONPatchApplier {
         ) -> Self {
             return .invalidObjectPointer(pointer, component: component, availableKeys: Array(availableObjectKeys))
         }
-        
+
         /// An error indicating that the pointer of a patch operation is invalid for a JSON array.
         ///
         /// - Parameters:
         ///   - index: The index component that's causing the pointer to be invalid in the JSON array.
         ///   - arrayCount: The size of the JSON array.
         case invalidArrayPointer(JSONPointer, index: String, arrayCount: Int)
-        
+
         /// An error indicating that the pointer of a patch operation is invalid for a JSON value.
         ///
         /// - Parameters:
         ///   - component: The component that's causing the pointer to be invalid, since the JSON element is a non-traversable value.
         ///   - jsonValue: The string-encoded description of the JSON value.
         case invalidValuePointer(JSONPointer, component: String, jsonValue: String)
-        
+
         /// An error indicating that a patch operation is invalid.
         case invalidPatch
-        
+
         public var errorDescription: String {
             switch self {
             case .invalidObjectPointer(let pointer, let component, let availableKeys):
                 return """
-                Invalid dictionary pointer '\(pointer)'. The component '\(component)' is not valid for the object with \
-                keys \(availableKeys.sorted().map(\.singleQuoted).list(finalConjunction: .and)).
-                """
+                    Invalid dictionary pointer '\(pointer)'. The component '\(component)' is not valid for the object with \
+                    keys \(availableKeys.sorted().map(\.singleQuoted).list(finalConjunction: .and)).
+                    """
             case .invalidArrayPointer(let pointer, let index, let arrayCount):
                 return """
-                Invalid array pointer '\(pointer)'. The index '\(index)' is not valid for array of \(arrayCount) \
-                elements.
-                """
+                    Invalid array pointer '\(pointer)'. The index '\(index)' is not valid for array of \(arrayCount) \
+                    elements.
+                    """
             case .invalidValuePointer(let pointer, let component, let jsonValue):
                 return """
-                Invalid value pointer '\(pointer)'. The component '\(component)' is not valid for the non-traversable \
-                value '\(jsonValue)'.
-                """
+                    Invalid value pointer '\(pointer)'. The component '\(component)' is not valid for the non-traversable \
+                    value '\(jsonValue)'.
+                    """
             case .invalidPatch:
                 return "Invalid patch"
             }

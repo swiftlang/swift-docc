@@ -15,7 +15,7 @@ class PropertyNode: TypeMemberNode {
     var isDynamic = false
     var type: String?
     var implementation: String?
-    
+
     convenience init(kind: Kind, level: AccessLevel, bundle: OutputBundle, isDynamic: Bool, type: String? = nil) {
         self.init(kind: kind, level: level, bundle: bundle)
         self.isDynamic = isDynamic
@@ -34,7 +34,7 @@ class PropertyNode: TypeMemberNode {
     override func source() -> String {
         var propertyType: String
         var propertyValue: String
-        
+
         if let type = self.type {
             propertyType = "\(type)?"
             propertyValue = "nil"
@@ -43,24 +43,24 @@ class PropertyNode: TypeMemberNode {
             propertyType = typesAndValues[index].0
             propertyValue = typesAndValues[index].1
         }
-        
+
         var result = ""
-        
+
         let kindString = (kind == .instance || kind == .interface) ? "" : kind.rawValue
         let levelString = (level == .default) ? "" : level.rawValue
-        
+
         result += Text.docs(for: name, bundle: bundle, sections: [.abstract])
         if isDynamic {
             result += "\(levelString) \(kindString) var \(name.lowercased()): \(propertyType) { return \(propertyType)(\(propertyValue)) }\n"
         } else {
             result += "\(levelString) \(kindString) \(kind == .static ? "let" : "var") \(name.lowercased()): \(propertyType) = \(propertyValue)\n"
         }
-        
+
         if kind == .interface {
             implementation = result
             result = "var \(name.lowercased()): \(propertyType) { get set }\n"
         }
-        
+
         return result
     }
 }

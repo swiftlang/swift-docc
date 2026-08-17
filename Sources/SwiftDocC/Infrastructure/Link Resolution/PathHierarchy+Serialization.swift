@@ -15,7 +15,7 @@ import SymbolKit
 
 extension PathHierarchy.FileRepresentation {
     // This mapping closure exist so that we don't encode ResolvedIdentifier values into the file. They're an implementation detail and they are a not stable across executions.
-    
+
     /// Encode a path hierarchy into a file representation.
     ///
     /// The caller can use `mapCreatedIdentifiers` when encoding and decoding path hierarchies to associate auxiliary data with a node in the hierarchy.
@@ -28,18 +28,18 @@ extension PathHierarchy.FileRepresentation {
         mapCreatedIdentifiers: (_ identifiers: [ResolvedIdentifier]) -> Void
     ) {
         let lookup = pathHierarchy.lookup
-        
+
         // Map each identifier to a number which will be used as to reference other nodes in the file representation.
         var identifierMap = [ResolvedIdentifier: Int]()
         identifierMap.reserveCapacity(lookup.count)
         for (index, identifier) in zip(0..., lookup.keys) {
             identifierMap[identifier] = index
         }
-        
+
         let nodes = [Node](unsafeUninitializedCapacity: lookup.count) { buffer, initializedCount in
             for (identifier, node) in lookup {
                 assert(identifier == node.identifier, "Every node lookup should match a node with that identifier.")
-                
+
                 buffer.initializeElement(
                     at: identifierMap[identifier]!,
                     to: Node(
@@ -47,14 +47,15 @@ extension PathHierarchy.FileRepresentation {
                         rawSpecialBehavior: node.specialBehaviors.rawValue,
                         children: node.children.values.flatMap({ tree in
                             var disambiguations = [Node.Disambiguation]()
-                            for element in tree.storage where element.node.identifier != nil { // nodes without identifiers can't be found in the tree
-                                disambiguations.append(.init(
-                                    kind: element.kind,
-                                    hash: element.hash,
-                                    parameterTypes: element.parameterTypes,
-                                    returnTypes: element.returnTypes,
-                                    nodeID: identifierMap[element.node.identifier]!
-                                ))
+                            for element in tree.storage where element.node.identifier != nil {  // nodes without identifiers can't be found in the tree
+                                disambiguations.append(
+                                    .init(
+                                        kind: element.kind,
+                                        hash: element.hash,
+                                        parameterTypes: element.parameterTypes,
+                                        returnTypes: element.returnTypes,
+                                        nodeID: identifierMap[element.node.identifier]!
+                                    ))
                             }
                             return disambiguations
                         }),
@@ -64,13 +65,13 @@ extension PathHierarchy.FileRepresentation {
             }
             initializedCount = lookup.count
         }
-        
+
         self.nodes = nodes
         self.modules = pathHierarchy.modules.map({ identifierMap[$0.identifier]! })
         self.articlesContainer = identifierMap[pathHierarchy.articlesContainer.identifier]!
         self.tutorialContainer = identifierMap[pathHierarchy.tutorialContainer.identifier]!
         self.tutorialOverviewContainer = identifierMap[pathHierarchy.tutorialOverviewContainer.identifier]!
-        
+
         mapCreatedIdentifiers(Array(lookup.keys))
     }
 }
@@ -84,7 +85,7 @@ extension PathHierarchy {
         ///
         /// Other places in the file hierarchy references nodes by their index in this list.
         var nodes: [Node]
-        
+
         /// The module nodes in this hierarchy.
         var modules: [Int]
         /// The container for articles and reference documentation.
@@ -93,14 +94,14 @@ extension PathHierarchy {
         var tutorialContainer: Int
         /// The container of tutorial overview pages.
         var tutorialOverviewContainer: Int
-        
+
         /// A node in the hierarchy.
         struct Node: Codable {
             var name: String
             var rawSpecialBehavior: Int = 0
             var children: [Disambiguation] = []
             var symbolID: SymbolGraph.Symbol.Identifier?
-            
+
             struct Disambiguation: Codable {
                 var kind: String?
                 var hash: String?
@@ -119,19 +120,19 @@ extension PathHierarchy.FileRepresentation.Node {
         case children
         case symbolID
     }
-    
+
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.name = try container.decode(String.self, forKey: .name)
         self.rawSpecialBehavior = try container.decodeIfPresent(Int.self, forKey: .rawSpecialBehavior) ?? 0
         self.children = try container.decodeIfPresent([Disambiguation].self, forKey: .children) ?? []
         self.symbolID = try container.decodeIfPresent(SymbolGraph.Symbol.Identifier.self, forKey: .symbolID)
     }
-    
+
     func encode(to encoder: any Encoder) throws {
         var container: KeyedEncodingContainer = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(self.name, forKey: .name)
         if rawSpecialBehavior > 0 {
             try container.encode(rawSpecialBehavior, forKey: .rawSpecialBehavior)
@@ -148,7 +149,7 @@ extension PathHierarchy.FileRepresentation.Node {
 /// > Note: This format is not stable yet. Expect information to be significantly reorganized, added, and removed.
 public struct SerializableLinkResolutionInformation: Codable {
     // This type is public so that it can be an argument to a function in `ConvertOutputConsumer`
-    
+
     var version: SemanticVersion
     var bundleID: DocumentationBundle.Identifier
     var pathHierarchy: PathHierarchy.FileRepresentation
@@ -169,9 +170,9 @@ extension PathHierarchyBasedLinkResolver {
                 nonSymbolPaths[index] = resolvedReferenceMap[identifier]!.url.withoutHostAndPortAndScheme().absoluteString
             }
         }
-        
+
         return SerializableLinkResolutionInformation(
-            version: .init(major: 0, minor: 1, patch: 0), // This is still in development
+            version: .init(major: 0, minor: 1, patch: 0),  // This is still in development
             bundleID: bundleID,
             pathHierarchy: hierarchyFileRepresentation,
             nonSymbolPaths: nonSymbolPaths

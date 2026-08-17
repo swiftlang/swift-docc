@@ -12,7 +12,7 @@ public import Markdown
 
 /**
  A markup checker.
- 
+
  A Checker is a `MarkupWalker` that collects a list of `Problem`s along the way.
  */
 public protocol Checker: MarkupWalker {
@@ -30,16 +30,15 @@ public extension Checker {
 
 // Default implementation so that existing conformances don't break because they don't have the new `diagnostics` protocol requirement.
 public extension Checker {
-    @available(*, deprecated) // This needs to be marked deprecated because it calls deprecated API.
+    @available(*, deprecated)  // This needs to be marked deprecated because it calls deprecated API.
     var diagnostics: [Diagnostic] {
         problems.map(\.diagnostic)
     }
 }
 
-
 /**
  An internal base class box for checkers.
- 
+
  This is used to type-erase a `Checker`, which have an associated type constraint, so they cannot be stored verbatim.
  */
 fileprivate class AnyCheckerBox: Checker {
@@ -113,7 +112,7 @@ fileprivate class AnyCheckerBox: Checker {
 
 /**
  An internal box for checkers.
- 
+
  This is the leaf box which dispatches `MarkupWalker` methods to the wrapped checker.
  */
 fileprivate class CheckerBox<Base: Checker>: AnyCheckerBox {
@@ -121,11 +120,11 @@ fileprivate class CheckerBox<Base: Checker>: AnyCheckerBox {
     init(_ base: Base) {
         self.base = base
     }
-    
+
     override var diagnostics: [Diagnostic] {
         return base.diagnostics
     }
-    
+
     public override func visitBlockQuote(_ blockQuote: BlockQuote) {
         base.visitBlockQuote(blockQuote)
     }
@@ -196,16 +195,16 @@ fileprivate class CheckerBox<Base: Checker>: AnyCheckerBox {
  */
 public struct AnyChecker: Checker {
     private var box: AnyCheckerBox
-    
+
     /// Creates an instance that type erases the given checker.
     public init(_ checker: some Checker) {
         self.box = CheckerBox(checker)
     }
-    
+
     public var diagnostics: [Diagnostic] {
         return box.diagnostics
     }
-    
+
     public mutating func visitBlockQuote(_ blockQuote: BlockQuote) {
         box.visitBlockQuote(blockQuote)
     }
@@ -282,7 +281,7 @@ extension Checker {
  A collection of checkers which all visit the same `Markup` tree.
  */
 public struct CompositeChecker: Checker {
-    
+
     /// The checkers that will visit the markup tree.
     public var checkers: [AnyChecker]
 
@@ -290,17 +289,17 @@ public struct CompositeChecker: Checker {
     public init(_ checkers: some Sequence<any Checker>) {
         self.checkers = checkers.map { $0.any() }
     }
-    
+
     public var diagnostics: [Diagnostic] {
         checkers.flatMap(\.diagnostics)
     }
-    
+
     public mutating func visit(_ markup: any Markup) -> () {
         for i in checkers.indices {
             checkers[i].visit(markup)
         }
     }
-    
+
     public mutating func visitBlockQuote(_ blockQuote: BlockQuote) {
         for i in checkers.indices {
             checkers[i].visitBlockQuote(blockQuote)

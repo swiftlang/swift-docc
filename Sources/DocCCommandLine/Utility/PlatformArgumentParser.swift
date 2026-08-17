@@ -15,14 +15,14 @@ enum PlatformArgumentParser {
     enum Error: DescribedError {
         case unexpectedFormat(String)
         case missingKey(String)
-        
+
         var errorDescription: String {
             switch self {
             case .unexpectedFormat(let message), .missingKey(let message): return message
             }
         }
     }
-    
+
     /// Parses a platform version command line argument list and returns a map of (platform, version) pairs.
     public static func parse(_ platforms: [String]) throws -> [String: PlatformVersion] {
         return try platforms.reduce(into: [:]) { (result, value) in
@@ -34,16 +34,16 @@ enum PlatformArgumentParser {
                     }
                     result[sides[0]] = sides[1]
                 }
-            
+
             guard let name = pairs["name"] else {
                 throw Error.missingKey("Argument '\(value)' does not contain 'name' key.")
             }
             guard let versionString = pairs["version"], let version = Version(versionString: versionString), (2...3).contains(version.count) else {
                 throw Error.missingKey("Argument '\(value)' does not contain 'version' key in X.Y.Z format.")
             }
-            
+
             let versionTriplet = VersionTriplet(version[0], version[1], version.count == 3 ? version[2] : 0)
-            
+
             let beta: Bool
             switch pairs["beta"]?.lowercased() {
             case nil, "false", "no":

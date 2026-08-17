@@ -16,26 +16,30 @@ import DocCTestUtilities
 class HeadingAnchorTests: XCTestCase {
     func testEncodeHeadingAnchor() async throws {
         let catalog =
-            Folder(name: "unit-test.docc", content: [
-                TextFile(name: "Root.md", utf8Content: """
-                # My root page
-                
-                This single article defines two headings and links to them
-                
-                @Metadata {
-                  @TechnologyRoot
-                }
+            Folder(
+                name: "unit-test.docc",
+                content: [
+                    TextFile(
+                        name: "Root.md",
+                        utf8Content: """
+                            # My root page
 
-                ### テスト
-                - <doc:#テスト>
-                
-                ### Some heading
-                - <doc:#Some-heading>
-                """),
-            ])
-        
+                            This single article defines two headings and links to them
+
+                            @Metadata {
+                              @TechnologyRoot
+                            }
+
+                            ### テスト
+                            - <doc:#テスト>
+
+                            ### Some heading
+                            - <doc:#Some-heading>
+                            """),
+                ])
+
         let (_, context) = try await loadBundle(catalog: catalog)
-        
+
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
         let renderContext = RenderContext(documentationContext: context)
@@ -53,7 +57,7 @@ class HeadingAnchorTests: XCTestCase {
         }
         XCTAssertEqual(headings[0].anchor, "%E3%83%86%E3%82%B9%E3%83%88")
         XCTAssertEqual(headings[1].anchor, "Some-heading")
-        
+
         // Check links to them
         let testTopic0 = try XCTUnwrap(renderNode.references["doc://unit-test/documentation/Root#%E3%83%86%E3%82%B9%E3%83%88"] as? TopicRenderReference)
         XCTAssertEqual(testTopic0.url, "/documentation/root#%E3%83%86%E3%82%B9%E3%83%88")

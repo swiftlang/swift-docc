@@ -16,13 +16,13 @@ import XCTest
 class RenderHierarchyTests: XCTestCase {
     func testDecodableTechnologyNavigationMissing() throws {
         let json = """
-        {
-            "path" : "\\/tech",
-            "paths" : [[]],
-            "reference" : "doc:\\/\\/bundleid\\/path",
-            "modules" : []
-        }
-        """
+            {
+                "path" : "\\/tech",
+                "paths" : [[]],
+                "reference" : "doc:\\/\\/bundleid\\/path",
+                "modules" : []
+            }
+            """
         let hierarchy = try JSONDecoder().decode(RenderHierarchy.self, from: json.data(using: .utf8)!)
         guard case RenderHierarchy.tutorials(_) = hierarchy else {
             XCTFail("Unexpected hierarchy type")

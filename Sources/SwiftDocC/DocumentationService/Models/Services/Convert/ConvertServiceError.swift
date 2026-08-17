@@ -14,12 +14,12 @@ import Foundation
 public struct ConvertServiceError: DescribedError, Codable {
     /// The identifier of the error.
     public var identifier: String
-    
+
     /// The human-readable description of the error.
     public var description: String
-    
+
     public var errorDescription: String { description }
-    
+
     /// An error that indicates that a convert request has no associated payload.
     public static func missingPayload() -> ConvertServiceError {
         ConvertServiceError(
@@ -27,7 +27,7 @@ public struct ConvertServiceError: DescribedError, Codable {
             description: "The request is missing a payload."
         )
     }
-    
+
     /// An error that indicates that an error occurred while converting documentation.
     public static func conversionError(underlyingError: String) -> ConvertServiceError {
         ConvertServiceError(
@@ -35,7 +35,7 @@ public struct ConvertServiceError: DescribedError, Codable {
             description: "The documentation content could not be converted: \(underlyingError)"
         )
     }
-    
+
     /// An error that indicates that a received request could not be decoded, likely because it is encoded in an invalid format.
     public static func invalidRequest(underlyingError: String) -> ConvertServiceError {
         ConvertServiceError(
@@ -43,7 +43,7 @@ public struct ConvertServiceError: DescribedError, Codable {
             description: "The request is invalid and cannot be decoded: \(underlyingError)"
         )
     }
-    
+
     /// An error that indicates that a response could not be encoded.
     public static func invalidResponseMessage(underlyingError: String) -> ConvertServiceError {
         ConvertServiceError(

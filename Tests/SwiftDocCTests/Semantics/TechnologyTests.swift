@@ -23,10 +23,12 @@ class TechnologyTests: XCTestCase {
         var diagnostics = [Diagnostic]()
         let technology = TutorialTableOfContents(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(technology)
-        XCTAssertEqual(diagnostics.map(\.identifier), [
-            "org.swift.docc.HasArgument.name",
-            "org.swift.docc.HasExactlyOne<Tutorials, Intro>.Missing",
-        ])
+        XCTAssertEqual(
+            diagnostics.map(\.identifier),
+            [
+                "org.swift.docc.HasArgument.name",
+                "org.swift.docc.HasExactlyOne<Tutorials, Intro>.Missing",
+            ])
         XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })
     }
 }

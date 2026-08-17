@@ -20,7 +20,7 @@ extension Semantic.Analyses {
         public init(featureFlags: FeatureFlags = .init()) {
             self.featureFlags = featureFlags
         }
-        
+
         @available(*, deprecated, renamed: "analyze(_:children:source:diagnostics:)", message: "Use 'analyze(_:children:source:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             var diagnostics = [Diagnostic]()
@@ -29,7 +29,7 @@ extension Semantic.Analyses {
             }
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
-        
+
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> ([Child], remainder: MarkupContainer) {
             return Semantic.Analyses.extractAll(
                 childType: Child.self,
@@ -41,7 +41,7 @@ extension Semantic.Analyses {
             ) as! ([Child], MarkupContainer)
         }
     }
-    
+
     static func extractAll(
         childType: any DirectiveConvertible.Type,
         children: some Sequence<any Markup>,
@@ -52,8 +52,9 @@ extension Semantic.Analyses {
     ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {
         let (candidates, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
-                childType.canConvertDirective(childDirective) else {
-                    return nil
+                childType.canConvertDirective(childDirective)
+            else {
+                return nil
             }
             return childDirective
         }
@@ -62,19 +63,19 @@ extension Semantic.Analyses {
         }
         return (converted, remainder: MarkupContainer(remainder))
     }
-    
+
     /**
      Separates `children` into markup elements that are of a specific type without performing any further analysis.
      */
     public struct ExtractAllMarkup<Child: Markup> {
         public init() {}
-        
+
         @available(*, deprecated, renamed: "analyze(_:children:source:diagnostics:)", message: "Use 'analyze(_:children:source:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems _: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             var diagnostics = [Diagnostic]()
             return analyze(directive, children: children, source: source, diagnostics: &diagnostics)
         }
-        
+
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, diagnostics _: inout [Diagnostic]) -> ([Child], remainder: MarkupContainer) {
             let (matches, remainder) = children.categorize {
                 $0 as? Child
@@ -83,4 +84,3 @@ extension Semantic.Analyses {
         }
     }
 }
-

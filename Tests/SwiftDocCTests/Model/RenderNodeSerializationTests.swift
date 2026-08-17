@@ -17,11 +17,11 @@ class RenderNodeSerializationTests: XCTestCase {
     func testRoundTrip() throws {
         let inputIdentifier = ResolvedTopicReference(bundleID: "com.example.docc", path: "/example", sourceLanguage: .swift)
         var inputNode = RenderNode(identifier: inputIdentifier, kind: .tutorial)
-        
+
         let introSection = IntroRenderSection(title: "Basic Augmented Reality App")
-        
+
         inputNode.sections.append(introSection)
-        
+
         let inlines: [RenderInlineContent] = [
             .text("Let's get started building the "),
             .emphasis(inlineContent: [
@@ -36,19 +36,23 @@ class RenderNodeSerializationTests: XCTestCase {
             .codeVoice(code: "swift package generate-xcodeproj"),
             .text(".")
         ]
-        
+
         let blockContent: [RenderBlockContent] = [
             .paragraph(.init(inlineContent: inlines)),
-            .aside(.init(style: .init(rawValue: "Experiment"), content: [
-                .paragraph(.init(inlineContent: [
-                    .text("Try running the project in the Simulator using the "),
-                    .strong(inlineContent: [.text("Project > Run")]),
-                    .text(" menu item, or the following code:"),
-                ])),
-                .codeListing(.init(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil, options: nil)),
-            ]))
+            .aside(
+                .init(
+                    style: .init(rawValue: "Experiment"),
+                    content: [
+                        .paragraph(
+                            .init(inlineContent: [
+                                .text("Try running the project in the Simulator using the "),
+                                .strong(inlineContent: [.text("Project > Run")]),
+                                .text(" menu item, or the following code:"),
+                            ])),
+                        .codeListing(.init(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil, options: nil)),
+                    ]))
         ]
-        
+
         let steps: [RenderBlockContent] = [
             .paragraph(.init(inlineContent: [.text("After you download Xcode, create a project.")])),
             .step(.init(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [.paragraph(.init(inlineContent: [.text("Caption")]))], media: .init("screenshot2.png"), code: nil, runtimePreview: nil)),
@@ -57,7 +61,7 @@ class RenderNodeSerializationTests: XCTestCase {
             .aside(.init(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor emit.")]))])),
             .step(.init(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil)),
         ]
-        
+
         var contentAndMedia = ContentAndMediaSection(layout: .horizontal, title: "", media: RenderReferenceIdentifier("screenshot1.png"), mediaPosition: .leading)
         contentAndMedia.content = blockContent
         let tutorialSection = TutorialSectionsRenderSection.Section(title: "Create a new AR project", contentSection: [.contentAndMedia(content: contentAndMedia)], stepsSection: steps, anchor: "")
@@ -66,109 +70,111 @@ class RenderNodeSerializationTests: XCTestCase {
         contentAndMedia2.title = "Initiate ARKit plane detection"
         tutorialSection2.contentSection[0] = .contentAndMedia(content: contentAndMedia2)
         let tutorialSectionsSection = TutorialSectionsRenderSection(sections: [tutorialSection, tutorialSection2])
-        
+
         inputNode.sections.append(tutorialSectionsSection)
-        
-        let assessment1 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor sit amet?")]))],
-                                                                     content: nil,
-                                                                     choices: [
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "That's right!"),
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, options: nil))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Not quite."),
-            .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: nil),
-        ])
-        
-        let assessment2 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Duis aute irure dolor in reprehenderit?")]))],
-                                                                     content: [.paragraph(.init(inlineContent: [.text("What is the airspeed velocity of an unladen swallow?")]))],
-                                                                     choices: [
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Correct."),
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Yep."),
-            .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Close!"),
-        ])
-        
+
+        let assessment1 = TutorialAssessmentsRenderSection.Assessment(
+            title: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor sit amet?")]))],
+            content: nil,
+            choices: [
+                .init(content: [.codeListing(.init(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "That's right!"),
+                .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, options: nil))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Not quite."),
+                .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: nil),
+            ])
+
+        let assessment2 = TutorialAssessmentsRenderSection.Assessment(
+            title: [.paragraph(.init(inlineContent: [.text("Duis aute irure dolor in reprehenderit?")]))],
+            content: [.paragraph(.init(inlineContent: [.text("What is the airspeed velocity of an unladen swallow?")]))],
+            choices: [
+                .init(content: [.codeListing(.init(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Correct."),
+                .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Yep."),
+                .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Close!"),
+            ])
+
         let assessments = TutorialAssessmentsRenderSection(assessments: [assessment1, assessment2], anchor: "Check-Your-Understanding")
-        
+
         inputNode.sections.append(assessments)
-        
+
         checkRoundTrip(inputNode)
     }
-    
+
     func testBundleRoundTrip() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
-        
+
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
         }
-        
+
         var diagnostics = [Diagnostic]()
         guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
-        
+
         XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing tutorial markup")
-        
+
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
-        
+
         let renderNode = translator.visit(tutorial) as! RenderNode
         checkRoundTrip(renderNode)
     }
-    
+
     func testTutorialArticleRoundTrip() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
-        
+
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
             return
         }
-        
+
         var diagnostics = [Diagnostic]()
         guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create article from markup: \(diagnostics)")
             return
         }
-        
+
         XCTAssertEqual(diagnostics.count, 0, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing article markup")
-        
+
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
-        
+
         let renderNode = translator.visit(article) as! RenderNode
         checkRoundTrip(renderNode)
     }
-    
+
     func testAssetReferenceDictionary() async throws {
         typealias JSONDictionary = [String: Any]
-        
+
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
-        
+
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
         }
-        
+
         var diagnostics = [Diagnostic]()
         guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
-        
+
         XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing tutorial markup")
-        
+
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
-        
+
         let renderNode = translator.visit(tutorial) as! RenderNode
         let data = try encode(renderNode: renderNode)
-        
+
         // Ensure references are correct
         XCTAssertNotNil(renderNode.projectFiles())
         XCTAssertEqual(renderNode.projectFiles()?.url.lastPathComponent, "project.zip")
-        
+
         XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 0)
         XCTAssertEqual(renderNode.downloadReferences().count, 1)
-        
+
         // Check the output of the dictionary
         let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as! JSONDictionary
         let references = dictionary["references"] as! [String: JSONDictionary]
@@ -195,12 +201,12 @@ class RenderNodeSerializationTests: XCTestCase {
     func testDiffAvailability() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
-        
+
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
             return
         }
-        
+
         var diagnostics = [Diagnostic]()
         guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create article from markup: \(diagnostics)")
@@ -228,81 +234,88 @@ class RenderNodeSerializationTests: XCTestCase {
         func decodeKind(jsonString: String) throws -> RenderNode.Kind {
             return try JSONDecoder().decode(RenderNode.Kind.self, from: Data(jsonString.utf8))
         }
-        
+
         // Both values can be decoded
         XCTAssertEqual(try decodeKind(jsonString: "\"tutorial\""), .tutorial)
         XCTAssertEqual(try decodeKind(jsonString: "\"project\""), .tutorial)
-        
+
         // A `tutorial` kind is still encoded as "project" for compatibility.
         let decoded = try decodeKind(jsonString: "\"tutorial\"")
         let encoded = try String(data: JSONEncoder().encode(Wrapper(kind: decoded)), encoding: .utf8)
         XCTAssertEqual(encoded, "{\"kind\":\"project\"}")
     }
-    
+
     func testRenderMetadataSerialization() throws {
         func decodeMetadata(jsonString: String) throws -> RenderMetadata {
             return try JSONDecoder().decode(RenderMetadata.self, from: jsonString.data(using: .utf8)!)
         }
-        
+
         // Both values can be decoded, and are decoded as "project".
         XCTAssertEqual(try decodeMetadata(jsonString: "{}").role, nil)
         XCTAssertEqual(try decodeMetadata(jsonString: "{ \"role\" : \"tutorial\" }").role, "project")
         XCTAssertEqual(try decodeMetadata(jsonString: "{ \"role\" : \"project\" }").role, "project")
-        
+
         // A `tutorial` role is still encoded as "project" for compatibility.
         let decoded = try decodeMetadata(jsonString: "{ \"role\" : \"tutorial\" }")
         let encoded = try String(data: JSONEncoder().encode(decoded), encoding: .utf8)
         XCTAssertEqual(encoded, "{\"role\":\"project\"}")
     }
-    
+
     func testRenderHierarchyChapterSerialization() throws {
         func decodeMetadata(jsonString: String) throws -> RenderHierarchyChapter {
             return try JSONDecoder().decode(RenderHierarchyChapter.self, from: jsonString.data(using: .utf8)!)
         }
-        
+
         // Both keys can be decoded, and are decoded as "tutorials".
-        XCTAssertEqual(try decodeMetadata(jsonString: """
-        {
-          "reference" : "chapter-identifier",
-          "tutorials" : [
-            {
-              "reference" : "tutorial-identifier",
-              "sections" : []
-            }
-          ]
-        }
-        """).tutorials.first?.reference.identifier, "tutorial-identifier")
-        XCTAssertEqual(try decodeMetadata(jsonString: """
-        {
-          "reference" : "chapter-identifier",
-          "projects" : [
-            {
-              "reference" : "tutorial-identifier",
-              "sections" : []
-            }
-          ]
-        }
-        """).tutorials.first?.reference.identifier, "tutorial-identifier")
-        
+        XCTAssertEqual(
+            try decodeMetadata(
+                jsonString: """
+                    {
+                      "reference" : "chapter-identifier",
+                      "tutorials" : [
+                        {
+                          "reference" : "tutorial-identifier",
+                          "sections" : []
+                        }
+                      ]
+                    }
+                    """
+            ).tutorials.first?.reference.identifier, "tutorial-identifier")
+        XCTAssertEqual(
+            try decodeMetadata(
+                jsonString: """
+                    {
+                      "reference" : "chapter-identifier",
+                      "projects" : [
+                        {
+                          "reference" : "tutorial-identifier",
+                          "sections" : []
+                        }
+                      ]
+                    }
+                    """
+            ).tutorials.first?.reference.identifier, "tutorial-identifier")
+
         // The `tutorials` property is still encoded as "projects" for compatibility.
-        let decoded = try decodeMetadata(jsonString: """
-        {
-          "reference" : "chapter-identifier",
-          "tutorials" : []
-        }
-        """)
+        let decoded = try decodeMetadata(
+            jsonString: """
+                {
+                  "reference" : "chapter-identifier",
+                  "tutorials" : []
+                }
+                """)
         let encoded = try String(data: JSONEncoder().encode(decoded), encoding: .utf8)!
         XCTAssertTrue(encoded.contains("\"projects\":[]"))
         XCTAssertFalse(encoded.contains("\"tutorials\":[]"))
     }
-    
+
     // MARK: - Utility functions
 
     func checkRoundTrip(_ inputNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {
         // Make sure we're not using a shared encoder
         let testEncoder = JSONEncoder()
         let testDecoder = JSONDecoder()
-        
+
         let data: Data
         do {
             data = try inputNode.encodeToJSON(with: testEncoder)
@@ -331,7 +344,7 @@ class RenderNodeSerializationTests: XCTestCase {
     func encode(renderNode: RenderNode) throws -> Data {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        
+
         return try encoder.encode(renderNode)
     }
 }

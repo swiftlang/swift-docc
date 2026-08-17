@@ -67,7 +67,7 @@ extension RESTParametersRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this RESTParametersRenderSection is similar enough to the given one.
     func isSimilar(to other: RESTParametersRenderSection) -> Bool {
         return self.title == other.title

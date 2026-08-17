@@ -28,7 +28,7 @@ public final class DiagnosticEngine {
     /// This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified,
     /// diagnostics with a severity up to and including `.information` will be printed.
     public var filterLevel: DiagnosticSeverity
-    
+
     /// Returns a Boolean value indicating whether the engine contains a consumer that satisfies the given predicate.
     /// - Parameter predicate: A closure that takes one of the engine's consumers as its argument and returns a Boolean value that indicates whether the passed consumer represents a match.
     /// - Returns: `true` if the engine contains a consumer that satisfies predicate; otherwise, `false`.
@@ -37,23 +37,23 @@ public final class DiagnosticEngine {
             try $0.values.contains(where: predicate)
         }
     }
-    
+
     /// Determines whether warnings will be treated as errors.
     private let treatWarningsAsErrors: Bool
     /// A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
     package var diagnosticIDsWithWarningSeverity: Set<String>
     /// A list of diagnostic identifiers that are explicitly raised to an "error" severity.
     package var diagnosticIDsWithErrorSeverity: Set<String>
-    
+
     /// Determines whether or not the diagnostics engine will emit a diagnostic with the given ID or group ID.
     package func willEmitDiagnostic(id: String, defaultSeverity: DiagnosticSeverity) -> Bool {
         if diagnosticIDsWithErrorSeverity.contains(id) {
-            true // Errors are always emitted
+            true  // Errors are always emitted
         } else if diagnosticIDsWithWarningSeverity.contains(id) {
             // `--Wwarning` can be used to lower severity even when `--warnings-as-errors` is passed to is needs to be checked first
             filterLevel <= .warning
         } else if treatWarningsAsErrors {
-            true // Errors are always emitted
+            true  // Errors are always emitted
         } else {
             filterLevel <= defaultSeverity
         }
@@ -70,7 +70,7 @@ public final class DiagnosticEngine {
             diagnostics.map { Problem(diagnostic: $0) }
         }
     }
-    
+
     /// A convenience accessor for retrieving all of the diagnostics this engine currently holds.
     public var diagnostics: [Diagnostic] {
         _diagnostics.sync { $0 }
@@ -107,7 +107,7 @@ public final class DiagnosticEngine {
     public func emit(_ problem: Problem) {
         emit(problem.diagnostic)
     }
-    
+
     /// Dispatches a diagnostic to all subscribed consumers.
     /// - Parameter diagnostic: The diagnostic to dispatch to this engine's currently subscribed consumers.
     public func emit(_ diagnostic: Diagnostic) {
@@ -118,7 +118,7 @@ public final class DiagnosticEngine {
     public func emit(_ problems: [Problem]) {
         emit(problems.map(\.diagnostic))
     }
-    
+
     /// Dispatches multiple diagnostics to consumers.
     /// - Parameter diagnostics: The sequence of diagnostics to dispatch to this engine's currently subscribed consumers.
     /// - Note: The diagnostics are dispatched asynchronously.
@@ -134,7 +134,7 @@ public final class DiagnosticEngine {
         if filteredProblems.containsAnyError {
             didEncounterError.sync { $0 = true }
         }
-        
+
         _diagnostics.sync {
             $0.append(contentsOf: filteredProblems)
         }
@@ -147,7 +147,7 @@ public final class DiagnosticEngine {
             }
         }
     }
-    
+
     public func flush() {
         workQueue.sync {
             for consumer in self.consumers.sync({ $0.values }) {
@@ -171,7 +171,7 @@ public final class DiagnosticEngine {
             $0.removeValue(forKey: ObjectIdentifier(consumer))
         }
     }
-    
+
     private func updateDiagnosticSeverity(_ diagnostic: inout Diagnostic) {
         func _severity(identifier: String) -> DiagnosticSeverity? {
             // swift-format-ignore
@@ -179,7 +179,7 @@ public final class DiagnosticEngine {
             else if diagnosticIDsWithWarningSeverity.contains(identifier) { .warning }
             else                                                          { nil }
         }
-        
+
         if let severity = _severity(identifier: diagnostic.identifier) ?? diagnostic.groupIdentifier.flatMap(_severity) {
             diagnostic.severity = severity
         } else if treatWarningsAsErrors, diagnostic.severity == .warning {

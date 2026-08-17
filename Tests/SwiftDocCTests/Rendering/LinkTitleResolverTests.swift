@@ -16,17 +16,21 @@ import DocCTestUtilities
 class LinkTitleResolverTests: XCTestCase {
     func testSymbolTitleResolving() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "MyKit", symbols: [
-                makeSymbol(id: "s:6MyKit10MyProtocolP", kind: .protocol, pathComponents: ["MyProtocol"]),
-            ]))
+            JSONFile(
+                symbolGraph: makeSymbolGraph(
+                    moduleName: "MyKit",
+                    symbols: [
+                        makeSymbol(id: "s:6MyKit10MyProtocolP", kind: .protocol, pathComponents: ["MyProtocol"]),
+                    ]))
         }
         let (_, context) = try await loadBundle(catalog: catalog)
         let resolver = LinkTitleResolver(context: context, source: nil)
-        let reference = try XCTUnwrap(context.knownIdentifiers.first(where: { ref in
-            ref.path.hasSuffix("MyProtocol")
-        }), "Did not find MyProtocol in test catalog")
+        let reference = try XCTUnwrap(
+            context.knownIdentifiers.first(where: { ref in
+                ref.path.hasSuffix("MyProtocol")
+            }), "Did not find MyProtocol in test catalog")
         let myProtocolNode = try context.entity(with: reference)
-        
+
         // Tests title resolving for symbols
         let title = resolver.title(for: myProtocolNode)
         XCTAssertEqual("MyProtocol", title?.allValues.first?.variant)

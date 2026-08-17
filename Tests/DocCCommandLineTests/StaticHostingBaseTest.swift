@@ -49,10 +49,11 @@ class StaticHostingBaseTests: XCTestCase {
                         continue
                     }
                 } else {
-                    compareJSONFolder(fileManager: fileManager,
-                                   output: output.appendingPathComponent(inputContent),
-                                   input: input.appendingPathComponent(inputContent),
-                                   indexHTML: indexHTML)
+                    compareJSONFolder(
+                        fileManager: fileManager,
+                        output: output.appendingPathComponent(inputContent),
+                        input: input.appendingPathComponent(inputContent),
+                        indexHTML: indexHTML)
                 }
             }
         } catch {

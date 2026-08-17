@@ -24,14 +24,14 @@ private import DocCHTML
 // There might be a different internal abstraction where we don't need this type at all. (rdar://177867282)
 struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     let _isPrimaryOutputFormat = true
-    
+
     private let customHeader: XMLNode?
     private let customFooter: XMLNode?
     private let prettyPrint: Bool
-    
+
     // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
     private let fileWriter: JSONEncodingRenderNodeWriter
-    
+
     init(
         targetFolder: URL,
         fileManager: some FileManagerProtocol,
@@ -41,23 +41,23 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     ) throws {
         (self.customHeader, self.customFooter) = try HTMLRenderer.prepareForFullPage(customHeader: customHeader, customFooter: customFooter, fileManager: fileManager)
         self.prettyPrint = prettyPrint
-        
+
         self.fileWriter = JSONEncodingRenderNodeWriter(
             targetFolder: targetFolder,
             fileManager: fileManager,
             transformForStaticHostingIndexHTML: nil
         )
     }
-    
+
     func consume(
         mainContent: XMLNode,
         metadata: (title: String, description: String?),
         forPage reference: ResolvedTopicReference
     ) throws {
         let page = HTMLRenderer.makeFullPage(mainContent: mainContent, metadata: metadata, for: reference, customHeader: customHeader, customFooter: customFooter)
-        
+
         let htmlData = HTMLFormatter.format(page, options: prettyPrint ? .prettyPrint : [])
-        
+
         let relativeFilePath = NodeURLGenerator.fileSafeReferencePath(reference, lowercased: true) + "/index.html"
         try fileWriter.write(htmlData, toFileSafePath: relativeFilePath)
     }

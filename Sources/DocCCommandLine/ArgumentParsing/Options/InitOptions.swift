@@ -16,9 +16,9 @@ public import Foundation
 /// These options are used by the ``Docc/Init`` subcommand.
 
 public struct InitOptions: ParsableArguments {
-    
-    public init() { }
-    
+
+    public init() {}
+
     /// The catalog directory name.
     @Option(
         name: .long,
@@ -28,7 +28,7 @@ public struct InitOptions: ParsableArguments {
         )
     )
     public var name: String
-    
+
     /// A user-provided location where the init action writes the generated catalog documentation.
     @Option(
         name: [.customLong("output-dir"), .customShort("o")],
@@ -39,7 +39,7 @@ public struct InitOptions: ParsableArguments {
         transform: URL.init(fileURLWithPath:)
     )
     public var providedCatalogOutputDirURL: URL
-    
+
     public func validate() throws {
         // Verify that the directory exist for the output location.
         var isDirectory: ObjCBool = false
@@ -47,19 +47,19 @@ public struct InitOptions: ParsableArguments {
             throw ValidationError("No directory exists at '\(providedCatalogOutputDirURL.path)'.")
         }
     }
-    
+
     /// The catalog template to initialize.
     @Option(
         name: .customLong("template"),
         help: ArgumentHelp(
             "The catalog template to initialize.",
             discussion: """
-            The provided templates are:
-            
-            - articleOnly: This template contains the minimal needed for creating article-only reference documentation not tied to symbols. It includes a catalog with just one markdown file and a references folder.
-            
-            - tutorial: This template contains the necessary structure and directives to get started on authoring tutorials.
-            """,
+                The provided templates are:
+
+                - articleOnly: This template contains the minimal needed for creating article-only reference documentation not tied to symbols. It includes a catalog with just one markdown file and a references folder.
+
+                - tutorial: This template contains the necessary structure and directives to get started on authoring tutorials.
+                """,
             valueName: "template-name"
         )
     )

@@ -16,10 +16,10 @@ import Foundation
 public struct TopicImage: Codable, Hashable {
     /// The type of this topic image.
     public let type: TopicImageType
-    
+
     /// The reference identifier for the image.
     public var identifier: RenderReferenceIdentifier
-    
+
     /// Create a new topic image with the given type and reference identifier.
     public init(
         type: TopicImage.TopicImageType,
@@ -36,7 +36,7 @@ extension TopicImage {
         /// An icon image that should be used to represent this page wherever a default icon
         /// is currently used.
         case icon
-        
+
         /// An icon image that should be used to represent this page wherever a default icon
         /// is currently used.
         case card
@@ -55,26 +55,28 @@ extension TopicImage {
         case .icon:
             type = .icon
         }
-        
+
         self.init(type: type, identifier: identifier)
     }
-    
+
     init?(
         pageImage: PageImage,
         with context: DocumentationContext,
         in parent: ResolvedTopicReference
     ) {
-        guard let identifier = context.identifier(
-            forAssetName: pageImage.source.path,
-            in: parent
-        ) else {
+        guard
+            let identifier = context.identifier(
+                forAssetName: pageImage.source.path,
+                in: parent
+            )
+        else {
             return nil
         }
-        
+
         self.init(
             pageImagePurpose: pageImage.purpose,
             identifier: RenderReferenceIdentifier(identifier)
         )
     }
-    
+
 }

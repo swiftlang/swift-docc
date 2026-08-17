@@ -13,10 +13,10 @@ public extension VariantCollection {
     struct Variant {
         /// The traits associated with the override.
         public var traits: [RenderNode.Variant.Trait]
-        
+
         /// The patch to apply as part of the override.
         public var patch: [VariantPatchOperation<Value>]
-        
+
         /// Creates an override value for the given traits.
         ///
         /// - Parameters:
@@ -26,7 +26,7 @@ public extension VariantCollection {
             self.traits = traits
             self.patch = patch
         }
-        
+
         /// Returns a new variant collection containing the traits of this variant collection with the values transformed by the given closure.
         public func mapPatch<TransformedValue>(
             _ transform: (Value) -> TransformedValue

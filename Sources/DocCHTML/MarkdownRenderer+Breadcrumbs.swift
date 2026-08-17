@@ -25,7 +25,7 @@ package extension MarkdownRenderer {
             switch names {
             case .single(.conceptual(let name)), .single(.symbol(let name)):
                 return [.text(name)]
-                
+
             case .languageSpecificSymbol(let namesByLanguageID):
                 let names = RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID)
                 return switch goal {
@@ -44,22 +44,24 @@ package extension MarkdownRenderer {
                 }
             }
         }
-        
+
         // Create links for each of the breadcrumbs
         var items: [XMLNode] = references.compactMap {
             linkProvider.element(for: $0).map { page in
-                .element(named: "li", children: [
-                    .element(named: "a", children: nameElements(for: page.names), attributes: ["href": self.path(to: page.path)])
-                ])
+                .element(
+                    named: "li",
+                    children: [
+                        .element(named: "a", children: nameElements(for: page.names), attributes: ["href": self.path(to: page.path)])
+                    ])
             }
         }
-        
+
         // Add the name of the current page. It doesn't display as a link because it would refer to the current page.
         items.append(
             .element(named: "li", children: nameElements(for: currentPageNames))
         )
         let list = XMLNode.element(named: "ul", children: items)
-        
+
         // swift-format-ignore
         return switch goal {
         case .conciseness: list // If the goal is conciseness, don't wrap the list in a `<nav>` HTML element with an "id".

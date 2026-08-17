@@ -25,7 +25,7 @@ public struct SymbolReference {
     static func isLeaf(_ symbol: SymbolGraph.Symbol) -> Bool {
         return !symbol.kind.identifier.swiftSymbolCouldHaveChildren
     }
-    
+
     /// Creates a new reference to a symbol.
     ///
     /// The two symbols `MyFramework/Manager`, a class, and `MyFramework/manager`, a static variable,
@@ -50,11 +50,9 @@ public struct SymbolReference {
         shouldAddKind: Bool = false
     ) {
         self.interfaceLanguages = Set(interfaceLanguages)
-        
+
         guard let symbol else {
-            path = shouldAddHash ?
-                identifier.appendingHashedIdentifier(identifier) :
-                identifier
+            path = shouldAddHash ? identifier.appendingHashedIdentifier(identifier) : identifier
             return
         }
 
@@ -68,11 +66,12 @@ public struct SymbolReference {
 
         if shouldAddKind {
             let interfaceLanguage = symbol.identifier.interfaceLanguage
-            
-            let languageIdentifier = SourceLanguage(
-                knownLanguageIdentifier: interfaceLanguage
-            )?.linkDisambiguationID ?? interfaceLanguage
-            
+
+            let languageIdentifier =
+                SourceLanguage(
+                    knownLanguageIdentifier: interfaceLanguage
+                )?.linkDisambiguationID ?? interfaceLanguage
+
             name = name.appending("-\(languageIdentifier).\(symbol.kind.identifier.identifier)")
         }
         if shouldAddHash {
@@ -81,7 +80,7 @@ public struct SymbolReference {
 
         path = name
     }
-    
+
     /// Creates a new reference to a symbol.
     ///
     /// - Parameters:
@@ -103,7 +102,7 @@ public struct SymbolReference {
             shouldAddKind: shouldAddKind
         )
     }
-    
+
     /// Creates a new reference to a symbol.
     ///
     /// - Parameters:
@@ -127,7 +126,7 @@ public struct SymbolReference {
             shouldAddKind: shouldAddKind
         )
     }
-    
+
     /// Creates a new symbol reference with the given components and source languages.
     ///
     /// - Parameters:
@@ -140,7 +139,7 @@ public struct SymbolReference {
         self.path = pathComponents.joinedSymbolPathComponents
         self.interfaceLanguages = Set(interfaceLanguages)
     }
-    
+
     /// Creates a new symbol reference with the given components and source language.
     ///
     /// - Parameters:
@@ -150,10 +149,10 @@ public struct SymbolReference {
         self.path = pathComponents.joinedSymbolPathComponents
         self.interfaceLanguages = [interfaceLanguage]
     }
-    
+
     /// The relative path from the module or framework to the symbol itself.
     public let path: String
-    
+
     /// The interface language for the reference.
     public let interfaceLanguages: Set<SourceLanguage>
 }

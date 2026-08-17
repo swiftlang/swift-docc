@@ -22,7 +22,7 @@
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<html>` element.
 package func html(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    ._element(.html, attributes: attributes , contents: contents)
+    ._element(.html, attributes: attributes, contents: contents)
 }
 
 // MARK: - Metadata
@@ -180,14 +180,15 @@ package func h2(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<h1>`-`<h6>` element.
 func heading(level: Int, attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    let tag: HTMLNode._Tag = switch level {
-        case 1:  .h1
-        case 2:  .h2
-        case 3:  .h3
-        case 4:  .h4
-        case 5:  .h5
+    let tag: HTMLNode._Tag =
+        switch level {
+        case 1: .h1
+        case 2: .h2
+        case 3: .h3
+        case 4: .h4
+        case 5: .h5
         default: .h6
-    }
+        }
     return ._element(tag, attributes: attributes, contents: contents)
 }
 
@@ -203,12 +204,13 @@ func heading(level: Int, attributes: [HTMLNode.Attribute] = [], contents: [HTMLN
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<hgroup>` element.
 package func hgroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    assert(contents.allSatisfy {
-        switch $0._tag {
+    assert(
+        contents.allSatisfy {
+            switch $0._tag {
             case .p, .h1, .h2, .h3, .h4, .h5, .h6: true
             default: false
-        }
-    }, "<hgroup> tags can only contain zero or more <p> tag and one <h1>–<h6> tags")
+            }
+        }, "<hgroup> tags can only contain zero or more <p> tag and one <h1>–<h6> tags")
     return ._element(.hgroup, attributes: attributes, contents: contents)
 }
 
@@ -994,12 +996,13 @@ func colGroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<table>` element.
 func table(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    assert(contents.allSatisfy {
-        switch $0._tag {
+    assert(
+        contents.allSatisfy {
+            switch $0._tag {
             case .caption, .colgroup, .thead, .tbody, .tfoot: true
             default: false
-        }
-    }, "<table> tags can only contain <caption>, <colgroup>, <thead>, <tbody>, and <tfoot> tags in that order")
+            }
+        }, "<table> tags can only contain <caption>, <colgroup>, <thead>, <tbody>, and <tfoot> tags in that order")
     return ._element(.table, attributes: attributes, contents: contents)
 }
 
@@ -1196,13 +1199,14 @@ func meter(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<optgroup>` element.
 func optGroup(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    assert(contents.allSatisfy {
-        switch $0._tag {
+    assert(
+        contents.allSatisfy {
+            switch $0._tag {
             case .div, .legend, .noscript, .option, .script, .template: true
             default: false
-        }
-    }, "<optgroup> tags can only contain <legend>, <option>, <script>, <template>, <noscript> and <div> tags")
-    assert(contents.first?._tag == .legend || contents.dropFirst().allSatisfy { $0._tag != .legend}, "<optgroup> tags can only contain zero or one <legend> tags as the first element")
+            }
+        }, "<optgroup> tags can only contain <legend>, <option>, <script>, <template>, <noscript> and <div> tags")
+    assert(contents.first?._tag == .legend || contents.dropFirst().allSatisfy { $0._tag != .legend }, "<optgroup> tags can only contain zero or one <legend> tags as the first element")
     return ._element(.optgroup, attributes: attributes, contents: contents)
 }
 
@@ -1254,12 +1258,13 @@ func progress(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<select>` element.
 func select(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
-    assert(contents.allSatisfy {
-        switch $0._tag {
+    assert(
+        contents.allSatisfy {
+            switch $0._tag {
             case .button, .div, .hr, .noscript, .optgroup, .option, .script, .template: true
             default: false
-        }
-    }, "<select> tags can only contain <button>, <option>, <optgroup>, <hr>, <script>, <template>, <noscript> and <div> tags")
+            }
+        }, "<select> tags can only contain <button>, <option>, <optgroup>, <hr>, <script>, <template>, <noscript> and <div> tags")
     return ._element(.select, attributes: attributes, contents: contents)
 }
 
@@ -1397,18 +1402,18 @@ extension HTMLNode {
     // This type is only internally accessible so that HTMLNode, its formatting, and its parsing can be defined in different files.
     enum _Tag: String {
         case html
-        
+
         // Metadata
-        
-        case base // a void element
+
+        case base  // a void element
         case head
-        case link // a void element
-        case meta // a void element
+        case link  // a void element
+        case meta  // a void element
         case style
         case title
-        
+
         // Sections
-        
+
         case address
         case article
         case aside
@@ -1419,9 +1424,9 @@ extension HTMLNode {
         case hgroup
         case nav
         case section
-        
+
         // Grouping
-        
+
         case blockquote
         case dd
         case div
@@ -1429,7 +1434,7 @@ extension HTMLNode {
         case dt
         case figcaption
         case figure
-        case hr // a void-element
+        case hr  // a void-element
         case li
         case main
         case menu
@@ -1438,9 +1443,9 @@ extension HTMLNode {
         case pre
         case search
         case ul
-        
+
         // Text-level semantics
-        
+
         case a
         case abbr
         case b
@@ -1469,11 +1474,11 @@ extension HTMLNode {
         case time
         case u
         case `var`
-        case wbr // a void-element
-        
+        case wbr  // a void-element
+
         // Embedded
-        
-        case area   // a void-element
+
+        case area  // a void-element
         case audio
         case embed  // a void-element
         case iframe
@@ -1482,14 +1487,14 @@ extension HTMLNode {
         case map
         case object
         case picture
-        case source // a void-element
+        case source  // a void-element
         case track  // a void-element
         case video
-        
+
         // Tables
-        
+
         case caption
-        case col // a void-element
+        case col  // a void-element
         case colgroup
         case table
         case tbody
@@ -1498,14 +1503,14 @@ extension HTMLNode {
         case th
         case thead
         case tr
-        
+
         // Forms
-        
+
         case button
         case datalist
         case fieldset
         case form
-        case input // a void-element
+        case input  // a void-element
         case label
         case legend
         case meter
@@ -1516,15 +1521,15 @@ extension HTMLNode {
         case select
         case selectedcontent
         case textarea
-        
+
         // Interactive
-        
+
         case details
         case dialog
         case summary
-        
+
         // Scripting
-        
+
         case canvas
         case noscript
         case script

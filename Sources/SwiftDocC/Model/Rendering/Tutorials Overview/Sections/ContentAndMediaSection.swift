@@ -11,25 +11,25 @@
 /// A section containing textual content and media laid out horizontally or vertically.
 public struct ContentAndMediaSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .contentAndMedia
-    
+
     /// The layout direction.
     public var layout: Layout?
-    
+
     /// The title of the section.
     public var title: String?
-    
+
     /// Text to display above the title.
     public var eyebrow: String?
-    
+
     /// The body content of the section.
     public var content: [RenderBlockContent] = []
-    
+
     /// An image or video to display opposite the text.
     public var media: RenderReferenceIdentifier?
-    
+
     /// Whether the media comes before or after the text when read from top to bottom or leading to trailing.
     public var mediaPosition: ContentAndMedia.MediaPosition
-    
+
     /// The kind of layout to use when rendering a section.
     /// Content is always leading, and media is always trailing.
     public enum Layout: String, Codable {
@@ -38,7 +38,7 @@ public struct ContentAndMediaSection: RenderSection, Equatable {
         /// Content should be laid out vertically, with the media trailing the content.
         case vertical
     }
-    
+
     /// Creates a new content and media section from the given parameters.
     ///
     /// - Parameters:
@@ -52,22 +52,23 @@ public struct ContentAndMediaSection: RenderSection, Equatable {
         self.media = media
         self.mediaPosition = mediaPosition
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         kind = try container.decodeIfPresent(RenderSectionKind.self, forKey: .kind) ?? .contentAndMedia
         layout = try container.decodeIfPresent(Layout.self, forKey: .layout)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         eyebrow = try container.decodeIfPresent(String.self, forKey: .eyebrow)
         content = try container.decodeIfPresent([RenderBlockContent].self, forKey: .content) ?? []
         media = try container.decodeIfPresent(RenderReferenceIdentifier.self, forKey: .media)
-        mediaPosition = try container.decodeIfPresent(ContentAndMedia.MediaPosition.self, forKey: .mediaPosition)
-        // Provide backwards-compatibility for ContentAndMediaSections that don't have a `mediaPosition` key.
-        ?? .leading
+        mediaPosition =
+            try container.decodeIfPresent(ContentAndMedia.MediaPosition.self, forKey: .mediaPosition)
+            // Provide backwards-compatibility for ContentAndMediaSections that don't have a `mediaPosition` key.
+            ?? .leading
     }
 }
-    
+
 // Diffable conformance
 extension ContentAndMediaSection: RenderJSONDiffable {
     /// Returns the differences between this ContentAndMediaSection and the given one.

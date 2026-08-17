@@ -17,26 +17,26 @@ public import Markdown
 public final class XcodeRequirement: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// Human readable title.
     @DirectiveArgumentWrapped
     public private(set) var title: String
-    
+
     /// Domain where requirement applies.
     @DirectiveArgumentWrapped
     public private(set) var destination: URL
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "title"         : \XcodeRequirement._title,
         "destination"   : \XcodeRequirement._destination,
     ]
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitXcodeRequirement(self)
     }

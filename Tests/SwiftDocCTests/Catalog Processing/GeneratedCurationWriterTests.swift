@@ -12,441 +12,466 @@ import XCTest
 @testable import SwiftDocC
 
 class GeneratedCurationWriterTests: XCTestCase {
-    private let testOutputURL = URL(fileURLWithPath: "/unit-test/output-dir") // Nothing is written to this path in this test
-    
+    private let testOutputURL = URL(fileURLWithPath: "/unit-test/output-dir")  // Nothing is written to this path in this test
+
     func testWriteTopLevelSymbolCuration() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(depthLimit: 0)
-        
+
         XCTAssertEqual(contentsToWrite.count, 1, "Results is limited to only the module")
-        
-        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("MixedFramework.md")], """
-        # ``/MixedFramework``
 
-        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+        XCTAssertEqual(
+            contentsToWrite[testOutputURL.appendingPathComponent("MixedFramework.md")],
+            """
+            # ``/MixedFramework``
 
-        ## Topics
+            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
-        ### Classes
+            ## Topics
 
-        - ``CollisionsWithDifferentCapitalization``
-        - ``CollisionsWithEscapedKeywords``
-        - ``MyClass``
-        - ``MyClassThatConformToMyOtherProtocol``
-        - ``MyObjectiveCClassSwiftName``
-        - ``MySwiftClassSwiftName``
+            ### Classes
 
-        ### Protocols
+            - ``CollisionsWithDifferentCapitalization``
+            - ``CollisionsWithEscapedKeywords``
+            - ``MyClass``
+            - ``MyClassThatConformToMyOtherProtocol``
+            - ``MyObjectiveCClassSwiftName``
+            - ``MySwiftClassSwiftName``
 
-        - ``MyObjectiveCCompatibleProtocol``
-        - ``MyOtherProtocolThatConformToMySwiftProtocol``
-        - ``MySwiftProtocol``
+            ### Protocols
 
-        ### Structures
+            - ``MyObjectiveCCompatibleProtocol``
+            - ``MyOtherProtocolThatConformToMySwiftProtocol``
+            - ``MySwiftProtocol``
 
-        @SupportedLanguage(swift)
+            ### Structures
 
-        - ``MyObjectiveCOption``
-        - ``MyStruct``
-        - ``MyTypedObjectiveCEnum``
-        - ``MyTypedObjectiveCExtensibleEnum``
+            @SupportedLanguage(swift)
 
-        ### Variables
+            - ``MyObjectiveCOption``
+            - ``MyStruct``
+            - ``MyTypedObjectiveCEnum``
+            - ``MyTypedObjectiveCExtensibleEnum``
 
-        @SupportedLanguage(swift)
+            ### Variables
 
-        - ``myTopLevelVariable``
+            @SupportedLanguage(swift)
 
-        ### Variables
+            - ``myTopLevelVariable``
 
-        @SupportedLanguage(objc)
+            ### Variables
 
-        - ``MixedFrameworkVersionNumber``
-        - ``MixedFrameworkVersionString``
-        - ``MyTypedObjectiveCEnumFirst``
-        - ``MyTypedObjectiveCEnumSecond``
-        - ``MyTypedObjectiveCExtensibleEnumFirst``
-        - ``MyTypedObjectiveCExtensibleEnumSecond``
+            @SupportedLanguage(objc)
 
-        ### Functions
+            - ``MixedFrameworkVersionNumber``
+            - ``MixedFrameworkVersionString``
+            - ``MyTypedObjectiveCEnumFirst``
+            - ``MyTypedObjectiveCEnumSecond``
+            - ``MyTypedObjectiveCExtensibleEnumFirst``
+            - ``MyTypedObjectiveCExtensibleEnumSecond``
 
-        - ``myTopLevelFunction()``
+            ### Functions
 
-        ### Type Aliases
+            - ``myTopLevelFunction()``
 
-        @SupportedLanguage(swift)
+            ### Type Aliases
 
-        - ``MyTypeAlias``
+            @SupportedLanguage(swift)
 
-        ### Type Aliases
+            - ``MyTypeAlias``
 
-        @SupportedLanguage(objc)
+            ### Type Aliases
 
-        - ``MyTypedObjectiveCEnum``
-        - ``MyTypedObjectiveCExtensibleEnum``
+            @SupportedLanguage(objc)
 
-        ### Enumerations
+            - ``MyTypedObjectiveCEnum``
+            - ``MyTypedObjectiveCExtensibleEnum``
 
-        @SupportedLanguage(swift)
+            ### Enumerations
 
-        - ``CollisionsWithDifferentFunctionArguments``
-        - ``CollisionsWithDifferentKinds``
-        - ``CollisionsWithDifferentSubscriptArguments``
-        - ``MyEnum``
-        - ``MyObjectiveCEnum``
-        - ``MyObjectiveCEnumSwiftName``
+            @SupportedLanguage(swift)
 
-        ### Enumerations
+            - ``CollisionsWithDifferentFunctionArguments``
+            - ``CollisionsWithDifferentKinds``
+            - ``CollisionsWithDifferentSubscriptArguments``
+            - ``MyEnum``
+            - ``MyObjectiveCEnum``
+            - ``MyObjectiveCEnumSwiftName``
 
-        @SupportedLanguage(objc)
+            ### Enumerations
 
-        - ``MyEnum``
-        - ``MyObjectiveCEnum``
-        - ``MyObjectiveCEnumSwiftName``
-        - ``MyObjectiveCOption``
-        
-        """)
+            @SupportedLanguage(objc)
+
+            - ``MyEnum``
+            - ``MyObjectiveCEnum``
+            - ``MyObjectiveCEnumSwiftName``
+            - ``MyObjectiveCOption``
+
+            """)
     }
-    
+
     func testWriteSymbolCurationFromTopLevelSymbol() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
-        
+
         XCTAssertThrowsError(try writer.generateDefaultCurationContents(fromSymbol: "MyClas")) { error in
-            XCTAssertEqual(error.localizedDescription, """
-        '--from-symbol <symbol-link>' not found: 'MyClas' doesn't exist at '/MixedFramework'
-        Replace 'MyClas' with 'MyClass'
-        """)
+            XCTAssertEqual(
+                error.localizedDescription,
+                """
+                '--from-symbol <symbol-link>' not found: 'MyClas' doesn't exist at '/MixedFramework'
+                Replace 'MyClas' with 'MyClass'
+                """)
         }
-        
+
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "CollisionsWithDifferentCapitalization")
-        
+
         XCTAssertEqual(contentsToWrite.count, 1, "Descendants don't have any curation to write.")
-        
-        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("MixedFramework/CollisionsWithDifferentCapitalization.md")], """
-        # ``/MixedFramework/CollisionsWithDifferentCapitalization``
 
-        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+        XCTAssertEqual(
+            contentsToWrite[testOutputURL.appendingPathComponent("MixedFramework/CollisionsWithDifferentCapitalization.md")],
+            """
+            # ``/MixedFramework/CollisionsWithDifferentCapitalization``
 
-        ## Topics
+            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
-        ### Instance Properties
+            ## Topics
 
-        - ``someThing``
-        - ``something``
-        
-        """)
+            ### Instance Properties
+
+            - ``someThing``
+            - ``something``
+
+            """)
     }
-    
+
     func testWriteSymbolCurationWithLimitedDepth() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "BundleWithSameNameForSymbolAndContainer")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let depthLevelsToTest = [nil, 0, 1, 2, 3, 4, 5]
-        
+
         // From the module
         for depthLimit in depthLevelsToTest {
             let contentsToWrite = try writer.generateDefaultCurationContents(depthLimit: depthLimit)
-            
+
             // In this test bundle there's one symbol per level and the target symbol is always included.
             let expectedFileCount = min(2, depthLimit ?? .max) + 1
             XCTAssertEqual(contentsToWrite.count, expectedFileCount)
-            
-            XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames.md")], """
-            # ``/SameNames``
 
-            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+            XCTAssertEqual(
+                contentsToWrite[testOutputURL.appendingPathComponent("SameNames.md")],
+                """
+                # ``/SameNames``
 
-            ## Topics
-
-            ### Structures
-
-            - ``Something``
-            
-            """)
-            
-            if expectedFileCount > 1 {
-                XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something.md")], """
-                # ``/SameNames/Something``
-                
                 <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
-                
+
                 ## Topics
-                
+
                 ### Structures
-                
+
                 - ``Something``
-                
-                ### Enumerations
-                
-                - ``SomethingElse``
-                
+
                 """)
+
+            if expectedFileCount > 1 {
+                XCTAssertEqual(
+                    contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something.md")],
+                    """
+                    # ``/SameNames/Something``
+
+                    <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+
+                    ## Topics
+
+                    ### Structures
+
+                    - ``Something``
+
+                    ### Enumerations
+
+                    - ``SomethingElse``
+
+                    """)
             }
-            
+
             if expectedFileCount > 2 {
-                XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something/Something.md")], """
-                # ``/SameNames/Something/Something``
-                
-                <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
-                
-                ## Topics
-                
-                ### Enumerations
-                
-                - ``SomethingElse``
-                
-                """)
+                XCTAssertEqual(
+                    contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something/Something.md")],
+                    """
+                    # ``/SameNames/Something/Something``
+
+                    <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+
+                    ## Topics
+
+                    ### Enumerations
+
+                    - ``SomethingElse``
+
+                    """)
             }
         }
-        
+
         // From a specific top-level symbol
         for depthLimit in depthLevelsToTest {
             let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "Something", depthLimit: depthLimit)
-            
+
             // In this test bundle there's one symbol per level and the target symbol is always included.
             let expectedFileCount = min(1, depthLimit ?? .max) + 1
             XCTAssertEqual(contentsToWrite.count, expectedFileCount)
-            
-            XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something.md")], """
-            # ``/SameNames/Something``
-            
-            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
-            
-            ## Topics
-            
-            ### Structures
-            
-            - ``Something``
-            
-            ### Enumerations
-            
-            - ``SomethingElse``
-            
-            """)
-            
-            if expectedFileCount > 1 {
-                XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something/Something.md")], """
-                # ``/SameNames/Something/Something``
-                
+
+            XCTAssertEqual(
+                contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something.md")],
+                """
+                # ``/SameNames/Something``
+
                 <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
-                
+
                 ## Topics
-                
+
+                ### Structures
+
+                - ``Something``
+
                 ### Enumerations
-                
+
                 - ``SomethingElse``
-                
+
                 """)
+
+            if expectedFileCount > 1 {
+                XCTAssertEqual(
+                    contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something/Something.md")],
+                    """
+                    # ``/SameNames/Something/Something``
+
+                    <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+
+                    ## Topics
+
+                    ### Enumerations
+
+                    - ``SomethingElse``
+
+                    """)
             }
         }
-        
+
         // From a specific "leaf" symbol with no curation
         for depthLimit in depthLevelsToTest {
             let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "Something/Something/SomethingElse", depthLimit: depthLimit)
-            
+
             XCTAssert(contentsToWrite.isEmpty, "The specified symbol has no curation to write")
         }
     }
-    
+
     func testSkipsManuallyCuratedPages() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()
-        
+
         XCTAssertFalse(contentsToWrite.isEmpty)
-        
+
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("TopClass.md")], """
-        # ``TestBed/TopClass``
+        XCTAssertEqual(
+            contentsToWrite[testOutputURL.appendingPathComponent("TopClass.md")],
+            """
+            # ``TestBed/TopClass``
 
-        ## Topics
+            ## Topics
 
-        ### Basics
+            ### Basics
 
-        - ``age``
-        - <doc:TopClass-API-Collection>
+            - ``age``
+            - <doc:TopClass-API-Collection>
 
-        <!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
-        
-        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+            <!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
 
-        ### Enumerations
+            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
-        - ``NestedEnum``
-        
-        """)
+            ### Enumerations
+
+            - ``NestedEnum``
+
+            """)
     }
-    
+
     func testAddsCommentForDisambiguatedLinks() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "OverloadedSymbols")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "OverloadedProtocol")
-        
+
         XCTAssertEqual(contentsToWrite.count, 1, "Descendants don't have any curation to write.")
-        
+
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("ShapeKit/OverloadedProtocol.md")], """
-        # ``/ShapeKit/OverloadedProtocol``
+        XCTAssertEqual(
+            contentsToWrite[testOutputURL.appendingPathComponent("ShapeKit/OverloadedProtocol.md")],
+            """
+            # ``/ShapeKit/OverloadedProtocol``
 
-        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
-        ## Topics
+            ## Topics
 
-        ### Instance Methods
+            ### Instance Methods
 
-        - ``fourthTestMemberName(test:)->Float``  <!-- func fourthTestMemberName(test: String) -> Float -->
-        - ``fourthTestMemberName(test:)->Double`` <!-- func fourthTestMemberName(test: String) -> Double -->
-        - ``fourthTestMemberName(test:)->Int``    <!-- func fourthTestMemberName(test: String) -> Int -->
-        - ``fourthTestMemberName(test:)->String`` <!-- func fourthTestMemberName(test: String) -> String -->
-        
-        """)
+            - ``fourthTestMemberName(test:)->Float``  <!-- func fourthTestMemberName(test: String) -> Float -->
+            - ``fourthTestMemberName(test:)->Double`` <!-- func fourthTestMemberName(test: String) -> Double -->
+            - ``fourthTestMemberName(test:)->Int``    <!-- func fourthTestMemberName(test: String) -> Int -->
+            - ``fourthTestMemberName(test:)->String`` <!-- func fourthTestMemberName(test: String) -> String -->
+
+            """)
     }
-    
+
     func testLinksSupportNonPathCharacters() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "InheritedOperators")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "MyNumber")
-        
+
         XCTAssertEqual(contentsToWrite.count, 1, "Descendants don't have any curation to write.")
-        
+
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("Operators/MyNumber.md")], """
-        # ``/Operators/MyNumber``
+        XCTAssertEqual(
+            contentsToWrite[testOutputURL.appendingPathComponent("Operators/MyNumber.md")],
+            """
+            # ``/Operators/MyNumber``
 
-        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
-        ## Topics
+            ## Topics
 
-        ### Operators
+            ### Operators
 
-        - ``*(_:_:)``
-        - ``*=(_:_:)``
-        - ``+(_:_:)``
-        - ``-(_:_:)``
-        - ``<(_:_:)``
-        - ``/(_:_:)``
-        - ``/=(_:_:)``
+            - ``*(_:_:)``
+            - ``*=(_:_:)``
+            - ``+(_:_:)``
+            - ``-(_:_:)``
+            - ``<(_:_:)``
+            - ``/(_:_:)``
+            - ``/=(_:_:)``
 
-        ### Initializers
+            ### Initializers
 
-        - ``init(exactly:)``
-        - ``init(integerLiteral:)``
+            - ``init(exactly:)``
+            - ``init(integerLiteral:)``
 
-        ### Instance Properties
+            ### Instance Properties
 
-        - ``magnitude``
-        
-        """)
+            - ``magnitude``
+
+            """)
     }
-    
+
     func testGeneratingLanguageSpecificCuration() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()
-        
+
         XCTAssertEqual(contentsToWrite.count, 2)
-        
+
         // In Objective-C, the Circle API appear as top level variables and functions.
-        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("GeometricalShapes.md")], """
-        # ``/GeometricalShapes``
+        XCTAssertEqual(
+            contentsToWrite[testOutputURL.appendingPathComponent("GeometricalShapes.md")],
+            """
+            # ``/GeometricalShapes``
 
-        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
-        ## Topics
+            ## Topics
 
-        ### Structures
+            ### Structures
 
-        - ``Circle``
+            - ``Circle``
 
-        ### Variables
+            ### Variables
 
-        @SupportedLanguage(objc)
+            @SupportedLanguage(objc)
 
-        - ``TLACircleDefaultRadius``
-        - ``TLACircleNull``
-        - ``TLACircleZero``
+            - ``TLACircleDefaultRadius``
+            - ``TLACircleNull``
+            - ``TLACircleZero``
 
-        ### Functions
+            ### Functions
 
-        @SupportedLanguage(objc)
+            @SupportedLanguage(objc)
 
-        - ``TLACircleToString``
-        - ``TLACircleFromString``
-        - ``TLACircleIntersects``
-        - ``TLACircleIsEmpty``
-        - ``TLACircleIsNull``
-        - ``TLACircleMake``
+            - ``TLACircleToString``
+            - ``TLACircleFromString``
+            - ``TLACircleIntersects``
+            - ``TLACircleIsEmpty``
+            - ``TLACircleIsNull``
+            - ``TLACircleMake``
 
-        """)
-        
+            """)
+
         // In Swift, the Circle API appear as members of the Circle structure.
         // There are two "Instance Properties" task groups because both Swift and Objective-C has it and the extra symbols exist in both languages.
-        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("GeometricalShapes/Circle.md")], """
-        # ``/GeometricalShapes/Circle``
+        XCTAssertEqual(
+            contentsToWrite[testOutputURL.appendingPathComponent("GeometricalShapes/Circle.md")],
+            """
+            # ``/GeometricalShapes/Circle``
 
-        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
-        ## Topics
+            ## Topics
 
-        ### Initializers
+            ### Initializers
 
-        @SupportedLanguage(swift)
+            @SupportedLanguage(swift)
 
-        - ``init()``
-        - ``init(center:radius:)``
-        - ``init(string:)``
+            - ``init()``
+            - ``init(center:radius:)``
+            - ``init(string:)``
 
-        ### Instance Properties
+            ### Instance Properties
 
-        @SupportedLanguage(swift)
+            @SupportedLanguage(swift)
 
-        - ``center``
-        - ``debugDescription``
-        - ``isEmpty``
-        - ``isNull``
-        - ``radius``
+            - ``center``
+            - ``debugDescription``
+            - ``isEmpty``
+            - ``isNull``
+            - ``radius``
 
-        ### Instance Properties
+            ### Instance Properties
 
-        @SupportedLanguage(objc)
+            @SupportedLanguage(objc)
 
-        - ``center``
-        - ``radius``
+            - ``center``
+            - ``radius``
 
-        ### Instance Methods
+            ### Instance Methods
 
-        @SupportedLanguage(swift)
+            @SupportedLanguage(swift)
 
-        - ``intersects(_:)``
+            - ``intersects(_:)``
 
-        ### Type Properties
+            ### Type Properties
 
-        @SupportedLanguage(swift)
+            @SupportedLanguage(swift)
 
-        - ``defaultRadius``
-        - ``null``
-        - ``zero``
-        
-        """)
+            - ``defaultRadius``
+            - ``null``
+            - ``zero``
+
+            """)
     }
-    
-    
+
     func testCustomOutputLocation() async throws {
         let (url, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
-        
+
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()
-        
+
         XCTAssertFalse(contentsToWrite.isEmpty)
-        
+
         for fileURL in contentsToWrite.keys {
             XCTAssert(fileURL.path.hasPrefix(testOutputURL.path))
         }

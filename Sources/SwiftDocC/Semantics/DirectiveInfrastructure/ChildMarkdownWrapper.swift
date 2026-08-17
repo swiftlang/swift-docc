@@ -13,11 +13,11 @@ private import Markdown
 
 protocol _ChildMarkupProtocol {
     var numberOfParagraphs: _ChildMarkupParagraphs { get }
-    
+
     var index: Int? { get }
-    
+
     var supportsStructuredMarkup: Bool { get }
-    
+
     func setProperty(
         on containingDirective: some AutomaticDirectiveConvertible,
         named propertyName: String,
@@ -58,15 +58,15 @@ enum _ChildMarkupParagraphs {
 @propertyWrapper
 public struct ChildMarkup<Value>: _ChildMarkupProtocol {
     var parsedValue: Value?
-    
+
     var index: Int?
-    
+
     var numberOfParagraphs: _ChildMarkupParagraphs
-    
+
     /// Returns true if the child markup can contain structured markup content like
     /// rows and columns.
     var supportsStructuredMarkup: Bool
-    
+
     public var wrappedValue: Value {
         get {
             parsedValue!
@@ -75,14 +75,15 @@ public struct ChildMarkup<Value>: _ChildMarkupProtocol {
             parsedValue = newValue
         }
     }
-    
-    @available(*, unavailable,
+
+    @available(
+        *, unavailable,
         message: "The value type must be a 'MarkupContainer'."
     )
     public init() {
         fatalError()
     }
-    
+
     func setProperty<T>(
         on containingDirective: T,
         named propertyName: String,

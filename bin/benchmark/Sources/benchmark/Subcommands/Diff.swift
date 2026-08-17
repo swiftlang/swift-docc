@@ -20,20 +20,20 @@ struct Diff: ParsableCommand {
         transform: { URL(fileURLWithPath: $0) }
     )
     var beforeFile: URL
-    
+
     @Argument(
         help: "The benchmark.json file to treat as the 'after' values in the diff.",
         transform: { URL(fileURLWithPath: $0) }
     )
     var afterFile: URL
-    
+
     @Option(
         name: .customLong("json-output-path"),
         help: "The path to an optional JSON file to write the the diff results to.",
         transform: { URL(fileURLWithPath: $0) }
     )
     var jsonOutputFile: URL?
-    
+
     mutating func run() throws {
         try MainActor.assumeIsolated {
             try DiffAction(
@@ -51,27 +51,27 @@ struct DiffAction {
     var beforeFile: URL
     var afterFile: URL
     var jsonOutputFile: URL?
-    
+
     @MainActor
     func run() throws {
         let beforeMetrics = try JSONDecoder().decode(BenchmarkResultSeries.self, from: Data(contentsOf: beforeFile)).metrics
         let afterMetrics = try JSONDecoder().decode(BenchmarkResultSeries.self, from: Data(contentsOf: afterFile)).metrics
-        
+
         var result = DiffResults.empty
-        
+
         // The metrics are sorted for presentation but it's possible that the order has changed over time so we match the before
         for afterMetric in afterMetrics {
             let beforeMetric = beforeMetrics.first(where: { $0.id == afterMetric.id })
             try result.analysis.append(DiffResults.analyze(before: beforeMetric, after: afterMetric))
         }
-        
+
         var columns = DiffResultsTable.Columns()
         columns.beforeInfo = tableColumnInfo(file: beforeFile)
-        columns.afterInfo  = tableColumnInfo(file: afterFile)
-        
+        columns.afterInfo = tableColumnInfo(file: afterFile)
+
         let table = DiffResultsTable(results: result, columns: columns)
         print(table.output)
-        
+
         if let jsonOutputFile {
             let encoder = JSONEncoder()
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -85,7 +85,7 @@ private func tableColumnInfo(file: URL) -> (String, Int) {
     if name.hasPrefix("benchmark-") {
         name = String(name.dropFirst("benchmark-".count))
     }
-    
+
     let width = min(40, max(20, name.count))
     return (name, width)
 }

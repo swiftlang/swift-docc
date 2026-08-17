@@ -12,22 +12,22 @@ import Testing
 @testable import SwiftDocC
 
 struct String_CapitalizationTests {
-    
+
     @Test
     func capitalizesFirstLetterOfLowercaseString() {
         #expect("hello world".capitalizingFirstWord() == "Hello world")
     }
-    
+
     @Test
     func leavesWordsContainingBacktickUnchanged() {
         #expect("h`ello world".capitalizingFirstWord() == "h`ello world")
     }
-    
+
     @Test
     func preservesWordsWithInternalCapitalization() {
         #expect("iPad iOS visionOS".capitalizingFirstWord() == "iPad iOS visionOS")
     }
-    
+
     @Test(arguments: [
         ("hello, world", "Hello, world"),
         ("twenty-one", "Twenty-One"),
@@ -38,7 +38,7 @@ struct String_CapitalizationTests {
     func capitalizesEachWordSeparatedByPunctuation(input: String, expected: String) {
         #expect(input.capitalizingFirstWord() == expected)
     }
-    
+
     @Test(arguments: [
         ("       has many spaces", "       Has many spaces"),
         ("     has a tab", "     Has a tab"),
@@ -47,7 +47,7 @@ struct String_CapitalizationTests {
     func preservesLeadingAndTrailingWhitespace(input: String, expected: String) {
         #expect(input.capitalizingFirstWord() == expected)
     }
-    
+
     @Test(arguments: [
         ("l'amérique du nord", "L'amérique du nord"),
         ("ça va?", "Ça va?"),

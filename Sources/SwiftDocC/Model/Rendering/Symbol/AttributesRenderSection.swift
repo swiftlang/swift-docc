@@ -17,7 +17,7 @@ public struct AttributesRenderSection: RenderSection, Equatable {
     public var title: String
     /// The list of attributes in this section.
     public var attributes: [RenderAttribute]?
-    
+
     /// Creates a new attributes section.
     /// - Parameter title: The section title.
     /// - Parameter attributes: The list of attributes.
@@ -25,20 +25,20 @@ public struct AttributesRenderSection: RenderSection, Equatable {
         self.title = title
         self.attributes = attributes
     }
-    
+
     // MARK: - Codable
-    
+
     /// The list of keys you use to encode or decode the section data.
     public enum CodingKeys: String, CodingKey {
         case kind, title, attributes
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
         attributes = try container.decodeIfPresent([RenderAttribute].self, forKey: .attributes)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
@@ -53,7 +53,7 @@ public enum RenderAttribute: Codable, Equatable {
     public enum CodingKeys: CodingKey, Hashable {
         case title, value, values, kind
     }
-    
+
     /// A list of the plain-text names of supported attributes.
     public enum Kind: String, Codable {
         case `default`, minimum, minimumExclusive, maximum, maximumExclusive, minimumLength, maximumLength, allowedValues, allowedTypes
@@ -77,7 +77,7 @@ public enum RenderAttribute: Codable, Equatable {
     /// A list of allowed type declarations for the value being described,
     /// for example `String`, `Int`, and `Double`.
     case allowedTypes([[DeclarationRenderSection.Token]])
-    
+
     /// A title for this attribute.
     var title: String {
         switch self {
@@ -92,10 +92,10 @@ public enum RenderAttribute: Codable, Equatable {
         case .allowedTypes: return "Possible Types"
         }
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         switch try container.decode(Kind.self, forKey: .kind) {
         case .default:
             self = .default(try container.decode(String.self, forKey: .value))
@@ -117,10 +117,10 @@ public enum RenderAttribute: Codable, Equatable {
             self = .allowedTypes(try container.decode([[DeclarationRenderSection.Token]].self, forKey: .values))
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case .default(let value):
             try container.encode(Kind.default, forKey: .kind)
@@ -165,7 +165,7 @@ extension AttributesRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this AttributesRenderSection is similar enough to the given one.
     func isSimilar(to other: AttributesRenderSection) -> Bool {
         return self.attributes == other.attributes

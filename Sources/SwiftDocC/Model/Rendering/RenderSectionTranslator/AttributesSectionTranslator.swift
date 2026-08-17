@@ -21,12 +21,12 @@ struct AttributesSectionTranslator: RenderSectionTranslator {
         translateSectionToVariantCollection(
             documentationDataVariants: symbol.attributesVariants
         ) { _, attributes in
-            
+
             func translateFragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
                 return fragments.map { fragment in
                     let reference: ResolvedTopicReference?
                     if let preciseIdentifier = fragment.preciseIdentifier,
-                       let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
+                        let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
                     {
                         reference = resolved
                         renderNodeTranslator.collectedTopicReferences.append(resolved)
@@ -38,11 +38,11 @@ struct AttributesSectionTranslator: RenderSectionTranslator {
                     return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString)
                 }
             }
-            
+
             let attributesRenderSection = AttributesRenderSection(
                 title: "Attributes",
                 attributes: attributes.compactMap { kind, attribute in
-                    
+
                     switch (kind, attribute) {
                     case (.minimum, let value as SymbolGraph.AnyNumber):
                         return RenderAttribute.minimum(String(value))
@@ -64,16 +64,15 @@ struct AttributesSectionTranslator: RenderSectionTranslator {
                     default:
                         return nil
                     }
-                    
+
                 }.sorted { $0.title < $1.title }
             )
             guard let attributes = attributesRenderSection.attributes, !attributes.isEmpty else {
                 return nil
             }
-            
+
             return attributesRenderSection
         }
     }
-    
-    
+
 }

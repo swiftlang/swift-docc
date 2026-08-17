@@ -20,48 +20,49 @@ struct AvailabilityParser {
     init(_ availability: SymbolGraph.Symbol.Availability) {
         self.availability = availability
     }
-    
+
     /// Determines whether the symbol is deprecated, either for a given platform or for all platforms.
     ///
     /// - Parameter platform: The platform to check. Pass `nil` to check if the symbol is deprecated on all platforms.
     /// - Returns: Whether or not the symbol is deprecated.
     func isDeprecated(platform: String? = nil) -> Bool {
         guard !availability.availability.isEmpty else { return false }
-        
+
         // Check if a specific platform is deprecated
         if let platform {
-            return availability.availability.contains(where: { return $0.domain?.rawValue == platform && ( $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil ) })
+            return availability.availability.contains(where: { return $0.domain?.rawValue == platform && ($0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil) })
         }
-        
+
         // Check if there's a "universal deprecation" in the listing
         if availability.availability.contains(where: { $0.domain == nil && ($0.isUnconditionallyDeprecated || $0.isUnconditionallyUnavailable) }) {
             return true
         }
-        
+
         // Check if the symbol is unconditionally deprecated
-        let isUnconditionallyDeprecated = availability.availability
+        let isUnconditionallyDeprecated =
+            availability.availability
             .allSatisfy { $0.isUnconditionallyDeprecated || $0.isUnconditionallyUnavailable || $0.deprecatedVersion != nil || $0.obsoletedVersion != nil }
             // If a symbol is unavailable on all known platforms, it should not be marked unconditionally deprecated.
             && availability.availability.contains(where: { $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil || $0.obsoletedVersion != nil })
         return isUnconditionallyDeprecated
     }
-    
+
     /// Determines a symbol's deprecation message that either applies to a given platform or that applies to all platforms.
     ///
     /// - Parameter platform: The platform for which to determine the deprecation message, or `nil` for all platforms.
     /// - Returns: The deprecation message for this platform, or `nil` if the symbol is not deprecated or doesn't have a deprecation message.
     func deprecationMessage(platform: String? = nil) -> String? {
         guard !availability.availability.isEmpty else { return nil }
-        
+
         if let platform {
             return availability.availability.mapFirst {
-                guard $0.domain?.rawValue == platform && ( $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil ) else {
+                guard $0.domain?.rawValue == platform && ($0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil) else {
                     return nil
                 }
                 return $0.message
             }
         }
-        
+
         // Check if there's a "universal deprecation" in the listing
         if let message = availability.availability.mapFirst(where: { item -> String? in
             guard item.domain == nil && (item.isUnconditionallyDeprecated || item.isUnconditionallyUnavailable) else { return nil }
@@ -69,14 +70,14 @@ struct AvailabilityParser {
         }) {
             return message
         }
-        
+
         if availability.availability.allSatisfy({ $0.isUnconditionallyDeprecated || $0.isUnconditionallyUnavailable || $0.deprecatedVersion != nil }) {
             return availability.availability.mapFirst { item -> String? in
                 guard item.isUnconditionallyDeprecated || (item.deprecatedVersion != nil) else { return nil }
                 return item.message
             }
         }
-        
+
         return nil
     }
 }

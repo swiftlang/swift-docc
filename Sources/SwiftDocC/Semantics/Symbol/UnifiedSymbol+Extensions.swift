@@ -16,26 +16,26 @@ extension UnifiedSymbolGraph.Symbol {
         // the symbol's selectors including ones for extension symbol graphs.
         return defaultSelector(in: mainGraphSelectors) ?? defaultSelector(in: pathComponents.keys)
     }
-    
+
     private func defaultSelector(
         in selectors: some Sequence<UnifiedSymbolGraph.Selector>
     ) -> UnifiedSymbolGraph.Selector? {
         // Return the default selector based on the ordering defined below.
         return selectors.sorted { lhsSelector, rhsSelector in
             switch (lhsSelector.interfaceLanguage, rhsSelector.interfaceLanguage) {
-                
+
             // If both selectors are Swift, pick the one that has the most matching platforms with the other selectors.
             case ("swift", "swift"):
                 let nonSwiftSelectors = selectors.filter { $0.interfaceLanguage != "swift" }
-                
+
                 let lhsMatchingPlatformsCount = nonSwiftSelectors.filter { $0.platform == lhsSelector.platform }.count
                 let rhsMatchingPlatformsCount = nonSwiftSelectors.filter { $0.platform == rhsSelector.platform }.count
-                
+
                 if lhsMatchingPlatformsCount == rhsMatchingPlatformsCount {
                     // If they have the same number of matching platforms, use the hierarchical platform order.
                     return PlatformName.isInOrder(lhsSelector.platform, rhsSelector.platform)
                 }
-                
+
                 return lhsMatchingPlatformsCount > rhsMatchingPlatformsCount
             case ("swift", _):
                 return true
@@ -50,11 +50,12 @@ extension UnifiedSymbolGraph.Symbol {
 
     func symbol(forSelector selector: UnifiedSymbolGraph.Selector?) -> SymbolGraph.Symbol? {
         guard let selector,
-              let kind = self.kind[selector],
-              let pathComponents = self.pathComponents[selector],
-              let names = self.names[selector],
-              let accessLevel = self.accessLevel[selector],
-              let mixins = self.mixins[selector] else {
+            let kind = self.kind[selector],
+            let pathComponents = self.pathComponents[selector],
+            let names = self.names[selector],
+            let accessLevel = self.accessLevel[selector],
+            let mixins = self.mixins[selector]
+        else {
             return nil
         }
 
@@ -74,12 +75,12 @@ extension UnifiedSymbolGraph.Symbol {
     var defaultSymbol: SymbolGraph.Symbol? {
         symbol(forSelector: defaultSelector)
     }
-    
+
     /// Returns the primary symbol to use as documentation source.
     var documentedSymbol: SymbolGraph.Symbol? {
         return symbol(forSelector: documentedSymbolSelector)
     }
-    
+
     /// Returns the primary symbol selector to use as documentation source.
     var documentedSymbolSelector: UnifiedSymbolGraph.Selector? {
         // Prioritize the longest doc comment with a "swift" selector,

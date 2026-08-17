@@ -48,18 +48,22 @@ class FileManagerCopyItemTests: XCTestCase {
                     try super.copyItem(at: childSrc, to: childDst)
                 }
 
-                throw CocoaError(.fileWriteNoPermission, userInfo: [
-                    NSFilePathErrorKey: srcURL.path,
-                    NSURLErrorKey: srcURL,
-                ])
+                throw CocoaError(
+                    .fileWriteNoPermission,
+                    userInfo: [
+                        NSFilePathErrorKey: srcURL.path,
+                        NSURLErrorKey: srcURL,
+                    ])
             } else {
                 // File copy: perform the real copy, then throw to simulate fchown failure.
                 // The file IS successfully written — only the attribute-setting step fails.
                 try super.copyItem(at: srcURL, to: dstURL)
-                throw CocoaError(.fileWriteNoPermission, userInfo: [
-                    NSFilePathErrorKey: srcURL.path,
-                    NSURLErrorKey: srcURL,
-                ])
+                throw CocoaError(
+                    .fileWriteNoPermission,
+                    userInfo: [
+                        NSFilePathErrorKey: srcURL.path,
+                        NSURLErrorKey: srcURL,
+                    ])
             }
         }
     }
@@ -91,21 +95,27 @@ class FileManagerCopyItemTests: XCTestCase {
         try fm._copyItem(at: sourceDir, to: destDir)
 
         // Verify ALL files were copied despite simulated fchown errors
-        XCTAssertTrue(fm.directoryExists(atPath: destDir.appendingPathComponent("css").path),
-                       "css directory should exist")
-        XCTAssertTrue(fm.fileExists(atPath: destDir.appendingPathComponent("css/style.css").path),
-                       "css/style.css should exist")
-        XCTAssertTrue(fm.fileExists(atPath: destDir.appendingPathComponent("favicon.svg").path),
-                       "favicon.svg should exist")
-        XCTAssertTrue(fm.fileExists(atPath: destDir.appendingPathComponent("index.html").path),
-                       "index.html should exist")
-        XCTAssertTrue(fm.fileExists(atPath: destDir.appendingPathComponent("index-template.html").path),
-                       "index-template.html should exist")
+        XCTAssertTrue(
+            fm.directoryExists(atPath: destDir.appendingPathComponent("css").path),
+            "css directory should exist")
+        XCTAssertTrue(
+            fm.fileExists(atPath: destDir.appendingPathComponent("css/style.css").path),
+            "css/style.css should exist")
+        XCTAssertTrue(
+            fm.fileExists(atPath: destDir.appendingPathComponent("favicon.svg").path),
+            "favicon.svg should exist")
+        XCTAssertTrue(
+            fm.fileExists(atPath: destDir.appendingPathComponent("index.html").path),
+            "index.html should exist")
+        XCTAssertTrue(
+            fm.fileExists(atPath: destDir.appendingPathComponent("index-template.html").path),
+            "index-template.html should exist")
 
         // Verify content integrity
         let copiedHTML = try Data(contentsOf: destDir.appendingPathComponent("index.html"))
-        XCTAssertEqual(String(decoding: copiedHTML, as: UTF8.self),
-                       "<html><head></head><body></body></html>")
+        XCTAssertEqual(
+            String(decoding: copiedHTML, as: UTF8.self),
+            "<html><head></head><body></body></html>")
     }
 
     func testCopyItemHandlesNestedDirectoryPartialCopy() throws {

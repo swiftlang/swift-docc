@@ -19,7 +19,7 @@ import DocCCommon
 
 class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
     var bundleID: DocumentationBundle.Identifier = "com.external.testbundle"
-    
+
     // The minimal information that the test resolver needs to create a resolved reference and documentation node
     struct EntityInfo {
         var referencePath = "/externally/resolved/path"
@@ -33,49 +33,49 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
         var topicImages: [(TopicImage, alt: String)]? = nil
         var platforms: [AvailabilityRenderItem]? = nil
     }
-    
+
     // When more tests use this we may find that there's a better way to describe this (for example by separating
     // the data for resolving references and for creating documentation nodes)
     var entitiesToReturn: [String: Result<EntityInfo, any Swift.Error>] = [:]
-    
+
     var assetsToReturn: [String: DataAsset] = [:]
-    
+
     var resolvedExternalPaths = [String]()
-    
+
     // MARK: [Reference|Asset]Resolver conformances
-    
+
     func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
         switch reference {
         case .resolved(let resolved):
-            return resolved // Don't re-resolve the same reference
-            
+            return resolved  // Don't re-resolve the same reference
+
         case .unresolved(let unresolved):
             let path = unresolved.topicURL.url.path
             resolvedExternalPaths.append(path)
-            
+
             let entity = entityInfo(path: path)
             return .success(
                 ResolvedTopicReference(bundleID: bundleID, path: entity.referencePath, fragment: entity.fragment, sourceLanguage: entity.language)
             )
         }
     }
-    
+
     func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
         guard reference.bundleID == bundleID else {
             fatalError("It is a programming mistake to retrieve an entity for a reference that the external resolver didn't resolve.")
         }
         return makeNode(for: entityInfo(path: reference.path), reference: reference)
     }
-    
+
     // MARK: Private helper functions
-    
+
     private func result(path: String) -> Result<EntityInfo, any Swift.Error> {
         guard let value = entitiesToReturn[path] else {
             fatalError("Missing test data to return for \(path). This is an error with the test.")
         }
         return value
     }
-    
+
     private func entityInfo(path: String) -> EntityInfo {
         switch result(path: path) {
         case .success(let entity):
@@ -84,7 +84,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             fatalError("This test resolver should never ask for the entity for a reference that failed to resolve.")
         }
     }
-    
+
     private func makeNode(for entityInfo: EntityInfo, reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
         LinkResolver.ExternalEntity(
             kind: entityInfo.kind,

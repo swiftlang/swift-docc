@@ -10,24 +10,26 @@
 
 extension RenderNode {
     public var headings: [String] {
-        return contentSections
+        return
+            contentSections
             // Exclude headings from call-to-action sections, since they always link to standalone (indexed) pages.
             .filter { $0.kind != .callToAction }
             .flatMap { $0.headings }
     }
 
     var rawIndexableTextContent: String {
-        return contentSections
+        return
+            contentSections
             // Exclude text from call-to-action sections, since they always link to standalone (indexed) pages.
             .filter { $0.kind != .callToAction }
             .map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
-    
+
     private var contentSections: [any RenderSection] {
         guard kind == .symbol || (kind == .article && sections.isEmpty) else {
             return sections
         }
-        
+
         return [ContentRenderSection(kind: .content, content: [.paragraph(.init(inlineContent: abstract ?? []))])]
             + primaryContentSections
     }
@@ -48,7 +50,7 @@ extension RenderNode: Indexable {
         case .symbol:
             kind = .symbol
         }
-        
+
         guard let title = metadata.title, !title.isEmpty else {
             // Nodes without a title are erroneous entries in the symbol graph.
             // A search result cannot be constructed without a title, meaning that
@@ -56,7 +58,7 @@ extension RenderNode: Indexable {
             assertionFailure("\(identifier.absoluteString.singleQuoted) has an empty title, and cannot have a usable search result")
             return nil
         }
-        
+
         let summaryParagraph: RenderBlockContent?
         if let abstract = self.abstract {
             summaryParagraph = RenderBlockContent.paragraph(.init(inlineContent: abstract))
@@ -67,10 +69,10 @@ extension RenderNode: Indexable {
         }
 
         let summary = summaryParagraph?.rawIndexableTextContent(references: references) ?? ""
-        
+
         return IndexingRecord(kind: kind, location: .topLevelPage(identifier), title: title, summary: summary, headings: self.headings, rawIndexableTextContent: self.rawIndexableTextContent, platforms: metadata.platforms)
     }
-    
+
     public func indexingRecords(onPage page: ResolvedTopicReference) throws -> [IndexingRecord] {
         switch self.kind {
         case .tutorial:
@@ -80,8 +82,8 @@ extension RenderNode: Indexable {
                         return []
                     }
                     return try sectionsSection.indexingRecords(onPage: page, references: references)
-            }
-            
+                }
+
             return [topLevelIndexingRecord()].compactMap({ $0 }) + sectionRecords
         default:
             return [topLevelIndexingRecord()].compactMap({ $0 })

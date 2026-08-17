@@ -13,14 +13,14 @@ import Markdown
 
 /**
  Walks a `Semantic` tree and collects any and all links external to the given bundle.
- 
+
  Visits semantic nodes and descends into all their children that do have (indirectly or directly) content.
  When visiting a node that directly contains markup content visits the markup with an instance of ``ExternalMarkupReferenceWalker``
  which in turn walks the markup tree and collects external links.
- 
+
  Once the visitor has finished visiting the semantic node and the relevant children all
  encountered external links are collected in ``collectedExternalReferences``.
- 
+
  > Warning: This type needs to keep up to date with the semantic objects it walks. When changing the API design
    for types like ``Symbol`` or ``Article``, if the changes include new pieces of content that might contain external links,
    this type needs to be updated to walk those new pieces of content as well.
@@ -30,40 +30,40 @@ struct ExternalReferenceWalker: SemanticVisitor {
 
     /// A markup walker to use for collecting links from markup elements.
     private var markupResolver: ExternalMarkupReferenceWalker
-    
+
     /// Collected unresolved external references, grouped by the bundle ID.
     var collectedExternalReferences: [DocumentationBundle.Identifier: [UnresolvedTopicReference]] {
         return markupResolver.collectedExternalLinks.mapValues { links in
             links.map(UnresolvedTopicReference.init(topicURL:))
         }
     }
-    
+
     /// Creates a new semantic walker that collects links to other documentation sources.
     /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
     init(localBundleID: DocumentationBundle.Identifier) {
         self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
     }
-    
-    mutating func visitCode(_ code: Code) { }
-    
+
+    mutating func visitCode(_ code: Code) {}
+
     mutating func visitSteps(_ steps: Steps) {
         for content in steps.content {
             visit(content)
         }
     }
-    
+
     mutating func visitStep(_ step: Step) {
         visit(step.content)
         visit(step.caption)
     }
-        
+
     mutating func visitTutorialSection(_ tutorialSection: TutorialSection) {
         visitMarkupLayouts(tutorialSection.introduction)
         if let stepsContent = tutorialSection.stepsContent {
             visitSteps(stepsContent)
         }
     }
-    
+
     mutating func visitTutorial(_ tutorial: Tutorial) {
         visit(tutorial.intro)
         for section in tutorial.sections {
@@ -73,19 +73,19 @@ struct ExternalReferenceWalker: SemanticVisitor {
             visit(assessments)
         }
     }
-    
+
     mutating func visitIntro(_ intro: Intro) {
         visit(intro.content)
     }
-    
-    mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) { }
-    
+
+    mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) {}
+
     mutating func visitAssessments(_ assessments: Assessments) {
         for question in assessments.questions {
             visit(question)
         }
     }
-    
+
     mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) {
         visit(multipleChoice.questionPhrasing)
         visit(multipleChoice.content)
@@ -93,22 +93,22 @@ struct ExternalReferenceWalker: SemanticVisitor {
             visit(choice)
         }
     }
-    
+
     mutating func visitJustification(_ justification: Justification) {
         visit(justification.content)
     }
-    
+
     mutating func visitChoice(_ choice: Choice) {
         visit(choice.content)
         visit(choice.justification)
     }
-    
+
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) {
         for element in markupContainer.elements {
             markupResolver.visit(element)
         }
     }
-    
+
     mutating func visitMarkup(_ markup: any Markup) {
         visitMarkupContainer(MarkupContainer(markup))
     }
@@ -122,15 +122,15 @@ struct ExternalReferenceWalker: SemanticVisitor {
             visit(resources)
         }
     }
-    
-    mutating func visitImageMedia(_ imageMedia: ImageMedia) { }
-    
-    mutating func visitVideoMedia(_ videoMedia: VideoMedia) { }
-    
+
+    mutating func visitImageMedia(_ imageMedia: ImageMedia) {}
+
+    mutating func visitVideoMedia(_ videoMedia: VideoMedia) {}
+
     mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) {
         visit(contentAndMedia.content)
     }
-    
+
     mutating func visitVolume(_ volume: Volume) {
         if let content = volume.content {
             visit(content)
@@ -139,15 +139,15 @@ struct ExternalReferenceWalker: SemanticVisitor {
             visit(chapter)
         }
     }
-    
+
     mutating func visitChapter(_ chapter: Chapter) {
         visit(chapter.content)
         for topicReference in chapter.topicReferences {
             visit(topicReference)
         }
     }
-    
-    mutating func visitTutorialReference(_ tutorialReference: TutorialReference) { }
+
+    mutating func visitTutorialReference(_ tutorialReference: TutorialReference) {}
 
     mutating func visitResources(_ resources: Resources) {
         visitMarkupContainer(resources.content)
@@ -155,11 +155,11 @@ struct ExternalReferenceWalker: SemanticVisitor {
             visitTile(tile)
         }
     }
-    
+
     mutating func visitTile(_ tile: Tile) {
         visitMarkupContainer(tile.content)
     }
-    
+
     mutating func visitTutorialArticle(_ article: TutorialArticle) {
         if let intro = article.intro {
             visitIntro(intro)
@@ -169,7 +169,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
             visit(assessments)
         }
     }
-    
+
     mutating func visitArticle(_ article: Article) {
         if let abstractSection = article.abstractSection {
             visitMarkup(abstractSection.paragraph)
@@ -203,14 +203,14 @@ struct ExternalReferenceWalker: SemanticVisitor {
             }
         }
     }
-    
+
     mutating func visitStack(_ stack: Stack) {
         for contentAndMedia in stack.contentAndMedia {
             visitContentAndMedia(contentAndMedia)
         }
     }
 
-    mutating func visitComment(_ comment: Comment) { }
+    mutating func visitComment(_ comment: Comment) {}
 
     mutating func visitSection(_ section: any Section) {
         for markup in section.content { visitMarkup(markup) }

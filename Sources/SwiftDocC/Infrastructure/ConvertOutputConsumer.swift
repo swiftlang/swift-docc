@@ -16,32 +16,32 @@ public protocol ConvertOutputConsumer {
     /// Consumes a render node that was generated during a conversion.
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
-    
+
     /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
     func consume(assetsInBundle bundle: DocumentationBundle) throws
-    
+
     /// Consumes the linkable element summaries produced during a conversion.
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws
-    
+
     /// Consumes the indexing records produced during a conversion.
     func consume(indexingRecords: [IndexingRecord]) throws
-    
+
     /// Consumes the assets and their variants that were registered during a conversion.
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws
-    
+
     /// Consumes benchmarks collected during a conversion.
     func consume(benchmarks: Benchmark) throws
 
     /// Consumes documentation coverage info created during a conversion.
     /// - note: Should only be called when doc coverage is enabled.
     func consume(documentationCoverageInfo: [CoverageDataEntry]) throws
-    
+
     /// Consumes a render reference store creating during a conversion.
     func consume(renderReferenceStore: RenderReferenceStore) throws
-    
+
     /// Consumes build metadata created during a conversion.
     func consume(buildMetadata: BuildMetadata) throws
-    
+
     /// Consumes a file representation of the local link resolution information.
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws
 }
@@ -49,7 +49,7 @@ public protocol ConvertOutputConsumer {
 package protocol ConvertOutputMarkdownConsumer {
     /// Consumes a markdown output node
     func consume(markdownNode: WritableMarkdownOutputNode) throws
-    
+
     /// Consumes a markdown output manifest
     func consume(markdownManifest: MarkdownOutputManifest) throws
 }

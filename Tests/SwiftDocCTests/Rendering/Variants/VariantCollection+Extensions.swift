@@ -13,7 +13,7 @@ import Foundation
 @testable import SwiftDocC
 
 extension VariantCollection {
-    
+
     /// Creates a variant collection given a default value and a value for Objective-C contexts.
     ///
     /// Use this initializer to specify a default value for the collection and a value that clients should use when processing documentation for Objective-C contexts

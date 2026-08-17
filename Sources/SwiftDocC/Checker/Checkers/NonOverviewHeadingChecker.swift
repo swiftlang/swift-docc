@@ -21,21 +21,27 @@ public struct NonOverviewHeadingChecker: Checker {
 
         return nonOverviewHeadings.compactMap { heading -> Diagnostic? in
             guard let headingRange = heading.range else { return nil }
-            let notes: [Diagnostic.Note] = if let sourceFile, let range = overviewHeading?.range {
-                [.init(source: sourceFile, range: range, message: "Overview section starts here")]
-            } else {
-                []
-            }
+            let notes: [Diagnostic.Note] =
+                if let sourceFile, let range = overviewHeading?.range {
+                    [.init(source: sourceFile, range: range, message: "Overview section starts here")]
+                } else {
+                    []
+                }
 
-            let solution = if overviewHeading == nil {
-                Solution(summary: #"Change the title to "Overview""#, replacements: [
-                    .init(range: headingRange, replacement: "## Overview")
-                ])
-            } else {
-                Solution(summary: "Change the heading to a level-3 heading", replacements: [
-                    .init(range: headingRange, replacement: "### \(heading.title)")
-                ])
-            }
+            let solution =
+                if overviewHeading == nil {
+                    Solution(
+                        summary: #"Change the title to "Overview""#,
+                        replacements: [
+                            .init(range: headingRange, replacement: "## Overview")
+                        ])
+                } else {
+                    Solution(
+                        summary: "Change the heading to a level-3 heading",
+                        replacements: [
+                            .init(range: headingRange, replacement: "### \(heading.title)")
+                        ])
+                }
 
             return Diagnostic(
                 source: sourceFile,

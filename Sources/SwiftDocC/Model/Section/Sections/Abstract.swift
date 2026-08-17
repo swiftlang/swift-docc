@@ -16,10 +16,10 @@ public struct AbstractSection: Section {
     public var content: [any Markup] {
         return paragraph.children.compactMap { $0.detachedFromParent }
     }
-    
+
     /// The section content as a paragraph.
     public var paragraph: Paragraph
-    
+
     /// Creates a new section with the given paragraph.
     public init(paragraph: Paragraph) {
         self.paragraph = paragraph

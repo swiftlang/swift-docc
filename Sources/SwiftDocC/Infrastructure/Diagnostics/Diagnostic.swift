@@ -25,13 +25,13 @@ public struct Diagnostic {
 
     /// An opaque identifier that diagnostic consumers and tools can use to identify specific types of diagnostics.
     public var identifier: String
-    
+
     /// A unique string that identifies a group of diagnostics whose severity can be controlled by passing `--Werror` and `--Wwarning` flags to `docc`.
     public var groupIdentifier: String?
 
     /// A brief summary that describe the problem or issue.
     public var summary: String
-    
+
     /// Additional details that explain the problem or issue to the end-user in plain language.
     public var explanation: String?
 
@@ -40,10 +40,10 @@ public struct Diagnostic {
     /// For example, if you're diagnosing the fact that there are multiple *X* in a document, you might diagnose on
     /// the second *X* while adding a note on the first *X* to note that it was the first occurrence.
     public var notes: [Note]
-    
+
     /// A list of possible solutions that the end-use can take to resolve the problem or issue.
     public var solutions: [Solution]
-    
+
     public init(
         source: URL? = nil,
         severity: DiagnosticSeverity,
@@ -75,14 +75,14 @@ public extension Diagnostic {
     mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
         // If there is no location information in the source diagnostic, the diagnostic might be removed for safety reasons.
         range?.offsetWithRange(docRange)
-        
+
         for solutionIndex in solutions.indices {
             for replacementIndex in solutions[solutionIndex].replacements.indices {
                 solutions[solutionIndex].replacements[replacementIndex].offsetWithRange(docRange)
             }
         }
     }
-    
+
     /// Returns the diagnostic with its range offset by the given documentation comment range.
     func withRangeOffset(by docRange: SymbolGraph.LineList.SourceRange) -> Self {
         var diagnostic = self

@@ -27,7 +27,7 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior", diagnostics.first?.identifier)
     }
-    
+
     func testAppendArgumentValue() async throws {
         let source = "@DocumentationExtension(mergeBehavior: append)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -40,7 +40,7 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.DocumentationExtension.NoConfiguration", diagnostics.first?.identifier)
         XCTAssertEqual(options?.behavior, .append)
     }
-    
+
     func testOverrideArgumentValue() async throws {
         let source = "@DocumentationExtension(mergeBehavior: override)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -52,7 +52,7 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertEqual(options?.behavior, .override)
     }
-    
+
     func testUnknownArgumentValue() async throws {
         let source = "@DocumentationExtension(mergeBehavior: somethingUnknown )"
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -65,7 +65,7 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.HasArgument.mergeBehavior.ConversionFailed", diagnostics.first?.identifier)
     }
-    
+
     func testExtraArguments() async throws {
         let source = "@DocumentationExtension(mergeBehavior: override, argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -78,13 +78,13 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual("org.swift.docc.UnknownArgument", diagnostics.first?.identifier)
     }
-    
+
     func testExtraDirective() async throws {
         let source = """
-        @DocumentationExtension(mergeBehavior: override) {
-           @Image
-        }
-        """
+            @DocumentationExtension(mergeBehavior: override) {
+               @Image
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -96,13 +96,13 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", diagnostics.first?.identifier)
         XCTAssertEqual("org.swift.docc.DocumentationExtension.NoInnerContentAllowed", diagnostics.last?.identifier)
     }
-    
+
     func testExtraContent() async throws {
         let source = """
-        @DocumentationExtension(mergeBehavior: override) {
-           Some text
-        }
-        """
+            @DocumentationExtension(mergeBehavior: override) {
+               Some text
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -113,7 +113,7 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertEqual(1, diagnostics.count)
         XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.DocumentationExtension.NoInnerContentAllowed")
     }
-    
+
     func testIncorrectArgumentLabel() async throws {
         let source = "@DocumentationExtension(merge: override)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -124,10 +124,12 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertNil(options)
         XCTAssertFalse(diagnostics.containsAnyError)
         XCTAssertEqual(2, diagnostics.count)
-        
-        XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
-            "org.swift.docc.HasArgument.mergeBehavior",
-            "org.swift.docc.UnknownArgument",
-        ])
+
+        XCTAssertEqual(
+            diagnostics.map(\.identifier).sorted(),
+            [
+                "org.swift.docc.HasArgument.mergeBehavior",
+                "org.swift.docc.UnknownArgument",
+            ])
     }
 }

@@ -22,21 +22,21 @@ private import DocCHTML
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool
     let _isPrimaryOutputFormat = false
-    
+
     // swift-format-ignore
     private struct HTMLTemplate {
         var original: String
         var contentReplacementRange:     Range<String.Index>
         var titleReplacementRange:       Range<String.Index>
         var descriptionReplacementRange: Range<String.Index>
-        
+
         struct CustomTemplate {
             var id, content: String
         }
-        
+
         init(data: Data, customTemplates: [CustomTemplate]) throws {
             var content = String(decoding: data, as: UTF8.self)
-            
+
             // Ensure that the index.html file has at least a `<head>` and a `<body>`.
             guard var beforeEndOfHead  = content.utf8.firstRange(of: "</head>".utf8)?.lowerBound,
                   var afterStartOfBody = content.range(of: "<body[^>]*>", options: .regularExpression)?.upperBound
@@ -46,11 +46,11 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
                 }
                 throw MissingRequiredTagsError()
             }
-            
+
             for template in customTemplates { // Use the order as `ConvertFileWritingConsumer`
                 content.insert(contentsOf: "<template id=\"\(template.id)\">\(template.content)</template>", at: afterStartOfBody)
             }
-            
+
             if let titleStart = content.utf8.firstRange(of:  "<title>".utf8)?.upperBound,
                let titleEnd   = content.utf8.firstRange(of: "</title>".utf8)?.lowerBound
             {
@@ -62,7 +62,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
                 let titleInside = content.utf8.index(beforeEndOfHead, offsetBy: -"</title>\n".utf8.count)
                 titleReplacementRange = titleInside ..< titleInside
             }
-            
+
             if let noScriptStart = content.utf8.firstRange(of:  "<noscript>".utf8)?.upperBound,
                let noScriptEnd   = content.utf8.firstRange(of: "</noscript>".utf8)?.lowerBound
             {
@@ -72,14 +72,14 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
                 let noScriptInside = content.utf8.index(afterStartOfBody, offsetBy: "<noscript>".utf8.count)
                 contentReplacementRange = noScriptInside ..< noScriptInside
             }
-                        
+
             original = content
             descriptionReplacementRange = beforeEndOfHead ..< beforeEndOfHead
-            
+
             assert(titleReplacementRange.upperBound       < descriptionReplacementRange.lowerBound, "The title replacement range should be before the description replacement range")
             assert(descriptionReplacementRange.upperBound < contentReplacementRange.lowerBound,     "The description replacement range should be before the content replacement range")
         }
-        
+
         func makeContent(
             content: XMLNode,
             title: String,
@@ -94,14 +94,14 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
                 copy.replaceSubrange(descriptionReplacementRange, with: metaDescription.rendered(prettyPrinted: prettyPrint))
             }
             copy.replaceSubrange(titleReplacementRange, with: title)
-            
+
             return copy
         }
     }
     private var htmlTemplate: HTMLTemplate
     // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
     private let fileWriter: JSONEncodingRenderNodeWriter
-    
+
     init(
         targetFolder: URL,
         fileManager: some FileManagerProtocol,
@@ -112,16 +112,18 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     ) throws {
         var customTemplates: [HTMLTemplate.CustomTemplate] = []
         if let customHeader {
-            customTemplates.append(.init(
-                id: "custom-header",
-                content: String(decoding: try fileManager.contents(of: customHeader), as: UTF8.self)
-            ))
+            customTemplates.append(
+                .init(
+                    id: "custom-header",
+                    content: String(decoding: try fileManager.contents(of: customHeader), as: UTF8.self)
+                ))
         }
         if let customFooter {
-            customTemplates.append(.init(
-                id: "custom-footer",
-                content: String(decoding: try fileManager.contents(of: customFooter), as: UTF8.self)
-            ))
+            customTemplates.append(
+                .init(
+                    id: "custom-footer",
+                    content: String(decoding: try fileManager.contents(of: customFooter), as: UTF8.self)
+                ))
         }
         self.htmlTemplate = try HTMLTemplate(
             data: fileManager.contents(of: htmlTemplate),
@@ -134,7 +136,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             transformForStaticHostingIndexHTML: nil
         )
     }
-    
+
     func consume(
         mainContent: XMLNode,
         metadata: (title: String, description: String?),
@@ -146,7 +148,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             plainDescription: metadata.description,
             prettyPrint: prettyPrintOutput
         )
-        
+
         let relativeFilePath = NodeURLGenerator.fileSafeReferencePath(reference, lowercased: true) + "/index.html"
         try fileWriter.write(Data(htmlString.utf8), toFileSafePath: relativeFilePath)
     }
@@ -158,9 +160,9 @@ private extension XMLNode {
             let data = HTMLFormatter.format(htmlNode, options: prettyPrinted ? .prettyPrint : [])
             return String(decoding: data, as: UTF8.self)
         }
-         
+
         assertionFailure("Failed to convert XMLNode \(name ?? "<no tag>") to an HTMLNode")
-        
+
         // Fallback to the XMLNode string formatting for now.
         return if prettyPrinted {
             xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement])

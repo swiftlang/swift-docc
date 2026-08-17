@@ -13,23 +13,23 @@ import Foundation
 /// A function source node.
 class MethodNode: TypeMemberNode {
     var implementation: String?
-    
+
     override class func keyword() -> String { return "func" }
-    
+
     override func source() -> String {
         var result = ""
         result += Text.docs(for: name, bundle: bundle, sections: [.abstract, .discussion])
 
         let kindString = (kind == .instance || kind == .interface) ? "" : kind.rawValue
         let levelString = level == .default ? "" : level.rawValue
-        
+
         result += "\(levelString) \(kindString) func \(name.lowercased())() { /* code */ }\n\n"
-        
+
         if kind == .interface {
             implementation = result
             result = "func \(name.lowercased())()\n\n"
         }
-        
+
         return result
     }
 }

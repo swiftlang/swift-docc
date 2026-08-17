@@ -19,13 +19,13 @@ public struct RenderHierarchyLandmark: Codable, Equatable {
         /// A landmark to a heading in the content.
         case heading
     }
-    
+
     /// The topic reference for the landmark.
     public var reference: RenderReferenceIdentifier
-    
+
     /// The kind of landmark.
     public var kind: Kind
-    
+
     /// Creates a new hierarchy landmark.
     /// - Parameters:
     ///   - reference: The topic reference for the landmark.

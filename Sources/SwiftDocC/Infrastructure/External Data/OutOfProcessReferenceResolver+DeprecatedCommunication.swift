@@ -12,9 +12,9 @@ public import Foundation
 public import SymbolKit
 
 extension OutOfProcessReferenceResolver {
-    
+
     // MARK: Request & Response
-    
+
     /// An outdated version of a request message to send to the external link resolver.
     ///
     /// This can either be a request to resolve a topic URL or to resolve a symbol based on its precise identifier.
@@ -26,7 +26,7 @@ extension OutOfProcessReferenceResolver {
     /// }
     @available(*, deprecated, message: "This version of the communication protocol is no longer recommended. Update to `RequestV2` and `ResponseV2` instead.")
     public typealias Request = _DeprecatedRequestV1
-    
+
     // Note this type isn't formally deprecated to avoid warnings in the ConvertService, which still _implicitly_ require this version of requests and responses.
     public enum _DeprecatedRequestV1: Codable, CustomStringConvertible {
         /// A request to resolve a topic URL
@@ -35,13 +35,13 @@ extension OutOfProcessReferenceResolver {
         case symbol(String)
         /// A request to resolve an asset.
         case asset(AssetReference)
-        
+
         private enum CodingKeys: CodingKey {
             case topic
             case symbol
             case asset
         }
-        
+
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
@@ -53,7 +53,7 @@ extension OutOfProcessReferenceResolver {
                 try container.encode(assetReference, forKey: .asset)
             }
         }
-        
+
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch container.allKeys.first {
@@ -67,7 +67,7 @@ extension OutOfProcessReferenceResolver {
                 throw OutOfProcessReferenceResolver.Error.unknownTypeOfRequest
             }
         }
-        
+
         /// A plain text representation of the request message.
         public var description: String {
             switch self {
@@ -90,7 +90,7 @@ extension OutOfProcessReferenceResolver {
     /// }
     @available(*, deprecated, message: "This version of the communication protocol is no longer recommended. Update to `RequestV2` and `ResponseV2` instead.")
     public typealias Response = _DeprecatedResponseV1
-    
+
     @available(*, deprecated, message: "This version of the communication protocol is no longer recommended. Update to `RequestV2` and `ResponseV2` instead.")
     public enum _DeprecatedResponseV1: Codable {
         /// A bundle identifier response.
@@ -103,14 +103,14 @@ extension OutOfProcessReferenceResolver {
         case resolvedInformation(ResolvedInformation)
         /// A response with information about the resolved asset.
         case asset(DataAsset)
-        
+
         enum CodingKeys: String, CodingKey {
             case bundleIdentifier
             case errorMessage
             case resolvedInformation
             case asset
         }
-        
+
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch container.allKeys.first {
@@ -126,7 +126,7 @@ extension OutOfProcessReferenceResolver {
                 throw OutOfProcessReferenceResolver.Error.invalidResponseKindFromClient
             }
         }
-        
+
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
@@ -141,9 +141,9 @@ extension OutOfProcessReferenceResolver {
             }
         }
     }
-    
+
     // MARK: Resolved Information
-    
+
     /// A type used to transfer information about a resolved reference in the outdated and no longer recommended version of the external resolver communication protocol.
     @available(*, deprecated, message: "This type is only used in the outdated, and no longer recommended, version of the out-of-process external resolver communication protocol.")
     public struct ResolvedInformation: Codable {
@@ -152,9 +152,9 @@ extension OutOfProcessReferenceResolver {
         /// Information about the resolved URL.
         public let url: URL
         /// Information about the resolved title.
-        public let title: String // DocumentationNode.Name
+        public let title: String  // DocumentationNode.Name
         /// Information about the resolved abstract.
-        public let abstract: String // Markup
+        public let abstract: String  // Markup
         /// Information about the resolved language.
         public let language: SourceLanguage
         /// Information about the languages where the resolved node is available.
@@ -165,38 +165,38 @@ extension OutOfProcessReferenceResolver {
         ///
         /// This is expected to be an abbreviated declaration for the symbol.
         public let declarationFragments: DeclarationFragments?
-        
+
         // We use the real types here because they're Codable and don't have public member-wise initializers.
-        
+
         /// Platform availability for a resolved symbol reference.
         public typealias PlatformAvailability = AvailabilityRenderItem
-        
+
         /// The declaration fragments for a resolved symbol reference.
         public typealias DeclarationFragments = SymbolGraph.Symbol.DeclarationFragments
-        
+
         /// The platform names, derived from the platform availability.
         public var platformNames: Set<String>? {
             return platforms.map { platforms in Set(platforms.compactMap { $0.name }) }
         }
-        
+
         /// Images that are used to represent the summarized element.
         public var topicImages: [TopicImage]?
-                
+
         /// References used in the content of the summarized element.
         public var references: [any RenderReference]?
-        
+
         /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
         public var variants: [Variant]?
-       
+
         /// A value that indicates whether this symbol is under development and likely to change.
         var isBeta: Bool {
             guard let platforms, !platforms.isEmpty else {
                 return false
             }
-            
+
             return platforms.allSatisfy { $0.isBeta == true }
         }
-        
+
         /// Creates a new resolved information value with all its values.
         ///
         /// - Parameters:
@@ -236,19 +236,19 @@ extension OutOfProcessReferenceResolver {
             self.references = references
             self.variants = variants
         }
-        
+
         /// A variant of content for the resolved information.
         ///
         /// - Note: All properties except for ``traits`` are optional. If a property is `nil` it means that the value is the same as the resolved information's value.
         public struct Variant: Codable {
             /// The traits of the variant.
             public let traits: [RenderNode.Variant.Trait]
-            
+
             /// A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the resolved information.
             ///
             /// This alias is used to make the property declarations more explicit while at the same time offering the convenient syntax of optionals.
             public typealias VariantValue = Optional
-            
+
             /// The kind of the variant or `nil` if the kind is the same as the resolved information.
             public let kind: VariantValue<DocumentationNode.Kind>
             /// The url of the variant or `nil` if the url is the same as the resolved information.
@@ -265,7 +265,7 @@ extension OutOfProcessReferenceResolver {
             ///
             /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
             public let declarationFragments: VariantValue<DeclarationFragments?>
-            
+
             /// Creates a new resolved information variant with the values that are different from the resolved information values.
             ///
             /// - Parameters:
@@ -312,10 +312,10 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
         case references
         case variants
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         url = try container.decode(URL.self, forKey: .url)
         title = try container.decode(String.self, forKey: .title)
@@ -329,12 +329,12 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
             decodedReferences.map(\.reference)
         }
         variants = try container.decodeIfPresent([OutOfProcessReferenceResolver.ResolvedInformation.Variant].self, forKey: .variants)
-        
+
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(self.kind, forKey: .kind)
         try container.encode(self.url, forKey: .url)
         try container.encode(self.title, forKey: .title)

@@ -25,7 +25,7 @@ public import Foundation
 public struct ValidatedURL: Hashable, Equatable {
     /// The raw components that make up the validated URL.
     public private(set) var components: URLComponents
-    
+
     /// Creates a new RFC 3986 valid URL by using the given string URL.
     ///
     /// Will return `nil` when the given `string` is not a valid URL.
@@ -45,7 +45,7 @@ public struct ValidatedURL: Hashable, Equatable {
         }
         self.components = components
     }
-    
+
     /// Creates a new RFC 3986 valid URL by using the given string URL and percent escaping the fragment component if necessary.
     ///
     /// Will return `nil` when the given `string` is not a valid URL.
@@ -67,12 +67,12 @@ public struct ValidatedURL: Hashable, Equatable {
                 parsedComponents.path += "?\(query)"
                 parsedComponents.query = nil
             }
-            
+
             assert(parsedComponents.string != nil, "Failed to parse authored link \(string.singleQuoted)")
             self.components = parsedComponents
             return
         }
-        
+
         // If the `URLComponents(string:)` parsing in `init(parsingExact:)` failed try a fallback that attempts to individually
         // percent encode each component.
         //
@@ -86,7 +86,7 @@ public struct ValidatedURL: Hashable, Equatable {
         // URLComponents/percentEncodedFragment` allow for the creation of a `URLComponents` value with special characters.
         var components = URLComponents()
         var remainder = string[...]
-        
+
         // See if the link is a documentation link and try to split out the scheme and bundle identifier. If the link isn't a
         // documentation link it's assumed that it's a symbol link that start with the path component.
         // Other general URLs should have been successfully parsed with `URLComponents(string:)` in `init(parsingExact:)` above.
@@ -94,9 +94,9 @@ public struct ValidatedURL: Hashable, Equatable {
             // The authored link is a doc link
             components.scheme = ResolvedTopicReference.urlScheme
             remainder = remainder.dropFirst("\(ResolvedTopicReference.urlScheme):".count)
-            
+
             if remainder.hasPrefix("//") {
-                remainder = remainder.dropFirst(2) // Don't include the "//" prefix in the `host` component.
+                remainder = remainder.dropFirst(2)  // Don't include the "//" prefix in the `host` component.
                 // The authored link includes a bundle ID
                 guard let startOfPath = remainder.firstIndex(of: "/") else {
                     // The link started with "doc://" but didn't contain another "/" to start of the path.
@@ -106,7 +106,7 @@ public struct ValidatedURL: Hashable, Equatable {
                 remainder = remainder[startOfPath...]
             }
         }
-        
+
         // This either is the start of a symbol link or the remainder of a doc link after the scheme and bundle ID was parsed.
         // This means that the remainder of the string is a path with an optional fragment. No other URL components are supported
         // by documentation links and symbol links.
@@ -124,11 +124,11 @@ public struct ValidatedURL: Hashable, Equatable {
             }
             components.percentEncodedPath = path
         }
-        
+
         assert(components.string != nil, "Failed to parse authored link \(string.singleQuoted)")
         self.components = components
     }
-    
+
     /// Creates a new RFC 3986 valid URL from the given URL.
     ///
     /// Will return `nil` when the given URL doesn't comply with RFC 3986.
@@ -139,7 +139,7 @@ public struct ValidatedURL: Hashable, Equatable {
         }
         self.components = components
     }
-    
+
     /// Creates a new RFC 3986 valid URL by using the given symbol path.
     ///
     /// - Parameter symbolDestination: A symbol path as a string, with path components separated by "/".
@@ -149,12 +149,12 @@ public struct ValidatedURL: Hashable, Equatable {
         components.path = symbolPath
         self.components = components
     }
-    
+
     /// Creates a new RFC 3986 valid URL.
     init(components: URLComponents) {
         self.components = components
     }
-    
+
     /// Returns the unmodified value in case the URL matches the required scheme or nil otherwise.
     /// - Parameter scheme: A URL scheme to match.
     /// - Returns: A valid URL if the scheme matches, `nil` otherwise.
@@ -162,12 +162,12 @@ public struct ValidatedURL: Hashable, Equatable {
         guard scheme == components.scheme else { return nil }
         return self
     }
-    
+
     /// The URL as an absolute string.
     var absoluteString: String {
         return components.string!
     }
-    
+
     /// The URL as an RFC 3986 compliant `URL` value.
     var url: URL {
         return components.url!
@@ -187,15 +187,15 @@ private extension StringProtocol {
                         // There's not two characters after the "%". This "%" can't represent a percent encoded character.
                         return true
                     }
-                    let firstFollowingIndex  = self.index(after: index)
+                    let firstFollowingIndex = self.index(after: index)
                     let secondFollowingIndex = self.index(after: firstFollowingIndex)
-                    
+
                     // Check if the next two characthers represent a percent encoded
                     // URL.
                     // If either of the two following characters aren't hex digits,
                     // the "%" doesn't represent a percent encoded character.
                     if Character(unicodeScalars[firstFollowingIndex]).isHexDigit,
-                       Character(unicodeScalars[secondFollowingIndex]).isHexDigit
+                        Character(unicodeScalars[secondFollowingIndex]).isHexDigit
                     {
                         // Later characters in the string might require percentage encoding.
                         continue
@@ -205,7 +205,7 @@ private extension StringProtocol {
             }
             return false
         }
-        
+
         return if needsPercentEncoding {
             addingPercentEncoding(withAllowedCharacters: allowedCharacters)
         } else {

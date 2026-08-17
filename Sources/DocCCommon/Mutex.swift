@@ -18,24 +18,24 @@ private import Darwin
 struct Mutex<Value: ~Copyable>: ~Copyable, @unchecked Sendable {
     private var value: UnsafeMutablePointer<Value>
     private var lock: UnsafeMutablePointer<os_unfair_lock>
-    
+
     init(_ initialValue: consuming sending Value) {
         value = UnsafeMutablePointer<Value>.allocate(capacity: 1)
         value.initialize(to: initialValue)
-        
+
         lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
         lock.initialize(to: os_unfair_lock())
     }
-    
+
     deinit {
         value.deallocate()
         lock.deallocate()
     }
-    
+
     borrowing func withLock<Result: ~Copyable, E: Error>(_ body: (inout sending Value) throws(E) -> sending Result) throws(E) -> sending Result {
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
-        
+
         return try body(&value.pointee)
     }
 }

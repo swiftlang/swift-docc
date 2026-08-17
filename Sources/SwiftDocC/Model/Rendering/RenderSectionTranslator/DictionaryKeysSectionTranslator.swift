@@ -18,17 +18,18 @@ struct DictionaryKeysSectionTranslator: RenderSectionTranslator {
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
         guard let dictionaryKeysSection = symbol.dictionaryKeysSection,
-              !dictionaryKeysSection.dictionaryKeys.isEmpty
+            !dictionaryKeysSection.dictionaryKeys.isEmpty
         else { return nil }
-        
+
         // Filter out keys that aren't backed by a symbol
         let filteredKeys = dictionaryKeysSection.dictionaryKeys.filter { $0.symbol != nil }
-        
-        return VariantCollection(defaultValue: CodableContentSection(
-            PropertiesRenderSection(
-                title: DictionaryKeysSection.title,
-                items: filteredKeys.map { renderNodeTranslator.createRenderProperty(name: $0.name, contents: $0.contents, required: $0.required, symbol: $0.symbol) }
-            )
-        ))
+
+        return VariantCollection(
+            defaultValue: CodableContentSection(
+                PropertiesRenderSection(
+                    title: DictionaryKeysSection.title,
+                    items: filteredKeys.map { renderNodeTranslator.createRenderProperty(name: $0.name, contents: $0.contents, required: $0.required, symbol: $0.symbol) }
+                )
+            ))
     }
 }

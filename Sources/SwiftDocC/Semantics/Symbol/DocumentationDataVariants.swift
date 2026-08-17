@@ -19,10 +19,10 @@ private import DocCCommon
 public struct DocumentationDataVariants<Variant> {
     /// The variant values for this collection of variants.
     private var values: [DocumentationDataVariantsTrait: Variant]
-    
+
     /// The default value of the variant.
     private var defaultVariantValue: Variant?
-    
+
     /// All the variants registered in this variant collection, including any default variant.
     ///
     /// The default variant value, if one exists, is the last element of the returned array.
@@ -31,12 +31,12 @@ public struct DocumentationDataVariants<Variant> {
             // Append the default variant value if there is one.
             + (defaultVariantValue.map { [(.fallback, $0)] } ?? [])
     }
-    
+
     /// Whether there are any variants for this piece of information about the documentation node
     public var isEmpty: Bool {
         values.isEmpty
     }
-    
+
     /// Creates a variants value.
     ///
     /// - Parameters:
@@ -46,7 +46,7 @@ public struct DocumentationDataVariants<Variant> {
         self.values = values
         self.defaultVariantValue = defaultVariantValue
     }
-    
+
     /// Accesses the variant for the given trait.
     public subscript(trait: DocumentationDataVariantsTrait) -> Variant? {
         get { values[trait] ?? defaultVariantValue }
@@ -58,7 +58,7 @@ public struct DocumentationDataVariants<Variant> {
             }
         }
     }
-    
+
     /// Accesses the variant for the given trait,
     /// falling back to the given default variant if the key isn’t found.
     public subscript(trait: DocumentationDataVariantsTrait, default defaultValue: Variant) -> Variant {
@@ -71,14 +71,14 @@ public struct DocumentationDataVariants<Variant> {
             }
         }
     }
-    
+
     /// Whether a variant for the given trait has been registered.
     ///
     /// - Parameter trait: The trait to look up a variant for.
     public func hasVariant(for trait: DocumentationDataVariantsTrait) -> Bool {
         values.keys.contains(trait)
     }
-    
+
     func map<NewVariant>(transform: (Variant) -> NewVariant) -> DocumentationDataVariants<NewVariant> {
         return DocumentationDataVariants<NewVariant>(
             values: Dictionary(
@@ -100,11 +100,11 @@ extension DocumentationDataVariants {
             self.init()
         }
     }
-    
+
     static var empty: DocumentationDataVariants<Variant> {
         return DocumentationDataVariants<Variant>(values: [:], defaultVariantValue: nil)
     }
-    
+
     /// Convenience API to access the first variant, or the default value if there are no registered variants.
     ///
     /// > Important:
@@ -137,33 +137,33 @@ public struct DocumentationDataVariantsTrait: Hashable, Sendable {
     public static var swift: DocumentationDataVariantsTrait {
         get { DocumentationDataVariantsTrait(sourceLanguage: .swift) }
         @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
-        set { /* Do nothing */ }
+        set { /* Do nothing */  }
     }
-    
+
     /// The Objective-C programming language.
     public static var objectiveC: DocumentationDataVariantsTrait {
         get { DocumentationDataVariantsTrait(sourceLanguage: .objectiveC) }
         @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
-        set { /* Do nothing */ }
+        set { /* Do nothing */  }
     }
-    
+
     /// The language in which the documentation node is relevant.
     public var interfaceLanguage: String? {
         sourceLanguage?.id
     }
-    
+
     private(set) var sourceLanguage: SourceLanguage?
-    
+
     /// A special trait that represents the fallback trait, which internal clients can use to access the default value of a collection of variants.
     static let fallback = DocumentationDataVariantsTrait()
-    
+
     /// Creates a new trait given an interface language.
     ///
     /// - Parameter interfaceLanguage: The language in which a documentation node is relevant.
     public init(interfaceLanguage: String? = nil) {
         self.init(sourceLanguage: interfaceLanguage.map { SourceLanguage(id: $0) })
     }
-    
+
     init(sourceLanguage: SourceLanguage?) {
         self.sourceLanguage = sourceLanguage
     }
@@ -178,9 +178,9 @@ public struct DocumentationDataVariantsTrait: Hashable, Sendable {
 
 extension Set<DocumentationDataVariantsTrait> {
     /// Filters set to a subset of language traits that can coexist together.
-    /// 
+    ///
     /// - Parameter trait: The language variant being processed.
-    /// 
+    ///
     /// Due to the interoperability of Swift and Objective-C, these languages represent separate views into the same APIs rather than being disjoint APIs.
     /// When constructing content, a page wants to display one or the other, not both, while other language variants are distinct and may be used concurrently.
     /// Use `compatible(withTrait:)` to obtain a subset of the current set of variants that can coexist on a page in the context of the input `trait`.

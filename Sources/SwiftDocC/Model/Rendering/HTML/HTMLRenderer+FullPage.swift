@@ -35,82 +35,108 @@ package extension HTMLRenderer {
     ) -> HTMLNode {
         // Use relative paths to shared assets like a style sheet or favicon.
         let pathPrefixToArchiveRoot = String(repeating: "../", count: reference.url.pathComponents.count - 1)
-        
-        let head = XMLNode.element(named: "head", children: [
-            .element(named: "meta", attributes: ["charset": "utf-8"]),
-            .element(named: "meta", attributes: [
-                "name": "viewport",
-                "content": "width=device-width,initial-scale=1,viewport-fit=cover",
-            ]),
-            // FIXME: Add relative favicon links (rdar://177705447 (Include favicon images in the static HTML output))
-            .element(named: "link", attributes: [
-                "rel": "stylesheet",
-                "href": "\(pathPrefixToArchiveRoot)reference.css",
-            ]),
-            .element(named: "title", children: [.text(metadata.title)])
-        ])
+
+        let head = XMLNode.element(
+            named: "head",
+            children: [
+                .element(named: "meta", attributes: ["charset": "utf-8"]),
+                .element(
+                    named: "meta",
+                    attributes: [
+                        "name": "viewport",
+                        "content": "width=device-width,initial-scale=1,viewport-fit=cover",
+                    ]),
+                // FIXME: Add relative favicon links (rdar://177705447 (Include favicon images in the static HTML output))
+                .element(
+                    named: "link",
+                    attributes: [
+                        "rel": "stylesheet",
+                        "href": "\(pathPrefixToArchiveRoot)reference.css",
+                    ]),
+                .element(named: "title", children: [.text(metadata.title)])
+            ])
         if let description = metadata.description {
-            head.addChild(.element(named: "meta", attributes: [
-                "name": "description",
-                "content": description,
-            ]))
+            head.addChild(
+                .element(
+                    named: "meta",
+                    attributes: [
+                        "name": "description",
+                        "content": description,
+                    ]))
         }
-        
+
         // The full page body consists of 5 elements, in order;
         let body = XMLNode.element(named: "body")
         // 1. An optional custom header
         if let customHeader {
             body.addChild(customHeader.copy() as! XMLNode)
         }
-        
+
         // 2. The default header
-        body.addChild(.element(named: "header", children: [
-            // FIXME: Make this a button that toggles the navigator sidebar (rdar://177705101)
-            // This is blocked by the sidebar requiring RenderNode input
-            .element(named: "h2", children: [.text("Documentation")]),
-            
-            // FIXME: Support switching between language representations of the page (rdar://177705327)
-            // The rough idea is to use <select> & <option> elements (when there are multiple languages)
-            // and to add some very minimal JavaScript to modify the display of the "swift-only" and "occ-only" CSS classes based on that selection.
-            .element(named: "span", children: [.text("Language: Swift")])
-        ]))
-        
+        body.addChild(
+            .element(
+                named: "header",
+                children: [
+                    // FIXME: Make this a button that toggles the navigator sidebar (rdar://177705101)
+                    // This is blocked by the sidebar requiring RenderNode input
+                    .element(named: "h2", children: [.text("Documentation")]),
+
+                    // FIXME: Support switching between language representations of the page (rdar://177705327)
+                    // The rough idea is to use <select> & <option> elements (when there are multiple languages)
+                    // and to add some very minimal JavaScript to modify the display of the "swift-only" and "occ-only" CSS classes based on that selection.
+                    .element(named: "span", children: [.text("Language: Swift")])
+                ]))
+
         // 3. The unique documentation content for this page
-        body.addChild(.element(named: "main", children: [
-            mainContent
-        ]))
-        
+        body.addChild(
+            .element(
+                named: "main",
+                children: [
+                    mainContent
+                ]))
+
         // 4. The default footer
-        body.addChild(.element(named: "footer", children: [
-            // FIXME: Interacting with this radio group doesn't change the page's color scheme (rdar://177705056)
-            .element(named: "fieldset", children: [
-                .element(named: "legend", children: [.text("Select a color scheme preference")]),
-                
-                .element(named: "label", children: [
-                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "light"]),
-                    .text("Light"),
-                ]),
-                .element(named: "label", children: [
-                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "dark"]),
-                    .text("Dark"),
-                ]),
-                .element(named: "label", children: [
-                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "auto", "checked": ""]),
-                    .text("Auto"),
-                ]),
-            ], attributes: ["role": "radiogroup"])
-        ]))
-        
+        body.addChild(
+            .element(
+                named: "footer",
+                children: [
+                    // FIXME: Interacting with this radio group doesn't change the page's color scheme (rdar://177705056)
+                    .element(
+                        named: "fieldset",
+                        children: [
+                            .element(named: "legend", children: [.text("Select a color scheme preference")]),
+
+                            .element(
+                                named: "label",
+                                children: [
+                                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "light"]),
+                                    .text("Light"),
+                                ]),
+                            .element(
+                                named: "label",
+                                children: [
+                                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "dark"]),
+                                    .text("Dark"),
+                                ]),
+                            .element(
+                                named: "label",
+                                children: [
+                                    .element(named: "input", attributes: ["type": "radio", "name": "color-scheme", "value": "auto", "checked": ""]),
+                                    .text("Auto"),
+                                ]),
+                        ], attributes: ["role": "radiogroup"])
+                ]))
+
         // 5. An optional custom footer
         if let customFooter {
             body.addChild(customFooter.copy() as! XMLNode)
         }
-        
+
         let root = XMLNode.element(named: "html", children: [head, body], attributes: ["lang": "en-US"])
-        
+
         return HTMLNode(from: root) ?? html(contents: [])
     }
-    
+
     /// Prepares the provided custom header and footer files to be included in the full-page structure.
     ///
     /// - Parameters:
@@ -127,7 +153,7 @@ package extension HTMLRenderer {
             let content = String(decoding: try fileManager.contents(of: url), as: UTF8.self)
             return try XMLElement(xmlString: content)
         }
-        
+
         return (
             customHeader: try customHeader.map(parse(contentsOf:)),
             customFooter: try customFooter.map(parse(contentsOf:))

@@ -17,19 +17,19 @@ extension DocumentationNode {
         public var id: String
         /// `true` if the documentation node is about a symbol, `false` otherwise.
         public var isSymbol: Bool
-        
+
         /// `true` if the documentation has its own "page", `false` if it only exists in another node.
         public var isPage: Bool {
             switch self {
             case .unknown,
-                 .volume,
-                 .chapter,
-                 .onPageLandmark,
-                 .dictionaryKey,
-                 .httpParameter,
-                 .httpBody,
-                 .httpResponse,
-                 .snippet:
+                .volume,
+                .chapter,
+                .onPageLandmark,
+                .dictionaryKey,
+                .httpParameter,
+                .httpBody,
+                .httpResponse,
+                .snippet:
                 return false
             default:
                 return true
@@ -41,21 +41,21 @@ extension DocumentationNode {
 extension DocumentationNode.Kind {
     /// An unknown kind of documentation node.
     public static let unknown = DocumentationNode.Kind(name: "Unknown", id: "org.swift.docc.kind.unknown", isSymbol: false)
-    
+
     /// An unknown kind of symbol documentation node.
     public static let unknownSymbol = DocumentationNode.Kind(name: "Unknown Symbol", id: "org.swift.docc.kind.unknownSymbol", isSymbol: true)
-    
+
     // Grouping
-    
+
     /// A documentation landing page.
     public static let landingPage = DocumentationNode.Kind(name: "Landing Page", id: "org.swift.docc.kind.landingPage", isSymbol: false)
     /// A documentation collection.
     public static let collection = DocumentationNode.Kind(name: "Collection", id: "org.swift.docc.kind.collection", isSymbol: false)
     /// A group of documentation collections.
     public static let collectionGroup = DocumentationNode.Kind(name: "CollectionGroup", id: "org.swift.docc.kind.collectionGroup", isSymbol: false)
-    
+
     // Conceptual
-    
+
     /// Root-level documentation.
     public static let root = DocumentationNode.Kind(name: "Documentation", id: "org.swift.docc.kind.root", isSymbol: false)
     /// Documentation about a module (also known as a framework, a library, or a package in some programming languages).
@@ -74,9 +74,9 @@ extension DocumentationNode.Kind {
     public static let tutorialArticle = DocumentationNode.Kind(name: "Article", id: "org.swift.docc.kind.tutorialarticle", isSymbol: false)
     /// An on-page landmark.
     public static let onPageLandmark = DocumentationNode.Kind(name: "Landmark", id: "org.swift.docc.kind.landmark", isSymbol: false)
-    
+
     // Containers
-    
+
     /// Documentation about a class.
     public static let `class` = DocumentationNode.Kind(name: "Class", id: "org.swift.docc.kind.class", isSymbol: true)
     /// Documentation about a structure.
@@ -97,7 +97,7 @@ extension DocumentationNode.Kind {
     public static let namespace = DocumentationNode.Kind(name: "Namespace", id: "org.swift.docc.kind.namespace", isSymbol: true)
 
     // Leaves
-    
+
     /// Documentation about a local variable.
     public static let localVariable = DocumentationNode.Kind(name: "Local Variable", id: "org.swift.docc.kind.localVariable", isSymbol: true)
     /// Documentation about a global variable.
@@ -116,9 +116,9 @@ extension DocumentationNode.Kind {
     public static let macro = DocumentationNode.Kind(name: "Macro", id: "org.swift.docc.kind.macro", isSymbol: true)
     /// Documentation about a union.
     public static let union = DocumentationNode.Kind(name: "Union", id: "org.swift.docc.kind.union", isSymbol: true)
-    
+
     // Member-only leaves
-    
+
     /// Documentation about an enumeration case.
     public static let enumerationCase = DocumentationNode.Kind(name: "Enumeration Case", id: "org.swift.docc.kind.enumerationCase", isSymbol: true)
     /// Documentation about an initializer.
@@ -149,16 +149,16 @@ extension DocumentationNode.Kind {
     public static let typeSubscript = DocumentationNode.Kind(name: "Type Subscript", id: "org.swift.docc.kind.typeSubscript", isSymbol: true)
     /// Documentation about a type constant.
     public static let typeConstant = DocumentationNode.Kind(name: "Type Constant", id: "org.swift.docc.kind.typeConstant", isSymbol: true)
-    
+
     // Data
-    
+
     /// Documentation about a build setting.
     public static let buildSetting = DocumentationNode.Kind(name: "Build Setting", id: "org.swift.docc.kind.buildSetting", isSymbol: false)
     /// Documentation about a property list key.
     public static let propertyListKey = DocumentationNode.Kind(name: "Property List Key", id: "org.swift.docc.kind.propertyListKey", isSymbol: false)
 
     // Other
-    
+
     /// Documentation about a keyword.
     public static let keyword = DocumentationNode.Kind(name: "Keyword", id: "org.swift.docc.kind.keyword", isSymbol: true)
     /// Documentation about a REST API.
@@ -171,17 +171,17 @@ extension DocumentationNode.Kind {
     public static let object = DocumentationNode.Kind(name: "Object", id: "org.swift.docc.kind.dictionary", isSymbol: true)
     /// A snippet.
     public static let snippet = DocumentationNode.Kind(name: "Snippet", id: "org.swift.docc.kind.snippet", isSymbol: true)
-    
+
     public static let extendedModule = DocumentationNode.Kind(name: "Extended Module", id: "org.swift.docc.kind.extendedModule", isSymbol: true)
 
     public static let extendedStructure = DocumentationNode.Kind(name: "Extended Structure", id: "org.swift.docc.kind.extendedStructure", isSymbol: true)
-    
+
     public static let extendedClass = DocumentationNode.Kind(name: "Extended Class", id: "org.swift.docc.kind.extendedClass", isSymbol: true)
-    
+
     public static let extendedEnumeration = DocumentationNode.Kind(name: "Extended Enumeration", id: "org.swift.docc.kind.extendedEnumeration", isSymbol: true)
-    
+
     public static let extendedProtocol = DocumentationNode.Kind(name: "Extended Protocol", id: "org.swift.docc.kind.extendedProtocol", isSymbol: true)
-    
+
     public static let unknownExtendedType = DocumentationNode.Kind(name: "Extended Type", id: "org.swift.docc.kind.unknownExtendedType", isSymbol: true)
 
     /// The list of all known kinds of documentation nodes.

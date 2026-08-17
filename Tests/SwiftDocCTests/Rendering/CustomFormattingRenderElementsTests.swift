@@ -17,12 +17,13 @@ class CustomFormattingRenderElementsTests: XCTestCase {
         let customElementsSymbolURL = Bundle.module.url(
             forResource: "custom-render-elements", withExtension: "json",
             subdirectory: "Rendering Fixtures")!
-        
+
         let data = try Data(contentsOf: customElementsSymbolURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         guard let discussion = symbol.primaryContentSections.first as? ContentRenderSection,
-            discussion.content.count == 3 else {
+            discussion.content.count == 3
+        else {
             XCTFail("Didn't find discussion section")
             return
         }
@@ -30,30 +31,35 @@ class CustomFormattingRenderElementsTests: XCTestCase {
             XCTFail("Didn't find discussion 1st paragraph")
             return
         }
-        
-        XCTAssertEqual(firstParagraph.inlineContent, [
-            .text("Use "),
-            .newTerm(inlineContent: [.text("www")]),
-            .text(" and "),
-            .inlineHead(inlineContent: [.text("ftp")]),
-            .text("."),
-        ])
+
+        XCTAssertEqual(
+            firstParagraph.inlineContent,
+            [
+                .text("Use "),
+                .newTerm(inlineContent: [.text("www")]),
+                .text(" and "),
+                .inlineHead(inlineContent: [.text("ftp")]),
+                .text("."),
+            ])
 
         guard case RenderBlockContent.termList(let l) = discussion.content[2] else {
             XCTFail("Didn't find term list")
             return
         }
-        
-        XCTAssertEqual(l.items, [
-            RenderBlockContent.TermListItem(
-                term: .init(inlineContent: [
-                    .text("This is a term"),
-                ]),
-                definition: .init(content: [
-                    .paragraph(.init(inlineContent: [
-                        .text("This is a definition"),
+
+        XCTAssertEqual(
+            l.items,
+            [
+                RenderBlockContent.TermListItem(
+                    term: .init(inlineContent: [
+                        .text("This is a term"),
+                    ]),
+                    definition: .init(content: [
+                        .paragraph(
+                            .init(inlineContent: [
+                                .text("This is a definition"),
+                            ])),
                     ])),
-                ])),
-        ])
+            ])
     }
 }

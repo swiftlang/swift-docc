@@ -19,19 +19,19 @@ public import Foundation
 public final class RenderNodeDataExtractor {
     /// The render node as a dictionary value.
     let json: JSON
-    
+
     /// Initialize the extractor with the JSON data.
     public init(with data: Data) throws {
         json = try JSONDecoder().decode(JSON.self, from: data)
     }
-    
+
     // MARK: - Data extractors
-    
+
     /// Returns the URL and checksum of the project files, if existing.
     public var projectFiles: (url: URL, checksum: String)? {
-        
+
         let projectName: String
-        
+
         if json["metadata"]?["role"]?.string == "sampleCode" {
             guard let sampleCodeProject = json["sampleCodeDownload"]?["action"]?["identifier"]?.string else {
                 return nil
@@ -43,7 +43,7 @@ public final class RenderNodeDataExtractor {
             }
             projectName = tutorialProject
         }
-        
+
         guard let stringURL = json["references"]?[projectName]?["url"]?.string else {
             return nil
         }
@@ -53,13 +53,12 @@ public final class RenderNodeDataExtractor {
         guard let url = URL(string: stringURL) else {
             return nil
         }
-        
+
         return (url: url, checksum: checksum)
     }
-    
+
     /// Returns the metadata, if available, inside a RenderNode JSON.
     func metadata(for key: String) -> String? {
         return json["metadata"]?[key]?.string
     }
 }
-

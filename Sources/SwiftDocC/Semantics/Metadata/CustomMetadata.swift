@@ -27,27 +27,25 @@ public import Markdown
 public final class CustomMetadata: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
-    
+
     /// A key to identify a piece of metadata
     @DirectiveArgumentWrapped
     public var key: String
-    
+
     /// value of the metadata
     @DirectiveArgumentWrapped
     public var value: String
-    
+
     static var hiddenFromDocumentation = true
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "key" : \CustomMetadata._key,
         "value"  : \CustomMetadata._value,
     ]
-    
 
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
 }
-

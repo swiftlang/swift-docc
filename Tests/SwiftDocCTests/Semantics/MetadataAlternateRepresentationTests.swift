@@ -24,15 +24,15 @@ class MetadataAlternateRepresentationTests: XCTestCase {
                 }
                 """
             }
-            
+
             XCTAssertTrue(diagnostics.isEmpty, "Unexpected problems: \(diagnostics.joined(separator: "\n"))")
             XCTAssertEqual(metadata?.alternateRepresentations.count, 1)
-            
+
             let alternateRepresentation = try XCTUnwrap(metadata?.alternateRepresentations.first)
             XCTAssertEqual(alternateRepresentation.reference.url, URL(string: "MyClass/property"))
         }
     }
-        
+
     func testValidExternalLinkReference() async throws {
         let (diagnostics, metadata) = try await parseDirective(Metadata.self) {
             """
@@ -41,10 +41,10 @@ class MetadataAlternateRepresentationTests: XCTestCase {
             }
             """
         }
-        
+
         XCTAssertTrue(diagnostics.isEmpty, "Unexpected problems: \(diagnostics.joined(separator: "\n"))")
         XCTAssertEqual(metadata?.alternateRepresentations.count, 1)
-        
+
         let alternateRepresentation = try XCTUnwrap(metadata?.alternateRepresentations.first)
         XCTAssertEqual(alternateRepresentation.reference.url, URL(string: "doc://com.example/documentation/MyClass/property"))
     }
@@ -57,11 +57,13 @@ class MetadataAlternateRepresentationTests: XCTestCase {
             }
             """
         }
-        
+
         XCTAssertEqual(diagnostics.count, 2, "Unexpected number of problems: \(diagnostics.joined(separator: "\n"))")
-        XCTAssertEqual(diagnostics, [
-            "1: note – org.swift.docc.Metadata.NoConfiguration",
-            "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"
-        ])
+        XCTAssertEqual(
+            diagnostics,
+            [
+                "1: note – org.swift.docc.Metadata.NoConfiguration",
+                "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"
+            ])
     }
 }

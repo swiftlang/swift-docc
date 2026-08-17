@@ -29,10 +29,12 @@ class CallToActionTests: XCTestCase {
             let callToAction = CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(callToAction)
             XCTAssertEqual(2, diagnostics.count)
-            XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
-                "org.swift.docc.\(CallToAction.self).missingLabel",
-                "org.swift.docc.\(CallToAction.self).missingLink",
-            ])
+            XCTAssertEqual(
+                diagnostics.map(\.identifier).sorted(),
+                [
+                    "org.swift.docc.\(CallToAction.self).missingLabel",
+                    "org.swift.docc.\(CallToAction.self).missingLink",
+                ])
         }
     }
 
@@ -145,7 +147,7 @@ class CallToActionTests: XCTestCase {
             XCTAssertEqual(CallToAction.directiveName, directive.name)
             let callToAction = try XCTUnwrap(CallToAction(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics))
             XCTAssert(diagnostics.isEmpty)
-            
+
             XCTAssertEqual(callToAction.buttonLabel(for: nil), expectedDefaultLabel)
             XCTAssertEqual(callToAction.buttonLabel(for: .article), expectedDefaultLabel)
             XCTAssertEqual(callToAction.buttonLabel(for: .sampleCode), expectedSampleCodeLabel)
@@ -163,7 +165,7 @@ class CallToActionTests: XCTestCase {
                 expectedDefaultLabel = "Visit"
                 expectedSampleCodeLabel = "View Source"
             }
-            
+
             validLabels.append(("purpose: \(buttonKind)", expectedDefaultLabel, expectedSampleCodeLabel))
             // Ensure that adding a label argument overrides the kind's default label
             validLabels.append(("purpose: \(buttonKind), label: \"Button\"", "Button", "Button"))

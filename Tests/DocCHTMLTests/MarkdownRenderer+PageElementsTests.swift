@@ -23,9 +23,9 @@ import DocCCommon
 import SymbolKit
 
 extension DocCHTMLTestSuites {
-struct MarkdownRenderer_PageElementsTests {
-    // swift-format-ignore
-    @Test(arguments: RenderGoal.allCases)
+    struct MarkdownRenderer_PageElementsTests {
+        // swift-format-ignore
+        @Test(arguments: RenderGoal.allCases)
     func renderingBreadcrumbs(goal: RenderGoal) {
         let elements = [
             LinkedElement(
@@ -86,9 +86,9 @@ struct MarkdownRenderer_PageElementsTests {
             """)
         }
     }
-    
-    // swift-format-ignore
-    @Test(arguments: RenderGoal.allCases)
+
+        // swift-format-ignore
+        @Test(arguments: RenderGoal.allCases)
     func renderingAvailability(goal: RenderGoal) {
         let availability = makeRenderer(goal: goal).availability([
             .init(name: "First",  introduced: "1.2", deprecated: "3.4", isBeta: false),
@@ -120,184 +120,199 @@ struct MarkdownRenderer_PageElementsTests {
             """)
         }
     }
-    
-    @Test(arguments: RenderGoal.allCases)
-    func renderingSingleLanguageParameters(goal: RenderGoal) {
-        let parameters = makeRenderer(goal: goal).parameters([
-            .swift: [
-                .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
-                .init(name: "Second", content: parseMarkup(string: """
-                Some **other** _formatted_ description
 
-                That spans two paragraphs
-                """)),
-            ]
-        ])
-        
-        switch goal {
-        case .richness:
-            parameters.assertMatches(prettyFormatted: true, expected: """
-            <section id="Parameters">
-              <h2>
-                <a href="#Parameters">Parameters</a>
-              </h2>
-              <dl>
-                <dt>First</dt>
-                <dd>
-                  <p>
-                    Some <i>formatted</i> description with <code>code</code>
-                  </p>
-                </dd>
-                <dt>Second</dt>
-                <dd>
-                  <p>
-                    Some <b>other</b> <i>formatted</i> description
-                  </p>
-                  <p>That spans two paragraphs</p>
-                </dd>
-              </dl>
-            </section>
-            """)
-        case .conciseness:
-            parameters.assertMatches(prettyFormatted: true, expected: """
-            <h2>Parameters</h2>
-            <dl>
-              <dt>First</dt>
-              <dd>
-                <p>
-                  Some <i>formatted</i> description with <code>code</code>
-                </p>
-              </dd>
-              <dt>Second</dt>
-              <dd>
-                <p>
-                  Some <b>other</b> <i>formatted</i> description
-                </p>
-                <p>That spans two paragraphs</p>
-              </dd>
-            </dl>
-            """)
+        @Test(arguments: RenderGoal.allCases)
+        func renderingSingleLanguageParameters(goal: RenderGoal) {
+            let parameters = makeRenderer(goal: goal).parameters([
+                .swift: [
+                    .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
+                    .init(
+                        name: "Second",
+                        content: parseMarkup(
+                            string: """
+                                Some **other** _formatted_ description
+
+                                That spans two paragraphs
+                                """)),
+                ]
+            ])
+
+            switch goal {
+            case .richness:
+                parameters.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <section id="Parameters">
+                          <h2>
+                            <a href="#Parameters">Parameters</a>
+                          </h2>
+                          <dl>
+                            <dt>First</dt>
+                            <dd>
+                              <p>
+                                Some <i>formatted</i> description with <code>code</code>
+                              </p>
+                            </dd>
+                            <dt>Second</dt>
+                            <dd>
+                              <p>
+                                Some <b>other</b> <i>formatted</i> description
+                              </p>
+                              <p>That spans two paragraphs</p>
+                            </dd>
+                          </dl>
+                        </section>
+                        """)
+            case .conciseness:
+                parameters.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <h2>Parameters</h2>
+                        <dl>
+                          <dt>First</dt>
+                          <dd>
+                            <p>
+                              Some <i>formatted</i> description with <code>code</code>
+                            </p>
+                          </dd>
+                          <dt>Second</dt>
+                          <dd>
+                            <p>
+                              Some <b>other</b> <i>formatted</i> description
+                            </p>
+                            <p>That spans two paragraphs</p>
+                          </dd>
+                        </dl>
+                        """)
+            }
         }
-    }
-    
-    @Test
-    func renderingLanguageSpecificParameters() {
-        let parameters = makeRenderer(goal: .richness).parameters([
-            .swift: [
-                .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
-                .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
-                .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
-            ],
-            .objectiveC: [
-                .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
-                .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
-                .init(name: "ObjectiveCOnly", content: parseMarkup(string: "Only available in Objective-C")),
-            ],
-        ])
-        parameters.assertMatches(prettyFormatted: true, expected: """
-        <section id="Parameters">
-          <h2>
-            <a href="#Parameters">Parameters</a>
-          </h2>
-          <dl>
-            <dt>FirstCommon</dt>
-            <dd>
-              <p>Available in both languages</p>
-            </dd>
-            <dt class="swift-only">SwiftOnly</dt>
-            <dd class="swift-only">
-              <p>Only available in Swift</p>
-            </dd>
-            <dt>SecondCommon</dt>
-            <dd>
-              <p>Also available in both languages</p>
-            </dd>
-            <dt class="occ-only">ObjectiveCOnly</dt>
-            <dd class="occ-only">
-              <p>Only available in Objective-C</p>
-            </dd>
-          </dl>
-        </section>
-        """)
-    }
-    
-    @Test
-    func renderingManyLanguageSpecificParameters() {
-        let parameters = makeRenderer(goal: .richness).parameters([
-            .swift: [
-                .init(name: "First", content: parseMarkup(string: "Some description")),
-            ],
-            .objectiveC: [
-                .init(name: "Second", content: parseMarkup(string: "Some description")),
-            ],
-            .data: [
-                .init(name: "Third", content: parseMarkup(string: "Some description")),
-            ],
-        ])
-        parameters.assertMatches(prettyFormatted: true, expected: """
-        <section id="Parameters">
-          <h2>
-            <a href="#Parameters">Parameters</a>
-          </h2>
-          <dl class="swift-only">
-            <dt>First</dt>
-            <dd>
-              <p>Some description</p>
-            </dd>
-          </dl>
-          <dl class="data-only">
-            <dt>Third</dt>
-            <dd>
-              <p>Some description</p>
-            </dd>
-          </dl>
-          <dl class="occ-only">
-            <dt>Second</dt>
-            <dd>
-              <p>Some description</p>
-            </dd>
-          </dl>
-        </section>
-        """)
-    }
-    
-    @Test(arguments: RenderGoal.allCases)
-    func renderingSingleLanguageReturnSections(goal: RenderGoal) {
-        let returns = makeRenderer(goal: goal).returns([
-            .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
-        ])
-        
-        let commonHTML = """
-        <p>First paragraph</p>
-        <p>Second paragraph</p>
-        """
-        
-        switch goal {
-        case .richness:
-            returns.assertMatches(prettyFormatted: true, expected: """
-            <section id="Return-Value">
-              <h2>
-                <a href="#Return-Value">Return Value</a>
-              </h2>
-            \(commonHTML.indenting(depth: 1))
-            </section>
-            """)
-        case .conciseness:
-            returns.assertMatches(prettyFormatted: true, expected: """
-            <h2>Return Value</h2>
-            \(commonHTML)
-            """)
+
+        @Test
+        func renderingLanguageSpecificParameters() {
+            let parameters = makeRenderer(goal: .richness).parameters([
+                .swift: [
+                    .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
+                    .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
+                    .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
+                ],
+                .objectiveC: [
+                    .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
+                    .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
+                    .init(name: "ObjectiveCOnly", content: parseMarkup(string: "Only available in Objective-C")),
+                ],
+            ])
+            parameters.assertMatches(
+                prettyFormatted: true,
+                expected: """
+                    <section id="Parameters">
+                      <h2>
+                        <a href="#Parameters">Parameters</a>
+                      </h2>
+                      <dl>
+                        <dt>FirstCommon</dt>
+                        <dd>
+                          <p>Available in both languages</p>
+                        </dd>
+                        <dt class="swift-only">SwiftOnly</dt>
+                        <dd class="swift-only">
+                          <p>Only available in Swift</p>
+                        </dd>
+                        <dt>SecondCommon</dt>
+                        <dd>
+                          <p>Also available in both languages</p>
+                        </dd>
+                        <dt class="occ-only">ObjectiveCOnly</dt>
+                        <dd class="occ-only">
+                          <p>Only available in Objective-C</p>
+                        </dd>
+                      </dl>
+                    </section>
+                    """)
         }
-    }
-    
-    // swift-format-ignore
-    @Test(arguments: RenderGoal.allCases)
+
+        @Test
+        func renderingManyLanguageSpecificParameters() {
+            let parameters = makeRenderer(goal: .richness).parameters([
+                .swift: [
+                    .init(name: "First", content: parseMarkup(string: "Some description"))
+                ],
+                .objectiveC: [
+                    .init(name: "Second", content: parseMarkup(string: "Some description"))
+                ],
+                .data: [
+                    .init(name: "Third", content: parseMarkup(string: "Some description"))
+                ],
+            ])
+            parameters.assertMatches(
+                prettyFormatted: true,
+                expected: """
+                    <section id="Parameters">
+                      <h2>
+                        <a href="#Parameters">Parameters</a>
+                      </h2>
+                      <dl class="swift-only">
+                        <dt>First</dt>
+                        <dd>
+                          <p>Some description</p>
+                        </dd>
+                      </dl>
+                      <dl class="data-only">
+                        <dt>Third</dt>
+                        <dd>
+                          <p>Some description</p>
+                        </dd>
+                      </dl>
+                      <dl class="occ-only">
+                        <dt>Second</dt>
+                        <dd>
+                          <p>Some description</p>
+                        </dd>
+                      </dl>
+                    </section>
+                    """)
+        }
+
+        @Test(arguments: RenderGoal.allCases)
+        func renderingSingleLanguageReturnSections(goal: RenderGoal) {
+            let returns = makeRenderer(goal: goal).returns([
+                .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
+            ])
+
+            let commonHTML = """
+                <p>First paragraph</p>
+                <p>Second paragraph</p>
+                """
+
+            switch goal {
+            case .richness:
+                returns.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <section id="Return-Value">
+                          <h2>
+                            <a href="#Return-Value">Return Value</a>
+                          </h2>
+                        \(commonHTML.indenting(depth: 1))
+                        </section>
+                        """)
+            case .conciseness:
+                returns.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <h2>Return Value</h2>
+                        \(commonHTML)
+                        """)
+            }
+        }
+
+        // swift-format-ignore
+        @Test(arguments: RenderGoal.allCases)
     func renderingLanguageSpecificReturnSections(goal: RenderGoal) {
         let returns = makeRenderer(goal: goal).returns([
             .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
             .objectiveC: parseMarkup(string: "Other language's paragraph"),
         ])
-        
+
         let commonHTML = """
         <p class="swift-only">
           First paragraph
@@ -309,7 +324,7 @@ struct MarkdownRenderer_PageElementsTests {
           Other language’s paragraph
         </p>
         """
-        
+
         switch goal {
         case .richness:
             returns.assertMatches(prettyFormatted: true, expected: """
@@ -328,15 +343,15 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
 
-    // swift-format-ignore
-    @Test(arguments: RenderGoal.allCases)
+        // swift-format-ignore
+        @Test(arguments: RenderGoal.allCases)
     func renderingSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
             "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
         ]
-        
+
         let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
             .swift:  [
                 .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
@@ -380,16 +395,16 @@ struct MarkdownRenderer_PageElementsTests {
             """)
         }
     }
-    
-    // swift-format-ignore
-    @Test
+
+        // swift-format-ignore
+        @Test
     func prettyPrintsSwiftDeclarations() {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
             "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
         ]
-        
+
         // func withUnsafeTemporaryAllocation<T, R, E>(of type: T.Type, capacity: Int, _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> R) throws(E) -> R where E : Error, T : ~Copyable, R : ~Copyable
         let functionDeclaration = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
             .swift:  [
@@ -445,7 +460,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .text,              spelling: " : ~Copyable",   preciseIdentifier: nil),
             ]
         ])
-        
+
         #expect(functionDeclaration.plainTextForTesting == """
         func withUnsafeTemporaryAllocation<T, R, E>(
             of type: T.Type,
@@ -460,7 +475,7 @@ struct MarkdownRenderer_PageElementsTests {
             _ <span class="internalParameter">body</span>: (<span class="typeIdentifier">UnsafeMutableBufferPointer</span>&lt;<span class="typeIdentifier">T</span>>) <span class="keyword">throws</span>(<span class="typeIdentifier">E</span>) -> <span class="typeIdentifier">R</span>
         ) <span class="keyword">throws</span>(<span class="typeIdentifier">E</span>) -> <span class="typeIdentifier">R</span> <span class="keyword">where</span> <span class="typeIdentifier">E</span> : <span class="typeIdentifier">Error</span>, <span class="typeIdentifier">T</span> : ~Copyable, <span class="typeIdentifier">R</span> : ~Copyable</code></pre>
         """)
-        
+
         // @attached(accessor) @attached(peer, names: prefixed(`$`)) macro TaskLocal()
         let macroDeclaration = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
             .swift:  [
@@ -474,7 +489,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .text,       spelling: "()",           preciseIdentifier: nil),
             ]
         ])
-        
+
         #expect(macroDeclaration.plainTextForTesting == """
         @attached(accessor) @attached(peer, names: prefixed(`$`))
         macro TaskLocal()
@@ -501,7 +516,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .text,              spelling: ")",              preciseIdentifier: nil),
             ]
         ])
-        
+
         #expect(macroDeclaration2.plainTextForTesting == """
         @freestanding(declaration)
         macro warning(_ message: String)
@@ -511,9 +526,9 @@ struct MarkdownRenderer_PageElementsTests {
         <span class="keyword">macro</span> warning(_ <span class="internalParameter">message</span>: <span class="typeIdentifier">String</span>)</code></pre>
         """)
     }
-    
-    // swift-format-ignore
-    @Test(arguments: RenderGoal.allCases)
+
+        // swift-format-ignore
+        @Test(arguments: RenderGoal.allCases)
     func renderingLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
@@ -521,7 +536,7 @@ struct MarkdownRenderer_PageElementsTests {
             "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
             "error-parameter-symbol-id":  URL(string: "/documentation/Foundation/NSError/index.html")!,
         ]
-        
+
         let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
             .swift:  [
                 .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
@@ -544,7 +559,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .text,              spelling: " -> ",        preciseIdentifier: nil),
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
             ],
-            
+
             .objectiveC:  [
                 .init(kind: .text,              spelling: "- (",         preciseIdentifier: nil),
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
@@ -591,16 +606,16 @@ struct MarkdownRenderer_PageElementsTests {
                                        andSecond: (<a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>) <span class="internalParameter">second</span>
                                            error: (<a class="typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a> **) <span class="internalParameter">error</span>;</code></pre>
             """)
-            
+
         case .conciseness:
             declaration.assertMatches(prettyFormatted: true, expected: """
             <pre><code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws -> ReturnValue</code></pre>
             """)
         }
     }
-    
-    // swift-format-ignore
-    @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
+
+        // swift-format-ignore
+        @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
     func renderingSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
         let elements = [
             LinkedElement(
@@ -651,7 +666,7 @@ struct MarkdownRenderer_PageElementsTests {
                 abstract: nil
             ),
         ]
-        
+
         let renderer = makeRenderer(goal: goal, elementsToReturn: elements)
         let expectedSectionID = expectedGroupTitle.replacingOccurrences(of: " ", with: "-")
         let groupedSection = renderer.groupedSection(named: expectedGroupTitle, groups: [
@@ -663,7 +678,7 @@ struct MarkdownRenderer_PageElementsTests {
                 ])
             ]
         ])
-        
+
         switch goal {
         case .richness:
             groupedSection.assertMatches(prettyFormatted: true, expected: """
@@ -715,7 +730,7 @@ struct MarkdownRenderer_PageElementsTests {
                       <span class="decorator">(</span>
                       <span class="identifier">with</span>
                       <span class="decorator">
-                        :<wbr> Int, 
+                        :<wbr> Int,
                       </span>
                       <span class="identifier">and</span>
                       <span class="decorator">
@@ -764,119 +779,134 @@ struct MarkdownRenderer_PageElementsTests {
             """)
         }
     }
-    
-    @Test(arguments: RenderGoal.allCases)
-    func testEmptyDiscussionSection(goal: RenderGoal) {
-        let renderer = makeRenderer(goal: goal)
-        let discussion = renderer.discussion([], fallbackSectionName: "Fallback")
-        #expect(discussion.isEmpty)
-    }
-    
-    @Test(arguments: RenderGoal.allCases)
-    func testDiscussionSectionWithoutHeading(goal: RenderGoal) {
-        let renderer = makeRenderer(goal: goal)
-        let discussion = renderer.discussion(parseMarkup(string: """
-        First paragraph
-        
-        Second paragraph
-        """), fallbackSectionName: "Fallback")
-        
-        let commonHTML = """
-        <p>First paragraph</p>
-        <p>Second paragraph</p>
-        """
-        
-        switch goal {
-        case .richness:
-            discussion.assertMatches(prettyFormatted: true, expected: """
-            <section id="Fallback">
-              <h2>
-                <a href="#Fallback">Fallback</a>
-              </h2>
-            \(commonHTML.indenting(depth: 1))
-            </section>
-            """)
-        case .conciseness:
-            discussion.assertMatches(prettyFormatted: true, expected: """
-            <h2>Fallback</h2>
-            \(commonHTML)
-            """)
+
+        @Test(arguments: RenderGoal.allCases)
+        func testEmptyDiscussionSection(goal: RenderGoal) {
+            let renderer = makeRenderer(goal: goal)
+            let discussion = renderer.discussion([], fallbackSectionName: "Fallback")
+            #expect(discussion.isEmpty)
+        }
+
+        @Test(arguments: RenderGoal.allCases)
+        func testDiscussionSectionWithoutHeading(goal: RenderGoal) {
+            let renderer = makeRenderer(goal: goal)
+            let discussion = renderer.discussion(
+                parseMarkup(
+                    string: """
+                        First paragraph
+
+                        Second paragraph
+                        """), fallbackSectionName: "Fallback")
+
+            let commonHTML = """
+                <p>First paragraph</p>
+                <p>Second paragraph</p>
+                """
+
+            switch goal {
+            case .richness:
+                discussion.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <section id="Fallback">
+                          <h2>
+                            <a href="#Fallback">Fallback</a>
+                          </h2>
+                        \(commonHTML.indenting(depth: 1))
+                        </section>
+                        """)
+            case .conciseness:
+                discussion.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <h2>Fallback</h2>
+                        \(commonHTML)
+                        """)
+            }
+        }
+
+        @Test(arguments: RenderGoal.allCases)
+        func testDiscussionSectionWithHeading(goal: RenderGoal) {
+            let renderer = makeRenderer(goal: goal)
+            let discussion = renderer.discussion(
+                parseMarkup(
+                    string: """
+                        ## Some Heading
+
+                        First paragraph
+
+                        Second paragraph
+                        """), fallbackSectionName: "Fallback")
+
+            let commonHTML = """
+                <p>First paragraph</p>
+                <p>Second paragraph</p>
+                """
+
+            switch goal {
+            case .richness:
+                discussion.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <section id="Some-Heading">
+                          <h2>
+                            <a href="#Some-Heading">Some Heading</a>
+                          </h2>
+                        \(commonHTML.indenting(depth: 1))
+                        </section>
+                        """)
+            case .conciseness:
+                discussion.assertMatches(
+                    prettyFormatted: true,
+                    expected: """
+                        <h2>Some Heading</h2>
+                        \(commonHTML)
+                        """)
+            }
+        }
+
+        // MARK: -
+
+        private func makeRenderer(
+            goal: RenderGoal,
+            elementsToReturn: [LinkedElement] = [],
+            pathsToReturn: [String: URL] = [:],
+            assetsToReturn: [String: LinkedAsset] = [:],
+            fallbackLinkTextsToReturn: [String: String] = [:]
+        ) -> MarkdownRenderer<some LinkProvider> {
+            let path = URL(string: "/documentation/ModuleName/Something/ThisPage/index.html")!
+
+            var elementsByURL = [
+                path: LinkedElement(
+                    path: path,
+                    names: .single(.symbol("ThisPage")),
+                    subheadings: .single(
+                        .symbol([
+                            .init(text: "class ", kind: .decorator),
+                            .init(text: "ThisPage", kind: .identifier),
+                        ])),
+                    abstract: nil
+                )
+            ]
+            for element in elementsToReturn {
+                elementsByURL[element.path] = element
+            }
+
+            return MarkdownRenderer(
+                path: path, goal: goal,
+                linkProvider: MultiValueLinkProvider(
+                    elementsToReturn: elementsByURL,
+                    pathsToReturn: pathsToReturn,
+                    assetsToReturn: assetsToReturn,
+                    fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
+                ))
+        }
+
+        private func parseMarkup(string: String) -> [any Markup] {
+            let document = Document(parsing: string, options: [.parseBlockDirectives, .parseSymbolLinks])
+            return Array(document.children)
         }
     }
-    
-    @Test(arguments: RenderGoal.allCases)
-    func testDiscussionSectionWithHeading(goal: RenderGoal) {
-        let renderer = makeRenderer(goal: goal)
-        let discussion = renderer.discussion(parseMarkup(string: """
-        ## Some Heading
-        
-        First paragraph
-        
-        Second paragraph
-        """), fallbackSectionName: "Fallback")
-        
-        let commonHTML = """
-        <p>First paragraph</p>
-        <p>Second paragraph</p>
-        """
-        
-        switch goal {
-        case .richness:
-            discussion.assertMatches(prettyFormatted: true, expected: """
-            <section id="Some-Heading">
-              <h2>
-                <a href="#Some-Heading">Some Heading</a>
-              </h2>
-            \(commonHTML.indenting(depth: 1))
-            </section>
-            """)
-        case .conciseness:
-            discussion.assertMatches(prettyFormatted: true, expected: """
-            <h2>Some Heading</h2>
-            \(commonHTML)
-            """)
-        }
-    }
-    
-    // MARK: -
-    
-    private func makeRenderer(
-        goal: RenderGoal,
-        elementsToReturn: [LinkedElement] = [],
-        pathsToReturn: [String: URL] = [:],
-        assetsToReturn: [String: LinkedAsset] = [:],
-        fallbackLinkTextsToReturn: [String: String] = [:]
-    ) -> MarkdownRenderer<some LinkProvider> {
-        let path = URL(string: "/documentation/ModuleName/Something/ThisPage/index.html")!
-        
-        var elementsByURL = [
-            path: LinkedElement(
-                path: path,
-                names: .single( .symbol("ThisPage") ),
-                subheadings: .single( .symbol([
-                    .init(text: "class ", kind: .decorator),
-                    .init(text: "ThisPage", kind: .identifier),
-                ])),
-                abstract: nil
-            )
-        ]
-        for element in elementsToReturn {
-            elementsByURL[element.path] = element
-        }
-        
-        return MarkdownRenderer(path: path, goal: goal, linkProvider: MultiValueLinkProvider(
-            elementsToReturn: elementsByURL,
-            pathsToReturn: pathsToReturn,
-            assetsToReturn: assetsToReturn,
-            fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
-        ))
-    }
-    
-    private func parseMarkup(string: String) -> [any Markup] {
-        let document = Document(parsing: string, options: [.parseBlockDirectives, .parseSymbolLinks])
-        return Array(document.children)
-    }
-}
 }
 
 struct MultiValueLinkProvider: LinkProvider {
@@ -884,17 +914,17 @@ struct MultiValueLinkProvider: LinkProvider {
     func element(for path: URL) -> LinkedElement? {
         elementsToReturn[path]
     }
-    
+
     var pathsToReturn: [String: URL]
     func pathForSymbolID(_ usr: String) -> URL? {
         pathsToReturn[usr]
     }
-    
+
     var assetsToReturn: [String: LinkedAsset]
     func assetNamed(_ assetName: String) -> LinkedAsset? {
         assetsToReturn[assetName]
     }
-    
+
     var fallbackLinkTextsToReturn: [String: String]
     func fallbackLinkText(linkString: String) -> String {
         fallbackLinkTextsToReturn[linkString] ?? linkString

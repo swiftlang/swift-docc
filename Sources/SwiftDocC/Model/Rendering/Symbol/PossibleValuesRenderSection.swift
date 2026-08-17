@@ -26,13 +26,13 @@ public struct PossibleValuesRenderSection: RenderSection, Equatable {
         /// Details content, if any.
         let content: [RenderBlockContent]?
     }
-    
+
     public var kind: RenderSectionKind = .possibleValues
     /// The title for the section, `nil` by default.
     public var title: String?
     /// The list of named values.
     public var values: [NamedValue]
-    
+
     /// Creates a new possible values section.
     /// - Parameter title: The section title.
     /// - Parameter values: The list of values for this section.
@@ -40,20 +40,20 @@ public struct PossibleValuesRenderSection: RenderSection, Equatable {
         self.title = title
         self.values = values
     }
-    
+
     // MARK: - Codable
-    
+
     /// The list of keys you use to encode or decode this section.
     public enum CodingKeys: String, CodingKey {
         case kind, title, values
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         values = try container.decode([NamedValue].self, forKey: .values)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
@@ -74,7 +74,7 @@ extension PossibleValuesRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this PossibleValuesRenderSection is similar enough to the given one.
     func isSimilar(to other: PossibleValuesRenderSection) -> Bool {
         return self.title == other.title || self.values == other.values
@@ -92,7 +92,7 @@ extension PossibleValuesRenderSection.NamedValue: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this NamedValue is similar enough to the given one.
     func isSimilar(to other: PossibleValuesRenderSection.NamedValue) -> Bool {
         return self.name == other.name || self.content == other.content

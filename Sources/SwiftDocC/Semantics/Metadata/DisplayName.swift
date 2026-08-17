@@ -28,31 +28,31 @@ public import Markdown
 public final class DisplayName: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.7"
     public let originalMarkup: BlockDirective
-    
+
     /// The custom display name for this symbol.
     @DirectiveArgumentWrapped(name: .unnamed)
     public var name: String
-    
+
     /// The style of the display name for this symbol.
     ///
     /// Defaults to ``Style/conceptual``.
     @DirectiveArgumentWrapped
     public var style: Style = .conceptual
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "style" : \DisplayName._style,
         "name"  : \DisplayName._name,
     ]
-    
+
     /// The style of the display name for this symbol.
     public enum Style: String, CaseIterable, DirectiveArgumentValueConvertible {
         case conceptual
-        
+
         /// Completely override any in-source content with the content from the documentation-extension.
         case symbol
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup

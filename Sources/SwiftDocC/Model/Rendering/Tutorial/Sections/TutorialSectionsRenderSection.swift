@@ -13,10 +13,10 @@ import Foundation
 /// A section of a Tutorial page.
 public struct TutorialSectionsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .tasks
-    
+
     /// The tasks in the section.
     public var tasks: [Section]
-    
+
     /// A render-friendly representation of a tutorial section.
     public struct Section: TextIndexing, Equatable {
         /// The title of the section.
@@ -48,7 +48,7 @@ public struct TutorialSectionsRenderSection: RenderSection, Equatable {
             self.anchor = anchor
         }
     }
-    
+
     /// Creates a new section for a tutorial from a list of child sections.
     ///
     /// - Parameter sections: A list of child sections.
@@ -64,7 +64,7 @@ extension TutorialSectionsRenderSection.Section: Codable {
         case anchor
         case title
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
@@ -72,7 +72,7 @@ extension TutorialSectionsRenderSection.Section: Codable {
         stepsSection = try container.decode([RenderBlockContent].self, forKey: .stepsSection)
         anchor = try container.decode(String.self, forKey: .anchor)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(title, forKey: .title)

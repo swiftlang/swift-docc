@@ -21,7 +21,7 @@ struct LinkTitleResolver {
     ///
     /// This value will be used if the title can only be determined by semantically parsing the documentation node's content.
     var source: URL?
-    
+
     /// Resolves the title that's appropriate for presentation as a link title for a given documentation node.
     ///
     /// Depending on the page type, semantic parsing may be necessary to determine the title of the page.
@@ -43,11 +43,11 @@ struct LinkTitleResolver {
             default: break
             }
         }
-        
+
         if case let .conceptual(name) = page.name {
             return .init(defaultVariantValue: name)
         }
-        
+
         if let symbol = (page.semantic as? Symbol) {
             return symbol.proseTitleVariants
         }
@@ -55,11 +55,11 @@ struct LinkTitleResolver {
         if let symbol = page.symbol {
             return .init(defaultVariantValue: symbol.names.prose ?? symbol.names.title)
         }
-        
+
         if let article = page.semantic as? Article, let title = article.title?.plainText {
             return .init(defaultVariantValue: title)
         }
-        
+
         return nil
     }
 }

@@ -42,7 +42,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         consumer.receive([diagnostic])
         XCTAssertEqual(logger.output, "warning: Test diagnostic [test-identifier]\n")
     }
-    
+
     func testDisplaysGroupIdentifier() {
         let diagnostic = Diagnostic(source: nil, severity: .warning, range: nil, identifier: "test-identifier", groupIdentifier: "test-group-identifier", summary: "Test diagnostic")
 
@@ -52,7 +52,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         consumer.receive([diagnostic])
         XCTAssertEqual(logger.output, "warning: Test diagnostic [test-group-identifier]\n")
     }
-    
+
     func testDoesNotDisplayNotYetModernizedIdentifier() {
         let diagnostic = Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.test-identifier", summary: "Test diagnostic")
 
@@ -70,13 +70,15 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
         consumer.receive([diagnostic, diagnostic])
-        XCTAssertEqual(logger.output, """
-        warning: Test diagnostic [test-identifier]
-        warning: Test diagnostic [test-identifier]
+        XCTAssertEqual(
+            logger.output,
+            """
+            warning: Test diagnostic [test-identifier]
+            warning: Test diagnostic [test-identifier]
 
-        """)
+            """)
     }
-    
+
     func testEmitsFixits() {
         let source = URL(string: "/path/to/file.md")!
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
@@ -85,63 +87,69 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         let solutionSummary = "Test solution summary"
         let explanation = "Test diagnostic explanation."
         let expectedLocation = "/path/to/file.md:1:8"
-        
+
         let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
         let replacement = Solution.Replacement(range: replacementRange, replacement: "Replacement text")
-        
+
         do {
             let solution = Solution(summary: solutionSummary, replacements: [replacement])
             let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
-            
+
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([diagnostic])
-            XCTAssertEqual(logger.output, """
-            \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
-            \(explanation)
-            \(source):1:8-1:24: fixit: Replacement text
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
+                \(explanation)
+                \(source):1:8-1:24: fixit: Replacement text
+
+                """)
         }
-        
+
         do {
             let firstSolutionSummary = "Test first solution summary!"  // end with punctuation
-            let secondSolutionSummary = "Test second solution summary" // end without punctuation
+            let secondSolutionSummary = "Test second solution summary"  // end without punctuation
             let firstSolution = Solution(summary: firstSolutionSummary, replacements: [replacement])
             let secondSolution = Solution(summary: secondSolutionSummary, replacements: [])
-            
+
             let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [firstSolution, secondSolution])
-            
+
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([diagnostic])
-            XCTAssertEqual(logger.output, """
-            \(expectedLocation): error: \(summary) [\(identifier)] \(firstSolutionSummary) \(secondSolutionSummary).
-            \(explanation)
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \(expectedLocation): error: \(summary) [\(identifier)] \(firstSolutionSummary) \(secondSolutionSummary).
+                \(explanation)
+
+                """)
         }
-        
+
         do {
             let firstInsertRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 8, source: source)
             let secondInsertRange = SourceLocation(line: 1, column: 14, source: source)..<SourceLocation(line: 1, column: 14, source: source)
             let firstReplacement = Solution.Replacement(range: firstInsertRange, replacement: "ABC")
             let secondReplacement = Solution.Replacement(range: secondInsertRange, replacement: "abc")
-            
+
             let solution = Solution(summary: solutionSummary, replacements: [firstReplacement, secondReplacement])
-            
+
             let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
-            
+
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([diagnostic])
-            XCTAssertEqual(logger.output, """
-            \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
-            \(explanation)
-            \(source):1:8-1:8: fixit: ABC
-            \(source):1:14-1:14: fixit: abc
-            
-            """)
+            XCTAssertEqual(
+                logger.output,
+                """
+                \(expectedLocation): error: \(summary) [\(identifier)] \(solutionSummary).
+                \(explanation)
+                \(source):1:8-1:8: fixit: ABC
+                \(source):1:14-1:14: fixit: abc
+
+                """)
         }
     }
 }

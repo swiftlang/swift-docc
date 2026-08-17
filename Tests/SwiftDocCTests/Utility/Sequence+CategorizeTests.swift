@@ -25,7 +25,7 @@ class Sequence_CategorizeTests: XCTestCase {
         XCTAssertTrue(matches.isEmpty)
         XCTAssertTrue(remainder.isEmpty)
     }
-    
+
     func testOneMatch() {
         let orig = [2]
         let (matches, remainder) = orig.categorize(where: isEven)
@@ -35,7 +35,7 @@ class Sequence_CategorizeTests: XCTestCase {
             XCTAssertEqual(2, x)
         }
     }
-    
+
     func testOneNonMatch() {
         let orig = [1]
         let (matches, remainder) = orig.categorize(where: isEven)
@@ -45,7 +45,7 @@ class Sequence_CategorizeTests: XCTestCase {
             XCTAssertEqual(1, x)
         }
     }
-    
+
     func testMany() {
         let orig = [1, 2, 3, 4]
         let (matches, remainder) = orig.categorize(where: isEven)

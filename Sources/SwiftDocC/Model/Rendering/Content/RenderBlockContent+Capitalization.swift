@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-
 extension RenderInlineContent {
     /// Capitalize the first word for normal text content, as well as content that has emphasis or strong applied.
     func capitalizingFirstWord() -> Self {
@@ -28,7 +27,7 @@ extension RenderInlineContent {
 extension [RenderBlockContent] {
     func capitalizingFirstWord() -> Self {
         guard let first else { return [] }
-        
+
         return [first.capitalizingFirstWord()] + dropFirst()
     }
 }
@@ -36,11 +35,10 @@ extension [RenderBlockContent] {
 extension [RenderInlineContent] {
     func capitalizingFirstWord() -> Self {
         guard let first else { return [] }
-        
+
         return [first.capitalizingFirstWord()] + dropFirst()
     }
 }
-
 
 extension RenderBlockContent {
     /// Capitalize the first word for paragraphs, asides, headings, and small content.
@@ -77,4 +75,3 @@ extension RenderBlockContent.Small {
         return .init(inlineContent: self.inlineContent.capitalizingFirstWord())
     }
 }
-

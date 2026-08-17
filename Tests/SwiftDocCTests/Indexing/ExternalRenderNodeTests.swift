@@ -105,7 +105,7 @@ class ExternalRenderNodeTests: XCTestCase {
         )
         return externalResolver
     }
-        
+
     func testExternalRenderNode() async throws {
         let externalResolver = generateExternalResolver()
         let (_, bundle, context) = try await testBundleAndContext(
@@ -114,11 +114,11 @@ class ExternalRenderNodeTests: XCTestCase {
         ) { url in
             let mixedLanguageFrameworkExtension = """
                 # ``MixedLanguageFramework``
-                
+
                 This symbol has a Swift and Objective-C variant.
 
                 ## Topics
-                
+
                 ### External Reference
 
                 - <doc://com.test.external/path/to/external/swiftArticle>
@@ -128,12 +128,12 @@ class ExternalRenderNodeTests: XCTestCase {
                 """
             try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
         }
-        
+
         let externalRenderNodes = context.externalCache.valuesByReference.values.map {
             ExternalRenderNode(externalEntity: $0, bundleIdentifier: bundle.id)
         }.sorted(by: \.titleVariants.defaultValue)
         XCTAssertEqual(externalRenderNodes.count, 4)
-        
+
         XCTAssertEqual(externalRenderNodes[0].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/path/to/external/objCArticle")
         XCTAssertEqual(externalRenderNodes[0].kind, .article)
         XCTAssertEqual(externalRenderNodes[0].symbolKind, nil)
@@ -147,14 +147,14 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(externalRenderNodes[1].role, "symbol")
         XCTAssertEqual(externalRenderNodes[1].externalIdentifier.identifier, "doc://com.test.external/path/to/external/objCSymbol")
         XCTAssertFalse(externalRenderNodes[1].isBeta)
-        
+
         XCTAssertEqual(externalRenderNodes[2].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/path/to/external/swiftArticle")
         XCTAssertEqual(externalRenderNodes[2].kind, .article)
         XCTAssertEqual(externalRenderNodes[2].symbolKind, nil)
         XCTAssertEqual(externalRenderNodes[2].role, "article")
         XCTAssertEqual(externalRenderNodes[2].externalIdentifier.identifier, "doc://com.test.external/path/to/external/swiftArticle")
         XCTAssertFalse(externalRenderNodes[2].isBeta)
-        
+
         XCTAssertEqual(externalRenderNodes[3].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/path/to/external/swiftSymbol")
         XCTAssertEqual(externalRenderNodes[3].kind, .symbol)
         XCTAssertEqual(externalRenderNodes[3].symbolKind, .class)
@@ -162,18 +162,18 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(externalRenderNodes[3].externalIdentifier.identifier, "doc://com.test.external/path/to/external/swiftSymbol")
         XCTAssertTrue(externalRenderNodes[3].isBeta)
     }
-    
+
     func testExternalRenderNodeVariantRepresentation() throws {
         let reference = ResolvedTopicReference(bundleID: "com.test.external", path: "/path/to/external/symbol", sourceLanguages: [.swift, .objectiveC])
-        
+
         // Variants for the title
         let swiftTitle = "Swift Symbol"
-        let objcTitle  = "Objective-C Symbol"
-        
+        let objcTitle = "Objective-C Symbol"
+
         // Variants for the fragments
         let swiftFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "symbol", kind: .identifier)]
-        let objcFragments:  [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
-        
+        let objcFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
+
         let externalEntity = LinkResolver.ExternalEntity(
             kind: .function,
             language: .swift,
@@ -196,14 +196,14 @@ class ExternalRenderNodeTests: XCTestCase {
             externalEntity: externalEntity,
             bundleIdentifier: "com.test.external"
         )
-        
+
         let swiftNavigatorExternalRenderNode = try XCTUnwrap(
             NavigatorExternalRenderNode(renderNode: externalRenderNode)
         )
         XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.title, swiftTitle)
         XCTAssertFalse(swiftNavigatorExternalRenderNode.metadata.isBeta)
         XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.fragments, swiftFragments)
-        
+
         let objcNavigatorExternalRenderNode = try XCTUnwrap(
             NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage(SourceLanguage.objectiveC.id))
         )
@@ -213,42 +213,58 @@ class ExternalRenderNodeTests: XCTestCase {
     }
 
     func testNavigatorWithExternalNodes() async throws {
-        let catalog = Folder(name: "ModuleName.docc", content: [
-            Folder(name: "swift", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
-                ]))
-            ]),
-            Folder(name: "clang", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
-                ]))
-            ]),
-            
-            InfoPlist(identifier: "some.custom.identifier"),
-            
-            TextFile(name: "ModuleName.md", utf8Content: """
-            # ``ModuleName``
-            
-            Curate a few external language-specific symbols and articles 
+        let catalog = Folder(
+            name: "ModuleName.docc",
+            content: [
+                Folder(
+                    name: "swift",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
+                                ]))
+                    ]),
+                Folder(
+                    name: "clang",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
+                                ]))
+                    ]),
 
-            ## Topics
+                InfoPlist(identifier: "some.custom.identifier"),
 
-            ### External Reference
+                TextFile(
+                    name: "ModuleName.md",
+                    utf8Content: """
+                        # ``ModuleName``
 
-            - <doc://com.test.external/path/to/external/swiftArticle>
-            - <doc://com.test.external/path/to/external/swiftSymbol>
-            - <doc://com.test.external/path/to/external/objCArticle>
-            - <doc://com.test.external/path/to/external/objCSymbol>
-            """),
-        ])
-        
+                        Curate a few external language-specific symbols and articles 
+
+                        ## Topics
+
+                        ### External Reference
+
+                        - <doc://com.test.external/path/to/external/swiftArticle>
+                        - <doc://com.test.external/path/to/external/swiftSymbol>
+                        - <doc://com.test.external/path/to/external/objCArticle>
+                        - <doc://com.test.external/path/to/external/objCSymbol>
+                        """),
+            ])
+
         var configuration = DocumentationContext.Configuration()
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
@@ -270,11 +286,10 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.count(where: \.isExternal), 0)
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
 
-        
         func externalTopLevelNodes(for language: SourceLanguage) -> [RenderIndex.Node]? {
             renderIndex.interfaceLanguages[language.id]?.first?.children?.filter(\.isExternal)
         }
-        
+
         // Verify that the curated external links are part of the index.
         let swiftExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .swift))
         XCTAssertEqual(swiftExternalNodes.count, 3)
@@ -316,42 +331,58 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(objcArticleInSwiftTree.isBeta, true)
         XCTAssertEqual(objcArticleInSwiftTree.type, "article")
     }
-    
+
     func testNavigatorWithExternalNodesWithNavigatorTitle() async throws {
-        let catalog = Folder(name: "ModuleName.docc", content: [
-            Folder(name: "swift", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
-                ]))
-            ]),
-            Folder(name: "clang", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
-                ]))
-            ]),
-            
-            InfoPlist(identifier: "some.custom.identifier"),
-            
-            TextFile(name: "ModuleName.md", utf8Content: """
-            # ``ModuleName``
-            
-            Curate a few external language-specific symbols and articles 
+        let catalog = Folder(
+            name: "ModuleName.docc",
+            content: [
+                Folder(
+                    name: "swift",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
+                                ]))
+                    ]),
+                Folder(
+                    name: "clang",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
+                                ]))
+                    ]),
 
-            ## Topics
+                InfoPlist(identifier: "some.custom.identifier"),
 
-            ### External Reference
+                TextFile(
+                    name: "ModuleName.md",
+                    utf8Content: """
+                        # ``ModuleName``
 
-            - <doc://com.test.external/path/to/external/navigatorTitleSwiftSymbol>
-            - <doc://com.test.external/path/to/external/navigatorTitleObjCSymbol>
-            """),
-        ])
-        
+                        Curate a few external language-specific symbols and articles 
+
+                        ## Topics
+
+                        ### External Reference
+
+                        - <doc://com.test.external/path/to/external/navigatorTitleSwiftSymbol>
+                        - <doc://com.test.external/path/to/external/navigatorTitleObjCSymbol>
+                        """),
+            ])
+
         var configuration = DocumentationContext.Configuration()
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
@@ -376,7 +407,7 @@ class ExternalRenderNodeTests: XCTestCase {
         func externalTopLevelNodes(for language: SourceLanguage) -> [RenderIndex.Node]? {
             renderIndex.interfaceLanguages[language.id]?.first?.children?.filter(\.isExternal)
         }
-        
+
         // Verify that the curated external links are part of the index.
         let swiftExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .swift))
         let objcExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .objectiveC))
@@ -392,44 +423,60 @@ class ExternalRenderNodeTests: XCTestCase {
     }
 
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
-        let catalog = Folder(name: "ModuleName.docc", content: [
-            Folder(name: "swift", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
-                ]))
-            ]),
-            Folder(name: "clang", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
-                ]))
-            ]),
-            
-            InfoPlist(identifier: "some.custom.identifier"),
-            
-            TextFile(name: "ModuleName.md", utf8Content: """
-            # ``ModuleName``
-            
-            Curate and link to a few external language-specific symbols and articles 
+        let catalog = Folder(
+            name: "ModuleName.docc",
+            content: [
+                Folder(
+                    name: "swift",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
+                                ]))
+                    ]),
+                Folder(
+                    name: "clang",
+                    content: [
+                        JSONFile(
+                            name: "ModuleName.symbols.json",
+                            content: makeSymbolGraph(
+                                moduleName: "ModuleName",
+                                symbols: [
+                                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
+                                ]))
+                    ]),
 
-            It also has an external reference which is not curated in the Topics section:
-            <doc://com.test.external/path/to/external/objCArticle>
-            <doc://com.test.external/path/to/external/swiftSymbol>
-            
-            ## Topics
-            
-            ### External Reference
-            
-            - <doc://com.test.external/path/to/external/swiftArticle>
-            - <doc://com.test.external/path/to/external/objCSymbol>
-            """),
-        ])
-        
+                InfoPlist(identifier: "some.custom.identifier"),
+
+                TextFile(
+                    name: "ModuleName.md",
+                    utf8Content: """
+                        # ``ModuleName``
+
+                        Curate and link to a few external language-specific symbols and articles 
+
+                        It also has an external reference which is not curated in the Topics section:
+                        <doc://com.test.external/path/to/external/objCArticle>
+                        <doc://com.test.external/path/to/external/swiftSymbol>
+
+                        ## Topics
+
+                        ### External Reference
+
+                        - <doc://com.test.external/path/to/external/swiftArticle>
+                        - <doc://com.test.external/path/to/external/objCSymbol>
+                        """),
+            ])
+
         var configuration = DocumentationContext.Configuration()
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
@@ -446,14 +493,14 @@ class ExternalRenderNodeTests: XCTestCase {
         }
         builder.finalize()
         let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
-        
+
         // Verify that there are no uncurated external links at the top level
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.count(where: \.isExternal), 0)
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
 
         // Verify that the curated external links are part of the index.
         let swiftExternalNodes = (renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
-        let objcExternalNodes  = (renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
+        let objcExternalNodes = (renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
         XCTAssertEqual(swiftExternalNodes.count, 1)
         XCTAssertEqual(objcExternalNodes.count, 2)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
@@ -464,15 +511,15 @@ class ExternalRenderNodeTests: XCTestCase {
 
     func testExternalRenderNodeVariantRepresentationWhenIsBeta() throws {
         let reference = ResolvedTopicReference(bundleID: "com.test.external", path: "/path/to/external/symbol", sourceLanguages: [.swift, .objectiveC])
-        
+
         // Variants for the title
         let swiftTitle = "Swift Symbol"
-        let objcTitle  = "Objective-C Symbol"
-        
+        let objcTitle = "Objective-C Symbol"
+
         // Variants for the fragments
         let swiftFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "symbol", kind: .identifier)]
-        let objcFragments:  [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
-        
+        let objcFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
+
         let externalEntity = LinkResolver.ExternalEntity(
             kind: .function,
             language: .swift,
@@ -496,7 +543,7 @@ class ExternalRenderNodeTests: XCTestCase {
             externalEntity: externalEntity,
             bundleIdentifier: "com.test.external"
         )
-        
+
         let swiftNavigatorExternalRenderNode = try XCTUnwrap(
             NavigatorExternalRenderNode(renderNode: externalRenderNode)
         )
@@ -514,43 +561,57 @@ class ExternalRenderNodeTests: XCTestCase {
         let externalResolver = ExternalReferenceResolverTests.TestExternalReferenceResolver()
         externalResolver.expectedReferencePath = "/documentation/testbundle/sampleclass"
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "Article.md", utf8Content: """
-            # Article
-            
-            This is an internal article with an external link <doc://\(externalResolver.bundleID)/documentation/TestBundle/SampleClass> which clashes with the curated local link.
-            
-            External links in content should not affect the navigator.
-                        
-            ## Topics
-            
-            - ``SampleClass``
-            """),
-            TextFile(name: "SampleClass.md", utf8Content: """
-            # ``SampleClass``
-            
-            This extends the documentation for this symbol.
-                        
-            ## Topics
-            
-            - <doc:ChildArticleA>
-            - <doc:ChildArticleB>
-            """),
-            TextFile(name: "ChildArticleA.md", utf8Content: """
-            # ChildArticleA
-            
-            A child article.
-            """),
-            TextFile(name: "ChildArticleB.md", utf8Content: """
-            # ChildArticleB
-            
-            A child article.
-            """),
-            // Symbol graph with a class that matches an external link path
-            JSONFile(name: "TestBundle.symbols.json", content: makeSymbolGraph(moduleName: "TestBundle", symbols: [
-                makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SampleClass"])
-            ])),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(
+                    name: "Article.md",
+                    utf8Content: """
+                        # Article
+
+                        This is an internal article with an external link <doc://\(externalResolver.bundleID)/documentation/TestBundle/SampleClass> which clashes with the curated local link.
+
+                        External links in content should not affect the navigator.
+                                    
+                        ## Topics
+
+                        - ``SampleClass``
+                        """),
+                TextFile(
+                    name: "SampleClass.md",
+                    utf8Content: """
+                        # ``SampleClass``
+
+                        This extends the documentation for this symbol.
+                                    
+                        ## Topics
+
+                        - <doc:ChildArticleA>
+                        - <doc:ChildArticleB>
+                        """),
+                TextFile(
+                    name: "ChildArticleA.md",
+                    utf8Content: """
+                        # ChildArticleA
+
+                        A child article.
+                        """),
+                TextFile(
+                    name: "ChildArticleB.md",
+                    utf8Content: """
+                        # ChildArticleB
+
+                        A child article.
+                        """),
+                // Symbol graph with a class that matches an external link path
+                JSONFile(
+                    name: "TestBundle.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "TestBundle",
+                        symbols: [
+                            makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SampleClass"])
+                        ])),
+            ])
 
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
@@ -646,13 +707,13 @@ private class TestExternalRenderNodeOutputConsumer: ConvertOutputConsumer, Exter
         try self.indexBuilder.sync { try $0.index(renderNode: renderNode) }
     }
 
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
-    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
-    func consume(indexingRecords: [IndexingRecord]) throws { }
-    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }
-    func consume(benchmarks: Benchmark) throws { }
-    func consume(documentationCoverageInfo: [CoverageDataEntry]) throws { }
-    func consume(renderReferenceStore: RenderReferenceStore) throws { }
-    func consume(buildMetadata: BuildMetadata) throws { }
-    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
+    func consume(assetsInBundle bundle: DocumentationBundle) throws {}
+    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
+    func consume(indexingRecords: [IndexingRecord]) throws {}
+    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws {}
+    func consume(benchmarks: Benchmark) throws {}
+    func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {}
+    func consume(renderReferenceStore: RenderReferenceStore) throws {}
+    func consume(buildMetadata: BuildMetadata) throws {}
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
 }

@@ -14,7 +14,7 @@ protocol DirectiveArgumentValueConvertible {
     /// Instantiates an instance of the conforming directive argument value type from a string representation.
     /// - Parameter rawDirectiveArgumentValue: A string representation of the directive argument value.
     init?(rawDirectiveArgumentValue: String)
-    
+
     static func allowedValues() -> [String]?
     static func expectedFormat() -> String?
 }
@@ -43,7 +43,7 @@ extension String: DirectiveArgumentValueConvertible {
     init?(rawDirectiveArgumentValue: String) {
         self.init(rawDirectiveArgumentValue)
     }
-    
+
     static func allowedValues() -> [String]? {
         return nil
     }
@@ -53,7 +53,7 @@ extension URL: DirectiveArgumentValueConvertible {
     init?(rawDirectiveArgumentValue: String) {
         self.init(string: rawDirectiveArgumentValue)
     }
-    
+
     static func allowedValues() -> [String]? {
         return nil
     }
@@ -63,7 +63,7 @@ extension Bool: DirectiveArgumentValueConvertible {
     init?(rawDirectiveArgumentValue: String) {
         self.init(rawDirectiveArgumentValue)
     }
-    
+
     static func allowedValues() -> [String]? {
         return ["true", "false"]
     }
@@ -73,7 +73,7 @@ extension Int: DirectiveArgumentValueConvertible {
     init?(rawDirectiveArgumentValue: String) {
         self.init(rawDirectiveArgumentValue)
     }
-    
+
     static func allowedValues() -> [String]? {
         return nil
     }

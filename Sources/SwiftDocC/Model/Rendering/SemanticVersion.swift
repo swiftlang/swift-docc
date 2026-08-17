@@ -17,12 +17,12 @@ public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConve
     ///
     /// For example, the `1` in `1.2.3`
     public var major: Int
-    
+
     /// The minor version number.
     ///
     /// For example, the `2` in `1.2.3`
     public var minor: Int
-    
+
     /// The patch version number.
     ///
     /// For example, the `3` in `1.2.3`
@@ -73,7 +73,7 @@ public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConve
         if lhs.patch != rhs.patch { return lhs.patch < rhs.patch }
         // Note: don't compare the values of prerelease, even if it is
         // present in both semantic versions.
-        return false // The version are equal
+        return false  // The version are equal
     }
 
     public var description: String {

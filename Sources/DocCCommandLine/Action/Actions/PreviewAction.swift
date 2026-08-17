@@ -38,23 +38,23 @@ public final class PreviewAction: AsyncAction {
     static var allowConcurrentPreviews = false
 
     private let printHTMLTemplatePath: Bool
-    
+
     let port: Int
-    
+
     var convertAction: ConvertAction
 
     private var previewPaths: [String] = []
-    
+
     // Use for testing to override binding to a system port
     var bindServerToSocketPath: String?
-    
+
     /// This closure is used to create a new convert action to generate a new version of the docs
     /// whenever the user changes a file in the watched directory.
     private let createConvertAction: () throws -> ConvertAction
-    
+
     /// A unique ID to access the action's preview server.
     let serverIdentifier = ProcessInfo.processInfo.globallyUniqueString
-    
+
     /// Creates a new preview action from the given parameters.
     ///
     /// - Parameters:
@@ -73,14 +73,14 @@ public final class PreviewAction: AsyncAction {
         if !Self.allowConcurrentPreviews && !servers.isEmpty {
             assertionFailure("Running multiple preview actions is not allowed.")
         }
-        
+
         // Initialize the action context.
         self.port = port
         self.createConvertAction = createConvertAction
         self.convertAction = try createConvertAction()
         self.printHTMLTemplatePath = printTemplatePath
     }
-    
+
     /// Converts a documentation bundle and starts a preview server to render the result of that conversion.
     ///
     /// > Important: On macOS, the bundle will be converted each time the source is modified.
@@ -99,7 +99,7 @@ public final class PreviewAction: AsyncAction {
         if printHTMLTemplatePath, let htmlTemplateDirectory = convertAction.htmlTemplateDirectory {
             print("Template: \(htmlTemplateDirectory.path)")
         }
-        
+
         let previewResult = try await preview()
         return ActionResult(didEncounterError: previewResult.didEncounterError, outputs: [convertAction.targetDirectory])
     }
@@ -107,11 +107,11 @@ public final class PreviewAction: AsyncAction {
     /// Stops a currently running preview session.
     func stop() throws {
         monitoredConvertTask?.cancel()
-        
+
         try servers[serverIdentifier]?.stop()
         servers.removeValue(forKey: serverIdentifier)
     }
-    
+
     func preview() async throws -> ActionResult {
         // Convert the documentation source for previewing.
         let result = try await convert()
@@ -132,7 +132,7 @@ public final class PreviewAction: AsyncAction {
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
             var logHandleCopy = logHandle.sync { $0 }
             servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandleCopy, fileManager: FileManager.default)
-            
+
             // When the user stops docc - stop the preview server first before exiting.
             trapSignals()
 
@@ -148,7 +148,7 @@ public final class PreviewAction: AsyncAction {
             // FIXME: Instead of wrapping the error message in a diagnostic, re-throw the original Error after removing the server.
             diagnosticEngine.emit(.init(severity: .error, range: nil, identifier: "UnexpectedPreviewFailure", summary: error.localizedDescription))
             diagnosticEngine.flush()
-            
+
             // Stale server entry, remove it from the list
             servers.removeValue(forKey: serverIdentifier)
             previewResult = ActionResult(didEncounterError: true)
@@ -156,35 +156,35 @@ public final class PreviewAction: AsyncAction {
 
         return previewResult
     }
-    
+
     func convert() async throws -> ActionResult {
         convertAction = try createConvertAction()
         var logHandleCopy = logHandle.sync { $0 }
         let (result, context) = try await convertAction.perform(logHandle: &logHandleCopy)
-        
+
         previewPaths = try context.previewPaths()
         return result
     }
-    
+
     private func printPreviewAddresses(base: URL) {
         // If the preview paths are empty, just print the base.
         let firstPath = previewPaths.first ?? ""
         print("\t Address: \(base.appendingPathComponent(firstPath).absoluteString)")
-            
+
         let spacing = String(repeating: " ", count: "Address:".count)
         for previewPath in previewPaths.dropFirst() {
             print("\t \(spacing) \(base.appendingPathComponent(previewPath).absoluteString)")
         }
     }
-    
+
     private var logHandle: Synchronized<LogHandle> = .init(.none)
-    
+
     fileprivate func print(_ string: String, terminator: String = "\n") {
         logHandle.sync { logHandle in
             Swift.print(string, terminator: terminator, to: &logHandle)
         }
     }
-    
+
     fileprivate var monitoredConvertTask: Task<Void, Never>?
 }
 
@@ -227,26 +227,26 @@ extension PreviewAction {
         self.print("Monitoring \(rootURL.path) for changes...")
     }
 }
-#endif // !os(Linux) && !os(Android)
+#endif  // !os(Linux) && !os(Android)
 
 extension DocumentationContext {
-    
+
     /// A collection of non-implicit root modules
     var renderRootModules: [ResolvedTopicReference] {
         get throws {
             try rootModules.filter({ try !entity(with: $0).isVirtual })
         }
     }
-    
+
     /// Finds the module and tutorial table-of-contents pages in the context and returns their paths.
     func previewPaths() throws -> [String] {
         let urlGenerator = PresentationURLGenerator(context: self, baseURL: URL(string: "/")!)
-        
+
         let rootModules = try renderRootModules
-        
+
         return (rootModules + tutorialTableOfContentsReferences).map { page in
             urlGenerator.presentationURLForReference(page).absoluteString
         }
     }
 }
-#endif // canImport(NIOHTTP1)
+#endif  // canImport(NIOHTTP1)

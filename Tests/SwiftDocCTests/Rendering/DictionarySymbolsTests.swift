@@ -17,32 +17,34 @@ class DictionarySymbolsTests: XCTestCase {
         let restSymbolURL = Bundle.module.url(
             forResource: "dictionary-symbol", withExtension: "json",
             subdirectory: "Rendering Fixtures")!
-        
+
         let data = try Data(contentsOf: restSymbolURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         //
         // Dictionary
         //
-        
+
         let metadata = symbol.metadata
-        XCTAssertEqual(metadata.role , "dictionarySymbol")
+        XCTAssertEqual(metadata.role, "dictionarySymbol")
         XCTAssertEqual(metadata.roleHeading, "Test Management Command")
         XCTAssertEqual(metadata.symbolKind, "dict")
         XCTAssertEqual(metadata.title, "DeviceRequestCommand")
-        
-        guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
-            return section.kind == .properties
-        }) as? PropertiesRenderSection else {
+
+        guard
+            let section = symbol.primaryContentSections.first(where: { section -> Bool in
+                return section.kind == .properties
+            }) as? PropertiesRenderSection
+        else {
             XCTFail("Plist details section not decoded")
             return
         }
-        
+
         XCTAssertEqual(section.items.map { $0.name }, ["Command", "CommandUUID"])
         XCTAssertEqual(section.items[0].typeDetails?.first?.baseType, "dictionary")
         XCTAssertEqual(section.items[1].typeDetails?.first?.baseType, "string")
-        
+
         AssertRoundtrip(for: symbol)
     }
-    
+
 }

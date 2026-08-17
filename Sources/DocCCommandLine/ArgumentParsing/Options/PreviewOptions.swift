@@ -14,7 +14,7 @@ public import ArgumentParser
 ///
 /// These options are used by the ``Docc/Preview`` subcommand.
 public struct PreviewOptions: ParsableArguments {
-    public init() { }
+    public init() {}
 
     /// The port number to use for the preview web server.
     ///
@@ -25,7 +25,7 @@ public struct PreviewOptions: ParsableArguments {
             "Port number to use for the preview web server.",
             valueName: "port-number"))
     public var port: Int = 8080
-    
+
     /// Converts a documentation bundle.
     ///
     /// ``PreviewAction`` makes use of ``ConvertAction`` so we import all the options
@@ -40,4 +40,3 @@ public struct PreviewOptions: ParsableArguments {
         }
     }
 }
-

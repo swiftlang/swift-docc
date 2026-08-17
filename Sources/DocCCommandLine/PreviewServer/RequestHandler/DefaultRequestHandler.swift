@@ -29,7 +29,8 @@ struct DefaultRequestHandler: RequestHandlerFactory {
 
     #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     /// Script injected before `</body>` to enable live reload via SSE.
-    private static let liveReloadScript = Data("""
+    private static let liveReloadScript = Data(
+        """
         <script>
         (function() {
             var es = new EventSource('/__docc-live-reload__');
@@ -43,7 +44,7 @@ struct DefaultRequestHandler: RequestHandlerFactory {
     #endif
 
     func create<ChannelHandler: ChannelInboundHandler>(channelHandler: ChannelHandler) -> RequestHandler
-        where ChannelHandler.OutboundOut == HTTPServerResponsePart {
+    where ChannelHandler.OutboundOut == HTTPServerResponsePart {
 
         return { context, head in
             var response = try fileManager.contents(of: rootURL.appendingPathComponent("index.html"))
@@ -53,14 +54,14 @@ struct DefaultRequestHandler: RequestHandlerFactory {
                 response.replaceSubrange(range, with: Self.liveReloadScript)
             }
             #endif
-            
+
             var content = context.channel.allocator.buffer(capacity: response.count)
             content.writeBytes(response)
-            
+
             var headers = HTTPHeaders()
             headers.add(name: "Content-Length", value: "\(response.count)")
             headers.add(name: "Content-Type", value: "text/html")
-            
+
             // No caching of live preview
             headers.add(name: "Cache-Control", value: "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
             headers.add(name: "Pragma", value: "no-cache")

@@ -17,8 +17,8 @@ struct NonInclusiveLanguageCheckerTests {
     @Test
     func matchesTermsInTitle() throws {
         let source = """
-# A Whitelisted title
-"""
+            # A Whitelisted title
+            """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -35,10 +35,10 @@ struct NonInclusiveLanguageCheckerTests {
     @Test
     func matchesTermsWithSpaces() throws {
         let source = """
-        # A White  listed title
-        # A Black    listed title
-        # A White listed title
-        """
+            # A White  listed title
+            # A Black    listed title
+            # A White listed title
+            """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -69,10 +69,10 @@ struct NonInclusiveLanguageCheckerTests {
     @Test
     func matchesTermsInAbstract() throws {
         let source = """
-# Title
+            # Title
 
-The blacklist is in the abstract.
-"""
+            The blacklist is in the abstract.
+            """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -89,15 +89,15 @@ The blacklist is in the abstract.
     @Test
     func matchesTermsInParagraph() throws {
         let source = """
-# Title
+            # Title
 
-The abstract.
+            The abstract.
 
-## Overview
+            ## Overview
 
-The
-master branch is the default.
-"""
+            The
+            master branch is the default.
+            """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -114,10 +114,10 @@ master branch is the default.
     @Test
     func matchesTermsInList() throws {
         let source = """
-- Item 1 is ok
-- Item 2 is blacklisted
-- Item 3 is ok
-"""
+            - Item 1 is ok
+            - Item 2 is blacklisted
+            - Item 3 is ok
+            """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -134,8 +134,8 @@ master branch is the default.
     @Test
     func matchesTermsInInlineCode() throws {
         let source = """
-The name `MachineSlave` is unacceptable.
-"""
+            The name `MachineSlave` is unacceptable.
+            """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -152,15 +152,15 @@ The name `MachineSlave` is unacceptable.
     @Test
     func matchesTermsInCodeBlock() throws {
         let source = """
-A code block:
+            A code block:
 
-```swift
+            ```swift
 
-func aBlackListedFunc() {
-    // ...
-}
-```
-"""
+            func aBlackListedFunc() {
+                // ...
+            }
+            ```
+            """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -172,26 +172,28 @@ func aBlackListedFunc() {
         #expect(range.upperBound.line == 5)
         #expect(range.upperBound.column == 18)
     }
-    
+
     private let nonInclusiveContent = """
-    # Some root page
-    
-    Some custom root page. And here is a ~~whitelist~~:
-    
-     - item one
-     - item two
-     - item three
-    """
+        # Some root page
+
+        Some custom root page. And here is a ~~whitelist~~:
+
+         - item one
+         - item two
+         - item three
+        """
 
     @Test
     func isDisabledByDefault() async throws {
         // Create a test bundle with some non-inclusive content.
-        let catalog = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
+            ])
         let context = try await load(catalog: catalog)
-        
-        #expect(context.diagnostics.isEmpty) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
+
+        #expect(context.diagnostics.isEmpty)  // Non-inclusive content is an info-level diagnostic, so it's filtered out.
     }
 
     // swift-format-ignore
@@ -207,7 +209,7 @@ func aBlackListedFunc() {
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.diagnosticLevel = configuredDiagnosticFilterLevel
         let context = try await load(catalog: catalog, diagnosticFilterLevel: configuredDiagnosticFilterLevel, configuration: configuration)
-        
+
         // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
         #expect(context.diagnostics.contains(where: { $0.identifier == "NonInclusiveLanguage" }) == expectsToIncludeNonInclusiveDiagnostics)
     }

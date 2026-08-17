@@ -16,7 +16,7 @@ extension RenderBlockContent.ListItem: ListableItem {}
 extension RenderBlockContent.TermListItem: ListableItem {}
 
 extension Collection<RenderBlockContent.ListItem> {
-    
+
     /// Detects term list items in a collection of list items and converts
     /// them to term list items for rendering while preserving non-term
     /// list items.
@@ -28,18 +28,18 @@ extension Collection<RenderBlockContent.ListItem> {
     ///
     func unorderedAndTermLists() -> [any RenderContent] {
         var contents = [any RenderContent]()
-        
+
         // Keep track of the recent list items that are of the same type
         var runningListItems = [any ListableItem]()
-        
+
         for item in self {
-            
+
             // If this is a term list item
             if let termListItem = RenderBlockContent.TermListItem(item) {
-                
+
                 // If the previous list item was not a term list item
                 if let previousItem = runningListItems.last, previousItem is RenderBlockContent.ListItem {
-                    
+
                     // Create an unordered list with the previous unordered list items
                     // and clear out the list of recent items
                     contents.append(listWithItems(runningListItems))
@@ -47,10 +47,10 @@ extension Collection<RenderBlockContent.ListItem> {
                 }
                 runningListItems.append(termListItem)
             } else {
-                
+
                 // If the previous list item was a term list item
                 if let previousItem = runningListItems.last, previousItem is RenderBlockContent.TermListItem {
-                    
+
                     // Create a term list with the previous term list items
                     // and clear out the list of recent items
                     contents.append(listWithItems(runningListItems))
@@ -59,14 +59,14 @@ extension Collection<RenderBlockContent.ListItem> {
                 runningListItems.append(item)
             }
         }
-        
+
         // Create a list with the items found at the end of the list
         if !runningListItems.isEmpty {
             contents.append(listWithItems(runningListItems))
         }
         return contents
     }
-    
+
     /// Creates an unordered or term list from the given items.
     ///
     /// > Important: This will `fatalError` if the given items are not
@@ -83,7 +83,7 @@ extension Collection<RenderBlockContent.ListItem> {
 }
 
 extension RenderBlockContent.TermListItem {
-    
+
     /// Creates a `TermListItem` from the given `ListItem` if
     /// the list item is deemed to be a term list item. If the
     /// given list item is not deemed to be a term list item, this
@@ -95,20 +95,20 @@ extension RenderBlockContent.TermListItem {
             return nil
         }
         let subsequentBlockContents = listItem.content.dropFirst()
-        
+
         // Collapse any contiguous text elements before checking
         // for term indication
         let collapsedFirstParagraphInlines = firstParagraph.inlineContent.collapsingContiguousTextElements()
-        
+
         let termDefinitionSeparator = ":"
         guard let (termInlines, firstDefinitionInlines) = collapsedFirstParagraphInlines.separatedForTermDefinition(separator: termDefinitionSeparator) else {
             // The inline elements in the first paragraph did not
             // contain term indicators
             return nil
         }
-        
+
         let term = RenderBlockContent.TermListItem.Term(inlineContent: termInlines)
-        
+
         // Use the definition contents from the first paragraph along
         // with the subsequent block elements in this list item as the
         // complete definition.
@@ -119,7 +119,7 @@ extension RenderBlockContent.TermListItem {
 }
 
 extension Collection<RenderInlineContent> {
-    
+
     /// Separate the inline contents into the contents that should be used for the
     /// term and the contents that should be used for the definition.
     ///
@@ -128,17 +128,17 @@ extension Collection<RenderInlineContent> {
     ///   aren't indicated as a term definition pair.
     func separatedForTermDefinition(separator: String) -> (termInlines: [RenderInlineContent], definitionInlines: [RenderInlineContent])? {
         let termKeyword = "term "
-        
+
         // Make sure this collection of inline contents starts with the
         // term keyword, ignoring any extra whitespace before the keyword
         guard case let .text(text) = first, text.lowercased().removingLeadingWhitespace().hasPrefix(termKeyword) else {
             return nil
         }
-        
+
         var termInlines = [RenderInlineContent]()
         var definitionInlines = [RenderInlineContent]()
         var foundSeparator = false
-        
+
         for inline in self {
             if foundSeparator {
                 // All content after the separator should be considered
@@ -160,12 +160,12 @@ extension Collection<RenderInlineContent> {
                 termInlines.append(inline)
             }
         }
-        
+
         guard foundSeparator else {
             // Term indicators weren't found
             return nil
         }
-        
+
         // Remove the keyword from the term inlines and drop the first inline if
         // removing the keyword produced an empty inline in its place
         let termInlinesKeywordRemoved: [RenderInlineContent]
@@ -180,16 +180,16 @@ extension Collection<RenderInlineContent> {
                 termInlinesKeywordRemoved = Array(termInlines.dropFirst())
             }
         }
-        
+
         if definitionInlines.isEmpty {
             // Don't allow a definition with no contents to have an empty
             // array of inline elements
             definitionInlines = [RenderInlineContent.text("")]
         }
-        
+
         return (termInlines: termInlinesKeywordRemoved, definitionInlines: definitionInlines)
     }
-    
+
     /// Collapse all inline elements that are of `text` type and are contiguous.
     /// This works around the issue of multiple inline elements in a row that are all
     /// `text` but rendered separately due to newline separation in the parsed markdown.
@@ -197,7 +197,7 @@ extension Collection<RenderInlineContent> {
         // Keep track of all inline contents which may include a combination of
         // plain text and other kinds of inline content.
         var inlines = [RenderInlineContent]()
-        
+
         // Keep track of the recent contiguous plain text content
         var previousText = ""
         for inline in self {
@@ -224,7 +224,7 @@ extension Collection<RenderInlineContent> {
 }
 
 extension RenderInlineContent {
-    
+
     /// Split an individual inline content into the content that should be included
     /// in the term and the content that should be included in the definition.
     ///
@@ -242,24 +242,24 @@ extension RenderInlineContent {
         guard components.count > 1 else {
             return nil
         }
-        
+
         // Use the content before the separator as part of the term, removing
         // any whitespace between the content and the separator
         let trimmedTermInline = RenderInlineContent.text(components.first!.removingTrailingWhitespace())
-        
+
         // Use the content after the separator as part of the definition,
         // removing any whitespace between the content and the separator
         let trimmedDefinitionInline = RenderInlineContent.text(components.dropFirst().joined(separator: separator).removingLeadingWhitespace())
-        
+
         // Only return content for the term if it is not empty
         let termInline = trimmedTermInline.plainText.isEmpty ? nil : trimmedTermInline
-        
+
         // Only return content for the definition if it is not empty
         let definitionInline = trimmedDefinitionInline.plainText.isEmpty ? nil : trimmedDefinitionInline
-        
+
         return (termInline: termInline, definitionInline: definitionInline)
     }
-    
+
     /// A non-empty result of removing the first instance of the given
     /// keyword from the content's string, or `nil` if the result of removing the
     /// given keyword produced an empty string.
@@ -295,7 +295,7 @@ extension String {
         }
         return String(self[index...])
     }
-    
+
     /// Returns a new string made by removing whitespace from the end of the string.
     func removingTrailingWhitespace() -> String {
         guard let index = self.lastIndex(where: { !$0.isWhitespace }) else { return "" }

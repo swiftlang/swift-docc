@@ -35,7 +35,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     ) {
         self.init(stream, formattingOptions: options, baseURL: baseURL, highlight: highlight, dataProvider: FileManager.default)
     }
-    
+
     package init(
         _ stream: any TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
@@ -62,7 +62,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
             self.diagnostics.append(contentsOf: diagnostics)
         }
     }
-    
+
     public func flush() throws {
         if formattingOptions.contains(.formatConsoleOutputForTools) {
             // For tools, the console writer writes each diagnostic as they are received.
@@ -71,10 +71,10 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
             outputStream.write(text)
             outputStream.write("\n")
         }
-        diagnostics = [] // `flush()` is called more than once. Don't emit the same diagnostics again.
+        diagnostics = []  // `flush()` is called more than once. Don't emit the same diagnostics again.
         self.diagnosticFormatter.finalize()
     }
-    
+
     private static func makeDiagnosticFormatter(
         _ options: DiagnosticFormattingOptions,
         baseURL: URL?,
@@ -102,7 +102,7 @@ extension DiagnosticConsoleWriter {
     package static func formattedDescription(for diagnostics: some Sequence<Diagnostic>, options: DiagnosticFormattingOptions = [], fileManager: any FileManagerProtocol) -> String {
         diagnostics.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
     }
-    
+
     @available(*, deprecated, message: "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.")
     public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: problem.diagnostic, options: options, fileManager: FileManager.default)
@@ -118,7 +118,7 @@ extension DiagnosticConsoleWriter {
 
 protocol DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions { get set }
-    
+
     func formattedDescription(for diagnostics: some Sequence<Diagnostic>) -> String
     func formattedDescription(for diagnostic: Diagnostic) -> String
     func finalize()
@@ -134,18 +134,18 @@ extension DiagnosticConsoleFormatter {
 
 struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions
-    
+
     func formattedDescription(for diagnostic: Diagnostic) -> String {
         var description = formattedDiagnosticSummary(diagnostic)
-        
+
         guard let source = diagnostic.source else {
             description += formattedDiagnosticDetails(diagnostic)
             return description
         }
-        
+
         // Since solution summaries aren't included in the fixit string we include them in the diagnostic
         // summary so that the solution information isn't dropped.
-        
+
         if !diagnostic.solutions.isEmpty, description.last?.isPunctuation == false {
             description += "."
         }
@@ -155,15 +155,15 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
                 description += "."
             }
         }
-        
+
         // Add explanations and notes
         description += formattedDiagnosticDetails(diagnostic)
-        
+
         // Only one fixit (but multiple related replacements) can be a presented with each diagnostic
         if diagnostic.solutions.count == 1, let solution = diagnostic.solutions.first {
             description += solution.replacements.reduce(into: "") { accumulation, replacement in
                 let range = replacement.range
-                accumulation +=  "\n\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)-\(range.upperBound.line):\(range.upperBound.column): fixit: \(replacement.replacement)"
+                accumulation += "\n\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)-\(range.upperBound.line):\(range.upperBound.column): fixit: \(replacement.replacement)"
             }
         }
 
@@ -173,7 +173,7 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     func finalize() {
         // Nothing to do after all diagnostics have been formatted.
     }
-    
+
     private func formattedDiagnosticSummary(_ diagnostic: Diagnostic) -> String {
         var result = ""
 
@@ -182,18 +182,18 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         } else if let url = diagnostic.source {
             result += "\(url.path): "
         }
-        
+
         result += "\(diagnostic.severity): \(diagnostic.summary)"
-        
+
         let identifier = diagnostic.groupIdentifier ?? diagnostic.identifier
         // If this is one of the diagnostics that we have updated, display it's identifier in the output
         if !identifier.hasPrefix("org.swift.") {
             result += " [\(identifier)]"
         }
-        
+
         return result
     }
-    
+
     private func formattedDiagnosticDetails(_ diagnostic: Diagnostic) -> String {
         var result = ""
 
@@ -205,10 +205,10 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
             result += "\n"
             result += diagnostic.notes.map { formattedDescription(for: $0) }.joined(separator: "\n")
         }
-        
+
         return result
     }
-    
+
     private func formattedDescription(for note: Diagnostic.Note) -> String {
         let location = "\(note.source.path):\(note.range.lowerBound.line):\(note.range.lowerBound.column)"
         return "\(location): note: \(note.message)"
@@ -226,7 +226,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 
     /// The number of additional lines from the source file that should be displayed both before and after the diagnostic source line.
     private static let contextSize = 2
-    
+
     init(
         baseUrl: URL?,
         highlight: Bool,
@@ -238,17 +238,17 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         self.options = options
         self.dataProvider = dataProvider
     }
-    
+
     func formattedDescription(for diagnostics: some Sequence<Diagnostic>) -> String {
         let sortedProblems = diagnostics.sorted { lhs, rhs in
             guard let lhsSource = lhs.source,
-                  let rhsSource = rhs.source
-            else { return lhs.source  == nil }
-            
+                let rhsSource = rhs.source
+            else { return lhs.source == nil }
+
             guard let lhsRange = lhs.range,
-                  let rhsRange = rhs.range
+                let rhsRange = rhs.range
             else { return lhsSource.path < rhsSource.path }
-            
+
             if lhsSource.path == rhsSource.path {
                 return lhsRange.lowerBound < rhsRange.lowerBound
             } else {
@@ -260,9 +260,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     }
 
     func formattedDescription(for diagnostic: Diagnostic) -> String {
-        formattedDiagnosticsSummary(for: diagnostic) +
-        formattedDiagnosticDetails(for: diagnostic) +
-        formattedDiagnosticSource(for: diagnostic, with: diagnostic.solutions)
+        formattedDiagnosticsSummary(for: diagnostic) + formattedDiagnosticDetails(for: diagnostic) + formattedDiagnosticSource(for: diagnostic, with: diagnostic.solutions)
     }
 
     func finalize() {
@@ -275,12 +273,13 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 extension DefaultDiagnosticConsoleFormatter {
     private func formattedDiagnosticsSummary(for diagnostic: Diagnostic) -> String {
         let summary = diagnostic.severity.description + ": " + diagnostic.summary
-        let formattedSummary = if highlight {
-            diagnostic.severity.ansiAnnotation.applied(to: summary)
-        } else {
-            summary
-        }
-        
+        let formattedSummary =
+            if highlight {
+                diagnostic.severity.ansiAnnotation.applied(to: summary)
+            } else {
+                summary
+            }
+
         let identifier = diagnostic.groupIdentifier ?? diagnostic.identifier
         // If this is one of the diagnostics that we have updated, display it's identifier in the output
         if identifier.hasPrefix("org.swift.") {
@@ -289,13 +288,13 @@ extension DefaultDiagnosticConsoleFormatter {
             return formattedSummary + " [\(identifier)]"
         }
     }
-    
+
     private func formattedDiagnosticDetails(for diagnostic: Diagnostic) -> String {
         var result = ""
         if let explanation = diagnostic.explanation {
             result.append("\n\(explanation)")
         }
-        
+
         if !diagnostic.notes.isEmpty {
             let formattedNotes = diagnostic.notes
                 .map { note in
@@ -305,16 +304,16 @@ extension DefaultDiagnosticConsoleFormatter {
                 .joined(separator: "\n")
             result.append("\n\(formattedNotes)")
         }
-        
+
         return result
     }
-    
+
     private func formattedDiagnosticSource(
         for diagnostic: Diagnostic,
         with solutions: [Solution]
     ) -> String {
         var result = ""
-        
+
         guard let url = diagnostic.source
         else { return "" }
         guard let diagnosticRange = diagnostic.range
@@ -333,20 +332,22 @@ extension DefaultDiagnosticConsoleFormatter {
                 addition.append("\n" + solution.summary)
                 for replacement in solution.replacements {
                     let solutionFragments = replacement.replacement.split(separator: "\n")
-                    addition += "\nsuggestion:\n" + solutionFragments.enumerated().map {
-                        "\($0.offset) + \($0.element)"
-                    }.joined(separator: "\n")
+                    addition +=
+                        "\nsuggestion:\n"
+                        + solutionFragments.enumerated().map {
+                            "\($0.offset) + \($0.element)"
+                        }.joined(separator: "\n")
                 }
             }
             return "\n--> \(formattedSourcePath(url))\(addition)"
         }
-        
+
         let sourceLines = readSourceLines(url)
 
         guard sourceLines.indices.contains(diagnosticRange.lowerBound.line - 1), sourceLines.indices.contains(diagnosticRange.upperBound.line - 1) else {
             return "\n--> \(formattedSourcePath(url)):\(max(1, diagnosticRange.lowerBound.line)):\(max(1, diagnosticRange.lowerBound.column))-\(max(1, diagnosticRange.upperBound.line)):\(max(1, diagnosticRange.upperBound.column))"
         }
-        
+
         // A range containing the source lines and some surrounding context.
         let sourceLinesToDisplay = Range(
             uncheckedBounds: (
@@ -355,11 +356,11 @@ extension DefaultDiagnosticConsoleFormatter {
             )
         ).clamped(to: sourceLines.indices)
         let maxLinePrefixWidth = String(sourceLinesToDisplay.upperBound).count
-        
+
         var suggestionsPerLocation = [SourceLocation: [String]]()
         for solution in solutions {
             // Solutions that requires multiple or zero replacements
-            // will be shown at the beginning of the diagnostic range. 
+            // will be shown at the beginning of the diagnostic range.
             let location: SourceLocation
             if solution.replacements.count == 1 {
                 location = solution.replacements.first!.range.lowerBound
@@ -386,10 +387,10 @@ extension DefaultDiagnosticConsoleFormatter {
             let highlightedSource = highlightSource(
                 sourceLine: sourceLine,
                 lineNumber: lineNumber,
-                range: diagnosticRange, 
+                range: diagnosticRange,
                 _diagnostic: diagnostic
             )
-            
+
             let separator: String
             if lineNumber >= diagnosticRange.lowerBound.line && lineNumber <= diagnosticRange.upperBound.line {
                 separator = "+"
@@ -448,16 +449,16 @@ extension DefaultDiagnosticConsoleFormatter {
                 }
             }
         }
-        
+
         return result
     }
-    
+
     private func highlightSuggestion(
         _ suggestion: String
     ) -> String {
         guard highlight
         else { return suggestion }
-        
+
         let suggestionAnsiAnnotation = ANSIAnnotation.sourceSuggestionHighlight
         return suggestionAnsiAnnotation.applied(to: suggestion)
     }
@@ -466,44 +467,46 @@ extension DefaultDiagnosticConsoleFormatter {
         sourceLine: String,
         lineNumber: Int,
         range: SourceRange,
-        _diagnostic: Diagnostic // used in a debug assertion to identify diagnostics with incorrect source ranges
+        _diagnostic: Diagnostic  // used in a debug assertion to identify diagnostics with incorrect source ranges
     ) -> String {
         guard highlight,
-              lineNumber >= range.lowerBound.line && lineNumber <= range.upperBound.line,
-              !sourceLine.isEmpty
+            lineNumber >= range.lowerBound.line && lineNumber <= range.upperBound.line,
+            !sourceLine.isEmpty
         else {
             return sourceLine
         }
-        
+
         guard range.lowerBound.line == range.upperBound.line else {
             // When highlighting multiple lines, highlight the full line
             return ANSIAnnotation.sourceHighlight.applied(to: sourceLine)
         }
 
         let sourceLineUTF8 = sourceLine.utf8
-        
+
         let highlightStart = max(0, range.lowerBound.column - 1)
         let highlightEnd = range.upperBound.column - 1
-        
-        assert(highlightStart <= sourceLineUTF8.count, {
-            """
-            Received diagnostic with incorrect source range; (\(range.lowerBound.column) ..< \(range.upperBound.column)) extends beyond the text on line \(lineNumber) (\(sourceLineUTF8.count) characters)
-             █\(sourceLine)
-             █\(String(repeating: " ", count: range.lowerBound.column))\(String(repeating: "~", count: range.upperBound.column - range.lowerBound.column))
-            Use this diagnostic information to reproduce the issue and correct the diagnostic range where it's emitted.
-             ID      : \(_diagnostic.identifier)
-             SUMMARY : \(_diagnostic.summary)
-             SOURCE  : \(_diagnostic.source?.path ?? _diagnostic.range?.source?.path ?? "<nil>")
-            """
-        }())
-        
+
+        assert(
+            highlightStart <= sourceLineUTF8.count,
+            {
+                """
+                Received diagnostic with incorrect source range; (\(range.lowerBound.column) ..< \(range.upperBound.column)) extends beyond the text on line \(lineNumber) (\(sourceLineUTF8.count) characters)
+                 █\(sourceLine)
+                 █\(String(repeating: " ", count: range.lowerBound.column))\(String(repeating: "~", count: range.upperBound.column - range.lowerBound.column))
+                Use this diagnostic information to reproduce the issue and correct the diagnostic range where it's emitted.
+                 ID      : \(_diagnostic.identifier)
+                 SUMMARY : \(_diagnostic.summary)
+                 SOURCE  : \(_diagnostic.source?.path ?? _diagnostic.range?.source?.path ?? "<nil>")
+                """
+            }())
+
         guard let before = String(sourceLineUTF8.prefix(highlightStart)),
-              let highlighted = String(sourceLineUTF8.dropFirst(highlightStart).prefix(highlightEnd - highlightStart)),
-              let after = String(sourceLineUTF8.dropFirst(highlightEnd))
+            let highlighted = String(sourceLineUTF8.dropFirst(highlightStart).prefix(highlightEnd - highlightStart)),
+            let after = String(sourceLineUTF8.dropFirst(highlightEnd))
         else {
             return sourceLine
         }
-        
+
         return "\(before)\(ANSIAnnotation.sourceHighlight.applied(to: highlighted))\(after)"
     }
 
@@ -514,11 +517,11 @@ extension DefaultDiagnosticConsoleFormatter {
 
         // TODO: Add support for also getting the source lines from the symbol graph files.
         guard let data = try? dataProvider.contents(of: url),
-              let content = String(data: data, encoding: .utf8)
-        else { 
+            let content = String(data: data, encoding: .utf8)
+        else {
             return []
         }
-        
+
         let lines = content.splitByNewlines
         sourceLines[url] = lines
         return lines

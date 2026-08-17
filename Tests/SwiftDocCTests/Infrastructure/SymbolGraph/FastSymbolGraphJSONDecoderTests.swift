@@ -15,7 +15,7 @@ import DocCCommon
 import SwiftDocC
 
 struct FastSymbolGraphJSONDecoderTests {
-    
+
     @Test(arguments: [
         "Asides",
         "Availability",
@@ -50,10 +50,10 @@ struct FastSymbolGraphJSONDecoderTests {
     func decodingTestResourceSymbolGraph(symbolGraphBaseName: String) throws {
         let url = try #require(Bundle.module.url(forResource: "\(symbolGraphBaseName).symbols", withExtension: "json", subdirectory: "Test Resources"))
         let data = try Data(contentsOf: url)
-        
+
         try expectSymbolGraphToDecodeTheSame(data: data)
     }
-    
+
     @Test(arguments: [
         "AlternateDeclarations",
         "AnonymousTopicGroups",
@@ -106,33 +106,33 @@ struct FastSymbolGraphJSONDecoderTests {
     ])
     func decodingSymbolGraphsInTestsCatalog(catalogBaseName: String) throws {
         let catalogURL = try #require(Bundle.module.url(forResource: catalogBaseName, withExtension: "docc", subdirectory: "Test Bundles"))
-        
+
         // Discover all symbol graph files in the catalog.
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider().inputsAndDataProvider(startingPoint: catalogURL, options: .init())
-        
+
         // Verify that each symbol graph file decodes the same, regardless of decoder
         for url in inputs.symbolGraphURLs {
             let data = try dataProvider.contents(of: url)
-            
+
             try expectSymbolGraphToDecodeTheSame(data: data)
         }
     }
-    
+
     // swift-format-ignore
     private func expectSymbolGraphToDecodeTheSame(data: Data) throws {
         let real = try JSONDecoder().decode(SymbolGraph.self, from: data)
         let fast = try FastSymbolGraphJSONDecoder.decode(SymbolGraph.self, from: data)
-        
+
         // Verify that the fast decoder can scan and ignore the entire JSON structure without issues
         _ = try FastSymbolGraphJSONDecoder.decode(IgnoreEverything.self, from: data)
-        
+
         // SymbolGraph.Metadata isn't equatable but only has two properties
         #expect(real.metadata.formatVersion == fast.metadata.formatVersion)
         #expect(real.metadata.generator     == fast.metadata.generator)
-        
+
         // SymbolGraph.Module
         #expect(real.module == fast.module)
-        
+
         // SymbolGraph.Relationship
         #expect(real.relationships == fast.relationships)
         for (real, fast) in zip(real.relationships, fast.relationships) {
@@ -140,16 +140,16 @@ struct FastSymbolGraphJSONDecoderTests {
             #expect(real.referenceLocation  == fast.referenceLocation)
             #expect(real.sourceOrigin       == fast.sourceOrigin)
         }
-        
+
         // SymbolGraph.Symbol
         // Much of the symbol data isn't equatable so this test various nested properties directly.
         // This makes it easier to pinpoint where there are differences compared to making Symbol equatable and doing a single `==` check.
         #expect(real.symbols.keys == fast.symbols.keys)
-        
+
         for key in real.symbols.keys {
             let realSymbol = try #require(real.symbols[key])
             let fastSymbol = try #require(fast.symbols[key])
-            
+
             // Dedicated properties
             #expect(realSymbol.identifier     == fastSymbol.identifier)
             #expect(realSymbol.kind           == fastSymbol.kind)
@@ -159,7 +159,7 @@ struct FastSymbolGraphJSONDecoderTests {
             #expect(realSymbol.docComment     == fastSymbol.docComment)
             #expect(realSymbol.isVirtual      == fastSymbol.isVirtual)
             #expect(realSymbol.accessLevel    == fastSymbol.accessLevel)
-            
+
             // Mixins
             #expect(realSymbol.availability          == fastSymbol.availability)
             #expect(realSymbol.declarationFragments  == fastSymbol.declarationFragments)
@@ -179,31 +179,31 @@ struct FastSymbolGraphJSONDecoderTests {
             #expect(realSymbol.spi                   == fastSymbol.spi)
         }
     }
-    
+
     @Test
     func decodingNestedDictionariesWithArbitraryStringKeys() throws {
         let json = #"""
-        {
-          "simple": 
-          {
-            "": 1,
-            "escaped\\slashes\\": 2
-          }, 
-          "escaped\"quote": 
-          {
-            "\u1234": 3
-          }
-        }
-        """#
-        
+            {
+              "simple": 
+              {
+                "": 1,
+                "escaped\\slashes\\": 2
+              }, 
+              "escaped\"quote": 
+              {
+                "\u1234": 3
+              }
+            }
+            """#
+
         let decoded = try FastSymbolGraphJSONDecoder.decode([String: [String: Int]].self, from: Data(json.utf8))
         #expect(Set(decoded.keys) == ["simple", "escaped\"quote"])
-        
+
         let first = try #require(decoded["simple"])
         #expect(Set(first.keys) == ["", "escaped\\slashes\\"])
         #expect(first[""] == 1)
         #expect(first["escaped\\slashes\\"] == 2)
-        
+
         let second = try #require(decoded["escaped\"quote"])
         #expect(Set(second.keys) == ["\u{1234}"])
         #expect(second["\u{1234}"] == 3)
@@ -266,16 +266,16 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem: @retroactive Equatab
     }
 }
 
-extension SymbolGraph.Symbol.Swift.Generics: @retroactive Equatable{
+extension SymbolGraph.Symbol.Swift.Generics: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.parameters  == rhs.parameters
+        return lhs.parameters == rhs.parameters
             && lhs.constraints == rhs.constraints
     }
 }
 
 extension SymbolGraph.Symbol.Swift.GenericParameter: @retroactive Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.name  == rhs.name
+        return lhs.name == rhs.name
             && lhs.depth == rhs.depth
             && lhs.index == rhs.index
     }

@@ -19,9 +19,9 @@ class StackTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let context = try await makeEmptyContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             XCTAssertEqual(Stack.directiveName, directive.name)
@@ -34,23 +34,23 @@ class StackTests: XCTestCase {
             )
         }
     }
-    
+
     func testValid() async throws {
         let source = """
-        @Stack {
-          @ContentAndMedia {
-            Text.
+            @Stack {
+              @ContentAndMedia {
+                Text.
 
-            @Image(source: code4.png, alt: "alt")
-          }
-        }
-        """
+                @Image(source: code4.png, alt: "alt")
+              }
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let context = try await makeEmptyContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             XCTAssertEqual(Stack.directiveName, directive.name)
@@ -64,25 +64,28 @@ class StackTests: XCTestCase {
         var source = "@Stack {"
         for _ in 0...Stack.childrenLimit {
             source += """
-            
-            @ContentAndMedia {
-              Text.
 
-              @Image(source: code4.png, alt: "alt")
-            }
-            
-            """
+                @ContentAndMedia {
+                  Text.
+
+                  @Image(source: code4.png, alt: "alt")
+                }
+
+                """
         }
         source += "}"
 
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
-        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
-            DataFile(name: "code4.png", data: Data())
-        ]))
-        
+
+        let (_, context) = try await loadBundle(
+            catalog: Folder(
+                name: "Something.docc",
+                content: [
+                    DataFile(name: "code4.png", data: Data())
+                ]))
+
         if let directive {
             var diagnostics = [Diagnostic]()
             XCTAssertEqual(Stack.directiveName, directive.name)

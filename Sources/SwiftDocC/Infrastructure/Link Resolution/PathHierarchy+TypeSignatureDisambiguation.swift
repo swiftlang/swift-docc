@@ -11,7 +11,7 @@
 private import DocCCommon
 
 extension PathHierarchy.DisambiguationContainer {
-    
+
     /// Returns the minimal suggested type-signature disambiguation for a list of overloads with lists of type names (either parameter types or return value types).
     ///
     /// For example, the following type names
@@ -37,12 +37,12 @@ extension PathHierarchy.DisambiguationContainer {
             assertionFailure("Need at least one type name to disambiguate. It's the callers responsibility to check before calling this function.")
             return []
         }
-        
+
         guard overloadsAndTypeNames.dropFirst().allSatisfy({ $0.typeNames.count == numberOfTypes }) else {
             assertionFailure("Overloads should always have the same number of type names (representing either parameter types or return types).")
             return []
         }
-        
+
         // Construct a table of the different overloads' type names for quick access.
         let typeNames = Table<String>(width: numberOfTypes, height: overloadsAndTypeNames.count) { buffer in
             for (row, pair) in overloadsAndTypeNames.indexed() {
@@ -51,7 +51,7 @@ extension PathHierarchy.DisambiguationContainer {
                 }
             }
         }
-        
+
         if numberOfTypes < 64, overloadsAndTypeNames.count < 64 {
             // If there are few enough types and few enough overloads, use an optimized implementation for finding the fewest and shortest combination
             // of type names that uniquely disambiguates each overload.
@@ -62,7 +62,7 @@ extension PathHierarchy.DisambiguationContainer {
             return _minimalSuggestedDisambiguationForManyParameters(typeNames: typeNames)
         }
     }
-    
+
     private static func _minimalSuggestedDisambiguationForFewParameters(typeNames: consuming Table<String>) -> [[String]?] {
         /// A specialized set-algebra type that only stores the possible values `0 ..< 64`.
         ///
@@ -70,7 +70,7 @@ extension PathHierarchy.DisambiguationContainer {
         /// However, because the code in this file only works with consecutive sequences of very small integers (most likely `0 ..< 16` and increasingly less likely the higher the number),
         /// and because the the sets of those integers is frequently accessed in loops, a specialized implementation addresses bottlenecks in `_minimalSuggestedDisambiguation(...)`.
         typealias IntSet = _FixedSizeBitSet<UInt64>
-        
+
         // We find the minimal suggested type-signature disambiguation in two steps.
         //
         // First, we compute which type names occur in which overloads.
@@ -96,23 +96,23 @@ extension PathHierarchy.DisambiguationContainer {
                 // Since this is the only row to check we can assign `[   3 ]` to it without iterating over any other rows.
                 //
                 // With no more rows to check we have found which type names occur in which overloads for every type name in this column.
-                
+
                 // At the start we need to consider every row
                 var rowsToCheck = IntSet(typeNames.rowIndices)
                 while !rowsToCheck.isEmpty {
                     // Find all the rows with this type name
                     var iterator = rowsToCheck.makeIterator()
-                    let currentRow = iterator.next()! // Verified to not be empty above.
+                    let currentRow = iterator.next()!  // Verified to not be empty above.
                     let typeName = typeNames[currentRow, column]
-                    
+
                     var rowsWithThisTypeName = IntSet()
-                    rowsWithThisTypeName.insert(currentRow) // We know that the type name exist on the current row
+                    rowsWithThisTypeName.insert(currentRow)  // We know that the type name exist on the current row
                     // Check all the other (unchecked rows)
                     while let row = iterator.next() {
                         guard typeNames[row, column] == typeName else { continue }
                         rowsWithThisTypeName.insert(row)
                     }
-                    
+
                     // Once we've found which rows have this type name we can assign all of them...
                     for row in rowsWithThisTypeName {
                         // Assign all the rows ...
@@ -123,30 +123,31 @@ extension PathHierarchy.DisambiguationContainer {
                 }
             }
         }
-        
+
         // Second, iterate over each overload and try different combinations of type names to find the shortest disambiguation.
         //
         // To reduce unnecessary work in the iteration, we precompute which type name combinations are meaningful to check.
-        
+
         // Check if any columns are common for all overloads. Those type names won't meaningfully disambiguate any overload.
         let allOverloads = IntSet(typeNames.rowIndices)
-        let typeNameIndicesToCheck = IntSet(typeNames.columnIndices.filter {
-            // It's sufficient to check the first row because this column has to be the same for all rows
-            table[0, $0] != allOverloads
-        })
-        
+        let typeNameIndicesToCheck = IntSet(
+            typeNames.columnIndices.filter {
+                // It's sufficient to check the first row because this column has to be the same for all rows
+                table[0, $0] != allOverloads
+            })
+
         guard !typeNameIndicesToCheck.isEmpty else {
             // Every type name is common across all overloads.
             // Return `nil` for each overload to indicate that none of them can be disambiguated using these type names.
             return .init(repeating: nil, count: typeNames.size.width)
         }
-        
+
         // Create a sequence of type name combinations with increasing number of type names in each combination.
         let typeNameCombinationsToCheck = typeNameIndicesToCheck.allCombinationsOfValues()
-        
+
         return typeNames.rowIndices.map { row in
             var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)? = nil
-            
+
             // To determine the fewest and shortest disambiguation for each overload, we check combinations with increasing number of type names.
             // This explanation uses letters for type names occurrences to help distinguish them from the combinations of type names to check.
             //
@@ -179,25 +180,25 @@ extension PathHierarchy.DisambiguationContainer {
             //
             // The third overload works much like the first overload. The type names at [  2], which is [  C], disambiguates the overload.
             // So, we break before checking [0 2]--which would include more type names--and return the type names at [  2] as the disambiguation ("_", "_", "Float").
-            
+
             for typeNamesToInclude in typeNameCombinationsToCheck {
                 // Stop if we've already found a disambiguating combination using fewer type names than this.
                 guard typeNamesToInclude.count <= (shortestDisambiguationSoFar?.indicesToInclude.count ?? .max) else {
                     break
                 }
-                
+
                 // Compute which other overloads this combinations of type names also could refer to.
                 var iterator = typeNamesToInclude.makeIterator()
-                let firstTypeNameToInclude = iterator.next()! // The generated `typeNamesToInclude` is never empty.
+                let firstTypeNameToInclude = iterator.next()!  // The generated `typeNamesToInclude` is never empty.
                 let overlap = IteratorSequence(iterator).reduce(into: table[row, firstTypeNameToInclude]) { accumulatedOverlap, index in
                     accumulatedOverlap.formIntersection(table[row, index])
                 }
-                
+
                 guard overlap.count == 1 else {
                     // This combination of parameters doesn't disambiguate the result
                     continue
                 }
-                
+
                 // Track the combined length of this combination of type names in case another combination (with the same number of type names) is shorter.
                 let length = typeNamesToInclude.reduce(0) { accumulatedLength, index in
                     // It's faster to check the number of UTF8 code units.
@@ -208,12 +209,12 @@ extension PathHierarchy.DisambiguationContainer {
                     shortestDisambiguationSoFar = (IntSet(typeNamesToInclude), length)
                 }
             }
-            
+
             guard let (indicesToInclude, _) = shortestDisambiguationSoFar else {
                 // This overload can't be uniquely disambiguated by these type names
                 return nil
             }
-            
+
             // Found the fewest (and shortest) type names that uniquely disambiguate this overload.
             // Return the list of disambiguating type names or "_" for an unused type name.
             return typeNames.columnIndices.map {
@@ -221,7 +222,7 @@ extension PathHierarchy.DisambiguationContainer {
             }
         }
     }
-    
+
     private static func _minimalSuggestedDisambiguationForManyParameters(typeNames: consuming Table<String>) -> [[String]?] {
         // If there are more than 64 parameters or more than 64 overloads we only try to disambiguate by a single type name.
         //
@@ -230,32 +231,32 @@ extension PathHierarchy.DisambiguationContainer {
         // Overloads with more than 64 parameters or more than 64 overloads is exceptional.
         // It could happen, but for the vast majority of projects, this code will never run.
         // To keep the rest of the code simpler, we separate the code paths for few parameters and many parameters.
-        
+
         return typeNames.rowIndices.map { row in
             // With this many parameters, simply check if any single type name disambiguates each overload.
             var shortestDisambiguationSoFar: (indexToInclude: Int, length: Int)? = nil
-            
+
             for column in typeNames.columnIndices {
                 let typeName = typeNames[row, column]
-                
+
                 // Check if any other overload also has this type name at this location.
                 guard typeNames.rowIndices.allSatisfy({ $0 == row || typeNames[$0, column] != typeName }) else {
                     // This type name doesn't uniquely identify this overload.
                     continue
                 }
-                
+
                 // Track which disambiguating type name is the shortest.
                 let length = typeName.utf8.count
                 if length < (shortestDisambiguationSoFar?.length ?? .max) {
                     shortestDisambiguationSoFar = (column, length)
                 }
             }
-            
+
             guard let (indexToInclude, _) = shortestDisambiguationSoFar else {
                 // This overload can't be uniquely disambiguated by a single type name
                 return nil
             }
-            
+
             // Found the fewest (and shortest) type names that uniquely disambiguate this overload.
             // Return the list of disambiguating type names or "_" for an unused type name.
             return typeNames.columnIndices.map {
@@ -314,12 +315,12 @@ private struct Table<Element>: ~Copyable {
 
         return row * size.width + column
     }
-    
+
     var rowIndices: Range<Int> {
-        0 ..< size.height
+        0..<size.height
     }
-    
+
     var columnIndices: Range<Int> {
-        0 ..< size.width
+        0..<size.width
     }
 }

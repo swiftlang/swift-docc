@@ -13,31 +13,31 @@ public import Foundation
 /// A diagnostic consumer that writes detailed diagnostic information to a file.
 ///
 /// For tools interacting with DocC, the diagnostic file format includes more information about the diagnostics than what
-/// is output to the consoles. 
+/// is output to the consoles.
 public final class DiagnosticFileWriter: DiagnosticConsumer {
     /// The path where the diagnostic file writer should write the diagnostics file.
     var outputLocation: URL
     /// The file manager that consumer uses to write the diagnostics file to the specific output path.
     private var fileManager: any FileManagerProtocol
-    
+
     /// Creates a new diagnostic file writer with a specific output path.
     /// - Parameter outputPath: The path where the diagnostic file writer should write the diagnostics file.
     public init(outputPath: URL) {
         self.outputLocation = outputPath
         self.fileManager = FileManager.default
     }
-    
+
     package init(outputPath: URL, fileManager: some FileManagerProtocol) {
         self.outputLocation = outputPath
         self.fileManager = fileManager
     }
-    
+
     private var receivedDiagnostics: [Diagnostic] = []
-    
+
     public func receive(_ diagnostics: [Diagnostic]) {
         receivedDiagnostics.append(contentsOf: diagnostics)
     }
-    
+
     public func flush() throws {
         let fileContent = DiagnosticFile(receivedDiagnostics)
         // Don't clear the received diagnostics, `flush()` is called more than once.

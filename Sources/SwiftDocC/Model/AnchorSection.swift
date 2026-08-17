@@ -15,7 +15,7 @@ private import Markdown
 public struct AnchorSection {
     /// The unique reference to the section.
     public var reference: ResolvedTopicReference
-    
+
     /// The title of the section.
     public var title: String
 }

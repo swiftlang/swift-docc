@@ -16,7 +16,7 @@ extension SymbolGraph.Relationship.Kind {
     /// This relationship connects top-level extended type symbols the
     /// respective extended module symbol.
     static let declaredIn = Self(rawValue: "declaredIn")
-    
+
     /// This relationship marks a parent-child hierarchy between a nested
     /// extended type symbol and its parent extended type symbol. It mirrors the
     /// `memberOf` relationship between the two respective original type symbols.
@@ -27,17 +27,17 @@ extension SymbolGraph.Relationship.Kind {
 
 extension SymbolGraph.Symbol.KindIdentifier {
     static let extendedProtocol = Self(rawValue: "protocol.extension")
-    
+
     static let extendedStructure = Self(rawValue: "struct.extension")
-    
+
     static let extendedClass = Self(rawValue: "class.extension")
-    
+
     static let extendedEnumeration = Self(rawValue: "enum.extension")
-    
+
     static let unknownExtendedType = Self(rawValue: "unknown.extension")
-    
+
     static let extendedModule = Self(rawValue: "module.extension")
-    
+
     init?(extending other: Self) {
         switch other {
         case .struct:
@@ -54,16 +54,16 @@ extension SymbolGraph.Symbol.KindIdentifier {
             return nil
         }
     }
-    
+
     static func extendedType(for extensionBlock: SymbolGraph.Symbol) -> Self? {
         guard let extensionMixin = extensionBlock.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension else {
             return nil
         }
-        
+
         guard let typeKind = extensionMixin.typeKind else {
             return nil
         }
-        
+
         return Self(extending: typeKind)
     }
 }
@@ -84,7 +84,7 @@ extension SymbolGraph.Symbol.Kind {
             return unknownExtendedType
         }
     }
-    
+
     static let unknownExtendedType = Self(parsedIdentifier: .unknownExtendedType, displayName: "Extended Type")
 }
 

@@ -18,7 +18,7 @@ class DocumentationServer_MessageTypeTests: XCTestCase {
             "MessageType(value)"
         )
     }
-    
+
     func testErrorMessageType() {
         XCTAssertEqual(DocumentationServer.MessageType.error.rawValue, "error")
     }

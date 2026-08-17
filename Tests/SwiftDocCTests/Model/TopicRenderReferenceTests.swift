@@ -13,7 +13,7 @@ import XCTest
 @testable import SwiftDocC
 
 class TopicRenderReferenceTests: XCTestCase {
-    
+
     let testReference = TopicRenderReference(
         identifier: RenderReferenceIdentifier("identifier"),
         titleVariants: VariantCollection<String>(
@@ -25,7 +25,7 @@ class TopicRenderReferenceTests: XCTestCase {
         kind: .article,
         estimatedTime: nil
     )
-    
+
     let encodedReference = """
         {
             "type": "topic",
@@ -34,7 +34,7 @@ class TopicRenderReferenceTests: XCTestCase {
             "url": "myURL"
         }
         """.data(using: .utf8)!
-    
+
     // Test for backwards-compatibility.
     func testDecoderAcceptsMissingKindKey() {
         XCTAssertNoThrow(try JSONDecoder().decode(TopicRenderReference.self, from: encodedReference))
@@ -43,17 +43,17 @@ class TopicRenderReferenceTests: XCTestCase {
     // Test for backwards-compatibility via an additional role for symbol references.
     func testDecodeTopicReferenceRole() {
         let json = """
-        {
-          "abstract" : [],
-          "identifier" : "doc://org.swift.docc.example/mykit/myclass",
-          "kind" : "symbol",
-          "title" : "MyClass",
-          "type" : "topic",
-          "url" : "/documentation/mykit/myclass",
-          "role" : "API Collection"
-        }
-        """.data(using: .utf8)!
-        
+            {
+              "abstract" : [],
+              "identifier" : "doc://org.swift.docc.example/mykit/myclass",
+              "kind" : "symbol",
+              "title" : "MyClass",
+              "type" : "topic",
+              "url" : "/documentation/mykit/myclass",
+              "role" : "API Collection"
+            }
+            """.data(using: .utf8)!
+
         do {
             let reference = try JSONDecoder().decode(TopicRenderReference.self, from: json)
             XCTAssertEqual(reference.role, "API Collection")
@@ -61,27 +61,27 @@ class TopicRenderReferenceTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
-    
+
     func testEmitsTitleVariantsDuringEncoding() throws {
         let encoder = RenderJSONEncoder.makeEncoder()
         _ = try encoder.encode(testReference)
         let variantOverrides = try XCTUnwrap(encoder.userInfo[.variantOverrides] as? VariantOverrides)
         XCTAssertEqual(variantOverrides.values.count, 1)
-        
+
         let variantOverride = try XCTUnwrap(variantOverrides.values.first)
         XCTAssertEqual(variantOverride.traits, [.interfaceLanguage("objc")])
-        
+
         XCTAssertEqual(variantOverride.patch.count, 1)
         let operation = try XCTUnwrap(variantOverride.patch.first)
         XCTAssertEqual(operation.operation, .replace)
         XCTAssertEqual(operation.pointer.pathComponents, ["title"])
     }
-        
+
     func testSetsTitleDuringDecoding() throws {
         let reference = try JSONDecoder().decode(TopicRenderReference.self, from: encodedReference)
         XCTAssertEqual(reference.title, "myTitle")
     }
-    
+
     func testSetsTitleVariantsDefaultValueWhenInstantiatingWithTitle() {
         let reference = TopicRenderReference(
             identifier: RenderReferenceIdentifier("identifier"),
@@ -91,18 +91,18 @@ class TopicRenderReferenceTests: XCTestCase {
             kind: .article,
             estimatedTime: nil
         )
-        
+
         XCTAssertEqual(reference.titleVariants.defaultValue, "myTitle")
         XCTAssert(reference.titleVariants.variants.isEmpty)
     }
-    
+
     func testSetsTitleVariantsDefaultValueWhenSettingTitle() {
         var reference = testReference
         reference.title = "another title"
-        
+
         XCTAssertEqual(reference.titleVariants.defaultValue, "another title")
     }
-    
+
     func testGetsTitleVariantsDefaultValueWhenGettingTitle() {
         XCTAssertEqual(testReference.title, "Default value")
     }

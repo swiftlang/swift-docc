@@ -22,16 +22,16 @@ class CoverageDetailedOutputTests: XCTestCase {
             shouldGenerateDetailed: true
         )
         let expected = """
-                | Abstract        | Curated         | Code Listing
-Types           | (0/0)           | (0/0)           | (0/0)
-Members         | (0/0)           | (0/0)           | (0/0)
-Globals         | (0/0)           | (0/0)           | (0/0)
+                            | Abstract        | Curated         | Code Listing
+            Types           | (0/0)           | (0/0)           | (0/0)
+            Members         | (0/0)           | (0/0)           | (0/0)
+            Globals         | (0/0)           | (0/0)           | (0/0)
 
 
-Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
---No Symbols to display--
+            Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
+            --No Symbols to display--
 
-"""
+            """
         XCTAssertEqual(result, expected)
     }
 
@@ -56,16 +56,16 @@ Symbol Name                      Kind                             Abstract?     
             shouldGenerateDetailed: true
         )
         let expected = """
-                | Abstract        | Curated         | Code Listing
-Types           | \(ratio(1, 1, length: 15)) | \(ratio(0, 1, length: 15)) | \(ratio(0, 1))
-Members         | (0/0)           | (0/0)           | (0/0)
-Globals         | (0/0)           | (0/0)           | (0/0)
+                            | Abstract        | Curated         | Code Listing
+            Types           | \(ratio(1, 1, length: 15)) | \(ratio(0, 1, length: 15)) | \(ratio(0, 1))
+            Members         | (0/0)           | (0/0)           | (0/0)
+            Globals         | (0/0)           | (0/0)           | (0/0)
 
 
-Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
-MyDocumentedUncuratedClass     | Class                          | true         | false        | false           | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass
+            Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
+            MyDocumentedUncuratedClass     | Class                          | true         | false        | false           | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass
 
-"""
+            """
         XCTAssertEqual(result, expected)
     }
 
@@ -101,11 +101,11 @@ MyDocumentedUncuratedClass     | Class                          | true         |
             shouldGenerateDetailed: true
         )
         let expected = """
-Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
-MyDocumentedUncuratedClass     | Class                          | true         | false        | true            | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass
-MyDocumentedUncuratedClassProp | Instance Property              | false        | true         | false           | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass/myProperty
+            Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
+            MyDocumentedUncuratedClass     | Class                          | true         | false        | true            | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass
+            MyDocumentedUncuratedClassProp | Instance Property              | false        | true         | false           | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass/myProperty
 
-"""
+            """
         XCTAssertEqual(result, expected)
     }
 }

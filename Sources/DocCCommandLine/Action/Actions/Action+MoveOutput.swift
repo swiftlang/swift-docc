@@ -12,7 +12,7 @@ import Foundation
 import SwiftDocC
 
 extension AsyncAction {
-    
+
     /// Creates a new unique directory, with an optional template, inside of specified container.
     /// - Parameters:
     ///   - container: The container directory to create a new directory within.
@@ -33,7 +33,7 @@ extension AsyncAction {
         }
         return targetURL
     }
-    
+
     /// Moves a file or directory from the specified location to a new location.
     /// - Parameters:
     ///   - source: The file or directory to move.
@@ -42,15 +42,15 @@ extension AsyncAction {
     static func moveOutput(from source: URL, to destination: URL, fileManager: any FileManagerProtocol) throws {
         // We only need to move output if it exists
         guard fileManager.fileExists(atPath: source.path) else { return }
-        
+
         if fileManager.fileExists(atPath: destination.path) {
             try fileManager.removeItem(at: destination)
         }
-        
+
         try ensureThatParentFolderExist(for: destination, fileManager: fileManager)
         try fileManager.moveItem(at: source, to: destination)
     }
-    
+
     private static func ensureThatParentFolderExist(for location: URL, fileManager: any FileManagerProtocol) throws {
         let parentFolder = location.deletingLastPathComponent()
         if !fileManager.directoryExists(atPath: parentFolder.path) {

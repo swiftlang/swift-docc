@@ -15,20 +15,20 @@ import XCTest
 class TestMetric: BenchmarkMetric, BenchmarkBlockMetric, DynamicallyIdentifiableMetric {
     let identifier = "com.tests.DynamicMetric"
     let displayName = "Dynamic Metric"
-    
+
     static let identifier = "com.tests.TestMetric"
     static let displayName = "Test Metric"
     let result: MetricValue? = .checksum("Result")
-    
+
     var didBegin = false
     var didEnd = false
 
-    init() { }
+    init() {}
 
     init(didInit: inout Bool) {
         didInit = true
     }
-    
+
     func begin() { didBegin = true }
     func end() { didEnd = true }
 }
@@ -38,39 +38,39 @@ class BenchmarkTests: XCTestCase {
         let testBenchmark = Benchmark()
         XCTAssertTrue(testBenchmark.metrics.isEmpty)
     }
-    
+
     func testOneOffMetric() {
         let testBenchmark = Benchmark()
-        
+
         // Add a one-off metric
         benchmark(add: TestMetric(), benchmarkLog: testBenchmark)
-        
+
         XCTAssertEqual(testBenchmark.metrics.count, 1)
         guard testBenchmark.metrics.count == 1 else { return }
-        
+
         // Verify the metric details
         XCTAssertEqual(type(of: testBenchmark.metrics[0]).identifier, "com.tests.TestMetric")
     }
 
     func testRangeMetric() {
         let testBenchmark = Benchmark()
-        
+
         // Test metric initial state
         let metric = TestMetric()
         XCTAssertFalse(metric.didBegin)
         XCTAssertFalse(metric.didEnd)
-        
+
         // Test metric has begun
         _ = benchmark(begin: metric, benchmarkLog: testBenchmark)
         XCTAssertTrue(metric.didBegin)
         XCTAssertFalse(metric.didEnd)
-        
+
         // Test metric has ended
         benchmark(end: metric, benchmarkLog: testBenchmark)
         XCTAssertTrue(metric.didBegin)
         XCTAssertTrue(metric.didEnd)
     }
-    
+
     func testFilteredMetric() {
         // Verify exact filter query
         do {
@@ -79,7 +79,7 @@ class BenchmarkTests: XCTestCase {
             benchmark(end: benchmark(begin: TestMetric(), benchmarkLog: testBenchmark), benchmarkLog: testBenchmark)
             XCTAssertEqual(testBenchmark.metrics.count, 2)
         }
-        
+
         // Verify partial filter query
         do {
             let testBenchmark = Benchmark(metricsFilter: "com.tests")
@@ -87,19 +87,19 @@ class BenchmarkTests: XCTestCase {
             benchmark(end: benchmark(begin: TestMetric(), benchmarkLog: testBenchmark), benchmarkLog: testBenchmark)
             XCTAssertEqual(testBenchmark.metrics.count, 2)
         }
-        
+
         // Verify non-matching filter query
         do {
             let testBenchmark = Benchmark(metricsFilter: "com.mests")
             benchmark(add: TestMetric(), benchmarkLog: testBenchmark)
             benchmark(end: benchmark(begin: TestMetric(), benchmarkLog: testBenchmark), benchmarkLog: testBenchmark)
             XCTAssertEqual(testBenchmark.metrics.count, 0)
-            
+
             // Verify filtered range metric returns nil
             XCTAssertNil(benchmark(begin: TestMetric(), benchmarkLog: testBenchmark))
         }
     }
-    
+
     func testFilteredMetricInit() {
         // Verify exact filter query
         do {
@@ -114,7 +114,7 @@ class BenchmarkTests: XCTestCase {
             _ = benchmark(begin: TestMetric(didInit: &didInitializeTheMetric), benchmarkLog: testBenchmark)
             XCTAssertTrue(didInitializeTheMetric)
         }
-        
+
         // Verify with non-matching query
         do {
             var didInitializeTheMetric = false
@@ -129,37 +129,37 @@ class BenchmarkTests: XCTestCase {
             XCTAssertFalse(didInitializeTheMetric)
         }
     }
-    
+
     func testDynamicMetrics() throws {
         // Encode a dynamic metric
         let testBenchmark = Benchmark()
         benchmark(add: TestMetric(), benchmarkLog: testBenchmark)
-        
+
         let encoder = JSONEncoder()
         let data = try encoder.encode(testBenchmark)
-        
+
         // Verify the dynamic id and name were encoded
         let result = try JSONDecoder().decode(BenchmarkResults.self, from: data)
         let metric = try XCTUnwrap(result.metrics.first)
-        
+
         XCTAssertEqual(metric.id, "com.tests.DynamicMetric")
         XCTAssertEqual(metric.displayName, "Dynamic Metric")
     }
-    
+
     func testRangeMetricWithBlock() {
         let testBenchmark = Benchmark()
-        
+
         // Test metric initial state
         let metric = TestMetric()
         XCTAssertFalse(metric.didBegin)
         XCTAssertFalse(metric.didEnd)
-        
+
         // Test metric has begun
         benchmark(wrap: metric, benchmarkLog: testBenchmark) {
             XCTAssertTrue(metric.didBegin)
             XCTAssertFalse(metric.didEnd)
         }
-        
+
         // Test metric has ended
         XCTAssertTrue(metric.didBegin)
         XCTAssertTrue(metric.didEnd)
@@ -174,7 +174,7 @@ class BenchmarkTests: XCTestCase {
             }
             XCTAssertEqual("12345", result)
         }
-        
+
         // Test with disabled benchmark
         do {
             let testBenchmark = Benchmark(isEnabled: false)

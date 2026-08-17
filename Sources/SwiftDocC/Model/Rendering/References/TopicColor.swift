@@ -33,7 +33,7 @@ public struct TopicColor: Codable, Hashable {
     //
     // For example, we may allow fully custom colors in the future and allow
     // for providing some kind of `ColorReference` here.
-    
+
     /// Create a topic color with the given standard color identifier.
     public init(standardColorIdentifier: String) {
         self.standardColorIdentifier = standardColorIdentifier

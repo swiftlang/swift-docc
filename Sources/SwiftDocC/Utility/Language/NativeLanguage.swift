@@ -20,10 +20,10 @@ public struct NativeLanguage {
     enum ListType {
         /// Signifies a list of alternative options, e.g. "One or two".
         case options
-        
+
         /// Signifies a list of union items, e.g. "One and two".
         case union
     }
-    
+
     static let english = EnglishLanguage()
 }

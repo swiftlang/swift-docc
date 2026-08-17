@@ -14,19 +14,19 @@ public import Markdown
 public final class MarkupContainer: Semantic {
     /// The `Markup` elements in the container.
     public let elements: [any Markup]
-    
+
     /// Create an empty `Markup` semantic container.
     public convenience override init() {
         self.init([])
     }
-    
+
     /// Creates a new general-purpose markup container with the given elements.
     ///
     /// - Parameter elements: Zero or more markup elements.
     public init(_ elements: any Markup...) {
         self.elements = elements
     }
-    
+
     /// Creates a new general-purpose markup container with the elements of a sequence.
     ///
     /// - Parameter elements: A sequence of markup elements.
@@ -40,7 +40,7 @@ public final class MarkupContainer: Semantic {
     public init(_ elements: some Sequence<any Markup>) {
         self.elements = Array(elements)
     }
-        
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitMarkupContainer(self)
     }
@@ -50,11 +50,11 @@ extension MarkupContainer: RandomAccessCollection {
     public subscript(position: [any Markup].Index) -> any Markup {
         return elements[position]
     }
-    
+
     public var startIndex: [any Markup].Index {
         return elements.startIndex
     }
-    
+
     public var endIndex: [any Markup].Index {
         return elements.endIndex
     }

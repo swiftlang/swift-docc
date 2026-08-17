@@ -13,7 +13,7 @@ import Foundation
 extension CharacterSet {
     /// Returns the character set for characters **not** allowed in a path URL component.
     static let urlPathNotAllowed = CharacterSet.urlPathAllowed.inverted
-    
+
     /// Returns the union of the `whitespaces` and `punctuationCharacters` character sets.
     static let whitespacesAndPunctuation = CharacterSet.whitespaces.union(.punctuationCharacters)
 }

@@ -15,7 +15,7 @@ class DocumentationServer_MessageTests: XCTestCase {
     func testGeneratesRandomIdentifierByDefault() {
         // Configure the random identifier generator to return a constant string.
         DocumentationServer.Message.randomIdentifierGenerator = { "random-identifier" }
-        
+
         XCTAssertEqual(
             DocumentationServer.Message(type: .error, payload: nil).identifier,
             "random-identifier",
@@ -25,14 +25,15 @@ class DocumentationServer_MessageTests: XCTestCase {
             """
         )
     }
-    
+
     func testPrefixesClientNameToRandomIdentifier() {
         // Configure the random identifier generator to return a constant string.
         DocumentationServer.Message.randomIdentifierGenerator = { "random-identifier" }
-        
+
         XCTAssertEqual(
             DocumentationServer.Message(
-                type: "type", clientName: "the-client", payload: nil).identifier,
+                type: "type", clientName: "the-client", payload: nil
+            ).identifier,
             "the-client-random-identifier",
             "Expected the generated identifier to have the client's name as a prefix."
         )

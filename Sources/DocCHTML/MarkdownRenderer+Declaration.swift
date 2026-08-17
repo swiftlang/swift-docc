@@ -19,9 +19,9 @@ package import DocCCommon
 package import SymbolKit
 
 package extension MarkdownRenderer {
- 
+
     typealias DeclarationFragment = SymbolGraph.Symbol.DeclarationFragments.Fragment
-    
+
     /// Creates a`<pre><code>` HTML element hierarchy that represents the symbol's language-specific declarations.
     ///
     /// When the renderer has a ``RenderGoal/richness`` goal, it creates a `<span>` element for each declaration fragment to enable syntax highlighting.
@@ -29,29 +29,31 @@ package extension MarkdownRenderer {
     /// When the renderer has a ``RenderGoal/conciseness`` goal, it joins the different fragments into string.
     func declaration(_ fragmentsByLanguage: [SourceLanguage: [DeclarationFragment]]) -> XMLElement {
         let fragmentsByLanguage = RenderHelpers.sortedLanguageSpecificValues(fragmentsByLanguage)
-        
+
         guard goal == .richness else {
             // On the rendered page, language specific content _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
             // So that tools don't need to filter out language specific content themselves, include only the primary language's (plain text) declaration.
-            let plainTextDeclaration: [XMLNode] = fragmentsByLanguage.first.map { _, fragments in
-                // The main purpose of individual HTML elements per declaration fragment would be syntax highlighting on the rendered page.
-                // That structure likely won't be beneficial (and could even be detrimental) to the tool's ability to consume the declaration information.
-                [.element(named: "code", children: [.text(fragments.map(\.spelling).joined())])]
-            } ?? []
+            let plainTextDeclaration: [XMLNode] =
+                fragmentsByLanguage.first.map { _, fragments in
+                    // The main purpose of individual HTML elements per declaration fragment would be syntax highlighting on the rendered page.
+                    // That structure likely won't be beneficial (and could even be detrimental) to the tool's ability to consume the declaration information.
+                    [.element(named: "code", children: [.text(fragments.map(\.spelling).joined())])]
+                } ?? []
             return .element(named: "pre", children: plainTextDeclaration)
         }
-        
-        let declarations: [XMLElement] = if fragmentsByLanguage.count == 1 {
-            // If there's only a single language there's no need to mark anything as language specific.
-            [XMLNode.element(named: "code", children: _declarationTokens(for: fragmentsByLanguage[0].value, in: fragmentsByLanguage[0].key))]
-        } else {
-            fragmentsByLanguage.map { language, fragments in
-                XMLNode.element(named: "code", children: _declarationTokens(for: fragments, in: language), attributes: ["class": "\(language.id)-only"])
+
+        let declarations: [XMLElement] =
+            if fragmentsByLanguage.count == 1 {
+                // If there's only a single language there's no need to mark anything as language specific.
+                [XMLNode.element(named: "code", children: _declarationTokens(for: fragmentsByLanguage[0].value, in: fragmentsByLanguage[0].key))]
+            } else {
+                fragmentsByLanguage.map { language, fragments in
+                    XMLNode.element(named: "code", children: _declarationTokens(for: fragments, in: language), attributes: ["class": "\(language.id)-only"])
+                }
             }
-        }
         return .element(named: "pre", children: declarations, attributes: ["id": "declaration"])
     }
-    
+
     private func _declarationTokens(for fragments: [DeclarationFragment], in language: SourceLanguage) -> [XMLNode] {
         // swift-format-ignore
         switch language {
@@ -60,23 +62,25 @@ package extension MarkdownRenderer {
             default:          DeclarationFormatter.withJoinedConsecutiveFragments(fragments) { buffer, _, _ in buffer.map(self.render(_:)) }
         }
     }
-    
+
     fileprivate func render(_ fragment: DeclarationFormatter.Fragment) -> XMLNode {
         let text = XMLNode.text(fragment.text)
-        
+
         switch fragment.kind {
         case .text:
             return consume text
-            
+
         case .link(usr: let usr):
             guard let usr, let reference = linkProvider.pathForSymbolID(usr) else {
                 fallthrough
             }
             // If the token refers to a symbol that the `linkProvider` is aware of, make that fragment a link to that symbol.
-            return .element(named: "a", children: [consume text], attributes: [
-                "href": path(to: reference),
-                "class": fragment.kind.htmlClassName
-            ])
+            return .element(
+                named: "a", children: [consume text],
+                attributes: [
+                    "href": path(to: reference),
+                    "class": fragment.kind.htmlClassName
+                ])
         case .keyword, .attribute, .number, .string, .internalParameter:
             // The declaration element is expected to scroll, so individual fragments don't need to contain explicit word breaks.
             return .element(named: "span", children: [consume text], attributes: ["class": fragment.kind.htmlClassName])
@@ -101,7 +105,7 @@ private enum DeclarationFormatter {
     // First, the SymbolKit fragments are transformed into `Fragment` types that join consecutive fragments that display the same. This happens in `withJoinedConsecutiveFragments(...)`
     // Second, some in-place mutation happens on the temporary buffer of those "fragments" to insert line breaks and modify whitespace.
     // Lastly, those fragments are transformed into XMLNode elements by calling `MarkdownRenderer.render(_:)` on each fragment.
-    
+
     /// A compact representation of the information in a SymbolKit fragment for the purpose of rendering a symbol declaration in static HTML.
     ///
     /// This type exists to join consecutive SymbolKit declaration fragments---that map to the same ``Kind``---into a single element.
@@ -115,7 +119,7 @@ private enum DeclarationFormatter {
             case link(usr: String?)
             case text
             case keyword, attribute, number, string, internalParameter
-            
+
             init(_ symbolFragment: MarkdownRenderer.DeclarationFragment) {
                 // swift-format-ignore
                 self = switch symbolFragment.kind {
@@ -129,7 +133,7 @@ private enum DeclarationFormatter {
                     default: .text
                 }
             }
-            
+
             /// The class name used to syntax highlight the text in the HTML declaration.
             var htmlClassName: String {
                 // swift-format-ignore
@@ -143,18 +147,19 @@ private enum DeclarationFormatter {
                     case .internalParameter: "internalParameter"
                 }
             }
-            
+
             /// Checks if two kinds are the same _without_ comparing the USR String for `link` kinds.
             static func == (lhs: Self, rhs: Self) -> Bool {
                 switch (lhs, rhs) {
-                    case (.link, .link),
-                         (.text, .text),
-                         (.keyword, .keyword),
-                         (.attribute, .attribute),
-                         (.number, .number),
-                         (.string, .string),
-                         (.internalParameter, .internalParameter): true
-                    default: false
+                case (.link, .link),
+                    (.text, .text),
+                    (.keyword, .keyword),
+                    (.attribute, .attribute),
+                    (.number, .number),
+                    (.string, .string),
+                    (.internalParameter, .internalParameter):
+                    true
+                default: false
                 }
             }
         }
@@ -163,9 +168,9 @@ private enum DeclarationFormatter {
         /// The text of this fragment.
         var text: Substring
     }
-    
+
     /// A helper method that transforms the SymbolKit fragments into partially processed `Fragment` values and joins consecutive fragments of the same kind to produce a smaller HTML output with fewer `span` elements.
-    /// 
+    ///
     /// - Parameters:
     ///   - fragments: The SymbolKit fragments to transform and join
     ///   - body: A closure where the caller can operate on a temporary buffer of `Fragment` values, with the counted number of external and internal parameter fragments for convenience.
@@ -181,13 +186,13 @@ private enum DeclarationFormatter {
         withUnsafeTemporaryAllocation(of: Fragment.self, capacity: fragments.count) { buffer in
             // Keep track of how many fragments we've initialized so that we can deinitialize them at the end.
             var elementCount = 0
-            
+
             // When pretty printing Swift we need to know how many parameters there are based on the _external_ fragments.
             // When pretty printing Objective-C we need to know how many parameters there are based on the _internal_ fragments.
             // We compute both in this function to avoid the caller iterating over the fragments again just to count the parameters.
             var externalParameterCount = 0
             var internalParameterCount = 0
-            
+
             var remaining = fragments[...]
             guard let first = remaining.popFirst() else {
                 // This body never initialized any elements so we don't need to deinitialize anything afterwards either.
@@ -199,14 +204,14 @@ private enum DeclarationFormatter {
             } else if first.kind == .externalParameter {
                 externalParameterCount &+= 1
             }
-            
+
             // An inner helper function that appends a fragment to the buffer
             func append(_ fragment: consuming Fragment) {
                 buffer.initializeElement(at: elementCount, to: consume fragment)
                 elementCount &+= 1
             }
             append(Fragment(kind: .init(first), text: first.spelling[...]))
-            
+
             while let next = remaining.popFirst() {
                 let kind = Fragment.Kind(next)
                 if kind == .internalParameter {
@@ -214,7 +219,7 @@ private enum DeclarationFormatter {
                 } else if kind == .text, next.kind == .externalParameter {
                     externalParameterCount &+= 1
                 }
-                
+
                 if buffer[elementCount - 1].kind == kind {
                     // Join fragments that display the same.
                     buffer[elementCount - 1].text.append(contentsOf: next.spelling)
@@ -222,7 +227,7 @@ private enum DeclarationFormatter {
                     append(Fragment(kind: kind, text: next.spelling[...]))
                 }
             }
-            
+
             defer {
                 // The closure is responsible for deinitializing any memory that it initializes. However, the buffer will trap if it deinitializes memory that it never initialized.
                 buffer[0..<elementCount].deinitialize()
@@ -231,7 +236,7 @@ private enum DeclarationFormatter {
             return body(.init(start: buffer.baseAddress, count: elementCount), externalParameterCount, internalParameterCount)
         }
     }
-    
+
     /// Pretty prints a Swift declaration by placing attributes on their own line and placing each parameter on its own line.
     ///
     /// For example, this function formats declaration `nonisolated func doSomething(with first: Int, and second: Int) -> Int` as:
@@ -252,30 +257,30 @@ private enum DeclarationFormatter {
             guard !fragments.isEmpty else {
                 return []
             }
-            
+
             var index = 0
-            
+
             // Attributes such as `nonisolated`, `@MainActor`, `@frozen`, `@peer(...)`, or `@freestanding(...)` are placed on their own line.
             // We have found the end of the list of attributes when we encounter the first keyword (for example `func`, `struct`, or `macro`.
             if fragments[index].kind == .attribute,
-               let firstKeywordIndex = fragments.firstIndex(where: { $0.kind == .keyword })
+                let firstKeywordIndex = fragments.firstIndex(where: { $0.kind == .keyword })
             {
                 fragments[firstKeywordIndex - 1].text.replaceTrailingSpacesWithNewline()
                 index = firstKeywordIndex
             }
-            
+
             // Only place parameters on their own lines if the function has more than one parameter.
             // Here we check the _external_ names because Swift parameters always have those in their declaration.
             guard externalParametersCount > 1 else {
                 return fragments.map { renderer.render($0) }
             }
-            
+
             // To know where to insert line breaks and indentation, we need to count and balance the parenthesis.
             var parenthesisDepth = 0
-            
+
             lineBreakParameters: while index < fragments.count {
                 defer { index &+= 1 }
-                
+
                 // We iterate over each fragment's UTF-8 code units to check where we need to insert a line break.
                 // Note that it can happen in the middle of a fragment, especially since multiple fragments may have already been joined together.
                 for utf8Index in fragments[index].text.utf8.indices {
@@ -286,31 +291,31 @@ private enum DeclarationFormatter {
                             fragments[index].text.replaceSpacesWithNewlineAndIndentation(after: utf8Index)
                         }
                         parenthesisDepth &+= 1
-                        
+
                     case comma where parenthesisDepth == 1:
                         fragments[index].text.replaceSpacesWithNewlineAndIndentation(after: utf8Index)
-                        
+
                     case closeParen:
                         parenthesisDepth &-= 1
                         if parenthesisDepth == 0 {
                             fragments[index].text.replaceSpacesWithNewline(before: utf8Index)
-                            
+
                             // We've found the parenthesis that defines the end of the parameter list.
                             // Because we don't do any pretty printing after this point, we break here to avoid looping unnecessarily.
                             break lineBreakParameters
                         }
-                        
+
                     default:
                         continue
                     }
                 }
             }
-        
+
             // Transform the updated fragments into HTML
             return fragments.map { renderer.render($0) }
         }
     }
-    
+
     /// Pretty prints an Objective-C method declaration by placing each parameter on its own line.
     ///
     /// For example, this function formats declaration `- (BOOL) doSomethingWithFirst:(NSInteger)first andSecond:(NSInteger)second;` as:
@@ -328,19 +333,19 @@ private enum DeclarationFormatter {
             guard !fragments.isEmpty else {
                 return []
             }
-            
+
             // Only place parameters on their on lines if the function has more than one parameter.
             // Here we check the _external_ names because Swift parameters always have those in their declaration.
             guard internalParametersCount > 1 else {
                 return fragments.map { renderer.render($0) }
             }
-            
+
             var fragmentIndex = 0
-            
+
             /// An inner helper function that advances `fragmentIndex` and counts the number of characters up until the next colon (or the end of the declaration).
             func countCharactersAndAdvanceUpUntilNextColon() -> Int {
                 var length = 0
-                
+
                 while fragmentIndex < fragments.count {
                     defer { fragmentIndex &+= 1 }
                     let text = fragments[fragmentIndex].text
@@ -362,21 +367,21 @@ private enum DeclarationFormatter {
                     }
                 }
             }
-            
+
             // On the first line, count the distance to the first parameter's colon.
             // This is the point that all other parameters will align their colons with.
             let colonAlignmentLength = countCharactersAndAdvanceUpUntilNextColon()
-            
+
             // From here on we want to add a newline and leading whitespace to each parameter except the last (we keep the semicolon on the same line)
-            for _ in 0 ..< internalParametersCount - 1 {
+            for _ in 0..<internalParametersCount - 1 {
                 advancePastNextParameterName()
                 // After advancing past the previous name, we know the fragment that we need to add a line break and indentation to.
                 let lineStartIndex = fragmentIndex
-                
+
                 let distanceToColon = countCharactersAndAdvanceUpUntilNextColon()
                 fragments[lineStartIndex].text.prependNewlineAndSpaces(length: colonAlignmentLength &- distanceToColon)
             }
-            
+
             // Transform the updated fragments into HTML
             return fragments.map { renderer.render($0) }
         }
@@ -390,10 +395,10 @@ private extension Substring {
             append("\n")
             return
         }
-        
+
         replaceSubrange(lastNonNewlineIndex..., with: CollectionOfOne("\n"))
     }
-    
+
     /// Returns the index of the first trailing space; or `nil` if the string doesn't have any trailing spaces.
     private func startOfTrailingSpaces() -> UTF8View.Index? {
         var lastNonNewlineIndex: UTF8View.Index?
@@ -405,7 +410,7 @@ private extension Substring {
         }
         return lastNonNewlineIndex
     }
-    
+
     /// Replaces all consecutive spaces from index onwards with a single whitespace.
     /// - Parameter index: The insertion location.
     mutating func replaceSpacesWithNewline(before index: UTF8View.Index) {
@@ -413,10 +418,10 @@ private extension Substring {
             insert("\n", at: index)
             return
         }
-        
+
         replaceSubrange(replacementRange, with: CollectionOfOne("\n"))
     }
-    
+
     /// Replaces all consecutive spaces from one-past the index onwards with one whitespace and four spaces (for indentation on the new line).
     /// - Parameter index: The insertion location.
     mutating func replaceSpacesWithNewlineAndIndentation(after index: UTF8View.Index) {
@@ -425,10 +430,10 @@ private extension Substring {
             insert(contentsOf: "\n    ", at: index)
             return
         }
-        
+
         replaceSubrange(replacementRange, with: "\n    ")
     }
-    
+
     /// Returns the range of consecutive spaces from `index` onwards; or `nil` if the UTF-8 code unit at `index` is not a space.
     private func rangeOfConsecutiveSpaces(from index: UTF8View.Index) -> Range<UTF8View.Index>? {
         var index = index
@@ -444,7 +449,7 @@ private extension Substring {
         }
         return start..<index
     }
-    
+
     /// Inserts a newline and `length` spaces (for indentation on the new line) at the start of the string.
     /// - Parameter length: The number of spaces to add after the newline.
     mutating func prependNewlineAndSpaces(length: Int) {

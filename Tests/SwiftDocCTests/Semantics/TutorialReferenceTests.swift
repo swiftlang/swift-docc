@@ -15,8 +15,8 @@ import Markdown
 class TutorialReferenceTests: XCTestCase {
     func testEmpty() async throws {
         let source = """
-@TutorialReference
-"""
+            @TutorialReference
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -29,12 +29,12 @@ class TutorialReferenceTests: XCTestCase {
             XCTAssertEqual(.warning, problem.severity)
         }
     }
-    
+
     func testValid() async throws {
         let tutorialLink = "doc:MyTutorial"
         let source = """
-@TutorialReference(tutorial: "\(tutorialLink)")
-"""
+            @TutorialReference(tutorial: "\(tutorialLink)")
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -49,12 +49,12 @@ class TutorialReferenceTests: XCTestCase {
         }
         XCTAssertTrue(diagnostics.isEmpty)
     }
-    
+
     func testMissingPath() async throws {
         let tutorialLink = "doc:"
         let source = """
-        @TutorialReference(tutorial: "\(tutorialLink)")
-        """
+            @TutorialReference(tutorial: "\(tutorialLink)")
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()

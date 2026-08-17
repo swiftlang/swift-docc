@@ -23,7 +23,7 @@ package protocol DataProvider {
 struct InMemoryDataProvider: DataProvider {
     private let files: [URL: Data]
     private let fallback: (any DataProvider)?
-    
+
     /// Creates a data provider with a collection of in-memory files.
     ///
     /// If the provider doesn't have in-memory data for a given file it will use the fallback.
@@ -36,7 +36,7 @@ struct InMemoryDataProvider: DataProvider {
         self.files = files
         self.fallback = fallback
     }
-    
+
     func contents(of url: URL) throws -> Data {
         if let inMemoryResult = files[url] {
             return inMemoryResult
@@ -44,7 +44,7 @@ struct InMemoryDataProvider: DataProvider {
         if let onDiskResult = try fallback?.contents(of: url) {
             return onDiskResult
         }
-        
+
         throw CocoaError(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: url.path])
     }
 }

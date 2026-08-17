@@ -31,24 +31,24 @@ public import Markdown
 public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// A value of `append` or `override`, denoting whether an extension file's content amends or replaces the in-source documentation.
     @DirectiveArgumentWrapped(name: .custom("mergeBehavior"))
     public var behavior: Behavior
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "behavior" : \DocumentationExtension._behavior,
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "behavior": \DocumentationExtension._behavior
     ]
-    
+
     /// The merge behavior in a documentation extension.
     public enum Behavior: String, CaseIterable, DirectiveArgumentValueConvertible {
         /// Append the documentation-extension content to the in-source content and process them together.
         case append
-        
+
         /// Completely override any in-source content with the content from the documentation-extension.
         case override
     }
-    
+
     func validate(source: URL?, diagnostics: inout [Diagnostic], featureFlags _: FeatureFlags) -> Bool {
         if behavior == .append {
             let diagnostic = Diagnostic(
@@ -63,10 +63,10 @@ public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertib
             )
             diagnostics.append(diagnostic)
         }
-        
+
         return true
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup

@@ -11,28 +11,28 @@
 import Foundation
 
 extension AvailabilityIndex {
-    
+
     /// A single entry in the index.
     public struct Info: Hashable, Equatable, Codable {
         /// The platform name.
         public let platformName: Platform.Name
-        
+
         /// When an item has been introduced.
         public let introduced: Platform.Version?
-        
+
         /// When an item has been deprecated.
         public let deprecated: Platform.Version?
-        
+
         public init(platformName: Platform.Name, introduced: Platform.Version? = nil, deprecated: Platform.Version? = nil) {
             self.platformName = platformName
             self.introduced = introduced
             self.deprecated = deprecated
         }
-        
+
         public func belongs(to platformName: Platform.Name) -> Bool {
             return self.platformName == platformName
         }
-        
+
         public func isIntroduced(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
             if let introduced {
@@ -40,7 +40,7 @@ extension AvailabilityIndex {
             }
             return false
         }
-        
+
         public func isAvailable(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
             if let introduced {
@@ -48,7 +48,7 @@ extension AvailabilityIndex {
             }
             return true
         }
-        
+
         public func isDeprecated(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
             if let deprecated {
@@ -57,24 +57,24 @@ extension AvailabilityIndex {
             return false
         }
     }
-        
+
 }
 
 // MARK: - InterfaceLanguage
 
 /**
  Interface Language identifies a programming language used to index a content of a documentation bundle.
- 
+
  - Note: The name reflects what a render node JSON provides to identify a programming language.
  The name has been decided to avoid confusion with locale languages.
  */
 public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equatable, Sendable {
-    
+
     public typealias ID = UInt8
-    
+
     /// A user friendly name for the language.
     public let name: String
-    
+
     /// An identifier for the language.
     ///
     /// For example, Swift's identifier is `"swift"` and Objective-C's is "`occ`".
@@ -82,35 +82,34 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     /// > Tip: You can initialize an ``InterfaceLanguage`` from a known identifier, with the
     /// > ``from(string:)`` function.
     public let id: String
-    
+
     /// A mask to use to identify the interface language.
     public let mask: ID
-    
-    
+
     enum CodingKeys: String, CodingKey {
         case name
         case id
         case mask
     }
-    
+
     /// Initialize an instance of interface language.
     private init(name: String, id: String, mask: ID) {
         self.name = name
         self.mask = mask
         self.id = id
     }
-    
+
     // This would return "Swift" or "Objective-C" for example.
     public var description: String {
         return name
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         let name = try values.decode(String.self, forKey: .name)
         self.name = name
-        
+
         let id = try values.decodeIfPresent(String.self, forKey: .id)
         if let id {
             self.id = id
@@ -120,10 +119,10 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
             // that do not include an id.
             self.id = name.lowercased()
         }
-        
+
         self.mask = try values.decode(ID.self, forKey: .mask)
     }
-    
+
     /// Create an interface language with the given display name, id, and integer mask.
     ///
     /// - Parameters:
@@ -139,10 +138,10 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     ///
     ///      > Warning: Only integer values between 3 and 7 are supported.
     public init(_ name: String, id: String, mask: Int) {
-        precondition(mask > 2 && mask < 8 , "Only IDs between 3 and 7 are allowed.")
+        precondition(mask > 2 && mask < 8, "Only IDs between 3 and 7 are allowed.")
         self.init(name: name, id: id, mask: (1 << mask))
     }
-    
+
     // String to Language
     public static func from(string: String) -> InterfaceLanguage {
         switch string.lowercased() {
@@ -156,24 +155,24 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
             return .undefined
         }
     }
-    
+
     // A list of pre-defined Apple platforms
     public static let swift = InterfaceLanguage(name: "Swift", id: "swift", mask: 1 << 0)
-    public static let objc  = InterfaceLanguage(name: "Objective-C", id: "occ", mask: 1 << 1)
-    public static let data  = InterfaceLanguage(name: "Data", id: "data", mask: 1 << 2)
-    
+    public static let objc = InterfaceLanguage(name: "Objective-C", id: "occ", mask: 1 << 1)
+    public static let data = InterfaceLanguage(name: "Data", id: "data", mask: 1 << 2)
+
     // A mask indicating an undefined language
     public static let undefined = InterfaceLanguage(name: "Other", id: "other", mask: 0)
-    
+
     // A mask including all the languages
     public static let any = InterfaceLanguage(name: "any", id: "any", mask: ID.max)
-    
+
     // A set containing all the Apple's pre-defined interface languages
     public static let apple = Set([InterfaceLanguage.swift, InterfaceLanguage.objc, InterfaceLanguage.data])
-    
+
     // A set containing all the default interface languages
     public static let all = Set([InterfaceLanguage.undefined] + InterfaceLanguage.apple)
-    
+
     // Equatable
     public static func == (lhs: InterfaceLanguage, rhs: InterfaceLanguage) -> Bool {
         // We only account for the mask in terms of equality.
@@ -187,15 +186,15 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
 
     /// The name of the platform such as `macOS`, `iOS` or `linux`.
     public let name: Name
-    
+
     /// The version of the platform, such as `10.15`, `6.2.1` or `12.2.5`.
     public let version: Version
-    
+
     // This would return "macOS 10.15" or "iOS 12.0" for example.
     public var description: String {
         return name.description + " " + version.description
     }
-    
+
     /**
      Initialize a `Platform` with the given name and version.
      */
@@ -203,37 +202,37 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
         self.name = name
         self.version = version
     }
-    
+
     // MARK: - PlatformVersion
-    
+
     public struct Version {
         public var majorVersion: Int
         public var minorVersion: Int
         public var patchVersion: Int
     }
-    
+
     // MARK: - PlatformName
-    
+
     public struct Name: Hashable, CustomStringConvertible, Codable, Equatable, Sendable {
-        
+
         public typealias ID = UInt64
-        
+
         /// The name of the platform, suitable for display.
         public let name: String
-        
+
         /// The assigned mask suitable to be used for filtering content.
         public let mask: ID
-        
+
         /**
          Initialize a platform with the given display name and id.
          Id is an integer used to shift bits and generate a mask for fast processing.
-         
+
          - Parameters:
             - name: The name of the platform used also for display. Note: case sensitive.
             - id: The ID of the platform.
          */
         public init(_ name: String, id: Int) {
-            precondition(id > 5 && id < 63 , "Only IDs between 6 and 62 are allowed.")
+            precondition(id > 5 && id < 63, "Only IDs between 6 and 62 are allowed.")
             self.init(name: name, mask: (1 << id))
         }
 
@@ -245,12 +244,12 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
         public var description: String {
             return name
         }
-        
+
         /// Returns a boolean indicating if the platform is an Apple defined one.
         public var isApplePlatform: Bool {
             return Platform.Name.apple.contains(self)
         }
-        
+
         // A list of pre-defined Apple platforms
         public static let undefined = Platform.Name(name: "undefined", mask: 0)
         public static let xcode = Platform.Name(name: "Xcode", mask: 1 << 0)
@@ -261,16 +260,16 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
         public static let macCatalyst = Platform.Name(name: "Mac Catalyst", mask: 1 << 5)
         public static let iPadOS = Platform.Name(name: "iPadOS", mask: 1 << 6)
         public static let visionOS = Platform.Name(name: "visionOS", mask: 1 << 7)
-        
+
         // A mask including all the platforms
         public static let any = Platform.Name(name: "all", mask: ID.max)
-        
+
         // A set containing all the Apple's pre-defined platforms
         public static let apple = Set([Platform.Name.xcode, Platform.Name.macOS, Platform.Name.iOS, Platform.Name.watchOS, Platform.Name.watchOS, Platform.Name.tvOS, Platform.Name.macCatalyst])
-        
+
         // A set containing all the default platforms
         public static let all = Set([Platform.Name.undefined] + Platform.Name.apple)
-        
+
         // String to Platform
         public static func from(string: String) -> Platform.Name {
             switch string.lowercased() {
@@ -294,7 +293,7 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
                 return .undefined
             }
         }
-        
+
         // Equatable
         public static func == (lhs: Platform.Name, rhs: Platform.Name) -> Bool {
             // We only account for the mask in terms of equality.
@@ -303,15 +302,14 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
     }
 }
 
-
 // MARK: - Utility Extensions
 
 extension Platform.Version: CustomStringConvertible, Equatable, Comparable, Codable, Hashable {
-    
+
     /**
      Initialize a `PlatformVersion` using a given string.
      Ex: "10.15.1" or "9.3.1".
-     
+
      - Parameter string: The string to parse to initialize the `PlatformVersion`.
      */
     public init?(string: String) {
@@ -321,25 +319,26 @@ extension Platform.Version: CustomStringConvertible, Equatable, Comparable, Coda
         guard intComponents.count == stringComponents.count, intComponents.count > 0 else {
             return nil
         }
-        self.init(majorVersion: intComponents[0],
-                  minorVersion: (intComponents.count > 1) ? intComponents[1] : 0,
-                  patchVersion: (intComponents.count > 2) ? intComponents[2] : 0)
+        self.init(
+            majorVersion: intComponents[0],
+            minorVersion: (intComponents.count > 1) ? intComponents[1] : 0,
+            patchVersion: (intComponents.count > 2) ? intComponents[2] : 0)
     }
-    
+
     public var description: String {
         if patchVersion > 0 { return "\(majorVersion).\(minorVersion).\(patchVersion)" }
         return "\(majorVersion).\(minorVersion)"
     }
-    
+
     // MARK: Comparable
-    
+
     public static func < (lhs: Platform.Version, rhs: Platform.Version) -> Bool {
         if lhs.majorVersion != rhs.majorVersion { return lhs.majorVersion < rhs.majorVersion }
         if lhs.minorVersion != rhs.minorVersion { return lhs.minorVersion < rhs.minorVersion }
         if lhs.patchVersion != rhs.patchVersion { return lhs.patchVersion < rhs.patchVersion }
-        return false // Equals, so return false.
+        return false  // Equals, so return false.
     }
-    
+
     // MARK: UInt32 version encoding
     public init(uint32: UInt32) {
         var representation = uint32
@@ -350,7 +349,7 @@ extension Platform.Version: CustomStringConvertible, Equatable, Comparable, Coda
         let major = representation
         self.init(majorVersion: Int(major), minorVersion: Int(minor), patchVersion: Int(patch))
     }
-    
+
     public var uint32: UInt32 {
         var result = UInt32(0)
         result = result | UInt32(majorVersion)

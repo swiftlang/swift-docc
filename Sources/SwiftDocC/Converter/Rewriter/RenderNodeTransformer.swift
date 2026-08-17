@@ -40,7 +40,8 @@ open class RenderNodeTransformer {
     public func apply(transformation: any RenderNodeTransforming) -> RenderNode {
         let context = RenderNodeTransformationContext(referencesCount: referencesCount)
 
-        return transformation
+        return
+            transformation
             .then(RemoveUnusedReferencesTransformation())
             .transform(renderNode: renderNode, context: context).renderNode
     }

@@ -23,16 +23,18 @@ struct PreviewHTTPHandlerTests {
     func handlesResponses() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             TextFile(name: "index.html", utf8Content: "index"),
-            Folder(name: "css", content: [
-                TextFile(name: "test.css", utf8Content: "css"),
-            ])
+            Folder(
+                name: "css",
+                content: [
+                    TextFile(name: "test.css", utf8Content: "css"),
+                ])
         ])
 
         let channel = EmbeddedChannel()
         let channelHandler = PreviewHTTPHandler(rootURL: folderURL, fileManager: fileSystem)
 
         let response = Response()
-        
+
         try channel.pipeline.addHandler(response).wait()
         try channel.pipeline.addHandler(channelHandler).wait()
 
@@ -43,7 +45,7 @@ struct PreviewHTTPHandlerTests {
             let request = makeRequestHead(uri: "/tutorials")
             try channel.writeInbound(HTTPServerRequestPart.head(request))
             try channel.writeInbound(HTTPServerRequestPart.end(nil))
-            
+
             #expect(response.head?.status == .ok)
             #expect(response.body == "index")
         }
@@ -53,7 +55,7 @@ struct PreviewHTTPHandlerTests {
             let request = makeRequestHead(uri: "/css/test.css")
             try channel.writeInbound(HTTPServerRequestPart.head(request))
             try channel.writeInbound(HTTPServerRequestPart.end(nil))
-            
+
             #expect(response.head?.status == .ok)
             #expect(response.body == "css")
         }
@@ -63,17 +65,17 @@ struct PreviewHTTPHandlerTests {
             let request = makeRequestHead(uri: "/css/notfound.css")
             try channel.writeInbound(HTTPServerRequestPart.head(request))
             try channel.writeInbound(HTTPServerRequestPart.end(nil))
-            
+
             #expect(response.head?.status == .notFound)
             #expect(response.body == "")
         }
-        
+
         // Passed credentials when none required
         do {
             let request = makeRequestHead(uri: "/tutorials", headers: [("Authorization", "Basic \("USER:PASS".data(using: .utf8)!.base64EncodedString())")])
             try channel.writeInbound(HTTPServerRequestPart.head(request))
             try channel.writeInbound(HTTPServerRequestPart.end(nil))
-            
+
             #expect(response.head?.status == .ok)
             #expect(response.body == "index")
         }

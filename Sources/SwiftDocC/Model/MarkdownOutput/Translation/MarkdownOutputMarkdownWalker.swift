@@ -18,20 +18,20 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     let context: DocumentationContext
     let identifier: ResolvedTopicReference
     private let formatOptions = MarkupFormatter.Options(unorderedListMarker: .dash, orderedListNumerals: .incrementing(start: 1))
-    
+
     init(context: DocumentationContext, identifier: ResolvedTopicReference) {
         self.context = context
         self.identifier = identifier
     }
-    
+
     var markdown = ""
     // All references to other documents explicitly referenced in the text
     var outgoingReferences: Set<MarkdownOutputManifest.Relationship> = []
-     
+
     private(set) var indentationToRemove: String?
     private(set) var isRenderingLinkList = false
     private var lastHeading: String? = nil
-    
+
     /// Perform actions while rendering a link list, which affects the output formatting of links
     mutating func withRenderingLinkList(value: Bool = true, _ process: (inout Self) -> Void) {
         let previous = isRenderingLinkList
@@ -64,17 +64,18 @@ extension MarkdownOutputMarkupWalker {
             self.visit(markup)
         }
     }
-    
+
     mutating func visit(section: (any Section)?, addingHeading: String? = nil) {
         guard
             let section = section,
-            section.content.isEmpty == false else {
+            section.content.isEmpty == false
+        else {
             return
         }
-        
-        // Some content is filtered from the markdown export. If this entire section consists of filtered content, the heading should not be added. 
+
+        // Some content is filtered from the markdown export. If this entire section consists of filtered content, the heading should not be added.
         let markdownBeforeSection = markdown
-        
+
         if let heading = addingHeading ?? type(of: section).title, heading.isEmpty == false {
             // Don't add if there is already a heading in the content
             if let first = section.content.first as? Heading, first.level == 2 {
@@ -84,24 +85,24 @@ extension MarkdownOutputMarkupWalker {
             }
         }
         let markdownWithSectionHeading = markdown
-        
+
         for content in section.content {
             self.visit(content)
         }
-        
+
         if markdown == markdownWithSectionHeading {
             // No content was added for this section, revert to where we were before
             markdown = markdownBeforeSection
         }
     }
-        
+
     mutating func startNewParagraphIfRequired() {
         if !markdown.isEmpty, !markdown.hasSuffix("\n\n") { markdown.append("\n\n") }
     }
 }
 
 extension MarkdownOutputMarkupWalker {
-    
+
     mutating func defaultVisit(_ markup: any Markup) {
         var output = markup.format(options: formatOptions)
         if let indentationToRemove, output.hasPrefix(indentationToRemove) {
@@ -122,7 +123,7 @@ extension MarkdownOutputMarkupWalker {
         }
         markdown.append(output)
     }
-    
+
     mutating func visitHeading(_ heading: Heading) {
         startNewParagraphIfRequired()
         markdown.append(heading.detachedFromParent.format(options: formatOptions))
@@ -130,13 +131,13 @@ extension MarkdownOutputMarkupWalker {
             lastHeading = heading.plainText
         }
     }
-    
+
     mutating func visitOrderedList(_ orderedList: OrderedList) {
         let converted = convertList(orderedList, relationships: &outgoingReferences)
         startNewParagraphIfRequired()
         defaultVisit(converted)
     }
-    
+
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) {
         if isRenderingLinkList {
             startNewParagraphIfRequired()
@@ -152,7 +153,7 @@ extension MarkdownOutputMarkupWalker {
             defaultVisit(converted)
         }
     }
-    
+
     // When processing a list, we have to convert the child elements of each list item so that links or nested lists are processed correctly instead of using the output of format().
     // The function is mutating because processing a link updates the manifest contents.
     private func convertList<List: ListItemContainer>(_ list: List, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> List {
@@ -161,10 +162,10 @@ extension MarkdownOutputMarkupWalker {
         }
         return List(newItems)
     }
-    
+
     // Iterate over the child elements to ensure nested lists and links are processed correctly instead of using the output of format()
     private func convertListItem(_ item: ListItem, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> ListItem {
-        
+
         func convertParagraph(_ paragraph: Paragraph) -> Paragraph {
             let newComponents: [any InlineMarkup] = paragraph.inlineChildren.compactMap { inlineChild in
                 switch inlineChild {
@@ -180,7 +181,7 @@ extension MarkdownOutputMarkupWalker {
             }
             return Paragraph(newComponents)
         }
-        
+
         let newChildren: [any BlockMarkup] = item.blockChildren.map { child in
             switch child {
             case let nestedList as any ListItemContainer:
@@ -193,7 +194,7 @@ extension MarkdownOutputMarkupWalker {
         }
         return ListItem(newChildren)
     }
-        
+
     mutating func visitImage(_ image: Image) {
         guard let source = image.source else {
             return
@@ -211,17 +212,17 @@ extension MarkdownOutputMarkupWalker {
         }
         markdown.append(image.format(options: formatOptions))
     }
-       
+
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
         startNewParagraphIfRequired()
         markdown.append(codeBlock.detachedFromParent.format(options: formatOptions))
     }
-    
+
     private func convertSymbolLink(_ symbolLink: SymbolLink, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> (link: any InlineMarkup, abstract: (any Markup)?)? {
         guard let destination = symbolLink.destination else {
             return nil
         }
-        
+
         guard
             let resolved = context.referenceIndex[destination],
             let doc = try? context.entity(with: resolved),
@@ -234,20 +235,21 @@ extension MarkdownOutputMarkupWalker {
             let code = InlineCode(destination)
             return (code, nil)
         }
-        
+
         var linkTitle = symbol.proseVariants[.swift] ?? symbol.title
         var linkListAbstract: (any Markup)?
-                
+
         if isRenderingLinkList {
             linkListAbstract = (doc.semantic as? Symbol)?.abstract
             if let fragments = symbol.navigator {
-                linkTitle = fragments
+                linkTitle =
+                    fragments
                     .map { $0.spelling }
                     .joined(separator: " ")
             }
             relationships.insert(relationship(source: resolved, type: .belongsToTopic, subtype: nil))
         }
-        
+
         let (link, _) = convertLink(Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)]), relationships: &relationships)
         return (link, linkListAbstract)
     }
@@ -262,16 +264,16 @@ extension MarkdownOutputMarkupWalker {
             $0.visit(abstract)
         }
     }
-    
+
     private func convertLink(_ link: Link, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> (link: Link, abstract: (any Markup)?) {
-        
+
         guard
             let destination = link.destination,
             let resolved = context.referenceIndex[destination]
         else {
             return (link, nil)
         }
-        
+
         let doc: DocumentationNode
         let anchorSection: AnchorSection?
         var outputDestination = resolved.path
@@ -292,7 +294,7 @@ extension MarkdownOutputMarkupWalker {
                 return (link, nil)
             }
         }
-        
+
         var linkTitle: String
         var linkListAbstract: (any Markup)?
         if let article = doc.semantic as? Article {
@@ -306,12 +308,12 @@ extension MarkdownOutputMarkupWalker {
         } else {
             linkTitle = anchorSection?.title ?? resolved.lastPathComponent
         }
-        
+
         // No abstract for an anchor link
         if anchorSection != nil {
             linkListAbstract = nil
         }
-        
+
         var convertedLink = Link(destination: outputDestination, title: linkTitle, [])
         // Preserve any inline title markup for the link. If the plain text value is the same as the destination, or was empty, then this was an auto-link or double-backtick symbol link and will require an appropriate title.
         if link.plainText == link.destination || link.plainText.isEmpty {
@@ -323,10 +325,10 @@ extension MarkdownOutputMarkupWalker {
         } else {
             convertedLink.setInlineChildren(link.inlineChildren)
         }
-        
+
         return (convertedLink, linkListAbstract)
     }
-    
+
     mutating func visitLink(_ link: Link) {
         let (converted, abstract) = convertLink(link, relationships: &outgoingReferences)
         // Only perform the linked list rendering for the first thing you find
@@ -335,20 +337,20 @@ extension MarkdownOutputMarkupWalker {
             $0.visit(abstract)
         }
     }
-    
+
     mutating func visitSoftBreak(_ softBreak: SoftBreak) {
         markdown.append("\n")
     }
-        
+
     mutating func visitParagraph(_ paragraph: Paragraph) {
-        
+
         startNewParagraphIfRequired()
-        
+
         for child in paragraph.children {
             visit(child)
         }
     }
-    
+
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) {
         let bundle = context.inputs
         switch blockDirective.name {
@@ -357,13 +359,13 @@ extension MarkdownOutputMarkupWalker {
                 return
             }
             visit(video)
-                        
+
         case ImageMedia.directiveName:
             guard let image = ImageMedia(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             visit(image)
-            
+
         case Row.directiveName:
             guard let row = Row(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
                 return
@@ -379,7 +381,7 @@ extension MarkdownOutputMarkupWalker {
                 return
             }
             if let defaultLanguage = context.sourceLanguages(for: identifier).first?.name,
-               let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage.lowercased() })
+                let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage.lowercased() })
             {
                 visit(container: languageMatch.content)
             } else {
@@ -389,7 +391,7 @@ extension MarkdownOutputMarkupWalker {
                     visit(para)
                     withRemoveIndentation(from: tab.childMarkup.first) {
                         $0.visit(container: tab.content)
-                        
+
                     }
                 }
             }
@@ -408,7 +410,7 @@ extension MarkdownOutputMarkupWalker {
             guard case .success(let resolved) = context.snippetResolver.resolveSnippet(path: snippet.path) else {
                 return
             }
-            
+
             let lines: [String]
             let renderExplanation: Bool
             if let slice = snippet.slice {
@@ -424,25 +426,25 @@ extension MarkdownOutputMarkupWalker {
                 renderExplanation = true
                 lines = resolved.mixin.lines
             }
-            
+
             if renderExplanation, let explanation = resolved.explanation {
                 visit(explanation)
             }
-            
+
             let code = CodeBlock(language: resolved.mixin.language, lines.joined(separator: "\n"))
             visit(code)
         default: return
         }
-        
+
     }
-    
+
     // HTML is not included in render JSON output, so is omitted here
     mutating func visitHTMLBlock(_ html: HTMLBlock) {
         return
     }
-    
+
     // Inline HTML is stripped of any tags, but its content is included in render JSON output, so the same path is followed here
-    mutating func visitInlineHTML(_ inlineHTML: InlineHTML)  {
+    mutating func visitInlineHTML(_ inlineHTML: InlineHTML) {
         return
     }
 
@@ -450,37 +452,37 @@ extension MarkdownOutputMarkupWalker {
 
 // Semantic handling
 extension MarkdownOutputMarkupWalker {
-    
+
     mutating func visit(container: MarkupContainer?) {
         for element in container?.elements ?? [] {
             visit(element)
         }
     }
-    
+
     mutating func visit(_ video: VideoMedia) {
         let unescaped = video.source.path.removingPercentEncoding ?? video.source.path
         var filename = video.source.url.lastPathComponent
         if let resolvedVideos = context.resolveAsset(named: unescaped, in: identifier, withType: .video),
-           let first = resolvedVideos.variants.first?.value
+            let first = resolvedVideos.variants.first?.value
         {
             filename = first.lastPathComponent
         }
-                    
+
         markdown.append("\n\n![\(video.altText ?? "")](videos/\(context.inputs.id)/\(filename))")
         visit(container: video.caption)
     }
-    
+
     mutating func visit(_ image: ImageMedia) {
         let unescaped = image.source.path.removingPercentEncoding ?? image.source.path
         var filename = image.source.url.lastPathComponent
         if let resolvedImages = context.resolveAsset(named: unescaped, in: identifier, withType: .image),
-           let first = resolvedImages.variants.first?.value
+            let first = resolvedImages.variants.first?.value
         {
             filename = first.lastPathComponent
         }
         markdown.append("\n\n![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
     }
-    
+
     mutating func visit(_ code: Code) {
         guard let codeIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
             return
@@ -488,21 +490,21 @@ extension MarkdownOutputMarkupWalker {
         let fileReference = ResourceReference(bundleID: code.fileReference.bundleID, path: codeIdentifier)
         let codeText: String
         if let data = try? context.resource(with: fileReference),
-           let string = String(data: data, encoding: .utf8)
+            let string = String(data: data, encoding: .utf8)
         {
             codeText = string
         } else if let asset = context.resolveAsset(named: code.fileReference.path, in: identifier),
-                  let string = try? String(contentsOf: asset.data(bestMatching: .init()).url, encoding: .utf8)
+            let string = try? String(contentsOf: asset.data(bestMatching: .init()).url, encoding: .utf8)
         {
             codeText = string
         } else {
             return
         }
-        
+
         visit(Paragraph(Emphasis(Text(code.fileName))))
         visit(CodeBlock(codeText))
     }
-    
+
 }
 
 // MARK: - Manifest construction

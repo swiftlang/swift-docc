@@ -19,18 +19,18 @@ public import Foundation
 public class DocumentationServer: DocumentationServerProtocol {
     /// The services provided by the server.
     public var services: [DocumentationServer.MessageType: any DocumentationService] = [:]
-    
+
     /// Synchronization queue used for server operations.
     ///
     /// Operations on the server, for example registering new services or processing messages, are performed on this queue.
     public var synchronizationQueue: DispatchQueue
-    
+
     /// The encoder used to encode outgoing messages.
     var encoder = JSONEncoder()
-    
+
     /// The encoder used to decode outgoing messages.
     var decoder = JSONDecoder()
-    
+
     /// Creates a server that processes messages using the given quality of service.
     public init(qualityOfService: DispatchQoS = .unspecified) {
         self.synchronizationQueue = DispatchQueue(
@@ -38,21 +38,21 @@ public class DocumentationServer: DocumentationServerProtocol {
             qos: qualityOfService
         )
     }
-    
+
     /// Registers the given service.
     ///
     /// The server registers the service for its declared handling message types. Message types that
     /// already have a service registered will now use the new service instead.
     ///
     /// - Parameter service: The service to register.
-    public func register<S : DocumentationService>(service: S) {
+    public func register<S: DocumentationService>(service: S) {
         synchronizationQueue.sync {
             for type in S.handlingTypes {
                 self.services[type] = service
             }
         }
     }
-    
+
     /// Processes the given message and responds using the given completion closure.
     ///
     /// The given message is expected to be a ``Message``, encoded as JSON. If the server cannot
@@ -74,17 +74,19 @@ public class DocumentationServer: DocumentationServerProtocol {
                     completion(self.encodedErrorMessage((.unsupportedMessageType())))
                     return
                 }
-                service.process(message, completion: { responseMessage in
-                    do {
-                        completion(try self.encode(responseMessage))
-                    } catch {
-                        completion(
-                            self.encodedErrorMessage(
-                                .invalidResponseMessage(underlyingError: error.localizedDescription)
+                service.process(
+                    message,
+                    completion: { responseMessage in
+                        do {
+                            completion(try self.encode(responseMessage))
+                        } catch {
+                            completion(
+                                self.encodedErrorMessage(
+                                    .invalidResponseMessage(underlyingError: error.localizedDescription)
+                                )
                             )
-                        )
-                    }
-                })
+                        }
+                    })
             } catch let error {
                 completion(
                     self.encodedErrorMessage(
@@ -93,23 +95,23 @@ public class DocumentationServer: DocumentationServerProtocol {
             }
         }
     }
-    
+
     /// Decodes the given documentation service message.
     ///
     /// The documentation service message is expected to be encoded in JSON format.
     func decodeMessage(_ encodedMessage: Data) throws -> Message {
         try decoder.decode(Message.self, from: encodedMessage)
     }
-    
+
     /// Encodes the given value.
     ///
     /// The value is encoded in JSON format.
     func encode(_ value: some Encodable) throws -> Data {
         try encoder.encode(value)
     }
-    
+
     /// Creates a documentation service message that contains the given error as payload.
-    /// 
+    ///
     /// - Parameter error: The error to be included in the payload of the documentation service message.
     /// - Returns: A ``Message`` with the given error as the payload.
     func encodedErrorMessage(_ error: DocumentationServerError) -> Data {

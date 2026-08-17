@@ -18,29 +18,30 @@ class TopicAnchorHashTests: XCTestCase {
             let (_, context) = try await self.testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
-            
+
             return try Self.extractChecksumHash(from: testBenchmark)
         }
 
         let expectedHash = try await computeTopicHash()
-        
+
         // Verify the produced topic graph hash is repeatedly the same
-        for _ in 0 ..< 10 {
+        for _ in 0..<10 {
             let hash = try await computeTopicHash()
             XCTAssertEqual(hash, expectedHash)
         }
     }
-    
+
     func testTopicAnchorsChangedHash() async throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
         let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
-        
+
         do {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
             guard let value = testBenchmark.metrics.first?.result,
-                case MetricValue.checksum(let hash) = value else {
+                case MetricValue.checksum(let hash) = value
+            else {
                 XCTFail("Unexpected metric value")
                 return
             }
@@ -51,7 +52,7 @@ class TopicAnchorHashTests: XCTestCase {
             XCTFail("Test bundle topic graph contains too few nodes")
             return
         }
-        
+
         // Add a new section to verify that the hash will change
         let newReference = ResolvedTopicReference(bundleID: "com.bundle.id", path: "/documentation/new#section", sourceLanguage: .swift)
         context.nodeAnchorSections[newReference] = AnchorSection(reference: newReference, title: "New Sub-section")
@@ -62,7 +63,8 @@ class TopicAnchorHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
             guard let value = testBenchmark.metrics.first?.result,
-                case MetricValue.checksum(let hash) = value else {
+                case MetricValue.checksum(let hash) = value
+            else {
                 XCTFail("Unexpected metric value")
                 return
             }
@@ -78,12 +80,13 @@ class TopicAnchorHashTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> String {
-        let hash: String? = switch benchmark.metrics[0].result {
+        let hash: String? =
+            switch benchmark.metrics[0].result {
             case .checksum(let hash):
                 hash
             default:
                 nil
-        }
+            }
         return try XCTUnwrap(hash, file: file, line: line)
     }
 }

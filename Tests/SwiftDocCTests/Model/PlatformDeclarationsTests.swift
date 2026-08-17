@@ -34,7 +34,7 @@ struct PlatformDeclarationsTests {
         for mergedKey: [PlatformName?] in [[.iOS, .tvOS], [.tvOS, .iOS]] {
             let variants: [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] = [
                 mergedKey: declaration("shared"),
-                [.macOS]:  declaration("macOS"),
+                [.macOS]: declaration("macOS"),
             ]
             // iOS in the merged key for the shared declaration is higher priority than macOS
             #expect(variants.mainRenderFragments()?.declarationFragments == declaration("shared").declarationFragments)

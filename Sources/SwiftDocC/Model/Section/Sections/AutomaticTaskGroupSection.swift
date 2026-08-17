@@ -10,7 +10,7 @@
 
 /// A type that can provide a collection of automatically generated task groups.
 protocol AutomaticTaskGroupsProviding {
-    
+
     /// The automatically created task groups this type provides.
     var automaticTaskGroups: [AutomaticTaskGroupSection] { get set }
 }
@@ -23,7 +23,7 @@ struct AutomaticTaskGroupSection {
     enum PositionPreference {
         case top, bottom
     }
-    
+
     let title: String
     var references: [ResolvedTopicReference]
     let renderPositionPreference: PositionPreference

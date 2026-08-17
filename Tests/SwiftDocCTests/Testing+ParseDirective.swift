@@ -24,20 +24,20 @@ func parseDirective<Directive: DirectiveConvertible>(
 ) async throws -> (problemIdentifiers: [String], directive: Directive?) {
     let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
     let document = Document(parsing: content(), source: source, options: .parseBlockDirectives)
-    
+
     let blockDirectiveContainer = try #require(document.child(at: 0) as? BlockDirective, sourceLocation: sourceLocation)
-    
+
     var diagnostics = [Diagnostic]()
     let context = try await makeEmptyContext()
     let directive = directive.init(from: blockDirectiveContainer, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
-    
+
     let diagnosticDescriptions = diagnostics.map { diagnostic -> String in
         #expect(diagnostic.source != nil, "Diagnostic \(diagnostic.identifier) is missing a source URL.", sourceLocation: sourceLocation)
         let line = diagnostic.range?.lowerBound.line.description ?? "unknown-line"
-        
+
         return "\(line): \(diagnostic.severity) – \(diagnostic.identifier)"
     }.sorted()
-    
+
     return (diagnosticDescriptions, directive)
 }
 
@@ -50,7 +50,7 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
     renderBlockContent: [RenderBlockContent],
     problemIdentifiers: [String],
     directive: Directive?,
-    collectedReferences: [String : any RenderReference]
+    collectedReferences: [String: any RenderReference]
 ) {
     let context = try await load(catalog: catalog)
     return try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
@@ -62,10 +62,13 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
     content: () -> String,
     sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
-    let context = try await load(catalog: Folder(name: "Something.docc", content: assetNames.map {
-        DataFile(name: $0, data: Data())
-    }))
-    
+    let context = try await load(
+        catalog: Folder(
+            name: "Something.docc",
+            content: assetNames.map {
+                DataFile(name: $0, data: Data())
+            }))
+
     let (renderedContent, diagnostics, directive, _) = try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
     return (renderedContent, diagnostics, directive)
 }
@@ -95,13 +98,14 @@ func parseDirective<Directive: RenderableDirectiveConvertible>(
     renderBlockContent: [RenderBlockContent],
     problemIdentifiers: [String],
     directive: Directive?,
-    collectedReferences: [String : any RenderReference]
+    collectedReferences: [String: any RenderReference]
 ) {
-    let context: DocumentationContext = if let catalogName {
-        try await loadFromDisk(catalogName: catalogName)
-    } else {
-        try await makeEmptyContext()
-    }
+    let context: DocumentationContext =
+        if let catalogName {
+            try await loadFromDisk(catalogName: catalogName)
+        } else {
+            try await makeEmptyContext()
+        }
     return try parseDirective(directive, context: context, content: content, sourceLocation: sourceLocation)
 }
 
@@ -116,24 +120,24 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
     renderBlockContent: [RenderBlockContent],
     problemIdentifiers: [String],
     directive: Directive?,
-    collectedReferences: [String : any RenderReference]
+    collectedReferences: [String: any RenderReference]
 ) {
     context.diagnosticEngine.clearDiagnostics()
-    
+
     let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
     let document = Document(parsing: content(), source: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-    
+
     let blockDirectiveContainer = try #require(document.child(at: 0) as? BlockDirective, sourceLocation: sourceLocation)
-    
+
     var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
     let result = analyzer.visit(blockDirectiveContainer)
     context.diagnosticEngine.emit(analyzer.diagnostics)
-    
+
     var referenceResolver = MarkupReferenceResolver(context: context, rootReference: context.inputs.rootReference)
-    
+
     _ = referenceResolver.visit(blockDirectiveContainer)
     context.diagnosticEngine.emit(referenceResolver.diagnostics)
-    
+
     func diagnosticDescriptions() throws -> [String] {
         try context.diagnostics.map { problem -> (line: Int, severity: String, id: String) in
             #expect(problem.source != nil, "Diagnostic \(problem.identifier) is missing a source URL.", sourceLocation: sourceLocation)
@@ -143,7 +147,7 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
         .sorted { lhs, rhs in
             let (lhsLine, _, lhsID) = lhs
             let (rhsLine, _, rhsID) = rhs
-            
+
             if lhsLine != rhsLine {
                 return lhsLine < rhsLine
             } else {
@@ -154,11 +158,11 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
             return "\(line): \(severity) – \(id)"
         }
     }
-    
+
     guard let directive = result as? Directive else {
         return ([], try diagnosticDescriptions(), nil, [:])
     }
-    
+
     var contentCompiler = RenderContentCompiler(
         context: context,
         identifier: ResolvedTopicReference(
@@ -167,9 +171,9 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
             sourceLanguage: .swift
         )
     )
-    
+
     let renderedContent = try #require(directive.render(with: &contentCompiler) as? [RenderBlockContent], sourceLocation: sourceLocation)
-    
+
     let collectedReferences = contentCompiler.videoReferences
         .mapValues { $0 as (any RenderReference) }
         .merging(
@@ -179,6 +183,6 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
                 return videoReference
             }
         )
-    
+
     return (renderedContent, try diagnosticDescriptions(), directive, collectedReferences)
 }

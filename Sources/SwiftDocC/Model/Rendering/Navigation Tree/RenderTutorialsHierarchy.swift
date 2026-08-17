@@ -12,7 +12,7 @@
 public struct RenderTutorialsHierarchy: Equatable {
     /// The topic reference for the landing page.
     public var reference: RenderReferenceIdentifier
-    
+
     /// The chapters of the technology.
     public var modules: [RenderHierarchyChapter]?
 
@@ -20,7 +20,7 @@ public struct RenderTutorialsHierarchy: Equatable {
     ///
     /// A list of render reference identifiers.
     public var paths: [[String]]
-    
+
     /// Creates a new root hierarchy node.
     /// - Parameters:
     ///   - reference: The topic reference.
@@ -38,14 +38,14 @@ extension RenderTutorialsHierarchy: Codable {
         case modules
         case paths
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         reference = try container.decode(RenderReferenceIdentifier.self, forKey: .reference)
         modules = try container.decodeIfPresent([RenderHierarchyChapter].self, forKey: .modules)
         paths = try container.decode([[String]].self, forKey: .paths)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(reference, forKey: .reference)

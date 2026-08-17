@@ -11,13 +11,13 @@
 /// A section that contains additional resources for learning about a technology.
 public struct ResourcesRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .resources
-    
+
     /// The resource tiles.
     public var tiles: [RenderTile]
-    
+
     /// An abstract for the section.
     public var content: [RenderBlockContent] = []
-        
+
     /// Creates a new resources section from the given tiles and content.
     ///
     /// - Parameters:

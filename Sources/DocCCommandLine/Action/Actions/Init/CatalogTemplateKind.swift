@@ -11,10 +11,10 @@
 /// Specifies the different template kinds available for
 /// initializing the documentation catalog.
 public enum CatalogTemplateKind: String {
-    
+
     /// A template designed for authoring article-only reference documentation, consisting of a catalog that contains only one markdown file.
     case articleOnly
-    
+
     /// A template designed for authoring tutorials, consisting of a catalog that contains a table of contents and a chapter.
     case tutorial
 
@@ -22,28 +22,28 @@ public enum CatalogTemplateKind: String {
 
 /// Content of the different templates
 extension CatalogTemplateKind {
-    
+
     /// Content of the 'articleOnly' template
     static func articleOnlyTemplateFiles(_ title: String) -> [String: String] {
         [
             "\(title).md": """
-                # \(title)
-                
-                <!--- Metadata configuration to make appear this documentation page as a top-level page -->
-                
-                @Metadata {
-                  @TechnologyRoot
-                }
-                
-                Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
-                
-                ## Overview
+            # \(title)
 
-                Add one or more paragraphs that introduce your content overview.
-                """
+            <!--- Metadata configuration to make appear this documentation page as a top-level page -->
+
+            @Metadata {
+              @TechnologyRoot
+            }
+
+            Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
+
+            ## Overview
+
+            Add one or more paragraphs that introduce your content overview.
+            """
         ]
     }
-    
+
     /// Content of the 'tutorial' template
     static var tutorialTopLevelFilename: String { "table-of-contents.tutorial" }
     static func tutorialTemplateFiles(_ title: String) -> [String: String] {
@@ -59,7 +59,7 @@ extension CatalogTemplateKind {
                 }
             }
             """,
-                "Chapter01/page-01.tutorial": """
+            "Chapter01/page-01.tutorial": """
             @Tutorial() {
                 @Intro(title: "Tutorial Page Title") {
                     Add one paragraph that introduce your tutorial.

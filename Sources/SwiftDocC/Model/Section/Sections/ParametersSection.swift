@@ -11,7 +11,7 @@
 /// A section that contains a function's parameters.
 public struct ParametersSection {
     public static let title: String? = "Parameters"
-    
+
     /// The list of function parameters.
     public let parameters: [Parameter]
 }

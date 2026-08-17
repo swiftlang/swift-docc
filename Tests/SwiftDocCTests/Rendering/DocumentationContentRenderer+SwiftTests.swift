@@ -13,7 +13,7 @@ import XCTest
 @testable import SwiftDocC
 
 class DocumentationContentRenderer_SwiftTests: XCTestCase {
-    
+
     // Tokens where the type name is incorrectly identified as "typeIdentifier"
     let typeIdentifierTokens: [DeclarationRenderSection.Token] = [
         .init(text: "class", kind: .keyword),
@@ -22,7 +22,7 @@ class DocumentationContentRenderer_SwiftTests: XCTestCase {
         .init(text: " : ", kind: .text),
         .init(text: "Object", kind: .typeIdentifier),
     ]
-    
+
     // Tokens where the type name is incorrectly identified as "typeIdentifier", which
     // are additionally prefixed by a module name
     let typeIdentifierTokensWithModule: [DeclarationRenderSection.Token] = [
@@ -34,7 +34,7 @@ class DocumentationContentRenderer_SwiftTests: XCTestCase {
         .init(text: " : ", kind: .text),
         .init(text: "Object", kind: .typeIdentifier),
     ]
-    
+
     // Tokens where the type name is correctly identified as "identifier"
     let identifierTokens: [DeclarationRenderSection.Token] = [
         .init(text: "class", kind: .keyword),
@@ -43,17 +43,17 @@ class DocumentationContentRenderer_SwiftTests: XCTestCase {
         .init(text: " : ", kind: .text),
         .init(text: "Object", kind: .typeIdentifier),
     ]
-    
+
     /// Test whether we map to "identifier" if we find an unexpected "typeIdentifier" token kind
     func testNavigatorTitle() {
         do {
             // Verify that the type's own name is mapped from "typeIdentifier" to "identifier" kind
             let mapped = DocumentationContentRenderer.Swift.navigatorTitle(for: typeIdentifierTokens, symbolTitle: "Test")
-            
+
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
         }
-        
+
         do {
             // Verify that the type's own name is left as-is if the expect kind is vended
             let mapped = DocumentationContentRenderer.Swift.navigatorTitle(for: identifierTokens, symbolTitle: "Test")
@@ -61,12 +61,12 @@ class DocumentationContentRenderer_SwiftTests: XCTestCase {
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
         }
-        
+
         do {
             // Verify that the type's own name is mapped from "typeIdentifier" to "identifier" kind even when prefixed with
             // a module "identifier".
             let mapped = DocumentationContentRenderer.Swift.navigatorTitle(for: typeIdentifierTokensWithModule, symbolTitle: "Test")
-            
+
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "MyModule", ".", "Test", " : ", "Object"])
         }
@@ -77,7 +77,7 @@ class DocumentationContentRenderer_SwiftTests: XCTestCase {
         do {
             // Verify that the type's own name is mapped from "typeIdentifier" to "identifier" kind
             let mapped = DocumentationContentRenderer.Swift.subHeading(for: typeIdentifierTokens, symbolTitle: "Test", symbolKind: "swift.class")
-            
+
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
         }
@@ -85,21 +85,21 @@ class DocumentationContentRenderer_SwiftTests: XCTestCase {
         do {
             // Verify that the type's own name is not-mapped from "identifier" kind
             let mapped = DocumentationContentRenderer.Swift.subHeading(for: identifierTokens, symbolTitle: "Test", symbolKind: "swift.class")
-            
+
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
         }
-        
+
         do {
             // Verify that the type's own name is mapped from "typeIdentifier" to "identifier" kind even when prefixed with
             // a module "identifier".
             let mapped = DocumentationContentRenderer.Swift.subHeading(for: typeIdentifierTokensWithModule, symbolTitle: "Test", symbolKind: "swift.class")
-            
+
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "MyModule", ".", "Test", " : ", "Object"])
         }
     }
-    
+
     // Tokens for an "init" symbol
     let initAsKeywordTokens: [DeclarationRenderSection.Token] = [
         .init(text: "convenience", kind: .keyword),
@@ -107,7 +107,7 @@ class DocumentationContentRenderer_SwiftTests: XCTestCase {
         .init(text: "init", kind: .keyword),
         .init(text: "()", kind: .text),
     ]
-    
+
     // Tokens for an "init" symbol
     let initAsIdentifierTokens: [DeclarationRenderSection.Token] = [
         .init(text: "convenience", kind: .keyword),

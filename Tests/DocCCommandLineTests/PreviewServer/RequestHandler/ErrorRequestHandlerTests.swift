@@ -21,7 +21,7 @@ class ErrorRequestHandlerTests: XCTestCase {
         let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler()
         let response = try responseWithPipeline(request: request, handler: factory)
-        
+
         XCTAssertEqual(response.head?.status, .internalServerError)
         XCTAssertEqual(response.body, "Server Error")
     }
@@ -30,7 +30,7 @@ class ErrorRequestHandlerTests: XCTestCase {
         let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler(error: RequestError(status: .notFound))
         let response = try responseWithPipeline(request: request, handler: factory)
-        
+
         XCTAssertEqual(response.head?.status, .notFound)
         XCTAssertEqual(response.body, "")
     }
@@ -39,7 +39,7 @@ class ErrorRequestHandlerTests: XCTestCase {
         let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler(error: RequestError(status: .notFound), headers: [("Name", "Value")])
         let response = try responseWithPipeline(request: request, handler: factory)
-        
+
         XCTAssertEqual(response.head?.status, .notFound)
         XCTAssertEqual(response.head?.headers["Name"], ["Value"])
         XCTAssertEqual(response.body, "")
@@ -49,7 +49,7 @@ class ErrorRequestHandlerTests: XCTestCase {
         let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler(error: RequestError(status: .notFound, message: "Message!"))
         let response = try responseWithPipeline(request: request, handler: factory)
-        
+
         XCTAssertEqual(response.head?.status, .notFound)
         XCTAssertEqual(response.body, "Message!")
     }

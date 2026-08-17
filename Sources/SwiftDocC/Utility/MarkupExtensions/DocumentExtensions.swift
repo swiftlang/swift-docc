@@ -13,13 +13,15 @@ import Markdown
 extension Document {
     /// The extracted `plainText` of a document's initial level-1 heading if present.
     var title: String? {
-        let titleHeading = children.first {
-            guard let heading = $0 as? Heading,
-                  heading.level == 1 else {
-                return false
-            }
-            return true
-        } as? Heading
+        let titleHeading =
+            children.first {
+                guard let heading = $0 as? Heading,
+                    heading.level == 1
+                else {
+                    return false
+                }
+                return true
+            } as? Heading
         return titleHeading?.plainText
     }
 }

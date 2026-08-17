@@ -9,104 +9,109 @@
 */
 
 import Foundation
-    
+
 extension RenderNode: Codable {
     enum CodingKeys: CodingKey {
         case schemaVersion, identifier, sections, references, metadata, kind, hierarchy
         case abstract, topicSections, topicSectionsStyle, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         schemaVersion = try container.decode(SemanticVersion.self, forKey: .schemaVersion)
-        
+
         identifier = try container.decode(ResolvedTopicReference.self, forKey: .identifier)
         sections = try container.decode([CodableRenderSection].self, forKey: .sections).map { $0.section }
-        references = try (container.decodeIfPresent([String: CodableRenderReference].self, forKey: .references) ?? [:]).mapValues({$0.reference})
+        references = try (container.decodeIfPresent([String: CodableRenderReference].self, forKey: .references) ?? [:]).mapValues({ $0.reference })
         metadata = try container.decode(RenderMetadata.self, forKey: .metadata)
         kind = try container.decode(Kind.self, forKey: .kind)
-        hierarchyVariants = try container.decodeVariantCollectionIfPresent(
-            ofValueType: RenderHierarchy?.self,
-            forKey: .hierarchy
-        ) ?? .init(defaultValue: nil)
+        hierarchyVariants =
+            try container.decodeVariantCollectionIfPresent(
+                ofValueType: RenderHierarchy?.self,
+                forKey: .hierarchy
+            ) ?? .init(defaultValue: nil)
         topicSectionsStyle = try container.decodeIfPresent(TopicsSectionStyle.self, forKey: .topicSectionsStyle) ?? .list
-        
+
         primaryContentSectionsVariants = try container.decodeVariantCollectionArrayIfPresent(
             ofValueType: CodableContentSection?.self,
             forKey: .primaryContentSections
         )
-        
-        relationshipSectionsVariants = try container.decodeVariantCollectionIfPresent(
-            ofValueType: [RelationshipsRenderSection].self,
-            forKey: .relationshipsSections
-        ) ?? .init(defaultValue: [])
-        
-        topicSectionsVariants = try container.decodeVariantCollectionIfPresent(
-            ofValueType: [TaskGroupRenderSection].self,
-            forKey: .topicSections
-        ) ?? .init(defaultValue: [])
-        
-        defaultImplementationsSectionsVariants = try container.decodeVariantCollectionIfPresent(
-            ofValueType: [TaskGroupRenderSection].self,
-            forKey: .defaultImplementationsSections
-        ) ?? .init(defaultValue: [])
-        
+
+        relationshipSectionsVariants =
+            try container.decodeVariantCollectionIfPresent(
+                ofValueType: [RelationshipsRenderSection].self,
+                forKey: .relationshipsSections
+            ) ?? .init(defaultValue: [])
+
+        topicSectionsVariants =
+            try container.decodeVariantCollectionIfPresent(
+                ofValueType: [TaskGroupRenderSection].self,
+                forKey: .topicSections
+            ) ?? .init(defaultValue: [])
+
+        defaultImplementationsSectionsVariants =
+            try container.decodeVariantCollectionIfPresent(
+                ofValueType: [TaskGroupRenderSection].self,
+                forKey: .defaultImplementationsSections
+            ) ?? .init(defaultValue: [])
+
         abstractVariants = try container.decodeVariantCollectionIfPresent(
             ofValueType: [RenderInlineContent]?.self,
             forKey: .abstract
         )
-        
-        seeAlsoSectionsVariants = try container.decodeVariantCollectionIfPresent(
-            ofValueType: [TaskGroupRenderSection].self,
-            forKey: .seeAlsoSections
-        ) ?? .init(defaultValue: [])
-        
+
+        seeAlsoSectionsVariants =
+            try container.decodeVariantCollectionIfPresent(
+                ofValueType: [TaskGroupRenderSection].self,
+                forKey: .seeAlsoSections
+            ) ?? .init(defaultValue: [])
+
         sampleDownload = try container.decodeIfPresent(SampleDownloadSection.self, forKey: .sampleCodeDownload)
         downloadNotAvailableSummary = try container.decodeIfPresent([RenderBlockContent].self, forKey: .downloadNotAvailableSummary)
-        
+
         deprecationSummaryVariants = try container.decodeVariantCollectionIfPresent(
             ofValueType: [RenderBlockContent]?.self,
             forKey: .deprecationSummary
         )
-        
+
         diffAvailability = try container.decodeIfPresent(DiffAvailability.self, forKey: .diffAvailability)
         variants = try container.decodeIfPresent([RenderNode.Variant].self, forKey: .variants)
         variantOverrides = try container.decodeIfPresent(VariantOverrides.self, forKey: .variantOverrides)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(schemaVersion, forKey: .schemaVersion)
         try container.encode(identifier, forKey: .identifier)
         try container.encode(sections.map(CodableRenderSection.init), forKey: .sections)
-        
+
         try container.encode(metadata, forKey: .metadata)
         try container.encode(kind, forKey: .kind)
         try container.encodeVariantCollection(hierarchyVariants, forKey: .hierarchy, encoder: encoder)
         if topicSectionsStyle != .list {
             try container.encode(topicSectionsStyle, forKey: .topicSectionsStyle)
         }
-        
+
         try container.encodeVariantCollection(abstractVariants, forKey: .abstract, encoder: encoder)
-        
+
         try container.encodeVariantCollectionIfNotEmpty(topicSectionsVariants, forKey: .topicSections, encoder: encoder)
         try container.encodeVariantCollectionIfNotEmpty(defaultImplementationsSectionsVariants, forKey: .defaultImplementationsSections, encoder: encoder)
         try container.encodeVariantCollectionIfNotEmpty(relationshipSectionsVariants, forKey: .relationshipsSections, encoder: encoder)
         try container.encodeVariantCollectionIfNotEmpty(seeAlsoSectionsVariants, forKey: .seeAlsoSections, encoder: encoder)
         try container.encodeVariantCollectionArrayIfNotEmpty(primaryContentSectionsVariants, forKey: .primaryContentSections, encoder: encoder)
-        
+
         try container.encodeIfPresent(sampleDownload, forKey: .sampleCodeDownload)
         try container.encodeIfPresent(downloadNotAvailableSummary, forKey: .downloadNotAvailableSummary)
-        
+
         try container.encodeVariantCollectionIfNotEmpty(deprecationSummaryVariants, forKey: .deprecationSummary, encoder: encoder)
-        
+
         try container.encodeIfPresent(diffAvailability, forKey: .diffAvailability)
         try container.encodeIfPresent(variants, forKey: .variants)
-        
+
         if !encoder.skipsEncodingReferences {
             try container.encode(references.mapValues(CodableRenderReference.init), forKey: .references)
         }
-        
+
         // We should only encode variant overrides now if we're _not_ skipping the encoding of
         // references or if there are just no references to encode.
         //
@@ -131,7 +136,7 @@ extension KeyedEncodingContainer {
             try encode(value, forKey: key)
         }
     }
-    
+
     /// Encodes the given boolean if its value is true.
     mutating func encodeIfTrue(_ value: Bool, forKey key: Key) throws {
         if value {

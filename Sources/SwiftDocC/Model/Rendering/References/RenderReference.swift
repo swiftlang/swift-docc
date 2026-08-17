@@ -17,7 +17,7 @@ public import Foundation
 public protocol RenderReference: Codable {
     /// The type of the reference.
     var type: RenderReferenceType { get }
-    
+
     /// The identifier of the reference.
     ///
     /// The identifier can be used to look up a value in the render node's ``RenderNode/references`` dictionary.
@@ -36,23 +36,23 @@ public enum RenderReferenceType: String, Codable, Equatable {
 public struct RenderReferenceIdentifier: Codable, Hashable, Equatable {
     /// The wrapped string identifier.
     public var identifier: String
-    
+
     /// Creates a new render identifier.
     /// - Parameter identifier: The string identifier to wrap.
     public init(_ identifier: String) {
         self.identifier = identifier
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         identifier = try container.decode(String.self)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(identifier)
     }
-    
+
     private enum CodingKeys: CodingKey {
         case identifier
     }
@@ -77,7 +77,7 @@ extension URLReference {
         guard !url.isAbsoluteWebURL else {
             return url
         }
-        
+
         // URLs which are already relative to the base URL should be left as-is
         guard !url.pathComponents.starts(with: Self.baseURL.pathComponents) else {
             return url
@@ -85,11 +85,11 @@ extension URLReference {
 
         return destinationURL(for: url.lastPathComponent, prefixComponent: prefixComponent)
     }
-    
+
     /// Returns the URL for a given file path relative to the base URL of the conforming type.
     ///
     /// The converter that writes the built documentation to the file system is responsible for copying the referenced file to this destination.
-    /// 
+    ///
     /// - Parameters:
     ///   - path: The path of the file.
     ///   - prefixComponent: An optional path component to add before the path of the file.

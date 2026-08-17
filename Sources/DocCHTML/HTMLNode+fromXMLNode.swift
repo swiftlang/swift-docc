@@ -20,21 +20,23 @@ package extension HTMLNode {
     init?(from xmlNode: XMLNode) {
         if let element = xmlNode as? XMLElement {
             guard let name = xmlNode.name,
-                  let tag = HTMLNode._Tag(rawValue: name.lowercased())
+                let tag = HTMLNode._Tag(rawValue: name.lowercased())
             else {
                 return nil
             }
-            
-            let attributes = element.attributes?.compactMap {
-                HTMLNode.Attribute($0)
-            } ?? []
-            
+
+            let attributes =
+                element.attributes?.compactMap {
+                    HTMLNode.Attribute($0)
+                } ?? []
+
             if tag.isVoid {
                 self = ._voidElement(tag, attributes: attributes)
             } else {
-                let contents = xmlNode.children?.compactMap {
-                    HTMLNode(from: $0)
-                } ?? []
+                let contents =
+                    xmlNode.children?.compactMap {
+                        HTMLNode(from: $0)
+                    } ?? []
                 self = ._element(tag, attributes: attributes, contents: contents)
             }
         } else if xmlNode.kind == .text, let text = xmlNode.stringValue {
@@ -51,7 +53,7 @@ private extension HTMLNode.Attribute {
         guard let name = attribute.name?.lowercased() else {
             return nil
         }
-        
+
         self.name = name
         self.value = attribute.stringValue ?? ""
     }

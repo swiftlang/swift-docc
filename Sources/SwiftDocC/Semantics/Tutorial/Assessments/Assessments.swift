@@ -15,30 +15,30 @@ public import Markdown
 public final class Assessments: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// The multiple-choice questions that make up the assessment.
     @ChildDirective(requirements: .oneOrMore)
     public private(set) var questions: [MultipleChoice]
-    
+
     override var children: [Semantic] {
         return questions
     }
-    
-    static var keyPaths: [String : AnyKeyPath] = [
-        "questions" : \Assessments._questions
+
+    static var keyPaths: [String: AnyKeyPath] = [
+        "questions": \Assessments._questions
     ]
-    
+
     init(originalMarkup: BlockDirective, questions: [MultipleChoice]) {
         self.originalMarkup = originalMarkup
         super.init()
         self.questions = questions
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
     }
-    
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitAssessments(self)
     }

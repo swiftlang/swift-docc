@@ -57,17 +57,17 @@ public struct Folder: File {
         self.name = name
         self.content = content
     }
-    
+
     public init(name: String, @FileBuilder content: () -> [any File]) {
         self.name = name
         self.content = content()
     }
-    
+
     public let name: String
 
     /// The files and sub folders that this folder contains.
     public let content: [any File]
-    
+
     public func appendingFile(_ newFile: any File) -> Folder {
         return Folder(name: name, content: content + [newFile])
     }
@@ -88,14 +88,14 @@ public struct FileBuilder {
     public static func buildExpression(_ expression: any File) -> [any File] {
         [expression]
     }
-    
+
     /// Support `if` statements without an `else` statement.
     public static func buildOptional(_ component: [any File]?) -> [any File] { component ?? [] }
-    
+
     /// Support `if-else` and `switch` statements.
-    public static func buildEither(first  component: [any File]) -> [any File] { component }
+    public static func buildEither(first component: [any File]) -> [any File] { component }
     public static func buildEither(second component: [any File]) -> [any File] { component }
-    
+
     /// Support `for-in` loops
     public static func buildArray(_ components: [[any File]]) -> [any File] {
         components.flatMap { $0 }
@@ -110,20 +110,19 @@ package struct FolderBuilder {
     public static func buildExpression(_ expression: Folder) -> [Folder] {
         [expression]
     }
-    
+
     /// Support `if` statements without an `else` statement.
     public static func buildOptional(_ component: [Folder]?) -> [Folder] { component ?? [] }
-    
+
     /// Support `if-else` and `switch` statements.
-    public static func buildEither(first  component: [Folder]) -> [Folder] { component }
+    public static func buildEither(first component: [Folder]) -> [Folder] { component }
     public static func buildEither(second component: [Folder]) -> [Folder] { component }
-    
+
     /// Support `for-in` loops
     public static func buildArray(_ components: [[Folder]]) -> [Folder] {
         components.flatMap { $0 }
     }
 }
-
 
 extension Folder {
     /// Returns a flat list of a folder's recursive listing for testing purposes.
@@ -164,7 +163,7 @@ public struct InfoPlist: File, DataRepresentable {
         public let identifier: String?
         public let defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?
         public let defaultCodeListingLanguage: String?
-        
+
         fileprivate init(displayName: String?, identifier: String?, defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?, defaultCodeListingLanguage: String?) {
             self.displayName = displayName
             self.identifier = identifier
@@ -176,10 +175,10 @@ public struct InfoPlist: File, DataRepresentable {
             let container = try decoder.container(keyedBy: DocumentationContext.Inputs.Info.CodingKeys.self)
             displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
             identifier = try container.decodeIfPresent(String.self, forKey: .id)
-            defaultAvailability = try container.decodeIfPresent([String : [DefaultAvailability.ModuleAvailability]].self, forKey: .defaultAvailability)
+            defaultAvailability = try container.decodeIfPresent([String: [DefaultAvailability.ModuleAvailability]].self, forKey: .defaultAvailability)
             defaultCodeListingLanguage = try container.decodeIfPresent(String.self, forKey: .defaultCodeListingLanguage)
         }
-        
+
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: DocumentationContext.Inputs.Info.CodingKeys.self)
             try container.encodeIfPresent(displayName, forKey: .displayName)
@@ -192,7 +191,7 @@ public struct InfoPlist: File, DataRepresentable {
     public func data() throws -> Data {
         let encoder = PropertyListEncoder()
         encoder.outputFormat = .xml
-        
+
         return try encoder.encode(content)
     }
 }
@@ -203,12 +202,12 @@ public struct TextFile: File, DataRepresentable {
         self.name = name
         self.utf8Content = utf8Content
     }
-    
+
     public init(name: String, @TextFileBuilder _ utf8Content: () -> String) {
         self.name = name
         self.utf8Content = utf8Content()
     }
-    
+
     public let name: String
 
     /// The UTF8 content of the file.
@@ -228,14 +227,14 @@ public struct TextFileBuilder {
     public static func buildExpression(_ expression: any CustomStringConvertible) -> String {
         expression.description
     }
-    
+
     /// Support `if` statements without an `else` statement.
     public static func buildOptional(_ component: String?) -> String { component ?? "" }
-    
+
     /// Support `if-else` and `switch` statements.
-    public static func buildEither(first  component: String) -> String { component }
+    public static func buildEither(first component: String) -> String { component }
     public static func buildEither(second component: String) -> String { component }
-    
+
     /// Support `for-in` loops
     public static func buildArray(_ components: [String]) -> String {
         components.joined(separator: "\n")
@@ -248,12 +247,12 @@ public struct JSONFile<Content: Codable>: File, DataRepresentable {
         self.name = name
         self.content = content
     }
-    
+
     public init(name: String? = nil, symbolGraph: SymbolGraph) where Content == SymbolGraph {
         self.name = name ?? "\(symbolGraph.module.name).symbols.json"
         self.content = symbolGraph
     }
-    
+
     public let name: String
 
     /// The UTF8 content of the file.
@@ -270,20 +269,20 @@ public struct CopyOfFile: File, DataRepresentable {
         case notAFile(URL)
         var errorDescription: String {
             switch self {
-                case .notAFile(let url): return "Original url is not a file: '\(url.path)'"
+            case .notAFile(let url): return "Original url is not a file: '\(url.path)'"
             }
         }
     }
-    
+
     /// The original file.
     public let original: URL
     public let name: String
-    
+
     public init(original: URL, newName: String? = nil) {
         self.original = original
         self.name = newName ?? original.lastPathComponent
     }
-    
+
     public func data() throws -> Data {
         // Note that `CopyOfFile` always reads a file from disk and so it's okay
         // to use `FileManager.default` directly here instead of `FileManagerProtocol`.
@@ -291,7 +290,7 @@ public struct CopyOfFile: File, DataRepresentable {
         guard FileManager.default.fileExists(atPath: original.path, isDirectory: &isDirectory), !isDirectory.boolValue else { throw Error.notAFile(original) }
         return try Data(contentsOf: original)
     }
-    
+
     public func write(to url: URL) throws {
         try FileManager.default.copyItem(at: original, to: url)
     }
@@ -302,13 +301,13 @@ public struct CopyOfFolder: File {
     let original: URL
     public let name: String
     let shouldCopyFile: (URL) -> Bool
-    
+
     public init(original: URL, newName: String? = nil, filter shouldCopyFile: @escaping (URL) -> Bool = { _ in true }) {
         self.original = original
         self.name = newName ?? original.lastPathComponent
         self.shouldCopyFile = shouldCopyFile
     }
-    
+
     public func write(to url: URL) throws {
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
         for filePath in try FileManager.default.contentsOfDirectory(atPath: original.path) {
@@ -316,7 +315,7 @@ public struct CopyOfFolder: File {
             guard !filePath.hasPrefix(".") else { continue }
             let originalFileURL = original.appendingPathComponent(filePath)
             guard shouldCopyFile(originalFileURL) else { continue }
-            
+
             try FileManager.default.copyItem(at: originalFileURL, to: url.appendingPathComponent(filePath))
         }
     }
@@ -326,7 +325,7 @@ public struct CopyOfFolder: File {
 public struct DataFile: File, DataRepresentable {
     public var name: String
     var _data: Data
-    
+
     public init(name: String, data: Data) {
         self.name = name
         self._data = data
@@ -343,11 +342,15 @@ public struct DataFile: File, DataRepresentable {
 package func makeTestFileSystemWithFolder(containing content: [any File]) throws -> (TestFileSystem, URL) {
     let testFileSystem = try TestFileSystem(folders: [
         // Don't add the files top-level to ensure that the caller works with file paths and not file names.
-        Folder(name: "path", content: [
-            Folder(name: "to", content: [
-                Folder(name: "Some folder", content: content)
+        Folder(
+            name: "path",
+            content: [
+                Folder(
+                    name: "to",
+                    content: [
+                        Folder(name: "Some folder", content: content)
+                    ])
             ])
-        ])
     ])
     return (testFileSystem, URL(fileURLWithPath: "/path/to/Some folder"))
 }
@@ -383,14 +386,14 @@ extension Folder {
             return []
         }
         typealias Path = [String]
-        
+
         func _makeStructure(paths: [Path], accumulatedBasePath: String) -> [any File] {
             assert(paths.allSatisfy { !$0.isEmpty })
-            
+
             let grouped = [String: [Path]](grouping: paths, by: { $0.first! }).mapValues {
                 $0.map { Array($0.dropFirst()) }
             }
-            
+
             return grouped.map { pathComponent, remaining in
                 let absolutePath = "\(accumulatedBasePath)/\(pathComponent)"
                 if remaining == [[]] && !isEmptyDirectoryCheck(absolutePath) {
@@ -400,12 +403,12 @@ extension Folder {
                 }
             }
         }
-        
-        if filePaths.allSatisfy({ $0.hasPrefix("/")}) {
+
+        if filePaths.allSatisfy({ $0.hasPrefix("/") }) {
             let subPaths = filePaths.map { $0.dropFirst() }.filter { !$0.isEmpty }
             return [Folder(name: "", content: _makeStructure(paths: subPaths.map { String($0).components(separatedBy: CharacterSet(charactersIn: "/")) }, accumulatedBasePath: ""))]
         }
-        
+
         return _makeStructure(paths: filePaths.map { $0.components(separatedBy: CharacterSet(charactersIn: "/")) }, accumulatedBasePath: "")
     }
 }
@@ -414,7 +417,7 @@ private func makeMinimalTestRenderNode(path: String) -> RenderNode {
     let reference = ResolvedTopicReference(bundleID: "org.swift.test", path: path, sourceLanguage: .swift)
     let rawReference = reference.url.absoluteString
     let title = path.components(separatedBy: "/").last ?? path
-    
+
     var renderNode = RenderNode(identifier: reference, kind: .article)
     renderNode.metadata.title = title
     renderNode.references = [
@@ -433,7 +436,7 @@ private func makeMinimalTestRenderNode(path: String) -> RenderNode {
 private struct DumpableNode {
     var name: String
     var children: [DumpableNode]?
-    
+
     init(_ file: any File) {
         if let folder = file as? Folder {
             name = file.name
@@ -466,7 +469,7 @@ extension File {
     /// ```
     public func dump() -> String {
         Self.dump(.init(self))
-            .trimmingCharacters(in: .newlines) // remove the trailing newline
+            .trimmingCharacters(in: .newlines)  // remove the trailing newline
     }
 
     private static func dump(_ node: DumpableNode, decorator: String = "") -> String {
@@ -480,7 +483,7 @@ extension File {
             return result + "\n"
         }
         result.append("/\n")
-        
+
         let sortedChildren = children.sorted(by: { lhs, rhs in
             // Sort files before folders if the folder name is a prefix of the file name
             switch (lhs.children, rhs.children) {
@@ -494,7 +497,7 @@ extension File {
                 return lhs.name < rhs.name
             }
         })
-        
+
         for (index, child) in sortedChildren.enumerated() {
             var decorator = decorator
             if decorator.hasSuffix("├") {
@@ -503,7 +506,7 @@ extension File {
             if decorator.hasSuffix("╰") {
                 decorator = decorator.dropLast() + "   "
             }
-            let newDecorator = decorator + (index == sortedChildren.count-1 ? "╰" : "├")
+            let newDecorator = decorator + (index == sortedChildren.count - 1 ? "╰" : "├")
             result.append(dump(child, decorator: newDecorator))
         }
         return result

@@ -68,8 +68,8 @@ extension Metadata {
         @DirectiveArgumentWrapped(name: .unnamed)
         public var kind: Kind
 
-        static var keyPaths: [String : AnyKeyPath] = [
-            "kind" : \PageKind._kind
+        static var keyPaths: [String: AnyKeyPath] = [
+            "kind": \PageKind._kind
         ]
 
         public let originalMarkup: Markdown.BlockDirective

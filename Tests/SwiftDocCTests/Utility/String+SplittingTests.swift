@@ -12,7 +12,7 @@ import Testing
 @testable import SwiftDocC
 
 struct String_SplittingTests {
-    
+
     @Test(arguments: [
         ("hello\nworld", ["hello", "world"]),
         ("hello\nworld\n", ["hello", "world"]),

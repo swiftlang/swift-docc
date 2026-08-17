@@ -12,10 +12,10 @@
 public struct ConvertRequestContextWrapper<Payload: Codable>: Codable {
     /// The identifier of the convert request associated with this payload.
     public var convertRequestIdentifier: String?
-    
+
     /// The original payload.
     public var payload: Payload
-    
+
     /// Creates a convert request context wrapper given the convert request's identifier and a payload.
     public init(convertRequestIdentifier: String?, payload: Payload) {
         self.convertRequestIdentifier = convertRequestIdentifier

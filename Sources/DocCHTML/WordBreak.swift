@@ -28,36 +28,36 @@ enum RenderHelpers {
     ///       ╰─────────────────────────┴──────────┴──── between words
     static func wordBreak(symbolName: String) -> [XMLNode] {
         var result: [XMLNode] = []
-        
+
         let utf8View = symbolName.utf8
         let indices = utf8View.indices
-        
+
         var fromIndex = utf8View.startIndex
         for (index, previousIndex) in zip(indices.dropFirst(), indices) {
             let previous = utf8View[previousIndex]
-            let current  = utf8View[index]
-            
+            let current = utf8View[index]
+
             // swift-format-ignore
             guard previous.isSyntaxSeparator      && !current.isSyntaxSeparator
                || previous.isLowercaseASCIILetter && current.isUppercaseASCIILetter
             else {
                 continue
             }
-            
-            result.append(.text(String(utf8View[fromIndex ..< index])!))
+
+            result.append(.text(String(utf8View[fromIndex..<index])!))
             if index < utf8View.endIndex {
                 result.append(.element(named: "wbr"))
             }
             fromIndex = index
         }
-        
+
         if fromIndex < utf8View.endIndex {
             result.append(.text(String(utf8View[fromIndex...])!))
         }
-        
+
         return result
     }
-    
+
     /// Returns the language specific symbol names sorted by the language.
     static func sortedLanguageSpecificValues<Value>(_ valuesByLanguageID: [SourceLanguage: Value]) -> [(key: SourceLanguage, value: Value)] {
         valuesByLanguageID.sorted(by: { lhs, rhs in lhs.key < rhs.key })
@@ -72,7 +72,7 @@ private extension UTF8.CodeUnit {
     var isLowercaseASCIILetter: Bool {
         UTF8.CodeUnit(ascii: "a") <= self && self <= UTF8.CodeUnit(ascii: "z")
     }
-    
+
     var isSyntaxSeparator: Bool {
         return self == UTF8.CodeUnit(ascii: ":")
             || self == UTF8.CodeUnit(ascii: "(")

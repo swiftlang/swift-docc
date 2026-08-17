@@ -13,7 +13,7 @@ extension HTMLNode {
     package struct Attribute {
         let name: String
         let value: String
-        
+
         /// A short, abbreviated description of a `<th>` element's content.
         package static func abbr(_ description: String) -> Attribute { .init(name: "abbr", value: description) }
 
@@ -49,10 +49,10 @@ extension HTMLNode {
 
         /// The type of content that's referenced by the `<link>` element.
         package static func `as`(_ value: As) -> Attribute { .init(name: "as", value: value.rawValue) }
-        
+
         /// Specifies the that browser should run the `<script>` element's script asynchronously.
-        package static let async = Attribute(name: "async", value: "") // A "boolean" attribute
-        
+        package static let async = Attribute(name: "async", value: "")  // A "boolean" attribute
+
         /// A configuration of the autocapitalization behavior of the element.
         package static func autoCapitalize(_ value: AutoCapitalize) -> Attribute { .init(name: "autocapitalize", value: value.rawValue) }
 
@@ -63,19 +63,19 @@ extension HTMLNode {
         package static func autoCorrect(_ enabled: Bool) -> Attribute { .init(name: "autocorrect", value: enabled ? "on" : "off") }
 
         /// An indication that browser it to focus the element as soon as the page is loaded, allowing the user to just start typing without having to manually focus the element.
-        package static let autoFocus = Attribute(name: "autofocus", value: "") // A "boolean" attribute
+        package static let autoFocus = Attribute(name: "autofocus", value: "")  // A "boolean" attribute
 
         /// Specifies that the browser should automatically being playing the `<audio>` or `<video>` element's resource as soon as it can, without waiting for the entire resource to finish downloading.
-        package static let autoPlay = Attribute(name: "autoplay", value: "") // A "boolean" attribute
+        package static let autoPlay = Attribute(name: "autoplay", value: "")  // A "boolean" attribute
 
         @available(*, deprecated, message: "Use CSS to configure a background image instead")
-        package static func background(_ value: String) -> Attribute { .init(name: "background", value: value) } 
+        package static func background(_ value: String) -> Attribute { .init(name: "background", value: value) }
 
         @available(*, deprecated, message: "Use CSS to configure a background color instead")
         package static func bgColor(_ value: String) -> Attribute { .init(name: "bgcolor", value: value) }
 
         @available(*, deprecated, message: "Use CSS to configure a border instead")
-        package static func border(_ value: String) -> Attribute { .init(name: "border", value: value) } 
+        package static func border(_ value: String) -> Attribute { .init(name: "border", value: value) }
 
         /// The media capture input method for a "file" type `<input>` element.
         package static func capture(_ value: Capture) -> Attribute { .init(name: "capture", value: value.rawValue) }
@@ -84,19 +84,19 @@ extension HTMLNode {
         package static let charSet = Attribute(name: "charset", value: "utf-8")
 
         /// Whether or not a "checkbox" type or "radio" type `<input>` element is checked.
-        package static let checked = Attribute(name: "checked", value: "") // A "boolean" attribute
+        package static let checked = Attribute(name: "checked", value: "")  // A "boolean" attribute
 
         /// The URL to either the source of a `<blockquote>` or `<q>` element's source or to a `<ins>` or `<del>` element's change.
-        package static func cite(_ value: String) -> Attribute { .init(name: "cite", value: value) } 
+        package static func cite(_ value: String) -> Attribute { .init(name: "cite", value: value) }
 
         /// A space-separated list of classes for the element.
         package static func `class`(_ classNames: String...) -> Attribute { .init(name: "class", value: classNames.joined(separator: " ")) }
-        
+
         @available(*, deprecated, message: "Use CSS to configure a text color instead")
         package static func color(_ value: String) -> Attribute { .init(name: "color", value: value) }
 
         /// The colorspace that the "color" type `<input>` element should use for selecting its color value.
-        package static func colorspace(_ value: String) -> Attribute { .init(name: "colorspace", value: value) } 
+        package static func colorspace(_ value: String) -> Attribute { .init(name: "colorspace", value: value) }
 
         /// The width of a `<textarea>` element's textual contents, measured in average character widths.
         package static func cols(_ width: Int) -> Attribute { .init(name: "cols", value: width.description) }
@@ -105,19 +105,19 @@ extension HTMLNode {
         package static func colSpan(_ count: UInt) -> Attribute { .init(name: "colspan", value: count.description) }
 
         /// The value associated with a `<meta>` element's ``name(_:)`` attribute.
-        package static func content(_ value: String) -> Attribute { .init(name: "content", value: value) } 
+        package static func content(_ value: String) -> Attribute { .init(name: "content", value: value) }
 
         /// A configuration that controls whether or not the element is editable.
         package static func contentEditable(_ value: ContentEditable) -> Attribute { .init(name: "contenteditable", value: value.rawValue) }
 
         /// Specifies if the browser should offer audio playback controls for the `<audio>` or `<video>` element.
-        package static let controls = Attribute(name: "controls", value: "") // A "boolean" attribute
+        package static let controls = Attribute(name: "controls", value: "")  // A "boolean" attribute
 
         /// A hint to the browser for what controls to show for this `<audio>` element.
         package static func controlsList(_ controls: Controls) -> Attribute { .init(name: "controlslist", value: controls.rawValue) }
 
         /// The coordinate information of an `<area>` element's ``shape(_:)`` attribute.
-        package static func coords(_ value: String) -> Attribute { .init(name: "coords", value: value) } 
+        package static func coords(_ value: String) -> Attribute { .init(name: "coords", value: value) }
 
         /// Specifies that the browser should use Cross-Origin Resource Sharing (CORS) to fetch the `<audio>`, `<img>`, `<link>`, `<script>`, or `<video>` element's resource.
         package static func crossOrigin(_ value: CrossOrigin) -> Attribute { .init(name: "crossorigin", value: value.rawValue) }
@@ -126,7 +126,7 @@ extension HTMLNode {
         package static func csp(_ policy: String) -> Attribute { .init(name: "csp", value: policy) }
 
         /// The URL of an `<object>` element's resource.
-        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) } 
+        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) }
 
         /// Either the machine-readable representation of a `<time>` element's date-time value or the date-time value associated with an `<ins>` or `<del>` element's change.
         package static func datetime(_ machineReadableRepresentation: String) -> Attribute { .init(name: "datetime", value: machineReadableRepresentation) }
@@ -135,11 +135,11 @@ extension HTMLNode {
         package static func decoding(_ value: Decoding) -> Attribute { .init(name: "decoding", value: value.rawValue) }
 
         /// A hint to the browser that it should enable the `<track>` element by default unless the user's preferences indicate something different.
-        package static let `default` = Attribute(name: "default", value: "") // A "boolean" attribute
-        
+        package static let `default` = Attribute(name: "default", value: "")  // A "boolean" attribute
+
         /// A hint to the browser that is should run the `<script>` element's source after it has parsed the page.
-        package static let `defer` = Attribute(name: "defer", value: "") // A "boolean" attribute
-        
+        package static let `defer` = Attribute(name: "defer", value: "")  // A "boolean" attribute
+
         /// The text direction of the element.
         package static func dir(_ textDirection: Dir) -> Attribute { .init(name: "dir", value: textDirection.rawValue) }
 
@@ -147,16 +147,16 @@ extension HTMLNode {
         package static func dirName(_ elementName: String) -> Attribute { .init(name: "dirname", value: elementName) }
 
         /// Whether or not the  `<button>`, `<fieldset>`, `<input>`, `<optgroup>`, `<option>`, `<select>`, or `<textarea>` element is disabled.
-        package static let disabled = Attribute(name: "disabled", value: "") // A "boolean" attribute
+        package static let disabled = Attribute(name: "disabled", value: "")  // A "boolean" attribute
 
         /// A configuration that the browser should disable playback on devices that are connected either via wire or wireless technologies.
-        package static let disableRemotePlayback = Attribute(name: "disableremoteplayback", value: "") // A "boolean" attribute
+        package static let disableRemotePlayback = Attribute(name: "disableremoteplayback", value: "")  // A "boolean" attribute
 
         /// A configuration that the browser should not suggest a Picture-in-Picture context menu.
-        package static let disablePictureInPicture = Attribute(name: "disablepictureinpicture", value: "") // A "boolean" attribute
+        package static let disablePictureInPicture = Attribute(name: "disablepictureinpicture", value: "")  // A "boolean" attribute
 
         /// A hint to the browser that the  `<a>` or `<area>` element's linked URL is used to downloading a resource.
-        package static let download = Attribute(name: "download", value: "") // A "boolean" attribute
+        package static let download = Attribute(name: "download", value: "")  // A "boolean" attribute
 
         /// A configuration that controls whether or not the element is draggable.
         package static func draggable(_ enabled: Bool) -> Attribute { .init(name: "draggable", value: enabled ? "true" : "false") }
@@ -168,14 +168,14 @@ extension HTMLNode {
         package static func enterKeyHint(_ value: EnterKeyHint) -> Attribute { .init(name: "enterkeyhint", value: value.rawValue) }
 
         /// Marks the `<img>` element for observation by the PerformanceElementTiming API and specifies the identifier for the observed timing event.
-        package static func elementTiming(_ id: String) -> Attribute { .init(name: "elementtiming", value: id) } 
+        package static func elementTiming(_ id: String) -> Attribute { .init(name: "elementtiming", value: id) }
 
         /// A hint to the browser about the relative priority it should use when fetching the `<img>`, `<link>`, or `<script>` element's resource.
         package static func fetchPriority(_ value: FetchPriority) -> Attribute { .init(name: "fetchpriority", value: value.rawValue) }
 
         /// The identifier of the other element that this `<label>` or `<output>` element describes.
         package static func `for`(_ identifier: String) -> Attribute { .init(name: "for", value: identifier) }
-        
+
         /// The identifier of the `<form>` element that this `<button>`, `<fieldset>`, `<input>`, `<object>`, `<output>`, `<select>`, or `<textarea>` element belongs to.
         package static func form(_ identifier: String) -> Attribute { .init(name: "form", value: identifier) }
 
@@ -189,10 +189,10 @@ extension HTMLNode {
         package static func formMethod(_ value: Method) -> Attribute { .init(name: "formmethod", value: value.rawValue) }
 
         /// Overrides the validation configuration of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        package static let formNoValidate = Attribute(name: "formnovalidate", value: "") // A "boolean" attribute
+        package static let formNoValidate = Attribute(name: "formnovalidate", value: "")  // A "boolean" attribute
 
         /// Overrides the target of the `<form>` element that this `<input>` or `<button>` element belongs to.
-        package static func formTarget(_ value: String) -> Attribute { .init(name: "formtarget", value: value) } 
+        package static func formTarget(_ value: String) -> Attribute { .init(name: "formtarget", value: value) }
 
         /// A list of strings corresponding to the id attributes of the `<th>` elements that provide the headers for this header cell.
         package static func headers(_ ids: [String]) -> Attribute { .init(name: "headers", value: ids.joined(separator: " ")) }
@@ -203,7 +203,7 @@ extension HTMLNode {
         package static func headingOffset(_ offset: Int) -> Attribute { .init(name: "headingoffset", value: Swift.min(8, Swift.max(0, offset)).description) }
 
         /// Prevents a heading offset from traversing beyond this element.
-        package static let headingReset = Attribute(name: "headingreset", value: "") // A "boolean" attribute
+        package static let headingReset = Attribute(name: "headingreset", value: "")  // A "boolean" attribute
 
         /// The intrinsic height, in pixels, of the `<canvas>`, `<embed>`, `<iframe>`, `<img>`, `<input>`, `<object>`, or `<video>` element.
         ///
@@ -230,7 +230,7 @@ extension HTMLNode {
         package static func id(_ id: String) -> Attribute { .init(name: "id", value: id) }
 
         /// A configuration that controls whether or not the element is inert (cannot be interacted with).
-        package static let inert = Attribute(name: "inert", value: "") // A "boolean" attribute
+        package static let inert = Attribute(name: "inert", value: "")  // A "boolean" attribute
 
         /// One or more hashes of the `<link>` or `<script>` element's linked resource that the browser can use to ensure that the resource is what it is expected to be.
         package static func integrity(_ hashes: [String]) -> Attribute { .init(name: "integrity", value: hashes.joined(separator: " ")) }
@@ -239,7 +239,7 @@ extension HTMLNode {
         package static func inputMode(_ value: InputMode) -> Attribute { .init(name: "inputmode", value: value.rawValue) }
 
         /// Specifies that the `<img>` element's image is part of a server-side map.
-        package static let isMap = Attribute(name: "ismap", value: "") // A "boolean" attribute
+        package static let isMap = Attribute(name: "ismap", value: "")  // A "boolean" attribute
 
         /// An indication of how the `<track>` element is meant to be used.
         package static func kind(_ value: Kind) -> Attribute { .init(name: "kind", value: value.rawValue) }
@@ -250,19 +250,19 @@ extension HTMLNode {
         /// The language that a non-editable element is in, or the language that an editable element should be written in by the user.
         ///
         /// A compliant HTTP page should only specify a valid [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) as the value for this attribute.
-        package static func lang(_ value: String) -> Attribute { .init(name: "lang", value: value) } 
+        package static func lang(_ value: String) -> Attribute { .init(name: "lang", value: value) }
 
         @available(*, deprecated, message: "Use the `type` attribute to specify a `<script>` element's scripting language instead.")
-        package static func language(_ value: String) -> Attribute { .init(name: "language", value: value) } 
+        package static func language(_ value: String) -> Attribute { .init(name: "language", value: value) }
 
         /// An indication for how the browser should load the `<img>` or `<iframe>` element's resource.
         package static func loading(_ value: Loading) -> Attribute { .init(name: "loading", value: value.rawValue) }
 
         /// The identifier of a `<datalist>` element that provides predefined values to suggest to the user for the `<input>` element.
-        package static func list(_ value: String) -> Attribute { .init(name: "list", value: value) } 
+        package static func list(_ value: String) -> Attribute { .init(name: "list", value: value) }
 
         /// A configuration that the `<audio>` or `<video>` element should automatically seek to the start upon reaching the end.
-        package static let loop = Attribute(name: "loop", value: "") // A "boolean" attribute
+        package static let loop = Attribute(name: "loop", value: "")  // A "boolean" attribute
 
         /// The upper bound of of the low end of the `<meter>` element's measured range.
         package static func low(_ value: Int) -> Attribute { .init(name: "low", value: value.description) }
@@ -280,55 +280,55 @@ extension HTMLNode {
         package static func minLength(_ value: Int) -> Attribute { .init(name: "minlength", value: value.description) }
 
         /// The media query for the resource's intended media of the `<a>`, `<area>`, `<link>`, `<source>`, or `<style>` element.
-        package static func media(_ value: String) -> Attribute { .init(name: "media", value: value) } 
+        package static func media(_ value: String) -> Attribute { .init(name: "media", value: value) }
 
         /// The HTTP method that the browser should use to submit the `<form>` element.
         package static func method(_ value: Method) -> Attribute { .init(name: "method", value: value.rawValue) }
 
         /// An indication that this `<input>` or `<select>` element supports multiple values.
-        package static let multiple = Attribute(name: "multiple", value: "") // A "boolean" attribute
+        package static let multiple = Attribute(name: "multiple", value: "")  // A "boolean" attribute
 
         /// The `<audio>` or `<video>` element will start out as muted.
-        package static let muted = Attribute(name: "muted", value: "") // A "boolean" attribute
+        package static let muted = Attribute(name: "muted", value: "")  // A "boolean" attribute
 
         /// Either the name that gives the metadata name for a ``contents(_:)`` value for a `<meta>` element or the name of a form element for the server to identify fields in the form submission.
-        package static func name(_ value: String) -> Attribute { .init(name: "name", value: value) } 
+        package static func name(_ value: String) -> Attribute { .init(name: "name", value: value) }
 
         /// A cryptographic nonce ("number used once") which can be used by Content Security Policy to determine whether or not a given fetch will be allowed to proceed.
-        package static func nonce(_ value: String) -> Attribute { .init(name: "nonce", value: value) } 
+        package static func nonce(_ value: String) -> Attribute { .init(name: "nonce", value: value) }
 
         /// An indication that this `<form>` element should not be validated before its submission.
-        package static let noValidate = Attribute(name: "novalidate", value: "") // A "boolean" attribute
+        package static let noValidate = Attribute(name: "novalidate", value: "")  // A "boolean" attribute
 
         /// A configuration that a `<details>` element is expanded or that a `<dialog>` element is active and can be interacted with.
-        package static let open = Attribute(name: "open", value: "") // A "boolean" attribute
+        package static let open = Attribute(name: "open", value: "")  // A "boolean" attribute
 
         /// The optimal value of the `<meter>` element's measured range.
         package static func optimum(_ value: Int) -> Attribute { .init(name: "optimum", value: value.description) }
 
         /// A regular expression that validates the `<input>` the element's value.
-        package static func pattern(_ value: String) -> Attribute { .init(name: "pattern", value: value) } 
+        package static func pattern(_ value: String) -> Attribute { .init(name: "pattern", value: value) }
 
         /// A list of URLs of that are interested in being notified if the user follows the `<a>` or `<area>` element's linked URL.
         package static func ping(_ urlStrings: [String]) -> Attribute { .init(name: "ping", value: urlStrings.joined(separator: " ")) }
 
         /// A placeholder value that provides a hint to the user of what can be entered in the `<input>` or `<textare>` element.
-        package static func placeholder(_ value: String) -> Attribute { .init(name: "placeholder", value: value) } 
+        package static func placeholder(_ value: String) -> Attribute { .init(name: "placeholder", value: value) }
 
         /// An indication that browser should display the video within the `<video>` element's playback area.
-        package static let playsInline = Attribute(name: "playsinline", value: "") // A "boolean" attribute
+        package static let playsInline = Attribute(name: "playsinline", value: "")  // A "boolean" attribute
 
         /// Designates the element as a "popover" that is hidden until it opened via an invoking element.
-        package static let popover = Attribute(name: "popover", value: "") // A "boolean" attribute
+        package static let popover = Attribute(name: "popover", value: "")  // A "boolean" attribute
 
         /// A URL for an image to display while the video is downloading.
-        package static func poster(_ value: String) -> Attribute { .init(name: "poster", value: value) } 
+        package static func poster(_ value: String) -> Attribute { .init(name: "poster", value: value) }
 
         /// A hint to the browser about how it should load the `<audio>` element's resource.
         package static func preLoad(_ value: PreLoad) -> Attribute { .init(name: "preload", value: value.rawValue) }
 
         /// An indication whether or not the`<input>` or `<textarea>` element can be edited.
-        package static let readOnly = Attribute(name: "readonly", value: "") // A "boolean" attribute
+        package static let readOnly = Attribute(name: "readonly", value: "")  // A "boolean" attribute
 
         /// How much information the browser should send in a referrer header when following the `<a>` element's link.
         package static func referrerPolicy(_ value: ReferrerPolicy) -> Attribute { .init(name: "referrerpolicy", value: value.rawValue) }
@@ -337,10 +337,10 @@ extension HTMLNode {
         package static func rel(_ relationships: [Rel]) -> Attribute { .init(name: "rel", value: relationships.map(\.rawValue).joined(separator: " ")) }
 
         /// An indication whether or not the`<input>`, `<select>`, or `<textarea>` element is required to be filled out.
-        package static let required = Attribute(name: "required", value: "") // A "boolean" attribute
+        package static let required = Attribute(name: "required", value: "")  // A "boolean" attribute
 
         /// An indication that a `<ol>` element should displays its list items in descending order (instead of in ascending order).
-        package static let reversed = Attribute(name: "reversed", value: "") // A "boolean" attribute
+        package static let reversed = Attribute(name: "reversed", value: "")  // A "boolean" attribute
 
         /// The semantic meaning of an element.
         package static func role(_ value: Role) -> Attribute { .init(name: "role", value: value.rawValue) }
@@ -358,7 +358,7 @@ extension HTMLNode {
         package static func scope(_ value: Scope) -> Attribute { .init(name: "scope", value: value.rawValue) }
 
         /// An indication that the `<option>` element is initially selected when the page loads.
-        package static let selected = Attribute(name: "selected", value: "") // A "boolean" attribute
+        package static let selected = Attribute(name: "selected", value: "")  // A "boolean" attribute
 
         /// The shape of the `<a>` or `<area>` element.
         package static func shape(_ value: Shape) -> Attribute { .init(name: "shape", value: value.rawValue) }
@@ -389,12 +389,12 @@ extension HTMLNode {
         /// Inline HTML to embed instead of the `<iframe>` element's resource.
         ///
         /// If the browser supports this attribute, and it's present, the browser will ignore the the ``src(_:)`` attribute.
-        package static func srcDoc(_ value: String) -> Attribute { .init(name: "srcdoc", value: value) } 
+        package static func srcDoc(_ value: String) -> Attribute { .init(name: "srcdoc", value: value) }
 
         /// The language `<track>` element's textual track data.
         ///
         /// A compliant `<track>` element must only specify a valid [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) as the value for this attribute.
-        package static func srcLang(_ value: String) -> Attribute { .init(name: "srclang", value: value) } 
+        package static func srcLang(_ value: String) -> Attribute { .init(name: "srclang", value: value) }
 
         /// A list of one or more resource URLs and their descriptors for the `<img>` or `<source>` element.
         package static func srcSet(_ urlStrings: [String]) -> Attribute { .init(name: "srcset", value: urlStrings.joined(separator: " ")) }
@@ -406,10 +406,10 @@ extension HTMLNode {
         package static func step(_ interval: Int) -> Attribute { .init(name: "step", value: interval.description) }
 
         @available(*, deprecated, message: "Use style sheet file to define CSS instead.")
-        package static func style(_ value: String) -> Attribute { .init(name: "style", value: value) } 
+        package static func style(_ value: String) -> Attribute { .init(name: "style", value: value) }
 
         @available(*, deprecated, message: "Us a `<caption>` element to describe this `<table>` element instead.")
-        package static func summary(_ value: String) -> Attribute { .init(name: "summary", value: value) } 
+        package static func summary(_ value: String) -> Attribute { .init(name: "summary", value: value) }
 
         /// A configuration that controls whether or not the element is sequentially focusable and determines its relative oder in the sequential navigation.
         ///
@@ -418,10 +418,10 @@ extension HTMLNode {
         package static func tabIndex(_ value: Int) -> Attribute { .init(name: "tabindex", value: value.description) }
 
         /// The name of the "navigable" that browsers will use when following the `<a>` or `<area>` element's link or where browsers will display the response for a `<form>` element's submission.
-        package static func target(_ value: String) -> Attribute { .init(name: "target", value: value) } 
+        package static func target(_ value: String) -> Attribute { .init(name: "target", value: value) }
 
         /// Advisory information for the element, such as would be appropriate for a tooltip.
-        package static func title(_ value: String) -> Attribute { .init(name: "title", value: value) } 
+        package static func title(_ value: String) -> Attribute { .init(name: "title", value: value) }
 
         /// A configuration that controls whether the element's text is to be translated when the page is localized, or whether to leave them unchanged.
         package static func translate(_ enabled: Bool) -> Attribute { .init(name: "translate", value: enabled ? "yes" : "no") }
@@ -433,7 +433,7 @@ extension HTMLNode {
         /// - the type of script that a `<script>` element represents
         /// - the MIME type that a `<link>` element is referencing.
         /// - the MIME type of the media that a `<source>` element is referencing.
-        package static func type(_ value: String) -> Attribute { .init(name: "type", value: value) } 
+        package static func type(_ value: String) -> Attribute { .init(name: "type", value: value) }
 
         /// Depending on the element, either:
         /// - The value of an `<input>` element.
@@ -441,13 +441,13 @@ extension HTMLNode {
         /// - The machine-readable representation of a `<data>` element's content.
         /// - The numeric value of a `<meter>` or `<progress>` element.
         /// - The value that is associated with a `<button>` element's ``name(_:)`` when its containing form is submitted.
-        package static func value(_ value: String) -> Attribute { .init(name: "value", value: value) } 
+        package static func value(_ value: String) -> Attribute { .init(name: "value", value: value) }
 
         /// The intrinsic width, in pixels, of the `<canvas>`, `<embed>`, `<iframe>`, `<img>`, `<input>`, `<object>`, or `<video>` element.
         package static func width(_ pixels: Int) -> Attribute { .init(name: "width", value: pixels.description) }
 
         /// A configuration that the `<textarea>` element's textual content should wrap.
-        package static let wrap = Attribute(name: "wrap", value: "") // A "boolean" attribute
+        package static let wrap = Attribute(name: "wrap", value: "")  // A "boolean" attribute
 
         /// A configuration that the browser should offer writing suggestions for this element.
         package static func writingSuggestions(_ enabled: Bool) -> Attribute { .init(name: "writingsuggestions", value: enabled ? "true" : "false") }
@@ -464,11 +464,11 @@ extension HTMLNode.Attribute {
         case right
         case justify
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/as(_:)`` attribute.
     package enum As: String {
         /// The loaded content is an audio worklet module.
-        case audioWorklet  = "audioworklet"
+        case audioWorklet = "audioworklet"
         /// The loaded content is an additional fetch or XML HTTP Request.
         case fetch
         /// The loaded content is a font.
@@ -478,13 +478,13 @@ extension HTMLNode.Attribute {
         /// The loaded content is supplementary JSON file.
         case json
         /// The loaded content is a paint worklet module.
-        case paintWorklet  = "paintworklet"
+        case paintWorklet = "paintworklet"
         /// The loaded content is a JavaScript source.
         case script
         /// The loaded content is a service worker module.
         case serviceWorker = "serviceworker"
         /// The loaded content is a shared worker module.
-        case sharedWorker  = "sharedworker"
+        case sharedWorker = "sharedworker"
         /// The loaded content is a stylesheet
         case style
         /// The loaded content is a supplementary plain text file.
@@ -494,7 +494,7 @@ extension HTMLNode.Attribute {
         /// The loaded content is a worker module.
         case worker
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/autocapitalize(_:)`` attribute.
     package enum AutoCapitalize: String {
         /// No autocapitalization should be applied (all letters should default to lowercase).
@@ -506,7 +506,7 @@ extension HTMLNode.Attribute {
         /// All letters should default to uppercase.
         case characters
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/capture(_:)`` attribute.
     package enum Capture: String {
         /// An indication that the capture should use the user-facing camera and/or microphone.
@@ -514,7 +514,7 @@ extension HTMLNode.Attribute {
         /// An indication that the capture should use the outward-facing camera and/or microphone.
         case environment
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/contentEditable(_:)`` attribute.
     package enum ContentEditable: String {
         /// The element is editable.
@@ -524,7 +524,7 @@ extension HTMLNode.Attribute {
         /// Only the element's raw text content is editable; rich formatting is disabled.
         case plaintextOnly = "plaintext-only"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/controls(_:)`` attribute.
     // swift-format-ignore
     package enum Controls: String {
@@ -535,7 +535,7 @@ extension HTMLNode.Attribute {
         /// Hints that the browser should not display a remote playback control.
         case noRemotePlayback = "noremoteplayback"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/crossOrigin(_:)`` attribute.
     package enum CrossOrigin: String {
         /// The browser should send a cross-origin request without a credential.
@@ -543,7 +543,7 @@ extension HTMLNode.Attribute {
         /// The browser should send a cross-origin request with a credential
         case useCredentials = "use-credentials"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/decoding(_:)`` attribute.
     package enum Decoding: String {
         /// A hint that the browser should decode the image synchronously along with rendering.
@@ -553,7 +553,7 @@ extension HTMLNode.Attribute {
         /// Specifies that the browser decides the best decoding behavior for the image.
         case auto
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/dir(_:)`` attribute.
     package enum Dir: String {
         /// The contents of the element are explicitly directionally isolated left-to-right text.
@@ -563,7 +563,7 @@ extension HTMLNode.Attribute {
         /// The contents of the element are explicitly directionally isolated text, but the direction is to be determined programmatically using the contents of the element.
         case auto
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/encType(_:)`` attribute.
     // swift-format-ignore
     package enum EncodingType: String {
@@ -575,7 +575,7 @@ extension HTMLNode.Attribute {
         @available(*, deprecated, message: "Submitting forms as plain text is discouraged other than for debugging.")
         case textPlain         = "text/plain"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/enterKeyHint(_:)`` attribute.
     package enum EnterKeyHint: String {
         /// The browser should present a cue for the operation 'enter', typically inserting a new line.
@@ -593,7 +593,7 @@ extension HTMLNode.Attribute {
         /// The browser should present a cue for the operation 'send', typically delivering the text to its target.
         case send
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/fetchPriority(_:)`` attribute.
     package enum FetchPriority: String {
         /// A hint that the browser should fetch the image at a high priority relative to other images.
@@ -603,7 +603,7 @@ extension HTMLNode.Attribute {
         /// No specific preference for the fetch priority of this image.
         case auto
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/hidden(_:)`` attribute.
     // swift-format-ignore
     package enum Hidden: String {
@@ -614,7 +614,7 @@ extension HTMLNode.Attribute {
         /// The element is will not be rendered, but content inside will be accessible to find-in-page and fragment navigation.
         case untilFound = "until-found"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/httpEquiv(_:)`` attribute.
     // swift-format-ignore
     package enum HTTPEquivalent: String {
@@ -631,7 +631,7 @@ extension HTMLNode.Attribute {
         @available(*, deprecated, message: "Use the `Set-Cookie` HTTP response header instead.")
         case setCookie       = "set-cookie"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/inputMode(_:)`` attribute.
     package enum InputMode: String {
         /// The browser should not display any virtual keyboard
@@ -651,7 +651,7 @@ extension HTMLNode.Attribute {
         /// The browser should display a keyboard for search.
         case search
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/kind(_:)`` attribute.
     package enum Kind: String {
         /// The track is meant to provide transcription or translation of the dialog.
@@ -665,7 +665,7 @@ extension HTMLNode.Attribute {
         /// The track is meant to be used by scripts and isn't visible to the user.
         case metadata
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/loading(_:)`` attribute.
     package enum Loading: String {
         /// An indication that the browser should load the image immediately.
@@ -673,7 +673,7 @@ extension HTMLNode.Attribute {
         /// An indication that the browser should defer loading the image until it reaches some browser-defined distance from the viewport.
         case lazy
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/method(_:)`` attribute.
     package enum Method: String {
         /// The form data is sent as the body in a POST request.
@@ -693,7 +693,7 @@ extension HTMLNode.Attribute {
         /// An indication that the whole media file can be downloaded, even if the user is not expected to use it.
         case auto = ""
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/referrerPolicy(_:)`` attribute.
     // swift-format-ignore
     package enum ReferrerPolicy: String {
@@ -711,11 +711,11 @@ extension HTMLNode.Attribute {
         case strictOrigin            = "strict-origin"
         /// Send a full URL when performing a same-origin request, only send the origin when the protocol security level stays the same (HTTPS→HTTPS), and send no header to a less secure destination (HTTPS→HTTP).
         case strictOriginWhenCrossOrigin = "strict-origin-when-cross-origin"
-        
+
         @available(*, deprecated, message: "This policy is unsafe because it leaks origins and paths from TLS-protected resources to insecure origins.")
         case unsafeURL = "unsafe-url"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/rel(_:)`` attribute.
     // swift-format-ignore
     package enum Rel: String {
@@ -778,7 +778,7 @@ extension HTMLNode.Attribute {
         /// An indication that the referenced document is the Terms of Service that describes the agreements between the current document's provider and users who wish to use the document provided.
         case termsOfService = "terms-of-service"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/role(_:)`` attribute.
     package enum Role: String {
         /// This element represents important and usually time-sensitive information.
@@ -852,7 +852,7 @@ extension HTMLNode.Attribute {
         @available(*, deprecated, message: "Use a <tr> element instead.")
         case row
         @available(*, deprecated, message: "Use a <thead>, <hody>, or <tfoot> element instead.")
-        case rowGroup  = "rowgroup"
+        case rowGroup = "rowgroup"
         @available(*, deprecated, message: "Use a <th scope=row> element instead.")
         case rowHeader = "rowheader"
         /// This element represents a user interface element that displays and controls  the scrolling of content within a viewing area.
@@ -876,7 +876,7 @@ extension HTMLNode.Attribute {
         @available(*, deprecated, message: "Use a <table> element instead.")
         case table
         /// This element represents a container for a set of ``tab`` controls and their associated ``tabPanel`` contents.
-        case tabList  = "tablist"
+        case tabList = "tablist"
         /// This element represents a container for contents that can be displayed in its containing ``tabList`` when the corresponding ``tab`` element is activated.
         case tabPanel = "tabpanel"
         @available(*, deprecated, message: "Use a <dfn> element instead.")
@@ -894,7 +894,7 @@ extension HTMLNode.Attribute {
         /// This element represents an item within a ``tree`` element.
         case treeItem = "treeitem"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/sandbox(_:)`` attribute.
     // swift-format-ignore
     package enum Sandbox: String {
@@ -923,7 +923,7 @@ extension HTMLNode.Attribute {
         /// Allows the sandboxed resource to navigate to non-HTTP protocols built into browser.
         case allowTopNavigationToCustomProtocols = "allow-top-navigation-to-custom-protocols"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/scope(_:)`` attribute.
     package enum Scope: String {
         /// The header relates to all cells of the row it belongs to.
@@ -935,7 +935,7 @@ extension HTMLNode.Attribute {
         /// The header belongs to a column group and relates to all of its cells.
         case colGroup = "colgroup"
     }
-    
+
     /// A value for the ``HTMLNode/Attribute/shape(_:)`` attribute.
     package enum Shape: String {
         /// This area is the whole image and doesn't use the ``coords(_:)``attribute.

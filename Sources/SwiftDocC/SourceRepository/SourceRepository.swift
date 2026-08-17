@@ -14,13 +14,13 @@ public import Foundation
 public struct SourceRepository {
     /// The path at which the repository is cloned locally.
     public var checkoutPath: String
-    
+
     /// The base URL where the service hosts the repository's contents.
     public var sourceServiceBaseURL: URL
-    
+
     /// A function that formats a line number to be included in a URL.
     public var formatLineNumber: (Int) -> String
-    
+
     /// Creates a source code repository.
     /// - Parameters:
     ///   - checkoutPath: The path at which the repository is checked out locally and from which its symbol graphs were generated.
@@ -35,7 +35,7 @@ public struct SourceRepository {
         self.sourceServiceBaseURL = sourceServiceBaseURL
         self.formatLineNumber = formatLineNumber
     }
-    
+
     /// Formats a local source file URL to a URL hosted by the remote source code service.
     /// - Parameters:
     ///   - sourceFileURL: The location of the source file on disk.
@@ -45,9 +45,10 @@ public struct SourceRepository {
         guard sourceFileURL.path.hasPrefix(checkoutPath) else {
             return nil
         }
-        
+
         let path = sourceFileURL.path.dropFirst(checkoutPath.count).removingLeadingSlash
-        return sourceServiceBaseURL
+        return
+            sourceServiceBaseURL
             .appendingPathComponent(path)
             .withFragment(lineNumber.map(formatLineNumber))
     }
@@ -65,7 +66,7 @@ public extension SourceRepository {
             formatLineNumber: { line in "L\(line)" }
         )
     }
-    
+
     /// Creates a source repository hosted by the GitLab service.
     /// - Parameters:
     ///   - checkoutPath: The path of the local checkout.
@@ -77,7 +78,7 @@ public extension SourceRepository {
             formatLineNumber: { line in "L\(line)" }
         )
     }
-    
+
     /// Creates a source repository hosted by the BitBucket service.
     /// - Parameters:
     ///   - checkoutPath: The path of the local checkout.
@@ -89,7 +90,7 @@ public extension SourceRepository {
             formatLineNumber: { line in "lines-\(line)" }
         )
     }
-    
+
     /// Creates a source repository hosted by the device's filesystem.
     ///
     /// Use this source repository to format `doc-source-file://` links to files on the

@@ -14,10 +14,10 @@ public import Foundation
 public struct BundleData {
     /// The location of the resource.
     public var url: URL
-    
+
     /// The trait collection associated with the resource.
     public var traitCollection: DataTraitCollection?
-    
+
     /// Creates a bundle data value given its location and an associated trait collection.
     /// - Parameters:
     ///   - url: The location of the resource in the documentation bundle.

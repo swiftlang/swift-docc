@@ -18,9 +18,9 @@ protocol _DirectiveArgumentProtocol {
     var allowedValues: [String]? { get }
     var expectedFormat: String? { get }
     var hiddenFromDocumentation: Bool { get }
-    
+
     var parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?) { get }
-    
+
     func setProperty(
         on containingDirective: some AutomaticDirectiveConvertible,
         named propertyName: String,
@@ -67,34 +67,36 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     let allowedValues: [String]?
     let expectedFormat: String?
     let hiddenFromDocumentation: Bool
-    
+
     let parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?)
-    
+
     let defaultValue: Value?
     var storedAsOptional: Bool {
         return defaultValue != nil
     }
-    
+
     let required: Bool
-    
+
     var parsedValue: Value?
     public var wrappedValue: Value {
         get {
             parsedValue ?? defaultValue!
-        } set {
+        }
+        set {
             parsedValue = newValue
         }
     }
-    
-    @available(*, unavailable,
+
+    @available(
+        *, unavailable,
         message: "The value type must conform to 'DirectiveArgumentValueConvertible'."
     )
     public init() {
         fatalError()
     }
-    
+
     // Expected argument configurations
-    
+
     @_disfavoredOverload
     init(
         wrappedValue: Value,
@@ -114,7 +116,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
             hiddenFromDocumentation: hiddenFromDocumentation
         )
     }
-    
+
     @_disfavoredOverload
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
@@ -133,7 +135,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
             hiddenFromDocumentation: hiddenFromDocumentation
         )
     }
-    
+
     private init(
         value: Value?,
         name: _DirectiveArgumentName,
@@ -144,7 +146,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         hiddenFromDocumentation: Bool
     ) {
         let required = required ?? (value == nil)
-        
+
         self.name = name
         self.defaultValue = value
         self.typeDisplayName = typeDisplayNameDescription(defaultValue: value, required: required)
@@ -154,7 +156,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         self.required = required
         self.hiddenFromDocumentation = hiddenFromDocumentation
     }
-    
+
     func setProperty<T>(
         on containingDirective: T,
         named propertyName: String,
@@ -164,9 +166,9 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         let wrappedValuePath = path.appending(path: \Self.parsedValue)
         containingDirective[keyPath: wrappedValuePath] = any as! Value?
     }
-    
+
     // Warnings and errors for unexpected argument configurations
-    
+
     @_disfavoredOverload
     @available(*, deprecated, message: "Use an optional type or a default value to control whether or not a directive argument is required.")
     init(
@@ -188,7 +190,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
             hiddenFromDocumentation: hiddenFromDocumentation
         )
     }
-    
+
     @_disfavoredOverload
     @available(*, deprecated, message: "Use an optional type or a default value to control whether or not a directive argument is required.")
     init(
@@ -213,7 +215,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
 
 extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertible {
     // Expected argument configurations
-    
+
     @_disfavoredOverload
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
@@ -221,7 +223,7 @@ extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertibl
     ) {
         self.init(value: nil, name: name, hiddenFromDocumentation: hiddenFromDocumentation)
     }
-    
+
     @_disfavoredOverload
     init(
         wrappedValue: Value,
@@ -230,11 +232,11 @@ extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertibl
     ) {
         self.init(value: wrappedValue, name: name, hiddenFromDocumentation: hiddenFromDocumentation)
     }
-    
+
     private init(value: Value?, name: _DirectiveArgumentName, hiddenFromDocumentation: Bool) {
         self.name = name
         self.defaultValue = value
-        
+
         let required = value == nil
         self.typeDisplayName = typeDisplayNameDescription(defaultValue: value, required: required)
         self.parseArgument = { _, argument in
@@ -245,9 +247,9 @@ extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertibl
         self.required = required
         self.hiddenFromDocumentation = hiddenFromDocumentation
     }
-    
+
     // Warnings and errors for unexpected argument configurations
-    
+
     @_disfavoredOverload
     @available(*, unavailable, message: "Directive argument of non-optional types without default value need to be required. Use an optional type or provide a default value to make this argument non-required.")
     init(name: _DirectiveArgumentName = .inferredFromPropertyName, required: Bool) {
@@ -260,14 +262,15 @@ protocol _OptionalDirectiveArgument {
     var wrapped: WrappedArgument? { get }
     init(wrapping: WrappedArgument?)
 }
-extension Optional: _OptionalDirectiveArgument  {
+extension Optional: _OptionalDirectiveArgument {
     typealias WrappedArgument = Wrapped
     var wrapped: WrappedArgument? {
         switch self {
         case .some(let value):
             return value
-        case .none: return
-            nil
+        case .none:
+            return
+                nil
         }
     }
     init(wrapping: WrappedArgument?) {
@@ -280,16 +283,16 @@ extension Optional: _OptionalDirectiveArgument  {
 }
 
 extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument, Value.WrappedArgument: DirectiveArgumentValueConvertible {
-    
+
     // When the wrapped value is DirectiveArgumentValueConvertible, additional arguments may be omitted
-    
+
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
         hiddenFromDocumentation: Bool = false
     ) {
         self = .init(value: nil, name: name, hiddenFromDocumentation: hiddenFromDocumentation)
     }
-    
+
     @_disfavoredOverload
     init(
         wrappedValue: Value,
@@ -298,14 +301,14 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument, Valu
     ) {
         self = .init(value: wrappedValue, name: name, hiddenFromDocumentation: hiddenFromDocumentation)
     }
-    
+
     private init(
         value: Value?,
         name: _DirectiveArgumentName,
         hiddenFromDocumentation: Bool
     ) {
         let argumentValueType = Value.WrappedArgument.self
-        
+
         self = .init(
             value: value,
             name: name,
@@ -319,9 +322,9 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument, Valu
 }
 
 extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
-    
+
     // Expected argument configurations
-    
+
     @_disfavoredOverload
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
@@ -331,7 +334,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
     ) {
         self = .init(value: nil, name: name, parseArgument: parseArgument, allowedValues: allowedValues, hiddenFromDocumentation: hiddenFromDocumentation)
     }
-    
+
     @_disfavoredOverload
     init(
         wrappedValue: Value,
@@ -342,7 +345,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
     ) {
         self = .init(value: wrappedValue, name: name, parseArgument: parseArgument, allowedValues: allowedValues, hiddenFromDocumentation: hiddenFromDocumentation)
     }
-    
+
     private init(
         value: Value?,
         name: _DirectiveArgumentName,
@@ -360,9 +363,9 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
         self.required = false
         self.hiddenFromDocumentation = hiddenFromDocumentation
     }
-    
+
     // Warnings and errors for unexpected argument configurations
-    
+
     @_disfavoredOverload
     @available(*, unavailable, message: "Directive arguments with an Optional type shouldn't be required.")
     init(
@@ -372,7 +375,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
     ) {
         fatalError()
     }
-    
+
     @_disfavoredOverload
     @available(*, unavailable, message: "Directive arguments with an Optional type shouldn't be required.")
     init(
@@ -387,13 +390,13 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
 
 private func typeDisplayNameDescription<Value>(defaultValue: Value?, required: Bool) -> String {
     var name = "\(Value.self)"
-    
+
     if let defaultValue {
         name += " = \(defaultValue)"
     } else if !required {
         name += "?"
     }
-    
+
     return name
 }
 

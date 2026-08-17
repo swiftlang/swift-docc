@@ -15,8 +15,8 @@ import Markdown
 class ContentAndMediaTests: XCTestCase {
     func testEmpty() async throws {
         let source = """
-@ContentAndMedia {
-"""
+            @ContentAndMedia {
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -25,16 +25,16 @@ class ContentAndMediaTests: XCTestCase {
         XCTAssertNotNil(contentAndMedia)
         XCTAssertEqual(0, diagnostics.count)
     }
-    
+
     func testValid() async throws {
         let source = """
-@ContentAndMedia {
-   
-   @Image(source: "/path/to/image", alt: blah)
+            @ContentAndMedia {
+               
+               @Image(source: "/path/to/image", alt: blah)
 
-   Blah.
-}
-"""
+               Blah.
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -46,16 +46,16 @@ class ContentAndMediaTests: XCTestCase {
             XCTAssertEqual(.leading, contentAndMedia.mediaPosition)
         }
     }
-    
+
     func testTrailingMiddleMediaPosition() async throws {
         let source = """
-@ContentAndMedia {
-   
-   Blah.
-   
-   @Image(source: "/path/to/image", alt: blah)
-}
-"""
+            @ContentAndMedia {
+               
+               Blah.
+               
+               @Image(source: "/path/to/image", alt: blah)
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -67,18 +67,18 @@ class ContentAndMediaTests: XCTestCase {
             XCTAssertEqual(.trailing, contentAndMedia.mediaPosition)
         }
     }
-    
+
     func testTrailingMediaPosition() async throws {
         let source = """
-@ContentAndMedia {
-   
-   Foo.
-   
-   @Image(source: "/path/to/image", alt: blah)
+            @ContentAndMedia {
+               
+               Foo.
+               
+               @Image(source: "/path/to/image", alt: blah)
 
-   Blah.
-}
-"""
+               Blah.
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -93,13 +93,13 @@ class ContentAndMediaTests: XCTestCase {
 
     func testDeprecatedArguments() async throws {
         let source = """
-@ContentAndMedia(layout: horizontal, eyebrow: eyebrow, title: title) {
+            @ContentAndMedia(layout: horizontal, eyebrow: eyebrow, title: title) {
 
-   @Image(source: "/path/to/image", alt: blah)
+               @Image(source: "/path/to/image", alt: blah)
 
-   Blah.
-}
-"""
+               Blah.
+            }
+            """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let context = try await makeEmptyContext()
@@ -108,10 +108,12 @@ class ContentAndMediaTests: XCTestCase {
         XCTAssertNotNil(contentAndMedia)
         XCTAssertEqual(.leading, contentAndMedia?.mediaPosition)
         XCTAssertEqual(diagnostics.count, 3)
-        XCTAssertEqual(diagnostics.map(\.identifier), [
-            "org.swift.docc.DeprecatedArgument.eyebrow",
-            "org.swift.docc.DeprecatedArgument.title",
-            "org.swift.docc.DeprecatedArgument.layout",
-        ])
+        XCTAssertEqual(
+            diagnostics.map(\.identifier),
+            [
+                "org.swift.docc.DeprecatedArgument.eyebrow",
+                "org.swift.docc.DeprecatedArgument.title",
+                "org.swift.docc.DeprecatedArgument.layout",
+            ])
     }
 }

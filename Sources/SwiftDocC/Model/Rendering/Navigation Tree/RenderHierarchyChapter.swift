@@ -12,37 +12,36 @@
 public struct RenderHierarchyChapter: Codable, Equatable {
     /// The topic reference for the chapter.
     public var reference: RenderReferenceIdentifier
-    
+
     /// The tutorials in the chapter.
     public var tutorials: [RenderHierarchyTutorial] = []
-    
+
     /// Creates a new hierarchy chapter.
     /// - Parameter identifier: The topic reference for the chapter.
     public init(identifier: RenderReferenceIdentifier) {
         self.reference = identifier
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case reference
         // Both "tutorials" and "projects" correspond to the
         // same `tutorials` property for legacy reasons.
         case tutorials, projects
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.reference = try container.decode(RenderReferenceIdentifier.self, forKey: .reference)
         // Decode using the new key if its present, otherwise decode using the previous key
         let tutorialsKey = container.contains(.tutorials) ? CodingKeys.tutorials : CodingKeys.projects
         self.tutorials = try container.decode([RenderHierarchyTutorial].self, forKey: tutorialsKey)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(reference, forKey: .reference)
-        try container.encode(tutorials, forKey: .projects) // Encode using the previous key for compatibility
+        try container.encode(tutorials, forKey: .projects)  // Encode using the previous key for compatibility
     }
 }
-

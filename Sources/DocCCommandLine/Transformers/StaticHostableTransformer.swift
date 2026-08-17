@@ -19,13 +19,13 @@ enum HTMLTemplate: String {
 
 enum StaticHostableTransformerError: DescribedError {
     case dataProviderDoesNotReferenceValidInput(url: URL)
-    
+
     var errorDescription: String {
         switch self {
         case .dataProviderDoesNotReferenceValidInput(let url):
             return """
-            The content of `\(url.absoluteString)` is not in the format expected by the transformer.
-            """
+                The content of `\(url.absoluteString)` is not in the format expected by the transformer.
+                """
         }
     }
 }
@@ -40,7 +40,7 @@ struct StaticHostableTransformer {
     private let indexHTMLData: Data
     /// The file manager used to create directories and files.
     private let fileManager: any FileManagerProtocol
-    
+
     /// Initialize with a dataProvider to the source doccarchive.
     /// - Parameters:
     ///   - dataDirectory: The data directory to create static hostable files for.
@@ -53,19 +53,19 @@ struct StaticHostableTransformer {
         self.outputURL = outputURL.standardizedFileURL
         self.indexHTMLData = indexHTMLData
     }
-    
+
     /// Creates a static hostable version of the documentation in the data folder of an archive pointed to by the `dataProvider`
     func transform() throws {
         for file in fileManager.recursiveFiles(startingPoint: dataDirectory) where file.pathExtension.lowercased() == "json" {
             // For each "/relative/something.json" file, create a "/relative/something/index.html" file.
-            
+
             guard let relativeFileURL = file.relative(to: dataDirectory) else {
                 // Our `URL.relative(to:)` extension only return `nil` if the URLComponents aren't valid.
                 continue
             }
-            
+
             let outputDirectoryURL = outputURL.appendingPathComponent(
-                relativeFileURL.deletingPathExtension().path, // A directory with the same base name as the file
+                relativeFileURL.deletingPathExtension().path,  // A directory with the same base name as the file
                 isDirectory: true
             )
 
@@ -73,14 +73,14 @@ struct StaticHostableTransformer {
             if !fileManager.fileExists(atPath: outputDirectoryURL.path) {
                 try fileManager.createDirectory(at: outputDirectoryURL, withIntermediateDirectories: true, attributes: [:])
             }
-            
+
             try fileManager.createFile(at: outputDirectoryURL.appendingPathComponent("index.html"), contents: indexHTMLData)
         }
     }
 }
 
 extension StaticHostableTransformer {
-    
+
     /// Returns the data for the `index.html` file that should be used in the DocC archive
     /// produced by this conversion.
     ///
@@ -98,21 +98,22 @@ extension StaticHostableTransformer {
         fileManager: any FileManagerProtocol
     ) throws -> Data {
         let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
-        
-        let indexHTMLFileName = if customHostingBasePathProvided {
-            HTMLTemplate.templateFileName.rawValue
-        } else {
-            HTMLTemplate.indexFileName.rawValue
-        }
-        
+
+        let indexHTMLFileName =
+            if customHostingBasePathProvided {
+                HTMLTemplate.templateFileName.rawValue
+            } else {
+                HTMLTemplate.indexFileName.rawValue
+            }
+
         let indexHTMLFile = htmlTemplateDirectory.appendingPathComponent(indexHTMLFileName, isDirectory: false)
-        
+
         guard let indexHTMLData = try? fileManager.contents(of: indexHTMLFile),
-              var indexHTML = String(data: indexHTMLData, encoding: .utf8)
+            var indexHTML = String(data: indexHTMLData, encoding: .utf8)
         else {
             throw TemplateOption.missingRequiredFile(fileName: indexHTMLFileName, inHTMLTemplateAt: htmlTemplateDirectory)
         }
-        
+
         if customHostingBasePathProvided, var replacementString = hostingBasePath {
             // We need to ensure that the base path has a leading /
             if !replacementString.hasPrefix("/") {
@@ -126,7 +127,7 @@ extension StaticHostableTransformer {
 
             indexHTML = indexHTML.replacingOccurrences(of: HTMLTemplate.tag.rawValue, with: replacementString)
         }
-        
+
         return Data(indexHTML.utf8)
     }
 }

@@ -19,21 +19,21 @@ extension PathHierarchy {
         guard let signature = symbol[mixin: SymbolGraph.Symbol.FunctionSignature.self] else {
             return nil
         }
-        
+
         let isSwift = symbol.identifier.interfaceLanguage == "swift"
         return (
             signature.parameters.map { parameterTypeSpelling(for: $0.declarationFragments, isSwift: isSwift) },
             returnTypeSpellings(for: signature.returns, isSwift: isSwift)
         )
     }
-    
+
     /// Creates a type disambiguation string from the given function parameter declaration fragments.
     private static func parameterTypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
         let accumulated = utf8TypeSpelling(for: fragments, isSwift: isSwift)
-        
+
         return String(decoding: accumulated, as: UTF8.self)
     }
-    
+
     /// Creates a list of type disambiguation strings for the function return declaration fragments.
     ///
     /// Unlike ``parameterTypeSpelling(for:isSwift:)``, this function splits Swift tuple return values is split into smaller disambiguation elements.
@@ -44,17 +44,17 @@ extension PathHierarchy {
             return []
         }
         let spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
-        
+
         guard isSwift, spelling[...].shapeOfSwiftTypeSpelling() == .tuple else {
             return [String(decoding: spelling, as: UTF8.self)]
         }
-        
+
         // This return value is a tuple that should be split into smaller type spellings
         var returnSpellings: [String] = []
-        
+
         var depth = 0
-        let endIndex = spelling.count - 1 // before the trailing ")"
-        var substringStartIndex = 1 // skip the leading "("
+        let endIndex = spelling.count - 1  // before the trailing ")"
+        var substringStartIndex = 1  // skip the leading "("
         // swift-format-ignore
         for index in 1 /* after the leading "(" */ ..< endIndex {
             switch spelling[index] {
@@ -69,71 +69,73 @@ extension PathHierarchy {
                 )
                 // Also, skip past the comma for the next return value spelling.
                 substringStartIndex = index + 1
-                
+
             default:
                 continue
             }
         }
         returnSpellings.append(
-            String(decoding: spelling[substringStartIndex ..< endIndex], as: UTF8.self)
+            String(decoding: spelling[substringStartIndex..<endIndex], as: UTF8.self)
         )
-        
+
         return returnSpellings
     }
-    
+
     private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
-    
+
     /// Returns the type name spelling as sequence of UTF-8 code units _without_ null-termination.
     private static func utf8TypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> ContiguousArray<UTF8.CodeUnit> {
         // This function joins the spelling of the text and identifier declaration fragments and applies Swift syntactic sugar;
         // `Array<Element>` -> `[Element]`, `Optional<Wrapped>` -> `Wrapped?`, and `Dictionary<Key,Value>` -> `[Key:Value]`
-        
+
         // This code get called for every symbol with a type signature, so it needs to be fast.
         // Because all the characters that need to be identified and processed are UTF-8 code units, this implementation works solely on UTF-8 code units.
         var accumulated = ContiguousArray<UTF8.CodeUnit>()
         // Reserve some temporary space to work with. This avoids reallocations for most declarations.
         // The final string will make it's own copy, so this temporary memory is only used until the end of this scope.
         accumulated.reserveCapacity(128)
-        
+
         // Iterating over the declaration fragments to accumulate their spelling and to identify places that need to apply syntactic sugar.
         var markers = ContiguousArray<Int>()
         // Track the current [], (), and <> scopes to identify when ":" is a part of the type name.
         var swiftBracketsStack = SwiftBracketsStack()
-        
+
         var remaining = fragments[...]
         while let fragment = remaining.popFirst() {
             let preciseIdentifier = fragment.preciseIdentifier
             if isSwift {
                 // Check if this fragment is a spelled out Swift array, optional, or dictionary.
                 switch preciseIdentifier {
-                case "s:Sa", // Swift.Array
-                     "s:SD", // Swift.Dictionary
-                     "s:Sq": // Swift.Optional
-                    assert(fragment.spelling == "Array" || fragment.spelling == "Dictionary" || fragment.spelling == "Optional", """
-                    Unexpected spelling '\(fragment.spelling)' for Array/Dictionary/Optional fragment in declaration; \(fragments.map(\.spelling).joined())
-                    """)
-                    
+                case "s:Sa",  // Swift.Array
+                    "s:SD",  // Swift.Dictionary
+                    "s:Sq":  // Swift.Optional
+                    assert(
+                        fragment.spelling == "Array" || fragment.spelling == "Dictionary" || fragment.spelling == "Optional",
+                        """
+                        Unexpected spelling '\(fragment.spelling)' for Array/Dictionary/Optional fragment in declaration; \(fragments.map(\.spelling).joined())
+                        """)
+
                     // Create a new marker at this location and insert is at the beginning since `withSwiftSyntacticSugar(markers:)`
                     // will iterate the markers from the end to the start.
                     markers.insert(accumulated.count, at: 0)
-                    
+
                     // Since `withSwiftSyntacticSugar(markers:)` below will remove this spelling, only collect the first character.
                     // The first character ("A", "D", or "O") is sufficient to identify which type of sugar to apply.
                     accumulated.append(fragment.spelling.utf8.first!)
                     continue
-                    
+
                 default:
                     break
                 }
-                
+
                 switch fragment.kind {
                 case .typeIdentifier:
                     // Accumulate all of the identifier tokens' spelling.
                     accumulated.append(contentsOf: fragment.spelling.utf8)
-                    
+
                 case .keyword where fragment.spelling == "Any":
                     accumulated.append(contentsOf: fragment.spelling.utf8)
-                    
+
                 case .keyword where fragment.spelling == "throws":
                     // We don't want to include typed throws in the disambiguation because it looks like another set of parameters.
                     // For example, "(Value) throws(Error) -> Result" would look like "(Value)(Error)->Result" if we skipped the `throws` keyword without skipping the error type.
@@ -146,7 +148,7 @@ extension PathHierarchy {
                     //  typeIdentifier | "Error"
                     //  text           | ")"
                     if let next = remaining.first, next.kind == .text, next.spelling == "(",
-                       let endIndex = remaining.firstIndex(where: { $0.kind == .text && $0.spelling.starts(with: ")") })
+                        let endIndex = remaining.firstIndex(where: { $0.kind == .text && $0.spelling.starts(with: ")") })
                     {
                         remaining = remaining[endIndex...]
                         // We can't drop the closing text fragment because it could contain other characters that we want to include in the disambiguation.
@@ -154,15 +156,15 @@ extension PathHierarchy {
                         remaining[endIndex].spelling.removeFirst()
                     }
                     continue
-                    
-                case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
+
+                case .text:  // In Swift, we're only want some `text` tokens characters in the type disambiguation.
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
                     let utf8Spelling = fragment.spelling.utf8
                     var index = utf8Spelling.startIndex
                     while index < utf8Spelling.endIndex {
                         defer { utf8Spelling.formIndex(after: &index) }
-                        
+
                         let char = utf8Spelling[index]
                         switch char {
                         case openAngle:
@@ -171,104 +173,108 @@ extension PathHierarchy {
                             swiftBracketsStack.push(.paren)
                         case openSquare:
                             swiftBracketsStack.push(.square)
-                            
+
                         case closeAngle:
                             guard utf8Spelling.startIndex < index, utf8Spelling[utf8Spelling.index(before: index)] != hyphen else {
-                                break // "->" shouldn't count when balancing brackets but should still be included in the type spelling.
+                                break  // "->" shouldn't count when balancing brackets but should still be included in the type spelling.
                             }
                             fallthrough
                         case closeSquare, closeParen:
                             assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(fragments.map(\.spelling).joined())")
                             swiftBracketsStack.pop()
-                            
+
                         case fullStop where utf8Spelling[index...].prefix(5).elementsEqual(".Type".utf8):
                             // "Name.Type" is different from just "Name" (and we don't want a trailing ".")
                             accumulated.append(contentsOf: ".Type".utf8)
-                            utf8Spelling.formIndex(&index, offsetBy: 4) // The 5th increment happens in the defer-statement above
-                            continue // Continue
-                            
+                            utf8Spelling.formIndex(&index, offsetBy: 4)  // The 5th increment happens in the defer-statement above
+                            continue  // Continue
+
                         case colon where swiftBracketsStack.isCurrentScopeSquareBracket,
-                             comma, fullStop, question, hyphen, ampersand, tilde:
-                            break // Include this character
-                            
+                            comma, fullStop, question, hyphen, ampersand, tilde:
+                            break  // Include this character
+
                         default:
-                            continue // Skip this character
+                            continue  // Skip this character
                         }
-                        
+
                         // Unless the switch-statement (above) continued the next iteration, add this character to the accumulated type spelling.
                         accumulated.append(char)
                     }
-                    
+
                 default:
                     continue
                 }
             } else {
                 switch fragment.kind {
                 case .identifier where preciseIdentifier != nil,
-                     .typeIdentifier,
-                     .text:
+                    .typeIdentifier,
+                    .text:
                     let spelling = fragment.spelling.utf8
-                    
+
                     // Ignore whitespace. Here we use a loop instead of `filter` to avoid a potential temporary allocation.
                     for char in spelling where char != space {
                         accumulated.append(char)
                     }
-                    
+
                 default:
                     continue
                 }
             }
         }
-        
+
         // Check if the type names are wrapped in redundant parenthesis and remove them
         if accumulated.first == openParen, accumulated.last == closeParen, accumulated[...].shapeOfSwiftTypeSpelling() == .scalar {
             // In case there are multiple
             // Use a temporary slice until all the layers of redundant parenthesis have been removed.
             var temp = accumulated[...]
-            
+
             repeat {
                 temp = temp.dropFirst().dropLast()
             } while temp.first == openParen && temp.last == closeParen && temp.shapeOfSwiftTypeSpelling() == .scalar
-            
+
             // Adjust the markers so that they align with the expected characters
             let difference = (accumulated.count - temp.count) / 2
-            
+
             accumulated = .init(temp)
-            
+
             for index in markers.indices {
                 markers[index] -= difference
-                
-                assert(accumulated[markers[index]] == uppercaseA || accumulated[markers[index]] == uppercaseD  || accumulated[markers[index]] == uppercaseO, """
-                Unexpectedly found '\(String(Unicode.Scalar(accumulated[index])))' at \(index) which should be either an Array, Optional, or Dictionary marker in \(String(decoding: accumulated, as: UTF8.self)))
-                """)
+
+                assert(
+                    accumulated[markers[index]] == uppercaseA || accumulated[markers[index]] == uppercaseD || accumulated[markers[index]] == uppercaseO,
+                    """
+                    Unexpectedly found '\(String(Unicode.Scalar(accumulated[index])))' at \(index) which should be either an Array, Optional, or Dictionary marker in \(String(decoding: accumulated, as: UTF8.self)))
+                    """)
             }
         }
-        
-        assert(markers.allSatisfy { [uppercaseA, uppercaseD, uppercaseO].contains(accumulated[$0]) }, """
-        Unexpectedly found misaligned markers: \(markers.map { "(index: \($0), char: \(String(Unicode.Scalar(accumulated[$0])))" })
-        """)
-        
+
+        assert(
+            markers.allSatisfy { [uppercaseA, uppercaseD, uppercaseO].contains(accumulated[$0]) },
+            """
+            Unexpectedly found misaligned markers: \(markers.map { "(index: \($0), char: \(String(Unicode.Scalar(accumulated[$0])))" })
+            """)
+
         // Check if we need to apply syntactic sugar to the accumulated declaration fragment spellings.
         if !markers.isEmpty {
             accumulated.applySwiftSyntacticSugar(markers: markers)
         }
-        
+
         return accumulated
     }
-    
+
     /// A small helper type that tracks the scope of nested brackets; `()`, `[]`, or `<>`.
     private struct SwiftBracketsStack: ~Copyable {
         enum Bracket {
             case angle  // <>
-            case square // []
+            case square  // []
             case paren  // ()
         }
         private var stack: ContiguousArray<Bracket>
         init() {
             stack = []
-            stack.reserveCapacity(32) // Some temporary space to work with.
+            stack.reserveCapacity(32)  // Some temporary space to work with.
         }
-        
+
         /// Push a new bracket scope to the stack.
         mutating func push(_ scope: Bracket) {
             stack.append(scope)
@@ -281,7 +287,7 @@ extension PathHierarchy {
         var isCurrentScopeSquareBracket: Bool {
             stack.last == .square
         }
-        
+
         var isEmpty: Bool {
             stack.isEmpty
         }
@@ -345,7 +351,7 @@ private enum ShapeOfSwiftTypeSpelling {
 }
 
 private extension ContiguousArray<UTF8.CodeUnit>.SubSequence {
-     /// Checks if the UTF-8 string looks like a tuple, scalar, or closure.
+    /// Checks if the UTF-8 string looks like a tuple, scalar, or closure.
     ///
     /// This is used to remove redundant parenthesis around expressions.
     func shapeOfSwiftTypeSpelling() -> ShapeOfSwiftTypeSpelling {
@@ -378,24 +384,24 @@ private extension ContiguousArray<UTF8.CodeUnit> {
     /// - Parameter markers: Locations of `A<Element>`, `O<Wrapped>`, and `D<Key,Value>` (truncated above) to replace with `[Element]`, `Wrapped?`, and `[Key:Value]`.
     mutating func applySwiftSyntacticSugar(markers: ContiguousArray<Int>) {
         assert(!markers.isEmpty, "This is a private helper function and it's the callers responsibility to check if it needs to be called or not.")
-        
+
         // Iterating over the UTF-8 string once to find all the balancing angle brackets (`<` and `>`)
         var markedAngleBracketPairs = ContiguousArray<(open: Int, close: Int)>()
-        markedAngleBracketPairs.reserveCapacity(32) // Some temporary space to work with.
-        
+        markedAngleBracketPairs.reserveCapacity(32)  // Some temporary space to work with.
+
         var angleBracketStack = ContiguousArray<Int>()
-        angleBracketStack.reserveCapacity(32) // Some temporary space to work with.
-        
+        angleBracketStack.reserveCapacity(32)  // Some temporary space to work with.
+
         for index in indices {
             switch self[index] {
             case openAngle:
                 angleBracketStack.append(index)
-            case closeAngle where self[index - 1] != hyphen: // "->" isn't the closing bracket of a generic
+            case closeAngle where self[index - 1] != hyphen:  // "->" isn't the closing bracket of a generic
                 guard let open = angleBracketStack.popLast() else {
                     assertionFailure("Encountered unexpected generic scope brackets in \(String(decoding: self, as: UTF8.self))")
                     return
                 }
-                
+
                 // Check if this balanced `<` and `>` pair is one of the markers.
                 if markers.contains(open - 1) {
                     // Save this angle bracket pair, sorted by the opening bracket location.
@@ -406,98 +412,97 @@ private extension ContiguousArray<UTF8.CodeUnit> {
                         markedAngleBracketPairs.append((open: open, close: index))
                     }
                 }
-                
+
             default:
                 // Ignore all non `<` or `>` characters
                 continue
             }
         }
-        
-        
-        assert(markedAngleBracketPairs.map(\.open) == markedAngleBracketPairs.map(\.open).sorted(),
-               "Marked angle bracket pairs \(markedAngleBracketPairs) are unexpectedly not sorted by opening bracket location")
-        
+
+        assert(
+            markedAngleBracketPairs.map(\.open) == markedAngleBracketPairs.map(\.open).sorted(),
+            "Marked angle bracket pairs \(markedAngleBracketPairs) are unexpectedly not sorted by opening bracket location")
+
         // Iterate over all the marked angle bracket pairs (from end to start) and replace the marked text with the syntactic sugar alternative.
         while !markedAngleBracketPairs.isEmpty {
             let (open, close) = markedAngleBracketPairs.removeLast()
             assert(self[open] == openAngle, "Start marker at \(open) is '\(String(Unicode.Scalar(self[open])))' instead of '<' in \(String(decoding: self, as: UTF8.self))")
             assert(self[close] == closeAngle, "End marker at \(close) is '\(String(Unicode.Scalar(self[close])))' instead of '>' in \(String(decoding: self, as: UTF8.self))")
-            
+
             // The caller accumulated a single character for each marker that indicated the type of syntactic sugar to apply.
             let marker = open - 1
             switch self[marker] {
-                
-            case uppercaseA: // Array
+
+            case uppercaseA:  // Array
                 // Apply Swift array syntactic sugar; transforming "A<Element>" into "[Element]" (where "Array" was already abbreviated to "A").
                 self[close] = closeSquare
-                self.replaceSubrange(marker ... open /* "A<" */, with: [openSquare])
-                
+                self.replaceSubrange(marker...open /* "A<" */, with: [openSquare])
+
                 // Update later marked locations since the syntactic sugar shortened the string.
                 for index in markedAngleBracketPairs.indices where open < markedAngleBracketPairs[index].close {
-                    markedAngleBracketPairs[index].close -= 1 // "A<" is replaced by "["
+                    markedAngleBracketPairs[index].close -= 1  // "A<" is replaced by "["
                     // The `open` location doesn't need to be updated because the pairs are iterated over in reverse order
                 }
-                
-            case uppercaseO: // Optional
+
+            case uppercaseO:  // Optional
                 // Apply Swift optional syntactic sugar; transforming "O<Wrapped>" into "Wrapped?" (where "Optional" was already abbreviated to "O").
                 self[close] = question
-                self.removeSubrange(marker ... open /* "O<" */)
-                
+                self.removeSubrange(marker...open /* "O<" */)
+
                 // Update later marked locations since the syntactic sugar shortened the string.
                 for index in markedAngleBracketPairs.indices where open < markedAngleBracketPairs[index].close {
-                    markedAngleBracketPairs[index].close -= 2 // "O<" is removed
+                    markedAngleBracketPairs[index].close -= 2  // "O<" is removed
                     // The `open` location doesn't need to be updated because the pairs are iterated over in reverse order
                 }
-                
-            case uppercaseD: // Dictionary
+
+            case uppercaseD:  // Dictionary
                 // Find the comma that separates "Key" and "Value" in "Dictionary<Key,Value>"
                 var depth = 1
                 let predicate: (UInt8) -> Bool = {
                     if $0 == openAngle || $0 == openParen {
                         depth += 1
-                        return false // keep scanning
-                    }
-                    else if depth == 1 {
+                        return false  // keep scanning
+                    } else if depth == 1 {
                         return $0 == comma
-                    }
-                    else if $0 == closeAngle || $0 == closeParen {
+                    } else if $0 == closeAngle || $0 == closeParen {
                         depth -= 1
                         assert(depth >= 0, "Unexpectedly found more closing brackets than open brackets in \(String(decoding: self[open + 1 ..< close], as: UTF8.self))")
                     }
-                    return false // keep scanning
+                    return false  // keep scanning
                 }
                 // swift-format-ignore
                 guard let commaIndex = self[open + 1 /* skip the known opening bracket */ ..< close /* skip the known closing bracket */].firstIndex(where: predicate) else {
                     assertionFailure("Didn't find ',' in \(String(decoding: self[open + 1 ..< close], as: UTF8.self))")
                     return
                 }
-                
+
                 // Apply Swift dictionary syntactic sugar; transforming "D<Key,Value>" into "[Key:Value]" (where "Dictionary" was already abbreviated to "D").
                 self[commaIndex] = colon
                 self[close] = closeSquare
-                self.replaceSubrange(marker ... open /* "D<" */, with: [openSquare])
-                
+                self.replaceSubrange(marker...open /* "D<" */, with: [openSquare])
+
                 // Update later marked locations since the syntactic sugar shortened the string.
                 for index in markedAngleBracketPairs.indices where open < markedAngleBracketPairs[index].close {
-                    markedAngleBracketPairs[index].close -= 1 // "D<" is replaced by "["
+                    markedAngleBracketPairs[index].close -= 1  // "D<" is replaced by "["
                     // The `open` location doesn't need to be updated because the pairs are iterated over in reverse order
                 }
-                
+
             default:
                 assertionFailure("Found marker '\(String(cString: [self[marker], 0]))' at \(marker) doesn't match either 'Array<', 'Optional<', or 'Dictionary<' in \(String(cString: self + [0]))")
                 return
             }
-            
+
             assert(
                 markedAngleBracketPairs.allSatisfy { open, close in
                     self[open] == openAngle && self[close] == closeAngle
-                }, """
+                },
+                """
                 Unexpectedly found misaligned angle bracket pairs in \(String(cString: self + [0])):
                 \(markedAngleBracketPairs.map { open, close in "('\(String(cString: [self[open], 0]))' @ \(open) - '\(String(cString: [self[close], 0]))' @ \(close))" }.joined(separator: "\n"))
                 """
             )
         }
-        
+
         return
     }
 }
@@ -505,7 +510,7 @@ private extension ContiguousArray<UTF8.CodeUnit> {
 // MARK: Parsing links
 
 extension PathHierarchy.PathParser {
-    
+
     /// Attempts to parse a path component with type signature disambiguation from a substring.
     ///
     /// - Parameter original: The substring to parse into a path component
@@ -532,19 +537,19 @@ extension PathHierarchy.PathParser {
         //    second parameter type          (Result,Element)->Result     │
         //                                                                │
         //    return type(s)                                            Result
-        
+
         let possibleDisambiguationText: Substring
         if let name = parseOperatorName(original) {
             possibleDisambiguationText = original[name.endIndex...]
         } else {
             possibleDisambiguationText = original
         }
-        
+
         // Look for the start of the parameter disambiguation.
         if let parameterStartRange = possibleDisambiguationText.range(of: "-(") {
             let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
-            
+
             let parameterTypes = scanner.scanArguments()
             if scanner.isAtEnd {
                 return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: parameterTypes, returnTypes: nil))
@@ -556,11 +561,11 @@ extension PathHierarchy.PathParser {
         } else if let parameterStartRange = possibleDisambiguationText.range(of: "->") {
             let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
-            
+
             let returnTypes = scanner.scanReturnTypes()
             return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: nil, returnTypes: returnTypes))
         }
-        
+
         // This path component doesn't have type signature disambiguation.
         return nil
     }
@@ -584,33 +589,33 @@ extension PathHierarchy.PathParser {
 ///   If the authored link contains unbalanced angle brackets then disambiguation isn't valid and the scanner will return a parsed value that DocC will fail to find a match for.
 private struct StringScanner: ~Copyable {
     private var remaining: Substring
-    
+
     init(_ original: Substring) {
         remaining = original
     }
-    
+
     /// Returns the next character _without_ advancing the scanner
     private func peek() -> Character? {
         remaining.first
     }
-    
+
     /// Advances the scanner and returns the scanned character.
     private mutating func take() -> Character {
         remaining.removeFirst()
     }
-    
+
     /// Advances the scanner by `count` elements and returns the scanned substring.
     mutating func take(_ count: Int) -> Substring {
         defer { remaining = remaining.dropFirst(count) }
         return remaining.prefix(count)
     }
-    
+
     /// Advances the scanner to the end and returns the scanned substring.
     private mutating func takeAll() -> Substring {
         defer { remaining.removeAll() }
         return remaining
     }
-    
+
     /// Advances the scanner up to the first character that satisfies the given `predicate` and returns the scanned substring.
     ///
     /// If the scanner doesn't contain any characters that satisfy the given `predicate`, then this method returns `nil` _without_ advancing the scanner.
@@ -634,7 +639,7 @@ private struct StringScanner: ~Copyable {
         defer { remaining = remaining[index...] }
         return remaining[..<index]
     }
-    
+
     /// Advances the scanner up to and past the first character that satisfies the given `predicate` and returns the scanned substring.
     ///
     /// If the scanner doesn't contain any characters that satisfy the given `predicate`, then this method returns `nil` _without_ advancing the scanner.
@@ -659,19 +664,19 @@ private struct StringScanner: ~Copyable {
         defer { remaining = remaining[index...] }
         return remaining[..<index]
     }
-    
+
     /// A Boolean value indicating whether the scanner has reached the end.
     var isAtEnd: Bool {
         remaining.isEmpty
     }
-    
+
     /// Returns a Boolean value indicating whether the substring at the scanners current position begins with the specified prefix.
     func hasPrefix(_ prefix: String) -> Bool {
         remaining.hasPrefix(prefix)
     }
 
     // MARK: Parsing argument types by scanning
-    
+
     /// Scans the remainder of the scanner's contents as the individual elements of a tuple return type,
     /// or as a single return type if the scanners current position isn't an open parenthesis (`(`)
     ///
@@ -685,13 +690,13 @@ private struct StringScanner: ~Copyable {
     /// - Note: The scanner expects that the caller has already scanned any parameter types and advanced past the `"->"` separator.
     mutating func scanReturnTypes() -> [Substring] {
         if peek() == "(" {
-            _ = take() // the leading parenthesis
-            return scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
+            _ = take()  // the leading parenthesis
+            return scanArguments()  // The return types (tuple or not) can be parsed the same as the arguments
         } else {
             return [takeAll()]
         }
     }
-    
+
     /// Scans the list of individual parameter type names as if the scanner's current position was 1 past the open parenthesis (`(`) or a tuple.
     ///
     /// For example, consider a scanner that has already advanced 2 characters into the string `"-(One,(A,B))->(Two)"`
@@ -707,10 +712,10 @@ private struct StringScanner: ~Copyable {
     /// - Note: The scanner expects that the caller has already advanced past the open parenthesis (`(`) that begins the list of parameter types.
     mutating func scanArguments() -> [Substring] {
         guard peek() != ")" else {
-            _ = take() // drop the ")"
+            _ = take()  // drop the ")"
             return []
         }
-        
+
         var arguments = [Substring]()
         repeat {
             guard let argument = scanArgument() else {
@@ -718,10 +723,10 @@ private struct StringScanner: ~Copyable {
             }
             arguments.append(argument)
         } while !isAtEnd && take() == ","
-        
+
         return arguments
     }
-    
+
     /// Scans a single type name, representing either a scalar value (such as `One`) or a nested tuple (such as `(A,B)`).
     ///
     /// For example, consider a scanner that has already advanced 6 characters into the string `"-(One,(A,B))->(Two)"`
@@ -740,7 +745,7 @@ private struct StringScanner: ~Copyable {
             // In this case, scan until the next argument (",") or the end of the arguments (")")
             return scanValue() ?? takeAll()
         }
-        
+
         guard var argumentString = scanTuple() else {
             return nil
         }
@@ -751,7 +756,7 @@ private struct StringScanner: ~Copyable {
         }
         argumentString.append(contentsOf: "->")
         remaining = remaining.dropFirst(2)
-        
+
         guard peek() == "(" else {
             // This closure type has a simple return type.
             guard let returnValue = scanValue() else {
@@ -764,7 +769,7 @@ private struct StringScanner: ~Copyable {
         }
         return argumentString + returnValue
     }
-        
+
     /// Scans a nested tuple as a single substring.
     ///
     /// For example, consider a scanner that has already advanced 6 character into the string `"-(One,(A,B))->(Two)"`
@@ -780,24 +785,23 @@ private struct StringScanner: ~Copyable {
     /// - Note: The scanner expects that the caller has already advanced to the open parenthesis (`(`) that's the start of the nested tuple.
     private mutating func scanTuple() -> Substring? {
         assert(peek() == "(", "The caller should have checked that this is a tuple")
-        
+
         // The tuple may contain any number of nested tuples. Keep track of the open and close parenthesis while scanning.
         var depth = 0
         let predicate: (Character) -> Bool = {
             if $0 == "(" {
                 depth += 1
-                return false // keep scanning
-            }
-            else if $0 == ")" {
+                return false  // keep scanning
+            } else if $0 == ")" {
                 depth -= 1
-                return depth == 0 // stop only if we've reached a balanced number of parenthesis
+                return depth == 0  // stop only if we've reached a balanced number of parenthesis
             }
-            return false // keep scanning
+            return false  // keep scanning
         }
-        
+
         return scan(past: predicate)
     }
-    
+
     /// Scans a single type name.
     ///
     /// For example, consider a scanner that has already advanced 2 character into the string `"-(One<A,B>,Two)"`
@@ -816,11 +820,10 @@ private struct StringScanner: ~Copyable {
         let predicate: (Character) -> Bool = {
             if $0 == "<" {
                 depth += 1
-                return false // keep scanning
-            }
-            else if $0 == ">" {
+                return false  // keep scanning
+            } else if $0 == ">" {
                 depth -= 1
-                return false // keep scanning
+                return false  // keep scanning
             }
             return depth == 0 && ($0 == "," || $0 == ")")
         }

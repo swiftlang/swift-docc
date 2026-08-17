@@ -22,13 +22,13 @@ struct LinkDestinationSummaryTests {
         let context = try await loadFromDisk(catalogName: "GeometricalShapes")
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let moduleReference = try #require(context.soleRootModuleReference)
-        
+
         func summary(for reference: ResolvedTopicReference, sourceLocation: SourceLocation = #_sourceLocation) throws -> LinkDestinationSummary {
             let node = try context.entity(with: reference)
             let renderNode = DocumentationNodeConverter(context: context).convert(node)
             return try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first, sourceLocation: sourceLocation)
         }
-        
+
         // typedef struct {
         //     CGPoint center;
         //     CGFloat radius;
@@ -36,9 +36,9 @@ struct LinkDestinationSummaryTests {
         do {
             let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle" }))
             #expect(reference.sourceLanguages.count == 2, "Symbol has 2 language representations")
-            
+
             let summary = try summary(for: reference)
-            
+
             #expect(summary.title == "Circle")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle")
             #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle")
@@ -59,10 +59,10 @@ struct LinkDestinationSummaryTests {
             ])
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
-            
+
             #expect(summary.variants.count == 1)
             let variant = try #require(summary.variants.first)
-            
+
             #expect(variant.title == "TLACircle")
             #expect(variant.relativePresentationURL?.absoluteString == nil, "Same presentation URL as the summarized element")
             #expect(variant.language == .objectiveC)
@@ -81,17 +81,17 @@ struct LinkDestinationSummaryTests {
             #expect(variant.navigatorDeclarationFragments == [
                 .init(text: "TLACircle", kind: .identifier),
             ])
-            
+
             try assertRoundTripCoding(summary)
         }
-        
+
         // extern const TLACircle TLACircleZero NS_SWIFT_NAME(Circle.zero);
         do {
             let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle/zero" }))
             #expect(reference.sourceLanguages.count == 2, "Symbol has 2 language representations")
-            
+
             let summary = try summary(for: reference)
-            
+
             #expect(summary.title == "zero")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/zero")
             #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero")
@@ -114,10 +114,10 @@ struct LinkDestinationSummaryTests {
             #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
-            
+
             #expect(summary.variants.count == 1)
             let variant = try #require(summary.variants.first)
-            
+
             #expect(variant.title == "TLACircleZero")
             #expect(variant.relativePresentationURL?.absoluteString == nil, "Same presentation URL as the summarized element")
             #expect(variant.language == .objectiveC)
@@ -131,17 +131,17 @@ struct LinkDestinationSummaryTests {
             #expect(variant.navigatorDeclarationFragments == [
                 .init(text: "TLACircleZero", kind: .identifier),
             ])
-            
+
             try assertRoundTripCoding(summary)
         }
-        
+
         // BOOL TLACircleIntersects(TLACircle circle, TLACircle otherCircle) NS_SWIFT_NAME(Circle.intersects(self:_:));
         do {
             let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle/intersects(_:)" }))
             #expect(reference.sourceLanguages.count == 2, "Symbol has 2 language representations")
-            
+
             let summary = try summary(for: reference)
-            
+
             #expect(summary.title == "intersects(_:)")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/intersects(_:)")
             #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)")
@@ -164,10 +164,10 @@ struct LinkDestinationSummaryTests {
             #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
-            
+
             #expect(summary.variants.count == 1)
             let variant = try #require(summary.variants.first)
-            
+
             #expect(variant.title == "TLACircleIntersects")
             #expect(variant.relativePresentationURL?.absoluteString == nil, "Same presentation URL as the summarized element")
             #expect(variant.language == .objectiveC)
@@ -181,7 +181,7 @@ struct LinkDestinationSummaryTests {
             #expect(variant.navigatorDeclarationFragments == [
                 .init(text: "TLACircleIntersects", kind: .identifier),
             ])
-            
+
             try assertRoundTripCoding(summary)
         }
 
@@ -189,9 +189,9 @@ struct LinkDestinationSummaryTests {
         do {
             let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/TLACircleMake" }))
             #expect(reference.sourceLanguages.count == 1, "Symbol only has one language representation")
-            
+
             let summary = try summary(for: reference)
-            
+
             #expect(summary.title == "TLACircleMake")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/tlacirclemake")
             #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake")
@@ -210,18 +210,18 @@ struct LinkDestinationSummaryTests {
             ])
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
-            
+
             #expect(summary.variants.isEmpty)
-            
+
             try assertRoundTripCoding(summary)
         }
-        
+
         do {
             let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle/init(center:radius:)" }))
             #expect(reference.sourceLanguages.count == 1, "Symbol only has one language representation")
-            
+
             let summary = try summary(for: reference)
-            
+
             #expect(summary.title == "init(center:radius:)")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/init(center:radius:)")
             #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)")
@@ -247,33 +247,33 @@ struct LinkDestinationSummaryTests {
             #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
-            
+
             #expect(summary.variants.isEmpty)
-            
+
             try assertRoundTripCoding(summary)
         }
     }
-    
+
     // swift-format-ignore
     @Test
     func summarizeArticleWithTopicImages() async throws {
         let catalog = Folder(name: "Something.docc") {
             TextFile(name: "First.md", utf8Content: """
             # Some article
-            
+
             This article has two page images.
-            
+
             @Metadata {
               @PageImage(purpose: card, source: card.png, alt: "Card image alt text")
               @PageImage(purpose: icon, source: icon.png, alt: "Icon image alt text")
             }
             """)
-            
+
             DataFile(name: "card.png",      data: Data())
             DataFile(name: "card~dark.png", data: Data())
-            
+
             DataFile(name: "icon@2x.png",   data: Data())
-            
+
             TextFile(name: "Second.md", utf8Content: """
             # Another article
             This second article exist so that the first article isn't elevated to be the root page.
@@ -285,7 +285,7 @@ struct LinkDestinationSummaryTests {
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
         var summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
-        
+
         #expect(summary.title == "Some article")
         #expect(summary.relativePresentationURL.absoluteString == "/documentation/something/first")
         #expect(summary.referenceURL.absoluteString == "doc://Something/documentation/Something/First")
@@ -298,24 +298,24 @@ struct LinkDestinationSummaryTests {
         #expect(summary.plainTextDeclaration           == nil, "Only symbols have USRs.")
         #expect(summary.subheadingDeclarationFragments == nil, "Only symbols have USRs.")
         #expect(summary.navigatorDeclarationFragments  == nil, "Only symbols have USRs.")
-        
+
         #expect(summary.topicImages == [
             TopicImage(type: .card, identifier: RenderReferenceIdentifier("card.png")),
             TopicImage(type: .icon, identifier: RenderReferenceIdentifier("icon.png")),
         ])
-        
+
         #expect(summary.references?.count == 2)
-        
+
         // The order of the references is expected to be stable.
         do {
             let imageReference = try #require(summary.references?.first as? ImageReference)
             #expect(imageReference.identifier.identifier == "card.png")
             #expect(imageReference.altText == "Card image alt text")
             #expect(imageReference.asset.context == .display)
-            
+
             #expect((renderNode.references[imageReference.identifier.identifier] as? ImageReference)?.altText == "Card image alt text",
                     "The reference in the page itself also has the altText")
-            
+
             #expect(Set(imageReference.asset.variants.keys) == [
                 DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard),
                 DataTraitCollection(userInterfaceStyle:  .dark, displayScale: .standard),
@@ -324,34 +324,34 @@ struct LinkDestinationSummaryTests {
             let darkImageURL  = try #require(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle:  .dark, displayScale: .standard)])
             #expect(lightImageURL.path == "/Something.docc/card.png")
             #expect(darkImageURL.path  == "/Something.docc/card~dark.png")
-            
+
             #expect(Set(imageReference.asset.metadata.keys) == [lightImageURL, darkImageURL])
             let lightImageMetadata = try #require(imageReference.asset.metadata[lightImageURL])
             #expect(lightImageMetadata.svgID == nil)
             let darkImageMetadata = try #require(imageReference.asset.metadata[darkImageURL])
             #expect(darkImageMetadata.svgID == nil)
         }
-        
+
         do {
             let imageReference = try #require(summary.references?.last as? ImageReference)
             #expect(imageReference.identifier.identifier == "icon.png")
             #expect(imageReference.altText == "Icon image alt text")
             #expect(imageReference.asset.context == .display)
-            
+
             #expect((renderNode.references[imageReference.identifier.identifier] as? ImageReference)?.altText == "Icon image alt text",
                     "The reference in the page itself also has the altText")
-            
+
             #expect(Set(imageReference.asset.variants.keys) == [
                 DataTraitCollection(userInterfaceStyle: .light, displayScale: .double),
             ])
             let lightImageURL = try #require(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .light, displayScale: .double)])
             #expect(lightImageURL.path == "/Something.docc/icon@2x.png")
-            
+
             #expect(Set(imageReference.asset.metadata.keys) == [lightImageURL])
             let lightImageMetadata = try #require(imageReference.asset.metadata[lightImageURL])
             #expect(lightImageMetadata.svgID == nil)
         }
-        
+
         // TODO: DataAsset doesn't round-trip encode/decode
         summary.references = summary.references?.compactMap { (original: RenderReference) -> (any RenderReference)? in
             guard var imageRef = original as? ImageReference else { return nil }
@@ -363,152 +363,161 @@ struct LinkDestinationSummaryTests {
             })
             return imageRef as (any RenderReference)
         }
-        
+
         try assertRoundTripCoding(summary)
-        
+
         // Also verify that round trip coding preserves asset prefixes
         let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: context.inputs.id.rawValue).encode(summary)
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
         #expect(decoded == summary)
     }
-    
+
     @Test
     func decodingUnknownKindAndLanguage() throws {
         let json = """
-        {
-          "kind" : {
-            "id" : "kind-id",
-            "name" : "Kind name",
-            "isSymbol" : false
-          },
-          "language" : {
-            "id" : "language-id",
-            "name" : "Language name",
-            "idAliases" : [
-              "language-alias-id"
-            ],
-            "linkDisambiguationID" : "language-id"
-          },
-          "availableLanguages" : [
-            "swift",
-            "data",
             {
-              "id" : "language-id",
-              "idAliases" : [
-                "language-alias-id"
+              "kind" : {
+                "id" : "kind-id",
+                "name" : "Kind name",
+                "isSymbol" : false
+              },
+              "language" : {
+                "id" : "language-id",
+                "name" : "Language name",
+                "idAliases" : [
+                  "language-alias-id"
+                ],
+                "linkDisambiguationID" : "language-id"
+              },
+              "availableLanguages" : [
+                "swift",
+                "data",
+                {
+                  "id" : "language-id",
+                  "idAliases" : [
+                    "language-alias-id"
+                  ],
+                  "linkDisambiguationID" : "language-id",
+                  "name" : "Language name"
+                },
+                {
+                  "id" : "language-id-2",
+                  "linkDisambiguationID" : "language-id-2",
+                  "name" : "Other language name"
+                },
+                "occ"
               ],
-              "linkDisambiguationID" : "language-id",
-              "name" : "Language name"
-            },
-            {
-              "id" : "language-id-2",
-              "linkDisambiguationID" : "language-id-2",
-              "name" : "Other language name"
-            },
-            "occ"
-          ],
-          "title" : "Something",
-          "path" : "/documentation/something",
-          "referenceURL" : "/documentation/something"
-        }
-        """
-        
+              "title" : "Something",
+              "path" : "/documentation/something",
+              "referenceURL" : "/documentation/something"
+            }
+            """
+
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(json.utf8))
         try assertRoundTripCoding(decoded)
-        
+
         #expect(decoded.kind == DocumentationNode.Kind(name: "Kind name", id: "kind-id", isSymbol: false))
         #expect(decoded.language == SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]))
-        #expect(decoded.availableLanguages == [
-            // Known languages
-            .swift,
-            .objectiveC,
-            .data,
-            
-            // Custom languages
-            SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]),
-            SourceLanguage(name: "Other language name", id: "language-id-2"),
-        ])
+        #expect(
+            decoded.availableLanguages == [
+                // Known languages
+                .swift,
+                .objectiveC,
+                .data,
+
+                // Custom languages
+                SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]),
+                SourceLanguage(name: "Other language name", id: "language-id-2"),
+            ])
     }
-    
+
     @Test
     func decodingLegacyData() throws {
         let legacyData = """
-        {
-          "title": "ClassName",
-          "referenceURL": "doc://org.swift.docc.example/documentation/MyKit/ClassName",
-          "language": "swift",
-          "path": "documentation/MyKit/ClassName",
-          "availableLanguages": [
-            "swift"
-          ],
-          "kind": "org.swift.docc.kind.class",
-          "abstract": [
             {
-              "type": "text",
-              "text": "A brief explanation of my class."
+              "title": "ClassName",
+              "referenceURL": "doc://org.swift.docc.example/documentation/MyKit/ClassName",
+              "language": "swift",
+              "path": "documentation/MyKit/ClassName",
+              "availableLanguages": [
+                "swift"
+              ],
+              "kind": "org.swift.docc.kind.class",
+              "abstract": [
+                {
+                  "type": "text",
+                  "text": "A brief explanation of my class."
+                },
+              ],
+              "platforms": [
+                {
+                  "name": "PlatformName",
+                  "introducedAt": "1.0"
+                },
+              ],
+              "fragments": [
+                {
+                  "kind": "keyword",
+                  "text": "class"
+                },
+                {
+                  "kind": "text",
+                  "text": " "
+                },
+                {
+                  "kind": "identifier",
+                  "text": "ClassName"
+                },
+              ]
             }
-          ],
-          "platforms": [
-            {
-              "name": "PlatformName",
-              "introducedAt": "1.0"
-            },
-          ],
-          "fragments": [
-            {
-              "kind": "keyword",
-              "text": "class"
-            },
-            {
-              "kind": "text",
-              "text": " "
-            },
-            {
-              "kind": "identifier",
-              "text": "ClassName"
-            }
-          ]
-        }
-        """
-        
+            """
+
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
-        
+
         #expect(decoded.referenceURL == ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
         #expect(decoded.platforms?.count == 1)
         #expect(decoded.platforms?.first?.name == "PlatformName")
         #expect(decoded.platforms?.first?.introduced == "1.0")
-        #expect(decoded.kind  == .class)
+        #expect(decoded.kind == .class)
         #expect(decoded.title == "ClassName")
         #expect(decoded.abstract?.plainText == "A brief explanation of my class.")
         #expect(decoded.relativePresentationURL.absoluteString == "documentation/MyKit/ClassName")
-        #expect(decoded.subheadingDeclarationFragments == [
-            .init(text: "class", kind: .keyword, identifier: nil),
-            .init(text: " ", kind: .text, identifier: nil),
-            .init(text: "ClassName", kind: .identifier, identifier: nil),
-        ])
+        #expect(
+            decoded.subheadingDeclarationFragments == [
+                .init(text: "class", kind: .keyword, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "ClassName", kind: .identifier, identifier: nil),
+            ])
         #expect(decoded.topicImages == nil)
-        #expect(decoded.references  == nil)
-        
+        #expect(decoded.references == nil)
+
         #expect(decoded.variants.isEmpty)
     }
-    
+
     @Test
     func apiCollectionIsCategorizedAsCollectionGroupKind() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "APICollection.md", utf8Content: """
-            # Some API Collection
-            This is an API Collection because it curates symbols.
+            TextFile(
+                name: "APICollection.md",
+                utf8Content: """
+                    # Some API Collection
+                    This is an API Collection because it curates symbols.
 
-            ## Topics
-            - ``ModuleName/SomeClass``
-            """)
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])]
-            ))
+                    ## Topics
+                    - ``ModuleName/SomeClass``
+                    """)
+            JSONFile(
+                name: "ModuleName.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
+                    ]
+                ))
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "APICollection" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
@@ -516,7 +525,7 @@ struct LinkDestinationSummaryTests {
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
 
-        #expect(summary.kind  == .collectionGroup, "API Collections (articles with Topics sections) should be classified as a `.collectionGroup` kind")
+        #expect(summary.kind == .collectionGroup, "API Collections (articles with Topics sections) should be classified as a `.collectionGroup` kind")
         #expect(summary.title == "Some API Collection")
         #expect(summary.abstract == [.text("This is an API Collection because it curates symbols.")])
 
@@ -526,26 +535,33 @@ struct LinkDestinationSummaryTests {
     @Test
     func explicitPageKindOverridesDefaultAPICollectionKind() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "ExplicitArticle.md", utf8Content: """
-            # Explicit Article
+            TextFile(
+                name: "ExplicitArticle.md",
+                utf8Content: """
+                    # Explicit Article
 
-            This would be classifies as an API Collection because it curates a symbol but it is explicitly marked as an "article" which overrides the default kind.
+                    This would be classifies as an API Collection because it curates a symbol but it is explicitly marked as an "article" which overrides the default kind.
 
-            @Metadata {
-                @PageKind(article)
-            }
+                    @Metadata {
+                        @PageKind(article)
+                    }
 
-            ## Topics
-            - ``ModuleName/SomeClass``
-            """)
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])]
-            ))
+                    ## Topics
+                    - ``ModuleName/SomeClass``
+                    """)
+            JSONFile(
+                name: "ModuleName.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
+                    ]
+                ))
         }
 
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "ExplicitArticle" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
@@ -554,32 +570,32 @@ struct LinkDestinationSummaryTests {
         let summary = try #require(summaries.first)
 
         // Should be .article because of explicit @PageKind(article), not .collectionGroup
-        #expect(summary.kind  == .article)
+        #expect(summary.kind == .article)
         #expect(summary.title == "Explicit Article")
 
         try assertRoundTripCoding(summary)
     }
-    
+
     enum AvailabilitySource: Equatable, CaseIterable {
         case inSourceAttributes, directives
     }
-    
+
     enum AvailabilityConfiguration: Equatable, CaseIterable {
         case isBeta, isDeprecated
     }
-    
+
     // FIXME: Symbol semantics and RenderContext doesn't consider pages deprecated when all their platforms are deprecated (rdar://172273148)
     // swift-format-ignore
     @Test(arguments: [AvailabilitySource.inSourceAttributes], AvailabilityConfiguration.allCases)
     func symbolsIncludePlatformAvailability(from availabilitySource: AvailabilitySource, _ availabilityConfiguration: AvailabilityConfiguration) async throws {
         let isDeprecated = availabilityConfiguration == .isDeprecated
         let isBeta       = availabilityConfiguration == .isBeta
-        
+
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                 A symbol with availability information for macOS and iOS.
-                
+
                 \(availabilitySource == .directives ? """
                 @Metadata {
                    @Available(macOS, introduced: 1.2.3\(isDeprecated ? ", deprecated: 3.2.1" : "")
@@ -591,7 +607,7 @@ struct LinkDestinationSummaryTests {
                     .init(domainName: "iOS",   introduced: .init(major: 2, minor: 3, patch: 4), deprecated: isDeprecated ? .init(major: 4, minor: 5, patch: 6) : nil),
                 ] : [])
             ]))
-            
+
             // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
             InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(unavailablePlatformName: .iPadOS),
@@ -605,74 +621,74 @@ struct LinkDestinationSummaryTests {
                 "iOS":   .init(.init(2, 3, 4), beta: true),
             ]
         }
-        
+
         let context = try await load(catalog: catalog, configuration: configuration)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
 
         // Because there's only a single language representation we can make a simple non-variant check
         let platforms = try #require(renderNode.metadata.platforms)
-        
+
         // Check the names as kind-of count comparison. That also makes it easy to spot any ordering issues.
         // Because of all the optional properties in a AvailabilityRenderItem, it's harder spot differences in the full-item-comparisons below.
         #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
-        
+
         let expectedUnconditionalInfo = availabilitySource == .inSourceAttributes ? false : nil
         // From the in-source attribute
         #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
         // Inherited from the iOS availability information
         #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
         // No iPad availability because it's marked as unavailable in the Info.plist
-        
+
         // From the in-source attribute
         #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
-        
+
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
 
         #expect(summary.platforms == renderNode.metadata.platforms)
         try assertRoundTripCoding(summary)
-        
+
         let summaryRenderReference = summary.makeTopicRenderReference()
-        
+
         #expect(summaryRenderReference.isBeta       == isBeta)
         #expect(summaryRenderReference.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summaryRenderReference)
-        
+
         #expect((node.semantic as? Symbol)?.isDeprecated == isDeprecated)
-        
+
         // Verify that the summary's render reference matches the information from the full page's render reference.
         let pageRenderReference = try #require(RenderContext(documentationContext: context).store.content(for: reference)?.renderReference as? TopicRenderReference)
-        
+
         #expect(pageRenderReference.isBeta       == isBeta)
         #expect(pageRenderReference.isDeprecated == isDeprecated)
     }
-    
+
     // swift-format-ignore
     @Test(arguments: AvailabilityConfiguration.allCases)
     func articleIncludePlatformAvailability(_ availabilityConfiguration: AvailabilityConfiguration) async throws {
         let isDeprecated = availabilityConfiguration == .isDeprecated
         let isBeta       = availabilityConfiguration == .isBeta
-        
+
         let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "First.md", utf8Content: """
             # Some article
             An article with availability information for macOS and iOS.
-            
+
             @Metadata {
                @Available(macOS, introduced: 1.2.3\(isDeprecated ? ", deprecated: 3.2.1" : "")
                @Available(iOS,   introduced: 2.3.4\(isDeprecated ? ", deprecated: 4.5.6" : "")
             }
             """)
-            
+
             TextFile(name: "Second.md", utf8Content: """
             # Another article
             This second article exist so that the first article isn't elevated to be the root page.
             """)
-            
+
             // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
             InfoPlist(defaultAvailability: ["ModuleName": [
                 .init(unavailablePlatformName: .iPadOS),
@@ -686,126 +702,126 @@ struct LinkDestinationSummaryTests {
                 "iOS":   .init(.init(2, 3, 4), beta: true),
             ]
         }
-        
+
         let context = try await load(catalog: catalog, configuration: configuration)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
 
         // Because there's only a single language representation we can make a simple non-variant check
         let platforms = try #require(renderNode.metadata.platforms)
-        
+
         // Check the names as kind-of count comparison. That also makes it easy to spot any ordering issues.
         // Because of all the optional properties in a AvailabilityRenderItem, it's harder spot differences in the full-item-comparisons below.
         #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
-        
+
         // From the in-source attribute
         #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
         // Inherited from the iOS availability information
         #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
         // No iPad availability because it's marked as unavailable in the Info.plist
-        
+
         // From the in-source attribute
         #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
-        
+
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
 
         #expect(summary.platforms == renderNode.metadata.platforms)
         try assertRoundTripCoding(summary)
-        
+
         let summaryRenderReference = summary.makeTopicRenderReference()
-        
+
         #expect(summaryRenderReference.isBeta       == isBeta)
         #expect(summaryRenderReference.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summaryRenderReference)
-        
+
         // FIXME: Articles don't consider the availability information from directives. (rdar://172280267)
 //        // Verify that the summary's render reference matches the information from the full page's render reference.
 //        let pageRenderReference = try #require(RenderContext(documentationContext: context).store.content(for: reference)?.renderReference as? TopicRenderReference)
-//        
+//
 //        #expect(pageRenderReference.isBeta       == isBeta)
 //        #expect(pageRenderReference.isDeprecated == isDeprecated)
     }
-    
+
     // FIXME: Add tests that verify the behaviors of mixing in-source availability attributes and Available directives (rdar://171807245)
-    
+
     // swift-format-ignore
     @Test
     func includesTopicReferencesFromSymbolAbstract() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], docComment: """
-                This first symbol links to the ``Second`` symbol.    
+                This first symbol links to the ``Second`` symbol.
                 """),
-                
+
                 makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]),
             ]))
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        
+
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
-        
+
         let renderReferenceID = RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName/Second")
         #expect(summary.abstract == [
             .text("This first symbol links to the "),
             .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
             .text(" symbol."),
         ])
-        
+
         #expect(summary.references?.count == 1)
         let renderReference = try #require(summary.references?.first as? TopicRenderReference)
         #expect(renderReference.title == "Second")
         #expect(renderReference.kind  == .symbol)
         #expect(renderReference.url   == "/documentation/modulename/second")
     }
-    
+
     // swift-format-ignore
     @Test
     func includesTopicReferencesFromArticleAbstract() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "First.md", utf8Content: """
             # First
-            
+
             This first article links to the <doc:Second> article.
             """)
-            
+
             TextFile(name: "Second.md", utf8Content: """
             # Second
             """)
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        
+
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
-        
+
         let renderReferenceID = RenderReferenceIdentifier("doc://unit-test/documentation/unit-test/Second")
         #expect(summary.abstract == [
             .text("This first article links to the "),
             .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
             .text(" article."),
         ])
-        
+
         #expect(summary.references?.count == 1)
         let renderReference = try #require(summary.references?.first as? TopicRenderReference)
         #expect(renderReference.title == "Second")
         #expect(renderReference.kind  == .article)
         #expect(renderReference.url   == "/documentation/unit-test/second")
     }
-    
+
     // swift-format-ignore
     @Test
     func summarizeTutorialPage() async throws {
@@ -825,19 +841,19 @@ struct LinkDestinationSummaryTests {
                   @Chapter(name: "Chapter 1") {
                      Some description of what this chapter teaches.
                      @Image(source: chapter-1.png)
-            
+
                      @TutorialReference(tutorial: SomeTutorial)
                   }
                }
             }
             """)
-            
+
             TextFile(name: "SomeTutorial.tutorial", utf8Content: """
             @Tutorial {
                @Intro(title: "Some tutorial title with emoji 💻") {
-                  Some introductory description of what this tutorial teaches. 
+                  Some introductory description of what this tutorial teaches.
                }
-               
+
                @Redirected(from: "old/path/to/this/page")
                @Redirected(from: "even/older/path/to/this/page")
 
@@ -847,27 +863,27 @@ struct LinkDestinationSummaryTests {
                      @Image(source: section-1.png)
                   }
                   @Redirected(from: "old/path/to/this/landmark")
-            
+
                   @Steps {}
                }
             }
             """)
-            
+
             DataFile(name: "background.png", data: Data())
             DataFile(name: "volume-1.png",   data: Data())
             DataFile(name: "chapter-1.png",  data: Data())
             DataFile(name: "section-1.png",  data: Data())
-            
+
             InfoPlist(displayName: "Custom Display Name", identifier: "com.test.custom-identifier")
         }
 
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
+
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeTutorial" }))
         let node = try context.entity(with: reference)
         let renderNode = DocumentationNodeConverter(context: context).convert(node)
-        
+
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let pageSummary = try #require(summaries.first)
         #expect(pageSummary.title == "Some tutorial title with emoji 💻")
@@ -890,7 +906,7 @@ struct LinkDestinationSummaryTests {
         ])
         #expect(pageSummary.topicImages == nil, "The tutorial page doesn't have any topic images")
         #expect(pageSummary.references  == nil, "Because the tutorial page doesn't have any topic images it also doesn't have any references")
-        
+
         let sectionSummary = try #require(summaries.dropFirst().first)
         #expect(sectionSummary.title == "Some section title with emoji 💻")
         #expect(sectionSummary.relativePresentationURL.absoluteString == "/tutorials/custom-display-name/sometutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
@@ -911,7 +927,7 @@ struct LinkDestinationSummaryTests {
         ])
         #expect(sectionSummary.topicImages == nil, "Sections don't have any topic images")
         #expect(sectionSummary.references  == nil, "Because sections don't have any topic images it also doesn't have any references")
-        
+
         try assertRoundTripCoding(summaries)
     }
 

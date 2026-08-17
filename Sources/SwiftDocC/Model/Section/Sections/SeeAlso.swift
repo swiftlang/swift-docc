@@ -13,7 +13,7 @@ public import Markdown
 /// A section that contains groups of related symbols or external links.
 public struct SeeAlsoSection: GroupedSection {
     public static let title: String? = "See Also"
-    
+
     public var content: [any Markup]
 
     /// The list of groups for the section.

@@ -34,14 +34,14 @@ final class MockHandler: ChannelInboundHandler {
 
     let requestHead: HTTPRequestHead
     let requestHandler: any RequestHandlerFactory
-    
+
     var requestError: RequestError?
-    
+
     init(requestHead: HTTPRequestHead, requestHandler: any RequestHandlerFactory) {
         self.requestHead = requestHead
         self.requestHandler = requestHandler
     }
-    
+
     /// The received request doesn't matter - we always give the handler
     /// the preset request head.
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
@@ -53,7 +53,7 @@ final class MockHandler: ChannelInboundHandler {
                 try handler(context, requestHead)
             } catch let error as RequestError {
                 requestError = error
-            } catch { }
+            } catch {}
             context.flush()
         default: return
         }
@@ -63,12 +63,12 @@ final class MockHandler: ChannelInboundHandler {
 /// A testing channel handler that records the written response head, body, and error if any.
 final class Response: ChannelOutboundHandler {
     typealias OutboundIn = HTTPServerResponsePart
-    
+
     var head: HTTPResponseHead?
     var body: String?
-    
+
     var requestError: RequestError?
-    
+
     func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
         switch unwrapOutboundIn(data) {
         case .head(let head):
@@ -91,7 +91,7 @@ func responseWithPipeline(request: HTTPRequestHead, handler factory: any Request
     let channelHandler = MockHandler(requestHead: request, requestHandler: factory)
 
     let response = Response()
-    
+
     XCTAssertNoThrow(try channel.pipeline.addHandler(response).wait(), file: (file), line: line)
     XCTAssertNoThrow(try channel.pipeline.addHandler(channelHandler).wait(), file: (file), line: line)
 

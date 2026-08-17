@@ -32,18 +32,18 @@ public struct NodeURLGenerator {
     ///  - baseURL("doc://org.swift.example-bundle") ~> doc://org.swift.example-bundle/Example/TutorialName
     ///  - baseURL("http://domain.com/prefix") ~> http://domain.com/prefix/tutorials/Example/TutorialName
     public var baseURL: URL
-    
+
     public init(baseURL: URL? = nil) {
         self.baseURL = baseURL ?? URL(string: "/")!
     }
-    
+
     // Path builder for documentation nodes
     public enum Path {
         public static let tutorialsFolderName = "tutorials"
         public static let documentationFolderName = "documentation"
         public static let dataFolderName = "data"
         public static let indexFolderName = "index"
-        
+
         public static let tutorialsFolder = "/\(tutorialsFolderName)"
         public static let documentationFolder = "/\(documentationFolderName)"
 
@@ -56,7 +56,7 @@ public struct NodeURLGenerator {
         case article(bundleName: String, articleName: String)
         case tutorialTableOfContents(name: String)
         case tutorial(bundleName: String, tutorialName: String)
-        
+
         /// A URL safe path under the given root path.
         public var stringValue: String {
             switch self {
@@ -115,11 +115,11 @@ public struct NodeURLGenerator {
             }
         }
     }
-    
+
     /// Returns a string path appropriate for the given semantic node.
     public static func pathForSemantic(_ semantic: Semantic, source: URL, bundle: DocumentationBundle) -> String {
         let fileName = source.deletingPathExtension().lastPathComponent
-        
+
         switch semantic {
         case is TutorialTableOfContents:
             return Path.tutorialTableOfContents(name: fileName).stringValue
@@ -135,7 +135,7 @@ public struct NodeURLGenerator {
             return fileName
         }
     }
-    
+
     /// Returns the reference's path in a format that is safe for writing to disk.
     public static func fileSafeReferencePath(
         _ reference: ResolvedTopicReference,
@@ -144,23 +144,23 @@ public struct NodeURLGenerator {
         guard !reference.path.removingLeadingSlash.isEmpty else {
             return ""
         }
-        
+
         let safeURL = fileSafeURL(reference.url)
         let pathRemovingLeadingSlash = safeURL.path.removingLeadingSlash
-        
+
         if lowercased {
             return pathRemovingLeadingSlash.lowercased()
         } else {
             return pathRemovingLeadingSlash
         }
     }
-    
+
     /// Returns a URL appropriate for the given reference.
     public func urlForReference(_ reference: ResolvedTopicReference, lowercased: Bool = false) -> URL {
         let safePath = Self.fileSafeReferencePath(reference, lowercased: lowercased)
         return urlForReference(reference, fileSafePath: safePath)
     }
-    
+
     /// Returns a URL appropriate for the given reference and file safe path.
     public func urlForReference(_ reference: ResolvedTopicReference, fileSafePath safePath: String) -> URL {
         if safePath.isEmpty {
@@ -174,7 +174,7 @@ public struct NodeURLGenerator {
             return url.withFragment(reference.fragment)
         }
     }
-    
+
     /// Patch path components for writing to the file system.
     ///
     /// We replace path unsafe characters when generating DocC references.
@@ -194,29 +194,29 @@ public struct NodeURLGenerator {
                     isURLModified = true
                     name = "'\(name)"
                 }
-                
+
                 // Shorten path components that are too long.
                 // Take the first 240 chars and append a checksum on the *complete* string.
                 if name.count >= pathComponentLengthLimit {
                     isURLModified = true
                     name = String(name.prefix(pathComponentLengthLimit)).appendingHashedIdentifier(name)
                 }
-                
+
                 return name
             })
-        
+
         // Skip re-constructing the URL if no changes were made to the path
         var newPath = "/" + pathComponents.joined(separator: "/")
-        
+
         // Verify the path's total length and trim it if necessary.
         if newPath.count >= pathLengthLimit {
             isURLModified = true
             newPath = String(newPath.prefix(pathLengthLimit))
                 .appendingHashedIdentifier(newPath)
         }
-        
+
         guard isURLModified else { return url }
-        
+
         // The URL coming from DocC is valid so we force unwrap here.
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         components.path = newPath

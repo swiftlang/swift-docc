@@ -22,50 +22,50 @@ fileprivate let helloWorldHTML = "<html><header><title>Hello Title</title></head
 fileprivate let jsFile = "var jsFile = true;".data(using: .utf8)!
 
 class FileServerTests: XCTestCase {
-    
+
     var defaultFileServer: FileServer = {
         var fileServer = FileServer(baseURL: baseURL)
         var memoryFileProvider = MemoryFileServerProvider()
-        
+
         memoryFileProvider.addFile(path: "/", data: helloWorldHTML)
         memoryFileProvider.addFile(path: "/index.html", data: helloWorldHTML)
         memoryFileProvider.addFile(path: "/js/file.js", data: jsFile)
-        
+
         fileServer.register(provider: memoryFileProvider)
-        
+
         return fileServer
     }()
-    
+
     func testBasicURL() {
         var retrieved = defaultFileServer.data(for: baseURL)
         XCTAssertEqual(helloWorldHTML, retrieved)
-        
+
         retrieved = defaultFileServer.data(for: baseURL.appendingPathComponent("index.html"))
         XCTAssertEqual(helloWorldHTML, retrieved)
-        
+
         retrieved = defaultFileServer.data(for: baseURL.appendingPathComponent("/js/file.js"))
         XCTAssertEqual(jsFile, retrieved)
     }
-    
+
     func testBasicPath() {
         var retrieved = defaultFileServer.data(for: baseURL.appendingPathComponent("index.html"))
         XCTAssertEqual(helloWorldHTML, retrieved)
-        
+
         retrieved = defaultFileServer.data(for: baseURL.appendingPathComponent("/index.html"))
         XCTAssertEqual(helloWorldHTML, retrieved)
-        
-        retrieved = defaultFileServer.data(for:  baseURL.appendingPathComponent("/js/file.js"))
+
+        retrieved = defaultFileServer.data(for: baseURL.appendingPathComponent("/js/file.js"))
         XCTAssertEqual(jsFile, retrieved)
     }
-    
+
     func testEmpty() {
         var retrieved = defaultFileServer.data(for: baseURL.appendingPathComponent("/invalid.html"))
         XCTAssertNil(retrieved, "\(baseURL.appendingPathComponent("/invalid.html").absoluteString) should return nil, but returned \(String(describing: retrieved))")
-        
+
         retrieved = defaultFileServer.data(for: baseURL.appendingPathComponent("/invalid/"))
         XCTAssertNil(retrieved, "\(baseURL.appendingPathComponent("/invalid/").absoluteString) should return nil, but returned \(String(describing: retrieved))")
     }
-    
+
     func testAddingFilesInFolder() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWith {
             DataFile(name: "figure1.png", data: Data())
@@ -76,29 +76,29 @@ class FileServerTests: XCTestCase {
 
         let memoryFileProvider = MemoryFileServerProvider(fileManager: fileSystem)
         memoryFileProvider.addFiles(inFolder: folderURL.path)
-        
+
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: memoryFileProvider)
-        
+
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/figure1.png")))
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/images/figure1.jpg")))
     }
-    
+
     func testAddingRemovingFromPath() {
         let memoryFileProvider = MemoryFileServerProvider()
         memoryFileProvider.addFile(path: "/figure1.png", data: Data())
         memoryFileProvider.addFile(path: "/images/figure1.jpg", data: Data())
-        
+
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: memoryFileProvider)
-        
+
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/images/figure1.jpg")))
-        
+
         memoryFileProvider.removeAllFiles(in: "/images")
-        
+
         XCTAssertNil(fileServer.data(for: baseURL.appendingPathComponent("/images/figure1.jpg")))
     }
-    
+
     func testDiskServerProvider() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWith {
             DataFile(name: "figure1.png", data: Data())
@@ -111,14 +111,14 @@ class FileServerTests: XCTestCase {
             XCTFail("Provided folder is not valid, it cannot be served.")
             return
         }
-        
+
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: fileSystemFileProvider)
-        
+
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/images/figure1.jpg")))
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/figure1.png")))
     }
-    
+
     func testSubPathProvider() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWith {
             DataFile(name: "figure1.png", data: Data())
@@ -131,44 +131,44 @@ class FileServerTests: XCTestCase {
             XCTFail("Provided folder is not valid, it cannot be served.")
             return
         }
-        
+
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: fileSystemFileProvider)
-        
+
         let memoryFileProvider = MemoryFileServerProvider()
         memoryFileProvider.addFile(path: "/", data: helloWorldHTML)
         memoryFileProvider.addFile(path: "/index.html", data: helloWorldHTML)
         memoryFileProvider.addFile(path: "/js/file.js", data: jsFile)
-        
+
         fileServer.register(provider: memoryFileProvider, subPath: "/subPath")
-        
+
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/images/figure1.jpg")))
         XCTAssertNotNil(fileServer.data(for: baseURL.appendingPathComponent("/figure1.png")))
-        
+
         var retrieved = fileServer.data(for: baseURL.appendingPathComponent("/subPath"))
         XCTAssertEqual(helloWorldHTML, retrieved)
 
         retrieved = fileServer.data(for: baseURL.appendingPathComponent("/subPath/index.html"))
         XCTAssertEqual(helloWorldHTML, retrieved)
-        
+
         retrieved = fileServer.data(for: baseURL.appendingPathComponent("/subPath/js/file.js"))
         XCTAssertEqual(jsFile, retrieved)
     }
-    
+
     func testResponse() {
         let memoryFileProvider = MemoryFileServerProvider()
         memoryFileProvider.addFile(path: "/images/figure1.jpg", data: Data())
-        
+
         let fileServer = FileServer(baseURL: baseURL)
         fileServer.register(provider: memoryFileProvider)
-        
-        let request = URLRequest(url:  baseURL.appendingPathComponent("/images/figure1.jpg"))
-        
+
+        let request = URLRequest(url: baseURL.appendingPathComponent("/images/figure1.jpg"))
+
         var (response, data) = fileServer.response(to: request)
         XCTAssertNotNil(data)
         XCTAssertEqual(response.mimeType, "image/jpeg")
-        
-        let failingRequest = URLRequest(url:  baseURL.appendingPathComponent("/not/found.jpg"))
+
+        let failingRequest = URLRequest(url: baseURL.appendingPathComponent("/not/found.jpg"))
         (response, data) = fileServer.response(to: failingRequest)
         XCTAssertNil(data)
         // Initializing a URLResponse with `nil` as MIME type in Linux returns nil
@@ -179,41 +179,41 @@ class FileServerTests: XCTestCase {
         XCTAssertEqual(response.mimeType, "application/octet-stream")
         #endif
     }
-    
+
     func testRedirectToHome() {
-        var request = URLRequest(url:  baseURL.appendingPathComponent("/home"))
+        var request = URLRequest(url: baseURL.appendingPathComponent("/home"))
         var (response, data) = defaultFileServer.response(to: request)
         XCTAssertEqual(helloWorldHTML, data)
         XCTAssertEqual("text/html", response.mimeType)
-        
-        request = URLRequest(url:  baseURL.appendingPathComponent("/foo///bar"))
-        (response, data) = defaultFileServer.response(to: request)
-        XCTAssertEqual(helloWorldHTML, data)
-        XCTAssertEqual("text/html", response.mimeType)
-        
-        request = URLRequest(url:  baseURL.appendingPathComponent("/project/Project"))
-        (response, data) = defaultFileServer.response(to: request)
-        XCTAssertEqual(helloWorldHTML, data)
-        XCTAssertEqual("text/html", response.mimeType)
-        
-        request = URLRequest(url:  baseURL.appendingPathComponent("/project/subPath/'...(_:)-6u3ic"))
-        (response, data) = defaultFileServer.response(to: request)
-        XCTAssertEqual(helloWorldHTML, data)
-        XCTAssertEqual("text/html", response.mimeType)
-        
-        request = URLRequest(url:  baseURL.appendingPathComponent("/project/subPath/body-swift.property"))
+
+        request = URLRequest(url: baseURL.appendingPathComponent("/foo///bar"))
         (response, data) = defaultFileServer.response(to: request)
         XCTAssertEqual(helloWorldHTML, data)
         XCTAssertEqual("text/html", response.mimeType)
 
-        request = URLRequest(url:  baseURL.appendingPathComponent("/theme/js/highlight-swift.js"))
+        request = URLRequest(url: baseURL.appendingPathComponent("/project/Project"))
+        (response, data) = defaultFileServer.response(to: request)
+        XCTAssertEqual(helloWorldHTML, data)
+        XCTAssertEqual("text/html", response.mimeType)
+
+        request = URLRequest(url: baseURL.appendingPathComponent("/project/subPath/'...(_:)-6u3ic"))
+        (response, data) = defaultFileServer.response(to: request)
+        XCTAssertEqual(helloWorldHTML, data)
+        XCTAssertEqual("text/html", response.mimeType)
+
+        request = URLRequest(url: baseURL.appendingPathComponent("/project/subPath/body-swift.property"))
+        (response, data) = defaultFileServer.response(to: request)
+        XCTAssertEqual(helloWorldHTML, data)
+        XCTAssertEqual("text/html", response.mimeType)
+
+        request = URLRequest(url: baseURL.appendingPathComponent("/theme/js/highlight-swift.js"))
         (response, data) = defaultFileServer.response(to: request)
         XCTAssertNotEqual(helloWorldHTML, data)
         XCTAssertNotEqual("text/html", response.mimeType)
     }
-    
+
     func testInvalidReference() {
-        let request = URLRequest(url:  baseURL.appendingPathComponent("thisWontResolve"))
+        let request = URLRequest(url: baseURL.appendingPathComponent("thisWontResolve"))
         let (response, data) = defaultFileServer.response(to: request)
         XCTAssertEqual(helloWorldHTML, data)
         XCTAssertEqual("text/html", response.mimeType)

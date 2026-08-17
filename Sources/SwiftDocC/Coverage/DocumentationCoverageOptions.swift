@@ -14,7 +14,8 @@
 public struct DocumentationCoverageOptions: Sendable {
     public init(
         level: DocumentationCoverageLevel,
-        kindFilterOptions: KindFilterOptions = []) {
+        kindFilterOptions: KindFilterOptions = []
+    ) {
         self.level = level
 
         if case .none = level {
@@ -28,7 +29,7 @@ public struct DocumentationCoverageOptions: Sendable {
     public static var noCoverage: DocumentationCoverageOptions {
         get { DocumentationCoverageOptions(level: .none, kindFilterOptions: []) }
         @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
-        set { /* Do nothing */ }
+        set { /* Do nothing */  }
     }
 
     // The desired level of documentation coverage as specified during invocation.
@@ -188,49 +189,49 @@ extension DocumentationCoverageOptions.KindFilterOptions {
         /// Converts given ``DocumentationNode.Kind`` to corresponding `BitFlagRepresentation` if possible. Returns `nil` if the given Kind is not representable.
         fileprivate init?(kind: DocumentationNode.Kind) {
             switch kind {
-            case .module, .extendedModule: // 1
+            case .module, .extendedModule:  // 1
                 self = .module
-            case .class, .extendedClass: // 2
+            case .class, .extendedClass:  // 2
                 self = .class
-            case .structure, .extendedStructure: // 3
+            case .structure, .extendedStructure:  // 3
                 self = .structure
-            case .enumeration, .extendedEnumeration: // 4
+            case .enumeration, .extendedEnumeration:  // 4
                 self = .enumeration
-            case .protocol, .extendedProtocol: // 5
+            case .protocol, .extendedProtocol:  // 5
                 self = .protocol
-            case .typeAlias: // 6
+            case .typeAlias:  // 6
                 self = .typeAlias
-            case .typeDef: // 7
+            case .typeDef:  // 7
                 self = .typeDef
-            case .associatedType: // 8
+            case .associatedType:  // 8
                 self = .associatedType
-            case .function: // 9
+            case .function:  // 9
                 self = .function
-            case .operator: // 10
+            case .operator:  // 10
                 self = .operator
-            case .enumerationCase: // 11
+            case .enumerationCase:  // 11
                 self = .enumerationCase
-            case .initializer: // 12
+            case .initializer:  // 12
                 self = .initializer
-            case .instanceMethod: // 13
+            case .instanceMethod:  // 13
                 self = .instanceMethod
-            case .instanceProperty: // 14
+            case .instanceProperty:  // 14
                 self = .instanceProperty
-            case .instanceSubscript: // 15
+            case .instanceSubscript:  // 15
                 self = .instanceSubscript
-            case .instanceVariable: // 16
+            case .instanceVariable:  // 16
                 self = .instanceVariable
-            case .typeMethod: // 17
+            case .typeMethod:  // 17
                 self = .typeMethod
-            case .typeProperty: // 18
+            case .typeProperty:  // 18
                 self = .typeProperty
-            case .typeSubscript: // 19
+            case .typeSubscript:  // 19
                 self = .typeSubscript
-            case .globalVariable: // 20
+            case .globalVariable:  // 20
                 self = .globalVariable
-            case .dictionary: // 21
+            case .dictionary:  // 21
                 self = .dictionary
-            case .httpRequest: // 22
+            case .httpRequest:  // 22
                 self = .httpRequest
             default:
                 return nil
@@ -241,45 +242,45 @@ extension DocumentationCoverageOptions.KindFilterOptions {
         fileprivate var bitMask: Int {
             switch self {
             case .none:
-            return 0
+                return 0
             case .module:
-            return 1 << 1
+                return 1 << 1
             case .`class`:
-            return 1 << 2
+                return 1 << 2
             case .structure:
-            return 1 << 3
+                return 1 << 3
             case .enumeration:
-            return 1 << 4
+                return 1 << 4
             case .protocol:
-            return 1 << 5
+                return 1 << 5
             case .typeAlias:
-            return 1 << 6
+                return 1 << 6
             case .typeDef:
-            return 1 << 7
+                return 1 << 7
             case .associatedType:
-            return 1 << 8
+                return 1 << 8
             case .function:
-            return 1 << 9
+                return 1 << 9
             case .operator:
-            return 1 << 10
+                return 1 << 10
             case .enumerationCase:
-            return 1 << 11
+                return 1 << 11
             case .initializer:
-            return 1 << 12
+                return 1 << 12
             case .instanceMethod:
-            return 1 << 13
+                return 1 << 13
             case .instanceProperty:
-            return 1 << 14
+                return 1 << 14
             case .instanceSubscript:
-            return 1 << 15
+                return 1 << 15
             case .instanceVariable:
-            return 1 << 16
+                return 1 << 16
             case .typeMethod:
-            return 1 << 17
+                return 1 << 17
             case .typeProperty:
-            return 1 << 18
+                return 1 << 18
             case .typeSubscript:
-            return 1 << 19
+                return 1 << 19
             case .globalVariable:
                 return 1 << 20
             case .dictionary:
@@ -298,102 +299,102 @@ extension DocumentationCoverageOptions.KindFilterOptions {
         /// A ``DocumentationNode.Kind`` instance value corresponding the value of the receiver. Returns `nil` for `BitFlagRepresentation.none`.
         fileprivate var documentationNodeKind: DocumentationNode.Kind? {
             switch self {
-            case .none: // 0
+            case .none:  // 0
                 return .none
-            case .module: // 1
+            case .module:  // 1
                 return .module
-            case .class: // 2
+            case .class:  // 2
                 return .class
-            case .structure: // 3
+            case .structure:  // 3
                 return .structure
-            case .enumeration: // 4
+            case .enumeration:  // 4
                 return .enumeration
-            case .protocol: // 5
+            case .protocol:  // 5
                 return .protocol
-            case .typeAlias: // 6
+            case .typeAlias:  // 6
                 return .typeAlias
-            case .typeDef: // 7
+            case .typeDef:  // 7
                 return .typeDef
-            case .associatedType: // 8
+            case .associatedType:  // 8
                 return .associatedType
-            case .function: // 9
+            case .function:  // 9
                 return .function
-            case .operator: // 10
+            case .operator:  // 10
                 return .operator
-            case .enumerationCase: // 11
+            case .enumerationCase:  // 11
                 return .enumerationCase
-            case .initializer: // 12
+            case .initializer:  // 12
                 return .initializer
-            case .instanceMethod: // 13
+            case .instanceMethod:  // 13
                 return .instanceMethod
-            case .instanceProperty: // 14
+            case .instanceProperty:  // 14
                 return .instanceProperty
-            case .instanceSubscript: // 15
+            case .instanceSubscript:  // 15
                 return .instanceSubscript
-            case .instanceVariable: // 16
+            case .instanceVariable:  // 16
                 return .instanceVariable
-            case .typeMethod: // 17
+            case .typeMethod:  // 17
                 return .typeMethod
-            case .typeProperty: // 18
+            case .typeProperty:  // 18
                 return .typeProperty
-            case .typeSubscript: // 19
+            case .typeSubscript:  // 19
                 return .typeSubscript
-            case .globalVariable: // 20
+            case .globalVariable:  // 20
                 return .globalVariable
-            case .dictionary: // 21
+            case .dictionary:  // 21
                 return .dictionary
-            case .httpRequest: // 22
+            case .httpRequest:  // 22
                 return .httpRequest
             }
         }
 
         fileprivate var canonicalArgumentString: String {
             switch self {
-            case .none: // 0
+            case .none:  // 0
                 return "none"
-            case .module: // 1
+            case .module:  // 1
                 return "module"
-            case .class: // 2
+            case .class:  // 2
                 return "class"
-            case .structure: // 3
+            case .structure:  // 3
                 return "structure"
-            case .enumeration: // 4
+            case .enumeration:  // 4
                 return "enumeration"
-            case .protocol: // 5
+            case .protocol:  // 5
                 return "protocol"
-            case .typeAlias: // 6
-            return "type-alias"
-            case .typeDef: // 7
+            case .typeAlias:  // 6
+                return "type-alias"
+            case .typeDef:  // 7
                 return "typedef"
-            case .associatedType: // 8
+            case .associatedType:  // 8
                 return "associated-type"
-            case .function: // 9
+            case .function:  // 9
                 return "function"
-            case .operator: // 10
+            case .operator:  // 10
                 return "operator"
-            case .enumerationCase: // 11
+            case .enumerationCase:  // 11
                 return "enumeration-case"
-            case .initializer: // 12
+            case .initializer:  // 12
                 return "initializer"
-            case .instanceMethod: // 13
+            case .instanceMethod:  // 13
                 return "instance-method"
-            case .instanceProperty: // 14
+            case .instanceProperty:  // 14
                 return "instance-property"
-            case .instanceSubscript: // 15
+            case .instanceSubscript:  // 15
                 return "instance-subscript"
-            case .instanceVariable: // 16
+            case .instanceVariable:  // 16
                 return "instance-variable"
-            case .typeMethod: // 17
+            case .typeMethod:  // 17
                 return "type-method"
-            case .typeProperty: // 18
+            case .typeProperty:  // 18
                 return "type-property"
-            case .typeSubscript: // 19
+            case .typeSubscript:  // 19
                 return "type-subscript"
-            case .globalVariable: // 20
+            case .globalVariable:  // 20
                 return "global-variable"
-            case .dictionary: // 21
+            case .dictionary:  // 21
                 return "dictionary"
-            case .httpRequest: // 21
+            case .httpRequest:  // 21
                 return "http-request"
             }
         }

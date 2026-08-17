@@ -36,7 +36,7 @@ public struct RESTResponseRenderSection: RenderSection, Equatable {
 
 // Diffable conformance
 extension RESTResponseRenderSection: RenderJSONDiffable {
-    
+
     /// Returns the differences between this RESTResponseRenderSection and the given one.
     func difference(from other: RESTResponseRenderSection, at path: CodablePath) -> JSONPatchDifferences {
         var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
@@ -47,7 +47,7 @@ extension RESTResponseRenderSection: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this RESTResponseRenderSection is similar enough to the given one.
     func isSimilar(to other: RESTResponseRenderSection) -> Bool {
         return self.title == other.title || self.responses == other.responses
@@ -92,7 +92,7 @@ public struct RESTResponse: Codable, TextIndexing, Equatable {
         self.type = type
         self.content = content
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         status = try container.decode(UInt.self, forKey: .status)
@@ -117,7 +117,7 @@ extension RESTResponse: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this RESTResponse is similar enough to the given one.
     func isSimilar(to other: RESTResponse) -> Bool {
         return self.content == other.content

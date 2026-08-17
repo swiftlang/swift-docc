@@ -12,7 +12,7 @@
 enum Conjunction: String {
     /// "or"
     case or
-    
+
     /// "and"
     case and
 }
@@ -20,7 +20,7 @@ enum Conjunction: String {
 extension BidirectionalCollection where Element: CustomStringConvertible {
     /**
      Returns this collection of elements separated by commas, terminating with `finalConjunction`.
-     
+
      For example, for the array `[1,2,3]`, will return "1, 2, or 3" or "1, 2, and 3".
      */
     func list(finalConjunction: Conjunction) -> String {

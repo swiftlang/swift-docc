@@ -40,35 +40,35 @@ private import SymbolKit
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.7"
     public let originalMarkup: BlockDirective
-    
+
     /// The relative path from your package's top-level "Snippets" directory to the snippet file that you want to embed in the page, without the `.swift` file extension.
     @DirectiveArgumentWrapped
     public var path: String
-    
+
     /// The name of a snippet slice to limit the embedded code example to a certain line range.
     ///
     /// By default, the embedded code example includes the full snippet.
     @DirectiveArgumentWrapped
     public var slice: String? = nil
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "path"  : \Snippet._path,
         "slice" : \Snippet._slice,
     ]
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
         super.init()
     }
-    
+
     func validate(diagnostics: inout [Diagnostic], source: URL?) -> Bool {
         if path.isEmpty {
             diagnostics.append(Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.EmptySnippetLink", summary: "No path provided to snippet; use a symbol link path to a known snippet"))
             return false
         }
-        
+
         return true
     }
 }
@@ -79,7 +79,7 @@ extension Snippet: RenderableDirectiveConvertible {
             return []
         }
         let mixin = resolvedSnippet.mixin
-        
+
         let options = RenderBlockContent.CodeBlockOptions(
             copyToClipboard: contentCompiler.context.configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled,
             showLineNumbers: false,
@@ -100,12 +100,11 @@ extension Snippet: RenderableDirectiveConvertible {
                 // Make dedicated copies of each line because the RenderBlockContent.codeListing requires it.
                 .map { String($0) }
 
-            
             return [RenderBlockContent.codeListing(.init(syntax: mixin.language, code: lines, metadata: nil, options: options))]
         } else {
             // Render the full snippet and its explanatory content.
             let fullCode = RenderBlockContent.codeListing(.init(syntax: mixin.language, code: mixin.lines, metadata: nil, options: options))
-            
+
             var content: [any RenderContent] = resolvedSnippet.explanation?.children.flatMap { contentCompiler.visit($0) } ?? []
             content.append(fullCode)
             return content

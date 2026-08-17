@@ -23,7 +23,7 @@ class DiagnosticSeverityTests: XCTestCase {
         XCTAssertNil(DiagnosticSeverity(""))
         XCTAssertNil(DiagnosticSeverity(nil))
     }
-    
+
     func testDiagnosticOrder() {
         // Verify that: error < warning < information
         XCTAssertLessThan(DiagnosticSeverity.error, .warning)

@@ -20,10 +20,10 @@ class SortByKeyPathTests: XCTestCase {
         URL(fileURLWithPath: "/456/789"),
         URL(fileURLWithPath: "/wxy/abc"),
     ]
-    
+
     func testSort() {
         var urls = Self.testURLs
-        
+
         urls.shuffle()
         urls.sort(by: \.path)
         XCTAssertEqual(
@@ -36,7 +36,7 @@ class SortByKeyPathTests: XCTestCase {
                 URL(fileURLWithPath: "/wxy/abc"),
             ]
         )
-        
+
         urls.shuffle()
         urls.sort(by: \.lastPathComponent)
         XCTAssertEqual(
@@ -62,7 +62,7 @@ class SortByKeyPathTests: XCTestCase {
                 URL(fileURLWithPath: "/wxy/abc"),
             ]
         )
-        
+
         XCTAssertEqual(
             Self.testURLs.shuffled().sorted(by: \.lastPathComponent),
             [

@@ -20,42 +20,43 @@ enum DiffStrategy {
 let arguments = ProcessInfo.processInfo.arguments.dropFirst()
 let diffStrategy: DiffStrategy
 switch arguments.first {
-    case "-h", "--help":
-        print("""
+case "-h", "--help":
+    print(
+        """
         OVERVIEW: Update the year in the license comment of modified files
 
         USAGE: swift run update-license-for-modified-files [--staged | <tree-ish>]
 
         To update the year for staged, but not yet committed files, run:
             swift run update-license-for-modified-files --staged
-        
+
         To update the year for all already committed changes that are different from the 'main' branch, run:
             swift run update-license-for-modified-files
-        
+
         To update the year for the already committed changes in the last commit, run:
             swift run update-license-for-modified-files HEAD~
-        
+
         You can specify any other branch or commit for this argument but I don't know if there's a real use case for doing so.
         """)
-        exit(0)
-        
-    case nil:
-        diffStrategy = .comparingTo(treeish: "main")
-    case "--staged", "--cached":
-        diffStrategy = .stagedFiles
-    case let treeish?:
-        diffStrategy = .comparingTo(treeish: treeish)
+    exit(0)
+
+case nil:
+    diffStrategy = .comparingTo(treeish: "main")
+case "--staged", "--cached":
+    diffStrategy = .stagedFiles
+case let treeish?:
+    diffStrategy = .comparingTo(treeish: treeish)
 }
 
 // Find which files are modified
 
 let repoURL: URL = {
     let url = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent() // main.swift
-        .deletingLastPathComponent() // update-license-for-modified-files
-        .deletingLastPathComponent() // Sources
-        .deletingLastPathComponent() // update-license-comments
-        .deletingLastPathComponent() // bin
+        .deletingLastPathComponent()  // main.swift
+        .deletingLastPathComponent()  // update-license-for-modified-files
+        .deletingLastPathComponent()  // Sources
+        .deletingLastPathComponent()  // update-license-comments
+        .deletingLastPathComponent()  // bin
     guard FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) else {
         fatalError("The path to the Swift-DocC source root has changed. This should only happen if the 'update-license-comments' sources have moved relative to the Swift-DocC repo.")
     }
@@ -78,7 +79,7 @@ let currentYear = Calendar.current.component(.year, from: .now)
 
 for file in modifiedFiles {
     guard var content = try? String(contentsOf: file, encoding: .utf8),
-          let licenseMatch = try? licenseRegex.firstMatch(in: content)
+        let licenseMatch = try? licenseRegex.firstMatch(in: content)
     else {
         // Didn't encounter a license comment in this file, do nothing
         continue
@@ -89,18 +90,18 @@ for file in modifiedFiles {
         print("Couldn't find license year in \(content[licenseMatch.range])")
         continue
     }
-    
+
     guard upperYear < currentYear else {
         // The license for this file is already up to date. No need to update it.
         continue
     }
-    
+
     if licenseMatch.1 == nil {
         // The existing license comment only contains a single year. Add the new year after
         content.insert(contentsOf: "-\(currentYear)", at: upperYearSubstring.endIndex)
     } else {
         // The existing license comment contains both a start year and an end year. Update the second year.
-        content.replaceSubrange(upperYearSubstring.startIndex ..< upperYearSubstring.endIndex, with: "\(currentYear)")
+        content.replaceSubrange(upperYearSubstring.startIndex..<upperYearSubstring.endIndex, with: "\(currentYear)")
     }
     try content.write(to: file, atomically: true, encoding: .utf8)
 }
@@ -111,28 +112,30 @@ private func findModifiedFiles(in repoURL: URL, strategy: DiffStrategy) throws -
     let diffCommand = Process()
     diffCommand.currentDirectoryURL = repoURL
     diffCommand.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-    
-    let comparisonFlag: String = switch strategy {
+
+    let comparisonFlag: String =
+        switch strategy {
         case .stagedFiles:
             "--cached"
         case .comparingTo(let treeish):
             treeish
-    }
-    
+        }
+
     diffCommand.arguments = ["diff", "--name-only", comparisonFlag]
 
     let output = Pipe()
     diffCommand.standardOutput = output
-    
+
     try diffCommand.run()
-    
+
     guard let outputData = try output.fileHandleForReading.readToEnd(),
-          let outputString = String(data: outputData, encoding: .utf8)
+        let outputString = String(data: outputData, encoding: .utf8)
     else {
         return []
     }
-    
-    return outputString
+
+    return
+        outputString
         .components(separatedBy: .newlines)
         .compactMap { line in
             guard !line.isEmpty else { return nil }

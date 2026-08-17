@@ -12,12 +12,12 @@
 struct CollectionChanges {
     /// The segments of common elements, removed elements, and inserted elements.
     let segments: [Segment]
-    
+
     /// A single segment that describe a number of elements that are either common between both collections, or that are removed or inserted in the second collection.
     struct Segment: Equatable {
         var kind: Kind
         var count: Int
-        
+
         enum Kind: Equatable {
             /// These elements are common between both collections.
             case common
@@ -27,7 +27,7 @@ struct CollectionChanges {
             case insert
         }
     }
-    
+
     /// Creates a new collection changes value from the differences between to collections.
     ///
     /// - Parameters:
@@ -43,7 +43,7 @@ struct CollectionChanges {
             segments = [.init(kind: .remove, count: from.count)]
             return
         }
-        
+
         var changes = ChangeSegmentBuilder(originalCount: from.count)
         // The `CollectionDifference` enumeration order is documented; first removals in descending order then insertions in ascending order.
         // https://github.com/apple/swift/blob/main/stdlib/public/core/CollectionDifference.swift#L216-L235
@@ -65,16 +65,16 @@ struct CollectionChanges {
 /// Removals need to be applied in reverse order. All removals need to be applied before applying any insertions. Insertions need to be applied in order.
 private struct ChangeSegmentBuilder: ~Copyable {
     typealias Segment = CollectionChanges.Segment
-    
+
     private(set) var segments: [Segment]
-    
+
     private var insertStartIndex = 0
     private var insertStartOffset = 0
-    
+
     init(originalCount: Int) {
-        self.segments = [ Segment(kind: .common, count: originalCount) ]
+        self.segments = [Segment(kind: .common, count: originalCount)]
     }
-    
+
     mutating func remove(at removalIndex: Int) {
         // Removals are applied in reverse order. When the first removal is applied, the only segment is the 'common' count.
         //
@@ -87,11 +87,13 @@ private struct ChangeSegmentBuilder: ~Copyable {
         //
         // This process repeats, meaning that every removal is always applied to the first segment.
         let segment = segments[0]
-        assert(segment.kind == .common && removalIndex < segment.count, """
+        assert(
+            segment.kind == .common && removalIndex < segment.count,
+            """
             The first segment should always be a 'common' segment (was \(segment.kind)) and (0 ..< \(segment.count)) should always contain the removal index (\(removalIndex)).
             If it's not, then that's means that the remove operations wasn't performed in reverse order.
             """)
-        
+
         if removalIndex == 0 {
             // Removing at the start of the segment
             if segment.count == 1 {
@@ -99,14 +101,13 @@ private struct ChangeSegmentBuilder: ~Copyable {
             } else {
                 segments[0].count -= 1
             }
-            
+
             if segments.first?.kind == .remove {
                 segments[0].count += 1
             } else {
                 segments.insert(Segment(kind: .remove, count: 1), at: 0)
             }
-        }
-        else if removalIndex == segment.count - 1 {
+        } else if removalIndex == segment.count - 1 {
             // Removing at end of segment
             segments[0].count -= 1
 
@@ -118,9 +119,9 @@ private struct ChangeSegmentBuilder: ~Copyable {
             }
         } else {
             // Removal within segment
-            let lowerSegmentCount  = removalIndex
-            let higherSegmentCount = segment.count - lowerSegmentCount - 1 // the 1 is for the removed element
-            
+            let lowerSegmentCount = removalIndex
+            let higherSegmentCount = segment.count - lowerSegmentCount - 1  // the 1 is for the removed element
+
             // Split the segment in two with a new removal segment in-between.
             segments[0...0] = [
                 Segment(kind: .common, count: lowerSegmentCount),
@@ -129,16 +130,16 @@ private struct ChangeSegmentBuilder: ~Copyable {
             ]
         }
     }
-    
+
     private func findSegment(toInsertAt index: Int) -> (segment: Segment, startOffset: Int, segmentIndex: Int)? {
         // Insertions are applied in order. This means that we can start with the previous offset and index.
         var offset = insertStartOffset
-        for segmentIndex in insertStartIndex ..< segments.count {
+        for segmentIndex in insertStartIndex..<segments.count {
             let segment = segments[segmentIndex]
             if segment.kind == .remove {
                 continue
             }
-            
+
             if index <= offset + segment.count {
                 return (segment, offset, segmentIndex)
             }
@@ -146,61 +147,64 @@ private struct ChangeSegmentBuilder: ~Copyable {
         }
         return nil
     }
-    
+
     mutating func insert(at insertIndex: Int) {
         guard let (segment, startOffset, segmentIndex) = findSegment(toInsertAt: insertIndex) else {
-            assert(segments.count == 1 && segments[0].kind == .remove, """
+            assert(
+                segments.count == 1 && segments[0].kind == .remove,
+                """
                 The only case when a segment can't be found in the loop is if the only segment is a 'remove' segment.
                 This happens when all the 'common' elements are removed (meaning that the 'from' and 'to' values have nothing in common.
                 """)
-            
+
             segments.append(Segment(kind: .insert, count: 1))
             return
         }
         assert(segment.kind != .remove)
-        
+
         insertStartOffset = startOffset
-        insertStartIndex  = segmentIndex
-        
+        insertStartIndex = segmentIndex
+
         guard segment.kind != .insert else {
             segments[segmentIndex].count += 1
             return
         }
         assert(segment.kind == .common)
-        
+
         if insertIndex == startOffset {
             // Insert at start of segment
             segments.insert(Segment(kind: .insert, count: 1), at: segmentIndex)
         } else if insertIndex == startOffset + segment.count {
             // Insert at end of segment
             let insertSegmentIndex = segmentIndex + 1
-            
+
             // If this is the last segment, append a new 'insert' segment
             guard insertSegmentIndex < segments.count else {
                 segments.append(Segment(kind: .insert, count: 1))
                 return
             }
-            
+
             switch segments[insertSegmentIndex].kind {
             case .insert:
                 assertionFailure("Inserts are processed from low to high. There shouldn't be another 'insert' segment after 'segmentIndex'.")
-                
+
             case .common:
                 // If the next segment is a 'common' segment, insert a new 'insert' segment before it
                 segments.insert(Segment(kind: .insert, count: 1), at: insertSegmentIndex)
-                
+
             case .remove:
                 // If the next segment is a 'remove' segment, skip over it so that insertions are always after removals.
                 segments.insert(Segment(kind: .insert, count: 1), at: insertSegmentIndex + 1)
-                
-                assert(insertSegmentIndex + 2 == segments.count || segments[insertSegmentIndex + 2].kind == .common,
-                       "If there's a segment after the remove segment, that is a segment of 'common' characters.")
+
+                assert(
+                    insertSegmentIndex + 2 == segments.count || segments[insertSegmentIndex + 2].kind == .common,
+                    "If there's a segment after the remove segment, that is a segment of 'common' characters.")
             }
         } else {
             // Insert within segment
-            let lowerSegmentCount  = insertIndex - startOffset
-            let higherSegmentCount = segment.count - lowerSegmentCount // nothing to add
-            
+            let lowerSegmentCount = insertIndex - startOffset
+            let higherSegmentCount = segment.count - lowerSegmentCount  // nothing to add
+
             // Split the segment in two with a new insertion segment in-between.
             segments[segmentIndex...segmentIndex] = [
                 Segment(kind: .common, count: lowerSegmentCount),

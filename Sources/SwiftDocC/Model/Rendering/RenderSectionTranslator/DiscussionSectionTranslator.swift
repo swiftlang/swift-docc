@@ -22,11 +22,11 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
             documentationDataVariants: symbol.discussionVariants
         ) { _, discussion in
             guard let discussionContent = renderNodeTranslator.visitMarkupContainer(MarkupContainer(discussion.content)) as? [RenderBlockContent],
-                  !discussionContent.isEmpty
+                !discussionContent.isEmpty
             else {
                 return nil
             }
-            
+
             let title: String?
             if let first = discussionContent.first, case RenderBlockContent.heading = first {
                 // There's already an authored heading. Don't add another heading.
@@ -41,7 +41,7 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
                     title = "Overview"
                 }
             }
-                
+
             return ContentRenderSection(kind: .content, content: discussionContent.capitalizingFirstWord(), heading: title)
         }
     }

@@ -14,12 +14,12 @@ import XCTest
 import DocCCommon
 
 class RenderMetadataTests: XCTestCase {
-    
+
     var testTitleVariants = VariantCollection<String?>(
         defaultValue: "Default title",
         objectiveCValue: "Objective-C title"
     )
-    
+
     func testRenderEmptyMetadata() throws {
         let metadata = RenderMetadata()
         guard let data = try? JSONEncoder().encode(metadata) else {
@@ -39,28 +39,29 @@ class RenderMetadataTests: XCTestCase {
             return
         }
     }
-    
+
     func testDecodeSymbolMetadata() throws {
         let plistSymbolURL = Bundle.module.url(
             forResource: "plist-symbol", withExtension: "json",
             subdirectory: "Rendering Fixtures")!
-        
+
         let data = try Data(contentsOf: plistSymbolURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         XCTAssertEqual(symbol.metadata.externalID, "plistkey-123")
-        
+
         XCTAssertEqual(symbol.metadata.title, "Wifi Access")
         XCTAssertEqual(symbol.metadata.roleHeading, "Property List Key")
-        XCTAssertEqual(symbol.metadata.modules?.map({ (module) -> String in
-            return module.name
-        }), ["MyKit"])
+        XCTAssertEqual(
+            symbol.metadata.modules?.map({ (module) -> String in
+                return module.name
+            }), ["MyKit"])
         XCTAssertEqual(symbol.metadata.externalID, "plistkey-123")
         XCTAssertEqual(symbol.metadata.platforms?.first?.introduced, "10.15")
         XCTAssertEqual(symbol.metadata.role, "symbol")
         XCTAssertEqual(symbol.metadata.sourceFileURI, "file:///username/developer/project/test.swift")
     }
-    
+
     func testDecodeArbitrarySymbolKind() throws {
         let data = try JSONSerialization.data(withJSONObject: ["symbolKind": "plum"], options: [])
         guard let metadata = try? JSONDecoder().decode(RenderMetadata.self, from: data) else {
@@ -72,25 +73,25 @@ class RenderMetadataTests: XCTestCase {
 
     func testAllPagesHaveTitleMetadata() async throws {
         var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
-        
+
         for bundleName in ["LegacyBundle_DoNotUseInNewTests"] {
             let (_, context) = try await testBundleAndContext(named: bundleName)
-            
+
             let renderContext = RenderContext(documentationContext: context)
             let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
-                
+
                 XCTAssertNotNil(renderNode.metadata.title, "Missing `title` in metadata for \(identifier.absoluteString) of kind \(entity.kind.id) in the \(bundleName) bundle")
-                
+
                 typesOfPages.removeAll(where: { type(of: entity.semantic!) == $0 })
             }
         }
-        
+
         XCTAssert(typesOfPages.isEmpty, "Never verified page with semantics: \(typesOfPages.map { "\($0)" }.joined(separator: ", "))")
     }
-    
+
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
     func testRendersBystandersFromSymbolGraph() async throws {
@@ -104,10 +105,10 @@ class RenderMetadataTests: XCTestCase {
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
-        
+
         // Verify it contains the bystanders data
         XCTAssertEqual(symbol.crossImportOverlayModule?.bystanderModules, ["Foundation"])
-        
+
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
@@ -156,20 +157,20 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "BundleWithRelativePathAmbiguity")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Dependency"])
     }
-    
+
     func testEmitsTitleVariantsDuringEncoding() throws {
         var metadata = RenderMetadata()
         metadata.titleVariants = testTitleVariants
-        
+
         let encoder = RenderJSONEncoder.makeEncoder()
         _ = try encoder.encode(metadata)
-        
+
         let variantOverrides = try XCTUnwrap(encoder.userInfo[.variantOverrides] as? VariantOverrides)
         XCTAssertEqual(variantOverrides.values.count, 1)
-        
+
         let variantOverride = try XCTUnwrap(variantOverrides.values.first)
         XCTAssertEqual(variantOverride.traits, [.interfaceLanguage("objc")])
-        
+
         XCTAssertEqual(variantOverride.patch.count, 1)
         let operation = try XCTUnwrap(variantOverride.patch.first)
         XCTAssertEqual(operation.operation, .replace)
@@ -180,7 +181,7 @@ class RenderMetadataTests: XCTestCase {
         }
         XCTAssertEqual(value.value as! String, "Objective-C title")
     }
-    
+
     func testSetsTitleDuringDecoding() throws {
         let metadata = try JSONDecoder().decode(
             RenderMetadata.self,
@@ -188,24 +189,24 @@ class RenderMetadataTests: XCTestCase {
         )
         XCTAssertEqual(metadata.title, "myTitle")
     }
-    
+
     func testSetsTitleVariantsDefaultValueWhenSettingTitle() {
         var metadata = RenderMetadata()
         metadata.title = "another title"
-        
+
         XCTAssertEqual(metadata.titleVariants.defaultValue, "another title")
     }
-    
+
     func testGetsTitleVariantsDefaultValueWhenGettingTitle() {
         var metadata = RenderMetadata()
         metadata.titleVariants = testTitleVariants
         XCTAssertEqual(metadata.title, "Default title")
     }
-    
+
     func testEncodesHasExpandedDocumentation() throws {
         var metadata = RenderMetadata()
         metadata.hasNoExpandedDocumentation = true
-        
+
         XCTAssert(
             try JSONDecoder().decode(
                 RenderMetadata.self,
@@ -213,7 +214,7 @@ class RenderMetadataTests: XCTestCase {
             ).hasNoExpandedDocumentation
         )
     }
-    
+
     func testDecodesMissingExpandedDocumentationAsFalse() throws {
         XCTAssertFalse(
             try JSONDecoder().decode(

@@ -28,16 +28,16 @@ struct DefaultRequestHandlerTests {
         let request = makeRequestHead(uri: "/random-path")
         let factory = DefaultRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
-        
+
         #expect(response.body == "Hello!")
         #expect(response.head?.headers["Content-type"] == ["text/html"])
-        
+
         // The preview server sends no-cache headers so that the developer doesn't get stale previews while iterating on their documentation.
         #expect(response.head?.headers["ETag"] == [])
         #expect(response.head?.headers["Pragma"] == ["no-cache"])
         #expect(response.head?.headers["Cache-Control"].first?.contains("no-cache") == true)
     }
-    
+
     @Test
     func defaultHandlerServerIndexDataEvenForExistingPath() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [

@@ -12,14 +12,14 @@
 public enum Layout: String, CaseIterable, Codable, DirectiveArgumentValueConvertible {
     /// A container split vertically into a left and right section.
     case horizontal
-    
+
     /// A container split horizontally into a top and bottom section.
     case vertical
-    
+
     public init?(rawDirectiveArgumentValue: String) {
         self.init(rawValue: rawDirectiveArgumentValue)
     }
-    
+
     public var description: String {
         switch self {
         case .horizontal: return "horizontal"

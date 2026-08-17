@@ -14,17 +14,17 @@
 public struct PrintCursor: Comparable, Hashable, CustomDebugStringConvertible {
     /// The line of this position in text, starting at `1`.
     public let line: Int
-    
+
     /// The column of this position in text, starting at `1`.
     public let column: Int
-    
+
     public init(line: Int, column: Int) {
         precondition(line > 0, "Line numbers must be > 0")
         precondition(column > 0, "Column numbers must be > 0")
         self.line = line
         self.column = column
     }
-    
+
     public init?(offset: Int, in source: String) {
         precondition(offset >= 0, "Source offsets must be >= 0")
         var currentLine = 1
@@ -45,7 +45,7 @@ public struct PrintCursor: Comparable, Hashable, CustomDebugStringConvertible {
         }
         self.init(line: currentLine, column: currentColumn)
     }
-    
+
     public static func < (lhs: PrintCursor, rhs: PrintCursor) -> Bool {
         guard lhs.line >= rhs.line else {
             return true
@@ -55,7 +55,7 @@ public struct PrintCursor: Comparable, Hashable, CustomDebugStringConvertible {
         }
         return lhs.column < rhs.column
     }
-    
+
     public var debugDescription: String {
         return "\(line):\(column)"
     }
@@ -67,19 +67,19 @@ public struct PrintCursor: Comparable, Hashable, CustomDebugStringConvertible {
 public struct CursorRange: Hashable, CustomDebugStringConvertible {
     /// The start of the range.
     public let start: PrintCursor
-    
+
     /// The end of the range.
     public let end: PrintCursor
-    
+
     /// The original source from which this range was established.
     var source: String
-    
+
     public init(start: PrintCursor, end: PrintCursor, in source: String) {
         self.start = start
         self.end = end
         self.source = source
     }
-    
+
     public var debugDescription: String {
         return "\(start)-\(end)"
     }
@@ -91,9 +91,9 @@ fileprivate let newLineASCII = UInt8(UTF8.CodeUnit(ascii: "\n"))
 extension Int {
     /**
      Initialize an absolute source offset using a line and column.
-     
+
      The `SourceRange`'s offset and length are calculated by scanning through `source` and tallying a running line and column along the way.
-     
+
      - Throws: `SourceRange.Error`
      */
     init?(cursor: PrintCursor, in source: some StringProtocol) {
@@ -114,7 +114,7 @@ extension Int {
             }
             index = source.utf8.index(after: index)
         }
-        
+
         self = source.utf8.distance(from: source.utf8.startIndex, to: index)
     }
 }

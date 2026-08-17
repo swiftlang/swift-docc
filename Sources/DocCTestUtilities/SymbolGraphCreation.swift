@@ -84,7 +84,7 @@ package func makeSymbol(
     pathComponents: [String],
     docComment: String? = nil,
     moduleName: String? = nil,
-    accessLevel: SymbolGraph.Symbol.AccessControl = .init(rawValue: "public"), // Defined internally in SwiftDocC
+    accessLevel: SymbolGraph.Symbol.AccessControl = .init(rawValue: "public"),  // Defined internally in SwiftDocC
     location: (position: SymbolGraph.LineList.SourceRange.Position, url: URL)? = (defaultSymbolPosition, defaultSymbolURL),
     signature: SymbolGraph.Symbol.FunctionSignature? = nil,
     availability: [SymbolGraph.Symbol.Availability.AvailabilityItem]? = nil,
@@ -92,8 +92,8 @@ package func makeSymbol(
     otherMixins: [any Mixin] = []
 ) -> SymbolGraph.Symbol {
     precondition(!pathComponents.isEmpty, "Need at least one path component to name the symbol")
-    
-    var mixins = otherMixins // Earlier mixins are prioritized if there are duplicates
+
+    var mixins = otherMixins  // Earlier mixins are prioritized if there are duplicates
     if let location {
         mixins.append(SymbolGraph.Symbol.Location(uri: location.url.absoluteString /* we want to include the file:// scheme */, position: location.position))
     }
@@ -106,18 +106,19 @@ package func makeSymbol(
     if let declaration {
         mixins.append(SymbolGraph.Symbol.DeclarationFragments(declarationFragments: declaration))
     }
-    
-    let names = if let declaration {
-        SymbolGraph.Symbol.Names(
-            title: pathComponents.last!, // Verified above to exist
-            navigator: declaration,
-            subHeading: declaration,
-            prose: nil
-        )
-    } else {
-        makeSymbolNames(name: pathComponents.last!) // Verified above to exist
-    }
-    
+
+    let names =
+        if let declaration {
+            SymbolGraph.Symbol.Names(
+                title: pathComponents.last!,  // Verified above to exist
+                navigator: declaration,
+                subHeading: declaration,
+                prose: nil
+            )
+        } else {
+            makeSymbolNames(name: pathComponents.last!)  // Verified above to exist
+        }
+
     return SymbolGraph.Symbol(
         identifier: SymbolGraph.Symbol.Identifier(precise: id, interfaceLanguage: language.id),
         names: names,
@@ -224,8 +225,8 @@ package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
         )
     }
 }
-    
+
 // MARK: Constants
 
-private let defaultSymbolPosition = SymbolGraph.LineList.SourceRange.Position(line: 11, character: 17) // an arbitrary non-zero start position
+private let defaultSymbolPosition = SymbolGraph.LineList.SourceRange.Position(line: 11, character: 17)  // an arbitrary non-zero start position
 private let defaultSymbolURL = URL(fileURLWithPath: "/Users/username/path/to/SomeFile.swift")

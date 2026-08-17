@@ -17,15 +17,15 @@ private import DocCCommon
 final class ExternalPathHierarchyResolver {
     /// A hierarchy of path components used to resolve links in the documentation.
     private(set) var pathHierarchy: PathHierarchy!
-    
+
     /// A map from the path hierarchies identifiers to resolved references.
     private var resolvedReferences = [ResolvedIdentifier: ResolvedTopicReference]()
     /// A map from symbol's unique identifiers to their resolved references.
     private var symbols: [String: ResolvedTopicReference]
-    
+
     /// The content for each external entity.
     private var content: [ResolvedTopicReference: LinkDestinationSummary]
-    
+
     /// Attempts to resolve an unresolved reference.
     ///
     /// - Parameters:
@@ -39,19 +39,21 @@ final class ExternalPathHierarchyResolver {
             guard let foundReference = resolvedReferences[foundID] else {
                 fatalError("Every identifier in the path hierarchy has a corresponding reference in the wrapping resolver. If it doesn't that's an indication that the file content that it was deserialized from was malformed.")
             }
-            
+
             guard content[foundReference] != nil else {
                 return .failure(unresolvedReference, .init("Resolved \(foundReference.url.withoutHostAndPortAndScheme().absoluteString.singleQuoted) but don't have any content to display for it."))
             }
-            
+
             return .success(foundReference)
         } catch {
-            return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { collidingNode in
-                self.fullName(of: collidingNode) // If the link was ambiguous, determine the full name of each colliding node to be presented in the link diagnostic.
-            })
+            return .failure(
+                unresolvedReference,
+                error.makeTopicReferenceResolutionErrorInfo() { collidingNode in
+                    self.fullName(of: collidingNode)  // If the link was ambiguous, determine the full name of each colliding node to be presented in the link diagnostic.
+                })
         }
     }
-    
+
     private func fullName(of collidingNode: PathHierarchy.Node) -> String {
         guard let reference = resolvedReferences[collidingNode.identifier], let summary = content[reference] else {
             return collidingNode.name
@@ -61,14 +63,14 @@ final class ExternalPathHierarchyResolver {
                 return plainTextDeclaration
             }
             if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
-               let plainTextDeclaration = variant.plainTextDeclaration ?? summary.plainTextDeclaration
+                let plainTextDeclaration = variant.plainTextDeclaration ?? summary.plainTextDeclaration
             {
                 return plainTextDeclaration
             }
         }
         return summary.title
     }
-    
+
     private static func path(for unresolved: UnresolvedTopicReference) -> String {
         guard let fragment = unresolved.fragment else {
             return unresolved.path
@@ -81,7 +83,7 @@ final class ExternalPathHierarchyResolver {
         guard let reference = symbols[usr] else { return nil }
         return (reference, entity(reference))
     }
-    
+
     /// Returns the external entity for a reference that was successfully resolved by this external resolver.
     ///
     /// - Precondition: The `reference` was previously resolved by this resolver.
@@ -91,9 +93,9 @@ final class ExternalPathHierarchyResolver {
         }
         return alreadyResolvedSummary
     }
-    
+
     // MARK: Deserialization
-    
+
     init(
         linkInformation fileRepresentation: SerializableLinkResolutionInformation,
         entityInformation linkDestinationSummaries: [LinkDestinationSummary]
@@ -117,13 +119,13 @@ final class ExternalPathHierarchyResolver {
         }
         self.content = entities
         self.symbols = symbols
-        
+
         // Second, decode the path hierarchy
         self.pathHierarchy = PathHierarchy(fileRepresentation.pathHierarchy) { identifiers in
             // Third, iterate over the newly created path hierarchy's identifiers and build up the map from Identifier -> Reference.
             self.resolvedReferences.reserveCapacity(identifiers.count)
             for (index, path) in fileRepresentation.nonSymbolPaths {
-                guard let url = URL(string: path) else { 
+                guard let url = URL(string: path) else {
                     assertionFailure("Failed to create URL from \"\(path)\". This is an indication of an encoding issue.")
                     // In release builds, skip pages that failed to decode. It's possible that they're never linked to and that they won't cause any issue in the build.
                     continue
@@ -139,12 +141,12 @@ final class ExternalPathHierarchyResolver {
             self.resolvedReferences[identifier] = symbols[usr]
         }
     }
-    
+
     convenience init(dependencyArchive: URL, dataProvider: any DataProvider) throws {
         // ???: Should it be the callers responsibility to pass both these URLs?
         let linkHierarchyFile = dependencyArchive.appendingPathComponent("link-hierarchy.json")
         let entityURL = dependencyArchive.appendingPathComponent("linkable-entities.json")
-        
+
         self.init(
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: dataProvider.contents(of: linkHierarchyFile)),
             entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
@@ -160,19 +162,19 @@ extension LinkDestinationSummary {
         guard let platforms, !platforms.isEmpty else {
             return false
         }
-        
+
         return platforms.allSatisfy { $0.isBeta == true }
     }
-    
+
     /// Create a topic render render reference for this link summary and its content variants.
     func makeTopicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
-        
+
         var titleVariants = VariantCollection(defaultValue: title)
         var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
         var fragmentVariants = VariantCollection(defaultValue: subheadingDeclarationFragments)
         var navigatorTitleVariants = VariantCollection(defaultValue: navigatorDeclarationFragments)
-        
+
         for variant in variants {
             let traits = variant.traits
             if let title = variant.title {
@@ -188,7 +190,7 @@ extension LinkDestinationSummary {
                 navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle)]))
             }
         }
-        
+
         return TopicRenderReference(
             identifier: .init(referenceURL.absoluteString),
             titleVariants: titleVariants,

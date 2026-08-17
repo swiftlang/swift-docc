@@ -37,45 +37,49 @@ public struct TemplateOption: ParsableArguments {
         // is nil, we fall back to the value provided in CommandLine.arguments[0].
         return Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0])
     }()
-    
+
     /// The default template location.
     static var defaultTemplateURL: URL {
         // This looks for the template relative to the docc executable
         //
         //   executable: common-file-path/bin/docc
         //   template:   common-file-path/share/docc/render/
-        let templatePath = doccExecutableLocation
-            .deletingLastPathComponent() // docc
-            .deletingLastPathComponent() // bin
+        let templatePath =
+            doccExecutableLocation
+            .deletingLastPathComponent()  // docc
+            .deletingLastPathComponent()  // bin
             .appendingPathComponent("share", isDirectory: true)
             .appendingPathComponent("docc", isDirectory: true)
             .appendingPathComponent("render", isDirectory: true)
-        
+
         return templatePath
     }
-    
+
     static func validateRequiredFile(fileName requiredFileName: String, inHTMLTemplateAt templateLocation: URL) throws(ValidationError) {
         if FileManager.default.fileExists(atPath: templateLocation.appendingPathComponent(requiredFileName, isDirectory: false).path) {
             return
         }
         throw Self.missingRequiredFile(fileName: requiredFileName, inHTMLTemplateAt: templateLocation)
     }
-    
+
     static func missingRequiredFile(fileName requiredFileName: String, inHTMLTemplateAt templateLocation: URL) -> ValidationError {
-        ValidationError("""
+        ValidationError(
+            """
             Missing '\(requiredFileName)' file in HTML template directory at '\(templateLocation.path)'.
             Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
             """)
     }
-    
+
     static func missingHTMLTemplate(at expectedTemplateLocation: URL) -> ValidationError {
         if ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey] != nil {
-            ValidationError("""
+            ValidationError(
+                """
                 Missing HTML template directory at custom location '\(expectedTemplateLocation.path)' \
                 specified using the '\(TemplateOption.environmentVariableKey)' environment variable.
                 """)
         } else {
-            ValidationError("""
+            ValidationError(
+                """
                 Missing HTML template directory, relative to the docc executable, at: '\(expectedTemplateLocation.path)'.
                 Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
                 """)
@@ -85,7 +89,7 @@ public struct TemplateOption: ParsableArguments {
     public mutating func validate() throws {
         templateURL = ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey]
             .map { URL(fileURLWithPath: $0) }
-        
+
         // Validate that the provided template URL represents a directory
         try URLArgumentValidator.validateHasDirectoryPath(templateURL, forArgumentDescription: "'\(TemplateOption.environmentVariableKey)' environment variable")
 
@@ -96,7 +100,7 @@ public struct TemplateOption: ParsableArguments {
             }
             return
         }
-        
+
         // Confirm that the provided directory contains an 'index.html' file which is a required part of an HTML template for docc.
         try Self.validateRequiredFile(fileName: HTMLTemplate.indexFileName.rawValue, inHTMLTemplateAt: templateURL)
     }

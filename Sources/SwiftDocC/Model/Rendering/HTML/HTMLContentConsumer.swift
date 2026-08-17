@@ -19,7 +19,7 @@ package import Foundation
 package protocol HTMLContentConsumer {
     // One reason that this is its own protocol, rather than an extension of ConvertOutputConsumer, is so that we can avoid exposing `XMLNode` in any public API.
     // That way, we are completely free to replace the entire internal HTML rendering implementation with something else in the future, without breaking API.
-    
+
     /// Consumes the HTML content and metadata for a given page.
     ///
     /// The content and metadata doesn't make up a full valid HTML page.
@@ -37,7 +37,7 @@ package protocol HTMLContentConsumer {
         ),
         forPage reference: ResolvedTopicReference
     ) throws
-    
+
     // This is not intended to be a long term design for determining which is the primary output format (rdar://177867282)
     // We need to make sure that this short-term workaround isn't surfaced in any `public` API so that we retain the ability to make large design changes.
     var _isPrimaryOutputFormat: Bool { get }

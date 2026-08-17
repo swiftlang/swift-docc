@@ -15,7 +15,7 @@
 /// - Note: Message types are backed by strings, so you can add new types without breaking the public API.
 public struct MessageType: Codable, RawRepresentable, Hashable, CustomDebugStringConvertible, Sendable {
     public var rawValue: String
-    
+
     /// Creates a type from a raw value.
     public init(rawValue: String) {
         self.rawValue = rawValue
@@ -23,15 +23,15 @@ public struct MessageType: Codable, RawRepresentable, Hashable, CustomDebugStrin
 
     /// A message that indicates a renderer has finished rendering documentation content.
     public static let rendered = MessageType(rawValue: "rendered")
-    
+
     /// A message that indicates a request for code-color preferences.
     ///
     /// Use code-color preferences to control how a renderer syntax highlighted code listings.
     public static let requestCodeColors = MessageType(rawValue: "requestCodeColors")
-    
+
     /// A message that indicates what code colors a renderer uses to syntax highlight code listings.
     public static let codeColors = MessageType(rawValue: "codeColors")
-    
+
     public var debugDescription: String {
         return "MessageType(\(rawValue))"
     }

@@ -37,18 +37,18 @@ import SwiftDocC
 final class PreviewHTTPHandler: ChannelInboundHandler {
     /// The handler's expected input data format.
     public typealias InboundIn = HTTPServerRequestPart
-    
+
     /// The handler's expected output data format.
     public typealias OutboundOut = HTTPServerResponsePart
-    
+
     /// The current handler's request state.
     private enum State {
         case idle, requestInProgress(requestHead: HTTPRequestHead, handler: RequestHandler)
     }
-    
+
     // MARK: - Properties
     private var state: State = .idle
-    
+
     private var keepAlive = false
     private let rootURL: URL
     private let fileManager: any FileManagerProtocol
@@ -60,7 +60,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
         self.rootURL = rootURL
         self.fileManager = fileManager
     }
-    
+
     /// Handles incoming data on a channel.
     ///
     /// When receiving a request's head this method prepares the correct handler
@@ -71,7 +71,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
     ///   - data: The current inbound request data.
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let requestPart = unwrapInboundIn(data)
-        
+
         switch (requestPart, state) {
         case (.head(let head), _):
             let handler: any RequestHandlerFactory
@@ -94,7 +94,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
             }
             #endif
             state = .requestInProgress(requestHead: head, handler: handler.create(channelHandler: self))
-            
+
         case (.end, .requestInProgress(let head, let handler)):
             #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
             let isSSE = head.uri == SSERequestHandler.path
@@ -110,18 +110,18 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
                     completeResponse(context, trailers: nil, promise: nil)
                 }
             }
-            
+
             // Call the pre-defined during the `head` context handler.
             do {
                 try handler(context, head)
             } catch {
                 let errorHandler = ErrorRequestHandler(error: error as? RequestError)
                     .create(channelHandler: self)
-                
+
                 // The error handler will never throw.
                 try! errorHandler(context, head)
             }
-            
+
         // Ignore other parts of a request, e.g. POST data or others.
         default: break
         }
@@ -131,9 +131,9 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
     private func completeResponse(_ context: ChannelHandlerContext, trailers: HTTPHeaders?, promise: EventLoopPromise<Void>?) {
         guard case State.requestInProgress = state else { return }
         state = .idle
-        
+
         let promise = promise ?? context.eventLoop.makePromise()
-        
+
         // If we don't need to keep the connection alive, close `context` after flushing the response
         if !self.keepAlive {
             // When we can update to Swift NIO 2.78.0 we can call `assumeIsolated()` on the future result and avoid this 'capture of non-sendable type' warning.
@@ -142,12 +142,12 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
 
         context.writeAndFlush(self.wrapOutboundOut(.end(trailers)), promise: promise)
     }
-    
+
     /// Replaces the current in-progress response with an error response and flushes the output to the client.
     private func error(context: ChannelHandlerContext, requestPart: PreviewHTTPHandler.InboundIn, head: HTTPRequestHead, status: HTTPResponseStatus, headers: [(String, String)] = []) {
         let errorHandler = ErrorRequestHandler(error: RequestError(status: status), headers: headers)
             .create(channelHandler: self)
-        
+
         try! errorHandler(context, head)
         completeResponse(context, trailers: nil, promise: nil)
     }

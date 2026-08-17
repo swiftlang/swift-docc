@@ -18,9 +18,9 @@ class AssessmentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
-        
+
         let context = try await makeEmptyContext()
-        
+
         if let directive {
             var diagnostics = [Diagnostic]()
             XCTAssertEqual(Assessments.directiveName, directive.name)

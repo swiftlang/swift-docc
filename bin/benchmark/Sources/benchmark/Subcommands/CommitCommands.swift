@@ -17,10 +17,10 @@ struct CompareTo: ParsableCommand {
         help: "The baseline 'commit-ish' to compare the current checkout against."
     )
     var commitHash: String
-    
+
     @OptionGroup
     var measureOptions: MeasureOptions
-    
+
     @Option(
         name: .customLong("output-dir"),
         help: "The directory to write the output benchmark measurements files.",
@@ -28,9 +28,9 @@ struct CompareTo: ParsableCommand {
     )
     var outputDirectory: URL?
     var outputDirectoryOrFallback: URL {
-        return outputDirectory ?? URL(fileURLWithPath: ".") // fallback to the current directory
+        return outputDirectory ?? URL(fileURLWithPath: ".")  // fallback to the current directory
     }
-    
+
     mutating func run() throws {
         try MainActor.assumeIsolated {
             let currentDocCExecutable = try MeasureAction.buildDocC(at: doccProjectRootURL)
@@ -65,7 +65,7 @@ struct MeasureCommits: ParsableCommand {
         help: "The commit hashes to gather measurements for."
     )
     var commitHashes: [String]
-    
+
     @Option(
         name: .customLong("output-dir"),
         help: "The directory to write the output benchmark measurements files.",
@@ -73,12 +73,12 @@ struct MeasureCommits: ParsableCommand {
     )
     var outputDirectory: URL?
     var outputDirectoryOrFallback: URL {
-        return outputDirectory ?? URL(fileURLWithPath: ".") // fallback to the current directory
+        return outputDirectory ?? URL(fileURLWithPath: ".")  // fallback to the current directory
     }
-    
+
     @OptionGroup
     var measureOptions: MeasureOptions
-    
+
     mutating func run() throws {
         for commitHash in commitHashes {
             let commitBenchmarkResult = try gatherMeasurementsForDocCCommit(
@@ -102,7 +102,7 @@ func gatherMeasurementsForDocCCommit(
     print("===== Gathering benchmark results for swift-docc \(commitHash) ========".styled(.bold))
     return try runWithDocCCommit(commitHash) { doccRootURL in
         let doccURL = try MeasureAction.buildDocC(at: doccRootURL)
-        
+
         return try MeasureAction.gatherMeasurements(
             doccExecutable: doccURL,
             repeatCount: repeatCount,

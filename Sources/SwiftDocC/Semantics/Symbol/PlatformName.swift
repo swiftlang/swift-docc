@@ -29,7 +29,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
     public static func < (lhs: PlatformName, rhs: PlatformName) -> Bool {
         isInOrder(lhs.rawValue, rhs.rawValue)
     }
-    
+
     /// Creates a new platform name value.
     /// - Parameters:
     ///   - rawValue: The raw source string.
@@ -40,24 +40,24 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         self.aliases = aliases
         self.displayName = displayName ?? rawValue
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(displayName)
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let name = try container.decode(String.self)
         self.init(operatingSystemName: name)
     }
-    
+
     /// Other known identifiers for the same platform (aka "macosx" for "macOS").
     public var aliases: [String] = []
-    
+
     /// The name to use in render JSON. If `nil` returns `rawValue`.
     public var displayName: String
-    
+
     /// Apple's macOS operating system.
     public static let macOS = PlatformName(rawValue: "macOS", aliases: ["macosx"])
     public static let macOSAppExtension = PlatformName(rawValue: "macOSAppExtension", displayName: "macOS App Extension")
@@ -81,7 +81,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
     public static let iPadOS = PlatformName(rawValue: "iPadOS")
     /// Apple's visionOS operating system.
     public static let visionOS = PlatformName(rawValue: "visionOS")
-    
+
     /// All supported platforms sorted for presentation.
     public static let sortedPlatforms: [PlatformName] = [
         .iOS, .iOSAppExtension,
@@ -93,7 +93,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         .watchOS, .watchOSAppExtension,
         .swift
     ]
-    
+
     /// A common platform names fast lookup index.
     ///
     /// A static, lazily created platform name index for fast lookups by name.
@@ -161,7 +161,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         switch (lhs, rhs) {
         case (_, nil): false
         case (nil, _): true
-        case (let lhs?, let rhs?):  isInOrder(lhs, rhs)
+        case (let lhs?, let rhs?): isInOrder(lhs, rhs)
         }
     }
 }

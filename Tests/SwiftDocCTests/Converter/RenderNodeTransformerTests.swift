@@ -12,22 +12,24 @@ import XCTest
 @testable import SwiftDocC
 
 class RenderNodeTransformerTests: XCTestCase {
-    
+
     func testCombinationTransformation() throws {
-        let symbolJSON = try String(contentsOf: Bundle.module.url(
-            forResource: "symbol-with-automatic-see-also-section", withExtension: "json",
-            subdirectory: "Converter Fixtures")!)
+        let symbolJSON = try String(
+            contentsOf: Bundle.module.url(
+                forResource: "symbol-with-automatic-see-also-section", withExtension: "json",
+                subdirectory: "Converter Fixtures")!)
 
         let renderNode = try RenderNodeTransformer(renderNodeData: symbolJSON.data(using: .utf8)!)
-            .apply(transformation:
-                SetMetadataTransformation(transform: { $0.title = "test title" })
+            .apply(
+                transformation:
+                    SetMetadataTransformation(transform: { $0.title = "test title" })
                     .then(SetMetadataTransformation(transform: { $0.roleHeading = "test heading" }))
                     .then(RemoveHierarchyTransformation())
             )
 
         XCTAssertEqual(renderNode.metadata.title, "test title")
         XCTAssertEqual(renderNode.metadata.roleHeading, "test heading")
-        
+
         XCTAssertNil(renderNode.hierarchyVariants.defaultValue)
         XCTAssertNil(renderNode.references["doc://org.swift.docc.example/documentation/MyKit"])
 
@@ -37,7 +39,8 @@ class RenderNodeTransformerTests: XCTestCase {
         var transform: (inout RenderMetadata) -> Void
 
         func transform(renderNode: RenderNode, context: RenderNodeTransformationContext)
-            -> RenderNodeTransformationResult {
+            -> RenderNodeTransformationResult
+        {
             var renderNode = renderNode
             transform(&renderNode.metadata)
             return (renderNode, context)

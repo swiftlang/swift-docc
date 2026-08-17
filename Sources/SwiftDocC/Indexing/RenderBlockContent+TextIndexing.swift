@@ -18,7 +18,7 @@ extension RenderBlockContent: TextIndexing {
         }
     }
 
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         switch self {
         case let .aside(a):
             return a.content.rawIndexableTextContent(references: references)
@@ -48,15 +48,15 @@ extension RenderBlockContent: TextIndexing {
                     return $0.rawIndexableTextContent(references: references)
                 }.joined(separator: " ")
             }.joined(separator: " ")
-            
+
             let meta = t.metadata?.rawIndexableTextContent(references: references) ?? ""
-            
+
             return content + " " + meta
         case .termList(let l):
             return l.items.map {
                 let definition = $0.definition.content.rawIndexableTextContent(references: references)
                 return $0.term.inlineContent.rawIndexableTextContent(references: references)
-                    + ( definition.isEmpty ? "" : " \(definition)" )
+                    + (definition.isEmpty ? "" : " \(definition)")
             }.joined(separator: " ")
         case .row(let row):
             return row.columns.map { column in

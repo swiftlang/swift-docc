@@ -11,7 +11,7 @@
 // Initializers for creating variant collections from symbol values.
 
 public extension VariantCollection {
-    
+
     /// Creates a variant collection from a non-empty symbol variants data using the given transformation closure.
     ///
     /// If there are no variants for the symbol data, this initializer returns `nil`.
@@ -24,7 +24,7 @@ public extension VariantCollection {
     ) {
         self.init(from: documentationDataVariants, anyTransform: { trait, value in transform(trait, value as! SymbolValue) })
     }
-    
+
     /// Creates a variant collection from a non-empty symbol variants data of the same value type using the given transformation closure.
     ///
     /// Use this initializer when the `Value` of the given ``DocumentationDataVariants`` is the same as the variant collection's `Value`. If there are no variants
@@ -38,7 +38,7 @@ public extension VariantCollection {
     ) {
         self.init(from: documentationDataVariants, anyTransform: { trait, value in transform(trait, value as! Value) })
     }
-    
+
     /// Creates a variant collection of optional value from a symbol variants data of the same value type using the given transformation closure.
     ///
     /// Use this initializer when the `Value` of the given ``DocumentationDataVariants`` is the variant collection's `Value` wrapped in an `Optional` .
@@ -60,7 +60,7 @@ public extension VariantCollection {
 
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant collection from a symbol variants data of the same value type using the given transformation closure.
     ///
     /// If there are no variants for the symbol data, the transform closure is called with a `nil` value.
@@ -72,16 +72,16 @@ public extension VariantCollection {
         transform: ((DocumentationDataVariantsTrait, SymbolValue)?) -> Value
     ) {
         var documentationDataVariants = documentationDataVariants
-        
+
         let defaultValue = transform(documentationDataVariants.removeDefaultValueForRendering())
-        
+
         let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant? in
             Self.createVariant(trait: trait, value: transform((trait, value)))
         }
-        
+
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant collection from a given set of variant traits.
     ///
     /// If there are no variants for the given traits, this initializer returns `nil`.
@@ -105,22 +105,22 @@ public extension VariantCollection {
         guard let defaultTrait = traits.removeFirstTraitForRendering() else {
             return nil
         }
-        
+
         let defaultValue = transform(defaultTrait) ?? fallbackDefaultValue
-        
+
         let variants = traits.compactMap { trait in
             guard let value = transform(trait) else {
                 return nil
             }
-            
+
             return (trait, value)
         }.compactMap { trait, value in
             Self.createVariant(trait: trait, value: value)
         }
-        
+
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant collection from two symbol variants data using the given transformation closure.
     ///
     /// If the first symbol data variants value is empty, this initializer returns `nil`. If the second data variants value is empty, the transform closure is passed
@@ -135,24 +135,24 @@ public extension VariantCollection {
     ) {
         var documentationDataVariants1 = documentationDataVariants1
         var documentationDataVariants2 = documentationDataVariants2
-        
+
         guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering() else {
             return nil
         }
-        
+
         let defaultValue2 = documentationDataVariants2.removeDefaultValueForRendering()
-        
+
         let defaultValue = transform(trait1, defaultValue1, defaultValue2.map(\.variant))
-        
+
         let variants = zipPairsByKey(documentationDataVariants1.allValues, optionalPairs2: documentationDataVariants2.allValues)
             .compactMap { (trait, values) -> Variant? in
                 let (value1, value2) = values
                 return Self.createVariant(trait: trait, value: transform(trait, value1, value2))
             }
-        
+
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant collection of optional value from two symbol variants data using the given transformation closure.
     ///
     /// If the first symbol data variants value is empty, this initializer returns `nil`. If the second data variants value is empty, the transform closure is passed
@@ -167,25 +167,25 @@ public extension VariantCollection {
     ) where Value == Wrapped? {
         var documentationDataVariants1 = documentationDataVariants1
         var documentationDataVariants2 = documentationDataVariants2
-        
+
         guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering() else {
             return nil
         }
-        
+
         let defaultValue2 = documentationDataVariants2.removeDefaultValueForRendering()
-        
+
         let defaultValue = transform(trait1, defaultValue1, defaultValue2.map(\.variant))
-        
+
         let variants = zipPairsByKey(documentationDataVariants1.allValues, optionalPairs2: documentationDataVariants2.allValues)
             .compactMap { (trait, values) -> Variant? in
                 let (value1, value2) = values
                 guard let patchValue = transform(trait, value1, value2) else { return nil }
                 return Self.createVariant(trait: trait, value: patchValue)
             }
-        
+
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant collection from two non-empty symbol variants data using the given transformation closure.
     ///
     /// If either symbol data variants values are empty, this initializer returns `nil`.
@@ -199,24 +199,24 @@ public extension VariantCollection {
     ) {
         var documentationDataVariants1 = documentationDataVariants1
         var documentationDataVariants2 = documentationDataVariants2
-        
+
         guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering(),
-              let (_, defaultValue2) = documentationDataVariants2.removeDefaultValueForRendering()
+            let (_, defaultValue2) = documentationDataVariants2.removeDefaultValueForRendering()
         else {
             return nil
         }
-        
+
         let defaultValue = transform(trait1, defaultValue1, defaultValue2)
-        
+
         let variants = zipPairsByKey(documentationDataVariants1.allValues, documentationDataVariants2.allValues)
             .compactMap { (trait, values) -> Variant? in
                 let (value1, value2) = values
                 return Self.createVariant(trait: trait, value: transform(trait, value1, value2))
             }
-        
+
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant collection from three non-empty symbol variants data using the given transformation closure.
     ///
     /// If any of symbol data variants values are empty, this initializer returns `nil`.
@@ -232,16 +232,16 @@ public extension VariantCollection {
         var documentationDataVariants1 = documentationDataVariants1
         var documentationDataVariants2 = documentationDataVariants2
         var documentationDataVariants3 = documentationDataVariants3
-        
+
         guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering(),
-              let (_, defaultValue2) = documentationDataVariants2.removeDefaultValueForRendering(),
-              let (_, defaultValue3) = documentationDataVariants3.removeDefaultValueForRendering()
+            let (_, defaultValue2) = documentationDataVariants2.removeDefaultValueForRendering(),
+            let (_, defaultValue3) = documentationDataVariants3.removeDefaultValueForRendering()
         else {
             return nil
         }
-        
+
         let defaultValue = transform(trait1, defaultValue1, defaultValue2, defaultValue3)
-        
+
         let variants = zipTriplesByKey(
             documentationDataVariants1.allValues,
             documentationDataVariants2.allValues,
@@ -250,10 +250,10 @@ public extension VariantCollection {
             let (value1, value2, value3) = values
             return Self.createVariant(trait: trait, value: transform(trait, value1, value2, value3))
         }
-        
+
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant collection from a non-empty symbol variants data using the given transformation closure.
     ///
     /// If the symbol data variants value is empty, this initializer returns `nil`.
@@ -265,18 +265,18 @@ public extension VariantCollection {
         anyTransform transform: (DocumentationDataVariantsTrait, Any) -> Value
     ) {
         var documentationDataVariants = documentationDataVariants
-        
+
         guard let defaultValue = documentationDataVariants.removeDefaultValueForRendering().flatMap(transform) else {
-           return nil
+            return nil
         }
-        
+
         let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant? in
             Self.createVariant(trait: trait, value: transform(trait, value))
         }
-        
+
         self.init(defaultValue: defaultValue, variants: variants)
     }
-    
+
     /// Creates a variant with a replace operation given a trait and a value.
     ///
     /// This function returns `nil` if the given trait doesn't have an interface language.
@@ -285,10 +285,12 @@ public extension VariantCollection {
         value: Value
     ) -> Variant? {
         guard let interfaceLanguage = trait.interfaceLanguage else { return nil }
-        
-        return Variant(traits: [.interfaceLanguage(interfaceLanguage)], patch: [
-            .replace(value: value)
-        ])
+
+        return Variant(
+            traits: [.interfaceLanguage(interfaceLanguage)],
+            patch: [
+                .replace(value: value)
+            ])
     }
 }
 
@@ -298,14 +300,15 @@ private extension DocumentationDataVariants {
     /// The default value used for rendering is either the Swift variant (preferred) or the Objective-C variant of the symbol data if available,
     /// otherwise it's the first one that's been registered.
     mutating func removeDefaultValueForRendering() -> (trait: DocumentationDataVariantsTrait, variant: Variant)? {
-        let index = allValues.firstIndex(where: { $0.trait == .swift })
-                        ?? allValues.firstIndex(where: { $0.trait == .objectiveC })
-                        ?? allValues.indices.startIndex
-        
+        let index =
+            allValues.firstIndex(where: { $0.trait == .swift })
+            ?? allValues.firstIndex(where: { $0.trait == .objectiveC })
+            ?? allValues.indices.startIndex
+
         guard allValues.indices.contains(index) else {
             return nil
         }
-        
+
         let (trait, variant) = allValues[index]
         self[trait] = nil
         return (trait, variant)
@@ -316,7 +319,7 @@ private extension Set<DocumentationDataVariantsTrait> {
     /// Removes and returns the trait that should be considered as the default value
     /// for rendering.
     ///
-    /// The default value used for rendering is either the Swift variant (preferred) or the Objective-C variant of the symbol data if available, 
+    /// The default value used for rendering is either the Swift variant (preferred) or the Objective-C variant of the symbol data if available,
     /// otherwise it's the first one that's been registered.
     mutating func removeFirstTraitForRendering() -> DocumentationDataVariantsTrait? {
         if isEmpty {
@@ -351,11 +354,10 @@ private extension Set<DocumentationDataVariantsTrait> {
 private func zipPairsByKey<Key, Value1, Value2>(
     _ pairs1: some Sequence<(Key, Value1)>,
     _ pairs2: some Sequence<(Key, Value2)>
-) -> [Key: (Value1, Value2)]
-{
+) -> [Key: (Value1, Value2)] {
     let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
     let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
-    
+
     return Dictionary(
         uniqueKeysWithValues: dictionary1.compactMap { key, value1 -> (Key, (Value1, Value2))? in
             guard let value2 = dictionary2[key] else { return nil }
@@ -389,7 +391,7 @@ private func zipPairsByKey<Key, Value1, Value2>(
 ) -> [Key: (Value1, Value2?)] {
     let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
     let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
-    
+
     return Dictionary(
         uniqueKeysWithValues: dictionary1.map { key, value1 -> (Key, (Value1, Value2?)) in
             (key, (value1, dictionary2[key]))
@@ -426,10 +428,10 @@ private func zipTriplesByKey<Key, Value1, Value2, Value3>(
     let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
     let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
     let dictionary3 = [Key: Value3](uniqueKeysWithValues: pairs3)
-    
+
     return Dictionary(
         uniqueKeysWithValues: dictionary1.compactMap { key, value1 -> (Key, (Value1, Value2, Value3))? in
-            guard let value2 = dictionary2[key], let value3 = dictionary3[key]  else { return nil }
+            guard let value2 = dictionary2[key], let value3 = dictionary3[key] else { return nil }
             return (key, (value1, value2, value3))
         }
     )

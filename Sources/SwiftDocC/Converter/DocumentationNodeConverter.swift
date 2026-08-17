@@ -12,7 +12,7 @@
 public struct DocumentationNodeConverter {
     /// The context the converter uses to resolve references it finds in the documentation node's content.
     let context: DocumentationContext
-    
+
     /// Creates a new node converter for the given context.
     ///
     /// The converter uses context to resolve references to other documentation and describe the documentation hierarchy.
@@ -22,7 +22,7 @@ public struct DocumentationNodeConverter {
     public init(context: DocumentationContext) {
         self.context = context
     }
-    
+
     /// Converts a documentation node to a render node.
     ///
     /// Convert a documentation node into a render node to get a self-contained, persistable representation of a given topic's data, so you can write it to disk, send it over a network, or otherwise process it.

@@ -25,12 +25,13 @@ final class RenderIndexTests: XCTestCase {
         let renderIndex = try await generatedRenderIndex(for: "LegacyBundle_DoNotUseInNewTests", with: "org.swift.docc.example")
         try XCTAssertEqual(renderIndex, RenderIndex.fromURL(expectedIndexURL))
     }
-    
+
     func testRenderIndexGenerationForBundleWithTechnologyRoot() async throws {
         let renderIndex = try await generatedRenderIndex(for: "BundleWithTechnologyRoot", with: "org.swift.docc.example")
         try XCTAssertEqual(
             renderIndex,
-            RenderIndex.fromString(#"""
+            RenderIndex.fromString(
+                #"""
                 {
                   "interfaceLanguages": {
                     "swift": [
@@ -56,16 +57,17 @@ final class RenderIndexTests: XCTestCase {
                 }
                 """#
             )
-            
+
         )
     }
-    
+
     func testRenderIndexGenerationForMixedLanguageFramework() async throws {
         let renderIndex = try await generatedRenderIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework")
 
         XCTAssertEqual(
             renderIndex,
-            try RenderIndex.fromString(#"""
+            try RenderIndex.fromString(
+                #"""
                 {
                   "interfaceLanguages": {
                     "occ": [
@@ -547,7 +549,7 @@ final class RenderIndexTests: XCTestCase {
             """
         )
     }
-    
+
     func testRenderIndexGenerationWithExternalNode() throws {
         try testRenderIndexGenerationFromJSON(
             makeRenderIndexJSONSingleNode(withOptionalProperty: "external")
@@ -556,7 +558,7 @@ final class RenderIndexTests: XCTestCase {
             XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["swift"])[0].isExternal)
         }
     }
-    
+
     func testRenderIndexGenerationWithDeprecatedNode() throws {
         try testRenderIndexGenerationFromJSON(
             makeRenderIndexJSONSingleNode(withOptionalProperty: "deprecated")
@@ -565,7 +567,7 @@ final class RenderIndexTests: XCTestCase {
             XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["swift"])[0].isDeprecated)
         }
     }
-    
+
     func testRenderIndexGenerationWithBetaNode() throws {
         try testRenderIndexGenerationFromJSON(
             makeRenderIndexJSONSingleNode(withOptionalProperty: "beta")
@@ -576,75 +578,79 @@ final class RenderIndexTests: XCTestCase {
     }
 
     func testRenderIndexGenerationWithNamespaceNode() throws {
-        try testRenderIndexGenerationFromJSON("""
-        {
-            "interfaceLanguages": {
-                "occ": [
-                    {
-                        "path": "/documentation/framework/foo",
-                        "title": "Foo",
-                        "type": "namespace"
-                    }
-                ]
-            },
-            "schemaVersion": {
-                "major": 0,
-                "minor": 1,
-                "patch": 0
+        try testRenderIndexGenerationFromJSON(
+            """
+            {
+                "interfaceLanguages": {
+                    "occ": [
+                        {
+                            "path": "/documentation/framework/foo",
+                            "title": "Foo",
+                            "type": "namespace"
+                        },
+                    ]
+                },
+                "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                }
             }
-        }
-        """) { renderIndex in
+            """
+        ) { renderIndex in
             XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["occ"])[0].type == "namespace")
         }
     }
-    
+
     func makeRenderIndexJSONSingleNode(withOptionalProperty property: String) -> String {
         return """
-    {
-      "interfaceLanguages": {
-        "swift": [
-          {
-            "path": "/documentation/framework/foo-swift.struct",
-            "title": "Foo",
-            "type": "struct",
-            "\(property)": true
-          }
-        ]
-      },
-      "schemaVersion": {
-        "major": 0,
-        "minor": 1,
-        "patch": 0
-      }
+                {
+                  "interfaceLanguages": {
+                    "swift": [
+                      {
+                        "path": "/documentation/framework/foo-swift.struct",
+                        "title": "Foo",
+                        "type": "struct",
+                        "\(property)": true
+                      },
+                    ]
+                  },
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                  }
+                }
+            """
     }
-"""
-    }
-    
+
     func testRenderIndexGenerationFromJSON(_ json: String, check: (RenderIndex) throws -> Void) throws {
         let renderIndexFromJSON = try RenderIndex.fromString(json)
-        
+
         try check(renderIndexFromJSON)
         try assertRoundTripCoding(renderIndexFromJSON)
     }
-    
+
     func testRenderIndexGenerationWithDeprecatedSymbol() async throws {
         let swiftWithDeprecatedSymbolGraphFile = Bundle.module.url(
-                forResource: "Deprecated",
-                withExtension: "symbols.json",
-                subdirectory: "Test Resources"
-            )!
+            forResource: "Deprecated",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
 
-        let bundle = Folder(name: "unit-test-swift.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            CopyOfFile(original: swiftWithDeprecatedSymbolGraphFile)
-        ])
+        let bundle = Folder(
+            name: "unit-test-swift.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                CopyOfFile(original: swiftWithDeprecatedSymbolGraphFile)
+            ])
 
         // The navigator index needs to test with the real File Manager
         let testTemporaryDirectory = try createTemporaryDirectory()
 
         let bundleDirectory = testTemporaryDirectory.appendingPathComponent(
-           bundle.name,
-           isDirectory: true
+            bundle.name,
+            isDirectory: true
         )
         try bundle.write(to: bundleDirectory)
 
@@ -652,55 +658,62 @@ final class RenderIndexTests: XCTestCase {
 
         XCTAssertEqual(
             try generatedRenderIndex(forIdentifier: "com.test.example", inContext: context),
-            try RenderIndex.fromString(#"""
-            {
-                "interfaceLanguages": {
-                    "swift": [
-                        {
-                            "title": "Functions",
-                            "type": "groupMarker"
-                        },
-                        {
-                            "deprecated": true,
-                            "path": "/documentation/mylibrary/foo()",
-                            "title": "func foo() -> Int",
-                            "type": "func"
-                        }
-                    ]
-                },
-                "includedArchiveIdentifiers": [
-                  "com.test.example"
-                ],
-                "schemaVersion": {
-                    "major": 0,
-                    "minor": 1,
-                    "patch": 2
+            try RenderIndex.fromString(
+                #"""
+                {
+                    "interfaceLanguages": {
+                        "swift": [
+                            {
+                                "title": "Functions",
+                                "type": "groupMarker"
+                            },
+                            {
+                                "deprecated": true,
+                                "path": "/documentation/mylibrary/foo()",
+                                "title": "func foo() -> Int",
+                                "type": "func"
+                            },
+                        ]
+                    },
+                    "includedArchiveIdentifiers": [
+                      "com.test.example"
+                    ],
+                    "schemaVersion": {
+                        "major": 0,
+                        "minor": 1,
+                        "patch": 2
+                    }
                 }
-            }
-            """#))
+                """#))
     }
-    
+
     func testRenderIndexGenerationWithDeprecationSummaryOnly() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
-                moduleName: "SomeModule",
-                symbols: [
-                    makeSymbol(
-                        id: "some-symbol-id",
-                        kind: .typealias,
-                        pathComponents: ["SomeTypeAlias"]
-                    )
-                ]
-            )),
-            TextFile(name: "SomeTypeAlias.md", utf8Content: """
-            # ``SomeTypeAlias``
-            
-            @DeprecationSummary {
-              Use SomeOtherTypeAlias instead.
-            }
-            """),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                JSONFile(
+                    name: "SomeModule.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "SomeModule",
+                        symbols: [
+                            makeSymbol(
+                                id: "some-symbol-id",
+                                kind: .typealias,
+                                pathComponents: ["SomeTypeAlias"]
+                            )
+                        ]
+                    )),
+                TextFile(
+                    name: "SomeTypeAlias.md",
+                    utf8Content: """
+                        # ``SomeTypeAlias``
+
+                        @DeprecationSummary {
+                          Use SomeOtherTypeAlias instead.
+                        }
+                        """),
+            ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
         let renderIndex = try generatedRenderIndex(
@@ -719,33 +732,37 @@ final class RenderIndexTests: XCTestCase {
     }
 
     func testRenderIndexGenerationWithPerPlatformUnconditionalDeprecation() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
-                moduleName: "SomeModule",
-                symbols: [
-                    makeSymbol(
-                        id: "some-symbol-id",
-                        kind: .typealias,
-                        pathComponents: ["SomeTypeAlias"],
-                        availability: [
-                            makeAvailabilityItem(
-                                domainName: "macOS",
-                                introduced: .init(major: 10, minor: 15, patch: 0),
-                                renamed: "SomeOtherTypeAlias",
-                                unconditionallyDeprecated: true
-                            ),
-                            makeAvailabilityItem(
-                                domainName: "iOS",
-                                introduced: .init(major: 13, minor: 0, patch: 0),
-                                renamed: "SomeOtherTypeAlias",
-                                unconditionallyDeprecated: true
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                JSONFile(
+                    name: "SomeModule.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "SomeModule",
+                        symbols: [
+                            makeSymbol(
+                                id: "some-symbol-id",
+                                kind: .typealias,
+                                pathComponents: ["SomeTypeAlias"],
+                                availability: [
+                                    makeAvailabilityItem(
+                                        domainName: "macOS",
+                                        introduced: .init(major: 10, minor: 15, patch: 0),
+                                        renamed: "SomeOtherTypeAlias",
+                                        unconditionallyDeprecated: true
+                                    ),
+                                    makeAvailabilityItem(
+                                        domainName: "iOS",
+                                        introduced: .init(major: 13, minor: 0, patch: 0),
+                                        renamed: "SomeOtherTypeAlias",
+                                        unconditionallyDeprecated: true
+                                    ),
+                                ]
                             ),
                         ]
-                    )
-                ]
-            )),
-        ])
+                    )),
+            ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
         let renderIndex = try generatedRenderIndex(
@@ -779,7 +796,8 @@ final class RenderIndexTests: XCTestCase {
         let renderIndex = try await generatedRenderIndex(for: "BookLikeContent", with: "org.swift.docc.Book")
         try XCTAssertEqual(
             renderIndex,
-            RenderIndex.fromString(#"""
+            RenderIndex.fromString(
+                #"""
                 {
                   "interfaceLanguages" : {
                     "swift" : [
@@ -830,12 +848,12 @@ final class RenderIndexTests: XCTestCase {
             )
         )
     }
-    
+
     func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) async throws -> RenderIndex {
         let (_, context) = try await testBundleAndContext(named: testBundleName)
         return try generatedRenderIndex(forIdentifier: bundleIdentifier, inContext: context)
     }
-    
+
     func generatedRenderIndex(forIdentifier bundleIdentifier: String, inContext context: DocumentationContext) throws -> RenderIndex {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
@@ -847,24 +865,24 @@ final class RenderIndexTests: XCTestCase {
         )
 
         builder.setup()
-        
+
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
-        
+
         builder.finalize(emitJSONRepresentation: true, emitLMDBRepresentation: false)
-        
+
         XCTAssertEqual(
             try FileManager.default.contentsOfDirectory(at: indexDirectory, includingPropertiesForKeys: nil).count,
             1,
             "More than one file was emitted while finalizing the index builder and only requesting the JSON representation."
         )
-        
+
         return try RenderIndex.fromURL(indexDirectory.appendingPathComponent("index.json"))
     }
-    
+
 }
 
 extension RenderIndex {
@@ -872,7 +890,7 @@ extension RenderIndex {
         let decoder = JSONDecoder()
         return try decoder.decode(RenderIndex.self, from: Data(string.utf8))
     }
-    
+
     static func fromURL(_ url: URL) throws -> RenderIndex {
         let data = try Data(contentsOf: url)
         return try JSONDecoder().decode(RenderIndex.self, from: data)

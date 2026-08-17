@@ -21,7 +21,7 @@ extension DocumentationDataVariants {
             values: Dictionary(
                 uniqueKeysWithValues: symbolData.compactMap { selector, value in
                     guard selector.platform == platformName else { return nil }
-                    
+
                     return (
                         DocumentationDataVariantsTrait(for: selector),
                         transform(value)
@@ -30,7 +30,7 @@ extension DocumentationDataVariants {
             )
         )
     }
-    
+
     init<V>(
         symbolData: [UnifiedSymbolGraph.Selector: V],
         platformName: String?,
@@ -40,9 +40,9 @@ extension DocumentationDataVariants {
             values: Dictionary(
                 uniqueKeysWithValues: symbolData.compactMap { selector, value in
                     guard selector.platform == platformName,
-                          let value = transform(value)
+                        let value = transform(value)
                     else { return nil }
-                    
+
                     return (
                         DocumentationDataVariantsTrait(for: selector),
                         value
@@ -51,7 +51,7 @@ extension DocumentationDataVariants {
             )
         )
     }
-    
+
     init<V>(
         symbolData: [UnifiedSymbolGraph.Selector: V],
         platformName: String?,
@@ -59,7 +59,7 @@ extension DocumentationDataVariants {
     ) {
         self.init(symbolData: symbolData, platformName: platformName, transform: { $0[keyPath: keyPath] })
     }
-    
+
     init<V>(
         symbolData: [UnifiedSymbolGraph.Selector: V],
         platformName: String?,
@@ -67,7 +67,7 @@ extension DocumentationDataVariants {
     ) {
         self.init(symbolData: symbolData, platformName: platformName, transform: { $0[keyPath: keyPath] })
     }
-    
+
     init(symbolData: [UnifiedSymbolGraph.Selector: Variant], platformName: String?) {
         self.init(symbolData: symbolData, platformName: platformName, transform: { $0 })
     }

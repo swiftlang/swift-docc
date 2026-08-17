@@ -47,7 +47,7 @@ public struct DiffAvailability: Codable, Equatable {
 
         /// The target versions of the platform for this diff.
         public var versions: [String]
-        
+
         /// Creates a new availability change.
         /// - Parameters:
         ///   - change: The type of change, for example, "modified" or "added".

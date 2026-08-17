@@ -19,7 +19,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
-        
+
         // Verify encoding references
         do {
             let encoderWithReferences = JSONEncoder()
@@ -28,7 +28,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                 XCTFail("Failed to decode render node back.")
                 return
             }
-            
+
             // Verify that references have been encoded
             let references = dictionary["references"] as? [String: Any]
             XCTAssertNotNil(references)
@@ -44,12 +44,12 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                 XCTFail("Failed to decode render node back.")
                 return
             }
-            
+
             // Verify that the references key does not exist
             XCTAssertNil(dictionary["references"])
         }
     }
-    
+
     func testTopicReferenceEncoder() throws {
         // Create a render node
         var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
@@ -60,54 +60,58 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         let encoder = RenderJSONEncoder.makeEncoder()
         let cache = RenderReferenceCache([:])
         var data = try node.encodeToJSON(with: encoder, renderReferenceCache: cache)
-        
+
         // Insert the references in the node
-        try TopicRenderReferenceEncoder.addRenderReferences(to: &data,
+        try TopicRenderReferenceEncoder.addRenderReferences(
+            to: &data,
             references: node.references,
             encoder: encoder,
             renderReferenceCache: cache
         )
-        
+
         // Verify the inserted reference
         guard let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
             let references = dictionary["references"] as? [String: [String: Any]],
-            let reference = references["reference1"] else {
+            let reference = references["reference1"]
+        else {
             XCTFail("Couldn't decode the render node back.")
             return
         }
-        
+
         // Verify that the correct title was encoded
         XCTAssertEqual(reference["title"] as? String, "myFunction")
-        
+
         // Verify the encoded reference was stored in the cache
         XCTAssertNotNil(cache.sync({ $0["reference1"] }))
-        
+
         // Now change the cached reference
         let newReference = TopicRenderReference(identifier: .init("reference1"), title: "NEW TITLE", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
         try cache.sync({
             $0["reference1"] = (try encoder.encode(newReference), [])
         })
-        
+
         // Encode again, using the stubbed cache
         var newData = try node.encodeToJSON(with: encoder, renderReferenceCache: cache)
-        try TopicRenderReferenceEncoder.addRenderReferences(to: &newData,
+        try TopicRenderReferenceEncoder.addRenderReferences(
+            to: &newData,
             references: node.references,
             encoder: encoder,
             renderReferenceCache: cache
         )
-        
+
         // Verify the inserted reference
         guard let newDictionary = try JSONSerialization.jsonObject(with: newData, options: []) as? [String: Any],
             let newReferences = newDictionary["references"] as? [String: [String: Any]],
-            let newRenderReference = newReferences["reference1"] else {
+            let newRenderReference = newReferences["reference1"]
+        else {
             XCTFail("Couldn't decode the render node back.")
             return
         }
-        
+
         // Verify that the cached title is used and NOT the real title from the given references list.
         XCTAssertEqual(newRenderReference["title"] as? String, "NEW TITLE")
     }
-    
+
     // This test has been disabled because of failures in Swift CI.
     // rdar://85428149 tracks updating this test to remove any flakiness.
     //
@@ -121,7 +125,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
             .reduce(into: [String: any RenderReference]()) { result, reference in
                 result[reference.identifier.identifier] = reference
             }
-        
+
         // Create many render nodes.
         let nodes = (0..<1000)
             .map({ i -> RenderNode in
@@ -132,14 +136,15 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
 
         let cache = RenderReferenceCache([:])
         let encodingErrors = Synchronized<[any Error]>([])
-        
+
         DispatchQueue.concurrentPerform(iterations: nodes.count) { i in
             do {
                 let encoder = RenderJSONEncoder.makeEncoder()
                 var data = try nodes[i].encodeToJSON(with: encoder, renderReferenceCache: cache)
-                
+
                 // Insert the references in the node
-                try TopicRenderReferenceEncoder.addRenderReferences(to: &data,
+                try TopicRenderReferenceEncoder.addRenderReferences(
+                    to: &data,
                     references: nodes[i].references,
                     encoder: encoder,
                     renderReferenceCache: cache
@@ -148,18 +153,18 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                 encodingErrors.sync({ $0.append(error) })
             }
         }
-        
+
         // Pipe through encoding errors.
         encodingErrors.sync({ errors in
             for error in errors {
                 XCTFail(String(describing: error))
             }
         })
-        
+
         // Verify all references have been cached
         XCTAssertEqual(cache.sync({ $0.keys.count }), 1000)
     }
-    
+
     /// Verifies that when JSON encoder should sort keys, the custom render reference cache
     /// respects that setting and prints the reference in alphabetical order.
     func testSortedReferences() async throws {
@@ -169,14 +174,14 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Create a JSON encoder
         let encoder = RenderJSONEncoder.makeEncoder()
         encoder.outputFormatting = .sortedKeys
-        
+
         let cache = RenderReferenceCache([:])
 
         // For reach topic encode its render node and verify the references are in alphabetical order.
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = converter.convert(node)
-            
+
             // Get the encoded JSON as string
             let encodedData = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: cache)
             let encodedString = try XCTUnwrap(String(data: encodedData, encoding: .utf8))
@@ -196,14 +201,14 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                     guard result.1 != nil else { isAtEnd = true; continue }
                     referencesString = result.0
                 }
-                
+
                 // Match "
                 do {
                     let result = referencesString.splitAt("\"")
                     guard result.1 != nil else { isAtEnd = true; continue }
                     referencesString = result.0
                 }
-                
+
                 // Match the identifier up to next "
                 do {
                     let result = referencesString.splitAt("\"")
@@ -212,15 +217,15 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                     identifiers.append(match)
                 }
             }
-            
+
             // Verify we collected ALL references
             XCTAssertEqual(renderNode.references.keys.count, identifiers.count)
-            
+
             // Verify the collected references are in alphabetical order
             XCTAssertEqual(identifiers, identifiers.sorted())
         }
     }
-    
+
     // Verifies that there is no extra comma at the end of the references list.
     func testRemovesLastReferencesListDelimiter() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
@@ -234,12 +239,12 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = converter.convert(node)
-            
+
             // Get the encoded JSON as string
             let encodedData = try renderNode.encodeToJSON(with: encoder)
             let encodedString = try XCTUnwrap(String(data: encodedData, encoding: .utf8))
                 .components(separatedBy: .whitespacesAndNewlines).filter({ !$0.isEmpty }).joined()
-            
+
             // Verify there is no coma at the end of the references list
             XCTAssertNil(encodedString.range(of: "},}"))
         }
@@ -253,4 +258,3 @@ fileprivate extension String {
         return (String(self[matchRange.upperBound...]), String(self[startIndex..<self.index(before: matchRange.upperBound)]))
     }
 }
-

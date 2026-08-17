@@ -41,9 +41,9 @@ public import Markdown
 public final class TechnologyRoot: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
-    static var keyPaths: [String : AnyKeyPath] = [:]
-    
+
+    static var keyPaths: [String: AnyKeyPath] = [:]
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup

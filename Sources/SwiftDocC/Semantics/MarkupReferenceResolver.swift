@@ -25,9 +25,12 @@ private func removedLinkDestinationDiagnostic(reference: ResolvedTopicReference,
     if let range, reference.pathComponents.count > 3 {
         // The first three path components are "/", "documentation", and the module name, so drop those
         let pathRemainder = reference.pathComponents[3...]
-        solutions.append(.init(summary: "Use a plain code span instead of a symbol link", replacements: [
-            .init(range: range, replacement: "`\(pathRemainder.joined(separator: "/"))`")
-        ]))
+        solutions.append(
+            .init(
+                summary: "Use a plain code span instead of a symbol link",
+                replacements: [
+                    .init(range: range, replacement: "`\(pathRemainder.joined(separator: "/"))`")
+                ]))
     }
     return Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.", solutions: solutions)
 }
@@ -39,7 +42,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
     var diagnostics = [Diagnostic]()
     var rootReference: ResolvedTopicReference
-    
+
     init(context: DocumentationContext, rootReference: ResolvedTopicReference) {
         self.context = context
         self.rootReference = rootReference
@@ -64,13 +67,13 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 }
             }
             return resolved
-            
+
         case .failure(let unresolved, let error):
             if let diagnostic = diagnosticForUnresolvedReference?(unresolved, range, fromSymbolLink, error.message) {
                 diagnostics.append(diagnostic)
                 return nil
             }
-            
+
             if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)] {
                 diagnostics.append(makeUnfindableArticleDiagnostic(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
             } else {
@@ -92,11 +95,11 @@ struct MarkupReferenceResolver: MarkupRewriter {
         image.replaceChildrenInRange(0..<image.childCount, with: newChildren)
         return image
     }
-    
+
     mutating func visitInlineHTML(_ inlineHTML: InlineHTML) -> (any Markup)? {
         return inlineHTML
     }
-    
+
     mutating func visitLineBreak(_ lineBreak: LineBreak) -> (any Markup)? {
         return lineBreak
     }
@@ -110,7 +113,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link
         }
         guard url.components.scheme == ResolvedTopicReference.urlScheme else {
-            return link // Create a non-topic link
+            return link  // Create a non-topic link
         }
         let unresolved = TopicReference.unresolved(.init(topicURL: url))
         guard let resolvedURL = resolve(reference: unresolved, range: link.range, severity: .warning) else {
@@ -139,20 +142,20 @@ struct MarkupReferenceResolver: MarkupRewriter {
         let url = ValidatedURL(parsingExact: unresolvedDestination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: unresolvedDestination)
         return resolve(reference: .unresolved(.init(topicURL: url)), range: range, severity: .warning, fromSymbolLink: true)
     }
-    
+
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> (any Markup)? {
         guard let destination = symbolLink.destination else {
             return symbolLink
         }
-        
+
         var symbolLink = symbolLink
         if let resolved = resolveAbsoluteSymbolLink(unresolvedDestination: destination, elementRange: symbolLink.range) {
             symbolLink.destination = resolved.absoluteString
         }
-        
+
         return symbolLink
     }
-    
+
     mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> (any Markup)? {
         return thematicBreak
     }
@@ -161,15 +164,15 @@ struct MarkupReferenceResolver: MarkupRewriter {
         let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:
-            var ignoredParsingDiagnostics = [Diagnostic]() // Any argument parsing issues have already been reported elsewhere
+            var ignoredParsingDiagnostics = [Diagnostic]()  // Any argument parsing issues have already been reported elsewhere
             guard let snippet = Snippet(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &ignoredParsingDiagnostics) else {
                 return blockDirective
             }
-            
+
             switch context.snippetResolver.resolveSnippet(path: snippet.path) {
             case .success(let resolvedSnippet):
                 if let requestedSlice = snippet.slice,
-                   let errorInfo = context.snippetResolver.validate(slice: requestedSlice, for: resolvedSnippet)
+                    let errorInfo = context.snippetResolver.validate(slice: requestedSlice, for: resolvedSnippet)
                 {
                     diagnostics.append(SnippetResolver.unknownSnippetSliceDiagnostic(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
                 }
@@ -182,7 +185,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags) else {
                 return blockDirective
             }
-            
+
             if !context.resourceExists(with: imageMedia.source, ofType: .image) {
                 diagnostics.append(
                     unresolvedResourceDiagnostic(
@@ -194,13 +197,13 @@ struct MarkupReferenceResolver: MarkupRewriter {
                     )
                 )
             }
-            
+
             return blockDirective
         case VideoMedia.directiveName:
             guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: context.inputs, featureFlags: context.configuration.featureFlags) else {
                 return blockDirective
             }
-            
+
             if !context.resourceExists(with: videoMedia.source, ofType: .video) {
                 diagnostics.append(
                     unresolvedResourceDiagnostic(
@@ -212,7 +215,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                     )
                 )
             }
-            
+
             if let posterReference = videoMedia.poster,
                 !context.resourceExists(with: posterReference, ofType: .image)
             {
@@ -226,7 +229,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                     )
                 )
             }
-            
+
             return blockDirective
         case Comment.directiveName:
             return blockDirective

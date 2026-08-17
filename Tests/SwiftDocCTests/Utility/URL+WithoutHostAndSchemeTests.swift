@@ -20,7 +20,7 @@ struct URL_withoutHostAndPortAndSchemeTests {
 
         let withoutHostAndPortAndScheme = url.withoutHostAndPortAndScheme()
         #expect(withoutHostAndPortAndScheme.absoluteString == "/path/to/something#fragment")
-        
+
         // Removing the host and scheme from a URL without those shouldn't change anything.
         #expect(withoutHostAndPortAndScheme.withoutHostAndPortAndScheme().absoluteString == "/path/to/something#fragment")
     }

@@ -19,6 +19,6 @@ typealias RequestHandler = ((ChannelHandlerContext, HTTPRequestHead) throws -> V
 /// Conforming types are factories creating specialized channel handlers. For example ``ErrorRequestHandler``.
 protocol RequestHandlerFactory {
     func create<ChannelHandler: ChannelInboundHandler>(channelHandler: ChannelHandler) -> RequestHandler
-        where ChannelHandler.OutboundOut == HTTPServerResponsePart
+    where ChannelHandler.OutboundOut == HTTPServerResponsePart
 }
 #endif

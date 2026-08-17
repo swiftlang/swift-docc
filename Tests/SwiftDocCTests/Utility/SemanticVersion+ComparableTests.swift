@@ -13,7 +13,7 @@ import SymbolKit
 
 struct SemanticVersion_ComparableTests {
     typealias Version = SymbolGraph.SemanticVersion
-    
+
     @Test(arguments: [
         (Version(major: 1, minor: 1, patch: 1), Version(major: 1, minor: 1, patch: 2)),
         (Version(major: 1, minor: 1, patch: 3), Version(major: 1, minor: 2, patch: 1)),

@@ -21,22 +21,26 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
 
     // The way the '--experimental-documentation-coverage' flag and the '--coverage-summary-level' option work together
     // doesn't match the possible values for `DocumentationCoverageLevel`.
-    
+
     @Flag(
-        help: ArgumentHelp("Generate documentation coverage output.", discussion: """
-        Detailed documentation coverage information will be written to 'documentation-coverage.json' in the output directory.
-        """)
+        help: ArgumentHelp(
+            "Generate documentation coverage output.",
+            discussion: """
+                Detailed documentation coverage information will be written to 'documentation-coverage.json' in the output directory.
+                """)
     )
     var experimentalDocumentationCoverage: Bool = false
 
     /// The desired level of documentation coverage. Options are `none`, `brief`, and `detailed`. The default is `.brief`
     @Option(
         name: .customLong("coverage-summary-level"),
-        help: ArgumentHelp("The level of documentation coverage information to write on standard out.", discussion: """
-        The '--coverage-summary-level' level has no impact on the information in the 'documentation-coverage.json' file.
-        The supported coverage summary levels are 'brief' and 'detailed'.
-        """,
-        valueName: "symbol-kind")
+        help: ArgumentHelp(
+            "The level of documentation coverage information to write on standard out.",
+            discussion: """
+                The '--coverage-summary-level' level has no impact on the information in the 'documentation-coverage.json' file.
+                The supported coverage summary levels are 'brief' and 'detailed'.
+                """,
+            valueName: "symbol-kind")
     )
     var summaryLevel: DocumentationCoverageLevel = .brief
 
@@ -51,19 +55,21 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
             return .brief
         }
     }
-    
+
     @Option(
         name: .customLong("coverage-symbol-kind-filter"),
         parsing: ArrayParsingStrategy.upToNextOption,
-        help: ArgumentHelp("Filter documentation coverage to only analyze symbols of the specified symbol kinds.", discussion: """
-        Specify a list of symbol kind values to filter the documentation coverage to only those types symbols.
-        The supported symbol kind values are: \ 
-        \(DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation.allValueStrings.sorted().joined(separator: ", "))
-        """,
-        valueName: "symbol-kind")
+        help: ArgumentHelp(
+            "Filter documentation coverage to only analyze symbols of the specified symbol kinds.",
+            discussion: """
+                Specify a list of symbol kind values to filter the documentation coverage to only those types symbols.
+                The supported symbol kind values are: \
+                \(DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation.allValueStrings.sorted().joined(separator: ", "))
+                """,
+            valueName: "symbol-kind")
     )
     public var symbolKindFilter: [DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation] = []
-    
+
     public mutating func validate() throws {
         Docc.Convert.warnAboutDeprecatedOptionIfNeeded("level", message: "Use '--coverage-summary-level' instead.")
         Docc.Convert.warnAboutDeprecatedOptionIfNeeded("kinds", message: "Use '--coverage-symbol-kind-filter' instead.")
@@ -86,7 +92,7 @@ extension DocumentationCoverageOptions {
             self = .noCoverage
             return
         }
-        
+
         self = DocumentationCoverageOptions(
             level: arguments.effectiveSummaryLevel,
             kindFilterOptions: .init(bitFlags: arguments.symbolKindFilter)

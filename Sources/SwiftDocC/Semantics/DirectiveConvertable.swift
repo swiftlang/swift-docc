@@ -19,17 +19,17 @@ public protocol DirectiveConvertible {
      The name that must match to convert a `BlockDirective` to this type.
      */
     static var directiveName: String { get }
-    
+
     /**
      The earliest release of Swift-DocC that supports this directive.
      */
     static var introducedVersion: String { get }
-    
+
     /**
      The `BlockDirective` that was analyzed and converted to this ``Semantic`` object.
      */
     var originalMarkup: BlockDirective { get }
-    
+
     /// Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid.
     /// - Parameters:
     ///   -  directive: The parsed block directive to create a semantic object from.
@@ -38,13 +38,13 @@ public protocol DirectiveConvertible {
     ///   -  featureFlags: A collection of feature flags.
     ///   - diagnostics: A mutable collection of diagnostics to update with any additional issues encountered while initializing the directive.
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic])
-    
+
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem])
-    
+
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem])
-    
+
     /// Returns a Boolean value indicating whether the `DirectiveConvertible` recognizes the given directive.
     ///
     /// - Parameter directive: The directive to check for conversion compatibility.
@@ -66,7 +66,7 @@ public extension DirectiveConvertible {
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         self.init(from: directive, source: source, for: bundle, featureFlags: FeatureFlags.current, problems: &problems)
     }
-    
+
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         var diagnostics = [Diagnostic]()
@@ -79,7 +79,7 @@ public extension DirectiveConvertible {
 
 // Default implementation so that existing conformances  by the additional initializer parameter in the protocol requirements.
 public extension DirectiveConvertible {
-    @available(*, deprecated) // This needs to be marked deprecated because it calls deprecated API.
+    @available(*, deprecated)  // This needs to be marked deprecated because it calls deprecated API.
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         // This will recurse infinitely (until the program traps) if types don't implement either the new or the old required initializer.
         var problems = [Problem]()

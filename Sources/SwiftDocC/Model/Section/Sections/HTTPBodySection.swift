@@ -11,12 +11,12 @@
 /// A section that contains a request's upload body.
 public struct HTTPBodySection {
     public static let title = "Request Body"
-    
+
     /// The request body.
     public var body: HTTPBody
-    
+
     /// Merge two bodies together.
-    /// 
+    ///
     /// Merges in documentation and symbols to existing value.
     mutating public func mergeBody(_ newBody: HTTPBody) {
         // Create a new body that combines the best of both.

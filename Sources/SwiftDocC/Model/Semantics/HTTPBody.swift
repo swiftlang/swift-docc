@@ -14,7 +14,7 @@ public import SymbolKit
 /// Documentation about the payload body of an HTTP request.
 public struct HTTPBody {
     /// The media type of the body.
-    /// 
+    ///
     /// Value might be undefined initially when first extracted from markdown.
     public var mediaType: String?
     /// The parameters passed in the body when the body is a multipart or url-encoded form.
@@ -23,7 +23,7 @@ public struct HTTPBody {
     public var contents: [any Markup]
     /// The symbol graph symbol representing this body.
     public var symbol: SymbolGraph.Symbol?
-    
+
     /// Initialize a value to describe documentation about a payload body for an HTTP request symbol.
     /// - Parameters:
     ///   - mediaType: The media type of the body.

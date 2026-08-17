@@ -22,17 +22,17 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     /// An optional container for metadata that's unrelated to the article's content.
     private(set) var metadata: Metadata?
     /// An optional container for options that are unrelated to the article's content.
-    private(set) var options: [Options.Scope : Options]
+    private(set) var options: [Options.Scope: Options]
     /// An optional list of previously known locations for this article.
     private(set) public var redirects: [Redirect]?
-    
+
     /// Initializes a new article from a given markup, metadata, and list of redirects.
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
     ///   - metadata: An optional container for metadata that's unrelated to the article's content.
     ///   - redirects: An optional list of previously known locations for this article.
-    init(markup: (any Markup)?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options]) {
+    init(markup: (any Markup)?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope: Options]) {
         let markupModel = markup.map { DocumentationMarkup(markup: $0) }
 
         self.markup = markup
@@ -80,24 +80,24 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
 
     /// An optional custom deprecation summary for a deprecated symbol.
     private(set) public var deprecationSummary: MarkupContainer?
-    
+
     /// The conceptual discussion section for this article.
     ///
     /// The discussion section is parsed from the markup content between the ``abstract``  and the "Topics" section.
     private(set) public var discussion: DiscussionSection?
-    
+
     /// The abstract section of the article.
     private(set) public var abstractSection: AbstractSection?
-    
+
     /// The Topic curation section of the article.
     internal(set) public var topics: TopicsSection?
-    
+
     /// The See Also section of the article.
     private(set) public var seeAlso: SeeAlsoSection?
-    
+
     /// The title of the article.
     internal(set) public var title: Heading?
-    
+
     /// Any automatically created task groups.
     var automaticTaskGroups: [AutomaticTaskGroupSection]
 
@@ -109,7 +109,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
         }
         self.init(from: markup, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
-    
+
     /// Initializes a new article with a given markup and source for a given documentation bundle and documentation context.
     ///
     /// - Parameters:
@@ -124,12 +124,12 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
             let replacementText: String
             if let firstChild = markup.child(at: 0) as? Paragraph {
                 replacementText = """
-                     # \(firstChild.plainText)
-                     """
+                    # \(firstChild.plainText)
+                    """
             } else {
                 replacementText = """
-                     # <#Title#>
-                     """
+                    # <#Title#>
+                    """
             }
 
             let replacement = Solution.Replacement(range: range, replacement: replacementText)
@@ -139,7 +139,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
 
             return nil
         }
-        
+
         var remainder: [any Markup]
         var redirects: [Redirect]
         (redirects, remainder) = markup.children.categorize { child -> Redirect? in
@@ -148,7 +148,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
             }
             return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
-        
+
         var optionalMetadata = DirectiveParser()
             .parseSingleDirective(
                 Metadata.self,
@@ -179,15 +179,15 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 diagnostics: &diagnostics
             )
         }
-        
+
         let allCategorizedOptions = Dictionary(grouping: options, by: \.scope)
-        
+
         for (scope, options) in allCategorizedOptions {
             let extraOptions = options.dropFirst()
             guard !extraOptions.isEmpty else {
                 continue
             }
-            
+
             let extraOptionsProblems = extraOptions.map { extraOptionsDirective -> Diagnostic in
                 var diagnostic = Diagnostic(
                     source: source,
@@ -196,15 +196,15 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                     identifier: "org.swift.docc.HasAtMostOne<\(Article.self), \(Options.self), \(scope)>.DuplicateChildren",
                     summary: "Duplicate \(scope) \(Options.directiveName.singleQuoted) directive",
                     explanation: """
-                    An article can only contain a single \(Options.directiveName.singleQuoted) \
-                    directive with the \(scope.rawValue.singleQuoted) scope.
-                    """
+                        An article can only contain a single \(Options.directiveName.singleQuoted) \
+                        directive with the \(scope.rawValue.singleQuoted) scope.
+                        """
                 )
-                
+
                 guard let range = extraOptionsDirective.originalMarkup.range else {
                     return diagnostic
                 }
-                
+
                 let solution = Solution(
                     summary: "Remove extraneous \(scope) \(Options.directiveName.singleQuoted) directive",
                     replacements: [
@@ -214,35 +214,35 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
                 diagnostic.solutions = [solution]
                 return diagnostic
             }
-            
+
             diagnostics.append(contentsOf: extraOptionsProblems)
         }
-        
+
         let relevantCategorizedOptions = allCategorizedOptions.compactMapValues(\.first)
-        
+
         let isDocumentationExtension = title.startsWithAnyLink
         if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
             let diagnosticSummary = """
-            A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.
-            """
+                A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.
+                """
 
             let solutions: [Solution]
             if let displayNameRange = displayName.originalMarkup.range, let titleRange = title.range {
                 let removeDisplayNameReplacement = Solution.Replacement(range: displayNameRange, replacement: "")
                 let changeTitleReplacement = Solution.Replacement(range: titleRange, replacement: "# \(displayName.name)")
-                
+
                 solutions = [Solution(summary: "Change the title", replacements: [removeDisplayNameReplacement, changeTitleReplacement])]
             } else {
                 solutions = []
             }
-            
+
             let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, solutions: solutions)
             diagnostics.append(diagnostic)
-            
+
             metadata.displayName = nil
             optionalMetadata = metadata
         }
-        
+
         self.init(
             markup: markup,
             metadata: optionalMetadata,
@@ -250,7 +250,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
             options: relevantCategorizedOptions
         )
     }
-    
+
     /// Visit the article using a semantic visitor and return the result of visiting the article.
     ///
     /// - Parameter visitor: The semantic visitor to visit this article.

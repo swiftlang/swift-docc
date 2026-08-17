@@ -19,12 +19,12 @@ class RoleTests: XCTestCase {
         "/documentation/MyKit/globalFunction(_:considering:)": "symbol",
         "/tutorials/Test-Bundle/TestTutorial2": "project",
         "/documentation/SideKit": "collection",
-        "/documentation/Test-Bundle/article": "collectionGroup", // it has topic groups
+        "/documentation/Test-Bundle/article": "collectionGroup",  // it has topic groups
         "/tutorials/Test-Bundle/TestTutorialArticle": "article",
         "/tutorials/TestOverview": "overview",
         "/documentation/SideKit/SideClass/init()": "symbol",
     ]
-    
+
     func testNodeRoles() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
@@ -42,7 +42,7 @@ class RoleTests: XCTestCase {
             }
         }
     }
-    
+
     func testDocumentationRenderReferenceRoles() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 

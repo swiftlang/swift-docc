@@ -20,22 +20,22 @@ typealias PageType = NavigatorIndex.PageType
 private let testBundleIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
-    
+
     struct Language: OptionSet {
         let rawValue: UInt8
-        
+
         static let swift = Language(rawValue: 1 << 0)
         static let objC = Language(rawValue: 1 << 1)
         static let perl = Language(rawValue: 1 << 2)
-        
+
         static let all: Language = [.swift, .objC, .perl]
     }
-    
+
     func generateLargeTree() -> Node {
         var index = 1
         let rootItem = NavigatorItem(pageType: 1, languageID: Language.all.rawValue, title: "Root", platformMask: 1, availabilityID: 1)
         let root = Node(item: rootItem, bundleIdentifier: "org.swift.docc.example")
-        
+
         @discardableResult func addItems(n: Int, items: [Node], language: Language) -> [Node] {
             var leaves = [Node]()
             for _ in 0..<n {
@@ -51,28 +51,28 @@ class NavigatorIndexingTests: XCTestCase {
             }
             return leaves
         }
-        
+
         let leaves1 = addItems(n: 50, items: [root], language: [.swift, .objC])
         var leaves2 = addItems(n: 1000, items: leaves1, language: [.swift, .objC])
         var leaves3 = addItems(n: 5000, items: leaves2, language: [.swift, .objC])
         addItems(n: 10000, items: leaves3, language: [.swift, .objC])
-        
+
         leaves2 = addItems(n: 10000, items: leaves1, language: .swift)
         leaves3 = addItems(n: 15000, items: leaves2, language: .swift)
         addItems(n: 100000, items: leaves3, language: .swift)
-        
+
         leaves2 = addItems(n: 5000, items: leaves1, language: .objC)
         leaves3 = addItems(n: 10000, items: leaves2, language: .objC)
         addItems(n: 500000, items: leaves3, language: .objC)
-                        
+
         return root
     }
-    
+
     func generateSmallTree(bundleIdentifier: String = testBundleIdentifier) -> Node {
         var index = 1
         let rootItem = NavigatorItem(pageType: 1, languageID: Language.all.rawValue, title: "Root", platformMask: 1, availabilityID: 1)
         let root = Node(item: rootItem, bundleIdentifier: bundleIdentifier)
-        
+
         @discardableResult func addItems(n: Int, items: [Node], language: Language) -> [Node] {
             var leaves = [Node]()
             for _ in 0..<n {
@@ -88,58 +88,58 @@ class NavigatorIndexingTests: XCTestCase {
             }
             return leaves
         }
-        
+
         let leaves1 = addItems(n: 2, items: [root], language: [.swift, .objC])
         let leaves2 = addItems(n: 4, items: leaves1, language: [.swift, .objC])
         let leaves3 = addItems(n: 8, items: leaves2, language: [.swift, .objC])
         addItems(n: 16, items: leaves3, language: [.swift, .objC])
-                        
+
         return root
     }
-    
+
     func testBasicTree() {
         let rootItem = NavigatorItem(pageType: 1, languageID: 1, title: "Root", platformMask: 1, availabilityID: 1)
         let root = Node(item: rootItem, bundleIdentifier: "org.swift.docc.example")
-        
+
         for i in 0..<2 {
             let item = NavigatorItem(pageType: 1, languageID: 1, title: "Sub Item \(i)", platformMask: 1, availabilityID: 1)
             root.add(child: Node(item: item, bundleIdentifier: "org.swift.docc.example"))
         }
-        
+
         for child in root.children {
             for i in 0..<3 {
                 let item = NavigatorItem(pageType: 1, languageID: 1, title: "\(child.item.title) - \(i)", platformMask: 1, availabilityID: 1)
                 child.add(child: Node(item: item, bundleIdentifier: "org.swift.docc.example"))
             }
         }
-        
+
         let dumpString = """
-Root
-┣╸Sub Item 0
-┃ ┣╸Sub Item 0 - 0
-┃ ┣╸Sub Item 0 - 1
-┃ ┗╸Sub Item 0 - 2
-┗╸Sub Item 1
-  ┣╸Sub Item 1 - 0
-  ┣╸Sub Item 1 - 1
-  ┗╸Sub Item 1 - 2
-"""
-        
+            Root
+            ┣╸Sub Item 0
+            ┃ ┣╸Sub Item 0 - 0
+            ┃ ┣╸Sub Item 0 - 1
+            ┃ ┗╸Sub Item 0 - 2
+            ┗╸Sub Item 1
+              ┣╸Sub Item 1 - 0
+              ┣╸Sub Item 1 - 1
+              ┗╸Sub Item 1 - 2
+            """
+
         XCTAssertEqual(root.countItems(), 9)
         XCTAssertEqual(root.dumpTree(), dumpString)
-        
+
         let rootCopy = root.copy()
         XCTAssertEqual(root, rootCopy)
         XCTAssertEqual(rootCopy.dumpTree(), dumpString)
     }
-    
+
     func testNavigatorItemRawDump() {
         let item = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         let data = item.rawValue
         let fromData = NavigatorItem(rawValue: data)
         XCTAssertEqual(item, fromData)
     }
-    
+
     func testNavigatorEquality() {
         // Test for equal
         var item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
@@ -154,7 +154,7 @@ Root
         item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true)
         item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: false)
         XCTAssertNotEqual(item1, item2)
-        
+
         item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         item2 = NavigatorItem(pageType: 2, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         XCTAssertNotEqual(item1, item2)
@@ -162,11 +162,11 @@ Root
         item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         item2 = NavigatorItem(pageType: 1, languageID: 5, title: "My Title", platformMask: 256, availabilityID: 1024)
         XCTAssertNotEqual(item1, item2)
-        
+
         item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Other Title", platformMask: 256, availabilityID: 1024)
         XCTAssertNotEqual(item1, item2)
-        
+
         item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 257, availabilityID: 1024)
         XCTAssertNotEqual(item1, item2)
@@ -185,14 +185,14 @@ Root
         )
         XCTAssertNotEqual(item1, item2)
     }
-    
+
     func testNavigatorItemRawDumpWithExtraProperties() {
         let item = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
         let data = item.rawValue
         let fromData = NavigatorItem(rawValue: data)
         XCTAssertEqual(item, fromData)
     }
-    
+
     func testNavigatorItemRawDumpBackwardCompatibility() {
         let item = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
         var data = Data()
@@ -209,7 +209,7 @@ Root
         let fromData = NavigatorItem(rawValue: data)
         XCTAssertEqual(item, fromData)
     }
-    
+
     func testNavigatorItemRawDumpWithIsDeprecated() {
         let item = NavigatorItem(
             pageType: 1, languageID: 4, title: "My Title",
@@ -221,23 +221,23 @@ Root
         XCTAssertEqual(item, fromData)
         XCTAssertEqual(fromData?.isDeprecated, true)
     }
-    
+
     func testNavigatorItemRawDumpBackwardCompatibilityWithoutIsDeprecated() {
         // Simulate data serialized before isDeprecated was added.
         // This data has isBeta and isExternal but NOT isDeprecated.
         var data = Data()
-        data.append(packedDataFromValue(UInt8(1)))   // pageType
-        data.append(packedDataFromValue(UInt8(4)))   // languageID
-        data.append(packedDataFromValue(UInt64(256))) // platformMask
-        data.append(packedDataFromValue(UInt64(1024)))// availabilityID
+        data.append(packedDataFromValue(UInt8(1)))  // pageType
+        data.append(packedDataFromValue(UInt8(4)))  // languageID
+        data.append(packedDataFromValue(UInt64(256)))  // platformMask
+        data.append(packedDataFromValue(UInt64(1024)))  // availabilityID
         let title = "My Title"
         let path = ""
-        data.append(packedDataFromValue(UInt64(title.utf8.count))) // titleLength
+        data.append(packedDataFromValue(UInt64(title.utf8.count)))  // titleLength
         data.append(packedDataFromValue(UInt64(path.utf8.count)))  // pathLength
         data.append(Data(title.utf8))
         data.append(Data(path.utf8))
-        data.append(packedDataFromValue(UInt8(1))) // isBeta = true
-        data.append(packedDataFromValue(UInt8(0))) // isExternal = false
+        data.append(packedDataFromValue(UInt8(1)))  // isBeta = true
+        data.append(packedDataFromValue(UInt8(0)))  // isExternal = false
         // Note: NOT adding isDeprecated byte
 
         let fromData = NavigatorItem(rawValue: data)
@@ -246,7 +246,7 @@ Root
         XCTAssertEqual(fromData?.isExternal, false)
         XCTAssertEqual(fromData?.isDeprecated, false)
     }
-    
+
     func testObjCLanguage() {
         let root = generateLargeTree()
         var objcFiltered: Node?
@@ -255,7 +255,7 @@ Root
         })
         XCTAssertEqual(objcFiltered?.countItems(), 531051)
     }
-    
+
     func test2Languages() {
         let root = generateLargeTree()
         var bothFiltered: Node?
@@ -264,7 +264,7 @@ Root
         })
         XCTAssertEqual(bothFiltered?.countItems(), 16051)
     }
-    
+
     func testSwiftLanguage() {
         let root = generateLargeTree()
         var swiftFiltered: Node?
@@ -273,52 +273,51 @@ Root
         })
         XCTAssertEqual(swiftFiltered?.countItems(), 141051)
     }
-    
+
     func testNavigationTreeDumpAndRead() throws {
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
-        
+
         let root = generateSmallTree()
         XCTAssertEqual(root.countItems(), 31)
-        
+
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
         let readTree = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, atomically: true)
-        
+
         XCTAssertEqual(original.root.countItems(), readTree.root.countItems())
         XCTAssertTrue(compare(lhs: original.root, rhs: readTree.root))
-        
+
         let idValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.id != nil
         }
-        
+
         let bundleIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return !node.bundleIdentifier.isEmpty
         }
-        
+
         let emptyPresentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.presentationIdentifier == nil
         }
-        
+
         XCTAssertTrue(validateTree(node: readTree.root, validator: idValidator), "The tree has IDs missing.")
         XCTAssertTrue(validateTree(node: readTree.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: readTree.root, validator: emptyPresentationIdentifierValidator), "The tree has a presentation identifier set which should not be present.")
-        
+
         let treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, atomically: true, presentationIdentifier: "com.example.test")
-        
+
         let presentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.presentationIdentifier == "com.example.test"
         }
-        
+
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: idValidator), "The tree has IDs missing.")
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
-        
-        
+
         func addAttributes(node: NavigatorTree.Node) -> Void {
             node.attributes["Attribute"] = true
         }
-        
+
         let treeWithAttributes = try NavigatorTree.read(
             from: indexURL,
             bundleIdentifier: testBundleIdentifier,
@@ -326,16 +325,16 @@ Root
             presentationIdentifier: "com.example.test",
             onNodeRead: addAttributes
         )
-        
+
         let attributesValidator: (NavigatorTree.Node) -> Bool = { node in
             return (node.attributes["Attribute"] as? Bool) == true
         }
-        
+
         XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: idValidator), "The tree has IDs missing.")
         XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
         XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: attributesValidator), "The tree lacks the correct attributes.")
-        
+
         // Test non-atomic read.
         let treeWithAttributesNonAtomic = try NavigatorTree.read(
             from: indexURL,
@@ -344,21 +343,21 @@ Root
             presentationIdentifier: "com.example.test",
             onNodeRead: addAttributes
         )
-        
+
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: idValidator), "The tree has IDs missing.")
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: attributesValidator), "The tree lacks the correct attributes.")
     }
-    
+
     func testLoadingNavigatorIndexDoesNotCacheReferences() throws {
         let uniqueTestBundleIdentifier: DocumentationBundle.Identifier = #function
-        
+
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
-        
+
         let root = generateSmallTree(bundleIdentifier: uniqueTestBundleIdentifier.rawValue)
-        
+
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
         _ = try NavigatorTree.read(
@@ -366,14 +365,13 @@ Root
             bundleIdentifier: uniqueTestBundleIdentifier.rawValue,
             atomically: true
         )
-        
+
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: uniqueTestBundleIdentifier))
     }
-    
-  
+
     func testNavigationTreeLargeDumpAndRead() throws {
         try XCTSkipIf(true, "These performance measurements aren't compared to previous results.")
-#if os(OSX)
+        #if os(OSX)
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         let root = generateLargeTree()
@@ -383,37 +381,37 @@ Root
         measure {
             _ = try! NavigatorTree.read(from: indexURL, atomically: true)
         }
-#endif
+        #endif
     }
-    
+
     // This test has been disabled because of frequent failures in Swift CI.
     //
     // rdar://87737744 tracks updating this test to remove any flakiness.
     func disabled_testNavigationTreeLargeDumpAndReadAsync() throws {
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
-        
+
         let root = generateLargeTree()
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
-        
+
         // Counts the number of times the broadcast callback is called.
         var counter = 0
-        
+
         let expectation = XCTestExpectation(description: "Load the tree asynchronously.")
-        
+
         let readTree = NavigatorTree()
         try! readTree.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main) { (nodes, completed, error) in
             counter += 1
             XCTAssertNil(error)
             if completed { expectation.fulfill() }
         }
-                
+
         wait(for: [expectation], timeout: 10.0)
         XCTAssert(counter > 2, "The broadcast callback has to be called at least 2 times.")
         XCTAssertEqual(original.root.countItems(), readTree.root.countItems())
         XCTAssertTrue(compare(lhs: original.root, rhs: readTree.root))
-        
+
         let expectation2 = XCTestExpectation(description: "Load the tree asynchronously, again with presentation identifier.")
         let readTreePresentationIdentifier = NavigatorTree()
         try! readTreePresentationIdentifier.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main, presentationIdentifier: "com.example.test") { (nodes, completed, error) in
@@ -422,28 +420,28 @@ Root
         }
         wait(for: [expectation2], timeout: 10.0)
         XCTAssertEqual(original.root.countItems(), readTreePresentationIdentifier.root.countItems())
-        
+
         let presentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.presentationIdentifier == "com.example.test"
         }
-        
+
         XCTAssertTrue(validateTree(node: readTreePresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
     }
-    
+
     func testNavigatorIndexGenerationEmpty() throws {
         let targetURL = try createTemporaryDirectory()
-        
+
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         builder.finalize()
-               
+
         XCTAssertNotNil(builder.navigatorIndex)
-        
+
         let indexURL = targetURL.appendingPathComponent("nav.index")
-                
+
         let readTree = NavigatorTree()
         XCTAssertThrowsError(try readTree.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main, broadcast: nil))
-        
+
         try XCTAssertEqual(
             RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
             RenderIndex.fromString(
@@ -463,36 +461,36 @@ Root
             )
         )
     }
-    
+
     func testNavigatorIndexGenerationOneNode() throws {
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
-        
+
         let original = NavigatorTree(root: NavigatorTree.rootNode(bundleIdentifier: NavigatorIndex.UnknownBundleIdentifier))
         try original.write(to: indexURL)
-        
+
         // Counts the number of times the broadcast callback is called.
         var counter = 0
-        
+
         let expectation = XCTestExpectation(description: "Load the tree asynchronously.")
-        
+
         let readTree = NavigatorTree()
         try! readTree.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main) { (nodes, completed, error) in
             counter += 1
             XCTAssertNil(error)
             if completed { expectation.fulfill() }
         }
-                
+
         wait(for: [expectation], timeout: 10.0)
         XCTAssert(counter == 1, "The broadcast callback has to be called at exactly 1 time.")
         XCTAssertEqual(original.root.countItems(), readTree.root.countItems())
         XCTAssertTrue(compare(lhs: original.root, rhs: readTree.root))
     }
-    
+
     func testNavigatorIndexGenerationOperator() throws {
         let operatorURL = Bundle.module.url(
             forResource: "Operator", withExtension: "json", subdirectory: "Test Resources")!
-        
+
         let renderNode = try RenderNode.decode(fromJSON: Data(contentsOf: operatorURL))
 
         let targetURL = try createTemporaryDirectory()
@@ -501,64 +499,69 @@ Root
         builder.setup()
         try builder.index(renderNode: renderNode)
         builder.finalize(emitJSONRepresentation: false, emitLMDBRepresentation: false)
-               
+
         XCTAssertNotNil(builder.navigatorIndex)
     }
-    
+
     func testNavigatorIndexGeneration() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         var results = Set<String>()
-        
+
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
-            
+
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 try builder.index(renderNode: renderNode)
             }
-            
+
             builder.finalize()
-            
+
             let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
             XCTAssertEqual(renderIndex.interfaceLanguages.keys.count, 1)
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 29)
-            
+
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.title, "Functions")
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.path, nil)
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.type, "groupMarker")
-            
+
             let navigatorIndex = builder.navigatorIndex!
             XCTAssertEqual(
                 navigatorIndex.availabilityIndex.platforms,
                 [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS]
             )
-            XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
-                Platform.Version(string: "13.0")!,
-                Platform.Version(string: "10.15")!,
-                Platform.Version(string: "11.1")!,
-                Platform.Version(string: "14.0")!,
-            ]))
+            XCTAssertEqual(
+                navigatorIndex.availabilityIndex.versions(for: .iOS),
+                Set([
+                    Platform.Version(string: "13.0")!,
+                    Platform.Version(string: "10.15")!,
+                    Platform.Version(string: "11.1")!,
+                    Platform.Version(string: "14.0")!,
+                ]))
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
-            XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIdentifier
-            }))
-            
+            XCTAssertTrue(
+                validateTree(
+                    node: navigatorIndex.navigatorTree.root,
+                    validator: { (node) -> Bool in
+                        return node.bundleIdentifier == testBundleIdentifier
+                    }))
+
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
             try FileManager.default.removeItem(at: targetURL)
         }
-        
+
         XCTAssertEqual(results.count, 1)
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
-    
+
     func testNavigatorIndexGenerationWithCyclicCuration() async throws {
         // This is a documentation hierarchy where every page exist in more than one place in the navigator,
         // through a mix of automatic and manual curation, with a cycle between the two "leaf" nodes:
@@ -575,240 +578,260 @@ Root
         //     ├────────────┐│
         //     ▼            ▼▼
         //  first() ◀──▶ second()
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(identifier: testBundleIdentifier),
-            
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                moduleName: "ModuleName", 
-                symbols: [
-                    .init(
-                        identifier: .init(precise: "some-container-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
-                        names: .init(title: "Container", navigator: [.init(kind: .identifier, spelling: "Container", preciseIdentifier: nil)], subHeading: nil, prose: nil),
-                        pathComponents: ["Container"],
-                        docComment: nil,
-                        accessLevel: .public,
-                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
-                        mixins: [:]
-                    ),
-                    
-                    .init(
-                        identifier: .init(precise: "some-other-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
-                        names: .init(title: "OtherSymbol", navigator: [.init(kind: .identifier, spelling: "OtherSymbol", preciseIdentifier: nil)], subHeading: nil, prose: nil),
-                        pathComponents: ["OtherSymbol"],
-                        docComment: nil,
-                        accessLevel: .public,
-                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
-                        mixins: [:]
-                    ),
-                
-                    .init(
-                        identifier: .init(precise: "first-member-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
-                        names: .init(title: "first()", navigator: [.init(kind: .identifier, spelling: "first()", preciseIdentifier: nil)], subHeading: nil, prose: nil),
-                        pathComponents: ["Container", "first()"],
-                        docComment: nil,
-                        accessLevel: .public,
-                        kind: .init(parsedIdentifier: .method, displayName: "Kind Display Name"),
-                        mixins: [:]
-                    ),
-                
-                    .init(
-                        identifier: .init(precise: "second-member-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
-                        names: .init(title: "second()", navigator: [.init(kind: .identifier, spelling: "second()", preciseIdentifier: nil)], subHeading: nil, prose: nil),
-                        pathComponents: ["Container", "second()"],
-                        docComment: nil,
-                        accessLevel: .public,
-                        kind: .init(parsedIdentifier: .method, displayName: "Kind Display Name"),
-                        mixins: [:]
-                    ),
-                ], relationships: [
-                    .init(source: "some-container-symbol-id", target: "first-member-symbol-id", kind: .memberOf, targetFallback: nil),
-                    .init(source: "some-container-symbol-id", target: "second-member-symbol-id", kind: .memberOf, targetFallback: nil),
-                ])
-            ),
-            
-            TextFile(name: "Container.md", utf8Content: """
-            # ``Container``
-            
-            The container curates one of the members and the other symbol
-            
-            ## Topics
-            ### Manual curation
-            - ``first()``
-            - ``OtherSymbol``
-            """),
-            
-            TextFile(name: "OtherSymbol.md", utf8Content: """
-            # ``OtherSymbol``
-            
-            The other symbol curates the other member
-            
-            ## Topics
-            ### Manual curation
-            - ``Container/second()``
-            """),
-            
-            
-            TextFile(name: "first.md", utf8Content: """
-            # ``Container/first()``
-            
-            Both members curate each other
-            
-            ## Topics
-            ### Manual curation
-            - ``second()``
-            """),
-        
-            TextFile(name: "second.md", utf8Content: """
-            # ``Container/second()``
-            
-            Both members curate each other
-            
-            ## Topics
-            ### Manual curation
-            - ``first()``
-            """),
-            
-            TextFile(name: "API-Collection.md", utf8Content: """
-            # An API collection
-            
-            The API collection curates both top-level symbols
-            
-            ## Topics
-            ### Manual curation
-            - ``Container``
-            - ``OtherSymbol``
-            """),
-            
-            TextFile(name: "Module.md", utf8Content: """
-            # ``ModuleName``
-            
-            The module curates the API collection
-            
-            ## Topics
-            ### Manual curation
-            - <doc:API-Collection>
-            """),
-        ])
-        
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(identifier: testBundleIdentifier),
+
+                JSONFile(
+                    name: "ModuleName.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            .init(
+                                identifier: .init(precise: "some-container-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                                names: .init(title: "Container", navigator: [.init(kind: .identifier, spelling: "Container", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                                pathComponents: ["Container"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+
+                            .init(
+                                identifier: .init(precise: "some-other-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                                names: .init(title: "OtherSymbol", navigator: [.init(kind: .identifier, spelling: "OtherSymbol", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                                pathComponents: ["OtherSymbol"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+
+                            .init(
+                                identifier: .init(precise: "first-member-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                                names: .init(title: "first()", navigator: [.init(kind: .identifier, spelling: "first()", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                                pathComponents: ["Container", "first()"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .method, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+
+                            .init(
+                                identifier: .init(precise: "second-member-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                                names: .init(title: "second()", navigator: [.init(kind: .identifier, spelling: "second()", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                                pathComponents: ["Container", "second()"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .method, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+                        ],
+                        relationships: [
+                            .init(source: "some-container-symbol-id", target: "first-member-symbol-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "some-container-symbol-id", target: "second-member-symbol-id", kind: .memberOf, targetFallback: nil),
+                        ])
+                ),
+
+                TextFile(
+                    name: "Container.md",
+                    utf8Content: """
+                        # ``Container``
+
+                        The container curates one of the members and the other symbol
+
+                        ## Topics
+                        ### Manual curation
+                        - ``first()``
+                        - ``OtherSymbol``
+                        """),
+
+                TextFile(
+                    name: "OtherSymbol.md",
+                    utf8Content: """
+                        # ``OtherSymbol``
+
+                        The other symbol curates the other member
+
+                        ## Topics
+                        ### Manual curation
+                        - ``Container/second()``
+                        """),
+
+                TextFile(
+                    name: "first.md",
+                    utf8Content: """
+                        # ``Container/first()``
+
+                        Both members curate each other
+
+                        ## Topics
+                        ### Manual curation
+                        - ``second()``
+                        """),
+
+                TextFile(
+                    name: "second.md",
+                    utf8Content: """
+                        # ``Container/second()``
+
+                        Both members curate each other
+
+                        ## Topics
+                        ### Manual curation
+                        - ``first()``
+                        """),
+
+                TextFile(
+                    name: "API-Collection.md",
+                    utf8Content: """
+                        # An API collection
+
+                        The API collection curates both top-level symbols
+
+                        ## Topics
+                        ### Manual curation
+                        - ``Container``
+                        - ``OtherSymbol``
+                        """),
+
+                TextFile(
+                    name: "Module.md",
+                    utf8Content: """
+                        # ``ModuleName``
+
+                        The module curates the API collection
+
+                        ## Topics
+                        ### Manual curation
+                        - <doc:API-Collection>
+                        """),
+            ])
+
         let (_, context) = try await loadBundle(catalog: catalog)
-        
+
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
-        
+
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
-        
+
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
-        
+
         builder.finalize()
-        
+
         let navigatorIndex = try XCTUnwrap(builder.navigatorIndex)
-        
-        assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), """
-        [Root]
-        ┗╸ModuleName
-          ┣╸Manual curation
-          ┗╸An API collection
-            ┣╸Manual curation
-            ┣╸Container
-            ┃ ┣╸Manual curation
-            ┃ ┣╸first()
-            ┃ ┃ ┣╸Manual curation
-            ┃ ┃ ┗╸second()
-            ┃ ┣╸OtherSymbol
-            ┃ ┃ ┣╸Manual curation
-            ┃ ┃ ┗╸second()
-            ┃ ┃   ┣╸Manual curation
-            ┃ ┃   ┗╸first()
-            ┃ ┣╸Instance Methods
-            ┃ ┗╸second()
-            ┃   ┣╸Manual curation
-            ┃   ┗╸first()
-            ┗╸OtherSymbol
+
+        assertEqualDumps(
+            navigatorIndex.navigatorTree.root.dumpTree(),
+            """
+            [Root]
+            ┗╸ModuleName
               ┣╸Manual curation
-              ┗╸second()
+              ┗╸An API collection
                 ┣╸Manual curation
-                ┗╸first()
-        """)
+                ┣╸Container
+                ┃ ┣╸Manual curation
+                ┃ ┣╸first()
+                ┃ ┃ ┣╸Manual curation
+                ┃ ┃ ┗╸second()
+                ┃ ┣╸OtherSymbol
+                ┃ ┃ ┣╸Manual curation
+                ┃ ┃ ┗╸second()
+                ┃ ┃   ┣╸Manual curation
+                ┃ ┃   ┗╸first()
+                ┃ ┣╸Instance Methods
+                ┃ ┗╸second()
+                ┃   ┣╸Manual curation
+                ┃   ┗╸first()
+                ┗╸OtherSymbol
+                  ┣╸Manual curation
+                  ┗╸second()
+                    ┣╸Manual curation
+                    ┗╸first()
+            """)
     }
-    
+
     func testNavigatorWithDifferentSwiftAndObjectiveCHierarchies() async throws {
         let (_, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
-        
-        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+
+        let fromMemoryBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         fromMemoryBuilder.setup()
         fromDecodedBuilder.setup()
-        
+
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
-            
+
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             XCTAssertNil(renderNode.variantOverrides)
             try fromMemoryBuilder.index(renderNode: renderNode)
-            
+
             let encoded = try RenderJSONEncoder.makeEncoder(emitVariantOverrides: true).encode(renderNode)
             let decoded = try RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: encoded)
             XCTAssertNotNil(decoded.variantOverrides)
             try fromDecodedBuilder.index(renderNode: decoded)
         }
-        
+
         fromMemoryBuilder.finalize()
         fromDecodedBuilder.finalize()
-        let fromMemoryNavigatorTree  = try XCTUnwrap(fromMemoryBuilder.navigatorIndex).navigatorTree.root
+        let fromMemoryNavigatorTree = try XCTUnwrap(fromMemoryBuilder.navigatorIndex).navigatorTree.root
         let fromDecodedNavigatorTree = try XCTUnwrap(fromDecodedBuilder.navigatorIndex).navigatorTree.root
-        
+
         XCTAssertEqual(fromMemoryNavigatorTree.dumpTree(), fromDecodedNavigatorTree.dumpTree())
-        XCTAssertEqual(fromMemoryNavigatorTree.dumpTree(), """
-        [Root]
-        ┣╸Objective-C
-        ┃ ┗╸GeometricalShapes
-        ┃   ┣╸Structures
-        ┃   ┣╸TLACircle
-        ┃   ┃ ┣╸Instance Properties
-        ┃   ┃ ┣╸center
-        ┃   ┃ ┗╸radius
-        ┃   ┣╸Variables
-        ┃   ┣╸TLACircleDefaultRadius
-        ┃   ┣╸TLACircleNull
-        ┃   ┣╸TLACircleZero
-        ┃   ┣╸Functions
-        ┃   ┣╸TLACircleToString
-        ┃   ┣╸TLACircleFromString
-        ┃   ┣╸TLACircleIntersects
-        ┃   ┣╸TLACircleIsEmpty
-        ┃   ┣╸TLACircleIsNull
-        ┃   ┗╸TLACircleMake
-        ┗╸Swift
-          ┗╸GeometricalShapes
-            ┣╸Structures
-            ┗╸Circle
-              ┣╸Initializers
-              ┣╸init()
-              ┣╸init(center: CGPoint, radius: CGFloat)
-              ┣╸init(string: String)
-              ┣╸Instance Properties
-              ┣╸var center: CGPoint
-              ┣╸var debugDescription: String
-              ┣╸var isEmpty: Bool
-              ┣╸var isNull: Bool
-              ┣╸var radius: CGFloat
-              ┣╸Instance Methods
-              ┣╸func intersects(Circle) -> Bool
-              ┣╸Type Properties
-              ┣╸static let defaultRadius: CGFloat
-              ┣╸static let null: Circle
-              ┗╸static let zero: Circle
-        """)
+        XCTAssertEqual(
+            fromMemoryNavigatorTree.dumpTree(),
+            """
+            [Root]
+            ┣╸Objective-C
+            ┃ ┗╸GeometricalShapes
+            ┃   ┣╸Structures
+            ┃   ┣╸TLACircle
+            ┃   ┃ ┣╸Instance Properties
+            ┃   ┃ ┣╸center
+            ┃   ┃ ┗╸radius
+            ┃   ┣╸Variables
+            ┃   ┣╸TLACircleDefaultRadius
+            ┃   ┣╸TLACircleNull
+            ┃   ┣╸TLACircleZero
+            ┃   ┣╸Functions
+            ┃   ┣╸TLACircleToString
+            ┃   ┣╸TLACircleFromString
+            ┃   ┣╸TLACircleIntersects
+            ┃   ┣╸TLACircleIsEmpty
+            ┃   ┣╸TLACircleIsNull
+            ┃   ┗╸TLACircleMake
+            ┗╸Swift
+              ┗╸GeometricalShapes
+                ┣╸Structures
+                ┗╸Circle
+                  ┣╸Initializers
+                  ┣╸init()
+                  ┣╸init(center: CGPoint, radius: CGFloat)
+                  ┣╸init(string: String)
+                  ┣╸Instance Properties
+                  ┣╸var center: CGPoint
+                  ┣╸var debugDescription: String
+                  ┣╸var isEmpty: Bool
+                  ┣╸var isNull: Bool
+                  ┣╸var radius: CGFloat
+                  ┣╸Instance Methods
+                  ┣╸func intersects(Circle) -> Bool
+                  ┣╸Type Properties
+                  ┣╸static let defaultRadius: CGFloat
+                  ┣╸static let null: Circle
+                  ┗╸static let zero: Circle
+            """)
     }
-    
+
     func testNavigatorIndexGenerationVariantsPayload() throws {
         try testNavigatorIndexGenerationVariantsPayload(ignoringLanguage: false)
     }
@@ -820,49 +843,49 @@ Root
     private func testNavigatorIndexGenerationVariantsPayload(ignoringLanguage: Bool) throws {
         let jsonFile = Bundle.module.url(forResource: "Variant-render-node", withExtension: "json", subdirectory: "Test Resources")!
         let jsonData = try Data(contentsOf: jsonFile)
-        
+
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
-        
+
         let renderNode = try XCTUnwrap(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: jsonData))
         try builder.index(renderNode: renderNode, ignoringLanguage: ignoringLanguage)
-        
+
         builder.finalize()
-        
+
         let navigatorIndex = builder.navigatorIndex!
-        
+
         assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
         var expectedDump = """
-        [Root]
+            [Root]
 
-        """
+            """
 
         if !ignoringLanguage {
             expectedDump += """
-        ┣╸Objective-C
-        ┃ ┗╸My Article in Objective-C
-        ┃   ┣╸Task Group 1
-        ┃   ┣╸Task Group 2
-        ┃   ┗╸Task Group 3
+                ┣╸Objective-C
+                ┃ ┗╸My Article in Objective-C
+                ┃   ┣╸Task Group 1
+                ┃   ┣╸Task Group 2
+                ┃   ┗╸Task Group 3
 
-        """
+                """
         }
 
         expectedDump += """
-        ┗╸Swift
-          ┗╸My Article
-            ┣╸Task Group 1
-            ┣╸Task Group 2
-            ┗╸Task Group 3
-        """
+            ┗╸Swift
+              ┗╸My Article
+                ┣╸Task Group 1
+                ┣╸Task Group 2
+                ┗╸Task Group 3
+            """
 
         assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), expectedDump)
 
         var expectedRenderIndexString = """
-        {
-            "interfaceLanguages": {
-        """
+            {
+                "interfaceLanguages": {
+            """
 
         if !ignoringLanguage {
             expectedRenderIndexString += #"""
@@ -891,41 +914,41 @@ Root
         }
 
         expectedRenderIndexString += #"""
-                "swift": [
+            "swift": [
+              {
+                "children": [
                   {
-                    "children": [
-                      {
-                        "title": "Task Group 1",
-                        "type": "groupMarker"
-                      },
-                      {
-                        "title": "Task Group 2",
-                        "type": "groupMarker"
-                      },
-                      {
-                        "title": "Task Group 3",
-                        "type": "groupMarker"
-                      }
-                    ],
-                    "path": "\/documentation\/mykit\/my-article",
-                    "title": "My Article",
-                    "type": "article"
+                    "title": "Task Group 1",
+                    "type": "groupMarker"
+                  },
+                  {
+                    "title": "Task Group 2",
+                    "type": "groupMarker"
+                  },
+                  {
+                    "title": "Task Group 3",
+                    "type": "groupMarker"
                   }
-                ]
-                """#
+                ],
+                "path": "\/documentation\/mykit\/my-article",
+                "title": "My Article",
+                "type": "article"
+              }
+            ]
+            """#
 
         expectedRenderIndexString += #"""
-            },
-            "includedArchiveIdentifiers": [
-                "org.swift.docc.example"
-            ],
-            "schemaVersion": {
-                "major": 0,
-                "minor": 1,
-                "patch": 2
+                },
+                "includedArchiveIdentifiers": [
+                    "org.swift.docc.example"
+                ],
+                "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 2
+                }
             }
-        }
-        """#
+            """#
 
         try XCTAssertEqual(
             RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
@@ -967,10 +990,10 @@ Root
             """
         )
     }
-    
+
     func testMultiCuratesChildrenOfMultiCuratedPages() async throws {
         let navigatorIndex = try await generatedNavigatorIndex(for: "MultiCuratedSubtree", bundleIdentifier: "org.swift.MultiCuratedSubtree")
-        
+
         XCTAssertEqual(
             navigatorIndex.navigatorTree.root.dumpTree(),
             """
@@ -1010,34 +1033,44 @@ Root
     // correctly included in the render node, and that the navigator is built
     // correctly.
     func testSupportedLanguageDirectiveForStandaloneArticles() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            InfoPlist(identifier: testBundleIdentifier),
-            TextFile(name: "UnitTest.md", utf8Content: """
-            # UnitTest
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(identifier: testBundleIdentifier),
+                TextFile(
+                    name: "UnitTest.md",
+                    utf8Content: """
+                        # UnitTest
 
-            @Metadata {
-              @TechnologyRoot
-              @SupportedLanguage(data)
-            }
+                        @Metadata {
+                          @TechnologyRoot
+                          @SupportedLanguage(data)
+                        }
 
-            ## Topics
+                        ## Topics
 
-            - <doc:Article>
-            - ``Foo``
-            """),
-            TextFile(name: "Article.md", utf8Content: """
-            # Article
+                        - <doc:Article>
+                        - ``Foo``
+                        """),
+                TextFile(
+                    name: "Article.md",
+                    utf8Content: """
+                        # Article
 
-            Just a random article.
-            """),
-            // The correct way to configure a catalog is to have a single root module. If multiple modules,
-            // are present, it is not possible to determine which module an article is supposed to be
-            // registered with. We include multiple modules to prevent registering the articles in the
-            // documentation cache, to test if the supported languages are attached prior to registration.
-            JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo", symbols: [
-                makeSymbol(id: "some-symbol", language: SourceLanguage.data, kind: .class, pathComponents: ["SomeSymbol"]),
-            ]))
-        ])
+                        Just a random article.
+                        """),
+                // The correct way to configure a catalog is to have a single root module. If multiple modules,
+                // are present, it is not possible to determine which module an article is supposed to be
+                // registered with. We include multiple modules to prevent registering the articles in the
+                // documentation cache, to test if the supported languages are attached prior to registration.
+                JSONFile(
+                    name: "Foo.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "Foo",
+                        symbols: [
+                            makeSymbol(id: "some-symbol", language: SourceLanguage.data, kind: .class, pathComponents: ["SomeSymbol"]),
+                        ]))
+            ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
 
@@ -1059,124 +1092,136 @@ Root
         let navigatorIndex = try XCTUnwrap(builder.navigatorIndex)
 
         let expectedNavigator = """
-[Root]
-┗╸UnitTest
-  ┣╸Article
-  ┗╸Foo
-    ┣╸Classes
-    ┗╸SomeSymbol
-"""
+            [Root]
+            ┗╸UnitTest
+              ┣╸Article
+              ┗╸Foo
+                ┣╸Classes
+                ┗╸SomeSymbol
+            """
         XCTAssertEqual(navigatorIndex.navigatorTree.root.dumpTree(), expectedNavigator)
     }
-    
+
     func testNavigatorIndexUsingPageTitleGeneration() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         var results = Set<String>()
-        
+
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
             builder.setup()
-            
+
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 try builder.index(renderNode: renderNode)
             }
-            
+
             builder.finalize()
-            
+
             let navigatorIndex = builder.navigatorIndex!
-            
+
             XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
-            XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
-                Platform.Version(string: "13.0")!,
-                Platform.Version(string: "10.15")!,
-                Platform.Version(string: "11.1")!,
-                Platform.Version(string: "14.0")!,
-            ]))
+            XCTAssertEqual(
+                navigatorIndex.availabilityIndex.versions(for: .iOS),
+                Set([
+                    Platform.Version(string: "13.0")!,
+                    Platform.Version(string: "10.15")!,
+                    Platform.Version(string: "11.1")!,
+                    Platform.Version(string: "14.0")!,
+                ]))
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
-            XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIdentifier
-            }))
-            
+            XCTAssertTrue(
+                validateTree(
+                    node: navigatorIndex.navigatorTree.root,
+                    validator: { (node) -> Bool in
+                        return node.bundleIdentifier == testBundleIdentifier
+                    }))
+
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
             try FileManager.default.removeItem(at: targetURL)
         }
-        
+
         XCTAssertEqual(results.count, 1)
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexPageTitleGeneration"))
     }
-    
+
     func testNavigatorIndexGenerationNoPaths() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(context: context)
         var results = Set<String>()
-        
+
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
             builder.setup()
-            
+
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
                 let renderNode = converter.convert(entity)
                 try builder.index(renderNode: renderNode)
             }
-            
+
             builder.finalize()
-            
+
             // Read the index back from disk
             let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
-            
+
             XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
-            XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
-                Platform.Version(string: "13.0")!,
-                Platform.Version(string: "10.15")!,
-                Platform.Version(string: "11.1")!,
-                Platform.Version(string: "14.0")!,
-            ]))
+            XCTAssertEqual(
+                navigatorIndex.availabilityIndex.versions(for: .iOS),
+                Set([
+                    Platform.Version(string: "13.0")!,
+                    Platform.Version(string: "10.15")!,
+                    Platform.Version(string: "11.1")!,
+                    Platform.Version(string: "14.0")!,
+                ]))
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
-            XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIdentifier
-            }))
-            
+            XCTAssertTrue(
+                validateTree(
+                    node: navigatorIndex.navigatorTree.root,
+                    validator: { (node) -> Bool in
+                        return node.bundleIdentifier == testBundleIdentifier
+                    }))
+
             // Test path persistence
-            XCTAssertNil(navigatorIndex.path(for: 0)) // Root should have not path persisted.
+            XCTAssertNil(navigatorIndex.path(for: 0))  // Root should have not path persisted.
             XCTAssertEqual(navigatorIndex.path(for: 1), "/documentation/fillintroduced")
             XCTAssertEqual(navigatorIndex.path(for: 4), "/tutorials/testoverview")
             XCTAssertEqual(navigatorIndex.path(for: 9), "/documentation/fillintroduced/maccatalystonlydeprecated()")
             XCTAssertEqual(navigatorIndex.path(for: 10), "/documentation/fillintroduced/maccatalystonlyintroduced()")
             XCTAssertEqual(navigatorIndex.path(for: 21), "/documentation/mykit/globalfunction(_:considering:)")
             XCTAssertEqual(navigatorIndex.path(for: 23), "/documentation/sidekit/uncuratedclass/angle")
-            
+
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
         }
-        
+
         XCTAssertEqual(results.count, 1)
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
-    
+
     func testNavigatorIndexGenerationWithLanguageGrouping() async throws {
         let navigatorIndex = try await generatedNavigatorIndex(for: "LegacyBundle_DoNotUseInNewTests", bundleIdentifier: testBundleIdentifier)
-        
+
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
-        XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
-            Platform.Version(string: "13.0")!,
-            Platform.Version(string: "10.15")!,
-            Platform.Version(string: "14.0")!,
-            Platform.Version(string: "11.1")!,
-        ]))
+        XCTAssertEqual(
+            navigatorIndex.availabilityIndex.versions(for: .iOS),
+            Set([
+                Platform.Version(string: "13.0")!,
+                Platform.Version(string: "10.15")!,
+                Platform.Version(string: "14.0")!,
+                Platform.Version(string: "11.1")!,
+            ]))
         XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
-        
+
         // Get the Swift language group.
         XCTAssertEqual(navigatorIndex.navigatorTree.numericIdentifierToNode[1]?.children.count, 4)
 
@@ -1184,23 +1229,22 @@ Root
         assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), try testTree(named: "testNavigatorIndexGenerationWithLanguageGrouping"))
     }
 
-    
     func testNavigatorIndexGenerationWithCuratedFragment() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         var results = Set<String>()
-        
+
         // Create an index 10 times to ensure we have no non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
-            
+
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
                 var renderNode = try XCTUnwrap(converter.renderNode(for: entity))
-                
+
                 if renderNode.identifier.path == "/documentation/MyKit" {
                     guard let reference = renderNode.topicSections.first?.identifiers.first else {
                         XCTFail("A topic section is missing a reference.")
@@ -1211,17 +1255,18 @@ Root
                         if section.identifiers.contains(reference) {
                             var identifiers = section.identifiers
                             identifiers.append(referenceWithFragment)
-                            return TaskGroupRenderSection(title: section.title,
-                                                          abstract: section.abstract,
-                                                          discussion: section.discussion,
-                                                          identifiers: identifiers,
-                                                          generated: section.generated,
-                                                          anchor: section.title.map(urlReadableFragment))
+                            return TaskGroupRenderSection(
+                                title: section.title,
+                                abstract: section.abstract,
+                                discussion: section.discussion,
+                                identifiers: identifiers,
+                                generated: section.generated,
+                                anchor: section.title.map(urlReadableFragment))
                         }
                         return section
                     }
                     renderNode.topicSections = topicsSections
-                    
+
                     guard var topicReference = renderNode.references[reference] as? TopicRenderReference else {
                         XCTFail("Missing expected reference \(reference)")
                         return
@@ -1230,66 +1275,73 @@ Root
                     topicReference.url = topicReference.url.appending("#Section")
                     renderNode.references[referenceWithFragment] = topicReference
                 }
-                
-                
+
                 try builder.index(renderNode: renderNode)
             }
-            
+
             builder.finalize()
-            
+
             let navigatorIndex = try XCTUnwrap(builder.navigatorIndex)
-            
+
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
             try FileManager.default.removeItem(at: targetURL)
         }
-        
+
         XCTAssertEqual(results.count, 1)
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
-    
+
     func testNavigatorIndexAvailabilityGeneration() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
-        
+
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
-        
+
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
-        
+
         builder.finalize()
-        
+
         let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
-        
+
         XCTAssertEqual(navigatorIndex.pathHasher, .md5)
         XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIdentifier)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, .iPadOS])
-        XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .macOS), Set([
-            Platform.Version(string: "10.9")!,
-            Platform.Version(string: "10.10")!,
-            Platform.Version(string: "10.15")!,
-            Platform.Version(string: "10.16")!,
-        ]))
-        XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
-            Platform.Version(string: "13.0")!,
-            Platform.Version(string: "14.0")!,
-            Platform.Version(string: "10.15")!,
-            Platform.Version(string: "11.1")!,
-        ]))
-        XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .watchOS), Set([
-            Platform.Version(string: "6.0")!,
-            Platform.Version(string: "13.3")!,
-        ]))
-        XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .tvOS), Set([
-            Platform.Version(string: "12.2")!,
-            Platform.Version(string: "13.0")!,
-        ]))
+        XCTAssertEqual(
+            navigatorIndex.availabilityIndex.versions(for: .macOS),
+            Set([
+                Platform.Version(string: "10.9")!,
+                Platform.Version(string: "10.10")!,
+                Platform.Version(string: "10.15")!,
+                Platform.Version(string: "10.16")!,
+            ]))
+        XCTAssertEqual(
+            navigatorIndex.availabilityIndex.versions(for: .iOS),
+            Set([
+                Platform.Version(string: "13.0")!,
+                Platform.Version(string: "14.0")!,
+                Platform.Version(string: "10.15")!,
+                Platform.Version(string: "11.1")!,
+            ]))
+        XCTAssertEqual(
+            navigatorIndex.availabilityIndex.versions(for: .watchOS),
+            Set([
+                Platform.Version(string: "6.0")!,
+                Platform.Version(string: "13.3")!,
+            ]))
+        XCTAssertEqual(
+            navigatorIndex.availabilityIndex.versions(for: .tvOS),
+            Set([
+                Platform.Version(string: "12.2")!,
+                Platform.Version(string: "13.0")!,
+            ]))
         XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
         XCTAssertEqual(Set(navigatorIndex.availabilityIndex.platforms(for: InterfaceLanguage.swift) ?? []), Set([.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, .iPadOS]))
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "macOS"), .macOS)
@@ -1298,39 +1350,39 @@ Root
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "ios"), .undefined, "Incorrect capitalization")
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "iOS"), .iOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "iPadOS"), .iPadOS)
-        
+
         // Check ID mapping
-        XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass", with: .swift))
-        XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass/myfunction()", with: .swift))
-        XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass/path", with: .swift))
-        XCTAssertNil(navigatorIndex.id(for:"/non/exisint/path", with: .swift))
-        
+        XCTAssertNotNil(navigatorIndex.id(for: "/documentation/sidekit/sideclass", with: .swift))
+        XCTAssertNotNil(navigatorIndex.id(for: "/documentation/sidekit/sideclass/myfunction()", with: .swift))
+        XCTAssertNotNil(navigatorIndex.id(for: "/documentation/sidekit/sideclass/path", with: .swift))
+        XCTAssertNil(navigatorIndex.id(for: "/non/exisint/path", with: .swift))
+
         // Check USR mapping
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC", language: .swift), "/documentation/sidekit/sideclass")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC10myFunctionyyF"), "/documentation/sidekit/sideclass/myfunction()")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC4pathSSvp", language: .swift), "/documentation/sidekit/sideclass/path")
         XCTAssertNil(navigatorIndex.path(for: "s:5SideKit"))
-        
+
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC", language: .swift, hashed: false), "/documentation/sidekit/sideclass")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC10myFunctionyyF", language: .swift, hashed: false), "/documentation/sidekit/sideclass/myfunction()")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC4pathSSvp", hashed: false), "/documentation/sidekit/sideclass/path")
         XCTAssertNil(navigatorIndex.path(for: "s:5SideKit", hashed: false))
-        
+
         XCTAssertEqual(navigatorIndex.path(for: "18xs4rl", hashed: true), "/documentation/sidekit/sideclass")
         XCTAssertEqual(navigatorIndex.path(for: "1ug5ui4", hashed: true), "/documentation/sidekit/sideclass/myfunction()")
         XCTAssertEqual(navigatorIndex.path(for: "1wfp7eu", hashed: true), "/documentation/sidekit/sideclass/path")
         XCTAssertNil(navigatorIndex.path(for: "1m2njn2", hashed: true))
-        
+
         // Check we don't return valid values for other languages
         XCTAssertNil(navigatorIndex.path(for: "s:7SideKit0A5ClassC", language: .objc))
         XCTAssertNil(navigatorIndex.path(for: "s:7SideKit0A5ClassC4pathSSvp", language: .data))
         XCTAssertNil(navigatorIndex.path(for: "1ug5ui4", language: .objc, hashed: true))
         XCTAssertNil(navigatorIndex.path(for: "1wfp7eu", language: .data, hashed: true))
-        
+
         let sideClassNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { navigatorIndex.path(for: $0.id!) == "/documentation/sidekit/sideclass" })
         let availabilities = navigatorIndex.availabilities(for: sideClassNode.item.availabilityID)
         XCTAssertEqual(availabilities.count, 3)
-        
+
         // Extract availability and check it against some queries.
         var availabilityInfo = availabilities[0]
         XCTAssertFalse(availabilityInfo.belongs(to: .macOS))
@@ -1345,245 +1397,257 @@ Root
         availabilityInfo = availabilities[2]
         XCTAssertTrue(availabilityInfo.belongs(to: .macCatalyst))
         XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .macCatalyst, version: Platform.Version(string: "13.0")!)))
-        
+
         // Ensure we can't write to an index which is read-only.
         let availabilityDB = try XCTUnwrap(navigatorIndex.environment).openDatabase(named: "availability")
         XCTAssertThrowsError(try availabilityDB.put(key: "content", value: "test"))
         XCTAssertNil(availabilityDB.get(type: String.self, forKey: "content"))
     }
-    
+
     func testCustomIconsInNavigator() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BookLikeContent") // This content has a @PageImage with the "icon" purpose
+        let (_, context) = try await testBundleAndContext(named: "BookLikeContent")  // This content has a @PageImage with the "icon" purpose
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
-        
+
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
-        
+
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
-        
+
         builder.finalize()
-        
+
         let renderIndexData = try Data(contentsOf: targetURL.appendingPathComponent("index.json"))
         let renderIndex = try JSONDecoder().decode(RenderIndex.self, from: renderIndexData)
-        
+
         let imageReference = try XCTUnwrap(renderIndex.references["plus.svg"])
-        XCTAssertEqual(imageReference.asset.variants.values.map(\.path).sorted(), [
-            "/images/\(context.inputs.id)/plus.svg",
-        ])
+        XCTAssertEqual(
+            imageReference.asset.variants.values.map(\.path).sorted(),
+            [
+                "/images/\(context.inputs.id)/plus.svg",
+            ])
     }
-    
+
     func testNavigatorIndexDifferentHasherGeneration() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
-        
+
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
-        
+
         // Change the path hasher to the FNV-1 implementation and make sure paths and mappings are still working.
         builder.navigatorIndex?.pathHasher = .fnv1
-        
+
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
-        
+
         builder.finalize()
-        
+
         let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
-        
+
         XCTAssertEqual(navigatorIndex.pathHasher, .fnv1)
-        
+
         // Check ID mapping
-        XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass", with: .swift))
-        XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass/myfunction()", with: .swift))
-        XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass/path", with: .swift))
-        XCTAssertNil(navigatorIndex.id(for:"/non/exisint/path", with: .swift))
-        
+        XCTAssertNotNil(navigatorIndex.id(for: "/documentation/sidekit/sideclass", with: .swift))
+        XCTAssertNotNil(navigatorIndex.id(for: "/documentation/sidekit/sideclass/myfunction()", with: .swift))
+        XCTAssertNotNil(navigatorIndex.id(for: "/documentation/sidekit/sideclass/path", with: .swift))
+        XCTAssertNil(navigatorIndex.id(for: "/non/exisint/path", with: .swift))
+
         // Check USR mapping
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC", language: .swift), "/documentation/sidekit/sideclass")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC10myFunctionyyF"), "/documentation/sidekit/sideclass/myfunction()")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC4pathSSvp", language: .swift), "/documentation/sidekit/sideclass/path")
         XCTAssertNil(navigatorIndex.path(for: "s:5SideKit"))
-        
+
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC", language: .swift, hashed: false), "/documentation/sidekit/sideclass")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC10myFunctionyyF", language: .swift, hashed: false), "/documentation/sidekit/sideclass/myfunction()")
         XCTAssertEqual(navigatorIndex.path(for: "s:7SideKit0A5ClassC4pathSSvp", hashed: false), "/documentation/sidekit/sideclass/path")
         XCTAssertNil(navigatorIndex.path(for: "s:5SideKit", hashed: false))
-        
+
         XCTAssertEqual(navigatorIndex.path(for: "18xs4rl", hashed: true), "/documentation/sidekit/sideclass")
         XCTAssertEqual(navigatorIndex.path(for: "1ug5ui4", hashed: true), "/documentation/sidekit/sideclass/myfunction()")
         XCTAssertEqual(navigatorIndex.path(for: "1wfp7eu", hashed: true), "/documentation/sidekit/sideclass/path")
         XCTAssertNil(navigatorIndex.path(for: "1m2njn2", hashed: true))
-        
+
         // Check we don't return valid values for other languages
         XCTAssertNil(navigatorIndex.path(for: "s:7SideKit0A5ClassC", language: .objc))
         XCTAssertNil(navigatorIndex.path(for: "s:7SideKit0A5ClassC4pathSSvp", language: .data))
         XCTAssertNil(navigatorIndex.path(for: "1ug5ui4", language: .objc, hashed: true))
         XCTAssertNil(navigatorIndex.path(for: "1wfp7eu", language: .data, hashed: true))
-        
+
         let sideClassNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { navigatorIndex.path(for: $0.id!) == "/documentation/sidekit/sideclass" })
         let availabilities = navigatorIndex.availabilities(for: sideClassNode.item.availabilityID)
         XCTAssertEqual(availabilities.count, 3)
     }
-    
+
     func testPlatformVersion() {
         guard let version1 = Platform.Version(string: "12.0") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         guard let version2 = Platform.Version(string: "12.1") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         guard let version3 = Platform.Version(string: "12.1.1") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         guard let version4 = Platform.Version(string: "12.1.2") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         guard let version5 = Platform.Version(string: "12.2.0") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         guard let version6 = Platform.Version(string: "13") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         guard let version2alt = Platform.Version(string: "12.1.0") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         guard let version10 = Platform.Version(string: "13.0.1") else {
             XCTFail("The version string is valid, but failed to be processed.")
             return
         }
-        
+
         // Verify progressive versions
         XCTAssert(version1 < version2)
         XCTAssert(version1 < version3)
         XCTAssert(version1 < version4)
         XCTAssert(version1 < version5)
         XCTAssert(version1 < version6)
-        
+
         XCTAssert(version2 < version3)
         XCTAssert(version2 < version4)
         XCTAssert(version2 < version5)
         XCTAssert(version2 < version6)
-        
+
         XCTAssert(version3 < version4)
         XCTAssert(version3 < version5)
         XCTAssert(version3 < version6)
-        
+
         XCTAssert(version4 < version5)
         XCTAssert(version4 < version6)
-        
+
         XCTAssert(version5 < version6)
-        
+
         XCTAssertFalse(version10 < version3)
-        
+
         // Verify inversion
         XCTAssert(version2 > version1)
         XCTAssert(version3 > version1)
         XCTAssert(version4 > version1)
         XCTAssert(version5 > version1)
         XCTAssert(version6 > version1)
-        
+
         // Verify equality
         XCTAssert(version1 != version2)
         XCTAssert(version1 != version3)
         XCTAssert(version1 != version4)
         XCTAssert(version1 != version5)
         XCTAssert(version1 != version6)
-        
+
         XCTAssert(version2 == version2alt)
         XCTAssertFalse(version2 < version2alt)
         XCTAssertFalse(version2 > version2alt)
-        
+
         // Checks invalid inputs
         XCTAssertNil(Platform.Version(string: "192.168.0.0"))
         XCTAssertNil(Platform.Version(string: "lorem ipsum"))
         XCTAssertNil(Platform.Version(string: "12.1.2a"))
-        
+
         // Check the UInt32 encoding
         XCTAssertEqual(version2.uint32, version2alt.uint32)
         XCTAssertEqual(version2, Platform.Version(uint32: version2alt.uint32))
-        
+
         // This should be 13.3.0 composed by:
         // UInt8(0) UInt8(13) UInt8(3) UInt8(0)
         let bitVersion: UInt32 = 0b00000000000011010000001100000000
         let converted = Platform.Version(uint32: bitVersion)
         XCTAssertEqual(converted, Platform.Version(string: "13.3.0"))
     }
-    
+
     func testNavigatorIndexLoopBreak() throws {
-        let navigatorNode1 = NavigatorTree.Node(item: NavigatorItem(pageType: 0,
-                                                                    languageID: 0,
-                                                                    title: "Top Page",
-                                                                    platformMask: 0,
-                                                                    availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
-        
-        let navigatorNode2 = NavigatorTree.Node(item: NavigatorItem(pageType: 0,
-                                                                    languageID: 0,
-                                                                    title: "Middle Page",
-                                                                    platformMask: 0,
-                                                                    availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
-        
-        let navigatorNode3 = NavigatorTree.Node(item: NavigatorItem(pageType: 0,
-                                                                    languageID: 0,
-                                                                    title: "Bottom Page",
-                                                                    platformMask: 0,
-                                                                    availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
-        
-        let navigatorNode4 = NavigatorTree.Node(item: NavigatorItem(pageType: 0,
-                                                                    languageID: 0,
-                                                                    title: "Multi Page",
-                                                                    platformMask: 0,
-                                                                    availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
-        
+        let navigatorNode1 = NavigatorTree.Node(
+            item: NavigatorItem(
+                pageType: 0,
+                languageID: 0,
+                title: "Top Page",
+                platformMask: 0,
+                availabilityID: 0),
+            bundleIdentifier: "com.test.bundle")
+
+        let navigatorNode2 = NavigatorTree.Node(
+            item: NavigatorItem(
+                pageType: 0,
+                languageID: 0,
+                title: "Middle Page",
+                platformMask: 0,
+                availabilityID: 0),
+            bundleIdentifier: "com.test.bundle")
+
+        let navigatorNode3 = NavigatorTree.Node(
+            item: NavigatorItem(
+                pageType: 0,
+                languageID: 0,
+                title: "Bottom Page",
+                platformMask: 0,
+                availabilityID: 0),
+            bundleIdentifier: "com.test.bundle")
+
+        let navigatorNode4 = NavigatorTree.Node(
+            item: NavigatorItem(
+                pageType: 0,
+                languageID: 0,
+                title: "Multi Page",
+                platformMask: 0,
+                availabilityID: 0),
+            bundleIdentifier: "com.test.bundle")
+
         navigatorNode1.add(child: navigatorNode2)
         navigatorNode1.add(child: navigatorNode4.copy())
         navigatorNode2.add(child: navigatorNode3)
         navigatorNode2.add(child: navigatorNode4.copy())
-        
+
         // Create a cycle
         navigatorNode3.add(child: navigatorNode1)
-        
+
         let copy = navigatorNode1.copy()
-        XCTAssertEqual(copy.dumpTree(), """
-                       Top Page
-                       ┣╸Middle Page
-                       ┃ ┣╸Bottom Page
-                       ┃ ┗╸Multi Page
-                       ┗╸Multi Page
-                       """)
+        XCTAssertEqual(
+            copy.dumpTree(),
+            """
+            Top Page
+            ┣╸Middle Page
+            ┃ ┣╸Bottom Page
+            ┃ ┗╸Multi Page
+            ┗╸Multi Page
+            """)
     }
-    
+
     func testAvailabilityIndexCreation() throws {
         #if !os(Linux) && !os(Android)
         let availabilityIndex = AvailabilityIndex()
-        
+
         let macOS_10_14 = Platform(name: .macOS, version: Platform.Version(string: "10.14")!)
         let macOS_10_14_9 = Platform(name: .macOS, version: Platform.Version(string: "10.14.9")!)
         let iOS_10_15 = Platform(name: .iOS, version: Platform.Version(string: "10.15")!)
@@ -1592,7 +1656,7 @@ Root
         let iOS_9 = Platform(name: .iOS, version: Platform.Version(string: "9")!)
         let iOS_6 = Platform(name: .iOS, version: Platform.Version(string: "6.0")!)
         let iOS_5 = Platform(name: .iOS, version: Platform.Version(string: "5.0")!)
-        
+
         let info0 = AvailabilityIndex.Info(platformName: .macOS, introduced: Platform.Version(string: "10.15"))
         let info1 = AvailabilityIndex.Info(platformName: .iOS, introduced: Platform.Version(string: "6.0"), deprecated: Platform.Version(string: "11.0"))
         let info2 = AvailabilityIndex.Info(platformName: .iOS, introduced: Platform.Version(string: "12.0"))
@@ -1600,44 +1664,44 @@ Root
         let info1alt = AvailabilityIndex.Info(platformName: .iOS, introduced: Platform.Version(string: "6.0"), deprecated: Platform.Version(string: "11.0"))
         let infoMissing = AvailabilityIndex.Info(platformName: .watchOS, introduced: Platform.Version(string: "2.0"))
         let platformOnly = AvailabilityIndex.Info(platformName: .iOS)
-        
+
         // Queries
         XCTAssertFalse(info0.isDeprecated(on: iOS_10_15))
         XCTAssertTrue(info1.isDeprecated(on: iOS_11_11))
         XCTAssertFalse(info1.isDeprecated(on: iOS_9))
-        
+
         XCTAssertFalse(info0.isAvailable(on: macOS_10_14_9))
         XCTAssertTrue(info1.isAvailable(on: iOS_9_1))
         XCTAssertFalse(info1.isAvailable(on: iOS_5))
-        
+
         XCTAssertFalse(info0.isIntroduced(on: macOS_10_14))
         XCTAssertTrue(info1.isIntroduced(on: iOS_6))
         XCTAssertFalse(info1.isIntroduced(on: iOS_9))
-        
+
         XCTAssertTrue(platformOnly.isAvailable(on: iOS_9_1))
-        
+
         // Creation
         XCTAssertEqual(availabilityIndex.id(for: info0, createIfMissing: true), 1)
         XCTAssertEqual(availabilityIndex.id(for: info1, createIfMissing: true), 2)
         XCTAssertEqual(availabilityIndex.id(for: info2, createIfMissing: true), 3)
         XCTAssertEqual(availabilityIndex.id(for: info3, createIfMissing: true), 4)
-        
+
         // Ensure we match
         XCTAssertEqual(availabilityIndex.id(for: info0), 1)
         XCTAssertEqual(availabilityIndex.id(for: info1), 2)
         XCTAssertEqual(availabilityIndex.id(for: info2), 3)
         XCTAssertEqual(availabilityIndex.id(for: info3), 4)
-        
+
         // Alternate version
         XCTAssertEqual(availabilityIndex.id(for: info1alt, createIfMissing: true), 2)
-        
+
         // Missing
         XCTAssertNil(availabilityIndex.id(for: infoMissing))
-        
+
         XCTAssertEqual(availabilityIndex.platforms.count, 2)
         XCTAssertEqual(availabilityIndex.versions(for: .iOS)?.count, 4)
         XCTAssertEqual(availabilityIndex.versions(for: .macOS)?.count, 1)
-        
+
         let targetFolder = try createTemporaryDirectory()
         let targetURL = targetFolder.appendingPathComponent("availability.index")
         let jsonEncoder = JSONEncoder()
@@ -1645,23 +1709,23 @@ Root
         try data.write(to: targetURL)
         let readData = try Data(contentsOf: targetURL)
         let decodedIndex = try JSONDecoder().decode(AvailabilityIndex.self, from: readData)
-        
+
         // Ensure we still match
         XCTAssertEqual(decodedIndex.id(for: info0), 1)
         XCTAssertEqual(decodedIndex.id(for: info1), 2)
         XCTAssertEqual(decodedIndex.id(for: info2), 3)
         XCTAssertEqual(decodedIndex.id(for: info3), 4)
-        
+
         XCTAssertEqual(decodedIndex.platforms.count, 2)
         XCTAssertEqual(decodedIndex.versions(for: .iOS)?.count, 4)
         XCTAssertEqual(decodedIndex.versions(for: .macOS)?.count, 1)
         #endif
     }
-    
+
     func testAvailabilityIndexInterfaceLanguageBackwardsCompatibility() throws {
         // Tests for backwards compatibility with an encoded `InterfaceLanguage` that does not include
         // an `id`.
-        
+
         let plistWithoutLanguageID = """
             <plist version="1.0">
             <dict>
@@ -1686,19 +1750,19 @@ Root
             </dict>
             </plist>
             """
-        
+
         let availabilityIndex = try PropertyListDecoder().decode(
             AvailabilityIndex.self,
             from: Data(plistWithoutLanguageID.utf8)
         )
-        
+
         XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.name, "Swift")
         XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.id, "swift")
         XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.mask, 1)
     }
-    
+
     func testRenderNodeToPageType() {
-        
+
         XCTAssertEqual(PageType(role: "symbol"), .symbol)
         XCTAssertEqual(PageType(role: "containersymbol"), .symbol)
         XCTAssertEqual(PageType(role: "restrequestsymbol"), .httpRequest)
@@ -1709,7 +1773,7 @@ Root
         XCTAssertEqual(PageType(role: "collectiongroup"), .collection)
         XCTAssertEqual(PageType(role: "article"), .article)
         XCTAssertEqual(PageType(role: "samplecode"), .sampleCode)
-        
+
         XCTAssertEqual(PageType(symbolKind: "module"), .framework)
         XCTAssertEqual(PageType(symbolKind: "class"), .class)
         XCTAssertEqual(PageType(symbolKind: "cl"), .class)
@@ -1733,13 +1797,13 @@ Root
         XCTAssertEqual(PageType(symbolKind: "property"), .instanceProperty)
         XCTAssertEqual(PageType(symbolKind: "dict"), .dictionarySymbol)
         XCTAssertEqual(PageType(symbolKind: "namespace"), .namespace)
-        
+
         func verifySymbolKind(_ inputs: [String], _ result: PageType) {
             for input in inputs {
-                XCTAssertEqual(PageType(symbolKind:input), result)
+                XCTAssertEqual(PageType(symbolKind: input), result)
             }
         }
-        
+
         verifySymbolKind(["enumelt", "econst"], .enumerationCase)
         verifySymbolKind(["enumctr", "structctr", "instctr", "intfctr", "constructor", "initializer"], .initializer)
         verifySymbolKind(["enumm", "structm", "instm", "intfm"], .instanceMethod)
@@ -1748,9 +1812,9 @@ Root
         verifySymbolKind(["enumsub", "structsub", "instsub", "intfsub"], .subscript)
         verifySymbolKind(["enumcm", "structcm", "clm", "intfcm"], .typeMethod)
         verifySymbolKind(["httpget", "httpput", "httppost", "httppatch", "httpdelete", "httprequest"], .httpRequest)
-        
+
         // Verify mappings provided from Delphi to SymbolKit
-        
+
         XCTAssertEqual(PageType(symbolKind: "tdef"), PageType(symbolKind: "typealias"))
         XCTAssertEqual(PageType(symbolKind: "data"), PageType(symbolKind: "var"))
         XCTAssertEqual(PageType(symbolKind: "func"), PageType(symbolKind: "func"))
@@ -1798,35 +1862,35 @@ Root
         // To verify we're able to open a read-only index, we need to mount a small DMG in read-only mode.
         let dmgPath = Bundle.module.url(
             forResource: "read-only-index", withExtension: "dmg", subdirectory: "Test Resources")!
-        
+
         // Mount the DMG.
         let mountProcess = Process()
         mountProcess.launchPath = "/usr/bin/hdiutil"
         mountProcess.arguments = ["attach", dmgPath.path]
         mountProcess.launch()
         mountProcess.waitUntilExit()
-        
+
         // Check mounting worked.
         guard mountProcess.terminationStatus == 0 else {
             XCTFail("Read-only DMG mounting failed.")
             return
         }
-        
+
         // Verify we can open the index without errors.
         let path = URL(fileURLWithPath: "/Volumes/ReadOnlyIndex/index")
         XCTAssertNoThrow(try NavigatorIndex.readNavigatorIndex(url: path))
-        
+
         // Detatch the Volume.
         let detatchProcess = Process()
         detatchProcess.launchPath = "/usr/bin/hdiutil"
         detatchProcess.arguments = ["detach", "/Volumes/ReadOnlyIndex"]
         detatchProcess.launch()
         detatchProcess.waitUntilExit()
-        
+
         XCTAssertEqual(detatchProcess.terminationStatus, 0)
         #endif
     }
-    
+
     func testNavigatorIndexAsReadOnlyFile() async throws {
         #if !os(Windows)
         // Skip this test if running as root (e.g. inside a CI container).
@@ -1838,165 +1902,173 @@ Root
 
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(context: context)
-        
+
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)
         builder.setup()
-        
+
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
             let renderNode = converter.convert(entity)
             try builder.index(renderNode: renderNode)
         }
-        
+
         builder.finalize()
-        
+
         // Get the database file.
         let dataFileURL = targetURL.appendingPathComponent("data.mdb")
-        
+
         // Set data file as read-only so we make sure we don't crash if the user has not writing permission on the database file.
         try FileManager.default.setAttributes([FileAttributeKey.posixPermissions: NSNumber(value: 0o400)], ofItemAtPath: dataFileURL.path)
-        
+
         // Ensure we can read the navigator index even if the data file is read-only.
         _ = try NavigatorIndex.readNavigatorIndex(url: targetURL, readNavigatorTree: false)
-        
+
         // Remove all permissions to the file.
         try FileManager.default.setAttributes([FileAttributeKey.posixPermissions: NSNumber(value: 0o000)], ofItemAtPath: dataFileURL.path)
-        
+
         // Make sure we throw if an index can't be opened even after the fallback, avoiding entering an infinite loop.
         XCTAssertThrowsError(try NavigatorIndex.readNavigatorIndex(url: targetURL, readNavigatorTree: false))
     }
-    
+
     func testNavigatorTitle() throws {
-        var json = buildRenderJSON(title: "Failure", symbolKind: "associatedtype", fragments: """
-            [
-                {
-                    "text": "associatedtype",
-                    "kind": "keyword"
-                },
-                {
-                    "kind": "text",
-                    "text": " "
-                },
-                {
-                    "text": "Failure",
-                    "kind": "identifier"
-                },
-                {
-                    "text": " : ",
-                    "kind": "text"
-                },
-                {
-                    "kind": "typeIdentifier",
-                    "preciseIdentifier": "s:s5ErrorP",
-                    "text": "Error"
-                }
-            ]
-        """
+        var json = buildRenderJSON(
+            title: "Failure", symbolKind: "associatedtype",
+            fragments: """
+                    [
+                        {
+                            "text": "associatedtype",
+                            "kind": "keyword"
+                        },
+                        {
+                            "kind": "text",
+                            "text": " "
+                        },
+                        {
+                            "text": "Failure",
+                            "kind": "identifier"
+                        },
+                        {
+                            "text": " : ",
+                            "kind": "text"
+                        },
+                        {
+                            "kind": "typeIdentifier",
+                            "preciseIdentifier": "s:s5ErrorP",
+                            "text": "Error"
+                        },
+                    ]
+                """
         )
         var renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "Failure")
-        
-        json = buildRenderJSON(title: "Subscriber", symbolKind: "protocol", fragments: """
-            [
-                {
-                    "text": "protocol",
-                    "kind": "keyword"
-                },
-                {
-                    "kind": "text",
-                    "text": " "
-                },
-                {
-                    "text": "Subscriber",
-                    "kind": "identifier"
-                }
-            ]
-        """
+
+        json = buildRenderJSON(
+            title: "Subscriber", symbolKind: "protocol",
+            fragments: """
+                    [
+                        {
+                            "text": "protocol",
+                            "kind": "keyword"
+                        },
+                        {
+                            "kind": "text",
+                            "text": " "
+                        },
+                        {
+                            "text": "Subscriber",
+                            "kind": "identifier"
+                        },
+                    ]
+                """
         )
         renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "Subscriber")
-        
-        json = buildRenderJSON(title: "receive(subscription:)", symbolKind: "method", fragments: """
-        [
-            {
-                "kind": "keyword",
-                "text": "func"
-            },
-            {
-                "text": " ",
-                "kind": "text"
-            },
-            {
-                "text": "receive",
-                "kind": "identifier"
-            },
-            {
-                "kind": "text",
-                "text": "("
-            },
-            {
-                "text": "subscription",
-                "kind": "externalParam"
-            },
-            {
-                "kind": "text",
-                "text": ": "
-            },
-            {
-                "kind": "typeIdentifier",
-                "preciseIdentifier": "s:7Combine12SubscriptionP",
-                "text": "Subscription"
-            },
-            {
-                "text": ")",
-                "kind": "text"
-            }
-        ]
-        """
+
+        json = buildRenderJSON(
+            title: "receive(subscription:)", symbolKind: "method",
+            fragments: """
+                [
+                    {
+                        "kind": "keyword",
+                        "text": "func"
+                    },
+                    {
+                        "text": " ",
+                        "kind": "text"
+                    },
+                    {
+                        "text": "receive",
+                        "kind": "identifier"
+                    },
+                    {
+                        "kind": "text",
+                        "text": "("
+                    },
+                    {
+                        "text": "subscription",
+                        "kind": "externalParam"
+                    },
+                    {
+                        "kind": "text",
+                        "text": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:7Combine12SubscriptionP",
+                        "text": "Subscription"
+                    },
+                    {
+                        "text": ")",
+                        "kind": "text"
+                    },
+                ]
+                """
         )
         renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "func receive(subscription: Subscription)")
-        
-        json = buildRenderJSON(title: "init(_:)", symbolKind: "structctr", fragments: """
-        [
-            {
-                "kind": "identifier",
-                "text": "init"
-            },
-            {
-                "kind": "text",
-                "text": "(Double)"
-            }
-        ]
-        """
+
+        json = buildRenderJSON(
+            title: "init(_:)", symbolKind: "structctr",
+            fragments: """
+                [
+                    {
+                        "kind": "identifier",
+                        "text": "init"
+                    },
+                    {
+                        "kind": "text",
+                        "text": "(Double)"
+                    },
+                ]
+                """
         )
         renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "init(Double)")
     }
-    
+
     func testNavigatorTitleForEmptyMetadataNavigatorTitle() throws {
         let json = buildRenderJSON(
             title: "init(_:)",
             symbolKind: "not-struct",
             fragments: """
-            [
-              {
-                "kind": "identifier",
-                "text": "Fragment Value"
-              }
-            ]
-            """,
+                [
+                  {
+                    "kind": "identifier",
+                    "text": "Fragment Value"
+                  }
+                ]
+                """,
             language: "occ"
         )
-        
+
         let renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(
             renderNode.navigatorTitle(),
             "Fragment Value"
         )
     }
-    
+
     func testSavesNodePresentationDisambiguator() {
         let node = Node(
             item: NavigatorItem(
@@ -2010,7 +2082,7 @@ Root
         node.presentationIdentifier = "the-disambiguator"
         XCTAssertEqual(node.presentationIdentifier, "the-disambiguator")
     }
-    
+
     func testPathHasher() throws {
         let pathHasher = try XCTUnwrap(PathHasher(rawValue: "MD5"))
         // Test that the results are stable for the given inputs
@@ -2021,7 +2093,7 @@ Root
             XCTAssertEqual("e47cfd13c4af", pathHasher.hash("/mykit/myclass/myfunc"))
         }
     }
-    
+
     func testNormalizedNavigatorIndexIdentifier() throws {
         let topicReference = ResolvedTopicReference(
             bundleID: "org.swift.example",
@@ -2029,60 +2101,60 @@ Root
             fragment: nil,
             sourceLanguage: .swift
         )
-        
+
         XCTAssertEqual(
             topicReference.normalizedNavigatorIndexIdentifier(forLanguage: 0),
             NavigatorIndex.Identifier(
-                bundleIdentifier:  "org.swift.example",
+                bundleIdentifier: "org.swift.example",
                 path: "/documentation/path/sub-path",
                 fragment: nil,
                 languageIdentifier: 0
             )
         )
-        
+
         let topicReferenceWithCapitalization = ResolvedTopicReference(
             bundleID: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: nil,
             sourceLanguage: .swift
         )
-        
+
         XCTAssertEqual(
             topicReferenceWithCapitalization.normalizedNavigatorIndexIdentifier(forLanguage: 1),
             NavigatorIndex.Identifier(
-                bundleIdentifier:  "org.swift.example",
+                bundleIdentifier: "org.swift.example",
                 path: "/documentation/path/subpath",
                 fragment: nil,
                 languageIdentifier: 1
             )
         )
-        
+
         let topicReferenceWithFragment = ResolvedTopicReference(
             bundleID: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: "FRAGMENT",
             sourceLanguage: .swift
         )
-        
+
         XCTAssertEqual(
             topicReferenceWithFragment.normalizedNavigatorIndexIdentifier(forLanguage: 1),
             NavigatorIndex.Identifier(
-                bundleIdentifier:  "org.swift.example",
+                bundleIdentifier: "org.swift.example",
                 path: "/documentation/path/subpath",
                 fragment: "FRAGMENT",
                 languageIdentifier: 1
             )
         )
     }
-    
+
     func testAnonymousTopicGroups() async throws {
         let navigatorIndex = try await generatedNavigatorIndex(
             for: "AnonymousTopicGroups",
             bundleIdentifier: "org.swift.docc.example"
         )
-        
+
         // The root page curates 'My Article' once without a topic group heading, and once with.
-        
+
         XCTAssertEqual(
             navigatorIndex.navigatorTree.root.dumpTree(),
             """
@@ -2162,7 +2234,7 @@ Root
         ]
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        
+
         let (_, _, context) = try await testBundleAndContext(named: "AvailabilityBetaBundle", configuration: configuration)
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
@@ -2176,7 +2248,7 @@ Root
         }
         builder.finalize()
         let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
-        
+
         // Find nodes that should have beta status
         let swiftNodes = renderIndex.interfaceLanguages["swift"] ?? []
         let betaNodes = findNodesWithBetaStatus(in: swiftNodes, isBeta: true)
@@ -2186,30 +2258,38 @@ Root
         XCTAssertEqual(betaNodes.map(\.title), ["MyClass"])
         XCTAssert(betaNodes.allSatisfy(\.isBeta))  // Sanity check
         XCTAssertEqual(nonBetaNodes.map(\.title).sorted(), ["Classes", "MyOtherClass", "MyThirdClass"])
-        XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Sanity check
+        XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false })  // Sanity check
     }
-    
+
     func testNavigatorUsesCustomDisplayName() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                // There's special logic for common Swift symbols, so use another kind of symbol here.
-                makeSymbol(id: "some-symbol-id", language: .data, kind: .dictionary, pathComponents: ["SomeDictionary"])
-            ])),
-            TextFile(name: "SomeDictionary.md", utf8Content: """
-            # ``SomeDictionary``    
-            
-            Customize the display name of this dictionary (for some reason)
-            
-            @Metadata {
-              @DisplayName("Some custom name")
-            }
-            """)
-        ])
+        let catalog = Folder(
+            name: "Something.docc",
+            content: [
+                JSONFile(
+                    name: "ModuleName.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            // There's special logic for common Swift symbols, so use another kind of symbol here.
+                            makeSymbol(id: "some-symbol-id", language: .data, kind: .dictionary, pathComponents: ["SomeDictionary"])
+                        ])),
+                TextFile(
+                    name: "SomeDictionary.md",
+                    utf8Content: """
+                        # ``SomeDictionary``    
+
+                        Customize the display name of this dictionary (for some reason)
+
+                        @Metadata {
+                          @DisplayName("Some custom name")
+                        }
+                        """)
+            ])
         let (_, context) = try await loadBundle(catalog: catalog)
-        
+
         // Navigator Index / Builder can only use real file systems
         let targetURL = try createTemporaryDirectory()
-        
+
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
@@ -2218,41 +2298,45 @@ Root
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
-            
+
             if identifier.lastPathComponent == "SomeDictionary" {
                 XCTAssertEqual(renderNode.metadata.title, "Some custom name")
                 XCTAssertEqual(renderNode.metadata.navigatorTitle?.map(\.text).joined(), "Some custom name")
             }
         }
         builder.finalize()
-        
-        XCTAssertEqual(builder.navigatorIndex?.navigatorTree.root.dumpTree(), """
-        [Root]
-        ┗╸ModuleName
-          ┣╸Dictionaries
-          ┗╸Some custom name
-        """)
-        
+
+        XCTAssertEqual(
+            builder.navigatorIndex?.navigatorTree.root.dumpTree(),
+            """
+            [Root]
+            ┗╸ModuleName
+              ┣╸Dictionaries
+              ┗╸Some custom name
+            """)
+
         let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
-        XCTAssertEqual(renderIndex.interfaceLanguages["data"]?.map(\.title), [
-            "Dictionaries",
-            "Some custom name",
-        ])
+        XCTAssertEqual(
+            renderIndex.interfaceLanguages["data"]?.map(\.title),
+            [
+                "Dictionaries",
+                "Some custom name",
+            ])
     }
-    
+
     private func findNodesWithBetaStatus(in nodes: [RenderIndex.Node], isBeta: Bool) -> [RenderIndex.Node] {
         var betaNodes: [RenderIndex.Node] = []
-        
+
         for node in nodes {
             if node.isBeta == isBeta {
                 betaNodes.append(node)
             }
-            
+
             if let children = node.children {
                 betaNodes.append(contentsOf: findNodesWithBetaStatus(in: children, isBeta: isBeta))
             }
         }
-        
+
         return betaNodes
     }
 
@@ -2293,7 +2377,7 @@ Root
 
 /// This function compares two nodes to ensure their data is equal.
 fileprivate func compare(lhs: Node, rhs: Node) -> Bool {
-    
+
     func dump(node: Node) -> [NavigatorItem] {
         var index = 0
         var queue = [node]
@@ -2306,10 +2390,10 @@ fileprivate func compare(lhs: Node, rhs: Node) -> Bool {
         }
         return queue.map { $0.item }
     }
-    
+
     let dump1 = dump(node: lhs)
     let dump2 = dump(node: rhs)
-    
+
     return dump1 == dump2
 }
 
@@ -2336,7 +2420,7 @@ fileprivate func validateTree(node: NavigatorTree.Node, validator: (NavigatorTre
 fileprivate func assertUniqueIDs(node: NavigatorTree.Node, message: String = "The tree has duplicated IDs.", file: StaticString = #filePath, line: UInt = #line) {
     var collector = Set<UInt32>()
     var brokenItemTitle = ""
-    
+
     let valid = validateTree(node: node) { (node) -> Bool in
         guard let id = node.id, !collector.contains(id) else {
             brokenItemTitle = node.item.title
@@ -2345,7 +2429,7 @@ fileprivate func assertUniqueIDs(node: NavigatorTree.Node, message: String = "Th
         collector.insert(id)
         return true
     }
-    
+
     XCTAssertTrue(valid, message + " Item title: \"\(brokenItemTitle)\".", file: file, line: line)
 }
 
@@ -2362,24 +2446,24 @@ fileprivate func buildRenderJSON(
     language: String = "swift"
 ) -> String {
     return """
-{
-  "abstract": [],
-  "hierarchy": { "paths": [] },
-  "identifier": { "interfaceLanguage": "\(language)", "url": "doc://org.swift.docc.example/documentation/test-item" },
-  "kind": "symbol",
-  "metadata": {
-    "modules": [ { "name": "MyKit" } ],
-    "roleHeading": "My Heading",
-    "title": "\(title)",
-    "symbolKind": "\(symbolKind)",
-    "fragments": \(fragments)
-  },
-  "primaryContentSections": [],
-  "references": {},
-  "schemaVersion": { "major": 1, "minor": 0, "patch": 0 },
-  "sections": [],
-  "seeAlsoSections": [],
-  "topicSections": []
-}
-"""
+        {
+          "abstract": [],
+          "hierarchy": { "paths": [] },
+          "identifier": { "interfaceLanguage": "\(language)", "url": "doc://org.swift.docc.example/documentation/test-item" },
+          "kind": "symbol",
+          "metadata": {
+            "modules": [ { "name": "MyKit" } ],
+            "roleHeading": "My Heading",
+            "title": "\(title)",
+            "symbolKind": "\(symbolKind)",
+            "fragments": \(fragments)
+          },
+          "primaryContentSections": [],
+          "references": {},
+          "schemaVersion": { "major": 1, "minor": 0, "patch": 0 },
+          "sections": [],
+          "seeAlsoSections": [],
+          "topicSections": []
+        }
+        """
 }

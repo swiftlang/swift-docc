@@ -38,7 +38,7 @@ struct RowTests {
         #expect(renderBlockContent.count == 1)
         #expect(renderBlockContent.first == .row(.init(numberOfColumns: 0, columns: [])))
     }
-    
+
     @Test func unknownArguments() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
@@ -59,21 +59,25 @@ struct RowTests {
         }
 
         #expect(row != nil)
-        #expect(diagnostics == [
-            "1: warning – org.swift.docc.UnknownArgument",
-            "2: warning – org.swift.docc.UnknownArgument",
-            "6: warning – org.swift.docc.HasArgument.size.ConversionFailed",
-        ])
+        #expect(
+            diagnostics == [
+                "1: warning – org.swift.docc.UnknownArgument",
+                "2: warning – org.swift.docc.UnknownArgument",
+                "6: warning – org.swift.docc.HasArgument.size.ConversionFailed",
+            ])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 6,
-            columns: [
-                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
-                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
-                RenderBlockContent.Row.Column(size: 4, alignment: .leading, content: ["Hello there."])
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 6,
+                        columns: [
+                            RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
+                            RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
+                            RenderBlockContent.Row.Column(size: 4, alignment: .leading, content: ["Hello there."])
+                        ]
+                    )))
     }
 
     @Test func unknownArgumentInNestedRow() async throws {
@@ -96,7 +100,7 @@ struct RowTests {
         #expect(row != nil)
         #expect(diagnostics == ["6: warning – org.swift.docc.UnknownArgument"])
     }
-    
+
     @Test func invalidChildrenNestedRow() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
@@ -111,17 +115,21 @@ struct RowTests {
         }
 
         #expect(row != nil)
-        #expect(diagnostics == [
-            "1: warning – org.swift.docc.HasAtLeastOne<Row, Column>",
-            "1: warning – org.swift.docc.Row.UnexpectedContent",
-            "2: warning – org.swift.docc.HasOnlyKnownDirectives",
-        ])
+        #expect(
+            diagnostics == [
+                "1: warning – org.swift.docc.HasAtLeastOne<Row, Column>",
+                "1: warning – org.swift.docc.Row.UnexpectedContent",
+                "2: warning – org.swift.docc.HasOnlyKnownDirectives",
+            ])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 0,
-            columns: []
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 0,
+                        columns: []
+                    )))
     }
 
     @Test func invalidChildrenNestedColumn() async throws {
@@ -141,12 +149,15 @@ struct RowTests {
         #expect(diagnostics == ["3: warning – org.swift.docc.HasOnlyKnownDirectives"])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 1,
-            columns: [
-                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: [])
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 1,
+                        columns: [
+                            RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: [])
+                        ]
+                    )))
     }
 
     @Test func emptyColumn() async throws {
@@ -154,11 +165,11 @@ struct RowTests {
             """
             @Row {
                 @Column
-            
+
                 @Column(size: 3) {
                     This is a wiiiiddde column.
                 }
-            
+
                 @Column
             }
             """
@@ -168,22 +179,25 @@ struct RowTests {
         #expect(diagnostics == [])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 5,
-            columns: [
-                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 5,
+                        columns: [
+                            RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
 
-                RenderBlockContent.Row.Column(
-                    size: 3,
-                    alignment: .leading,
-                    content: ["This is a wiiiiddde column."]
-                ),
+                            RenderBlockContent.Row.Column(
+                                size: 3,
+                                alignment: .leading,
+                                content: ["This is a wiiiiddde column."]
+                            ),
 
-                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
-            ]
-        )))
+                            RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: []),
+                        ]
+                    )))
     }
-    
+
     @Test func nestedRowAndColumns() async throws {
         let (renderBlockContent, diagnostics, row) = try await parseDirective(Row.self) {
             """
@@ -193,7 +207,7 @@ struct RowTests {
                         @Column {
                             Hello
                         }
-            
+
                         @Column {
                             There
                         }
@@ -207,24 +221,28 @@ struct RowTests {
         #expect(diagnostics == [])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 1,
-            columns: [
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .leading,
-                    content: [
-                        .row(RenderBlockContent.Row(
-                            numberOfColumns: 2,
-                            columns: [
-                                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello"]),
-                                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["There"]),
-                            ]
-                        ))
-                    ]
-                )
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 1,
+                        columns: [
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .leading,
+                                content: [
+                                    .row(
+                                        RenderBlockContent.Row(
+                                            numberOfColumns: 2,
+                                            columns: [
+                                                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello"]),
+                                                RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["There"]),
+                                            ]
+                                        ))
+                                ]
+                            )
+                        ]
+                    )))
     }
 
     @Test func columnWithAlignmentOnly() async throws {
@@ -242,16 +260,19 @@ struct RowTests {
         #expect(diagnostics == [])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 1,
-            columns: [
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .center,
-                    content: ["Centered content"]
-                )
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 1,
+                        columns: [
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .center,
+                                content: ["Centered content"]
+                            )
+                        ]
+                    )))
     }
 
     @Test func columnWithSizeAndAlignment() async throws {
@@ -269,16 +290,19 @@ struct RowTests {
         #expect(diagnostics == [])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 2,
-            columns: [
-                RenderBlockContent.Row.Column(
-                    size: 2,
-                    alignment: .trailing,
-                    content: ["Trailing aligned"]
-                )
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 2,
+                        columns: [
+                            RenderBlockContent.Row.Column(
+                                size: 2,
+                                alignment: .trailing,
+                                content: ["Trailing aligned"]
+                            )
+                        ]
+                    )))
     }
 
     @Test func columnWithoutAlignment() async throws {
@@ -296,16 +320,19 @@ struct RowTests {
         #expect(diagnostics == [])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 2,
-            columns: [
-                RenderBlockContent.Row.Column(
-                    size: 2,
-                    alignment: .leading,
-                    content: ["Default alignment"]
-                )
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 2,
+                        columns: [
+                            RenderBlockContent.Row.Column(
+                                size: 2,
+                                alignment: .leading,
+                                content: ["Default alignment"]
+                            )
+                        ]
+                    )))
     }
 
     @Test(arguments: [
@@ -388,26 +415,29 @@ struct RowTests {
         #expect(diagnostics == [])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 3,
-            columns: [
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .leading,
-                    content: ["Left aligned"]
-                ),
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .center,
-                    content: ["Center aligned"]
-                ),
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .leading,
-                    content: ["Default aligned"]
-                )
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 3,
+                        columns: [
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .leading,
+                                content: ["Left aligned"]
+                            ),
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .center,
+                                content: ["Center aligned"]
+                            ),
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .leading,
+                                content: ["Default aligned"]
+                            )
+                        ]
+                    )))
     }
 
     @Test func multipleColumnsWithInvalidAlignment() async throws {
@@ -433,26 +463,29 @@ struct RowTests {
         #expect(diagnostics == ["6: warning – org.swift.docc.HasArgument.alignment.ConversionFailed"])
 
         #expect(renderBlockContent.count == 1)
-        #expect(renderBlockContent.first == .row(RenderBlockContent.Row(
-            numberOfColumns: 3,
-            columns: [
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .leading,
-                    content: ["Valid"]
-                ),
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .leading,
-                    content: ["Invalid"]
-                ),
-                RenderBlockContent.Row.Column(
-                    size: 1,
-                    alignment: .trailing,
-                    content: ["Valid"]
-                )
-            ]
-        )))
+        #expect(
+            renderBlockContent.first
+                == .row(
+                    RenderBlockContent.Row(
+                        numberOfColumns: 3,
+                        columns: [
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .leading,
+                                content: ["Valid"]
+                            ),
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .leading,
+                                content: ["Invalid"]
+                            ),
+                            RenderBlockContent.Row.Column(
+                                size: 1,
+                                alignment: .trailing,
+                                content: ["Valid"]
+                            )
+                        ]
+                    )))
     }
 
 }

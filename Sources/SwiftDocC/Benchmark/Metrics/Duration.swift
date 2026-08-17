@@ -25,7 +25,7 @@ extension Benchmark {
 
         private let id: String
         private var startTime = 0.0
-        
+
         /// Creates a new instance with the given name.
         ///
         /// Since this metric can be used multiple times to measure
@@ -37,18 +37,18 @@ extension Benchmark {
         public init(id: String) {
             self.id = id
         }
-        
+
         public func begin() {
             startTime = ProcessInfo.processInfo.systemUptime
         }
-        
+
         public func end() {
             // We need to multiply the resulting duration by 1000 to store
             // a value in milliseconds as an integer to avoid floating point
             // encoding artifacts.
             result = .duration((ProcessInfo.processInfo.systemUptime - startTime))
         }
-        
+
         /// Convenience init to use when the duration is tracked elsewhere.
         /// - Parameter id: The id for the metric.
         /// - Parameter duration: The duration value in seconds to be logged.

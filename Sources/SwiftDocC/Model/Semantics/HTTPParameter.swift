@@ -16,7 +16,7 @@ public struct HTTPParameter {
     /// The name of the parameter.
     public var name: String
     /// The source of the parameter, such as "query" or "path".
-    /// 
+    ///
     /// Value might be undefined initially when first extracted from markdown.
     public var source: String?
     /// The content that describe the parameter.
@@ -25,7 +25,7 @@ public struct HTTPParameter {
     public var symbol: SymbolGraph.Symbol?
     /// The required status of the parameter.
     public var required: Bool
-    
+
     /// Initialize a value to describe documentation about a parameter for an HTTP request symbol.
     /// - Parameters:
     ///   - name: The name of this parameter.

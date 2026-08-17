@@ -21,10 +21,10 @@ private import WinSDK
 #endif
 
 #if canImport(os)
-    import os
-    private let logger = Logger(subsystem: "org.swift.docc", category: "FileServer")
+import os
+private let logger = Logger(subsystem: "org.swift.docc", category: "FileServer")
 #else
-    private let logger = NoOpLoggerShim()
+private let logger = NoOpLoggerShim()
 #endif
 
 fileprivate let slashCharSet = CharacterSet(charactersIn: "/")
@@ -35,13 +35,13 @@ fileprivate let slashCharSet = CharacterSet(charactersIn: "/")
  `WebView` via a custom `URLProtocol`.
  */
 public class FileServer {
-    
+
     /// The base URL of the server. Example: `http://www.example.com`.
     public let baseURL: URL
-    
+
     /// The list of providers from which files are served.
     private var providers: [String: any FileServerProvider] = [:]
-    
+
     /**
      Initialize a FileServer instance with a base URL.
      - parameter baseURL: The base URL to use.
@@ -49,9 +49,7 @@ public class FileServer {
     public init(baseURL: URL) {
         self.baseURL = baseURL.absoluteURL
     }
-    
-    
-    
+
     /// Registers a `FileServerProvider` to a `FileServer` objects which can be used to provide content
     /// to a local web page served by local content.
     /// - Parameters:
@@ -65,22 +63,23 @@ public class FileServer {
         providers[trimmed] = provider
         return true
     }
-    
+
     /**
      Returns the data for a given URL.
      */
     public func data(for url: URL) -> Data? {
-        let providerKey = providers.keys.sorted { (l, r) -> Bool in
-            l.count > r.count
+        let providerKey =
+            providers.keys.sorted { (l, r) -> Bool in
+                l.count > r.count
             }.filter { (path) -> Bool in
                 return url.path.trimmingCharacters(in: slashCharSet).hasPrefix(path)
-            }.first ?? "" //in case missing an exact match, get the root one
+            }.first ?? ""  //in case missing an exact match, get the root one
         guard let provider = providers[providerKey] else {
             fatalError("A provider has not been passed to a FileServer.")
         }
         return provider.data(for: url.path.trimmingCharacters(in: slashCharSet).removingPrefix(providerKey))
     }
-    
+
     /**
      Returns a tuple with a response and the given data.
      - Parameter request: The request coming from a web client.
@@ -92,7 +91,7 @@ public class FileServer {
         }
         var data: Data? = nil
         let response: URLResponse
-        
+
         let mimeType: String
 
         // We need to make sure that the path extension is for an actual file and not a symbol name which is a false positive
@@ -100,32 +99,32 @@ public class FileServer {
         if url.pathExtension.isAlphanumeric && !url.lastPathComponent.isSwiftEntity {
             data = self.data(for: url)
             mimeType = FileServer.mimeType(for: url.pathExtension)
-        } else { // request is for a path, we need to fake a redirect here
+        } else {  // request is for a path, we need to fake a redirect here
             if url.pathComponents.isEmpty {
                 logger.log("Tried to load an invalid URL: \(url.absoluteString).\nFalling back to serve index.html.")
             }
             mimeType = "text/html"
             data = self.data(for: baseURL.appendingPathComponent("/index.html"))
         }
-        
+
         if let data {
             response = URLResponse(url: url, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
         } else {
             response = URLResponse(url: url, mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
         }
-        
+
         return (response, data)
     }
-    
+
     /// Returns the MIME type based on file extension, best guess.
     internal static func mimeType(for ext: String) -> String {
         // RFC 2046 states in section 4.5.1:
         // The "octet-stream" subtype is used to indicate that a body contains arbitrary binary data.
         // https://stackoverflow.com/questions/1176022/unknown-file-type-mime
         let defaultMimeType = "application/octet-stream"
-        
+
         #if os(macOS)
-        
+
         return UTType(filenameExtension: ext)?.preferredMIMEType ?? defaultMimeType
 
         #elseif os(Windows)
@@ -133,7 +132,8 @@ public class FileServer {
         return ".\(ext)".withCString(encodedAs: UTF16.self) {
             var pwszMimeOut: UnsafeMutablePointer<WCHAR>?
             guard FindMimeFromData(nil, $0, nil, 0, nil, DWORD(FMFD_URLASFILENAME), &pwszMimeOut, 0) >= 0,
-                    let pwszMimeOut else {
+                let pwszMimeOut
+            else {
                 return defaultMimeType
             }
             defer { CoTaskMemFree(pwszMimeOut) }
@@ -141,7 +141,7 @@ public class FileServer {
         }
 
         #else
-        
+
         let mimeTypes = [
             "html": "text/html",
             "htm": "text/html",
@@ -152,27 +152,27 @@ public class FileServer {
             "svg": "image/svg+xml",
             "gif": "image/gif",
             "js": "application/javascript",
-            "json": "application/json"]
-        
+            "json": "application/json",
+        ]
+
         return mimeTypes[ext] ?? defaultMimeType
-        
+
         #endif
     }
 }
-
 
 /**
  A protocol used for serving content to a `FileServer`. The data can then come from multiple sources such as:
  - disk
  - remote source
  - in memory storage
- 
+
  This abstraction lets a `FileServer` provide content from multiple types of sources at the same time.
  */
 public protocol FileServerProvider {
     /**
      Retrieve the data linked to a given path based on the `baseURL`.
-     
+
      - parameter path: The path.
      - returns: The data matching the url, if possible.
      */
@@ -180,14 +180,14 @@ public protocol FileServerProvider {
 }
 
 public class FileSystemServerProvider: FileServerProvider {
-    
+
     private(set) var directoryURL: URL
     private let fileManager: any FileManagerProtocol
-    
+
     public convenience init?(directoryPath: String) {
         self.init(directoryPath: directoryPath, fileManager: FileManager.default)
     }
-    
+
     package init?(directoryPath: String, fileManager: any FileManagerProtocol) {
         guard fileManager.directoryExists(atPath: directoryPath) else {
             return nil
@@ -195,19 +195,19 @@ public class FileSystemServerProvider: FileServerProvider {
         self.directoryURL = URL(fileURLWithPath: directoryPath)
         self.fileManager = fileManager
     }
-    
+
     public func data(for path: String) -> Data? {
         let finalURL = directoryURL.appendingPathComponent(path)
         return try? fileManager.contents(of: finalURL)
     }
-    
+
 }
 
 public class MemoryFileServerProvider: FileServerProvider {
-    
+
     /// Files to serve based on relative path.
     private var files = [String: Data]()
-    
+
     private let fileManager: any FileManagerProtocol
 
     /// Creates a memory file server provider with the default file manager.
@@ -221,8 +221,7 @@ public class MemoryFileServerProvider: FileServerProvider {
     package init(fileManager: any FileManagerProtocol) {
         self.fileManager = fileManager
     }
-    
-    
+
     /// Add a file to the file server.
     ///
     /// - Parameters:
@@ -239,7 +238,7 @@ public class MemoryFileServerProvider: FileServerProvider {
         files[trimmed] = data
         return true
     }
-    
+
     /// Retrieve the data that the server serves for the given path.
     ///
     /// - Parameter path: The path to a file served by the server.
@@ -251,7 +250,7 @@ public class MemoryFileServerProvider: FileServerProvider {
         #endif
         return files[trimmed]
     }
-    
+
     /// Adds files from the `source` directory to the `destination` directory in the file server.
     ///
     /// - Parameters:
@@ -260,10 +259,10 @@ public class MemoryFileServerProvider: FileServerProvider {
     ///   - recursive: Whether or not to recursively add files from the source directory.
     public func addFiles(inFolder source: String, inSubPath destination: String = "", recursive: Bool = true) {
         guard fileManager.directoryExists(atPath: source) else { return }
-        
+
         let trimmedSubPath = destination.trimmingCharacters(in: slashCharSet)
         let sourceURL = URL(fileURLWithPath: source)
-        
+
         for fileURL in fileManager.recursiveFiles(startingPoint: sourceURL, options: []) {
             let relativePath = fileURL.path.removingPrefix(sourceURL.path).removingPrefix("/")
             if recursive == false && relativePath.contains("/") { continue }
@@ -271,12 +270,12 @@ public class MemoryFileServerProvider: FileServerProvider {
             addFile(path: "/\(trimmedSubPath)/\(relativePath)", data: data)
         }
     }
-    
+
     /// Remove all files served by the server.
     public func removeAllFiles() {
         files.removeAll()
     }
-    
+
     /// Removes all files served by the server matching a given subpath.
     ///
     /// - Parameter directory: The path to a directory to remove
@@ -291,7 +290,7 @@ public class MemoryFileServerProvider: FileServerProvider {
             files.removeValue(forKey: key)
         }
     }
-    
+
 }
 
 /// Checks whether the given string is a known entity definition which might interfere with the rendering engine while dealing with URLs.
@@ -300,19 +299,18 @@ fileprivate func isKnownEntityDefinition(_ identifier: String) -> Bool {
 }
 
 fileprivate extension String {
-    
+
     /// Removes the prefix of a string.
     func removingPrefix(_ prefix: String) -> String {
         guard hasPrefix(prefix) else { return self }
         return String(dropFirst(prefix.count))
     }
 
-
     /// Check that a given string is alphanumeric.
     var isAlphanumeric: Bool {
         return !self.isEmpty && self.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) == nil
     }
-    
+
     /// Check that a given string is a Swift entity definition.
     var isSwiftEntity: Bool {
         let swiftEntityPattern = #"(?<=\-)swift\..*"#

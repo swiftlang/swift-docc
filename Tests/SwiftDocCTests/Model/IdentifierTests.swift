@@ -21,10 +21,10 @@ class IdentifierTests: XCTestCase {
         // Test trimming invalid characters
         XCTAssertEqual(urlReadableFragment(" ä ö "), "ä-ö")
         XCTAssertEqual(urlReadableFragment(" asdö  "), "asdö")
-        
+
         // Test lowercasing
         XCTAssertEqual(urlReadableFragment(" ASD  "), "ASD")
-        
+
         // Test replacing invalid characters
         XCTAssertEqual(urlReadableFragment(" ASD ASD  "), "ASD-ASD")
         XCTAssertEqual(urlReadableFragment(" 3äêòNS  "), "3äêòNS")
@@ -36,21 +36,21 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(urlReadableFragment(" This is a 'test' "), "This-is-a-test")
         XCTAssertEqual(urlReadableFragment(" This is a \"test\" "), "This-is-a-test")
         XCTAssertEqual(urlReadableFragment(" This is a `test` "), "This-is-a-test")
-        
+
         // Test replacing complete sentence.
         XCTAssertEqual(urlReadableFragment("Test replacing 'complete' sentence"), "Test-replacing-complete-sentence")
-        
+
         XCTAssertEqual(urlReadableFragment("💻"), "💻")
     }
-    
+
     func testURLReadableFragmentTwice() {
         XCTAssertEqual(urlReadableFragment(urlReadableFragment("")), "")
 
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ä ö ")), "ä-ö")
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" asdö  ")), "asdö")
-        
+
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ASD  ")), "ASD")
-        
+
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ASD ASD  ")), "ASD-ASD")
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" 3äêòNS  ")), "3äêòNS")
 
@@ -59,51 +59,51 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a 'test' ")), "This-is-a-test")
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a \"test\" ")), "This-is-a-test")
         XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a `test` ")), "This-is-a-test")
-        
+
         XCTAssertEqual(urlReadableFragment(urlReadableFragment("Test replacing 'complete' sentence")), "Test-replacing-complete-sentence")
-        
+
         XCTAssertEqual(urlReadableFragment(urlReadableFragment("💻")), "💻")
     }
-    
+
     func testReusingReferences() {
         let bundleID: DocumentationBundle.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "Cache for this bundle shouldn't exist because caching is not enabled by default")
-        
+
         // Add one reference
         ResolvedTopicReference.enableReferenceCaching(for: bundleID)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
-        
+
         // Add the same reference repeatedly
         _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
-        
+
         _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should still only have one cached reference because the same reference was created repeatedly")
-        
+
         // Add another reference
         _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/other-page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 2, "Should have cached another reference because two different references with this bundle identifier has been created")
-        
+
         // Purge and repeat
         ResolvedTopicReference.purgePool(for: bundleID)
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "Cache for this bundle shouldn't have been deleted because the pool was purged")
-        
+
         ResolvedTopicReference.enableReferenceCaching(for: bundleID)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
-        
+
         _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
     }
-    
+
     func testReferencesAreNotCachedByDefault() {
         let bundleID: DocumentationBundle.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "References for this bundle shouldn't exist because caching is not enabled by default")
-        
+
         _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "After creating a reference in this bundle, references still shouldn't exist because caching is not enabled by default")
     }
-    
+
     func testReferenceInitialPathComponents() {
         let ref1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
         XCTAssertEqual(ref1.pathComponents, ["/"])
@@ -112,7 +112,7 @@ class IdentifierTests: XCTestCase {
         let ref3 = ResolvedTopicReference(bundleID: "bundle", path: "/MyClass/myFunction", sourceLanguage: .swift)
         XCTAssertEqual(ref3.pathComponents, ["/", "MyClass", "myFunction"])
     }
-    
+
     func testReferenceUpdatedPathComponents() {
         var ref1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
         XCTAssertEqual(ref1.pathComponents, ["/"])
@@ -132,7 +132,7 @@ class IdentifierTests: XCTestCase {
         let ref3 = ResolvedTopicReference(bundleID: "bundle", path: "/MyClass/myFunction", sourceLanguage: .swift)
         XCTAssertEqual(ref3.absoluteString, "doc://bundle/MyClass/myFunction")
     }
-    
+
     func testReferenceUpdatedAbsoluteString() {
         var ref1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
         XCTAssertEqual(ref1.absoluteString, "doc://bundle/")
@@ -143,34 +143,34 @@ class IdentifierTests: XCTestCase {
         ref1 = ref1.removingLastPathComponent()
         XCTAssertEqual(ref1.absoluteString, "doc://bundle/MyClass")
     }
-    
+
     func testResolvedTopicReferenceDoesNotCopyStorageIfNotModified() {
         let reference1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
-         let reference2 = reference1
+        let reference2 = reference1
 
-         XCTAssertEqual(
-             ObjectIdentifier(reference1._storage),
-             ObjectIdentifier(reference2._storage)
-         )
+        XCTAssertEqual(
+            ObjectIdentifier(reference1._storage),
+            ObjectIdentifier(reference2._storage)
+        )
     }
-    
+
     func testWithSourceLanguages() {
         let swiftReference = ResolvedTopicReference(
             bundleID: "bundle",
             path: "/",
             sourceLanguage: .swift
         )
-        
+
         XCTAssertEqual(
             swiftReference.withSourceLanguages([.objectiveC]).sourceLanguages,
             [.objectiveC]
         )
-        
+
         XCTAssertEqual(
             swiftReference.withSourceLanguages([.swift]).sourceLanguages,
             [.swift]
         )
-        
+
         XCTAssertEqual(
             swiftReference.withSourceLanguages([.objectiveC, .swift]).sourceLanguages,
             Set([.swift, .objectiveC])

@@ -15,16 +15,16 @@ import Markdown
 class DirectiveMirrorTests: XCTestCase {
     func testReflectDisplayNameDirective() {
         let reflectedDirective = DirectiveMirror(reflecting: DisplayName.self).reflectedDirective
-        
+
         XCTAssertEqual(reflectedDirective.name, "DisplayName")
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssertEqual(reflectedDirective.arguments.count, 2)
-        
+
         XCTAssertEqual(reflectedDirective.arguments["name"]?.unnamed, true)
         XCTAssertEqual(reflectedDirective.arguments["name"]?.required, true)
         XCTAssertEqual(reflectedDirective.arguments["name"]?.labelDisplayName, "_ name")
         XCTAssertEqual(reflectedDirective.arguments["name"]?.propertyLabel, "name")
-        
+
         XCTAssertEqual(reflectedDirective.arguments["style"]?.unnamed, false)
         XCTAssertEqual(reflectedDirective.arguments["style"]?.required, false)
         XCTAssertEqual(reflectedDirective.arguments["style"]?.labelDisplayName, "style")
@@ -34,26 +34,26 @@ class DirectiveMirrorTests: XCTestCase {
 
     func testReflectTitleHeadingDirective() {
         let reflectedDirective = DirectiveMirror(reflecting: TitleHeading.self).reflectedDirective
-        
+
         XCTAssertEqual(reflectedDirective.name, "TitleHeading")
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssertEqual(reflectedDirective.arguments.count, 1)
-        
+
         XCTAssertEqual(reflectedDirective.arguments["heading"]?.unnamed, true)
         XCTAssertEqual(reflectedDirective.arguments["heading"]?.required, true)
         XCTAssertEqual(reflectedDirective.arguments["heading"]?.labelDisplayName, "_ heading")
         XCTAssertEqual(reflectedDirective.arguments["heading"]?.propertyLabel, "heading")
     }
-    
+
     func testReflectMetadataDirective() {
         let reflectedDirective = DirectiveMirror(reflecting: Metadata.self).reflectedDirective
-        
+
         XCTAssertEqual(reflectedDirective.name, "Metadata")
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssert(reflectedDirective.arguments.isEmpty)
-        
+
         XCTAssertEqual(reflectedDirective.childDirectives.count, 13)
-        
+
         XCTAssertEqual(
             reflectedDirective.childDirectives["DocumentationExtension"]?.propertyLabel,
             "documentationOptions"
@@ -70,7 +70,7 @@ class DirectiveMirrorTests: XCTestCase {
             reflectedDirective.childDirectives["DocumentationExtension"]?.storedAsOptional,
             true
         )
-        
+
         XCTAssertEqual(
             reflectedDirective.childDirectives["TechnologyRoot"]?.propertyLabel,
             "technologyRoot"
@@ -88,42 +88,42 @@ class DirectiveMirrorTests: XCTestCase {
             true
         )
     }
-    
+
     func testReflectIntroDirective() {
         let reflectedDirective = DirectiveMirror(reflecting: Intro.self).reflectedDirective
-        
+
         XCTAssertEqual(reflectedDirective.name, "Intro")
-        
+
         XCTAssert(reflectedDirective.allowsMarkup)
         XCTAssertFalse(reflectedDirective.requiresMarkup)
-        
+
         XCTAssertEqual(reflectedDirective.arguments.count, 1)
         XCTAssertEqual(reflectedDirective.arguments["title"]?.unnamed, false)
         XCTAssertEqual(reflectedDirective.arguments["title"]?.required, true)
         XCTAssertEqual(reflectedDirective.arguments["title"]?.labelDisplayName, "title")
         XCTAssertEqual(reflectedDirective.arguments["title"]?.propertyLabel, "title")
         XCTAssertEqual(reflectedDirective.arguments["title"]?.storedAsOptional, false)
-        
+
         XCTAssertEqual(reflectedDirective.childDirectives.count, 2)
         XCTAssertEqual(reflectedDirective.childDirectives["Video"]?.propertyLabel, "video")
         XCTAssertEqual(reflectedDirective.childDirectives["Video"]?.storedAsOptional, true)
         XCTAssertEqual(reflectedDirective.childDirectives["Video"]?.requirements, .zeroOrOne)
-        
+
         XCTAssertEqual(reflectedDirective.childDirectives["Image"]?.propertyLabel, "image")
         XCTAssertEqual(reflectedDirective.childDirectives["Image"]?.storedAsOptional, true)
         XCTAssertEqual(reflectedDirective.childDirectives["Image"]?.requirements, .zeroOrOne)
     }
-    
+
     func testReflectStackDirective() {
         let reflectedDirective = DirectiveMirror(reflecting: Stack.self).reflectedDirective
-        
+
         XCTAssertEqual(reflectedDirective.name, "Stack")
-        
+
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssertFalse(reflectedDirective.requiresMarkup)
-        
+
         XCTAssert(reflectedDirective.arguments.isEmpty)
-        
+
         XCTAssertEqual(reflectedDirective.childDirectives.count, 1)
         XCTAssertEqual(reflectedDirective.childDirectives["ContentAndMedia"]?.propertyLabel, "contentAndMedia")
         XCTAssertEqual(reflectedDirective.childDirectives["ContentAndMedia"]?.storedAsOptional, false)
@@ -148,12 +148,12 @@ private extension RandomAccessCollection<DirectiveMirror.ReflectedArgument> {
                 return false
             }
         }
-        
+
         guard let match else {
             XCTFail("Expected argument named \(name.singleQuoted)", file: file, line: line)
             return nil
         }
-        
+
         return match
     }
 }
@@ -168,12 +168,12 @@ private extension RandomAccessCollection<DirectiveMirror.ReflectedChildDirective
         let match = first { childDirective in
             return childDirective.name == name
         }
-        
+
         guard let match else {
             XCTFail("Expected child directive named \(name.singleQuoted)", file: file, line: line)
             return nil
         }
-        
+
         return match
     }
 }

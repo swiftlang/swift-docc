@@ -17,15 +17,15 @@ struct MiscasedSectionHeadingTests {
     @Test
     func warnsAboutLowercaseSeeAlsoHeading() throws {
         let markupSource = """
-        # Title
-        Abstract
+            # Title
+            Abstract
 
-        ## Overview
-        An overview
+            ## Overview
+            An overview
 
-        ## See also
-        - ``RelatedSymbol``
-        """
+            ## See also
+            - ``RelatedSymbol``
+            """
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
         var checker = MiscasedSectionHeading(sourceFile: nil)
         checker.visit(document)
@@ -83,21 +83,21 @@ struct MiscasedSectionHeadingTests {
     @Test
     func doesNotWarnForExpectedCasing() {
         let markupSource = """
-        # Title
-        Abstract
+            # Title
+            Abstract
 
-        ## Overview
-        An overview
+            ## Overview
+            An overview
 
-        ## Discussion
-        A discussion
+            ## Discussion
+            A discussion
 
-        ## Topics
-        - ``A``
+            ## Topics
+            - ``A``
 
-        ## See Also
-        - ``B``
-        """
+            ## See Also
+            - ``B``
+            """
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
         var checker = MiscasedSectionHeading(sourceFile: nil)
         checker.visit(document)
@@ -108,12 +108,12 @@ struct MiscasedSectionHeadingTests {
     @Test
     func doesNotWarnAboutNonLevel2Headings() {
         let markupSource = """
-        # see also
-        Abstract
+            # see also
+            Abstract
 
-        ### see also
-        Sub-section
-        """
+            ### see also
+            Sub-section
+            """
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
         var checker = MiscasedSectionHeading(sourceFile: nil)
         checker.visit(document)

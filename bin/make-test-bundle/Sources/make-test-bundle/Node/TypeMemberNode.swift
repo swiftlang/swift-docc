@@ -15,20 +15,20 @@ class TypeMemberNode {
     enum Kind: String {
         case instance, `static`, `class`, `interface`
     }
-    
+
     enum AccessLevel: String {
         case `public`, `open`
         case `default` = ""
     }
-    
+
     class func keyword() -> String { fatalError() }
-    
+
     static var counter = 0
     let name: String
     let bundle: OutputBundle
     let kind: Kind
     let level: AccessLevel
-    
+
     init(kind: Kind, level: AccessLevel, bundle: OutputBundle) {
         Self.counter += 1
         let word = words.next()
@@ -37,6 +37,6 @@ class TypeMemberNode {
         self.level = level
         self.bundle = bundle
     }
-    
+
     func source() -> String { fatalError() }
 }

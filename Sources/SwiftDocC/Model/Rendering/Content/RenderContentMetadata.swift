@@ -36,7 +36,7 @@ public struct RenderContentMetadata: Equatable, Codable {
 }
 
 extension RenderContentMetadata {
-    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return (title ?? "")
             + (abstract?.rawIndexableTextContent(references: references) ?? "")
     }

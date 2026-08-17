@@ -12,14 +12,14 @@ public import Foundation
 private import SymbolKit
 
 /// A type that generates URLs that you use to link to rendered pages.
-/// 
+///
 /// Compared to a ``NodeURLGenerator``, this type also supports resolving presentation URLs via external resolvers.
 public struct PresentationURLGenerator {
     /// The documentation context the URL generator queries for external reference resolvers.
     var context: DocumentationContext
     /// The URL generator for in-bundle references.
     let urlGenerator: NodeURLGenerator
-    
+
     /// Creates a new URL generator.
     ///
     /// - Parameters:
@@ -29,12 +29,12 @@ public struct PresentationURLGenerator {
         self.context = context
         self.urlGenerator = NodeURLGenerator(baseURL: baseURL)
     }
-    
+
     @available(*, deprecated, renamed: "presentationURLForReference(_:)", message: "Use 'presentationURLForReference(_:)' instead. This dep...")
     public func presentationURLForReference(_ reference: ResolvedTopicReference, requireRelativeURL: Bool) -> URL {
         return presentationURLForReference(reference)
     }
-    
+
     /// Returns the URL for linking to the rendered page of a given reference.
     ///
     /// - Parameters:

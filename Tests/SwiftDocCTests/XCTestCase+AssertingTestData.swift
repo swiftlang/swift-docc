@@ -15,7 +15,7 @@ import Markdown
 import DocCCommon
 
 extension XCTestCase {
-    
+
     /// Asserts that a rendered node's content matches expectations.
     func assertExpectedContent(
         _ renderNode: RenderNode,
@@ -47,7 +47,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             (renderNode.primaryContentSections.last as? ContentRenderSection)?.content.paragraphText,
             expectedDiscussionSection,
@@ -55,7 +55,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             renderNode.identifier.sourceLanguage.id,
             expectedSourceLanguage,
@@ -63,7 +63,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         let attributesSection = renderNode.primaryContentSections.compactMap { $0 as? AttributesRenderSection }.first
         XCTAssertEqual(
             attributesSection?.attributes,
@@ -72,7 +72,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             (renderNode.primaryContentSections.first as? DeclarationsRenderSection)?
                 .declarations
@@ -83,28 +83,28 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             (renderNode.primaryContentSections.compactMap { $0 as? RESTEndpointRenderSection })
                 .flatMap(\.tokens)
                 .map(\.text),
-            expectedEndpointTokens ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
+            expectedEndpointTokens ?? [],  // compactMap gives an empty [], but should treat it as match for nil, too
             failureMessageForField("rest endpoint tokens"),
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             (renderNode.primaryContentSections.compactMap { $0 as? RESTParametersRenderSection })
                 .flatMap { section in
                     section.parameters.map { "\($0.name)@\(section.source.rawValue)" }
                 },
-            expectedHTTPParameters ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
+            expectedHTTPParameters ?? [],  // compactMap gives an empty [], but should treat it as match for nil, too
             failureMessageForField("rest parameters"),
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             (renderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection)?
                 .mimeType,
@@ -113,7 +113,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             (renderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection)?
                 .parameters?
@@ -123,17 +123,17 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             (renderNode.primaryContentSections.compactMap { $0 as? RESTResponseRenderSection })
                 .flatMap(\.responses)
                 .map(\.status),
-            expectedHTTPResponses ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
+            expectedHTTPResponses ?? [],  // compactMap gives an empty [], but should treat it as match for nil, too
             failureMessageForField("rest responses"),
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             renderNode.metadata.navigatorTitle?.map(\.text).joined(),
             expectedNavigatorTitle,
@@ -141,7 +141,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             renderNode.metadata.title,
             expectedTitle,
@@ -149,7 +149,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             renderNode.metadata.symbolKind,
             expectedSymbolKind,
@@ -157,7 +157,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             renderNode.topicSections.flatMap(\.identifiers),
             expectedTopicSectionIdentifiers,
@@ -165,7 +165,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         if let expectedSeeAlsoSectionIdentifiers {
             XCTAssertEqual(
                 renderNode.seeAlsoSections.flatMap(\.identifiers),
@@ -175,7 +175,7 @@ extension XCTestCase {
                 line: line
             )
         }
-        
+
         XCTAssertEqual(
             renderNode.references.map(\.value).compactMap { reference in
                 (reference as? TopicRenderReference)?.title
@@ -185,7 +185,7 @@ extension XCTestCase {
             file: file,
             line: line
         )
-        
+
         XCTAssertEqual(
             renderNode.references.map(\.value).compactMap { reference in
                 (reference as? TopicRenderReference)?.fragments?.map(\.text).joined()

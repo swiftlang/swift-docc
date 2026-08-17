@@ -58,7 +58,7 @@ class DirectiveIndexTests: XCTestCase {
             ]
         )
     }
-    
+
     func testDirectiveIndexHasExpectedRenderableDirectives() {
         XCTAssertEqual(
             DirectiveIndex.shared.renderableDirectives.keys.sorted(),

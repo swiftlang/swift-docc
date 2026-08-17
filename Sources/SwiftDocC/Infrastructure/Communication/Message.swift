@@ -16,19 +16,19 @@ public struct Message {
     ///
     /// Clients can use the type of the message to determine which handler to invoke.
     public var type: MessageType
-    
+
     /// The payload of the message.
     ///
     /// The data associated with a message is encodable, so a communication bridge can encode it when a client sends a
     /// message.
     public var data: AnyCodable?
-    
+
     /// An identifier for the message.
     ///
     /// The identifier helps clients keep track of which messages they've received, and messages for which they're awaiting a
     /// response in a request-response model.
     public var identifier: String?
-    
+
     /// Creates a message given a type, a data payload, and an identifier.
     /// - Parameters:
     ///   - type: The type of the message.
@@ -39,19 +39,19 @@ public struct Message {
         self.data = data
         self.identifier = identifier
     }
-    
+
     /// Generates a unique string identifier for a message.
     public static func generateUUID() -> String {
         return UUID().uuidString
     }
-    
+
     /// Creates a message that indicates a renderer has finished rendering documentation content.
     ///
     /// The string value of this message type is `rendered`.
     public static func rendered(identifier: String = generateUUID()) -> Message {
         return .init(type: .rendered, data: nil, identifier: identifier)
     }
-    
+
     /// Creates a message that indicates a request for code-color preferences.
     ///
     /// This message is sent by renderer to request code-color preferences that renderers use when syntax highlighting code listings.
@@ -59,7 +59,7 @@ public struct Message {
     public static func requestCodeColors(identifier: String = generateUUID()) -> Message {
         return .init(type: .requestCodeColors, data: nil, identifier: identifier)
     }
-    
+
     /// Creates a message that indicates what code colors a renderer uses to syntax highlight code listings.
     ///
     /// A "codeColors" message is sent as a response to a `requestCodeColors` message and provides code colors

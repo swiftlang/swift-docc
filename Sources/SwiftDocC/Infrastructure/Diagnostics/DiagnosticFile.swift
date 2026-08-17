@@ -14,28 +14,28 @@ import struct Markdown.SourceLocation
 struct DiagnosticFile: Codable {
     var version: SemanticVersion
     var diagnostics: [Diagnostic]
-    
+
     init(version: SemanticVersion = Self.currentVersion, _ diagnostics: [SwiftDocC.Diagnostic]) {
         self.version = version
         self.diagnostics = diagnostics.map { .init($0) }
     }
-    
+
     // This file format follows semantic versioning.
     // Breaking changes should increment the major version component.
     // Non breaking additions should increment the minor version.
     // Bug fixes should increment the patch version.
     static let currentVersion = SemanticVersion(major: 1, minor: 1, patch: 0, prerelease: nil, buildMetadata: nil)
-    
+
     enum Error: Swift.Error {
         case unknownMajorVersion(found: SemanticVersion, latestKnown: SemanticVersion)
     }
-    
+
     static func verifyIsSupported(_ version: SemanticVersion, current: SemanticVersion = Self.currentVersion) throws {
         guard version.major == current.major else {
             throw Error.unknownMajorVersion(found: version, latestKnown: current)
         }
     }
-    
+
     struct Diagnostic: Codable {
         struct Range: Codable {
             var start: Location
@@ -71,16 +71,16 @@ struct DiagnosticFile: Codable {
             case error, warning, note, remark
         }
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case version, diagnostics
     }
-    
+
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         version = try container.decode(SemanticVersion.self, forKey: .version)
         try Self.verifyIsSupported(version)
-        
+
         diagnostics = try container.decode([Diagnostic].self, forKey: .diagnostics)
     }
 }
@@ -129,7 +129,7 @@ extension DiagnosticFile.Diagnostic.Solution {
 extension DiagnosticFile.Diagnostic.Solution.Replacement {
     init(_ replacement: Solution.Replacement) {
         self.range = .init(replacement.range)
-        self.text  = replacement.replacement
+        self.text = replacement.replacement
     }
 }
 

@@ -16,7 +16,7 @@ struct WrappingEnumerator<Element> {
         didSet { if index >= items.count { index = 0 } }
     }
     private(set) var index: Int = 0
-    
+
     /// Returns the next item in the array, starts from index `0` if end of array reached.
     mutating func next() -> Element {
         defer {

@@ -16,10 +16,10 @@ class ResourceReferenceTests: XCTestCase {
     func testPathWithSectionFragment() throws {
         let ref = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/Test-Bundle/Tutorial1", sourceLanguage: .swift)
         XCTAssertEqual(ref.absoluteString, "doc://org.swift.docc.example/Test-Bundle/Tutorial1")
-        
+
         let refAdvanced = ref.withFragment("fragment")
         XCTAssertEqual(refAdvanced.absoluteString, "doc://org.swift.docc.example/Test-Bundle/Tutorial1#fragment")
-        
+
         let refSuperAdvanced = ref.withFragment(" FRä'g'mē\"nt ")
         XCTAssertEqual(refSuperAdvanced.absoluteString, "doc://org.swift.docc.example/Test-Bundle/Tutorial1#FR%C3%A4gm%C4%93nt")
     }

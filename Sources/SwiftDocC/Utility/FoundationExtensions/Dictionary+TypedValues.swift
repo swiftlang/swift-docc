@@ -12,16 +12,16 @@ private import Foundation
 
 extension [String: Any] {
     /// Returns the value for the given key decoded as the requested type.
-    func decode<T>(_ expectedType: T.Type, forKey key: String) throws -> T where T : Decodable {
+    func decode<T>(_ expectedType: T.Type, forKey key: String) throws -> T where T: Decodable {
         guard let value = self[key] else {
             throw TypedValueError.missingValue(key: key)
         }
-        
+
         // First attempt to just cast the value as the requested type
         if let castedValue = value as? T {
             return castedValue
         }
-        
+
         // If that fails, attempt to decode it. Since we know T is Decodable,
         // even if the given value cannot be _directly_ cast to T, it's possible
         // that it can be decoded as T.
@@ -36,9 +36,9 @@ extension [String: Any] {
             throw TypedValueError.wrongType(key: key, expected: T.self, actual: type(of: value))
         }
     }
-    
+
     /// Returns the value for the given key decoded as the requested type, if present.
-    func decodeIfPresent<T>(_ expectedType: T.Type, forKey key: String) throws -> T? where T : Decodable {
+    func decodeIfPresent<T>(_ expectedType: T.Type, forKey key: String) throws -> T? where T: Decodable {
         guard self.keys.contains(key) else {
             return nil
         }
@@ -54,7 +54,7 @@ enum TypedValueError: DescribedError {
     case wrongType(key: String, expected: Any.Type, actual: Any.Type)
     /// One or more required ``DocumentationBundle.Info.Key``s are missing.
     case missingRequiredKeys([DocumentationBundle.Info.CodingKeys])
-    
+
     var errorDescription: String {
         switch self {
         case let .missingValue(key):
@@ -64,18 +64,20 @@ enum TypedValueError: DescribedError {
         case .missingRequiredKeys(let keys):
             return keys.map { key in
                 var errorMessage = """
-                Missing value for \(key.rawValue.singleQuoted).
-                
-                """
-                
+                    Missing value for \(key.rawValue.singleQuoted).
+
+                    """
+
                 if let argumentName = key.argumentName {
-                    errorMessage.append("""
-                    Use the \(argumentName.singleQuoted) argument or add \(key.rawValue.singleQuoted) to the catalog's Info.plist.
-                    """)
+                    errorMessage.append(
+                        """
+                        Use the \(argumentName.singleQuoted) argument or add \(key.rawValue.singleQuoted) to the catalog's Info.plist.
+                        """)
                 } else {
-                    errorMessage.append("""
-                    Add \(key.rawValue.singleQuoted) to the catalog's Info.plist.
-                    """)
+                    errorMessage.append(
+                        """
+                        Add \(key.rawValue.singleQuoted) to the catalog's Info.plist.
+                        """)
                 }
                 return errorMessage
             }.joined(separator: "\n\n")

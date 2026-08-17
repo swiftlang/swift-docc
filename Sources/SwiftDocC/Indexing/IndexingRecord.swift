@@ -14,11 +14,11 @@
 public struct IndexingRecord: Equatable {
     /**
      The location of the content for this record.
-     
+
      Top-level pages are an obvious kind of search result in a list-like UI. However,
      we may want to put subsections or other important items in the same list of search results.
      This location may point to a top-level page or somewhere deeper in the page.
-     
+
      For example, a ``Tutorial`` may have its own search result and each of its ``TutorialSection``s may be a search result as well.
      */
     public enum Location: Equatable {
@@ -26,13 +26,13 @@ public struct IndexingRecord: Equatable {
          A search result corresponds to a top-level page of documentation.
          */
         case topLevelPage(ResolvedTopicReference)
-        
+
         /**
          A search result corresponds to something on a page of documentation.
          */
         case contained(ResolvedTopicReference, inPage: ResolvedTopicReference)
     }
-    
+
     /**
      The kind of documentation for a search result.
      */
@@ -41,55 +41,55 @@ public struct IndexingRecord: Equatable {
         public init(rawValue: String) {
             self.rawValue = rawValue
         }
-        
+
         /// A Technology "Overview" page.
         public static let overview = Kind(rawValue: "overview")
-                
+
         /// A "Tutorial" page.
         public static let tutorial = Kind(rawValue: "tutorial")
-        
+
         /// An "Article" page.
         public static let article = Kind(rawValue: "article")
-        
+
         /// A tutorial section.
         public static let tutorialSection = Kind(rawValue: "tutorialSection")
-        
+
         /// A symbol page.
         public static let symbol = Kind(rawValue: "symbol")
     }
-    
+
     /**
      The kind of document or section whose text content this record collects.
      */
     public let kind: Kind
-    
+
     /**
      The location of a search result for this record.
      */
     public let location: Location
-    
+
     /**
      The title of the document or section.
      */
     public let title: String
-    
+
     /**
      A summary phrase, sentence, or abstract from a document or section for use in previewing content in search results.
      */
     public let summary: String
-    
+
     /**
      Headings and subheadings in the document or section.
      */
     public let headings: [String]
-    
+
     /**
      A concatenation of all other raw text content in the document or section.
-     
+
      > Note: Titles, headings, and abstracts are not included in this string.
      */
     public let rawIndexableTextContent: String
-    
+
     /// The availability information for a platform.
     public typealias PlatformAvailability = AvailabilityRenderItem
     /// Information about the platforms for which the summarized element is available.
@@ -115,16 +115,16 @@ extension IndexingRecord.Location: Codable {
         case topLevelPage
         case contained
     }
-    
+
     private enum CodingKeys: CodingKey {
         case type
         case reference, inPage
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(LocationType.self, forKey: .type)
-        
+
         switch type {
         case .topLevelPage:
             let reference = try container.decode(ResolvedTopicReference.self, forKey: .reference)
@@ -135,7 +135,7 @@ extension IndexingRecord.Location: Codable {
             self = .contained(reference, inPage: inPageReference)
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {

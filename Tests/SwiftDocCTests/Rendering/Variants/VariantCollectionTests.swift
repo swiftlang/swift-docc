@@ -14,7 +14,7 @@ import Testing
 
 struct VariantCollectionTests {
     let testCollection = VariantCollection(defaultValue: "default value", objectiveCValue: "Objective-C value")
-    
+
     let testCollectionWithMultipleVariants = VariantCollection(
         defaultValue: "default value",
         variants: [
@@ -28,7 +28,7 @@ struct VariantCollectionTests {
             ),
         ]
     )
-    
+
     @Test
     func createsObjectiveCVariant() {
         #expect(testCollection.defaultValue == "default value")
@@ -38,26 +38,26 @@ struct VariantCollectionTests {
         }
         #expect(value == "Objective-C value")
     }
-    
+
     @Test
     func encodesDefaultValueAndAddsVariantsInEncoder() throws {
         let encoder = RenderJSONEncoder.makeEncoder()
         let encodedAndDecodedValue = try JSONDecoder()
             .decode(VariantCollection<String>.self, from: encoder.encode(testCollectionWithMultipleVariants))
-        
+
         #expect(encodedAndDecodedValue.defaultValue == "default value")
         #expect(encodedAndDecodedValue.variants.isEmpty)
-        
+
         let variants = try #require((encoder.userInfo[.variantOverrides] as? VariantOverrides)?.values)
         #expect(variants.count == 2)
-        
+
         let expectedVariants = [
             (language: "language A", value: "language A value"),
             (language: "language B", value: "language B value"),
         ]
         for (variant, expected) in zip(variants, expectedVariants) {
             #expect(variant.traits == [.interfaceLanguage(expected.language)])
-            
+
             guard case .replace(_, let value) = variant.patch[0] else {
                 Issue.record("Unexpected patch operation")
                 return
@@ -66,24 +66,24 @@ struct VariantCollectionTests {
             #expect(stringValue == expected.value)
         }
     }
-    
+
     @Test
     func mapsValues() {
         let testCollection = testCollection.mapValues { value -> String? in
             if value == "default value" {
-               return "default value transformed"
+                return "default value transformed"
             }
-            
+
             return nil
         }
-        
+
         #expect(testCollection.defaultValue == "default value transformed")
-        
+
         guard case .replace(let value)? = testCollection.variants.first?.patch.first else {
             Issue.record("Unexpected patch value")
             return
         }
-        
+
         #expect(value == nil)
     }
 }

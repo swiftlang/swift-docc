@@ -14,7 +14,7 @@ public import Foundation
 /// Resolves and validates a URL value that provides the path to a documentation archive.
 public struct DocCArchiveOption: DirectoryPathOption {
 
-    public init(){}
+    public init() {}
 
     /// The name of the command line argument used to specify a source archive path.
     static let argumentValueName = "source-archive-path"
@@ -34,14 +34,14 @@ public struct DocCArchiveOption: DirectoryPathOption {
         guard urlOrFallback.hasDirectoryPath else {
             throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive. Expected a directory but a path to a file was provided")
         }
-        
+
         var archiveContents: [String]
         do {
             archiveContents = try FileManager.default.contentsOfDirectory(atPath: urlOrFallback.path)
         } catch {
             throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive: \(error)")
         }
-        
+
         let missingContents = Array(Set(DocCArchiveOption.expectedContent).subtracting(archiveContents))
         guard missingContents.isEmpty else {
             throw ValidationError(
@@ -51,6 +51,6 @@ public struct DocCArchiveOption: DirectoryPathOption {
                 """
             )
         }
-        
+
     }
 }

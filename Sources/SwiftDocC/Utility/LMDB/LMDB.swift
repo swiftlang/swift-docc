@@ -13,7 +13,7 @@ import CLMDB
 
 /**
     A general utility class for LMDB.
- 
+
     - Note: LMDB wrapper doesn't use any writing queue to serialize writes, but it relies on LMDB's low level solution.
             Reads are never blocked, but writes are serialized using a mutually exclusive lock at the database level.
  */
@@ -23,40 +23,40 @@ final class LMDB {
     #else
     public typealias ModeType = mode_t
     #endif
-        
+
     /// Default instance.
     public static var `default` = LMDB()
-    
+
     /// Returns the library version.
     public var version: Version {
         return [Int(MDB_VERSION_MAJOR), Int(MDB_VERSION_MINOR), Int(MDB_VERSION_PATCH)]
     }
-    
+
     /// The default number of databases to open which is `0`. The `0` value means no named databases can be opened.
     public static let defaultMaxDBs: UInt32 = 0
-    
+
     /// The default number of readers to open which is `126`.
     public static let defaultMaxReaders: UInt32 = 126
-    
+
     /// The default number of map size which is `10485760`.
     public static let defaultMapSize: size_t = 10485760
-    
+
     /// The default file mode for opening an environment which is `744`.
     #if os(Windows)
     public static let defaultFileMode: ModeType = _S_IREAD | _S_IWRITE
     #else
     public static let defaultFileMode: ModeType = S_IRWXU | S_IRGRP | S_IROTH
     #endif
-    
+
 }
 
 /**
  A type with a customized data representation suited for storage inside an LMDB database.
 
- Types that conform to the `LMDBData` protocol can provide their own representation to be used when converting 
+ Types that conform to the `LMDBData` protocol can provide their own representation to be used when converting
  an instance to a valid data representation ready for LMDB storage.
 
- > Note: Default implementations for some common Swift types are included. Custom types require an appropriate 
+ > Note: Default implementations for some common Swift types are included. Custom types require an appropriate
  implementation of the conversion.
  */
 public protocol LMDBData {
@@ -69,7 +69,7 @@ public extension LMDBData {
         guard data.count == MemoryLayout<Self>.stride else { return nil }
         self = data.baseAddress!.assumingMemoryBound(to: Self.self).pointee
     }
-    
+
     func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
         var val = self
         return try withUnsafeBytes(of: &val, body)
@@ -81,7 +81,7 @@ extension Data: LMDBData {
         self = Data.init(bytes: data.baseAddress!, count: data.count)
     }
 
-    public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R{
+    public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
         return try self.withUnsafeBytes({ (ptr) -> R in
             return try body(ptr)
         })
@@ -100,19 +100,19 @@ extension String: LMDBData {
 
 // This is required for macOS, for Linux the default implementation works as expected.
 extension Array: LMDBData where Element: FixedWidthInteger {
-    
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+
+    #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     public init?(data: UnsafeRawBufferPointer) {
         var array = [Element](repeating: 0, count: data.count / MemoryLayout<Element>.stride)
         _ = array.withUnsafeMutableBytes { data.copyBytes(to: $0) }
         self = array
     }
-    
+
     public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
         let data = self.withUnsafeBufferPointer { Data(buffer: $0) }
         return try data.read(body)
     }
-#endif
+    #endif
 
 }
 

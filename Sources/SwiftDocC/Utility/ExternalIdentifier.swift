@@ -10,10 +10,10 @@
 
 /// A convenience structure to represent an external identifier of a symbol.
 public enum ExternalIdentifier {
-    
+
     /// An external identifier represented by a symbol's USR.
     case usr(_ usr: String)
-    
+
     /// Returns the hashed identifier.
     public var hash: String {
         switch self {

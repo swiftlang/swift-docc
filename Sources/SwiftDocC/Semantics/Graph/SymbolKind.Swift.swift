@@ -20,7 +20,7 @@ extension SymbolGraph.Symbol.KindIdentifier {
         default: return true
         }
     }
-    
+
     /// Returns the kind identifier in the form expected when creating render models.
     ///
     /// Used for ``RenderNode`` and ``RenderIndex`` creation.

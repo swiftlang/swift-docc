@@ -21,7 +21,7 @@ extension PathHierarchy {
         /// - The node that was found
         /// - The portion of the path up and including to the found node and its trailing path separator.
         typealias PartialResult = (node: Node, pathPrefix: Substring)
-        
+
         /// No element was found at the beginning of the path.
         ///
         /// Includes information about:
@@ -29,25 +29,25 @@ extension PathHierarchy {
         /// - The remaining portion of the path. This may be empty
         /// - A list of the names for the top level elements.
         case notFound(pathPrefix: Substring, remaining: [PathComponent], availableChildren: Set<String>)
-        
+
         /// No element was found at the beginning of an absolute path.
         ///
         /// Includes information about:
         /// - The portion of the path up to the first path component.
         /// - A list of the names for the available modules.
         case moduleNotFound(pathPrefix: Substring, remaining: [PathComponent], availableChildren: Set<String>)
-        
+
         /// Matched node does not correspond to a documentation page.
         ///
         /// For partial symbol graph files, sometimes sparse nodes that don't correspond to known documentation need to be created to form a hierarchy. These nodes are not findable.
         case unfindableMatch(Node)
-        
+
         /// A symbol link found a non-symbol match.
         ///
         /// Includes information about:
         /// - The path to the non-symbol match.
         case nonSymbolMatchForSymbolLink(path: String)
-        
+
         /// Encountered an unknown disambiguation for a found node.
         ///
         /// Includes information about:
@@ -55,7 +55,7 @@ extension PathHierarchy {
         /// - The remaining portion of the path.
         /// - A list of possible matches paired with the disambiguation suffixes needed to distinguish them.
         case unknownDisambiguation(partialResult: PartialResult, remaining: [PathComponent], candidates: [(node: Node, disambiguation: String)])
-        
+
         /// Encountered an unknown name in the path.
         ///
         /// Includes information about:
@@ -63,7 +63,7 @@ extension PathHierarchy {
         /// - The remaining portion of the path.
         /// - A list of the names for the children of the partial result.
         case unknownName(partialResult: PartialResult, remaining: [PathComponent], availableChildren: Set<String>)
-        
+
         /// Encountered an unknown anchor at the end of the path.
         ///
         /// Includes information about:
@@ -71,7 +71,7 @@ extension PathHierarchy {
         /// - The name of the unknown anchor.
         /// - A list of the names for the anchors of the partial result.
         case unknownAnchor(partialResult: PartialResult, anchor: String, availableAnchors: Set<String>)
-        
+
         /// Multiple matches are found partway through the path.
         ///
         /// Includes information about:
@@ -104,10 +104,11 @@ extension PathHierarchy.Error {
             }
             let foundDisambiguation = nextPathComponent.full.dropFirst(symbolName.count)
             let pathPrefix: Substring = partialResultPrefix + nextPathComponent.full.prefix(symbolName.count)
-            
+
             let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: foundDisambiguation.count)
-            
-            let solutions: [Solution] = candidates
+
+            let solutions: [Solution] =
+                candidates
                 .map { (fullName: fullNameOfNode($0.node), disambiguation: $0.disambiguation) }
                 .sorted { lhs, rhs in
                     // Sort by name first and disambiguation second
@@ -119,82 +120,96 @@ extension PathHierarchy.Error {
                 .map { (fullName: String, suggestedDisambiguation: String) -> Solution in
                     // In contexts that display the solution message on a single line by removing newlines, this extra whitespace makes it look correct ─────────────╮
                     //                                                                                                                                               ▼
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: foundDisambiguation, to: suggestedDisambiguation, forCollision: true)) for \n\(fullName.singleQuoted)", replacements: [
-                        .init(range: replacementRange, replacement: suggestedDisambiguation)
-                    ])
+                    return Solution(
+                        summary: "\(Self.replacementOperationDescription(from: foundDisambiguation, to: suggestedDisambiguation, forCollision: true)) for \n\(fullName.singleQuoted)",
+                        replacements: [
+                            .init(range: replacementRange, replacement: suggestedDisambiguation)
+                        ])
                 }
             return (pathPrefix, foundDisambiguation, solutions)
         }
-        
+
         switch self {
         case .moduleNotFound(pathPrefix: let pathPrefix, remaining: let remaining, availableChildren: let availableChildren):
-            let firstPathComponent = remaining.first! // This would be a .notFound error if the remaining components were empty.
-            
+            let firstPathComponent = remaining.first!  // This would be a .notFound error if the remaining components were empty.
+
             let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: firstPathComponent.full.count)
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
             let solutions = nearMisses.map { candidate in
-                Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
-                    .init(range: replacementRange, replacement: candidate)
-                ])
+                Solution(
+                    summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))",
+                    replacements: [
+                        .init(range: replacementRange, replacement: candidate)
+                    ])
             }
-            
-            return TopicReferenceResolutionErrorInfo("""
+
+            return TopicReferenceResolutionErrorInfo(
+                """
                 No module named \(firstPathComponent.full.singleQuoted)
                 """,
                 solutions: solutions
             )
-            
+
         case .notFound(pathPrefix: let pathPrefix, remaining: let remaining, availableChildren: let availableChildren):
             guard let firstPathComponent = remaining.first else {
                 return TopicReferenceResolutionErrorInfo(
                     "No local documentation matches this reference"
                 )
             }
-            
+
             let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: firstPathComponent.full.count)
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
             let solutions = nearMisses.map { candidate in
-                Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
-                    .init(range: replacementRange, replacement: candidate)
-                ])
+                Solution(
+                    summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))",
+                    replacements: [
+                        .init(range: replacementRange, replacement: candidate)
+                    ])
             }
-            
-            return TopicReferenceResolutionErrorInfo("""
+
+            return TopicReferenceResolutionErrorInfo(
+                """
                 Can't resolve \(firstPathComponent.full.singleQuoted)
                 """,
                 solutions: solutions
             )
 
         case .unfindableMatch(let node):
-            return TopicReferenceResolutionErrorInfo("""
-            \(node.name.singleQuoted) can't be linked to in a partial documentation build
-            """)
+            return TopicReferenceResolutionErrorInfo(
+                """
+                \(node.name.singleQuoted) can't be linked to in a partial documentation build
+                """)
 
         case .nonSymbolMatchForSymbolLink(path: let path):
-            return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols", solutions: [
-                Solution(summary: "Use a '<doc:>' style reference.", replacements: [
-                    // the SourceRange points to the opening double-backtick
-                    .init(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
-                    // the SourceRange points to the closing double-backtick
-                    .init(range: .makeRelativeRange(startColumn: path.count, endColumn: path.count+2), replacement: ">"),
+            return TopicReferenceResolutionErrorInfo(
+                "Symbol links can only resolve symbols",
+                solutions: [
+                    Solution(
+                        summary: "Use a '<doc:>' style reference.",
+                        replacements: [
+                            // the SourceRange points to the opening double-backtick
+                            .init(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
+                            // the SourceRange points to the closing double-backtick
+                            .init(range: .makeRelativeRange(startColumn: path.count, endColumn: path.count + 2), replacement: ">"),
+                        ])
                 ])
-            ])
-            
+
         case .unknownDisambiguation(partialResult: let partialResult, remaining: let remaining, candidates: let candidates):
             let nextPathComponent = remaining.first!
             let (pathPrefix, foundDisambiguation, solutions) = makeCollisionSolutions(from: candidates, nextPathComponent: nextPathComponent, partialResultPrefix: partialResult.pathPrefix)
-            
-            return TopicReferenceResolutionErrorInfo("""
+
+            return TopicReferenceResolutionErrorInfo(
+                """
                 \(foundDisambiguation.dropFirst().singleQuoted) isn't a disambiguation for \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: foundDisambiguation.count)
             )
-            
+
         case .unknownName(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
             let nextPathComponent = remaining.first!
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(nextPathComponent.name))
-            
+
             // Use the authored disambiguation to try and reduce the possible near misses. For example, if the link was disambiguated with `-struct` we should
             // only make suggestions for similarly spelled structs.
             let filteredNearMisses = nearMisses.filter { name in
@@ -207,45 +222,53 @@ extension PathHierarchy.Error {
                 // If there are no near-misses where the authored disambiguation narrow down the results, replace the full path component
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
                 solutions = nearMisses.map { candidate in
-                    Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))", replacements: [
-                        .init(range: replacementRange, replacement: candidate)
-                    ])
+                    Solution(
+                        summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))",
+                        replacements: [
+                            .init(range: replacementRange, replacement: candidate)
+                        ])
                 }
             } else {
                 // If the authored disambiguation narrows down the possible near-misses, only replace the name part of the path component
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.name.count)
                 solutions = filteredNearMisses.map { candidate in
-                    Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))", replacements: [
-                        .init(range: replacementRange, replacement: candidate)
-                    ])
+                    Solution(
+                        summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))",
+                        replacements: [
+                            .init(range: replacementRange, replacement: candidate)
+                        ])
                 }
             }
-            
-            return TopicReferenceResolutionErrorInfo("""
+
+            return TopicReferenceResolutionErrorInfo(
+                """
                 \(nextPathComponent.full.singleQuoted) doesn't exist at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
             )
-            
+
         case .unknownAnchor(partialResult: let partialResult, anchor: let anchor, availableAnchors: let availableAnchors):
             let nearMisses = NearMiss.bestMatches(for: availableAnchors, against: anchor)
-            
+
             let pathPrefix = partialResult.pathPrefix
             let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: anchor.count)
             let solutions = nearMisses.map { candidate in
-                Solution(summary: "\(Self.replacementOperationDescription(from: anchor, to: candidate))", replacements: [
-                    .init(range: replacementRange, replacement: candidate)
-                ])
+                Solution(
+                    summary: "\(Self.replacementOperationDescription(from: anchor, to: candidate))",
+                    replacements: [
+                        .init(range: replacementRange, replacement: candidate)
+                    ])
             }
-            
-            return TopicReferenceResolutionErrorInfo("""
+
+            return TopicReferenceResolutionErrorInfo(
+                """
                 \(anchor.singleQuoted) is not an anchor of \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: anchor.count)
             )
-            
+
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
             let nextPathComponent = remaining.first!
             let (pathPrefix, foundDisambiguation, solutions) = makeCollisionSolutions(
@@ -264,7 +287,8 @@ extension PathHierarchy.Error {
                     length: nextPathComponent.full.count)
             }
 
-            return TopicReferenceResolutionErrorInfo("""
+            return TopicReferenceResolutionErrorInfo(
+                """
                 \(nextPathComponent.full.singleQuoted) is ambiguous at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
@@ -272,7 +296,7 @@ extension PathHierarchy.Error {
             )
         }
     }
-    
+
     private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol, forCollision: Bool = false) -> String {
         if from.isEmpty {
             return "Insert \(to.singleQuoted)"
@@ -280,11 +304,11 @@ extension PathHierarchy.Error {
         if to.isEmpty {
             return "Remove \(from.singleQuoted)"
         }
-        
+
         guard forCollision else {
             return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
         }
-        
+
         if to.hasPrefix("->") || from.hasPrefix("->") {
             // If either the "to" or "from" descriptions are a return type disambiguation, include the full arrow for both.
             // Only a ">" prefix doesn't read as an "arrow", and it looks incorrect when only of the descriptions have a "-" prefix.
@@ -312,9 +336,9 @@ private extension PathHierarchy.Node {
 
 extension SourceRange {
     static func makeRelativeRange(startColumn: Int, endColumn: Int) -> SourceRange {
-        return SourceLocation(line: 0, column: startColumn, source: nil) ..< SourceLocation(line: 0, column: endColumn, source: nil)
+        return SourceLocation(line: 0, column: startColumn, source: nil)..<SourceLocation(line: 0, column: endColumn, source: nil)
     }
-    
+
     static func makeRelativeRange(startColumn: Int, length: Int) -> SourceRange {
         return .makeRelativeRange(startColumn: startColumn, endColumn: startColumn + length)
     }

@@ -14,30 +14,30 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
     ///
     /// This value is always `.topic`.
     public var type: RenderReferenceType = .topic
-    
+
     /// The identifier of the reference.
     public var identifier: RenderReferenceIdentifier
-    
+
     /// The title of the destination page.
     public var title: String {
         get { getVariantDefaultValue(keyPath: \.titleVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.titleVariants) }
     }
-    
+
     /// The variants of the title.
     public var titleVariants: VariantCollection<String>
-    
+
     /// The topic url for the destination page.
     public var url: String
-    
+
     /// The abstract of the destination page.
     public var abstract: [RenderInlineContent] {
         get { getVariantDefaultValue(keyPath: \.abstractVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.abstractVariants) }
     }
-    
+
     public var abstractVariants: VariantCollection<[RenderInlineContent]> = .init(defaultValue: [])
-    
+
     /// The kind of page that's referenced.
     public var kind: RenderNode.Kind
     /// Whether the reference is required in its parent context.
@@ -46,7 +46,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     public var role: String?
-    
+
     /// The abbreviated declaration of the symbol to display in links
     ///
     /// This value is `nil` if the referenced page is not a symbol.
@@ -54,9 +54,9 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         get { getVariantDefaultValue(keyPath: \.fragmentsVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.fragmentsVariants) }
     }
-    
+
     public var fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
-    
+
     /// The abbreviated declaration of the symbol to display in navigation
     ///
     /// This value is `nil` if the referenced page is not a symbol.
@@ -64,21 +64,21 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         get { getVariantDefaultValue(keyPath: \.navigatorTitleVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.navigatorTitleVariants) }
     }
-    
+
     public var navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
-    
+
     /// Information about conditional conformance for the symbol
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     public var conformance: ConformanceSection?
     /// The estimated time to complete the topic.
     public var estimatedTime: String?
-    
+
     /// Number of default implementations for the symbol
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     public var defaultImplementationCount: Int?
-    
+
     /// A value that indicates whether this symbol is built for a beta platform
     ///
     /// This value is `false` if the referenced page is not a symbol.
@@ -87,10 +87,10 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
     ///
     /// This value is `false` if the referenced page is not a symbol.
     public var isDeprecated: Bool
-    
+
     /// The names and style for a reference to a property list key or entitlement key.
     public var propertyListKeyNames: PropertyListKeyNames?
-    
+
     /// The display name and raw key name for a property list key or entitlement key and configuration about which "name" to use for links to this page.
     public struct PropertyListKeyNames: Equatable {
         /// A style for how to render links to a property list key or an entitlement key.
@@ -100,15 +100,15 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         /// The human friendly display name for a property list key or entitlement key, for example, "Enables Data Access".
         public var displayName: String?
     }
-    
+
     /// An optional list of text-based tags.
     public var tags: [RenderNode.Tag]?
-    
+
     /// Author provided images that represent this page.
     public var images: [TopicImage]
-    
+
     /// Creates a new topic reference with all its initial values.
-    /// 
+    ///
     /// - Parameters:
     ///   - identifier: The identifier of this reference.
     ///   - title: The title of the destination page.
@@ -166,7 +166,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
             images: images
         )
     }
-    
+
     /// Creates a new topic reference with all its initial values.
     ///
     /// - Parameters:
@@ -224,7 +224,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         self.tags = tags
         self.images = images
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case type
         case identifier
@@ -247,7 +247,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         case tags
         case images
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
@@ -255,7 +255,8 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         titleVariants = try values.decode(VariantCollection<String>.self, forKey: .title)
         url = try values.decode(String.self, forKey: .url)
         abstractVariants = try values.decodeIfPresent(VariantCollection<[RenderInlineContent]>.self, forKey: .abstract) ?? .init(defaultValue: [])
-        kind = try values.decodeIfPresent(RenderNode.Kind.self, forKey: .kind)
+        kind =
+            try values.decodeIfPresent(RenderNode.Kind.self, forKey: .kind)
             // Provide backwards-compatibility for TopicRenderReferences that don't have a `kind` key.
             ?? .tutorial
         required = try values.decodeIfPresent(Bool.self, forKey: .required) ?? false
@@ -280,17 +281,17 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         tags = try values.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
         images = try values.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(type, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
         try container.encodeVariantCollection(titleVariants, forKey: .title, encoder: encoder)
         try container.encode(url, forKey: .url)
         try container.encodeVariantCollection(abstractVariants, forKey: .abstract, encoder: encoder)
         try container.encode(kind, forKey: .kind)
-        
+
         if required {
             try container.encode(required, forKey: .required)
         }
@@ -300,7 +301,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         try container.encodeIfPresent(conformance, forKey: .conformance)
         try container.encodeIfPresent(estimatedTime, forKey: .estimatedTime)
         try container.encodeIfPresent(defaultImplementationCount, forKey: .defaultImplementations)
-        
+
         if isBeta {
             try container.encode(isBeta, forKey: .beta)
         }
@@ -341,7 +342,7 @@ extension TopicRenderReference: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.propertyListKeyNames?.displayName, forKey: CodingKeys.propertyListDisplayName)
         diffBuilder.addDifferences(atKeyPath: \.tags, forKey: CodingKeys.tags)
         diffBuilder.addDifferences(atKeyPath: \.images, forKey: CodingKeys.images)
-        
+
         return diffBuilder.differences
     }
 }

@@ -15,7 +15,7 @@ import XCTest
 import DocCCommon
 
 class PageKindTests: XCTestCase {
-    
+
     private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) async throws -> RenderNode {
         let (bundle, context) = try await testBundleAndContext(named: bundleName)
         let reference = ResolvedTopicReference(
@@ -27,7 +27,7 @@ class PageKindTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
     }
-    
+
     func testPageKindSampleCode() async throws {
         let renderNode = try await generateRenderNodeFromBundle(
             bundleName: "SampleBundle",
@@ -67,10 +67,10 @@ class PageKindTests: XCTestCase {
 
     func testValidMetadataWithOnlyPageKind() async throws {
         let source = """
-        @Metadata {
-            @PageKind(article)
-        }
-        """
+            @Metadata {
+                @PageKind(article)
+            }
+            """
 
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
@@ -88,7 +88,7 @@ class PageKindTests: XCTestCase {
             XCTAssert(diagnostics.isEmpty)
         }
     }
-    
+
     // Verify that we assign the `Collection` role to the root article of a
     // documentation catalog that contains only one article.
     func testRoleForSingleArticleCatalog() async throws {
@@ -98,7 +98,7 @@ class PageKindTests: XCTestCase {
         )
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.collection.rawValue)
     }
-    
+
     // Verify we assign the `Collection` role to the root article of an article-only
     // documentation catalog that doesn't include manual curation
     func testRoleForArticleOnlyCatalogWithNoCuration() async throws {

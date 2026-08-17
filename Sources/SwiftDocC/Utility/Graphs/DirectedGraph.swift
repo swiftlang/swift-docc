@@ -42,7 +42,7 @@ struct DirectedGraph<Node: Hashable> {
     init(edges: [Node: [Node]]) {
         self.edges = edges
     }
-    
+
     /// Returns the nodes that are reachable from the given node
     func neighbors(of node: Node) -> [Node] {
         edges[node] ?? []

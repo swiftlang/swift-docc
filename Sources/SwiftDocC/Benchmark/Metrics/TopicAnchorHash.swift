@@ -18,22 +18,24 @@ extension Benchmark {
     public class TopicAnchorHash: BenchmarkMetric {
         public static let identifier = "topic-anchor-hash"
         public static let displayName = "Topic Anchor Checksum"
-        
+
         /// Creates a new metric and stores the checksum of the given documentation context anchor sections.
         /// - Parameter context: A documentation context containing a topic graph.
         public init(context: DocumentationContext) {
-            guard let checksum = context.nodeAnchorSections.keys
-                .sorted(by: { lhs, rhs -> Bool in
-                    return lhs.absoluteString < rhs.absoluteString
-                })
-                // It's ok to force unwrap we enumerate only valid keys above.
-                .map({ "\(context.nodeAnchorSections[$0]!.reference.absoluteString):\(context.nodeAnchorSections[$0]!.title)\n" })
-                .joined()
-                .data(using: .utf8).map(Checksum.md5) else { return }
-            
+            guard
+                let checksum = context.nodeAnchorSections.keys
+                    .sorted(by: { lhs, rhs -> Bool in
+                        return lhs.absoluteString < rhs.absoluteString
+                    })
+                    // It's ok to force unwrap we enumerate only valid keys above.
+                    .map({ "\(context.nodeAnchorSections[$0]!.reference.absoluteString):\(context.nodeAnchorSections[$0]!.title)\n" })
+                    .joined()
+                    .data(using: .utf8).map(Checksum.md5)
+            else { return }
+
             result = .checksum(checksum)
         }
-        
+
         public var result: MetricValue?
     }
 }

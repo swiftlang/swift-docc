@@ -23,19 +23,19 @@ public struct SampleDownloadSection: RenderSection, Equatable {
     public init(action: RenderInlineContent) {
         self.action = action
     }
-    
+
     // MARK: - Codable
-    
+
     /// The list of keys you use to encode or decode this section.
     public enum CodingKeys: String, CodingKey {
         case kind, action
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         action = try container.decode(RenderInlineContent.self, forKey: .action)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)

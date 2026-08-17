@@ -14,10 +14,10 @@
 public struct VariantOverride: Codable {
     /// The traits associated with the override.
     public var traits: [RenderNode.Variant.Trait]
-    
+
     /// The patch to apply as part of the override.
     public var patch: JSONPatch
-    
+
     /// Creates an override value for the given traits.
     ///
     /// - Parameters:

@@ -14,37 +14,38 @@ import XCTest
 
 class IntroRenderSectionTests: XCTestCase {
     func value() throws -> IntroRenderSection {
-        let jsonData = Data("""
-        {
-            "action": {
-                "identifier": "doc://testbundle/tutorials/TechnologyX/Tutorial",
-                "isActive": true,
-                "overridingTitle": "Get started",
-                "overridingTitleInlineContent": [
-                    {
-                        "text": "Get started",
-                        "type": "text"
-                    }
-                ],
-                "type": "reference"
-            },
-            "backgroundImage": "intro.png",
-            "content": [
-                {
-                    "inlineContent": [
+        let jsonData = Data(
+            """
+            {
+                "action": {
+                    "identifier": "doc://testbundle/tutorials/TechnologyX/Tutorial",
+                    "isActive": true,
+                    "overridingTitle": "Get started",
+                    "overridingTitleInlineContent": [
                         {
-                            "text": "This is the intro.",
+                            "text": "Get started",
                             "type": "text"
                         }
                     ],
-                    "type": "paragraph"
-                }
-            ],
-            "image": "intro.png",
-            "kind": "hero",
-            "title": "Introducing TechnologyX"
-        }
-        """.utf8)
+                    "type": "reference"
+                },
+                "backgroundImage": "intro.png",
+                "content": [
+                    {
+                        "inlineContent": [
+                            {
+                                "text": "This is the intro.",
+                                "type": "text"
+                            }
+                        ],
+                        "type": "paragraph"
+                    }
+                ],
+                "image": "intro.png",
+                "kind": "hero",
+                "title": "Introducing TechnologyX"
+            }
+            """.utf8)
 
         return try JSONDecoder().decode(IntroRenderSection.self, from: jsonData)
     }
@@ -60,7 +61,7 @@ class IntroRenderSectionTests: XCTestCase {
         )
         intro.content = [.paragraph(.init(inlineContent: [.text("This is the intro.")]))]
         intro.image = .init("intro.png")
-        
+
         XCTAssertEqual(
             try value(),
             intro

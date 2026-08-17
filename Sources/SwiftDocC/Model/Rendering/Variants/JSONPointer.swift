@@ -18,27 +18,27 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable, Sendable
     ///
     /// The path components of the pointer are not escaped.
     public var pathComponents: [String]
-    
+
     public var description: String {
         Self.escaped(pathComponents)
     }
-    
+
     /// Creates a JSON Pointer given its path components.
     ///
     /// The components are assumed to be properly escaped per [RFC6901](https://datatracker.ietf.org/doc/html/rfc6901).
     public init(pathComponents: some Sequence<String>) {
         self.pathComponents = Array(pathComponents)
     }
-    
+
     /// Returns the pointer with the first path component removed.
     public func removingFirstPathComponent() -> JSONPointer {
         JSONPointer(pathComponents: pathComponents.dropFirst())
     }
-    
+
     func prependingPathComponents(_ components: [String]) -> JSONPointer {
         JSONPointer(pathComponents: components + pathComponents)
     }
-    
+
     /// An enum representing characters that need escaping in JSON Pointer values.
     ///
     /// The characters that need to be escaped in JSON Pointer values are defined in
@@ -48,12 +48,12 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable, Sendable
         ///
         /// This character is encoded as `~0` in JSON Pointer.
         case tilde = "~"
-        
+
         /// The forward slash character.
         ///
         /// This character is encoded as `~1` in JSON Pointer.
         case forwardSlash = "/"
-        
+
         /// The escaped character.
         public var escaped: String {
             switch self {
@@ -62,7 +62,7 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable, Sendable
             }
         }
     }
-    
+
     /// Creates a JSON pointer given a coding path.
     ///
     /// Use this initializer when creating JSON pointers during encoding. This initializer escapes components as defined by
@@ -78,34 +78,34 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable, Sendable
             }
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(description)
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let stringValue = try container.decode(String.self)
         self.pathComponents = Self.unescaped(stringValue)
     }
-    
+
     private static func escaped(_ pathComponents: [String]) -> String {
         // This code is called quite frequently for mixed language content.
         // Optimizing it has a measurable impact on the total documentation build time.
-        
+
         var string: [UTF8.CodeUnit] = []
         string.reserveCapacity(
             pathComponents.reduce(0) { acc, component in
                 acc + 1 /* the "/" separator */ + component.utf8.count
             }
-            + 16 // some extra capacity since the escaped replacements grow the string beyond its original length.
+                + 16  // some extra capacity since the escaped replacements grow the string beyond its original length.
         )
-        
+
         for component in pathComponents {
             // The leading slash and component separator
             string.append(forwardSlash)
-            
+
             // The escaped component
             for char in component.utf8 {
                 switch char {
@@ -118,25 +118,25 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable, Sendable
                 }
             }
         }
-        
+
         return String(decoding: string, as: UTF8.self)
     }
-    
+
     private static func unescaped(_ escapedRawString: String) -> [String] {
         escapedRawString.removingLeadingSlash.components(separatedBy: "/").map {
             // This code is called quite frequently for mixed language content.
             // Optimizing it has a measurable impact on the total documentation build time.
-            
+
             var string: [UTF8.CodeUnit] = []
             string.reserveCapacity($0.utf8.count)
-            
+
             var remaining = $0.utf8[...]
             while let char = remaining.popFirst() {
                 guard char == tilde, let escapedCharacterIndicator = remaining.popFirst() else {
                     string.append(char)
                     continue
                 }
-                
+
                 // Check the character
                 switch escapedCharacterIndicator {
                 case zero:
@@ -148,7 +148,7 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable, Sendable
                     return $0
                 }
             }
-            
+
             return String(decoding: string, as: UTF8.self)
         }
     }

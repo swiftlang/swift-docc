@@ -22,7 +22,7 @@ public struct SourceLanguage: Hashable, Codable, Comparable, Sendable, CustomDeb
     /// For example, a set can represent a page's list of supported language or it can represent a filter of common languages between to pages.
     /// Because each DocC execution only involves very few unique languages in practice,
     /// having a very small private identifier type allows DocC to pack all the languages it realistically needs into a small (inlineable) value.
-    fileprivate var _id: UInt8 // this is fileprivate so that SmallSourceLanguageSet (below) can access it
+    fileprivate var _id: UInt8  // this is fileprivate so that SmallSourceLanguageSet (below) can access it
 }
 
 /// The private type that holds the information for each source language
@@ -31,7 +31,7 @@ private struct _SourceLanguageInformation: Equatable {
     var id: String
     var idAliases: [String] = []
     var linkDisambiguationID: String
-    
+
     init(name: String, id: String, idAliases: [String] = [], linkDisambiguationID: String? = nil) {
         self.name = name
         self.id = id
@@ -44,19 +44,19 @@ private struct _SourceLanguageInformation: Equatable {
 
 private let _knownLanguages = [
     // NOTE: The known languages have identifiers that is also their sort order when there are no unknown languages
-    
+
     // Swift
     _SourceLanguageInformation(name: "Swift", id: "swift"),
-    
+
     // Miscellaneous data, that's not a programming language.
     _SourceLanguageInformation(name: "Data", id: "data"),
-    
+
     // JavaScript or another language that conforms to the ECMAScript specification.
     _SourceLanguageInformation(name: "JavaScript", id: "javascript"),
-    
+
     // The Metal programming language.
     _SourceLanguageInformation(name: "Metal", id: "metal"),
-    
+
     // Objective-C, C, and C++
     _SourceLanguageInformation(
         name: "Objective-C",
@@ -64,8 +64,8 @@ private let _knownLanguages = [
         idAliases: [
             "objective-c",
             "objc",
-            "c",   // FIXME: DocC should display C as its own language (https://github.com/swiftlang/swift-docc/issues/169).
-            "c++", // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/swiftlang/swift-docc/issues/767)
+            "c",  // FIXME: DocC should display C as its own language (https://github.com/swiftlang/swift-docc/issues/169).
+            "c++",  // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/swiftlang/swift-docc/issues/767)
             "objective-c++",
             "objc++",
             "occ++",
@@ -81,7 +81,7 @@ private extension SourceLanguage {
     private static func _isKnownLanguageID(_ id: UInt8) -> Bool {
         id < _numberOfKnownLanguages
     }
-    
+
     private static let _numberOfKnownLanguages = UInt8(_knownLanguages.count)
     private static let _maximumNumberOfUnknownLanguages: UInt8 = .max - _numberOfKnownLanguages
 }
@@ -89,10 +89,10 @@ private extension SourceLanguage {
 // Public accessors for known languages
 public extension SourceLanguage {
     // NOTE: The known languages have identifiers that is also their sort order when there are no unknown languages
-    
+
     /// The Swift programming language.
     static let swift = SourceLanguage(_id: 0)
-    
+
     /// Miscellaneous data, that's not a programming language.
     ///
     /// For example, use this to represent JSON or XML content.
@@ -101,10 +101,10 @@ public extension SourceLanguage {
     static let javaScript = SourceLanguage(_id: 2)
     /// The Metal programming language.
     static let metal = SourceLanguage(_id: 3)
-    
+
     /// The Objective-C programming language.
     static let objectiveC = SourceLanguage(_id: 4)
-    
+
     /// The list of programming languages that are known to DocC.
     static let knownLanguages: [SourceLanguage] = [.swift, .objectiveC, .javaScript, .data, .metal]
 }
@@ -117,7 +117,7 @@ private extension SourceLanguage {
     private func _accessInfo() -> _SourceLanguageInformation {
         Self._accessInfo(id: _id)
     }
-    
+
     private static func _accessInfo(id: UInt8) -> _SourceLanguageInformation {
         let (unknownIndex, isKnownLanguage) = id.subtractingReportingOverflow(SourceLanguage._numberOfKnownLanguages)
         return if isKnownLanguage {
@@ -126,7 +126,7 @@ private extension SourceLanguage {
             _unknownLanguages.withLock { $0[Int(unknownIndex)] }
         }
     }
-    
+
     private static func _addingOrFindingExisting(unknownLanguageInfo: _SourceLanguageInformation, withUnlockedUnknownLanguages unknownLanguages: inout [_SourceLanguageInformation]) -> UInt8 {
         if let existingIndex = unknownLanguages.firstIndex(of: unknownLanguageInfo) {
             return _languageID(unknownLanguageIndex: existingIndex)
@@ -135,12 +135,14 @@ private extension SourceLanguage {
             return _languageID(unknownLanguageIndex: unknownLanguages.count - 1)
         }
     }
-    
+
     private static func _languageID(unknownLanguageIndex: Int) -> UInt8 {
-        precondition(unknownLanguageIndex < _maximumNumberOfUnknownLanguages, """
-        Unexpectedly created more than 256 different programming languages in a single DocC execution. \
-        This is considered highly unlikely in real content and is possibly caused by some programming bug that is frequently modifying existing source languages.
-        """)
+        precondition(
+            unknownLanguageIndex < _maximumNumberOfUnknownLanguages,
+            """
+            Unexpectedly created more than 256 different programming languages in a single DocC execution. \
+            This is considered highly unlikely in real content and is possibly caused by some programming bug that is frequently modifying existing source languages.
+            """)
         return _numberOfKnownLanguages + UInt8(clamping: unknownLanguageIndex)
     }
 }
@@ -177,13 +179,13 @@ public extension SourceLanguage {
     ///   - linkDisambiguationID: The identifier to use for link disambiguation purposes.
     init(name: String, id: String, idAliases: [String] = [], linkDisambiguationID: String? = nil) {
         let newInfo = _SourceLanguageInformation(name: name, id: id, idAliases: idAliases, linkDisambiguationID: linkDisambiguationID)
-        
+
         // Before creating a new language, check if there is one that matches all the information
         if let existing = Self._knownLanguage(withIdentifier: id), newInfo == Self._accessInfo(id: existing._id) {
             self = existing
             return
         }
-        
+
         self._id = _unknownLanguages.withLock { unknownLanguages in
             Self._addingOrFindingExisting(
                 unknownLanguageInfo: .init(name: name, id: id, idAliases: idAliases, linkDisambiguationID: linkDisambiguationID),
@@ -191,7 +193,7 @@ public extension SourceLanguage {
             )
         }
     }
-    
+
     /// Finds the programming language that matches a given identifier, or creates a new one if it finds no existing language.
     /// - Parameter id: The identifier of the programming language.
     init(id: String) {
@@ -203,7 +205,7 @@ public extension SourceLanguage {
             }
         }
     }
-    
+
     /// Finds the programming language that matches a given display name, or creates a new one if it finds no existing language.
     ///
     /// - Parameter name: The display name of the programming language.
@@ -217,7 +219,7 @@ public extension SourceLanguage {
             }
         }
     }
-    
+
     /// Finds the programming language that matches a given display name.
     ///
     /// If the language name doesn't match any known language, this initializer returns `nil`.
@@ -230,7 +232,7 @@ public extension SourceLanguage {
             return nil
         }
     }
-    
+
     /// Finds the programming language that matches a given identifier.
     ///
     /// If the language identifier doesn't match any known language, this initializer returns `nil`.
@@ -243,7 +245,7 @@ public extension SourceLanguage {
             return nil
         }
     }
-    
+
     private static func knownLanguage(withName name: String) -> SourceLanguage? {
         // swift-format-ignore
         switch name.lowercased() {
@@ -255,7 +257,7 @@ public extension SourceLanguage {
             default:            nil
         }
     }
-    
+
     private static func _knownLanguage(withIdentifier id: String) -> SourceLanguage? {
         // swift-format-ignore
         switch id.lowercased() {
@@ -278,22 +280,22 @@ extension SourceLanguage {
     private enum CodingKeys: CodingKey {
         case name, id, idAliases, linkDisambiguationID
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         let name = try container.decode(String.self, forKey: .name)
         let id = try container.decode(String.self, forKey: .id)
         let idAliases = try container.decodeIfPresent([String].self, forKey: .idAliases) ?? []
         let linkDisambiguationID = try container.decodeIfPresent(String.self, forKey: .linkDisambiguationID)
-        
+
         self.init(name: name, id: id, idAliases: idAliases, linkDisambiguationID: linkDisambiguationID)
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         let info = _accessInfo()
-        
+
         try container.encode(info.name, forKey: .name)
         try container.encode(info.id, forKey: .id)
         if !info.idAliases.isEmpty {
@@ -315,7 +317,7 @@ public extension SourceLanguage {
             // If both languages are known, their `_id` is also their sort order
             lhs._id < rhs._id
         }
-        
+
         // Sort Swift before other languages.
         else if lhs == .swift {
             true
@@ -365,21 +367,21 @@ package struct SmallSourceLanguageSet: Sendable, Hashable, SetAlgebra, Expressib
     //
     // We _could_ use an enum to switch between an inline fixed size value and a dynamic resizable value.
     // However, the 1 bit for the two enum cases would double the `stride` of the memory layout, resulting in 63 unused "wasted" bits.
-    
+
     private var bitSet: _FixedSizeBitSet<UInt64>
     private init(storage: _FixedSizeBitSet<UInt64>) {
         self.bitSet = storage
     }
-    
+
     @inlinable
     package init() {
         bitSet = .init()
     }
-    
+
     // SetAlgebra
-    
+
     package typealias Element = SourceLanguage
-    
+
     @inlinable
     package func contains(_ member: SourceLanguage) -> Bool {
         bitSet.contains(Int(member._id))
@@ -423,9 +425,9 @@ package struct SmallSourceLanguageSet: Sendable, Hashable, SetAlgebra, Expressib
     package mutating func formSymmetricDifference(_ other: SmallSourceLanguageSet) {
         bitSet.formSymmetricDifference(other.bitSet)
     }
-    
+
     // ExpressibleByArrayLiteral
-    
+
     @inlinable
     package init(arrayLiteral elements: SourceLanguage...) {
         bitSet = .init()
@@ -433,27 +435,27 @@ package struct SmallSourceLanguageSet: Sendable, Hashable, SetAlgebra, Expressib
             bitSet.insert(Int(language._id))
         }
     }
-    
+
     // Sequence
-    
+
     @inlinable
     package func makeIterator() -> some IteratorProtocol<SourceLanguage> {
         _Iterator(wrapped: bitSet.makeIterator())
     }
-    
+
     private struct _Iterator<Wrapped: IteratorProtocol<Int>>: IteratorProtocol {
         typealias Element = SourceLanguage
-        
+
         fileprivate var wrapped: Wrapped
-        
+
         @inlinable
         mutating func next() -> SourceLanguage? {
-            wrapped.next().map { SourceLanguage(_id: UInt8($0) )}
+            wrapped.next().map { SourceLanguage(_id: UInt8($0)) }
         }
     }
-    
+
     // Collection
-    
+
     package typealias Index = _FixedSizeBitSet<UInt64>.Index
     @inlinable
     package var startIndex: Index {
@@ -471,36 +473,36 @@ package struct SmallSourceLanguageSet: Sendable, Hashable, SetAlgebra, Expressib
     package func index(after currentIndex: Index) -> Index {
         bitSet.index(after: currentIndex)
     }
-    
+
     private var containsUnknownLanguages: Bool {
         // There are 5 known languages, representing the trailing 5 bits of the bit set
         let unknownLanguagesMask: UInt64 = 0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11100000
         return (bitSet.storage & unknownLanguagesMask) != 0
     }
-    
+
     package func min() -> SourceLanguage? {
         guard containsUnknownLanguages else {
             // Known languages are trivially sortable by their `_id`
-            return bitSet.min().map { SourceLanguage(_id: UInt8($0) )}
+            return bitSet.min().map { SourceLanguage(_id: UInt8($0)) }
         }
-        
-        return Array(bitSet).map { SourceLanguage(_id: UInt8($0) )}.min()
+
+        return Array(bitSet).map { SourceLanguage(_id: UInt8($0)) }.min()
     }
-    
+
     package func sorted() -> [SourceLanguage] {
         guard containsUnknownLanguages else {
             // Known languages are trivially sortable by their `_id`
-            return bitSet.sorted().map { SourceLanguage(_id: UInt8($0) )}
+            return bitSet.sorted().map { SourceLanguage(_id: UInt8($0)) }
         }
-        
-        return Array(bitSet).map { SourceLanguage(_id: UInt8($0) )}.sorted()
+
+        return Array(bitSet).map { SourceLanguage(_id: UInt8($0)) }.sorted()
     }
-    
+
     @inlinable
     package var isEmpty: Bool {
         bitSet.isEmpty
     }
-    
+
     @inlinable
     package var count: Int {
         bitSet.count

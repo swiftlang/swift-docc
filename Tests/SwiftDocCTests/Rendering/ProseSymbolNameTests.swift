@@ -59,22 +59,26 @@ struct ProseSymbolNameTests {
     // MARK: - Tests
 
     @Test(arguments: [
-        MultiLanguageSetup(name: "Swift prose only",
-                           swiftProse: "swiftProseName", objcProse: nil,
-                           expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
-                           expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
-        MultiLanguageSetup(name: "Objective-C prose only",
-                           swiftProse: nil, objcProse: "objcProseName",
-                           expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
-                           expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
-        MultiLanguageSetup(name: "Both languages have prose",
-                           swiftProse: "swiftProseName", objcProse: "objcProseName",
-                           expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
-                           expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
-        MultiLanguageSetup(name: "Neither language has prose",
-                           swiftProse: nil, objcProse: nil,
-                           expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
-                           expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
+        MultiLanguageSetup(
+            name: "Swift prose only",
+            swiftProse: "swiftProseName", objcProse: nil,
+            expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
+            expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
+        MultiLanguageSetup(
+            name: "Objective-C prose only",
+            swiftProse: nil, objcProse: "objcProseName",
+            expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
+            expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
+        MultiLanguageSetup(
+            name: "Both languages have prose",
+            swiftProse: "swiftProseName", objcProse: "objcProseName",
+            expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
+            expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
+        MultiLanguageSetup(
+            name: "Neither language has prose",
+            swiftProse: nil, objcProse: nil,
+            expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
+            expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
     ])
     func usesProseNameForInlineLinkTextInAllOutputFormats(_ setup: MultiLanguageSetup) async throws {
         let (context, reference) = try await loadMultiLanguageContext(
@@ -88,12 +92,14 @@ struct ProseSymbolNameTests {
     }
 
     @Test(arguments: [
-        SingleLanguageSetup(name: "Prose set",
-                            prose: "singleProseName",
-                            expectedHTML: "single<wbr></wbr>Prose<wbr></wbr>Name"),
-        SingleLanguageSetup(name: "Prose not set",
-                            prose: nil,
-                            expectedHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)"),
+        SingleLanguageSetup(
+            name: "Prose set",
+            prose: "singleProseName",
+            expectedHTML: "single<wbr></wbr>Prose<wbr></wbr>Name"),
+        SingleLanguageSetup(
+            name: "Prose not set",
+            prose: nil,
+            expectedHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)"),
     ])
     func usesProseNameForSingleLanguageSymbolInAllOutputFormats(_ setup: SingleLanguageSetup) async throws {
         let (context, reference) = try await loadSingleLanguageContext(prose: setup.prose)
@@ -144,26 +150,31 @@ struct ProseSymbolNameTests {
         var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: .init())
         let html = renderer.renderSymbol(symbol).content.xmlString
         if let expectedObjC {
-            #expect(html.contains(#"<code class="swift-only">\#(expectedSwift.html)</code>"#),
-                    "Swift-only HTML missing expected code \(expectedSwift.html); got: \(html)")
-            #expect(html.contains(#"<code class="occ-only">\#(expectedObjC.html)</code>"#),
-                    "Objective-C-only HTML missing expected code \(expectedObjC.html); got: \(html)")
+            #expect(
+                html.contains(#"<code class="swift-only">\#(expectedSwift.html)</code>"#),
+                "Swift-only HTML missing expected code \(expectedSwift.html); got: \(html)")
+            #expect(
+                html.contains(#"<code class="occ-only">\#(expectedObjC.html)</code>"#),
+                "Objective-C-only HTML missing expected code \(expectedObjC.html); got: \(html)")
         } else {
-            #expect(html.contains(#"<code>\#(expectedSwift.html)</code>"#),
-                    "HTML missing expected code \(expectedSwift.html); got: \(html)")
+            #expect(
+                html.contains(#"<code>\#(expectedSwift.html)</code>"#),
+                "HTML missing expected code \(expectedSwift.html); got: \(html)")
         }
 
         // D. Markdown output.
         var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
         let output = visitor.createOutput()
         let markdown = try #require(output).markdown
-        
-        #expect(markdown.contains("`\(expectedSwift.text)`"),
-                "Markdown missing expected inline code `\(expectedSwift.text)`; got: \(markdown)")
+
+        #expect(
+            markdown.contains("`\(expectedSwift.text)`"),
+            "Markdown missing expected inline code `\(expectedSwift.text)`; got: \(markdown)")
         // When a prose name replaces the title, the full title should not appear.
         if expectedSwift.text != Self.swiftTitle {
-            #expect(!markdown.contains("`\(Self.swiftTitle)`"),
-                    "Markdown unexpectedly contains the full title `\(Self.swiftTitle)`; got: \(markdown)")
+            #expect(
+                !markdown.contains("`\(Self.swiftTitle)`"),
+                "Markdown unexpectedly contains the full title `\(Self.swiftTitle)`; got: \(markdown)")
         }
     }
 
@@ -173,13 +184,16 @@ struct ProseSymbolNameTests {
         expectedObjC: String?
     ) {
         if let expectedObjC {
-            #expect(reference.titleVariants.value(for: .swift) == expectedSwift,
-                    "Unexpected Swift link text: \(reference.titleVariants.value(for: .swift))")
-            #expect(reference.titleVariants.value(for: .objectiveC) == expectedObjC,
-                    "Unexpected Objective-C link text: \(reference.titleVariants.value(for: .objectiveC))")
+            #expect(
+                reference.titleVariants.value(for: .swift) == expectedSwift,
+                "Unexpected Swift link text: \(reference.titleVariants.value(for: .swift))")
+            #expect(
+                reference.titleVariants.value(for: .objectiveC) == expectedObjC,
+                "Unexpected Objective-C link text: \(reference.titleVariants.value(for: .objectiveC))")
         } else {
-            #expect(reference.titleVariants.defaultValue == expectedSwift,
-                    "Unexpected link text: \(reference.titleVariants.defaultValue)")
+            #expect(
+                reference.titleVariants.defaultValue == expectedSwift,
+                "Unexpected link text: \(reference.titleVariants.defaultValue)")
         }
     }
 
@@ -189,20 +203,25 @@ struct ProseSymbolNameTests {
         swiftProse: String?,
         objcProse: String?
     ) async throws -> (context: DocumentationContext, reference: ResolvedTopicReference) {
-        var swiftFunction = makeSymbol(id: Self.symbolID, language: .swift, kind: .func,
-                                       pathComponents: [Self.swiftTitle],
-                                       docComment: "Call ``\(Self.swiftTitle)`` to do something.")
+        var swiftFunction = makeSymbol(
+            id: Self.symbolID, language: .swift, kind: .func,
+            pathComponents: [Self.swiftTitle],
+            docComment: "Call ``\(Self.swiftTitle)`` to do something.")
         swiftFunction.names.prose = swiftProse
-        var objcFunction = makeSymbol(id: Self.symbolID, language: .objectiveC, kind: .func,
-                                      pathComponents: [Self.objcTitle])
+        var objcFunction = makeSymbol(
+            id: Self.symbolID, language: .objectiveC, kind: .func,
+            pathComponents: [Self.objcTitle])
         objcFunction.names.prose = objcProse
 
-        let context = try await load(catalog: Folder(name: "ModuleName.docc") {
-            JSONFile(name: "ModuleName.symbols.json",
-                     content: makeSymbolGraph(moduleName: "ModuleName", symbols: [swiftFunction]))
-            JSONFile(name: "ModuleName.occ.symbols.json",
-                     content: makeSymbolGraph(moduleName: "ModuleName", symbols: [objcFunction]))
-        })
+        let context = try await load(
+            catalog: Folder(name: "ModuleName.docc") {
+                JSONFile(
+                    name: "ModuleName.symbols.json",
+                    content: makeSymbolGraph(moduleName: "ModuleName", symbols: [swiftFunction]))
+                JSONFile(
+                    name: "ModuleName.occ.symbols.json",
+                    content: makeSymbolGraph(moduleName: "ModuleName", symbols: [objcFunction]))
+            })
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let reference = try #require(context.documentationCache.reference(symbolID: Self.symbolID))
@@ -212,15 +231,18 @@ struct ProseSymbolNameTests {
     private func loadSingleLanguageContext(
         prose: String?
     ) async throws -> (context: DocumentationContext, reference: ResolvedTopicReference) {
-        var function = makeSymbol(id: Self.symbolID, language: .swift, kind: .func,
-                                  pathComponents: [Self.swiftTitle],
-                                  docComment: "Call ``\(Self.swiftTitle)`` to do something.")
+        var function = makeSymbol(
+            id: Self.symbolID, language: .swift, kind: .func,
+            pathComponents: [Self.swiftTitle],
+            docComment: "Call ``\(Self.swiftTitle)`` to do something.")
         function.names.prose = prose
 
-        let context = try await load(catalog: Folder(name: "ModuleName.docc") {
-            JSONFile(name: "ModuleName.symbols.json",
-                     content: makeSymbolGraph(moduleName: "ModuleName", symbols: [function]))
-        })
+        let context = try await load(
+            catalog: Folder(name: "ModuleName.docc") {
+                JSONFile(
+                    name: "ModuleName.symbols.json",
+                    content: makeSymbolGraph(moduleName: "ModuleName", symbols: [function]))
+            })
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
 
         let reference = try #require(context.documentationCache.reference(symbolID: Self.symbolID))

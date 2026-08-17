@@ -107,7 +107,8 @@ public struct CoverageDataEntry: CustomStringConvertible, Codable {
     public static func generateSummary(
         of coverageInfo: [CoverageDataEntry],
         shouldGenerateBrief: Bool,
-        shouldGenerateDetailed: Bool) -> String {
+        shouldGenerateDetailed: Bool
+    ) -> String {
 
         var output = ""
         if shouldGenerateBrief {
@@ -119,13 +120,16 @@ public struct CoverageDataEntry: CustomStringConvertible, Codable {
                 SummaryRow.summaryTableHeader,
                 SummaryRow(
                     rowHeader: "Types",
-                    data: split[.types] ?? []).description,
+                    data: split[.types] ?? []
+                ).description,
                 SummaryRow(
                     rowHeader: "Members",
-                    data: split[.members] ?? []).description,
+                    data: split[.members] ?? []
+                ).description,
                 SummaryRow(
                     rowHeader: "Globals",
-                    data: split[.globals] ?? []).description
+                    data: split[.globals] ?? []
+                ).description,
             ]
 
             output.append("\(rows.joined(separator: "\n"))\n")
@@ -330,8 +334,7 @@ extension CoverageDataEntry {
                 self = try .instanceMethod(
                     parameterStats: CoverageDataEntry.KindSpecificData.extractFunctionSignatureStats(
                         documentationNode: documentationNode,
-                        context: context
-                        , fieldName: "method parameters"))
+                        context: context, fieldName: "method parameters"))
             case .operator:
                 self = try .`operator`(
                     parameterStats: CoverageDataEntry.KindSpecificData.extractFunctionSignatureStats(
@@ -355,11 +358,10 @@ extension CoverageDataEntry {
             }
         }
 
-
-
         static func extractChildStats(
             documentationNode: DocumentationNode,
-            context: DocumentationContext) throws -> [InstanceMemberType: RatioStatistic] {
+            context: DocumentationContext
+        ) throws -> [InstanceMemberType: RatioStatistic] {
 
             func _getStats(
                 kind: DocumentationNode.Kind?
@@ -382,7 +384,6 @@ extension CoverageDataEntry {
                 }
             }
 
-
             var dictionary: [InstanceMemberType: RatioStatistic] = [:]
 
             dictionary[.all] = try _getStats(kind: nil)
@@ -397,14 +398,13 @@ extension CoverageDataEntry {
         static func extractFunctionSignatureStats(
             documentationNode: DocumentationNode,
             context: DocumentationContext,
-            fieldName: String) throws -> RatioStatistic {
+            fieldName: String
+        ) throws -> RatioStatistic {
             guard let symbolGraphSymbol = documentationNode.symbol else {
                 throw CoverageDataEntry.Error.failedConversion(
                     description:
                         "Failed to get backing SymbolGraph.Symbol for `\(documentationNode)`")
             }
-
-
 
             let funcSignatureMixinKey = SymbolGraph.Symbol.FunctionSignature.mixinKey
             guard
@@ -460,11 +460,11 @@ extension CoverageDataEntry.KindSpecificData {
         case framework
         case article
 
-
         /// For cases that have an associated type `RatioStatistic`, the appropriate initializer for that case on `KindSpecificData`
         /// - Throws: If the instance does not represent a case with associated type `RatioStatistic`
         /// - Returns: A closure that accepts an instance of `RatioStatistic` and returns an instance of `KindSpecificData`
-        func associatedRatioStatisticInitializer() throws -> (RatioStatistic) -> CoverageDataEntry
+        func associatedRatioStatisticInitializer() throws -> (RatioStatistic) ->
+            CoverageDataEntry
             .KindSpecificData
         {
             switch self {
@@ -479,9 +479,9 @@ extension CoverageDataEntry.KindSpecificData {
             case .operator:
                 return CoverageDataEntry.KindSpecificData.`operator`(parameterStats:)
             case .class,
-                 .`structure`,
-                 .dictionary,
-                 .enumeration,
+                .`structure`,
+                .dictionary,
+                .enumeration,
                 .httpRequest,
                 .protocol,
                 .typeAlias,
@@ -500,7 +500,8 @@ extension CoverageDataEntry.KindSpecificData {
         /// For cases that have an associated type `[InstanceMemberType: RatioStatistic]`, the appropriate initializer for that case on `KindSpecificData`
         /// - Throws: If the instance does not represent a case with associated type `RatioStatistic`
         /// - Returns: A closure that accepts an instance of `[InstanceMemberType: RatioStatistic]` and returns an instance of `KindSpecificData`
-        func associatedMemberStatisticsInitializer() throws -> ([InstanceMemberType: RatioStatistic]) -> CoverageDataEntry
+        func associatedMemberStatisticsInitializer() throws -> ([InstanceMemberType: RatioStatistic]) ->
+            CoverageDataEntry
             .KindSpecificData
         {
             switch self {
@@ -513,9 +514,9 @@ extension CoverageDataEntry.KindSpecificData {
             case .class:
                 return CoverageDataEntry.KindSpecificData.class(memberStats:)
             case .instanceMethod,
-                 .initializer,
-                 .dictionary,
-                 .httpRequest,
+                .initializer,
+                .dictionary,
+                .httpRequest,
                 .typeAlias,
                 .instanceProperty,
                 .enumerationCase,
@@ -585,10 +586,10 @@ extension CoverageDataEntry.KindSpecificData {
     var formattedParameterStats: String {
         switch self {
         case .instanceMethod(let stats),
-             .function(let stats),
-             .initializer(let stats),
-             .enumerationCase(let stats),
-             .`operator`(let stats):
+            .function(let stats),
+            .initializer(let stats),
+            .enumerationCase(let stats),
+            .`operator`(let stats):
             return stats.description
         default:
             return "-"
@@ -599,9 +600,9 @@ extension CoverageDataEntry.KindSpecificData {
     var formattedMemberStats: String {
         switch self {
         case .enumeration(let memberStats),
-             .structure(let memberStats),
-             .class(let memberStats),
-             .protocol(let memberStats):
+            .structure(let memberStats),
+            .class(let memberStats),
+            .protocol(let memberStats):
             return (memberStats[.all] ?? .zeroOverZero).description
         default:
             return "-"
@@ -627,8 +628,8 @@ extension CoverageDataEntry.KindSpecificData {
             )
             self = try discriminant.associatedRatioStatisticInitializer()(associatedValue)
         case .class,
-             .`structure`,
-             .enumeration,
+            .`structure`,
+            .enumeration,
             .protocol:
             let associatedValue = try container.decode(
                 [InstanceMemberType: RatioStatistic].self,
@@ -672,16 +673,15 @@ extension CoverageDataEntry.KindSpecificData {
             try container.encode(stats, forKey: .associatedValue)
 
         case .typeAlias,
-             .dictionary,
-             .httpRequest,
-             .instanceProperty,
-             .variable,
-             .framework,
-             .article:
+            .dictionary,
+            .httpRequest,
+            .instanceProperty,
+            .variable,
+            .framework,
+            .article:
             break
         }
     }
-
 
     /// Represents the various kinds of instance members that types can have. Keys  used to retrieve statistics about the associated member kind.
     public enum InstanceMemberType: String, Hashable, Codable, CaseIterable {
@@ -854,9 +854,11 @@ internal struct SummaryRow: CustomStringConvertible {
     }
 
     private static var briefSummaryColumnWidth: Int = 15
-    private static func paddingAllExceptLast(in list: [String],
-                              to length: Int,
-                              joiningWith separator: String) -> String {
+    private static func paddingAllExceptLast(
+        in list: [String],
+        to length: Int,
+        joiningWith separator: String
+    ) -> String {
 
         guard let lastColumn = list.last else {
             // list is empty
@@ -868,7 +870,6 @@ internal struct SummaryRow: CustomStringConvertible {
             return lastColumn
         }
 
-
         let allButLastColumn = list.dropLast().map {
             $0.padding(
                 toLength: briefSummaryColumnWidth,
@@ -879,7 +880,6 @@ internal struct SummaryRow: CustomStringConvertible {
 
         // This avoids padding the end of each line which makes testing the output easier.
         return "\(allButLastColumn)\(separator)\(lastColumn)"
-
 
     }
 
@@ -905,7 +905,8 @@ internal struct SummaryRow: CustomStringConvertible {
                 paddedHeader,
                 hasAbstract,
                 isCurated,
-                hasCodeListing],
+                hasCodeListing,
+            ],
             to: SummaryRow.briefSummaryColumnWidth,
             joiningWith: " | ")
     }
@@ -918,7 +919,8 @@ internal struct SummaryRow: CustomStringConvertible {
                 leftHeaderPadding,
                 "Abstract",
                 "Curated",
-                "Code Listing"],
+                "Code Listing",
+            ],
             to: 30,
             joiningWith: " | ")
 

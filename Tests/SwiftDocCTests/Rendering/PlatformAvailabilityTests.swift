@@ -17,15 +17,15 @@ class PlatformAvailabilityTests: XCTestCase {
     func testDecodePlatformAvailability() throws {
         let platformAvailabilityURL = Bundle.module.url(
             forResource: "platform-availability", withExtension: "json", subdirectory: "Rendering Fixtures")!
-        
+
         let data = try Data(contentsOf: platformAvailabilityURL)
         let symbol = try RenderNode.decode(fromJSON: data)
-        
+
         guard let platforms = symbol.metadata.platforms else {
             XCTFail("No platform data found in fixture")
             return
         }
-        
+
         // The "macOS" platform in the fixture is unconditionally deprecated
         XCTAssertEqual(true, platforms.first { $0.name == "macOS" }?.unconditionallyDeprecated)
 
@@ -97,19 +97,23 @@ class PlatformAvailabilityTests: XCTestCase {
         // iOS introduces iPadOS and Mac Catalyst as fallback platforms
         XCTAssertEqual(availability.count, 5)
 
-        XCTAssert(availability.contains(where: { item in
-            item.name == "iOS" && item.introduced == "15.0"
-        }))
-        XCTAssert(availability.contains(where: { item in
-            item.name == "macOS" && item.introduced == "12.0"
-        }))
-        XCTAssert(availability.contains(where: { item in
-            item.name == "watchOS" && item.introduced == "7.0"
-        }))
-        
-        XCTAssert(availability.allSatisfy { item in
-            item.isBeta != true
-        })
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "iOS" && item.introduced == "15.0"
+            }))
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "macOS" && item.introduced == "12.0"
+            }))
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "watchOS" && item.introduced == "7.0"
+            }))
+
+        XCTAssert(
+            availability.allSatisfy { item in
+                item.isBeta != true
+            })
     }
 
     func testArbitraryPlatformAvailability() async throws {
@@ -125,17 +129,20 @@ class PlatformAvailabilityTests: XCTestCase {
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 2)
 
-        XCTAssert(availability.contains(where: { item in
-            item.name == "SomePackage" && item.introduced == "1.0"
-        }))
-        XCTAssert(availability.contains(where: { item in
-            item.name == "My Package" && item.introduced == "2.0"
-        }))
-        XCTAssert(availability.allSatisfy { item in
-            item.isBeta != true
-        })
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "SomePackage" && item.introduced == "1.0"
+            }))
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "My Package" && item.introduced == "2.0"
+            }))
+        XCTAssert(
+            availability.allSatisfy { item in
+                item.isBeta != true
+            })
     }
-    
+
     // Test that the Info.plist default availability does not affect the deprecated/unavailable availabilities provided by the symbol graph.
     func testAvailabilityParserWithInfoPlistDefaultAvailability() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "AvailabilityOverrideBundle")
@@ -150,29 +157,36 @@ class PlatformAvailabilityTests: XCTestCase {
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 5)
-        XCTAssert(availability.contains(where: { platform in
-            platform.name == "iOS" && platform.deprecated != nil
-        }))
-        XCTAssert(availability.contains(where: { platform in
-            platform.name == "macOS" && platform.deprecated != nil
-        }))
-        XCTAssert(availability.contains(where: { platform in
-            platform.name == "watchOS" && platform.deprecated != nil
-        }))
-        XCTAssert(availability.contains(where: { platform in
-            platform.name == "Mac Catalyst" && platform.deprecated != nil
-        }))
-        XCTAssert(availability.contains(where: { platform in
-            platform.name == "iPadOS" && platform.deprecated != nil
-        }))
-        XCTAssertFalse(availability.contains(where: { platform in
-            platform.name == "tvOS"
-        }))
-        XCTAssert(availability.allSatisfy { item in
-            item.isBeta != true
-        })
+        XCTAssert(
+            availability.contains(where: { platform in
+                platform.name == "iOS" && platform.deprecated != nil
+            }))
+        XCTAssert(
+            availability.contains(where: { platform in
+                platform.name == "macOS" && platform.deprecated != nil
+            }))
+        XCTAssert(
+            availability.contains(where: { platform in
+                platform.name == "watchOS" && platform.deprecated != nil
+            }))
+        XCTAssert(
+            availability.contains(where: { platform in
+                platform.name == "Mac Catalyst" && platform.deprecated != nil
+            }))
+        XCTAssert(
+            availability.contains(where: { platform in
+                platform.name == "iPadOS" && platform.deprecated != nil
+            }))
+        XCTAssertFalse(
+            availability.contains(where: { platform in
+                platform.name == "tvOS"
+            }))
+        XCTAssert(
+            availability.allSatisfy { item in
+                item.isBeta != true
+            })
     }
-    
+
     /// Ensure that adding `@Available` directives for platform versions marked as beta in an article causes the final RenderNode to contain the appropriate availability data.
     func testBetaPlatformAvailabilityFromArticle() async throws {
         let platformMetadata = [
@@ -219,21 +233,25 @@ class PlatformAvailabilityTests: XCTestCase {
         // iOS introduces iPadOS and Mac Catalyst as fallback platforms
         XCTAssertEqual(availability.count, 5)
 
-        XCTAssert(availability.contains(where: { item in
-            item.name == "iOS" && item.introduced == "15.0"
-        }))
-        XCTAssert(availability.contains(where: { item in
-            item.name == "macOS" && item.introduced == "12.0"
-        }))
-        XCTAssert(availability.contains(where: { item in
-            item.name == "watchOS" && item.introduced == "7.0"
-        }))
-        
-        XCTAssert(availability.allSatisfy { item in
-            item.isBeta == true
-        })
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "iOS" && item.introduced == "15.0"
+            }))
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "macOS" && item.introduced == "12.0"
+            }))
+        XCTAssert(
+            availability.contains(where: { item in
+                item.name == "watchOS" && item.introduced == "7.0"
+            }))
+
+        XCTAssert(
+            availability.allSatisfy { item in
+                item.isBeta == true
+            })
     }
-    
+
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
     func testBetaPlatformAvailabilityFromExtension() async throws {
         let platformMetadata = [
@@ -261,8 +279,7 @@ class PlatformAvailabilityTests: XCTestCase {
         }
     }
 
-    
-    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) async throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String: PlatformVersion]) async throws -> (DocumentationBundle, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = platformMetadata

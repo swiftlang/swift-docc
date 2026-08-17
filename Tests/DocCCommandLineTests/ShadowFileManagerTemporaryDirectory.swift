@@ -14,7 +14,7 @@ import XCTest
 // This file exists to shadow `FileManager.temporaryDirectory` in unit tests to warn about potentially referencing a shared location if multiple checkouts run tests at the same time in Swift CI.
 
 extension FileManager {
-    
+
     @available(*, deprecated, message: "Use `createTemporaryDirectory` instead in unit tests to avoid referencing a shared location in Swift CI.")
     var temporaryDirectory: URL {
         XCTFail("Use `createTemporaryDirectory` instead in unit tests to avoid referencing a shared location in Swift CI.")

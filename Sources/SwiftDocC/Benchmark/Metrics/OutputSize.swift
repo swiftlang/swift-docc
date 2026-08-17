@@ -16,29 +16,29 @@ extension Benchmark {
         public static let identifier = "total-archive-output-size"
         public static let displayName = "Total DocC archive size"
         public var result: MetricValue?
-        
+
         public init(archiveDirectory: URL) {
             self.result = MetricValue(directory: archiveDirectory)
         }
     }
-    
+
     /// Measures the output size of the data subdirectory in a DocC archive.
     public struct DataDirectoryOutputSize: BenchmarkMetric {
         public static let identifier = "data-subdirectory-output-size"
         public static let displayName = "Data subdirectory size"
         public var result: MetricValue?
-        
+
         public init(dataDirectory: URL) {
             self.result = MetricValue(directory: dataDirectory)
         }
     }
-    
+
     /// Measures the output size of the index subdirectory in a DocC archive.
     public struct IndexDirectoryOutputSize: BenchmarkMetric {
         public static let identifier = "index-subdirectory-output-size"
         public static let displayName = "Index subdirectory size"
         public var result: MetricValue?
-        
+
         public init(indexDirectory: URL) {
             self.result = MetricValue(directory: indexDirectory)
         }
@@ -53,20 +53,22 @@ extension MetricValue {
     /// corresponding files. This behavior helps produce real deltas between
     /// multiple benchmarks.
     init?(directory: URL) {
-        guard let enumerator = FileManager.default.enumerator(
-            at: directory,
-            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey],
-            options: .skipsHiddenFiles,
-            errorHandler: nil
-        ) else {
+        guard
+            let enumerator = FileManager.default.enumerator(
+                at: directory,
+                includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey],
+                options: .skipsHiddenFiles,
+                errorHandler: nil
+            )
+        else {
             return nil
         }
-        
+
         var bytes: Int64 = 0
         for case let url as URL in enumerator {
             bytes += Int64((try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0)
         }
-        
+
         self = .bytesOnDisk(bytes)
     }
 }

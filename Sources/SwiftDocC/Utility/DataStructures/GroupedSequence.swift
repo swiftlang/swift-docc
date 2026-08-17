@@ -38,26 +38,26 @@
 /// ```
 struct GroupedSequence<Key: Hashable, Element>: Sequence, CustomStringConvertible {
     fileprivate var storage = [Key: Element]()
-    
+
     /// A closure that transforms an element into its key.
     private var deriveKey: (Element) -> Key
-    
+
     var description: String {
         storage.values.description
     }
-    
+
     /// Creates an empty grouped sequence.
     init(deriveKey: @escaping (Element) -> Key) {
         self.deriveKey = deriveKey
     }
-   
+
     /// Adds an element to the group sequence.
     ///
     /// If an element with the same derived key was appended before, it will be replaced with the new element.
     mutating func append(_ element: Element) {
         storage[deriveKey(element)] = element
     }
-    
+
     /// Adds the contents of a sequence to the group sequence.
     ///
     /// Existing elements with the same derived key will be replaced with the new element.
@@ -66,14 +66,14 @@ struct GroupedSequence<Key: Hashable, Element>: Sequence, CustomStringConvertibl
             append(element)
         }
     }
-    
+
     /// Accesses the member using the given key.
     subscript(key: Key) -> Element? {
         get {
             storage[key]
         }
     }
-    
+
     /// Returns an iterator over the members of the sequence.
     func makeIterator() -> some IteratorProtocol<Element> {
         storage.values.makeIterator()

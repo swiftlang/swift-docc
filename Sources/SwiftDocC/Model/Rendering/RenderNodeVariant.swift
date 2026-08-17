@@ -23,16 +23,16 @@ extension RenderNode {
     /// }
     /// ```
     public struct Variant: Codable, Equatable {
-        
+
         /// A trait describing an aspect of the render variant.
         public enum Trait: Codable, Hashable {
             /// Presentation language (e.g. Swift or Obj-C).
             case interfaceLanguage(String)
-            
+
             enum CodingKeys: String, CodingKey, CaseIterable {
                 case interfaceLanguage
             }
-            
+
             public enum Error: DescribedError {
                 case invalidTrait
                 public var errorDescription: String {
@@ -41,7 +41,7 @@ extension RenderNode {
                     }
                 }
             }
-            
+
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -49,41 +49,41 @@ extension RenderNode {
                     self = .interfaceLanguage(language)
                     return
                 }
-                
+
                 throw Error.invalidTrait
             }
-            
+
             public func encode(to encoder: any Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
-                
+
                 switch self {
                 case .interfaceLanguage(let language):
                     try container.encode(language, forKey: .interfaceLanguage)
                 }
             }
         }
-        
+
         /// Collection of traits identifying the variant.
         public var traits: [Trait]
-        
+
         /// The paths to the variant.
         public var paths: [String]
-        
+
         enum CodingKeys: String, CodingKey {
             case traits, paths
         }
-        
+
         public init(traits: [Trait], paths: [String]) {
             self.traits = traits
             self.paths = paths
         }
-        
+
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             traits = try container.decode([Trait].self, forKey: .traits)
             paths = try container.decode([String].self, forKey: .paths)
         }
-        
+
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(traits, forKey: .traits)

@@ -21,28 +21,29 @@ struct DocumentationContentRendererTests {
         let subHeadingFragments = try await makeDocumentationContentRenderer()
             .subHeadingFragments(for: nodeWithSubheadingAndNavigatorVariants)
 
-        #expect(subHeadingFragments.defaultValue == [
-            DeclarationRenderSection.Token(
-                text: "class",
-                kind: .keyword,
-                identifier: nil,
-                preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: " ",
-                kind: .text,
-                identifier: nil,
-                preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: "ClassInSwift",
+        #expect(
+            subHeadingFragments.defaultValue == [
+                DeclarationRenderSection.Token(
+                    text: "class",
+                    kind: .keyword,
+                    identifier: nil,
+                    preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: " ",
+                    kind: .text,
+                    identifier: nil,
+                    preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: "ClassInSwift",
 
-                // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
-                kind: .identifier,
-                identifier: nil,
-                preciseIdentifier: nil
-            ),
-        ])
+                    // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
+                    kind: .identifier,
+                    identifier: nil,
+                    preciseIdentifier: nil
+                ),
+            ])
     }
 
     @Test
@@ -55,20 +56,21 @@ struct DocumentationContentRendererTests {
             return
         }
 
-        #expect(fragments == [
-            DeclarationRenderSection.Token(
-                text: "class",
-                kind: .keyword, identifier: nil, preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: " ",
-                kind: .text, identifier: nil, preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: "ClassInAnotherLanguage",
-                kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
-            ),
-        ])
+        #expect(
+            fragments == [
+                DeclarationRenderSection.Token(
+                    text: "class",
+                    kind: .keyword, identifier: nil, preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: " ",
+                    kind: .text, identifier: nil, preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: "ClassInAnotherLanguage",
+                    kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
+                ),
+            ])
     }
 
     @Test
@@ -76,28 +78,29 @@ struct DocumentationContentRendererTests {
         let navigatorFragments = try await makeDocumentationContentRenderer()
             .navigatorFragments(for: nodeWithSubheadingAndNavigatorVariants)
 
-        #expect(navigatorFragments.defaultValue == [
-            DeclarationRenderSection.Token(
-                text: "class",
-                kind: .keyword,
-                identifier: nil,
-                preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: " ",
-                kind: .text,
-                identifier: nil,
-                preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: "ClassInSwift",
+        #expect(
+            navigatorFragments.defaultValue == [
+                DeclarationRenderSection.Token(
+                    text: "class",
+                    kind: .keyword,
+                    identifier: nil,
+                    preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: " ",
+                    kind: .text,
+                    identifier: nil,
+                    preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: "ClassInSwift",
 
-                // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
-                kind: .identifier,
-                identifier: nil,
-                preciseIdentifier: nil
-            ),
-        ])
+                    // The 'typeIdentifier' value of the symbol's declaration is replaced with an 'identifier'.
+                    kind: .identifier,
+                    identifier: nil,
+                    preciseIdentifier: nil
+                ),
+            ])
     }
 
     @Test
@@ -110,20 +113,21 @@ struct DocumentationContentRendererTests {
             return
         }
 
-        #expect(fragments == [
-            DeclarationRenderSection.Token(
-                text: "class",
-                kind: .keyword, identifier: nil, preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: " ",
-                kind: .text, identifier: nil, preciseIdentifier: nil
-            ),
-            DeclarationRenderSection.Token(
-                text: "ClassInAnotherLanguage",
-                kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
-            ),
-        ])
+        #expect(
+            fragments == [
+                DeclarationRenderSection.Token(
+                    text: "class",
+                    kind: .keyword, identifier: nil, preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: " ",
+                    kind: .text, identifier: nil, preciseIdentifier: nil
+                ),
+                DeclarationRenderSection.Token(
+                    text: "ClassInAnotherLanguage",
+                    kind: .typeIdentifier, identifier: nil, preciseIdentifier: nil
+                ),
+            ])
     }
 
     @Test
@@ -134,21 +138,25 @@ struct DocumentationContentRendererTests {
             constraints: [.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "Bar")]
         )
 
-        let catalog = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
-                moduleName: "SomeModule",
-                symbols: [
-                    makeSymbol(id: "s:Foo", kind: .struct, pathComponents: ["Foo"]),
-                    makeSymbol(id: "s:Outer", kind: .struct, pathComponents: ["Outer"]),
-                    makeSymbol(id: "s:Bar", kind: .struct, pathComponents: ["Outer", "Bar"]),
-                    makeSymbol(id: "s:member", kind: .method, pathComponents: ["Outer", "Bar", "member"], otherMixins: [selfIsBar]),
-                ],
-                relationships: [
-                    .init(source: "s:Bar", target: "s:Outer", kind: .memberOf, targetFallback: nil),
-                    .init(source: "s:member", target: "s:Bar", kind: .memberOf, targetFallback: nil),
-                ]
-            )),
-        ])
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                JSONFile(
+                    name: "SomeModule.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "SomeModule",
+                        symbols: [
+                            makeSymbol(id: "s:Foo", kind: .struct, pathComponents: ["Foo"]),
+                            makeSymbol(id: "s:Outer", kind: .struct, pathComponents: ["Outer"]),
+                            makeSymbol(id: "s:Bar", kind: .struct, pathComponents: ["Outer", "Bar"]),
+                            makeSymbol(id: "s:member", kind: .method, pathComponents: ["Outer", "Bar", "member"], otherMixins: [selfIsBar]),
+                        ],
+                        relationships: [
+                            .init(source: "s:Bar", target: "s:Outer", kind: .memberOf, targetFallback: nil),
+                            .init(source: "s:member", target: "s:Bar", kind: .memberOf, targetFallback: nil),
+                        ],
+                    )),
+            ])
 
         let context = try await load(catalog: catalog)
         let bundleID = context.inputs.id
@@ -229,7 +237,7 @@ struct DocumentationContentRendererTests {
             ]),
             roleHeadingVariants: .init(swiftVariant: ""),
             platformNameVariants: .init(swiftVariant: nil),
-            moduleReference: ResolvedTopicReference(bundleID: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
+            moduleReference: ResolvedTopicReference(bundleID: "", path: "", sourceLanguage: .swift),  // This information isn't used anywhere.
             externalIDVariants: .init(swiftVariant: nil),
             accessLevelVariants: .init(swiftVariant: nil),
             availabilityVariants: .init(swiftVariant: Availability(availability: [])),

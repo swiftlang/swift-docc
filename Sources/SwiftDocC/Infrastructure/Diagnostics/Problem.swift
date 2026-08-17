@@ -17,7 +17,7 @@ import SymbolKit
 public struct Problem {
     /// A diagnostic describing the problem.
     public var diagnostic: Diagnostic
-    
+
     /// The possible solutions to the problem if there are any.
     public var possibleSolutions: [Solution] {
         get { diagnostic.solutions }
@@ -40,14 +40,14 @@ extension Problem {
     /// Useful when validating a doc comment that needs to be projected in its containing file "space".
     mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
         diagnostic.offsetWithRange(docRange)
-        
+
         for i in possibleSolutions.indices {
             for j in possibleSolutions[i].replacements.indices {
                 possibleSolutions[i].replacements[j].offsetWithRange(docRange)
             }
         }
     }
-    
+
     /// Returns the diagnostic with its range offset by the given documentation comment range.
     func withRangeOffset(by docRange: SymbolGraph.LineList.SourceRange) -> Self {
         var problem = self

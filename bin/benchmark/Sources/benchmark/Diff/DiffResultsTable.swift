@@ -14,7 +14,7 @@ struct DiffResultsTable {
     struct Columns {
         typealias Column = (name: String, width: Int)
         var data: [Column]
-        
+
         init() {
             data = [
                 ("Metric", 40),
@@ -23,85 +23,85 @@ struct DiffResultsTable {
                 ("After", 20),
             ]
         }
-        
+
         var beforeInfo: Column {
             get { data[2] }
             set { data[2] = newValue }
         }
-        
+
         var afterInfo: Column {
             get { data[3] }
             set { data[3] = newValue }
         }
-        
+
         var totalWidth: Int {
             data.reduce(0, { $0 + $1.width + 3 }) - 1
         }
-        
+
         var names: [String] {
             data.map { $0.name }
         }
     }
-    
+
     private(set) var output: String
     init(results: DiffResults, columns: Columns) {
         var output = ""
-        
+
         let allWarnings = results.analysis.flatMap { $0.warnings ?? [] }
         for warning in allWarnings {
             output += "\(warning)\n"
         }
-        
+
         let totalWidth = columns.totalWidth
         output += "┌\(String(repeating: "─", count: totalWidth))┐\n"
         output += Self.formattedRow(columns: columns)
         output += "├\(String(repeating: "─", count: totalWidth))┤\n"
-        
+
         var footnoteCounter = 0
-        
+
         for analysis in results.analysis {
             var change: String
             var colorInfo: [ColumnColorInfo] = []
             switch analysis.change {
-                case .same:
-                    change = "no change"
-                case .differentChecksum:
-                    change = "change"
-                case .differentNumeric(let percentage):
-                    change = percentageFormatter.string(from: NSNumber(value: percentage))!
-                    // The colorInfo will be overwritten below if there are warnings
-                    colorInfo = [ColumnColorInfo(index: 1, color: percentage < 0 ? .green : .red, upTo: change.endIndex)]
-                case .notApplicable:
-                    change = "n/a"
+            case .same:
+                change = "no change"
+            case .differentChecksum:
+                change = "change"
+            case .differentNumeric(let percentage):
+                change = percentageFormatter.string(from: NSNumber(value: percentage))!
+                // The colorInfo will be overwritten below if there are warnings
+                colorInfo = [ColumnColorInfo(index: 1, color: percentage < 0 ? .green : .red, upTo: change.endIndex)]
+            case .notApplicable:
+                change = "n/a"
             }
             if analysis.warnings != nil {
                 colorInfo = [ColumnColorInfo(index: 1, color: .yellow, upTo: change.endIndex)]
             }
             if let footnotes = analysis.footnotes, !footnotes.isEmpty {
-                let footNoteSuffix = (footnoteCounter ..< footnoteCounter+footnotes.count).map { Self.superscript($0 + 1) }.joined(separator: ",")
+                let footNoteSuffix = (footnoteCounter..<footnoteCounter + footnotes.count).map { Self.superscript($0 + 1) }.joined(separator: ",")
 
                 change += footNoteSuffix
                 footnoteCounter += footnotes.count
             }
-            
+
             var analysisColumns = columns
             analysisColumns.data[0].name = analysis.metricName
             analysisColumns.data[1].name = change
             analysisColumns.data[2].name = analysis.before ?? "-"
             analysisColumns.data[3].name = analysis.after
-            
+
             output += Self.formattedRow(columns: analysisColumns, colorInfo: colorInfo)
         }
-                    
+
         output += "└\(String(repeating: "─", count: totalWidth))┘\n"
-        
+
         let allFootnotes = results.analysis.flatMap { $0.footnotes ?? [] }
         if !allFootnotes.isEmpty {
             output += "\n"
             for (number, footnote) in zip(1..., allFootnotes) {
                 let footnoteNumber = number < 10 ? " \(number): " : "\(number): "
                 let footnoteTextLines = footnote.text.components(separatedBy: .newlines)
-                
+
                 output += "\(footnoteNumber)\(footnoteTextLines[0])\n"
                 for line in footnoteTextLines.dropFirst() {
                     output += "    \(line)\n"
@@ -118,17 +118,17 @@ struct DiffResultsTable {
                 output += "\n"
             }
         }
-        
+
         self.output = output
     }
-    
+
     private static let superscriptCharacters = [
         "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹",
     ]
-    
+
     static func superscript(_ number: Int) -> String {
         guard number > 0 else { return "" }
-        
+
         var result = ""
         var number = number
         var digit = 0
@@ -139,13 +139,13 @@ struct DiffResultsTable {
         result = superscriptCharacters[number] + result
         return result
     }
-    
+
     private struct ColumnColorInfo {
         let index: Int
         let color: BasicTerminalColor
         let upTo: String.Index
     }
-    
+
     private static func formattedRow(columns: Columns, colorInfo: [ColumnColorInfo] = []) -> String {
         let values: [String] = columns.names.enumerated().map { (index, value) in
             let row = value.padding(toLength: columns.data[index].width, withPad: " ", startingAt: 0)
@@ -173,29 +173,29 @@ private let percentageFormatter: NumberFormatter = {
 // MARK: Very minimal terminal output helpers
 
 private let supportsBasicColorOutput: Bool = {
-    guard let term = ProcessInfo.processInfo.environment["TERM"] else { return false}
+    guard let term = ProcessInfo.processInfo.environment["TERM"] else { return false }
     return term != "dumb"
 }()
 
 enum BasicTerminalColor {
     case red, green, yellow
-    
+
     var escapeCode: String {
         switch self {
-            case .red: return "\u{001B}[31m"
-            case .green: return "\u{001B}[32m"
-            case .yellow: return "\u{001B}[33m"
+        case .red: return "\u{001B}[31m"
+        case .green: return "\u{001B}[32m"
+        case .yellow: return "\u{001B}[33m"
         }
     }
 }
 
 enum BasicTerminalStyle {
     case bold, dim
-    
+
     var escapeCode: String {
         switch self {
-            case .bold: return "\u{001B}[1m"
-            case .dim: return "\u{001B}[2m"
+        case .bold: return "\u{001B}[1m"
+        case .dim: return "\u{001B}[2m"
         }
     }
 }
@@ -203,11 +203,11 @@ enum BasicTerminalStyle {
 extension String {
     func colored(_ color: BasicTerminalColor) -> String {
         guard supportsBasicColorOutput else { return self }
-        return color.escapeCode + self + "\u{001B}[39m" // reset to default color
+        return color.escapeCode + self + "\u{001B}[39m"  // reset to default color
     }
-    
+
     func styled(_ style: BasicTerminalStyle) -> String {
         guard supportsBasicColorOutput else { return self }
-        return style.escapeCode + self + "\u{001B}[22m" // reset to default text weight
+        return style.escapeCode + self + "\u{001B}[22m"  // reset to default text weight
     }
 }

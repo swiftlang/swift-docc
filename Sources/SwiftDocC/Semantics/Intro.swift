@@ -17,23 +17,23 @@ public import Markdown
 public final class Intro: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
-    
+
     /// The title of the containing ``Tutorial``.
     @DirectiveArgumentWrapped
     public private(set) var title: String
-    
+
     /// An optional video, displayed as a modal.
     @ChildDirective
     public private(set) var video: VideoMedia? = nil
-    
+
     /// An optional standout image.
     @ChildDirective
     public private(set) var image: ImageMedia? = nil
-    
+
     /// The child markup content.
     @ChildMarkup(numberOfParagraphs: .zeroOrMore)
     public private(set) var content: MarkupContainer
-    
+
     // swift-format-ignore
     static var keyPaths: [String : AnyKeyPath] = [
         "title"     : \Intro._title,
@@ -41,15 +41,15 @@ public final class Intro: Semantic, AutomaticDirectiveConvertible {
         "image"     : \Intro._image,
         "content"   : \Intro._content
     ]
-    
+
     override var children: [Semantic] {
         return [content, image, video].compactMap { $0 }
     }
-    
+
     init(originalMarkup: BlockDirective, title: String, image: ImageMedia?, video: VideoMedia?, content: MarkupContainer) {
         self.originalMarkup = originalMarkup
         super.init()
-        
+
         self.content = content
         self.title = title
         self.image = image
@@ -59,7 +59,7 @@ public final class Intro: Semantic, AutomaticDirectiveConvertible {
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitIntro(self)
     }
-    
+
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup

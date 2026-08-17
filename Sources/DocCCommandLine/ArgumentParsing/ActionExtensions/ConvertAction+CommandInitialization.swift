@@ -28,7 +28,7 @@ extension ConvertAction {
         featureFlags.isParametersAndReturnsValidationEnabled = convert.featureFlags.enableParametersAndReturnsValidation
         featureFlags.isExperimentalMarkdownOutputEnabled = convert.featureFlags.enableExperimentalMarkdownOutput
         featureFlags.isExperimentalMarkdownOutputManifestEnabled = convert.featureFlags.enableExperimentalMarkdownOutputManifest
-        
+
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
         if let linkResolverURL = convert.outOfProcessLinkResolverOption.linkResolverExecutableURL {
@@ -48,7 +48,7 @@ extension ConvertAction {
         let parsedPlatforms = try PlatformArgumentParser.parse(convert.availabilityOptions.platforms)
 
         let bundleDiscoveryOptions = convert.bundleDiscoveryOptions
-        
+
         // The `preview` and `convert` action defaulting to the current working directory is only supported
         // when running `docc preview` and `docc convert` without any of the fallback options.
         let documentationBundleURL: URL?
@@ -97,7 +97,7 @@ extension ConvertAction {
 package extension Docc.Convert {
     var bundleDiscoveryOptions: BundleDiscoveryOptions {
         let additionalSymbolGraphFiles = symbolGraphFiles(in: inputsAndOutputs.additionalSymbolGraphDirectory)
-        
+
         return BundleDiscoveryOptions(
             fallbackDisplayName: infoPlistFallbacks.fallbackBundleDisplayName,
             fallbackIdentifier: infoPlistFallbacks.fallbackBundleIdentifier,
@@ -110,7 +110,7 @@ package extension Docc.Convert {
 
 private func symbolGraphFiles(in directory: URL?) -> [URL] {
     guard let directory else { return [] }
-    
+
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }
         .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }

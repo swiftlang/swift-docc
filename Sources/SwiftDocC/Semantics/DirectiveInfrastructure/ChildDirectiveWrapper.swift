@@ -15,7 +15,7 @@ protocol _ChildDirectiveProtocol {
     var storedAsOptional: Bool { get }
     var requirements: ChildDirectiveRequirements { get }
     var directiveConvertible: any DirectiveConvertible.Type { get }
-    
+
     func setProperty(
         on containingDirective: some AutomaticDirectiveConvertible,
         named propertyName: String,
@@ -26,7 +26,7 @@ protocol _ChildDirectiveProtocol {
 enum ChildDirectiveRequirements {
     case zeroOrOne
     case one
-    
+
     case zeroOrMore
     case oneOrMore
 }
@@ -58,12 +58,12 @@ enum ChildDirectiveRequirements {
 public struct ChildDirective<Value>: _ChildDirectiveProtocol {
     let storedAsArray: Bool
     let storedAsOptional: Bool
-    
+
     var parsedValue: Value?
     let requirements: ChildDirectiveRequirements
-    
+
     let directiveConvertible: any DirectiveConvertible.Type
-    
+
     public var wrappedValue: Value {
         get {
             parsedValue!
@@ -72,14 +72,15 @@ public struct ChildDirective<Value>: _ChildDirectiveProtocol {
             parsedValue = newValue
         }
     }
-    
-    @available(*, unavailable,
+
+    @available(
+        *, unavailable,
         message: "The value type must conform to 'DirectiveConvertible'."
     )
     public init() {
         fatalError()
     }
-    
+
     func setProperty<T>(
         on containingDirective: T,
         named propertyName: String,

@@ -26,8 +26,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
     /// Set the common fragments for the given symbol references.
     func setCommonFragments(
         references: [ResolvedTopicReference],
-        fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment])
-    {
+        fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]
+    ) {
         Self.commonFragmentsMap.sync({ map in
             for reference in references {
                 map[reference] = fragments
@@ -145,11 +145,12 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     let translatedDeclaration = translateDeclaration(
                         overloadDeclaration.declaration,
                         commonFragments: commonFragments)
-                    otherDeclarations.append(.init(
-                        tokens: translatedDeclaration,
-                        identifier: overloadDeclaration.reference.absoluteString,
-                        conformance: overloadDeclaration.conformance
-                    ))
+                    otherDeclarations.append(
+                        .init(
+                            tokens: translatedDeclaration,
+                            identifier: overloadDeclaration.reference.absoluteString,
+                            conformance: overloadDeclaration.conformance
+                        ))
 
                     // Add a topic reference to the overload
                     renderNodeTranslator.collectedTopicReferences.append(
@@ -162,8 +163,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
             func collectOverloadDeclarations(from overloads: Symbol.Overloads) -> [OverloadDeclaration]? {
                 let declarations = overloads.references.compactMap { overloadReference -> OverloadDeclaration? in
-                    guard let overload = try? renderNodeTranslator.context
-                        .entity(with: overloadReference).semantic as? Symbol
+                    guard
+                        let overload = try? renderNodeTranslator.context
+                            .entity(with: overloadReference).semantic as? Symbol
                     else {
                         return nil
                     }

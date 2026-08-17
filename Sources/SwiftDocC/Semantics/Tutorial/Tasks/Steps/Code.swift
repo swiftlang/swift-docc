@@ -17,10 +17,10 @@ A code file to display alongside a ``Step``.
 public final class Code: Semantic, DirectiveConvertible {
     public static let introducedVersion = "5.5"
     public static let directiveName = "Code"
-    
+
     /// The original `BlockDirective` node that was parsed into this semantic code.
     public let originalMarkup: BlockDirective
-    
+
     /// A reference to the file containing the code that should be loaded from the bundle.
     public let fileReference: ResourceReference
     /// The name of the file, for display and identification purposes.
@@ -33,7 +33,7 @@ public final class Code: Semantic, DirectiveConvertible {
     public let shouldResetDiff: Bool
     /// A preview image or video overlay.
     public let preview: (any Media)?
-    
+
     enum Semantics {
         enum File: DirectiveArgument {
             static let argumentName = "file"
@@ -49,7 +49,7 @@ public final class Code: Semantic, DirectiveConvertible {
             static let argumentName = "reset"
         }
     }
-    
+
     init(originalMarkup: BlockDirective, fileReference: ResourceReference, fileName: String, previousFileReference: ResourceReference?, shouldResetDiff: Bool, preview: (any Media)?) {
         self.originalMarkup = originalMarkup
         self.fileReference = fileReference
@@ -58,7 +58,7 @@ public final class Code: Semantic, DirectiveConvertible {
         self.shouldResetDiff = shouldResetDiff
         self.preview = preview
     }
-    
+
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         var diagnostics = [Diagnostic]()
@@ -67,19 +67,19 @@ public final class Code: Semantic, DirectiveConvertible {
         }
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
-    
+
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Code.directiveName)
-        
+
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
-        
+
         Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
-        
+
         guard let requiredFileReference = Semantic.Analyses.HasArgument<Code, Semantics.File>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics) else { return nil }
         let fileReference = ResourceReference(bundleID: bundle.id, path: requiredFileReference)
-        
+
         guard let requiredFileName = Semantic.Analyses.HasArgument<Code, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics) else { return nil }
-        
+
         // ResetDiff is optional and defaults to false. If it exists, however, extract it using analysis so we get
         // diagnostics for type mismatches.
         let shouldResetDiff: Bool
@@ -88,17 +88,17 @@ public final class Code: Semantic, DirectiveConvertible {
         } else {
             shouldResetDiff = false
         }
-       
+
         let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
-        
+
         let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, diagnostics: &diagnostics).map { argument in
             ResourceReference(bundleID: bundle.id, path: argument)
         }
-        
+
         self.init(originalMarkup: directive, fileReference: fileReference, fileName: requiredFileName, previousFileReference: optionalPreviousFileReference, shouldResetDiff: shouldResetDiff, preview: optionalPreview)
     }
-    
-    public override func accept<V>(_ visitor: inout V) -> V.Result where V : SemanticVisitor {
+
+    public override func accept<V>(_ visitor: inout V) -> V.Result where V: SemanticVisitor {
         return visitor.visitCode(self)
     }
 }

@@ -14,12 +14,12 @@ import Foundation
 public struct DocumentationServerError: DescribedError, Codable {
     /// The identifier of the error.
     public var identifier: String
-    
+
     /// The human-readable description of the error.
     public var description: String
-    
+
     public var errorDescription: String { description }
-    
+
     /// An error that indicates that a received message has no service that can process it.
     public static func unsupportedMessageType() -> DocumentationServerError {
         DocumentationServerError(
@@ -27,7 +27,7 @@ public struct DocumentationServerError: DescribedError, Codable {
             description: "The message type is not recognized by the service."
         )
     }
-    
+
     /// An error that indicates that a received message could not be decoded, likely because it is encoded in an invalid format.
     public static func invalidMessage(underlyingError: String) -> DocumentationServerError {
         DocumentationServerError(
@@ -35,7 +35,7 @@ public struct DocumentationServerError: DescribedError, Codable {
             description: "The message is invalid and cannot be decoded: \(underlyingError)"
         )
     }
-    
+
     /// An error that indicates that a response message could not be encoded.
     public static func invalidResponseMessage(underlyingError: String) -> DocumentationServerError {
         DocumentationServerError(

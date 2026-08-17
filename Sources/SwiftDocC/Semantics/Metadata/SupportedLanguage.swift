@@ -34,7 +34,7 @@ public import DocCCommon
 public final class SupportedLanguage: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
-    
+
     /// A source language that this symbol is available in.
     ///
     /// For supported values, see ``SupportedLanguage``.
@@ -46,12 +46,13 @@ public final class SupportedLanguage: Semantic, AutomaticDirectiveConvertible {
         }
     )
     public var language: SourceLanguage
-    
-    static var keyPaths: [String : AnyKeyPath] = [
+
+    static var keyPaths: [String: AnyKeyPath] = [
         "language": \SupportedLanguage._language,
     ]
-    
-    @available(*, deprecated,
+
+    @available(
+        *, deprecated,
         message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'."
     )
     init(originalMarkup: BlockDirective) {

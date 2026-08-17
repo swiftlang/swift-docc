@@ -33,9 +33,9 @@ public protocol TextIndexing {
 public protocol Indexable {
     /**
      A list of ``IndexingRecord``s that can become search results.
-     
+
      > Note: A document may have a search result for itself and sometimes notable subsections.
-     
+
      - throws: ``IndexingError``
      */
     func indexingRecords(onPage page: ResolvedTopicReference) throws -> [IndexingRecord]

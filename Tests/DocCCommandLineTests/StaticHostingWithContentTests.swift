@@ -19,35 +19,41 @@ struct StaticHostingWithContentTests {
     @Test(arguments: [true, false])
     func includesBasePathInPerPageIndexHTMLFile(includeHTMLContent: Bool) async throws {
         let catalog = Folder(name: "Something.docc") {
-            TextFile(name: "RootArticle.md", utf8Content: """
-            # A single article
-            
-            This is a _formatted_ article that becomes the root page (because there is only one page).
-            """)
-            
-            TextFile(name: "header.html", utf8Content: """
-            <p>Some header content</p>
-            """)
-            TextFile(name: "footer.html", utf8Content: """
-            <p>Some footer content</p>
-            """)
+            TextFile(
+                name: "RootArticle.md",
+                utf8Content: """
+                    # A single article
+
+                    This is a _formatted_ article that becomes the root page (because there is only one page).
+                    """)
+
+            TextFile(
+                name: "header.html",
+                utf8Content: """
+                    <p>Some header content</p>
+                    """)
+            TextFile(
+                name: "footer.html",
+                utf8Content: """
+                    <p>Some footer content</p>
+                    """)
         }
         let htmlTemplateContent = """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="{{BASE_PATH}}/favicon.ico" />
-            <title>Documentation</title>
-          </head>
-          <body>
-            <noscript>
-              <p>Some existing information inside the no script tag</p>
-            </noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """
-        
+            <html>
+              <head>
+                <meta charset="utf-8" />
+                <link rel="icon" href="{{BASE_PATH}}/favicon.ico" />
+                <title>Documentation</title>
+              </head>
+              <body>
+                <noscript>
+                  <p>Some existing information inside the no script tag</p>
+                </noscript>
+                <div id="app"></div>
+              </body>
+            </html>
+            """
+
         let fileSystem = try TestFileSystem {
             Folder(name: "path") {
                 Folder(name: "to") {
@@ -60,9 +66,9 @@ struct StaticHostingWithContentTests {
             }
             Folder(name: "output-dir") {}
         }
-        
+
         let basePath = "some/test/base-path"
-        
+
         var action = try ConvertAction(
             documentationBundleURL: URL(fileURLWithPath: "/path/to/\(catalog.name)"),
             outOfProcessResolver: nil,
@@ -81,66 +87,74 @@ struct StaticHostingWithContentTests {
         )
         // The old `Indexer` type doesn't work with virtual file systems.
         action._completelySkipBuildingIndex = true
-        
+
         _ = try await action.perform(logHandle: .none)
-        
+
         // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
-        #expect(fileSystem.dump(subHierarchyFrom: "/output-dir") == """
-        output-dir/
-        ├─ data/
-        │  ╰─ documentation/
-        │     ╰─ rootarticle.json
-        ├─ documentation/
-        │  ╰─ rootarticle/
-        │     ╰─ index.html
-        ├─ downloads/
-        │  ╰─ Something/
-        ├─ images/
-        │  ╰─ Something/
-        ├─ index.html
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ Something/
-        """)
-        
-        let expectedTitleAndMetaContent = includeHTMLContent ? """
-          <title>A single article</title>
-          <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
-        """ : "  <title>Documentation</title>\n  "
-        
-        let expectedNoScriptContent = includeHTMLContent ? """
-            <noscript>\
-        <article>\
-        <section>\
-        <ul>\
-        <li>RootArticle</li>\
-        </ul>\
-        <hgroup>\
-        <p>Article</p>\
-        <h1>RootArticle</h1>\
-        </hgroup>\
-        <p>This is a <i>formatted</i> article that becomes the root page (because there is only one page).</p>\
-        </section>\
-        </article>\
-        </noscript>
-        """ : """
-        
-            <noscript>
-              <p>Some existing information inside the no script tag</p>
+        #expect(
+            fileSystem.dump(subHierarchyFrom: "/output-dir") == """
+                output-dir/
+                ├─ data/
+                │  ╰─ documentation/
+                │     ╰─ rootarticle.json
+                ├─ documentation/
+                │  ╰─ rootarticle/
+                │     ╰─ index.html
+                ├─ downloads/
+                │  ╰─ Something/
+                ├─ images/
+                │  ╰─ Something/
+                ├─ index.html
+                ├─ metadata.json
+                ╰─ videos/
+                   ╰─ Something/
+                """)
+
+        let expectedTitleAndMetaContent =
+            includeHTMLContent
+            ? """
+              <title>A single article</title>
+              <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
+            """ : "  <title>Documentation</title>\n  "
+
+        let expectedNoScriptContent =
+            includeHTMLContent
+            ? """
+                <noscript>\
+            <article>\
+            <section>\
+            <ul>\
+            <li>RootArticle</li>\
+            </ul>\
+            <hgroup>\
+            <p>Article</p>\
+            <h1>RootArticle</h1>\
+            </hgroup>\
+            <p>This is a <i>formatted</i> article that becomes the root page (because there is only one page).</p>\
+            </section>\
+            </article>\
             </noscript>
-        """
-        
+            """
+            : """
+
+                <noscript>
+                  <p>Some existing information inside the no script tag</p>
+                </noscript>
+            """
+
         // The footer comes before the header to match the behavior of ConvertFileWritingConsumer.
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/some/test/base-path/favicon.ico" />
-          \(expectedTitleAndMetaContent)</head>
-          <body><template id="custom-footer"><p>Some footer content</p></template><template id="custom-header"><p>Some header content</p></template>\(includeHTMLContent ? "\n" : "")\(expectedNoScriptContent)
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
+        try assert(
+            readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")),
+            matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/some/test/base-path/favicon.ico" />
+                  \(expectedTitleAndMetaContent)</head>
+                  <body><template id="custom-footer"><p>Some footer content</p></template><template id="custom-header"><p>Some header content</p></template>\(includeHTMLContent ? "\n" : "")\(expectedNoScriptContent)
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
     }
 }

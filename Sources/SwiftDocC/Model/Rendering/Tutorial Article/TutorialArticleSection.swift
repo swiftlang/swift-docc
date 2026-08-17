@@ -10,17 +10,17 @@
 
 /// A Tutorial Article section.
 public struct TutorialArticleSection: RenderSection, Equatable {
-    
+
     public let kind: RenderSectionKind = .articleBody
-    
+
     /// The contents of the Tutorial Article.
     public var content: [ContentLayout] = []
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         content = try container.decodeIfPresent([ContentLayout].self, forKey: .content) ?? []
     }
-    
+
     /// Creates a tutorial article section from a given list
     /// of content layout items.
     ///
@@ -34,10 +34,10 @@ public struct TutorialArticleSection: RenderSection, Equatable {
 public enum ContentLayout: Equatable {
     /// A full-width layout.
     case fullWidth(content: [RenderBlockContent])
-    
+
     /// A layout for a piece of media that has an attached description.
     case contentAndMedia(content: ContentAndMediaSection)
-    
+
     /// A multi-column layout.
     case columns(content: [ContentAndMediaSection])
 }
@@ -47,11 +47,11 @@ extension ContentLayout: Codable {
         case kind
         case content
     }
-    
+
     private enum LayoutKind: String, Codable {
         case fullWidth, contentAndMedia, columns
     }
-    
+
     private var kind: LayoutKind {
         switch self {
         case .fullWidth: return .fullWidth
@@ -59,11 +59,11 @@ extension ContentLayout: Codable {
         case .columns: return .columns
         }
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let kind = try container.decode(LayoutKind.self, forKey: .kind)
-        
+
         switch kind {
         case .fullWidth:
             self = try .fullWidth(content: container.decode([RenderBlockContent].self, forKey: .content))
@@ -73,11 +73,11 @@ extension ContentLayout: Codable {
             self = try .columns(content: container.decode([ContentAndMediaSection].self, forKey: .content))
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
-        
+
         switch self {
         case .fullWidth(let content):
             try container.encode(content, forKey: .content)

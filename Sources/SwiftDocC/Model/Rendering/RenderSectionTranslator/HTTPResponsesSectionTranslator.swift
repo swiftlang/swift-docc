@@ -19,48 +19,50 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
         guard let httpResponsesSection = symbol.httpResponsesSection else { return nil }
-        
+
         // Filter out responses that aren't backed by a symbol
         let filteredResponses = httpResponsesSection.responses.filter { $0.symbol != nil }
         guard !filteredResponses.isEmpty else { return nil }
-        
-        return VariantCollection(defaultValue: CodableContentSection(
-            RESTResponseRenderSection(
-                title: HTTPResponsesSection.title,
-                responses: filteredResponses.map { translateResponse($0, &renderNodeTranslator) }
-            )
-        ))
+
+        return VariantCollection(
+            defaultValue: CodableContentSection(
+                RESTResponseRenderSection(
+                    title: HTTPResponsesSection.title,
+                    responses: filteredResponses.map { translateResponse($0, &renderNodeTranslator) }
+                )
+            ))
     }
-    
+
     private func translateResponse(_ response: HTTPResponse, _ renderNodeTranslator: inout RenderNodeTranslator) -> RESTResponse {
-        let responseContent = renderNodeTranslator.visitMarkupContainer(
-            MarkupContainer(response.contents)
-        ) as! [RenderBlockContent]
-        
+        let responseContent =
+            renderNodeTranslator.visitMarkupContainer(
+                MarkupContainer(response.contents)
+            ) as! [RenderBlockContent]
+
         var renderedTokens: [DeclarationRenderSection.Token]? = nil
-        
+
         if let responseSymbol = response.symbol {
             // Convert the dictionary key's declaration into section tokens
             if let fragments = responseSymbol.declarationFragments {
                 renderedTokens = fragments.map { token -> DeclarationRenderSection.Token in
                     let reference: ResolvedTopicReference?
                     if let preciseIdentifier = token.preciseIdentifier,
-                       let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
+                        let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
                     {
                         reference = resolved
-                        
+
                         // Add relationship to render references
                         renderNodeTranslator.collectedTopicReferences.append(resolved)
                     } else {
                         reference = nil
                     }
-                    
+
                     // Add the declaration token
                     return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
                 }
             }
         }
-        
+
         return RESTResponse(
             status: response.statusCode,
             reason: response.reason ?? Self.reasonForStatusCode[response.statusCode],
@@ -69,7 +71,7 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
             content: responseContent
         )
     }
-    
+
     // Default reason strings in case one not explicitly set.
     private static let reasonForStatusCode: [UInt: String] = [
         100: "Continue",

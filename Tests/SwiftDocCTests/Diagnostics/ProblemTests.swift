@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-
 import XCTest
 import Markdown
 @testable import SwiftDocC
@@ -30,11 +29,13 @@ class ProblemTests: XCTestCase {
         let solution = Solution(summary: solutionSummary, replacements: [replacement])
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
 
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: .formatConsoleOutputForTools), """
-        \(expectedLocation): error: \(summary). \(solutionSummary).
-        \(explanation)
-        \(expectedFixit)
-        """)
+        XCTAssertEqual(
+            DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: .formatConsoleOutputForTools),
+            """
+            \(expectedLocation): error: \(summary). \(solutionSummary).
+            \(explanation)
+            \(expectedFixit)
+            """)
     }
 
     func testFormattedDescription() {
@@ -51,10 +52,12 @@ class ProblemTests: XCTestCase {
         let solution = Solution(summary: solutionSummary, replacements: [replacement])
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, solutions: [solution])
 
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: [.formatConsoleOutputForTools]), """
-        \(expectedLocation): error: \(summary). \(solutionSummary).
-        \(explanation)
-        \(source):1:8-1:24: fixit: Replacement text
-        """)
+        XCTAssertEqual(
+            DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: [.formatConsoleOutputForTools]),
+            """
+            \(expectedLocation): error: \(summary). \(solutionSummary).
+            \(explanation)
+            \(source):1:8-1:24: fixit: Replacement text
+            """)
     }
 }

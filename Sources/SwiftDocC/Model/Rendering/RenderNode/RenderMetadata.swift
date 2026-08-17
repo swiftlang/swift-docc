@@ -13,42 +13,42 @@ public import Foundation
 /// Arbitrary metadata for a render node.
 public struct RenderMetadata: VariantContainer {
     // MARK: Tutorials metadata
-    
+
     /// The name of technology associated with a tutorial.
     public var category: String?
     public var categoryPathComponent: String?
     /// A description of the estimated time to complete the tutorials of a technology.
     public var estimatedTime: String?
-    
+
     // MARK: Symbol metadata
-    
+
     /// The modules that the symbol is apart of.
     public var modules: [Module]? {
         get { getVariantDefaultValue(keyPath: \.modulesVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.modulesVariants) }
     }
-    
+
     /// The variants for the modules.
     public var modulesVariants: VariantCollection<[Module]?> = .init(defaultValue: nil)
-    
+
     /// The name of the module extension in which the symbol is defined, if applicable.
     public var extendedModule: String? {
         get { getVariantDefaultValue(keyPath: \.extendedModuleVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.extendedModuleVariants) }
     }
-    
+
     /// The variants for the module extension.
     public var extendedModuleVariants: VariantCollection<String?> = .init(defaultValue: nil)
-    
+
     /// The platform availability information about a symbol.
     public var platforms: [AvailabilityRenderItem]? {
         get { getVariantDefaultValue(keyPath: \.platformsVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.platformsVariants) }
     }
-    
+
     /// The variants for the platforms.
     public var platformsVariants: VariantCollection<[AvailabilityRenderItem]?> = .init(defaultValue: nil)
-    
+
     /// Whether protocol method is required to be implemented by conforming types.
     public var required: Bool {
         get { getVariantDefaultValue(keyPath: \.requiredVariants) }
@@ -57,94 +57,94 @@ public struct RenderMetadata: VariantContainer {
 
     /// The variants for the `required` property.
     public var requiredVariants: VariantCollection<Bool> = .init(defaultValue: false)
-    
+
     /// A heading describing the type of the document.
     public var roleHeading: String? {
         get { getVariantDefaultValue(keyPath: \.roleHeadingVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.roleHeadingVariants) }
     }
-    
+
     /// The variants of the role heading.
     public var roleHeadingVariants: VariantCollection<String?> = .init(defaultValue: nil)
-    
+
     /// The role of the document.
     ///
     /// Examples of document roles include "symbol" or "sampleCode".
     public var role: String?
-    
+
     /// Custom authored images that represent this page.
     ///
     /// Authors can use the `@PageImage` metadata directive to provide custom icon and card images for a page.
     public var images: [TopicImage] = []
-    
+
     /// Custom authored color that represents this page.
     ///
     /// Authors can use the `@PageColor` metadata directive to provide a custom color for a page.
     public var color: TopicColor?
-    
+
     /// Author provided custom metadata describing the page.
     public var customMetadata: [String: String] = [:]
-    
+
     /// The title of the page.
     public var title: String? {
         get { getVariantDefaultValue(keyPath: \.titleVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.titleVariants) }
     }
-    
+
     /// The variants of the title.
     public var titleVariants: VariantCollection<String?> = .init(defaultValue: nil)
-    
+
     /// An identifier for a symbol generated externally.
     public var externalID: String? {
         get { getVariantDefaultValue(keyPath: \.externalIDVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.externalIDVariants) }
     }
-    
+
     /// The variants of the external ID.
     public var externalIDVariants: VariantCollection<String?> = .init(defaultValue: nil)
-    
+
     /// The kind of a symbol, e.g., "class" or "func".
     public var symbolKind: String? {
         get { getVariantDefaultValue(keyPath: \.symbolKindVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.symbolKindVariants) }
     }
-    
+
     /// The variants of the symbol kind.
     public var symbolKindVariants: VariantCollection<String?> = .init(defaultValue: nil)
-    
+
     /// The access level of a symbol, e.g., "public" or "private".
     public var symbolAccessLevel: String? {
         get { getVariantDefaultValue(keyPath: \.symbolAccessLevelVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.symbolAccessLevelVariants) }
     }
-    
+
     /// The variants for the access level of a symbol.
     public var symbolAccessLevelVariants: VariantCollection<String?> = .init(defaultValue: nil)
-    
+
     /// Abbreviated declaration to display in links.
     public var fragments: [DeclarationRenderSection.Token]? {
         get { getVariantDefaultValue(keyPath: \.fragmentsVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.fragmentsVariants) }
     }
-    
+
     /// The variants for the fragments of a page.
     public var fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
-    
+
     /// Abbreviated declaration to display in navigators.
     public var navigatorTitle: [DeclarationRenderSection.Token]? {
         get { getVariantDefaultValue(keyPath: \.navigatorTitleVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.navigatorTitleVariants) }
     }
-    
+
     /// The variants for the navigator title of a page.
     public var navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
-    
+
     /// Additional metadata associated with the render node.
     public var extraMetadata: [CodingKeys: Any] = [:]
-    
+
     /// Information the availability of generic APIs.
     public var conformance: ConformanceSection?
-    
+
     /// The URI of the source file in which the symbol was originally declared, suitable for display in a user interface.
     ///
     /// This information may not (and should not) always be available for many reasons,
@@ -153,22 +153,22 @@ public struct RenderMetadata: VariantContainer {
         get { getVariantDefaultValue(keyPath: \.sourceFileURIVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.sourceFileURIVariants) }
     }
-    
+
     /// The variants for the source file URI of a page.
     public var sourceFileURIVariants: VariantCollection<String?> = .init(defaultValue: nil)
-    
+
     /// The remote location where the source declaration of the topic can be viewed.
     public var remoteSource: RemoteSource? {
         get { getVariantDefaultValue(keyPath: \.remoteSourceVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.remoteSourceVariants) }
     }
-    
+
     /// The variants for the topic's remote source.
     public var remoteSourceVariants: VariantCollection<RemoteSource?> = .init(defaultValue: nil)
-    
+
     /// Any tags assigned to the node.
     public var tags: [RenderNode.Tag]?
-    
+
     /// Whether there isn't a version of the page with more content that a renderer can link to.
     ///
     /// This property indicates to renderers that an expanded version of the page does not exist for this render node,
@@ -186,7 +186,7 @@ extension RenderMetadata: Codable {
         case table, codeListing, link, subsection, task, overview
         case tutorial = "project"
     }
-    
+
     /// Metadata about a module dependency.
     public struct Module: Codable, Equatable {
         public let name: String
@@ -194,15 +194,15 @@ extension RenderMetadata: Codable {
         /// but have no authoring support at the moment.
         public let relatedModules: [String]?
     }
-    
+
     /// Describes the location of the topic's source code, hosted remotely by a source service.
     public struct RemoteSource: Codable, Equatable {
         /// The name of the file where the topic is declared.
         public var fileName: String
-        
+
         /// The location of the topic's source code, hosted by a source service.
         public var url: URL
-        
+
         /// Creates a topic's source given its source code's file name and URL.
         public init(fileName: String, url: URL) {
             self.fileName = fileName
@@ -212,19 +212,19 @@ extension RenderMetadata: Codable {
 
     public struct CodingKeys: CodingKey, Hashable, Equatable {
         public var stringValue: String
-        
+
         public init(stringValue: String) {
             self.stringValue = stringValue
         }
-        
+
         public var intValue: Int? {
             return nil
         }
-        
+
         public init?(intValue: Int) {
             return nil
         }
-        
+
         public static let category = CodingKeys(stringValue: "category")
         public static let categoryPathComponent = CodingKeys(stringValue: "categoryPathComponent")
         public static let estimatedTime = CodingKeys(stringValue: "estimatedTime")
@@ -249,10 +249,10 @@ extension RenderMetadata: Codable {
         public static let customMetadata = CodingKeys(stringValue: "customMetadata")
         public static let hasNoExpandedDocumentation = CodingKeys(stringValue: "hasNoExpandedDocumentation")
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         category = try container.decodeIfPresent(String.self, forKey: .category)
         categoryPathComponent = try container.decodeIfPresent(String.self, forKey: .categoryPathComponent)
 
@@ -278,7 +278,7 @@ extension RenderMetadata: Codable {
         remoteSourceVariants = try container.decodeVariantCollectionIfPresent(ofValueType: RemoteSource?.self, forKey: .remoteSource)
         tags = try container.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
         hasNoExpandedDocumentation = try container.decodeIfPresent(Bool.self, forKey: .hasNoExpandedDocumentation) ?? false
-        
+
         let extraKeys = Set(container.allKeys).subtracting(
             [
                 .category,
@@ -307,13 +307,13 @@ extension RenderMetadata: Codable {
             extraMetadata[extraKey] = try container.decode(AnyMetadata.self, forKey: extraKey).value
         }
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encodeIfPresent(category, forKey: .category)
         try container.encodeIfPresent(categoryPathComponent, forKey: .categoryPathComponent)
-        
+
         try container.encodeVariantCollection(modulesVariants, forKey: .modules, encoder: encoder)
         try container.encodeVariantCollection(extendedModuleVariants, forKey: .extendedModule, encoder: encoder)
         try container.encodeIfPresent(estimatedTime, forKey: .estimatedTime)
@@ -334,11 +334,11 @@ extension RenderMetadata: Codable {
         if let tags = self.tags, !tags.isEmpty {
             try container.encodeIfPresent(tags, forKey: .tags)
         }
-        
+
         for (key, value) in extraMetadata {
             try container.encode(AnyMetadata(value), forKey: key)
         }
-        
+
         try container.encodeIfNotEmpty(images, forKey: .images)
         try container.encodeIfPresent(color, forKey: .color)
         try container.encodeIfNotEmpty(customMetadata, forKey: .customMetadata)
@@ -379,7 +379,7 @@ extension RenderMetadata: RenderJSONDiffable {
 
         return diffBuilder.differences
     }
-    
+
     /// Returns if this RenderMetadata is similar enough to the given one.
     func isSimilar(to other: RenderMetadata) -> Bool {
         return self.title == other.title
@@ -391,10 +391,10 @@ extension RenderMetadata.Module: RenderJSONDiffable {
     /// Returns the difference between two RenderMetadata.Modules.
     func difference(from other: RenderMetadata.Module, at path: CodablePath) -> JSONPatchDifferences {
         var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
-        
+
         diffBuilder.addDifferences(atKeyPath: \.name, forKey: CodingKeys.name)
         diffBuilder.addDifferences(atKeyPath: \.relatedModules, forKey: CodingKeys.relatedModules)
-        
+
         return diffBuilder.differences
     }
 }

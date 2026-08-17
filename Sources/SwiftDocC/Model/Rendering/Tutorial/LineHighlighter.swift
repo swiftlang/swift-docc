@@ -13,7 +13,7 @@ import Foundation
 /**
  A utility type that computes highlighted lines for diffs between ``Code``
  elements in a ``TutorialSection``'s ``Step``s.
- 
+
  The logic is tricky, so here's a diagram of what is going on here:
  ```
                           Start
@@ -36,24 +36,24 @@ public struct LineHighlighter {
     struct Result {
         /// The file to be highlighted (or not).
         let file: ResourceReference
-        
+
         /// The highlights to apply when displaying this file.
         let highlights: [Highlight]
     }
-    
+
     /**
      A single line's highlight.
      */
     public struct Highlight: Codable, Equatable {
         /// The line to highlight.
         public let line: Int
-        
+
         /// If non-`nil`, the column to start the highlight.
         public let start: Int?
-        
+
         /// If non-`nil`, the length of the highlight in columns.
         public let length: Int?
-        
+
         /// Creates a new highlight for a single line.
         ///
         /// - Parameters:
@@ -66,22 +66,22 @@ public struct LineHighlighter {
             self.length = length
         }
     }
-    
+
     /// The ``DocumentationContext`` to use for loading file lines.
     private let context: DocumentationContext
-    
+
     /// The ``TutorialSection`` whose ``Steps`` will be analyzed for their code highlights.
     private let tutorialSection: TutorialSection
-    
+
     /// The topic reference of the tutorial whose section will be analyzed for their code highlights.
     private let tutorialReference: ResolvedTopicReference
-    
+
     init(context: DocumentationContext, tutorialSection: TutorialSection, tutorialReference: ResolvedTopicReference) {
         self.context = context
         self.tutorialSection = tutorialSection
         self.tutorialReference = tutorialReference
     }
-    
+
     /// The lines in the `resource` file.
     private func lines(of resource: borrowing ResourceReference) -> [String]? {
         let fileContent: String?
@@ -99,7 +99,7 @@ public struct LineHighlighter {
         }
         return fileContent?.splitByNewlines
     }
-    
+
     /// Returns the line highlights between two files.
     private func lineHighlights(old: borrowing ResourceReference, new: ResourceReference) -> Result {
         // Retrieve the contents of the current file and the file we're comparing against.
@@ -108,7 +108,7 @@ public struct LineHighlighter {
         }
 
         let diff = newLines.difference(from: oldLines)
-        
+
         // Convert the insertion offsets to `Highlight` values.
         let highlights = diff.insertions.compactMap { insertion -> Highlight? in
             guard case .insert(let offset, _, _) = insertion else { return nil }
@@ -116,10 +116,10 @@ public struct LineHighlighter {
             // TODO: Collect intra-line diffs.
             return Highlight(line: offset + 1)
         }
-        
+
         return Result(file: new, highlights: highlights)
     }
-    
+
     /// Returns the line highlights between two ``Code`` elements.
     private func lineHighlights(old: consuming Code?, new: borrowing Code) -> Result {
         if let previousFileOverride = new.previousFileReference {
@@ -128,29 +128,30 @@ public struct LineHighlighter {
             }
             return lineHighlights(old: previousFileOverride, new: new.fileReference)
         }
-        
+
         guard let old,
             old.fileName == new.fileName,
-            !new.shouldResetDiff else {
-                return Result(file: new.fileReference, highlights: [])
+            !new.shouldResetDiff
+        else {
+            return Result(file: new.fileReference, highlights: [])
         }
-        
+
         return lineHighlights(old: old.fileReference, new: new.fileReference)
     }
-    
+
     /// The highlights to apply for the given ``TutorialSection``.
     var highlights: [Result] {
         guard let steps = tutorialSection.stepsContent?.steps else { return [] }
-        
+
         var previousCode: Code? = nil
         var results: [Result] = []
-        
+
         for step in steps {
             guard let newCode = step.code else { continue }
             results.append(lineHighlights(old: previousCode, new: newCode))
             previousCode = newCode
         }
-        
+
         return results
     }
 }

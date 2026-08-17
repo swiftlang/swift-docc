@@ -22,11 +22,11 @@ class WebKitCommunicationBridgeTests: XCTestCase {
         try assertMessageIsSent(message: .codeColors(CodeColors.testValue))
         #endif
     }
-    
+
     func testMessagesCanBeReceived() throws {
         #if canImport(WebKit)
         let message = Message.codeColors(CodeColors.testValue)
-        
+
         let userContentController = WKUserContentController()
         let expectation = XCTestExpectation(description: "Message has been received.")
         let bridge = WebKitCommunicationBridge(with: userContentController) { _message in
@@ -35,37 +35,37 @@ class WebKitCommunicationBridgeTests: XCTestCase {
             XCTAssertEqual(message.data?.value as! CodeColors, _message.data?.value as! CodeColors)
             expectation.fulfill()
         }
-        
+
         let json = try JSONSerialization.jsonObject(with: try! JSONEncoder().encode(message))
         bridge.onReceiveMessageData(messageBody: json)
-        
+
         wait(for: [expectation], timeout: 5.0)
         #endif
     }
-    
+
     func assertMessageIsSent(message: Message) throws {
         #if canImport(WebKit)
         let encodedMessage = try JSONEncoder().encode(message)
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: encodedMessage) as? NSDictionary)
-        
+
         let didEvaluateJavaScript = expectation(description: "Did evaluate JavaScript")
         let evaluateJavaScript: (String, ((Any?, (any Error)?) -> ())?) -> () = { string, _ in
             defer { didEvaluateJavaScript.fulfill() }
-            
+
             XCTAssert(string.hasPrefix("window.bridge.receive("))
             XCTAssert(string.hasSuffix(")"))
-            
+
             let jsonString = String(string.dropFirst("window.bridge.receive(".count).dropLast())
             guard let jsonData = jsonString.data(using: .utf8),
-                  let decodedMessage = try? JSONSerialization.jsonObject(with: jsonData) as? NSDictionary
+                let decodedMessage = try? JSONSerialization.jsonObject(with: jsonData) as? NSDictionary
             else {
                 XCTFail("Unable to decode \(jsonString) as communication bridge Message")
                 return
             }
-            
+
             XCTAssertEqual(json, decodedMessage)
         }
-        
+
         let bridge = WebKitCommunicationBridge()
         XCTAssertNoThrow(try bridge.send(message, using: evaluateJavaScript))
         waitForExpectations(timeout: 1.0)

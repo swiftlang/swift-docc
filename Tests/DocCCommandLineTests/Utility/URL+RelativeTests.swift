@@ -16,42 +16,55 @@ class URL_RelativeTests: XCTestCase {
     func testPathsRelativeToParents() {
         let url = URL(fileURLWithPath: "/Users/username/Documents/Some Folder/Some Document.txt")
 
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some Folder/"))?.path,
-                       "Some Document.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/"))?.path,
-                       "Some Folder/Some Document.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/"))?.path,
-                       "Documents/Some Folder/Some Document.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/"))?.path,
-                       "username/Documents/Some Folder/Some Document.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/"))?.path,
-                       "Users/username/Documents/Some Folder/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some Folder/"))?.path,
+            "Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/"))?.path,
+            "Some Folder/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/"))?.path,
+            "Documents/Some Folder/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/"))?.path,
+            "username/Documents/Some Folder/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/"))?.path,
+            "Users/username/Documents/Some Folder/Some Document.txt")
     }
 
     func testPathsRelativeToChildren() {
         let url = URL(fileURLWithPath: "/Users/username/Some File.txt")
 
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some/Nested/Folders/"))?.path,
-                       "../../../../Some File.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some/Nested/"))?.path,
-                       "../../../Some File.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some/"))?.path,
-                       "../../Some File.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/"))?.path,
-                       "../Some File.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some/Nested/Folders/"))?.path,
+            "../../../../Some File.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some/Nested/"))?.path,
+            "../../../Some File.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Some/"))?.path,
+            "../../Some File.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/"))?.path,
+            "../Some File.txt")
     }
 
     func testPathsRelativeToSiblingsChildren() {
         let url = URL(fileURLWithPath: "/Users/username/Documents/Some Document.txt")
 
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/"))?.path,
-                       "../Documents/Some Document.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/Some/"))?.path,
-                       "../../Documents/Some Document.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/Some/Nested/"))?.path,
-                       "../../../Documents/Some Document.txt")
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/Some/Nested/Folders/"))?.path,
-                       "../../../../Documents/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/"))?.path,
+            "../Documents/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/Some/"))?.path,
+            "../../Documents/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/Some/Nested/"))?.path,
+            "../../../Documents/Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Desktop/Some/Nested/Folders/"))?.path,
+            "../../../../Documents/Some Document.txt")
     }
 
     func testPathsRelativeToSelf() {
@@ -63,8 +76,9 @@ class URL_RelativeTests: XCTestCase {
     func testPathsRelativeToSibling() {
         let url = URL(fileURLWithPath: "/Users/username/Documents/Some Document.txt")
 
-        XCTAssertEqual(url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Another Document.txt"))?.path,
-                       "../Some Document.txt")
+        XCTAssertEqual(
+            url.relative(to: URL(fileURLWithPath: "/Users/username/Documents/Another Document.txt"))?.path,
+            "../Some Document.txt")
     }
 
 }

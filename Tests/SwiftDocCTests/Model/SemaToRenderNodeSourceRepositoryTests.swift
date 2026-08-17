@@ -19,10 +19,10 @@ class SemaToRenderNodeSourceRepositoryTests: XCTestCase {
             for: "SourceLocations",
             sourceRepository: nil
         )
-        
+
         XCTAssertNil(try outputConsumer.renderNode(withTitle: "MyStruct").metadata.remoteSource)
     }
-    
+
     func testEmitsSourceRepositoryInformationForSymbolsWhenPresent() async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "SourceLocations",

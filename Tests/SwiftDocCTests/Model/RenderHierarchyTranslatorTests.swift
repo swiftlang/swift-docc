@@ -16,30 +16,32 @@ class RenderHierarchyTranslatorTests: XCTestCase {
     func test() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let technologyReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
-        
+
         var translator = RenderHierarchyTranslator(context: context)
         let renderHierarchyVariants = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchyVariants
         XCTAssertEqual(renderHierarchyVariants?.variants, [], "Unexpected variant hierarchies for tutorial table of content page")
         let renderHierarchy = renderHierarchyVariants?.defaultValue
-        
+
         // Verify that the hierarchy translator has collected all topic references from the hierarchy
-        XCTAssertEqual(translator.collectedTopicReferences.sorted(by: { $0.absoluteString <= $1.absoluteString }).map{ $0.absoluteString }, [
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2#Create-a-New-AR-Project",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#A-Section",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#This-is-an-H2",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#This-is-an-H3",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces#Create-a-New-AR-Project",
-            "doc://org.swift.docc.example/tutorials/TestOverview",
-            "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
-        ])
-        
+        XCTAssertEqual(
+            translator.collectedTopicReferences.sorted(by: { $0.absoluteString <= $1.absoluteString }).map { $0.absoluteString },
+            [
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2#Create-a-New-AR-Project",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#A-Section",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#This-is-an-H2",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#This-is-an-H3",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces",
+                "doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces#Create-a-New-AR-Project",
+                "doc://org.swift.docc.example/tutorials/TestOverview",
+                "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
+            ])
+
         let pending = translator.linkReferences
             .map({ pair -> String in
                 return pair.value.title + ", " + pair.value.url
@@ -48,60 +50,64 @@ class RenderHierarchyTranslatorTests: XCTestCase {
 
         // Verify that the hierarchy translator has collected all "fake" references
         // & their titles that need to be added to the node
-        XCTAssertEqual(pending, [
-            "Check Your Understanding, /tutorials/test-bundle/testtutorial#Check-Your-Understanding",
-            "Check Your Understanding, /tutorials/test-bundle/testtutorial2#Check-Your-Understanding",
-            "Check Your Understanding, /tutorials/test-bundle/tutorialmediawithspaces#Check-Your-Understanding",
-        ])
-        
+        XCTAssertEqual(
+            pending,
+            [
+                "Check Your Understanding, /tutorials/test-bundle/testtutorial#Check-Your-Understanding",
+                "Check Your Understanding, /tutorials/test-bundle/testtutorial2#Check-Your-Understanding",
+                "Check Your Understanding, /tutorials/test-bundle/tutorialmediawithspaces#Check-Your-Understanding",
+            ])
+
         guard case .tutorials(let technologyHierarchy)? = renderHierarchy else {
             XCTFail("Unexpected hierarchy type")
             return
         }
 
         XCTAssertEqual(technologyHierarchy.modules?.count, 1)
-        
+
         guard let modules = technologyHierarchy.modules, !modules.isEmpty else {
             XCTFail("Could not find modules")
             return
         }
         let chapter = modules[0]
-        
+
         XCTAssertEqual(chapter.reference.identifier, "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1")
-        
+
         XCTAssertEqual(chapter.tutorials.count, 4)
-        
+
         let tutorial = chapter.tutorials[0]
-        
+
         XCTAssertEqual(tutorial.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial")
-        
+
         XCTAssertEqual(tutorial.landmarks.count, 4)
-        
+
         let section1 = tutorial.landmarks[0]
         let section2 = tutorial.landmarks[1]
         let section3 = tutorial.landmarks[2]
         let assessments = tutorial.landmarks[3]
-        
+
         XCTAssertEqual(section1.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(section2.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection")
         XCTAssertEqual(section3.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate")
         XCTAssertEqual(assessments.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Check-Your-Understanding")
     }
-    
+
     func testMultiplePaths() async throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
-            let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
-            ## Topics
+            let text = try String(contentsOf: myKitURL).replacingOccurrences(
+                of: "## Topics",
+                with: """
+                    ## Topics
 
-            ### Tutorials
-             - <doc:/tutorials/Test-Bundle/TestTutorial>
-             - <doc:/tutorials/Test-Bundle/TestTutorial2>
-            """)
+                    ### Tutorials
+                     - <doc:/tutorials/Test-Bundle/TestTutorial>
+                     - <doc:/tutorials/Test-Bundle/TestTutorial2>
+                    """)
             try text.write(to: myKitURL, atomically: true, encoding: .utf8)
         }
-        
+
         // Get a translated render node
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
@@ -112,27 +118,29 @@ class RenderHierarchyTranslatorTests: XCTestCase {
             XCTFail("Did not find the node hierarchy")
             return
         }
-        
-        XCTAssertEqual(hierarchy.paths.sorted(by: { $0.count < $1.count }), [
+
+        XCTAssertEqual(
+            hierarchy.paths.sorted(by: { $0.count < $1.count }),
             [
-                "doc://org.swift.docc.example/documentation/MyKit",
-            ],
-            [
-                "doc://org.swift.docc.example/documentation/MyKit",
-                "doc://org.swift.docc.example/documentation/Test-Bundle/article",
-            ],
-            [
-                "doc://org.swift.docc.example/tutorials/TestOverview",
-                "doc://org.swift.docc.example/tutorials/TestOverview/$volume",
-                "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
-            ],
-        ])
+                [
+                    "doc://org.swift.docc.example/documentation/MyKit"
+                ],
+                [
+                    "doc://org.swift.docc.example/documentation/MyKit",
+                    "doc://org.swift.docc.example/documentation/Test-Bundle/article",
+                ],
+                [
+                    "doc://org.swift.docc.example/tutorials/TestOverview",
+                    "doc://org.swift.docc.example/tutorials/TestOverview/$volume",
+                    "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
+                ],
+            ])
     }
-    
+
     func testLanguageSpecificHierarchies() async throws {
         let (_, context) = try await testBundleAndContext(named: "GeometricalShapes")
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
-        
+
         // An inner function to assert the rendered hierarchy values for a given reference
         func assertExpectedHierarchies(
             for reference: ResolvedTopicReference,
@@ -144,7 +152,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
             let documentationNode = try context.entity(with: reference)
             var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visit(documentationNode.semantic) as? RenderNode, file: file, line: line)
-            
+
             if let expectedSwiftPaths {
                 guard case .reference(let defaultHierarchy) = renderNode.hierarchyVariants.defaultValue else {
                     XCTFail("Unexpectedly found `.tutorials` main hierarchy for symbol", file: file, line: line)
@@ -155,7 +163,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
             } else {
                 XCTAssertNil(renderNode.hierarchyVariants.defaultValue, "Unexpectedly found main hierarchy", file: file, line: line)
             }
-                
+
             if let expectedObjectiveCPaths {
                 let variants = try XCTUnwrap(renderNode.hierarchyVariants.variants.first, file: file, line: line)
                 let patch = try XCTUnwrap(variants.patch.first, file: file, line: line)
@@ -169,7 +177,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
                 XCTAssertNil(renderNode.hierarchyVariants.variants.first, "Unexpectedly found variant hierarchy", file: file, line: line)
             }
         }
-        
+
         // typedef struct {
         //     CGPoint center;
         //     CGFloat radius;
@@ -180,7 +188,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
                 "doc://GeometricalShapes/documentation/GeometricalShapes",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
             ],
-            expectedObjectiveCPaths: nil // Same in both languages. Only encoded once.
+            expectedObjectiveCPaths: nil  // Same in both languages. Only encoded once.
         )
 
         // extern const TLACircle TLACircleZero NS_SWIFT_NAME(Circle.zero);
@@ -188,41 +196,41 @@ class RenderHierarchyTranslatorTests: XCTestCase {
             for: moduleReference.appendingPath("Circle/zero"),
             expectedSwiftPaths: [
                 "doc://GeometricalShapes/documentation/GeometricalShapes",
-                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // The Swift representation is a member
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",  // The Swift representation is a member
             ],
             expectedObjectiveCPaths: [
-                "doc://GeometricalShapes/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
+                "doc://GeometricalShapes/documentation/GeometricalShapes"  // The Objective-C representation is a top-level function
             ]
         )
-        
+
         // BOOL TLACircleIntersects(TLACircle circle, TLACircle otherCircle) NS_SWIFT_NAME(Circle.intersects(self:_:));
         try assertExpectedHierarchies(
             for: moduleReference.appendingPath("Circle/intersects(_:)"),
             expectedSwiftPaths: [
                 "doc://GeometricalShapes/documentation/GeometricalShapes",
-                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // The Swift representation is a member
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",  // The Swift representation is a member
             ],
             expectedObjectiveCPaths: [
-                "doc://GeometricalShapes/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
+                "doc://GeometricalShapes/documentation/GeometricalShapes"  // The Objective-C representation is a top-level function
             ]
         )
-        
+
         // TLACircle TLACircleMake(CGPoint center, CGFloat radius) NS_SWIFT_UNAVAILABLE("Use 'Circle.init(center:radius:)' instead.");
         try assertExpectedHierarchies(
             for: moduleReference.appendingPath("TLACircleMake"),
-            expectedSwiftPaths: nil, // There is no Swift representation
+            expectedSwiftPaths: nil,  // There is no Swift representation
             expectedObjectiveCPaths: [
-                "doc://GeometricalShapes/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
+                "doc://GeometricalShapes/documentation/GeometricalShapes"  // The Objective-C representation is a top-level function
             ]
         )
-          
+
         try assertExpectedHierarchies(
             for: moduleReference.appendingPath("Circle/init(center:radius:)"),
             expectedSwiftPaths: [
                 "doc://GeometricalShapes/documentation/GeometricalShapes",
-                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // The Swift representation is a member
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",  // The Swift representation is a member
             ],
-            expectedObjectiveCPaths: nil // There is no Objective-C representation
+            expectedObjectiveCPaths: nil  // There is no Objective-C representation
         )
     }
 }

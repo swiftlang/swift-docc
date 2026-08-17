@@ -14,28 +14,28 @@ import SwiftDocC
 class DocumentationServerTests: XCTestCase {
     func testCallsCorrectServiceForMessageType() throws {
         let server = DocumentationServer()
-        
+
         server.register(service: TestServiceA())
         server.register(service: TestServiceB())
-        
+
         let message1 = DocumentationServer.Message(type: "type-1", payload: nil)
         let message2 = DocumentationServer.Message(type: "type-2", payload: nil)
         let message3 = DocumentationServer.Message(type: "type-3", payload: nil)
-        
+
         processAndAssert(server, withMessage: message1) { data in
             XCTAssertEqual(
                 try self.decode(DocumentationServer.Message.self, from: data),
                 TestServiceA.response
             )
         }
-        
+
         processAndAssert(server, withMessage: message2) { data in
             XCTAssertEqual(
                 try self.decode(DocumentationServer.Message.self, from: data),
                 TestServiceA.response
             )
         }
-        
+
         processAndAssert(server, withMessage: message3) { data in
             XCTAssertEqual(
                 try self.decode(DocumentationServer.Message.self, from: data),
@@ -43,34 +43,37 @@ class DocumentationServerTests: XCTestCase {
             )
         }
     }
-    
+
     func testPassesTheMessageToTheService() throws {
         let server = DocumentationServer()
-        
+
         let expectedMessage = DocumentationServer.Message(
             type: .init(rawValue: "type-1"),
             payload: "payload".data(using: .utf8)!
         )
         XCTAssertTrue(TestServiceA.handlingTypes.contains(expectedMessage.type))
-        
+
         let messageExpectation = XCTestExpectation(description: "service received message")
         let responseExpectation = XCTestExpectation(description: "server received response")
-        
-        server.register(service: TestServiceA(onProcess: { message in
-            XCTAssertEqual(message, expectedMessage)
-            messageExpectation.fulfill()
-        }))
-        
-        processAndAssert(server, withMessage: expectedMessage, satisfies: { data in
-            responseExpectation.fulfill()
-        })
-        
+
+        server.register(
+            service: TestServiceA(onProcess: { message in
+                XCTAssertEqual(message, expectedMessage)
+                messageExpectation.fulfill()
+            }))
+
+        processAndAssert(
+            server, withMessage: expectedMessage,
+            satisfies: { data in
+                responseExpectation.fulfill()
+            })
+
         wait(for: [messageExpectation, responseExpectation], timeout: 1.0)
     }
-    
+
     func testReturnsInvalidMessageErrorWhenGivenAnInvalidMessage() throws {
         let server = DocumentationServer()
-        
+
         processAndAssert(
             server,
             withMessageData: "this is not a valid message".data(using: .utf8)!,
@@ -78,12 +81,12 @@ class DocumentationServerTests: XCTestCase {
                 self.assertIsErrorMessageWithIdentifier("invalid-message", messageData: data)
             })
     }
-    
+
     func testSynchronizationQueueHasGivenQualityOfService() {
         let server = DocumentationServer(qualityOfService: .userInitiated)
         XCTAssertEqual(server.synchronizationQueue.qos, .userInitiated)
     }
-    
+
     func processAndAssert(
         _ server: DocumentationServer,
         withMessage message: DocumentationServer.Message,
@@ -97,25 +100,27 @@ class DocumentationServerTests: XCTestCase {
             }
         )
     }
-    
+
     func processAndAssert(
         _ server: DocumentationServer,
         withMessageData message: Data,
         satisfies assertion: @escaping (Data) throws -> ()
     ) {
         let expectation = XCTestExpectation(description: "Completion closure called")
-        
-        server.process(message, completion: { data in
-            defer {
-                expectation.fulfill()
-            }
-            do {
-                try assertion(data)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
-        })
-        
+
+        server.process(
+            message,
+            completion: { data in
+                defer {
+                    expectation.fulfill()
+                }
+                do {
+                    try assertion(data)
+                } catch {
+                    XCTFail(error.localizedDescription)
+                }
+            })
+
         wait(for: [expectation], timeout: 1.0)
     }
 
@@ -133,19 +138,19 @@ class DocumentationServerTests: XCTestCase {
             XCTFail("Unable to decode message data")
         }
     }
-    
-    func decode<Message : Decodable>(_ type: Message.Type, from data: Data) throws -> Message {
+
+    func decode<Message: Decodable>(_ type: Message.Type, from data: Data) throws -> Message {
         try JSONDecoder().decode(type, from: data)
     }
-    
+
     struct TestServiceA: DocumentationService {
         static var handlingTypes: [DocumentationServer.MessageType] = ["type-1", "type-2"]
-        
+
         static let response = DocumentationServer.Message(
             type: "response", payload: "TestServiceA response".data(using: .utf8)!)
-        
+
         var onProcess: ((DocumentationServer.Message) -> ())?
-        
+
         func process(
             _ message: DocumentationServer.Message,
             completion: (DocumentationServer.Message) -> ()
@@ -154,13 +159,13 @@ class DocumentationServerTests: XCTestCase {
             completion(Self.response)
         }
     }
-    
+
     struct TestServiceB: DocumentationService {
         static var handlingTypes: [DocumentationServer.MessageType] = ["type-3"]
-        
+
         static let response = DocumentationServer.Message(
             type: "response", payload: "TestServiceB response".data(using: .utf8)!)
-        
+
         func process(
             _ message: DocumentationServer.Message,
             completion: (DocumentationServer.Message) -> ()

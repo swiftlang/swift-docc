@@ -22,19 +22,19 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
     var collectedTopicReferences: [ResolvedTopicReference] = []
-    
+
     /// Unresolvable topic references outside the current bundle.
     var collectedUnresolvedTopicReferences: [UnresolvedTopicReference] = []
-    
+
     /// Any collected constraints to symbol relationships.
     var collectedConstraints: [TopicReference: [SymbolGraph.Symbol.Swift.GenericConstraint]] = [:]
-    
+
     /// A context containing pre-rendered content.
     let renderContext: RenderContext?
-    
+
     /// A collection of functions that render pieces of documentation content.
     let contentRenderer: DocumentationContentRenderer
-    
+
     /// Whether the documentation converter should include source file
     /// location metadata in any render nodes representing symbols it creates.
     ///
@@ -42,28 +42,28 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// include public distribution of any created render nodes as there are filesystem privacy and security
     /// concerns with distributing this data.
     var shouldEmitSymbolSourceFileURIs: Bool
-    
+
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
-    
+
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
-    
+
     var symbolIdentifiersWithExpandedDocumentation: [String]? = nil
-    
+
     public mutating func visitCode(_ code: Code) -> (any RenderTree)? {
         let fileType = NSString(string: code.fileName).pathExtension
         guard let fileIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
             return nil
         }
-        
+
         let fileReference = ResourceReference(bundleID: code.fileReference.bundleID, path: fileIdentifier)
         guard let fileContents = fileContents(with: fileReference) else {
             return nil
         }
-        
+
         let assetReference = RenderReferenceIdentifier(fileReference.path)
-        
+
         fileReferences[fileReference.path] = FileReference(
             identifier: assetReference,
             fileName: code.fileName,
@@ -81,19 +81,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ) -> [String: AvailabilityRenderItem] {
         var result = [String: AvailabilityRenderItem]()
         result.reserveCapacity(availabilities.count)
-        
+
         for availability in availabilities {
-            let current: PlatformVersion? = if let currentPlatforms, let name = PlatformName(metadataPlatform: availability.platform) {
-                currentPlatforms[name.displayName]
-            } else {
-                nil
-            }
+            let current: PlatformVersion? =
+                if let currentPlatforms, let name = PlatformName(metadataPlatform: availability.platform) {
+                    currentPlatforms[name.displayName]
+                } else {
+                    nil
+                }
             let renderItem = AvailabilityRenderItem(availability, current: current)
             if let name = renderItem.name {
                 result[name] = renderItem
             }
         }
-        
+
         return result
     }
 
@@ -111,31 +112,31 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return nil
         }
     }
-    
+
     public mutating func visitSteps(_ steps: Steps) -> (any RenderTree)? {
         let stepsContent = steps.content.flatMap { child -> [RenderBlockContent] in
             return visit(child) as! [RenderBlockContent]
         }
-        
+
         return stepsContent
     }
-    
+
     public mutating func visitStep(_ step: Step) -> (any RenderTree)? {
         let renderBlock = visitMarkupContainer(MarkupContainer(step.content)) as! [RenderBlockContent]
         let caption = visitMarkupContainer(MarkupContainer(step.caption)) as! [RenderBlockContent]
-        
+
         let mediaReference = step.media.map { visit($0) } as? RenderReferenceIdentifier
         let codeReference = step.code.map { visitCode($0) } as? RenderReferenceIdentifier
-        
+
         let previewReference = step.code?.preview.flatMap {
             createAndRegisterRenderReference(forMedia: $0.source, altText: ($0 as? ImageMedia)?.altText)
         }
-        
+
         let result = [RenderBlockContent.step(.init(content: renderBlock, caption: caption, media: mediaReference, code: codeReference, runtimePreview: previewReference))]
-        
+
         return result
     }
-    
+
     public mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> (any RenderTree)? {
         let introduction = contentLayouts(tutorialSection.introduction)
         let stepsContent: [RenderBlockContent]
@@ -144,22 +145,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } else {
             stepsContent = []
         }
-        
+
         let highlightsPerFile = LineHighlighter(context: context, tutorialSection: tutorialSection, tutorialReference: identifier).highlights
-        
+
         // Add the highlights to the file references.
         for result in highlightsPerFile {
             fileReferences[result.file.path]?.highlights = result.highlights
         }
-        
+
         return TutorialSectionsRenderSection.Section(title: tutorialSection.title, contentSection: introduction, stepsSection: stepsContent, anchor: urlReadableFragment(tutorialSection.title))
     }
-    
+
     public mutating func visitTutorial(_ tutorial: Tutorial) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .tutorial)
-        
+
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
-        
+
         if let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) {
             let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
             node.hierarchyVariants = hierarchy.hierarchyVariants
@@ -170,18 +171,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // We've warned about this during semantic analysis.
             return nil
         }
-        
+
         node.metadata.title = tutorial.intro.title
         node.metadata.role = DocumentationContentRenderer.role(for: .tutorial).rawValue
-        
+
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
-        
+
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
-                
+
         var intro = visitIntro(tutorial.intro) as! IntroRenderSection
         intro.estimatedTimeInMinutes = tutorial.durationMinutes
-        
+
         if let chapterReference = context.parents(of: identifier).first {
             intro.chapter = context.title(for: chapterReference)
         }
@@ -189,16 +190,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let requirement = tutorial.requirements.first {
             let identifier = RenderReferenceIdentifier(requirement.title)
             let requirementReference = XcodeRequirementReference(identifier: identifier, title: requirement.title, url: requirement.destination)
-            requirementReferences[identifier.identifier] = requirementReference 
+            requirementReferences[identifier.identifier] = requirementReference
             intro.xcodeRequirement = identifier
         }
-        
+
         if let projectFiles = tutorial.projectFiles {
             intro.projectFiles = createAndRegisterRenderReference(forMedia: projectFiles, assetContext: .download)
         }
-        
+
         node.sections.append(intro)
-        
+
         var tutorialSections = TutorialSectionsRenderSection(sections: tutorial.sections.map { visitTutorialSection($0) as! TutorialSectionsRenderSection.Section })
 
         // Attach anchors to tutorial sections.
@@ -210,7 +211,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             section.anchor = sectionReferences[index].reference.fragment ?? ""
             return section
         }
-        
+
         node.sections.append(tutorialSections)
         if let assessments = tutorial.assessments {
             node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
@@ -223,12 +224,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         if tutorialPath.count >= 2 {
             let volume = tutorialPath[tutorialPath.count - 2]
-            
+
             if let cta = callToAction(with: tutorial.callToActionImage, volume: volume) {
                 node.sections.append(cta)
             }
         }
-        
+
         node.references = createTopicRenderReferences()
 
         addReferences(fileReferences, to: &node)
@@ -240,7 +241,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(hierarchyTranslator.linkReferences, to: &node)
         return node
     }
-    
+
     /// Creates a CTA for tutorials and tutorial articles.
     private mutating func callToAction(with callToActionImage: ImageMedia?, volume: ResolvedTopicReference) -> CallToActionSection? {
         // Get all the tutorials and tutorial articles in the learning path, ordered.
@@ -249,22 +250,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
         for node in context.breadthFirstSearch(from: volume) where node.kind == .tutorial || node.kind == .tutorialArticle {
             surroundingTopics.append((node.reference, node.kind))
         }
-        
+
         // Find the tutorial or article that comes after the current page, if one exists.
         let nextTopicIndex = surroundingTopics.firstIndex(where: { $0.reference == identifier }).map { $0 + 1 }
         if let nextTopicIndex, nextTopicIndex < surroundingTopics.count {
             let nextTopicReference = surroundingTopics[nextTopicIndex]
             let nextTopicReferenceIdentifier = visitResolvedTopicReference(nextTopicReference.reference) as! RenderReferenceIdentifier
             let nextTopic = try! context.entity(with: nextTopicReference.reference).semantic as! any (Abstracted & Titled)
-            
+
             let image = callToActionImage.map { visit($0) as! RenderReferenceIdentifier }
-            
+
             return createCallToAction(reference: nextTopicReferenceIdentifier, kind: nextTopicReference.kind, title: nextTopic.title ?? "", abstract: inlineAbstractContentInTopic(nextTopic), image: image)
         }
-        
+
         return nil
     }
-    
+
     private mutating func createCallToAction(reference: RenderReferenceIdentifier, kind: DocumentationNode.Kind, title: String, abstract: [RenderInlineContent], image: RenderReferenceIdentifier?) -> CallToActionSection {
         let overridingTitle: String
         let eyebrow: String
@@ -278,52 +279,53 @@ public struct RenderNodeTranslator: SemanticVisitor {
         default:
             fatalError("Unexpected kind '\(kind)', only tutorials and tutorial articles may be CTA destinations.")
         }
-        
+
         let action = RenderInlineContent.reference(identifier: reference, isActive: true, overridingTitle: overridingTitle, overridingTitleInlineContent: [.text(overridingTitle)])
         return CallToActionSection(title: title, abstract: abstract, media: image, action: action, featuredEyebrow: eyebrow)
     }
-    
+
     private mutating func inlineAbstractContentInTopic(_ topic: any Abstracted) -> [RenderInlineContent] {
         if let abstract = topic.abstract {
             return (visitMarkupContainer(MarkupContainer(abstract)) as! [RenderBlockContent]).firstParagraph
         }
-        
+
         return []
     }
-    
+
     public mutating func visitIntro(_ intro: Intro) -> (any RenderTree)? {
         var section = IntroRenderSection(title: intro.title)
         section.content = visitMarkupContainer(intro.content) as! [RenderBlockContent]
-        
+
         section.image = intro.image.map { visit($0) } as? RenderReferenceIdentifier
         section.video = intro.video.map { visit($0) } as? RenderReferenceIdentifier
-        
+
         // Set the Intro's background image to the video's poster image.
-        section.backgroundImage = intro.video?.poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
+        section.backgroundImage =
+            intro.video?.poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
             ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source, altText: $0.altText) }
-        
+
         return section
     }
-    
+
     /// Add a requirement reference and return its identifier.
     public mutating func visitXcodeRequirement(_ requirement: XcodeRequirement) -> (any RenderTree)? {
         fatalError("TODO")
     }
-    
+
     public mutating func visitAssessments(_ assessments: Assessments) -> (any RenderTree)? {
         let renderSectionAssessments: [TutorialAssessmentsRenderSection.Assessment] = assessments.questions.map { question in
             return self.visitMultipleChoice(question) as! TutorialAssessmentsRenderSection.Assessment
         }
-        
+
         return TutorialAssessmentsRenderSection(assessments: renderSectionAssessments, anchor: RenderHierarchyTranslator.assessmentsAnchor)
     }
-    
+
     public mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) -> (any RenderTree)? {
         let questionPhrasing = visit(multipleChoice.questionPhrasing) as! [RenderBlockContent]
         let content = visitMarkupContainer(multipleChoice.content) as! [RenderBlockContent]
         return TutorialAssessmentsRenderSection.Assessment(title: questionPhrasing, content: content, choices: multipleChoice.choices.map { visitChoice($0) } as! [TutorialAssessmentsRenderSection.Assessment.Choice])
     }
-    
+
     public mutating func visitChoice(_ choice: Choice) -> (any RenderTree)? {
         return TutorialAssessmentsRenderSection.Assessment.Choice(
             content: visitMarkupContainer(choice.content) as! [RenderBlockContent],
@@ -332,15 +334,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
             reaction: choice.justification.reaction
         )
     }
-    
+
     public mutating func visitJustification(_ justification: Justification) -> (any RenderTree)? {
         return visitMarkupContainer(justification.content) as! [RenderBlockContent]
     }
-        
+
     // Visits a container and expects the elements to be block level elements
     public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> (any RenderTree)? {
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
-        let content = markupContainer.elements.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderBlockContent]
+        let content = markupContainer.elements.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item)) }) as! [RenderBlockContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references found in the markup container.
         imageReferences.merge(contentCompiler.imageReferences) { (_, new) in new }
@@ -348,11 +350,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         linkReferences.merge(contentCompiler.linkReferences) { (_, new) in new }
         return content
     }
-    
+
     // Visits a collection of inline markup elements.
     public mutating func visitMarkup(_ markup: [any Markup]) -> (any RenderTree)? {
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
-        let content = markup.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderInlineContent]
+        let content = markup.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item)) }) as! [RenderInlineContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references.
         imageReferences.merge(contentCompiler.imageReferences) { (_, new) in new }
@@ -364,12 +366,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitMarkup(_ markup: any Markup) -> (any RenderTree)? {
         return visitMarkup(Array(markup.children))
     }
-    
+
     private func firstTutorial(ofTechnology technology: ResolvedTopicReference) -> (reference: ResolvedTopicReference, kind: DocumentationNode.Kind)? {
         guard let volume = (context.children(of: technology, kind: .volume)).first,
             let firstChapter = (context.children(of: volume.reference)).first,
-            let firstTutorial = (context.children(of: firstChapter.reference)).first else
-        {
+            let firstTutorial = (context.children(of: firstChapter.reference)).first
+        else {
             return nil
         }
         return firstTutorial
@@ -382,11 +384,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         for node in context.breadthFirstSearch(from: identifier) {
             guard let entity = try? context.entity(with: node.reference),
-                  let durationMinutes = (entity.semantic as? (any Timed))?.durationMinutes
+                let durationMinutes = (entity.semantic as? (any Timed))?.durationMinutes
             else {
                 continue
             }
-            
+
             if totalDurationMinutes == nil {
                 totalDurationMinutes = 0
             }
@@ -396,20 +398,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return totalDurationMinutes.flatMap(contentRenderer.formatEstimatedDuration(minutes:))
     }
 
-    @available(*, deprecated) // This is a deprecated protocol requirement
+    @available(*, deprecated)  // This is a deprecated protocol requirement
     public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> (any RenderTree)? {
         visitTutorialTableOfContents(technology)
     }
 
     public mutating func visitTutorialTableOfContents(_ tableOfContents: TutorialTableOfContents) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .overview)
-        
+
         node.metadata.title = tableOfContents.intro.title
         node.metadata.category = tableOfContents.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration()
         node.metadata.role = DocumentationContentRenderer.role(for: .tutorialTableOfContents).rawValue
-        
+
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
 
@@ -418,33 +420,33 @@ public struct RenderNodeTranslator: SemanticVisitor {
             intro.action = visitLink(firstTutorial.reference.url, defaultTitle: "Get started")
         }
         node.sections.append(intro)
-                
+
         node.sections.append(contentsOf: tableOfContents.volumes.map { visitVolume($0) as! VolumeRenderSection })
-        
+
         if let resources = tableOfContents.resources {
             node.sections.append(visitResources(resources) as! ResourcesRenderSection)
         }
-        
+
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         if let (hierarchyVariants, _) = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier, omittingChapters: true) {
             node.hierarchyVariants = hierarchyVariants
             collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         }
-        
+
         node.references = createTopicRenderReferences()
-        
+
         addReferences(fileReferences, to: &node)
         addReferences(imageReferences, to: &node)
         addReferences(videoReferences, to: &node)
         addReferences(linkReferences, to: &node)
-        
+
         return node
     }
-    
+
     private mutating func createTopicRenderReferences() -> [String: any RenderReference] {
         var renderReferences: [String: any RenderReference] = [:]
         let renderer = DocumentationContentRenderer(context: context)
-        
+
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
             let dependencies: RenderReferenceDependencies
@@ -453,11 +455,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
             for link in dependencies.linkReferences {
                 linkReferences[link.identifier.identifier] = link
             }
-            
+
             for imageReference in dependencies.imageReferences {
                 imageReferences[imageReference.identifier.identifier] = imageReference
             }
-            
+
             for dependencyReference in dependencies.topicReferences {
                 // If this reference is also a direct reference of the page,
                 // do not redundantly process it as a dependency reference.
@@ -467,12 +469,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 let (dependencyRenderReference, _) = makeRenderReference(for: dependencyReference, with: renderer)
                 renderReferences[dependencyReference.absoluteString] = dependencyRenderReference
             }
-            
+
             // Add conformance constraints to the reference, if any are present.
             if let conformanceSection = renderer.conformanceSectionFor(reference, collectedConstraints: collectedConstraints) {
                 renderReference.conformance = conformanceSection
             }
-            
+
             renderReferences[reference.absoluteString] = renderReference
         }
 
@@ -483,7 +485,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             )
             renderReferences[renderReference.identifier.identifier] = renderReference
         }
-        
+
         return renderReferences
     }
 
@@ -494,15 +496,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         with renderer: DocumentationContentRenderer
     ) -> (TopicRenderReference, RenderReferenceDependencies) {
         if let renderContext,
-           let content = renderContext.store.content(for: reference),
-           let prerendered = content.renderReference as? TopicRenderReference {
+            let content = renderContext.store.content(for: reference),
+            let prerendered = content.renderReference as? TopicRenderReference
+        {
             return (prerendered, content.renderReferenceDependencies)
         }
         var dependencies = RenderReferenceDependencies()
         let renderReference = renderer.renderReference(for: reference, dependencies: &dependencies)
         return (renderReference, dependencies)
     }
-    
+
     private func addReferences(_ references: [String: some RenderReference], to node: inout RenderNode) {
         node.references.merge(references) { _, new in new }
     }
@@ -514,11 +517,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         volumeSection.chapters = volume.chapters.compactMap { visitChapter($0) } as? [VolumeRenderSection.Chapter] ?? []
         return volumeSection
     }
-    
+
     public mutating func visitImageMedia(_ imageMedia: ImageMedia) -> (any RenderTree)? {
         return createAndRegisterRenderReference(forMedia: imageMedia.source, altText: imageMedia.altText)
     }
-    
+
     public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> (any RenderTree)? {
         return createAndRegisterRenderReference(
             forMedia: videoMedia.source,
@@ -526,21 +529,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
             altText: videoMedia.altText
         )
     }
-    
+
     public mutating func visitChapter(_ chapter: Chapter) -> (any RenderTree)? {
         guard !chapter.topicReferences.isEmpty else {
             // If the chapter has no tutorials, return `nil`.
             return nil
         }
-        
+
         var renderChapter = VolumeRenderSection.Chapter(name: chapter.name)
         renderChapter.content = visitMarkupContainer(chapter.content) as! [RenderBlockContent]
         renderChapter.tutorials = chapter.topicReferences.map { visitTutorialReference($0) } as! [RenderReferenceIdentifier]
         renderChapter.image = chapter.image.map { visit($0) } as? RenderReferenceIdentifier
-        
+
         return renderChapter
     }
-    
+
     public mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> (any RenderTree)? {
         var layout: ContentAndMediaSection.Layout? {
             switch contentAndMedia.layout {
@@ -552,13 +555,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         let mediaReference = contentAndMedia.media.map { visit($0) } as? RenderReferenceIdentifier
         var section = ContentAndMediaSection(layout: layout, title: contentAndMedia.title, media: mediaReference, mediaPosition: contentAndMedia.mediaPosition)
-        
+
         section.eyebrow = contentAndMedia.eyebrow
         section.content = visitMarkupContainer(contentAndMedia.content) as! [RenderBlockContent]
-        
+
         return section
     }
-        
+
     public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> (any RenderTree)? {
         switch context.resolve(tutorialReference.topic, in: context.inputs.rootReference) {
         case let .failure(reference, _):
@@ -567,12 +570,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return visitResolvedTopicReference(resolved)
         }
     }
-    
+
     public mutating func visitResolvedTopicReference(_ resolvedTopicReference: ResolvedTopicReference) -> any RenderTree {
         collectedTopicReferences.append(resolvedTopicReference)
         return RenderReferenceIdentifier(resolvedTopicReference.absoluteString)
     }
-        
+
     public mutating func visitResources(_ resources: Resources) -> (any RenderTree)? {
         let tiles = resources.tiles.map { visitTile($0) as! RenderTile }
         let content = visitMarkupContainer(resources.content) as! [RenderBlockContent]
@@ -581,32 +584,35 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
     public mutating func visitLink(_ link: URL, defaultTitle overridingTitle: String?) -> RenderInlineContent {
         let overridingTitleInlineContent: [RenderInlineContent]? = overridingTitle.map { [RenderInlineContent.text($0)] }
-        
+
         let action: RenderInlineContent
         // We expect, at this point of the rendering, this API to be called with valid URLs, otherwise crash.
         if let resolved = context.referenceIndex[link.absoluteString] {
-            action = RenderInlineContent.reference(identifier: RenderReferenceIdentifier(resolved.absoluteString),
-                                                   isActive: true,
-                                                   overridingTitle: overridingTitle,
-                                                   overridingTitleInlineContent: overridingTitleInlineContent)
+            action = RenderInlineContent.reference(
+                identifier: RenderReferenceIdentifier(resolved.absoluteString),
+                isActive: true,
+                overridingTitle: overridingTitle,
+                overridingTitleInlineContent: overridingTitleInlineContent)
             collectedTopicReferences.append(resolved)
         } else if !ResolvedTopicReference.urlHasResolvedTopicScheme(link) {
             // This is an external link
             let externalLinkIdentifier = RenderReferenceIdentifier(forExternalLink: link.absoluteString)
             if linkReferences.keys.contains(externalLinkIdentifier.identifier) {
                 // If we've already seen this link, return the existing reference with an overridden title.
-                action = RenderInlineContent.reference(identifier: externalLinkIdentifier,
-                                                       isActive: true,
-                                                       overridingTitle: overridingTitle,
-                                                       overridingTitleInlineContent: overridingTitleInlineContent)
+                action = RenderInlineContent.reference(
+                    identifier: externalLinkIdentifier,
+                    isActive: true,
+                    overridingTitle: overridingTitle,
+                    overridingTitleInlineContent: overridingTitleInlineContent)
             } else {
                 // Otherwise, create and save a new link reference.
-                let linkReference = LinkReference(identifier: externalLinkIdentifier,
-                                                  title: overridingTitle ?? link.absoluteString,
-                                                  titleInlineContent: overridingTitleInlineContent ?? [.text(link.absoluteString)],
-                                                  url: link.absoluteString)
+                let linkReference = LinkReference(
+                    identifier: externalLinkIdentifier,
+                    title: overridingTitle ?? link.absoluteString,
+                    titleInlineContent: overridingTitleInlineContent ?? [.text(link.absoluteString)],
+                    url: link.absoluteString)
                 linkReferences[externalLinkIdentifier.identifier] = linkReference
-                
+
                 action = RenderInlineContent.reference(identifier: externalLinkIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
             }
         } else {
@@ -614,26 +620,26 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // as it may break routing or other downstream uses of the URL.
             action = RenderInlineContent.text(link.path)
         }
-        
+
         return action
     }
-    
+
     public mutating func visitTile(_ tile: Tile) -> (any RenderTree)? {
         let action = tile.destination.map { visitLink($0, defaultTitle: RenderTile.defaultCallToActionTitle(for: tile.identifier)) }
-        
+
         var section = RenderTile(identifier: .init(tileIdentifier: tile.identifier), title: tile.title, action: action, media: nil)
         section.content = visitMarkupContainer(tile.content) as! [RenderBlockContent]
-        
+
         return section
     }
-    
+
     public mutating func visitArticle(_ article: Article) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
         // Contains symbol references declared in the Topics section.
         var topicSectionContentCompiler = RenderContentCompiler(context: context, identifier: identifier)
-        
+
         node.metadata.title = article.title!.plainText
-        
+
         // Detect the article modules from its breadcrumbs.
         var modules = Set<ResolvedTopicReference>()
         for reference in context.topicGraph.reverseEdgesGraph.breadthFirstSearch(from: identifier) {
@@ -641,7 +647,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 modules.insert(moduleReference)
             }
         }
-        
+
         let moduleNames = modules.compactMap { reference -> String? in
             try? context.entity(with: reference).name.plainText
         }
@@ -650,14 +656,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 RenderMetadata.Module(name: $0, relatedModules: nil)
             }
         }
-        
+
         let documentationNode = try! context.entity(with: identifier)
-        
+
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitArticle(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchyVariants = hierarchyVariants
-        
+
         // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
         // advertising the page as "Swift", which is the language DocC assigns to pages in article only catalogs.
         // (github.com/swiftlang/swift-docc/issues/240).
@@ -665,14 +671,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if !isArticleOnlyCatalog {
             node.variants = variants(for: documentationNode)
         }
-        
+
         if let abstract = article.abstractSection,
-            let abstractContent = visitMarkup(abstract.content) as? [RenderInlineContent] {
+            let abstractContent = visitMarkup(abstract.content) as? [RenderInlineContent]
+        {
             node.abstract = abstractContent
         }
-        
+
         if let discussion = article.discussion,
-            let discussionContent = visitMarkupContainer(MarkupContainer(discussion.content)) as? [RenderBlockContent] {
+            let discussionContent = visitMarkupContainer(MarkupContainer(discussion.content)) as? [RenderBlockContent]
+        {
             var title: String?
             if let first = discussionContent.first, case RenderBlockContent.heading = first {
                 title = nil
@@ -683,88 +691,88 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             node.primaryContentSections.append(ContentRenderSection(kind: .content, content: discussionContent, heading: title))
         }
-        
-        node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
-            fallbackDefaultValue: []
-        ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
-            
-            var sections = [TaskGroupRenderSection]()
-            
-            if let topics = article.topics, !topics.taskGroups.isEmpty {
-                // Don't set an eyebrow as collections and groups don't have one; append the authored Topics section
-                sections.append(
-                    contentsOf: renderGroups(
-                        topics,
-                        allowExternalLinks: false,
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &topicSectionContentCompiler
+
+        node.topicSectionsVariants =
+            VariantCollection<[TaskGroupRenderSection]>(
+                from: documentationNode.availableVariantTraits,
+                fallbackDefaultValue: []
+            ) { trait in
+                let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+
+                var sections = [TaskGroupRenderSection]()
+
+                if let topics = article.topics, !topics.taskGroups.isEmpty {
+                    // Don't set an eyebrow as collections and groups don't have one; append the authored Topics section
+                    sections.append(
+                        contentsOf: renderGroups(
+                            topics,
+                            allowExternalLinks: false,
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &topicSectionContentCompiler
+                        )
                     )
-                )
-            }
-            
-            // Place "top" rendering preference automatic task groups
-            // after any user-defined task groups but before automatic curation.
-            if !article.automaticTaskGroups.isEmpty {
-                sections.append(
-                    contentsOf: renderAutomaticTaskGroupsSection(
-                        article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &topicSectionContentCompiler
-                    )
-                )
-            }
-            
-            // If there are no manually curated topics, and no automatic groups, try generating automatic groups by
-            // child kind.
-            if (article.topics == nil || article.topics?.taskGroups.isEmpty == true) &&
-                article.automaticTaskGroups.isEmpty {
-                // If there are no authored child topics in docs or markdown,
-                // inspect the topic graph, find this node's children, and
-                // for the ones found curate them automatically in task groups.
-                // Automatic groups are named after the child's kind, e.g.
-                // "Methods", "Variables", etc.
-                let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
-                let groups = try! AutomaticCuration.topics(
-                    for: documentationNode,
-                    withTraits: allowedTraits,
-                    context: context
-                ).compactMap { group -> AutomaticCuration.TaskGroup? in
-                    // Remove references that have been already curated.
-                    let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
-                    // Remove groups that have no uncurated references
-                    guard !newReferences.isEmpty else { return nil }
-                    
-                    return (title: group.title, references: newReferences)
                 }
-                
-                // Collect all child topic references.
-                topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
-                // Add the final groups to the node.
-                sections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
-            }
-            
-            // Place "bottom" rendering preference automatic task groups
-            // after any user-defined task groups but before automatic curation.
-            if !article.automaticTaskGroups.isEmpty {
-                sections.append(
-                    contentsOf: renderAutomaticTaskGroupsSection(
-                        article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &topicSectionContentCompiler
+
+                // Place "top" rendering preference automatic task groups
+                // after any user-defined task groups but before automatic curation.
+                if !article.automaticTaskGroups.isEmpty {
+                    sections.append(
+                        contentsOf: renderAutomaticTaskGroupsSection(
+                            article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &topicSectionContentCompiler
+                        )
                     )
-                )
-            }
-            
-            return sections
-        } ?? .init(defaultValue: [])
-        
+                }
+
+                // If there are no manually curated topics, and no automatic groups, try generating automatic groups by
+                // child kind.
+                if (article.topics == nil || article.topics?.taskGroups.isEmpty == true) && article.automaticTaskGroups.isEmpty {
+                    // If there are no authored child topics in docs or markdown,
+                    // inspect the topic graph, find this node's children, and
+                    // for the ones found curate them automatically in task groups.
+                    // Automatic groups are named after the child's kind, e.g.
+                    // "Methods", "Variables", etc.
+                    let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
+                    let groups = try! AutomaticCuration.topics(
+                        for: documentationNode,
+                        withTraits: allowedTraits,
+                        context: context
+                    ).compactMap { group -> AutomaticCuration.TaskGroup? in
+                        // Remove references that have been already curated.
+                        let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
+                        // Remove groups that have no uncurated references
+                        guard !newReferences.isEmpty else { return nil }
+
+                        return (title: group.title, references: newReferences)
+                    }
+
+                    // Collect all child topic references.
+                    topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
+                    // Add the final groups to the node.
+                    sections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
+                }
+
+                // Place "bottom" rendering preference automatic task groups
+                // after any user-defined task groups but before automatic curation.
+                if !article.automaticTaskGroups.isEmpty {
+                    sections.append(
+                        contentsOf: renderAutomaticTaskGroupsSection(
+                            article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &topicSectionContentCompiler
+                        )
+                    )
+                }
+
+                return sections
+            } ?? .init(defaultValue: [])
+
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
-        
+
         let role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind)
         node.metadata.role = role.rawValue
 
@@ -790,7 +798,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 break
             }
         }
-       
+
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
                 let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
@@ -799,12 +807,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
             }
         }
-        
+
         if let pageColor = documentationNode.metadata?.pageColor {
             node.metadata.color = TopicColor(standardColorIdentifier: pageColor.rawValue)
         }
 
-        var metadataCustomDictionary : [String: String] = [:]
+        var metadataCustomDictionary: [String: String] = [:]
         if let customMetadatas = documentationNode.metadata?.customMetadata {
             for elem in customMetadatas {
                 metadataCustomDictionary[elem.key] = elem.value
@@ -812,41 +820,42 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         node.metadata.customMetadata = metadataCustomDictionary
-        node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
-            fallbackDefaultValue: []
-        ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
-            
-            var seeAlsoSections = [TaskGroupRenderSection]()
-            
-            // Authored See Also section
-            if let seeAlso = article.seeAlso, !seeAlso.taskGroups.isEmpty {
-                seeAlsoSections.append(
-                    contentsOf: renderGroups(
-                        seeAlso,
-                        allowExternalLinks: true,
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &topicSectionContentCompiler
+        node.seeAlsoSectionsVariants =
+            VariantCollection<[TaskGroupRenderSection]>(
+                from: documentationNode.availableVariantTraits,
+                fallbackDefaultValue: []
+            ) { trait in
+                let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+
+                var seeAlsoSections = [TaskGroupRenderSection]()
+
+                // Authored See Also section
+                if let seeAlso = article.seeAlso, !seeAlso.taskGroups.isEmpty {
+                    seeAlsoSections.append(
+                        contentsOf: renderGroups(
+                            seeAlso,
+                            allowExternalLinks: true,
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &topicSectionContentCompiler
+                        )
                     )
-                )
-            }
-            
-            // Automatic See Also section
-            if let seeAlso = AutomaticCuration.seeAlso(
-                for: documentationNode,
-                withTraits: allowedTraits,
-                context: context,
-                renderContext: renderContext,
-                renderer: contentRenderer
-            ) {
-                topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
-                seeAlsoSections.append(TaskGroupRenderSection(taskGroup: seeAlso))
-            }
-            
-            return seeAlsoSections
-        } ?? .init(defaultValue: [])
+                }
+
+                // Automatic See Also section
+                if let seeAlso = AutomaticCuration.seeAlso(
+                    for: documentationNode,
+                    withTraits: allowedTraits,
+                    context: context,
+                    renderContext: renderContext,
+                    renderer: contentRenderer
+                ) {
+                    topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
+                    seeAlsoSections.append(TaskGroupRenderSection(taskGroup: seeAlso))
+                }
+
+                return seeAlsoSections
+            } ?? .init(defaultValue: [])
 
         if let callToAction = article.metadata?.callToAction {
             if let url = callToAction.url {
@@ -859,14 +868,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         overridingTitleInlineContent: nil))
                 downloadReferences[url.description] = DownloadReference(identifier: downloadIdentifier, verbatimURL: url, checksum: nil)
             } else if let fileReference = callToAction.file,
-                      let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
+                let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
             {
-                node.sampleDownload = .init(action: .reference(
-                    identifier: downloadIdentifier,
-                    isActive: true,
-                    overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
-                    overridingTitleInlineContent: nil
-                ))
+                node.sampleDownload = .init(
+                    action: .reference(
+                        identifier: downloadIdentifier,
+                        isActive: true,
+                        overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
+                        overridingTitleInlineContent: nil
+                    ))
             }
         }
 
@@ -874,10 +884,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // FIXME: Move this logic out of the rendering code (rdar://172280267)
             let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
             // These are the same for all platforms, so we only need to compute them once.
-            var directiveAvailabilityByPlatform = documentationNode.metadata.map {
-                renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
-            } ?? .init()
-            
+            var directiveAvailabilityByPlatform =
+                documentationNode.metadata.map {
+                    renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
+                } ?? .init()
+
             if let iOSAvailability = directiveAvailabilityByPlatform[PlatformName.iOS.displayName] {
                 var unavailableDefaultPlatformNames = Set<String>()
                 if let defaultAvailability = context.inputs.info.defaultAvailability {
@@ -887,7 +898,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         }
                     }
                 }
-                
+
                 func addFallbackIfNeeded(named name: String) {
                     guard directiveAvailabilityByPlatform[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
                         return
@@ -899,21 +910,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
                 addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
             }
-            
+
             if !directiveAvailabilityByPlatform.isEmpty {
                 node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder))
             }
         }
-        
+
         if let pageKind = article.metadata?.pageKind {
             node.metadata.role = pageKind.kind.renderRole.rawValue
             node.metadata.roleHeading = pageKind.kind.titleHeading
         }
-        
+
         if let titleHeading = article.metadata?.titleHeading {
             node.metadata.roleHeading = titleHeading.heading
-        } 
-        
+        }
+
         collectedTopicReferences.append(contentsOf: topicSectionContentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
 
@@ -927,34 +938,34 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         return node
     }
-    
+
     public mutating func visitTutorialArticle(_ article: TutorialArticle) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
-        
+
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         guard let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) else {
             // This tutorial article is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
         }
-        
+
         let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
 
         node.metadata.title = article.title
-        
+
         node.metadata.category = tutorialTableOfContents.name
         node.metadata.categoryPathComponent = hierarchy.tutorialTableOfContents.url.lastPathComponent
         node.metadata.role = DocumentationContentRenderer.role(for: .tutorialArticle).rawValue
-        
+
         // Unlike for other pages, in here we use `RenderHierarchyTranslator` to crawl the technology
         // and produce the list of modules for the render hierarchy to display in the tutorial local navigation.
         node.hierarchyVariants = hierarchy.hierarchyVariants
-        
+
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
-        
+
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
-        
+
         var intro: IntroRenderSection
         if let articleIntro = article.intro {
             intro = visitIntro(articleIntro) as! IntroRenderSection
@@ -962,34 +973,34 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Create a default intro section so that it's not an error to skip writing one.
             intro = IntroRenderSection(title: "")
         }
-        
+
         if let time = article.durationMinutes {
             intro.estimatedTimeInMinutes = time
         }
-        
+
         // Guaranteed to have at least one path
         let tutorialPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
-                
+
         node.sections.append(intro)
-        
+
         let layouts = contentLayouts(article.content)
-        
+
         let articleSection = TutorialArticleSection(content: layouts)
-        
+
         node.sections.append(articleSection)
-        
+
         if let assessments = article.assessments {
             node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
         }
-        
+
         if tutorialPath.count >= 2 {
             let volume = tutorialPath[tutorialPath.count - 2]
-            
+
             if let cta = callToAction(with: article.callToActionImage, volume: volume) {
                 node.sections.append(cta)
             }
         }
-        
+
         node.references = createTopicRenderReferences()
 
         addReferences(fileReferences, to: &node)
@@ -998,10 +1009,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(requirementReferences, to: &node)
         addReferences(downloadReferences, to: &node)
         addReferences(linkReferences, to: &node)
-        
+
         return node
     }
-    
+
     private mutating func contentLayouts(_ markupLayouts: some Sequence<MarkupLayout>) -> [ContentLayout] {
         return markupLayouts.map { content in
             switch content {
@@ -1014,15 +1025,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
     }
-    
+
     public mutating func visitStack(_ stack: Stack) -> (any RenderTree)? {
         return stack.contentAndMedia.map { self.visitContentAndMedia($0) as! ContentAndMediaSection } as [ContentAndMediaSection]
     }
-    
+
     public mutating func visitComment(_ comment: Comment) -> (any RenderTree)? {
         return nil
     }
-    
+
     public mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> (any RenderTree)? {
         return nil
     }
@@ -1121,7 +1132,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             )
         }
     }
-    
+
     /// Renders a list of topic groups.
     ///
     /// When rendering topic groups for a page that is available in multiple languages,
@@ -1166,21 +1177,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
                 SupportedLanguage(from: $0, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags)?.language
             }
-            
+
             // If the task group has a set of supported languages, see if it should render for the allowed traits.
             if supportedLanguages?.matchesOneOf(traits: allowedTraits) == false {
                 return nil
             }
-            
+
             let abstractContent = group.abstract.map {
                 return visitMarkup($0.content) as! [RenderInlineContent]
             }
-            
+
             let discussion = group.discussion.map { discussion -> ContentRenderSection in
                 let discussionContent = visitMarkupContainer(MarkupContainer(discussion.content)) as! [RenderBlockContent]
                 return ContentRenderSection(kind: .content, content: discussionContent, heading: "Discussion")
             }
-            
+
             /// A helper method to check if a topic with the given identifier is available via ``isReferenceAvailable(_:allowedTraits:availableTraits)``.
             func isTopicAvailable(identifier topicIdentifier: String) -> Bool {
                 guard let reference = contentCompiler.collectedTopicReferences[topicIdentifier] else {
@@ -1191,7 +1202,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
                 return isReferenceAvailable(reference, allowedTraits: allowedTraits, availableTraits: availableTraits, inSeeAlsoSection: isSeeAlsoSection)
             }
-            
+
             let taskGroupRenderSection = TaskGroupRenderSection(
                 title: group.heading?.plainText,
                 abstract: abstractContent,
@@ -1205,42 +1216,42 @@ public struct RenderNodeTranslator: SemanticVisitor {
                                 return nil
                             }
                         }
-                        
+
                         if let referenceInlines = contentCompiler.visitLink(link) as? [RenderInlineContent],
-                           let renderReference = referenceInlines.first(where: { inline in
-                               switch inline {
-                               case .reference(_,_,_,_):
-                                   return true
-                               default:
-                                   return false
-                               }
-                           }),
-                           case let RenderInlineContent.reference(
-                             identifier: identifier,
-                             isActive: _,
-                             overridingTitle: _,
-                             overridingTitleInlineContent: _
-                           ) = renderReference
+                            let renderReference = referenceInlines.first(where: { inline in
+                                switch inline {
+                                case .reference(_, _, _, _):
+                                    return true
+                                default:
+                                    return false
+                                }
+                            }),
+                            case let RenderInlineContent.reference(
+                                identifier: identifier,
+                                isActive: _,
+                                overridingTitle: _,
+                                overridingTitleInlineContent: _
+                            ) = renderReference
                         {
                             return isTopicAvailable(identifier: identifier.identifier)
                                 ? identifier.identifier : nil
                         }
                     case let link as SymbolLink:
                         if let referenceInlines = contentCompiler.visitSymbolLink(link) as? [RenderInlineContent],
-                           let renderReference = referenceInlines.first(where: { inline in
-                               switch inline {
-                               case .reference:
-                                   return true
-                               default:
-                                   return false
-                               }
-                           }),
-                           case let RenderInlineContent.reference(
-                             identifier: identifier,
-                             isActive: _,
-                             overridingTitle: _,
-                             overridingTitleInlineContent: _
-                           ) = renderReference
+                            let renderReference = referenceInlines.first(where: { inline in
+                                switch inline {
+                                case .reference:
+                                    return true
+                                default:
+                                    return false
+                                }
+                            }),
+                            case let RenderInlineContent.reference(
+                                identifier: identifier,
+                                isActive: _,
+                                overridingTitle: _,
+                                overridingTitleInlineContent: _
+                            ) = renderReference
                         {
                             return isTopicAvailable(identifier: identifier.identifier)
                                 ? identifier.identifier : nil
@@ -1251,40 +1262,40 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 },
                 anchor: group.heading.map { urlReadableFragment($0.plainText) } ?? "Topics"
             )
-            
+
             // rdar://74617294 If a task group doesn't have any symbol or external links it shouldn't be rendered
             guard !taskGroupRenderSection.identifiers.isEmpty else {
                 return nil
             }
-            
+
             return taskGroupRenderSection
         }
     }
-    
+
     @discardableResult
     private mutating func collectUnresolvableSymbolReference(destination: UnresolvedTopicReference, title: String) -> UnresolvedTopicReference? {
         guard let url = ValidatedURL(destination.topicURL.url) else {
             return nil
         }
-        
+
         let reference = UnresolvedTopicReference(topicURL: url, title: title)
         collectedUnresolvedTopicReferences.append(reference)
-        
+
         return reference
     }
-    
+
     private func shouldCreateAutomaticRoleHeading(for node: DocumentationNode) -> Bool {
         return node.options?.automaticTitleHeadingEnabled
             ?? context.options?.automaticTitleHeadingEnabled
             ?? true
     }
-    
+
     private func shouldCreateAutomaticArticleSubheading(for node: DocumentationNode) -> Bool {
         return node.options?.automaticArticleSubheadingEnabled
             ?? context.options?.automaticArticleSubheadingEnabled
             ?? true
     }
-    
+
     private func topicsSectionStyle(for node: DocumentationNode) -> RenderNode.TopicsSectionStyle {
         let topicsVisualStyleOption: TopicsVisualStyle.Style
         if let topicsSectionStyleOption = node.options?.topicsVisualStyle
@@ -1294,7 +1305,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } else {
             topicsVisualStyleOption = .list
         }
-        
+
         switch topicsVisualStyleOption {
         case .list:
             return .list
@@ -1306,15 +1317,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return .hidden
         }
     }
-    
+
     public mutating func visitSymbol(_ symbol: Symbol) -> (any RenderTree)? {
         let documentationNode = try! context.entity(with: identifier)
-        
+
         let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
-        
+
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
-        
+
         let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
@@ -1341,103 +1352,107 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
-        
+
         let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
         // These are the same for all platforms, so we only need to compute them once.
         let baseAvailabilityByPlatform = defaultAvailability(moduleName: moduleName.symbolName, currentPlatforms: currentPlatforms) ?? .init()
-        let directiveAvailabilityByPlatform = documentationNode.metadata.map {
-            renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
-        } ?? .init()
-        
+        let directiveAvailabilityByPlatform =
+            documentationNode.metadata.map {
+                renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
+            } ?? .init()
+
         // FIXME: Move this logic out of the rendering code (rdar://172280267)
         let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
         let symbolExistsInCatalystSymbolGraph = documentationNode.unifiedSymbol?.allSelectors.contains(where: { $0.platform?.lowercased() == PlatformName.catalyst.rawValue.lowercased() }) ?? false
-        
-        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
-            // Different sources of availability information are added in-order to compute the complete availability information.
 
-            // The default availability is merged with the in-source availability when loading a symbol graph (see ``SymbolGraphLoader.addDefaultAvailability(to:moduleName:)``).
-            // If no in-source availability is present, we fall back to the default availability for the module (in Info.plist).
-            // FIXME: Move this logic out of the rendering code (rdar://172280267)
-            var information = inSourceAvailability.availability.isEmpty ? baseAvailabilityByPlatform : [String: AvailabilityRenderItem]()
-            
-            var unavailablePlatformNamesToRemove = [String]()
-            
-            // The symbol's individual in-source attributes is more specific information that reflects the source-availability of the API.
-            for availability in inSourceAvailability.availability {
-                guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue).displayName }) else {
-                    // Don't include wildcard information
-                    continue
+        node.metadata.platformsVariants =
+            VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
+                // Different sources of availability information are added in-order to compute the complete availability information.
+
+                // The default availability is merged with the in-source availability when loading a symbol graph (see ``SymbolGraphLoader.addDefaultAvailability(to:moduleName:)``).
+                // If no in-source availability is present, we fall back to the default availability for the module (in Info.plist).
+                // FIXME: Move this logic out of the rendering code (rdar://172280267)
+                var information = inSourceAvailability.availability.isEmpty ? baseAvailabilityByPlatform : [String: AvailabilityRenderItem]()
+
+                var unavailablePlatformNamesToRemove = [String]()
+
+                // The symbol's individual in-source attributes is more specific information that reflects the source-availability of the API.
+                for availability in inSourceAvailability.availability {
+                    guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue).displayName }) else {
+                        // Don't include wildcard information
+                        continue
+                    }
+                    guard availability.obsoletedVersion == nil && !availability.isUnconditionallyUnavailable /* Don't include obsoleted or unavailable API */ else {
+                        unavailablePlatformNamesToRemove.append(name)
+                        continue
+                    }
+
+                    let renderItem = AvailabilityRenderItem(availability, current: currentPlatforms?[name])
+                    assert(renderItem.unconditionallyUnavailable != true, "Unavailable API should have already been filtered out above.")
+                    information[name] = renderItem
                 }
-                guard availability.obsoletedVersion == nil && !availability.isUnconditionallyUnavailable /* Don't include obsoleted or unavailable API */ else {
-                    unavailablePlatformNamesToRemove.append(name)
-                    continue
-                }
-                
-                let renderItem = AvailabilityRenderItem(availability, current: currentPlatforms?[name])
-                assert(renderItem.unconditionallyUnavailable != true, "Unavailable API should have already been filtered out above.")
-                information[name] = renderItem
-            }
-            
-            // FIXME: Combine the in-source attributes with the Available directives as a per-platform override (rdar://171807245)
-            
-            // After we've gathered all the information, see if we need to fill in inferred information for iPadOS and Mac Catalyst.
-            if let iOSAvailability = information[PlatformName.iOS.displayName],
-               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
-            {
-                var unavailableDefaultPlatformNames = Set<String>()
-                if let defaultAvailability = context.inputs.info.defaultAvailability?.modules[moduleName.symbolName] {
-                    for availability in defaultAvailability where availability.versionInformation == .unavailable {
-                        unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
+
+                // FIXME: Combine the in-source attributes with the Available directives as a per-platform override (rdar://171807245)
+
+                // After we've gathered all the information, see if we need to fill in inferred information for iPadOS and Mac Catalyst.
+                if let iOSAvailability = information[PlatformName.iOS.displayName],
+                    iOSAvailability.introduced != nil  // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+                {
+                    var unavailableDefaultPlatformNames = Set<String>()
+                    if let defaultAvailability = context.inputs.info.defaultAvailability?.modules[moduleName.symbolName] {
+                        for availability in defaultAvailability where availability.versionInformation == .unavailable {
+                            unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
+                        }
+                    }
+
+                    func addFallbackIfNeeded(named name: String) {
+                        guard information[name]?.introduced == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                            return
+                        }
+                        var copy = iOSAvailability
+                        copy.name = name
+                        information[name] = copy
+                    }
+                    addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+
+                    // Catalyst only inherits iOS availability if the symbol don't specify in-source
+                    // availability or if there's no Mac Catalyst symbol graph.
+                    // If the symbol is not present in the Catalyst SGF then is not available for this
+                    // platform.
+                    if (catalystSGFExists && symbolExistsInCatalystSymbolGraph) || !catalystSGFExists {
+                        addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
                     }
                 }
-                
-                func addFallbackIfNeeded(named name: String) {
-                    guard information[name]?.introduced == nil, !unavailableDefaultPlatformNames.contains(name) else {
-                        return
-                    }
-                    var copy = iOSAvailability
-                    copy.name = name
-                    information[name] = copy
+
+                // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.
+                for name in unavailablePlatformNamesToRemove {
+                    information[name] = nil
                 }
-                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                
-                
-                // Catalyst only inherits iOS availability if the symbol don't specify in-source
-                // availability or if there's no Mac Catalyst symbol graph.
-                // If the symbol is not present in the Catalyst SGF then is not available for this
-                // platform.
-                if (catalystSGFExists && symbolExistsInCatalystSymbolGraph) || !catalystSGFExists  {
-                    addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+
+                guard !information.isEmpty else {
+                    return nil
                 }
+
+                return information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
             }
-            
-            // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.
-            for name in unavailablePlatformNamesToRemove {
-                information[name] = nil
-            }
-            
-            guard !information.isEmpty else {
-                return nil
-            }
-            
-            return information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
-        } ?? .init(defaultValue: {
-            assertionFailure("This default value is never used")
-            return nil
-        }())
+            ?? .init(
+                defaultValue: {
+                    assertionFailure("This default value is never used")
+                    return nil
+                }())
 
         // FIXME: Adding even a single Available directive discards all the in-source information (rdar://171807245)
         if !directiveAvailabilityByPlatform.isEmpty {
-            var information = baseAvailabilityByPlatform
-                .merging(directiveAvailabilityByPlatform, uniquingKeysWith: { _, new in new }) // override any value with the directive information
-            
+            var information =
+                baseAvailabilityByPlatform
+                .merging(directiveAvailabilityByPlatform, uniquingKeysWith: { _, new in new })  // override any value with the directive information
+
             if let iOSAvailability = information[PlatformName.iOS.displayName],
-               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+                iOSAvailability.introduced != nil  // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
             {
                 func addFallbackIfNeeded(named name: String) {
                     guard information[name] == nil,
-                          context.inputs.info.defaultAvailability?.modules[moduleName.symbolName]?.contains(where: { $0.platformName.displayName == name && $0.versionInformation == .unavailable }) != true
+                        context.inputs.info.defaultAvailability?.modules[moduleName.symbolName]?.contains(where: { $0.platformName.displayName == name && $0.versionInformation == .unavailable }) != true
                     else {
                         return
                     }
@@ -1448,15 +1463,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
                 addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
             }
-            
+
             node.metadata.platforms = information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
         }
-        
+
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
         node.metadata.role = DocumentationContentRenderer.role(for: documentationNode.kind).rawValue
         node.metadata.titleVariants = VariantCollection<String?>(from: symbol.titleVariants)
         node.metadata.externalIDVariants = VariantCollection<String?>(from: symbol.externalIDVariants)
-        
+
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
             node.metadata.roleHeadingVariants = VariantCollection<String?>(from: symbol.roleHeadingVariants)
         }
@@ -1464,15 +1479,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let titleHeading = documentationNode.metadata?.titleHeading {
             node.metadata.roleHeadingVariants = VariantCollection<String?>(defaultValue: titleHeading.heading)
         }
-        
-        node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
-            kindVariants.identifier.renderingIdentifier
-        } ?? .init(defaultValue: nil)
-        
+
+        node.metadata.symbolKindVariants =
+            VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
+                kindVariants.identifier.renderingIdentifier
+            } ?? .init(defaultValue: nil)
+
         node.metadata.conformance = contentRenderer.conformanceSectionFor(identifier, collectedConstraints: collectedConstraints)
         node.metadata.fragmentsVariants = contentRenderer.subHeadingFragments(for: documentationNode)
         node.metadata.navigatorTitleVariants = contentRenderer.navigatorFragments(for: documentationNode)
-        
+
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
                 let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
@@ -1481,12 +1497,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
             }
         }
-        
+
         if let pageColor = documentationNode.metadata?.pageColor {
             node.metadata.color = TopicColor(standardColorIdentifier: pageColor.rawValue)
         }
 
-        var metadataCustomDictionary : [String: String] = [:]
+        var metadataCustomDictionary: [String: String] = [:]
         if let customMetadatas = documentationNode.metadata?.customMetadata {
             for elem in customMetadatas {
                 metadataCustomDictionary[elem.key] = elem.value
@@ -1495,9 +1511,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.customMetadata = metadataCustomDictionary
         node.variants = variants(for: documentationNode)
-        
+
         collectedTopicReferences.append(identifier)
-        
+
         let contentRenderer = DocumentationContentRenderer(context: context)
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
@@ -1505,7 +1521,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let hierarchyVariants = hierarchyTranslator.visitSymbol(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchyVariants = hierarchyVariants
-        
+
         // In case `inheritDocs` is disabled and there is actually origin data for the symbol, then include origin information as abstract.
         // Generate the placeholder abstract only in case there isn't an authored abstract coming from a doc extension.
         if !context.configuration.externalMetadata.inheritDocs,
@@ -1515,20 +1531,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Create automatic abstract for inherited symbols.
             node.abstract = [.text("Inherited from "), .codeVoice(code: origin.displayName), .text(".")]
         } else {
-            node.abstractVariants = VariantCollection<[RenderInlineContent]?>(
-                from: symbol.abstractSectionVariants
-            ) { _, abstractSection in
-                // Create an abstract as usual.
-                let abstract = abstractSection.content
-                
-                if let abstractContent = visitMarkup(abstract) as? [RenderInlineContent] {
-                    return abstractContent
-                } else {
-                    return nil
-                }
-            } ?? .init(defaultValue: nil)
+            node.abstractVariants =
+                VariantCollection<[RenderInlineContent]?>(
+                    from: symbol.abstractSectionVariants
+                ) { _, abstractSection in
+                    // Create an abstract as usual.
+                    let abstract = abstractSection.content
+
+                    if let abstractContent = visitMarkup(abstract) as? [RenderInlineContent] {
+                        return abstractContent
+                    } else {
+                        return nil
+                    }
+                } ?? .init(defaultValue: nil)
         }
-        
+
         node.primaryContentSectionsVariants.append(
             contentsOf: createRenderSections(
                 for: symbol,
@@ -1554,16 +1571,17 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 ]
             )
         )
-        
+
         var sourceRepository = sourceRepository
-        
+
         if shouldEmitSymbolSourceFileURIs {
-            node.metadata.sourceFileURIVariants = VariantCollection<String?>(
-                from: symbol.locationVariants
-            ) { _, location in
-                location.uri
-            } ?? .init(defaultValue: nil)
-            
+            node.metadata.sourceFileURIVariants =
+                VariantCollection<String?>(
+                    from: symbol.locationVariants
+                ) { _, location in
+                    location.uri
+                } ?? .init(defaultValue: nil)
+
             // If a source repository is not set, set the device's
             // filesystem as the source repository. This causes
             // the `metadata.remoteSource` property to link to the
@@ -1572,327 +1590,337 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sourceRepository = .localFilesystem()
             }
         }
-        
+
         if let sourceRepository {
-            node.metadata.remoteSourceVariants = VariantCollection<RenderMetadata.RemoteSource?>(
-                from: symbol.locationVariants
-            ) { _, location in
-                guard let locationURL = location.url(),
-                      let url = sourceRepository.format(
-                        sourceFileURL: locationURL,
-                        lineNumber: location.position.line + 1
-                      )
-                else {
-                    return nil
-                }
-                
-                return RenderMetadata.RemoteSource(
-                    fileName: locationURL.lastPathComponent,
-                    url: url
-                )
-            } ?? .init(defaultValue: nil)
+            node.metadata.remoteSourceVariants =
+                VariantCollection<RenderMetadata.RemoteSource?>(
+                    from: symbol.locationVariants
+                ) { _, location in
+                    guard let locationURL = location.url(),
+                        let url = sourceRepository.format(
+                            sourceFileURL: locationURL,
+                            lineNumber: location.position.line + 1
+                        )
+                    else {
+                        return nil
+                    }
+
+                    return RenderMetadata.RemoteSource(
+                        fileName: locationURL.lastPathComponent,
+                        url: url
+                    )
+                } ?? .init(defaultValue: nil)
         }
-        
+
         if shouldEmitSymbolAccessLevels {
             node.metadata.symbolAccessLevelVariants = VariantCollection<String?>(from: symbol.accessLevelVariants)
         }
-        
+
         if let externalID = symbol.externalID,
-           let symbolIdentifiersWithExpandedDocumentation
+            let symbolIdentifiersWithExpandedDocumentation
         {
             node.metadata.hasNoExpandedDocumentation = !symbolIdentifiersWithExpandedDocumentation.contains(externalID)
         }
-        
-        node.relationshipSectionsVariants = VariantCollection<[RelationshipsRenderSection]>(
-            from: documentationNode.availableVariantTraits,
-            fallbackDefaultValue: []
-        ) { trait in
-            guard let relationships = symbol.relationshipsVariants[trait], !relationships.groups.isEmpty else {
-                return []
-            }
-            
-            var groupSections = [RelationshipsRenderSection]()
-            
-            let eligibleGroups = relationships.groups.sorted(by: \.sectionOrder)
-            
-            for group in eligibleGroups {
-                // destination url → symbol title
-                var destinationsMap = [TopicReference: String]()
-                
-                for destination in group.destinations {
-                    if let constraints = relationships.constraints[destination] {
-                        collectedConstraints[destination] = constraints
-                    }
-                    
-                    switch destination {
-                    case .resolved(.success(let resolved)):
-                        if let node = context.documentationCache[resolved] {
-                            let resolver = LinkTitleResolver(context: context, source: resolved.url)
-                            let resolvedTitle = resolver.title(for: node)
-                            destinationsMap[destination] = resolvedTitle?[trait]
-                            
-                            let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
-                            
-                            if !dropLink {
-                                // Add relationship to render references
-                                collectedTopicReferences.append(resolved)
-                            } else if let topicUrl = ValidatedURL(resolved.url) {
-                                // If the topic isn't linkable (e.g. an extended type), then we shouldn't
-                                // add a resolved relationship - deconstruct the resolved reference so
-                                // we can still display it, though
-                                let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
-                                let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
-                                collectedUnresolvedTopicReferences.append(reference)
-                            }
-                        } else if let entity = context.externalCache[resolved] {
-                            collectedTopicReferences.append(resolved)
-                            destinationsMap[destination] = entity.title
-                        } else {
-                            fatalError("A successfully resolved reference should have either local or external content.")
+
+        node.relationshipSectionsVariants =
+            VariantCollection<[RelationshipsRenderSection]>(
+                from: documentationNode.availableVariantTraits,
+                fallbackDefaultValue: []
+            ) { trait in
+                guard let relationships = symbol.relationshipsVariants[trait], !relationships.groups.isEmpty else {
+                    return []
+                }
+
+                var groupSections = [RelationshipsRenderSection]()
+
+                let eligibleGroups = relationships.groups.sorted(by: \.sectionOrder)
+
+                for group in eligibleGroups {
+                    // destination url → symbol title
+                    var destinationsMap = [TopicReference: String]()
+
+                    for destination in group.destinations {
+                        if let constraints = relationships.constraints[destination] {
+                            collectedConstraints[destination] = constraints
                         }
 
-                    case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
-                        // Try creating a render reference anyway
-                        if let title = relationships.targetFallbacks[destination],
-                           let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title) {
-                            destinationsMap[destination] = reference.title
+                        switch destination {
+                        case .resolved(.success(let resolved)):
+                            if let node = context.documentationCache[resolved] {
+                                let resolver = LinkTitleResolver(context: context, source: resolved.url)
+                                let resolvedTitle = resolver.title(for: node)
+                                destinationsMap[destination] = resolvedTitle?[trait]
+
+                                let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
+
+                                if !dropLink {
+                                    // Add relationship to render references
+                                    collectedTopicReferences.append(resolved)
+                                } else if let topicUrl = ValidatedURL(resolved.url) {
+                                    // If the topic isn't linkable (e.g. an extended type), then we shouldn't
+                                    // add a resolved relationship - deconstruct the resolved reference so
+                                    // we can still display it, though
+                                    let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
+                                    let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
+                                    collectedUnresolvedTopicReferences.append(reference)
+                                }
+                            } else if let entity = context.externalCache[resolved] {
+                                collectedTopicReferences.append(resolved)
+                                destinationsMap[destination] = entity.title
+                            } else {
+                                fatalError("A successfully resolved reference should have either local or external content.")
+                            }
+
+                        case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
+                            // Try creating a render reference anyway
+                            if let title = relationships.targetFallbacks[destination],
+                                let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title)
+                            {
+                                destinationsMap[destination] = reference.title
+                            }
                         }
                     }
+
+                    // Links section
+                    var orderedDestinations = Array(destinationsMap.keys)
+                    orderedDestinations.sort { destination1, destination2 -> Bool in
+                        return destinationsMap[destination1]! <= destinationsMap[destination2]!
+                    }
+                    let groupSection = RelationshipsRenderSection(type: group.kind.rawValue, title: group.heading.plainText, identifiers: orderedDestinations.map({ $0.url!.absoluteString }))
+                    groupSections.append(groupSection)
                 }
-                
-                // Links section
-                var orderedDestinations = Array(destinationsMap.keys)
-                orderedDestinations.sort { destination1, destination2 -> Bool in
-                    return destinationsMap[destination1]! <= destinationsMap[destination2]!
-                }
-                let groupSection = RelationshipsRenderSection(type: group.kind.rawValue, title: group.heading.plainText, identifiers: orderedDestinations.map({ $0.url!.absoluteString }))
-                groupSections.append(groupSection)
-            }
-            
-            return groupSections
-        } ?? .init(defaultValue: [])
-        
+
+                return groupSections
+            } ?? .init(defaultValue: [])
+
         // Build up the topic section variants by iterating over all available
         // variant traits.
         //
         // We can't just iterate over the traits of the existing
         // topics section or automatic task groups, because it's important
         // for automatic curation to consider _all_ variants this node is available in.
-        node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
-            fallbackDefaultValue: []
-        ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
-            
-            let automaticTaskGroups = symbol.automaticTaskGroupsVariants[trait] ?? []
-            let topics = symbol.topicsVariants[trait]
-            
-            var sections = [TaskGroupRenderSection]()
-            if let topics, !topics.taskGroups.isEmpty {
-                // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
-                sections.append(
-                    contentsOf: renderGroups(
-                        topics,
-                        allowExternalLinks: false,
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
-                    )
-                )
-            }
-            
-            // Place "top" rendering preference automatic task groups
-            // after any user-defined task groups but before automatic curation.
-            if !automaticTaskGroups.isEmpty {
-                sections.append(
-                    contentsOf: renderAutomaticTaskGroupsSection(
-                        automaticTaskGroups.filter({ $0.renderPositionPreference == .top }),
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
-                    )
-                )
-            }
-            
-            // Children of the current symbol that have not been curated manually in a task group will all
-            // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
-            let groups = try! AutomaticCuration.topics(for: documentationNode, withTraits: allowedTraits, context: context)
-            
-            for group in groups {
-                let newReferences = group.references
-                contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
+        node.topicSectionsVariants =
+            VariantCollection<[TaskGroupRenderSection]>(
+                from: documentationNode.availableVariantTraits,
+                fallbackDefaultValue: []
+            ) { trait in
+                let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
 
-                // If the section has been manually curated, merge the references of both the automatic curation and the manual curation into one section (rdar://61899214).
-                if let duplicateSectionIndex = sections.firstIndex(where: { $0.title == group.title }) {
-                    let originalSection = sections[duplicateSectionIndex]
-                    // Combining all references here without checking for duplicates should be safe,
-                    // because the automatic curation of topics only returns symbols that haven't already been manually curated.
-                    let combinedReferences = originalSection.identifiers + newReferences.map { $0.absoluteString }
-                    sections[duplicateSectionIndex] = TaskGroupRenderSection(title: originalSection.title, abstract: originalSection.abstract, discussion: originalSection.discussion, identifiers: combinedReferences)
-                } else {
-                    sections.append(TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences)))
-                }
-            }
-            
-            // Place "bottom" rendering preference automatic task groups
-            // after any user-defined task groups but before automatic curation.
-            if !automaticTaskGroups.isEmpty {
-                sections.append(
-                    contentsOf: renderAutomaticTaskGroupsSection(
-                        automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }),
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
+                let automaticTaskGroups = symbol.automaticTaskGroupsVariants[trait] ?? []
+                let topics = symbol.topicsVariants[trait]
+
+                var sections = [TaskGroupRenderSection]()
+                if let topics, !topics.taskGroups.isEmpty {
+                    // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
+                    sections.append(
+                        contentsOf: renderGroups(
+                            topics,
+                            allowExternalLinks: false,
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &contentCompiler
+                        )
                     )
-                )
-            }
-            
-            return sections
-        } ?? .init(defaultValue: [])
-        
-        node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
-        
-        node.defaultImplementationsSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: symbol.defaultImplementationsVariants,
-            symbol.relationshipsVariants
-        ) { _, defaultImplementations, relationships in
-            guard !symbol.defaultImplementations.groups.isEmpty else {
-                return []
-            }
-            
-            for imp in defaultImplementations.implementations {
-                let resolved: ResolvedTopicReference
-                switch imp.reference {
-                case .resolved(.success(let reference)):
-                    resolved = reference
-                case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
-                    // Try creating a render reference anyway
-                    if let title = defaultImplementations.targetFallbacks[imp.reference],
-                       let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title),
-                       let constraints = relationships.constraints[imp.reference] {
-                        collectedConstraints[.unresolved(reference)] = constraints
+                }
+
+                // Place "top" rendering preference automatic task groups
+                // after any user-defined task groups but before automatic curation.
+                if !automaticTaskGroups.isEmpty {
+                    sections.append(
+                        contentsOf: renderAutomaticTaskGroupsSection(
+                            automaticTaskGroups.filter({ $0.renderPositionPreference == .top }),
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &contentCompiler
+                        )
+                    )
+                }
+
+                // Children of the current symbol that have not been curated manually in a task group will all
+                // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
+                let groups = try! AutomaticCuration.topics(for: documentationNode, withTraits: allowedTraits, context: context)
+
+                for group in groups {
+                    let newReferences = group.references
+                    contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
+
+                    // If the section has been manually curated, merge the references of both the automatic curation and the manual curation into one section (rdar://61899214).
+                    if let duplicateSectionIndex = sections.firstIndex(where: { $0.title == group.title }) {
+                        let originalSection = sections[duplicateSectionIndex]
+                        // Combining all references here without checking for duplicates should be safe,
+                        // because the automatic curation of topics only returns symbols that haven't already been manually curated.
+                        let combinedReferences = originalSection.identifiers + newReferences.map { $0.absoluteString }
+                        sections[duplicateSectionIndex] = TaskGroupRenderSection(title: originalSection.title, abstract: originalSection.abstract, discussion: originalSection.discussion, identifiers: combinedReferences)
+                    } else {
+                        sections.append(TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences)))
                     }
-                    continue
                 }
-                
-                // Add implementation to render references
-                collectedTopicReferences.append(resolved)
-                if let constraints = relationships.constraints[imp.reference] {
-                    collectedConstraints[.successfullyResolved(resolved)] = constraints
-                }
-            }
-            
-            return defaultImplementations.groups.map { group in
-                TaskGroupRenderSection(
-                    title: group.heading,
-                    abstract: nil,
-                    discussion: nil,
-                    identifiers: group.references.map({ $0.url!.absoluteString }),
-                    anchor: urlReadableFragment(group.heading)
-                )
-            }
-        } ?? .init(defaultValue: [])
 
-        node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
-            fallbackDefaultValue: []
-        ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
-            
-            // If the symbol contains an authored See Also section from the documentation extension,
-            // add it as the first section under See Also.
-            var seeAlsoSections = [TaskGroupRenderSection]()
-            
-            if let seeAlso = symbol.seeAlsoVariants[trait] {
-                seeAlsoSections.append(
-                    contentsOf: renderGroups(
-                        seeAlso,
-                        allowExternalLinks: true,
-                        allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
+                // Place "bottom" rendering preference automatic task groups
+                // after any user-defined task groups but before automatic curation.
+                if !automaticTaskGroups.isEmpty {
+                    sections.append(
+                        contentsOf: renderAutomaticTaskGroupsSection(
+                            automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }),
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &contentCompiler
+                        )
                     )
-                )
-            }
-            
-            // Curate the current node's siblings as further See Also groups.
-            if let seeAlso = AutomaticCuration.seeAlso(
-                for: documentationNode,
-                withTraits: allowedTraits,
-                context: context,
-                renderContext: renderContext,
-                renderer: contentRenderer
-            ), !seeAlso.references.isEmpty {
-                contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
-                seeAlsoSections.append(
-                    TaskGroupRenderSection(taskGroup: seeAlso)
-                )
-            }
-            
-            return seeAlsoSections
-        } ?? .init(defaultValue: [])
-        
+                }
+
+                return sections
+            } ?? .init(defaultValue: [])
+
+        node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
+
+        node.defaultImplementationsSectionsVariants =
+            VariantCollection<[TaskGroupRenderSection]>(
+                from: symbol.defaultImplementationsVariants,
+                symbol.relationshipsVariants
+            ) { _, defaultImplementations, relationships in
+                guard !symbol.defaultImplementations.groups.isEmpty else {
+                    return []
+                }
+
+                for imp in defaultImplementations.implementations {
+                    let resolved: ResolvedTopicReference
+                    switch imp.reference {
+                    case .resolved(.success(let reference)):
+                        resolved = reference
+                    case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
+                        // Try creating a render reference anyway
+                        if let title = defaultImplementations.targetFallbacks[imp.reference],
+                            let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title),
+                            let constraints = relationships.constraints[imp.reference]
+                        {
+                            collectedConstraints[.unresolved(reference)] = constraints
+                        }
+                        continue
+                    }
+
+                    // Add implementation to render references
+                    collectedTopicReferences.append(resolved)
+                    if let constraints = relationships.constraints[imp.reference] {
+                        collectedConstraints[.successfullyResolved(resolved)] = constraints
+                    }
+                }
+
+                return defaultImplementations.groups.map { group in
+                    TaskGroupRenderSection(
+                        title: group.heading,
+                        abstract: nil,
+                        discussion: nil,
+                        identifiers: group.references.map({ $0.url!.absoluteString }),
+                        anchor: urlReadableFragment(group.heading)
+                    )
+                }
+            } ?? .init(defaultValue: [])
+
+        node.seeAlsoSectionsVariants =
+            VariantCollection<[TaskGroupRenderSection]>(
+                from: documentationNode.availableVariantTraits,
+                fallbackDefaultValue: []
+            ) { trait in
+                let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+
+                // If the symbol contains an authored See Also section from the documentation extension,
+                // add it as the first section under See Also.
+                var seeAlsoSections = [TaskGroupRenderSection]()
+
+                if let seeAlso = symbol.seeAlsoVariants[trait] {
+                    seeAlsoSections.append(
+                        contentsOf: renderGroups(
+                            seeAlso,
+                            allowExternalLinks: true,
+                            allowedTraits: allowedTraits,
+                            availableTraits: documentationNode.availableVariantTraits,
+                            contentCompiler: &contentCompiler
+                        )
+                    )
+                }
+
+                // Curate the current node's siblings as further See Also groups.
+                if let seeAlso = AutomaticCuration.seeAlso(
+                    for: documentationNode,
+                    withTraits: allowedTraits,
+                    context: context,
+                    renderContext: renderContext,
+                    renderer: contentRenderer
+                ), !seeAlso.references.isEmpty {
+                    contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
+                    seeAlsoSections.append(
+                        TaskGroupRenderSection(taskGroup: seeAlso)
+                    )
+                }
+
+                return seeAlsoSections
+            } ?? .init(defaultValue: [])
+
         /// The set of traits in which the symbol is deprecated in at least one platform.
         let traitsInWhichSymbolsIsDeprecated = documentationNode.availableVariantTraits.filter { trait in
             guard let platforms = symbol.availabilityVariants[trait]?.availability else {
                 return false
             }
-            
+
             return platforms.contains(where: { platform in
                 platform.deprecatedVersion != nil || platform.isUnconditionallyDeprecated
             })
         }
-        
-        node.deprecationSummaryVariants = VariantCollection(
-            from: documentationNode.availableVariantTraits,
-            fallbackDefaultValue: nil,
-            transform: { trait in
-                if traitsInWhichSymbolsIsDeprecated.contains(trait) || traitsInWhichSymbolsIsDeprecated.isEmpty {
-                    // It's possible for a symbol to only be deprecated in _some_ of its language representations
-                    // In this case, only display the deprecation information for those language representations.
-                    //
-                    // Also, previous versions of DocC treated a page as deprecated if it had a custom `@DeprecationSummmary` description,
-                    // even if the symbol wasn't deprecated. We preserve that behavior for backwards compatibility.
-                    // TODO: Warn about using `@DeprecationSummmary` for non-deprecated pages,
-                    // suggesting to use `@Available` to add deprecation information.
-                    guard let deprecatedSummary = symbol.deprecatedSummaryVariants[trait] else {
-                        return nil
+
+        node.deprecationSummaryVariants =
+            VariantCollection(
+                from: documentationNode.availableVariantTraits,
+                fallbackDefaultValue: nil,
+                transform: { trait in
+                    if traitsInWhichSymbolsIsDeprecated.contains(trait) || traitsInWhichSymbolsIsDeprecated.isEmpty {
+                        // It's possible for a symbol to only be deprecated in _some_ of its language representations
+                        // In this case, only display the deprecation information for those language representations.
+                        //
+                        // Also, previous versions of DocC treated a page as deprecated if it had a custom `@DeprecationSummmary` description,
+                        // even if the symbol wasn't deprecated. We preserve that behavior for backwards compatibility.
+                        // TODO: Warn about using `@DeprecationSummmary` for non-deprecated pages,
+                        // suggesting to use `@Available` to add deprecation information.
+                        guard let deprecatedSummary = symbol.deprecatedSummaryVariants[trait] else {
+                            return nil
+                        }
+
+                        return visitMarkupContainer(MarkupContainer(deprecatedSummary.content)) as? [RenderBlockContent]
                     }
-                    
-                    return visitMarkupContainer(MarkupContainer(deprecatedSummary.content)) as? [RenderBlockContent]
+
+                    return []
                 }
-                
-                return []
-            }
-        ) ?? .init(defaultValue: nil)
-        
+            ) ?? .init(defaultValue: nil)
+
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
-        
+
         addReferences(imageReferences, to: &node)
         addReferences(videoReferences, to: &node)
         // See Also can contain external links, we need to separately transfer
         // link references from the content compiler
         addReferences(contentCompiler.linkReferences, to: &node)
         addReferences(linkReferences, to: &node)
-        
+
         return node
     }
 
     /// Creates a render reference for the given media and registers the reference to include it in the `references` dictionary.
     mutating func createAndRegisterRenderReference(forMedia media: ResourceReference?, poster: ResourceReference? = nil, altText: String? = nil, assetContext: DataAsset.Context = .display) -> RenderReferenceIdentifier? {
         guard let oldMedia = media,
-              let mediaIdentifier = context.identifier(forAssetName: oldMedia.path, in: identifier) else {
-            return nil
-        }
-        
-        let media = ResourceReference(bundleID: oldMedia.bundleID, path: mediaIdentifier)
-        guard let resolvedAssets = renderContext?.store.content(forAssetNamed: media.path, bundleID: identifier.bundleID)
-                                ?? context.resolveAsset(named: media.path, in: identifier)
+            let mediaIdentifier = context.identifier(forAssetName: oldMedia.path, in: identifier)
         else {
             return nil
         }
-        
+
+        let media = ResourceReference(bundleID: oldMedia.bundleID, path: mediaIdentifier)
+        guard
+            let resolvedAssets = renderContext?.store.content(forAssetNamed: media.path, bundleID: identifier.bundleID)
+                ?? context.resolveAsset(named: media.path, in: identifier)
+        else {
+            return nil
+        }
+
         let fileExtension: String = {
             let identifierFileExtension = NSString(string: media.path).pathExtension
             if !identifierFileExtension.isEmpty {
@@ -1900,11 +1928,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             return resolvedAssets.data(bestMatching: DataTraitCollection()).url.pathExtension
         }()
-        
+
         // Check if media is a supported image.
         if DocumentationContext.isFileExtension(fileExtension, supported: .image) {
             let mediaReference = RenderReferenceIdentifier(media.path)
-            
+
             imageReferences[media.path] = ImageReference(
                 identifier: mediaReference,
                 // If no alt text has been provided and this image has been registered previously, use the registered alt text.
@@ -1913,14 +1941,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             )
             return mediaReference
         }
-        
+
         if DocumentationContext.isFileExtension(fileExtension, supported: .video) {
             let mediaReference = RenderReferenceIdentifier(media.path)
             let poster = poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
             videoReferences[media.path] = VideoReference(identifier: mediaReference, altText: altText, videoAsset: resolvedAssets, poster: poster)
             return mediaReference
         }
-        
+
         if assetContext == DataAsset.Context.download {
             let mediaReference = RenderReferenceIdentifier(media.path)
             // Create a download reference if possible.
@@ -1928,7 +1956,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             do {
                 let downloadURL = resolvedAssets.variants.first!.value
                 let downloadData = try context.dataProvider.contents(of: downloadURL)
-                downloadReference = DownloadReference(identifier: mediaReference,
+                downloadReference = DownloadReference(
+                    identifier: mediaReference,
                     renderURL: downloadURL,
                     checksum: Checksum.sha512(of: downloadData))
             } catch {
@@ -1943,7 +1972,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         return nil
     }
-    
+
     var context: DocumentationContext
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
@@ -1952,9 +1981,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var linkReferences: [String: LinkReference] = [:]
     var requirementReferences: [String: XcodeRequirementReference] = [:]
     var downloadReferences: [String: DownloadReference] = [:]
-    
-    private var defaultAvailabilityCacheByModuleName: [String /* module name */: [String /* platform name*/ : AvailabilityRenderItem]?] = [:]
-    
+
+    private var defaultAvailabilityCacheByModuleName: [String /* module name */: [String /* platform name*/: AvailabilityRenderItem]?] = [:]
+
     /// Given module availability and the current platforms we're building against return if the module is a beta framework.
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
         guard let introducedVersion = moduleAvailability.introducedVersion else { return false }
@@ -1966,30 +1995,31 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Verify we're building against this platform
             let targetPlatformVersion = currentPlatforms[moduleAvailability.platformName.displayName],
             // Verify the target platform version is in beta
-            targetPlatformVersion.beta else {
-                return false
+            targetPlatformVersion.beta
+        else {
+            return false
         }
-        
+
         // Build a module availability version, defaulting the patch number to 0 if not provided (e.g. 10.15)
         let moduleVersionTriplet = VersionTriplet(moduleVersion[0], moduleVersion[1], moduleVersion.count > 2 ? moduleVersion[2] : 0)
-        
+
         // Consider the module beta if its version is greater than or equal to the target platform
         return moduleVersionTriplet >= targetPlatformVersion.version
     }
-    
+
     /// The default availability for modules in a given bundle and module.
     private mutating func defaultAvailability(moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [String: AvailabilityRenderItem]? {
         // FIXME: Move this logic out of the rendering code (rdar://172280267)
         if let cached = defaultAvailabilityCacheByModuleName[moduleName] {
             return cached
         }
-        
+
         guard let defaultAvailabilityForModule = context.inputs.info.defaultAvailability?.modules[moduleName] else {
             // Don't repeatedly look up the default availability in the Info.plist for every symbol
             defaultAvailabilityCacheByModuleName[moduleName] = nil
             return nil
         }
-        
+
         var result = [String: AvailabilityRenderItem]()
         for availability in defaultAvailabilityForModule where availability.versionInformation != .unavailable {
             let name = availability.platformName.displayName
@@ -1999,15 +2029,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
             )
             assert(renderItem.unconditionallyUnavailable != true, "Default availability shouldn't ever be unconditionally unavailable")
-            
+
             // Override any previous value if the same platform is specified multiple times
             result[name] = renderItem
         }
-        
+
         defaultAvailabilityCacheByModuleName[moduleName] = result
         return result
     }
-   
+
     mutating func createRenderSections(
         for symbol: Symbol,
         renderNode: inout RenderNode,
@@ -2017,14 +2047,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             translator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &self)
         }
     }
-    
+
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
         let generator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
-        
+
         var allVariants: [SourceLanguage: ResolvedTopicReference] = documentationNode.availableSourceLanguages.reduce(into: [:]) { partialResult, language in
             partialResult[language] = identifier
         }
-        
+
         // Apply alternate representations
         if let alternateRepresentations = documentationNode.metadata?.alternateRepresentations {
             for alternateRepresentation in alternateRepresentations {
@@ -2042,64 +2072,66 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 ) { existing, _ in existing }
             }
         }
-        
-        return allVariants
+
+        return
+            allVariants
             .sorted(by: { variant1, variant2 in
                 // Emit Swift first, then alphabetically.
                 switch (variant1.key, variant2.key) {
                 case (.swift, _): return true
                 case (_, .swift): return false
                 default: return variant1.key.id < variant2.key.id
+                }
+            })
+            .map { sourceLanguage, reference in
+                RenderNode.Variant(
+                    traits: [.interfaceLanguage(sourceLanguage.id)],
+                    paths: [
+                        generator.presentationURLForReference(reference).path
+                    ]
+                )
             }
-        })
-        .map { sourceLanguage, reference in
-            RenderNode.Variant(
-                traits: [.interfaceLanguage(sourceLanguage.id)],
-                paths: [
-                    generator.presentationURLForReference(reference).path
-                ]
-            )
-        }
     }
-    
+
     private mutating func convertFragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
         return fragments.map { token -> DeclarationRenderSection.Token in
             let reference: ResolvedTopicReference?
             if let preciseIdentifier = token.preciseIdentifier,
-               let resolved = self.context.localOrExternalReference(symbolID: preciseIdentifier)
+                let resolved = self.context.localOrExternalReference(symbolID: preciseIdentifier)
             {
                 reference = resolved
-                
+
                 // Add relationship to render references
                 self.collectedTopicReferences.append(resolved)
             } else {
                 reference = nil
             }
-            
+
             // Add the declaration token
             return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
         }
     }
-    
+
     /// Generate a RenderProperty object from markup content and symbol data.
     mutating func createRenderProperty(name: String, contents: [any Markup], required: Bool, symbol: SymbolGraph.Symbol?) -> RenderProperty {
-        let parameterContent = self.visitMarkupContainer(
-            MarkupContainer(contents)
-        ) as! [RenderBlockContent]
-        
+        let parameterContent =
+            self.visitMarkupContainer(
+                MarkupContainer(contents)
+            ) as! [RenderBlockContent]
+
         var renderedTokens: [DeclarationRenderSection.Token]? = nil
         var attributes: [RenderAttribute] = []
         var isReadOnly: Bool? = nil
         var deprecated: Bool? = nil
-        var introducedVersion: String? = nil 
+        var introducedVersion: String? = nil
         var typeDetails: [TypeDetails]? = nil
-        
+
         if let symbol {
             // Convert the dictionary key's declaration into section tokens
             if let fragments = symbol.declarationFragments {
                 renderedTokens = convertFragments(fragments)
             }
-                
+
             // Populate attributes
             if let constraint = symbol.defaultValue {
                 attributes.append(RenderAttribute.default(String(constraint)))
@@ -2126,12 +2158,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 attributes.append(RenderAttribute.maximumLength(String(constraint)))
             }
             if let constraint = symbol.allowedValues {
-                attributes.append(RenderAttribute.allowedValues(constraint.map { String($0) } ))
+                attributes.append(RenderAttribute.allowedValues(constraint.map { String($0) }))
             }
             if let constraint = symbol.typeDetails, constraint.count > 0 {
                 // Pull out the base-type details.
                 typeDetails = constraint.filter { $0.baseType != nil }
-                                        .map { TypeDetails(baseType: $0.baseType, arrayMode: $0.arrayMode) }
+                    .map { TypeDetails(baseType: $0.baseType, arrayMode: $0.arrayMode) }
                 // Pull out the allowed-type declarations.
                 // If there is only 1 type declaration found, it would be redundant with declaration, so skip it.
                 let typeDeclarations = constraint.compactMap { $0.fragments }
@@ -2140,7 +2172,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     attributes.append(RenderAttribute.allowedTypes(allowedTypes))
                 }
             }
-            
+
             // Extract the availability information
             if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
                 for item in availabilityItems {
@@ -2153,7 +2185,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
             }
         }
-        
+
         return RenderProperty(
             name: name,
             type: renderedTokens ?? [],
@@ -2167,7 +2199,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             introducedVersion: introducedVersion
         )
     }
-    
+
     init(
         context: DocumentationContext,
         identifier: ResolvedTopicReference,

@@ -18,14 +18,14 @@ extension Benchmark {
     public class TopicGraphHash: BenchmarkMetric {
         public static let identifier = "topic-graph-hash"
         public static let displayName = "Topic Graph Checksum"
-        
+
         /// Creates a new metric and stores the checksum of the given documentation context topic graph.
         /// - Parameter context: A documentation context containing a topic graph.
         public init(context: DocumentationContext) {
             guard let checksum = context.dumpGraph().data(using: .utf8).map(Checksum.md5) else { return }
             result = .checksum(checksum)
         }
-        
+
         public var result: MetricValue?
     }
 }

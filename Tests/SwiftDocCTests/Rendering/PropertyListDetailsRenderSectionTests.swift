@@ -19,15 +19,17 @@ struct PropertyListDetailsRenderSectionTests {
     @Test(arguments: [true, false])
     func renderingDecodedPropertyDetails(arrayMode: Bool) async throws {
         let renderSection = try await makePlistDetailsSection(arrayMode: arrayMode, baseType: "string", rawKey: "property-list-key")
-        #expect(renderSection.details == .init(
-            rawKey: "property-list-key",
-            value: [TypeDetails(baseType: "string", arrayMode: arrayMode)],
-            platforms: [],
-            displayName: nil,
-            titleStyle: .useDisplayName
-        ))
+        #expect(
+            renderSection.details
+                == .init(
+                    rawKey: "property-list-key",
+                    value: [TypeDetails(baseType: "string", arrayMode: arrayMode)],
+                    platforms: [],
+                    displayName: nil,
+                    titleStyle: .useDisplayName
+                ))
     }
-    
+
     private func makePlistDetailsSection(
         arrayMode: Bool,
         baseType: any CustomStringConvertible,

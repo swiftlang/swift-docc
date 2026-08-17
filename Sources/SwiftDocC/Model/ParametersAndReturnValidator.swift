@@ -45,9 +45,9 @@ struct ParametersAndReturnValidator {
     var diagnosticEngine: DiagnosticEngine
     /// The list of sources for this symbol's documentation.
     let docChunkSources: [DocumentationNode.DocumentationChunk.Source]
-    
+
     let isValidationEnabled: Bool
-    
+
     /// Creates validated parameter section variants and returns section variants for the symbol.
     ///
     /// The validator processes the parameter and return value documentation in 3 ways:
@@ -72,22 +72,22 @@ struct ParametersAndReturnValidator {
         returnsSection: DocumentationDataVariants<ReturnsSection>
     ) {
         guard isValidationEnabled,
-              let symbol = unifiedSymbol,
-              !hasInheritedDocumentationComment(symbol: symbol),
-              let signatures = Self.traitSpecificSignatures(symbol)
+            let symbol = unifiedSymbol,
+            !hasInheritedDocumentationComment(symbol: symbol),
+            let signatures = Self.traitSpecificSignatures(symbol)
         else {
             return (
                 DocumentationDataVariants(defaultVariantValue: parameters.map { ParametersSection(parameters: $0) }),
                 DocumentationDataVariants(defaultVariantValue: returns?.first.map { ReturnsSection(content: $0.contents) })
             )
         }
-        
+
         var parameterVariants = makeParametersSectionVariants(parameters, signatures, symbol.documentedSymbol?.kind, hasDocumentedReturnValues: returns != nil)
         if parameterVariants.allValues.allSatisfy({ _, section in section.parameters.isEmpty }) {
             // If all source languages have empty parameter sections, return `nil` instead of individually empty sections.
             parameterVariants = DocumentationDataVariants(defaultVariantValue: nil)
         }
-        
+
         var returnVariants = makeReturnsSectionVariants(
             returns?.first,
             signatures,
@@ -103,7 +103,7 @@ struct ParametersAndReturnValidator {
         }
         return (parameterVariants, returnVariants)
     }
-    
+
     /// Creates a validated parameter section containing only the parameters that exist in each language representation's function signature.
     ///
     /// - Parameters:
@@ -126,16 +126,16 @@ struct ParametersAndReturnValidator {
             // Since the symbol documented its return value synthesize an "error" parameter for it.
             var variants = DocumentationDataVariants<ParametersSection>()
             for trait in signatures.keys {
-                variants[trait] = ParametersSection(parameters: []) // Add an empty section so that this language doesn't fallback to the Objective-C content.
+                variants[trait] = ParametersSection(parameters: [])  // Add an empty section so that this language doesn't fallback to the Objective-C content.
             }
-            variants[.objectiveC] = ParametersSection(parameters: [Parameter(name: "error", contents: Self.objcErrorDescription)]) // This parameter is synthesized and doesn't have a source range.
+            variants[.objectiveC] = ParametersSection(parameters: [Parameter(name: "error", contents: Self.objcErrorDescription)])  // This parameter is synthesized and doesn't have a source range.
             return variants
         }
-        
+
         var variants = DocumentationDataVariants<ParametersSection>()
         var allKnownFunctionParameterNames: Set<String> = []
         var parameterNamesByExternalName: [String: Set<String>] = [:]
-        
+
         // Wrap the documented parameters in classes so that `isMatchedInAnySignature` can be modified and tracked across different signatures.
         // This is used later in this method body to raise warnings about documented parameters that wasn't found in any symbol representation's function signature.
         class ParameterReference {
@@ -143,19 +143,19 @@ struct ParametersAndReturnValidator {
             init(_ parameter: Parameter) {
                 self.wrapped = parameter
             }
-            
+
             var isMatchedInAnySignature: Bool = false
             var name: String { wrapped.name }
         }
         let parameterReferences = parameters.map { ParameterReference($0) }
         // Accumulate which unnamed parameters in the function signatures are missing documentation.
         var undocumentedUnnamedParameters = Set<Int>()
-        
+
         for (trait, signature) in signatures {
             // Insert parameter documentation in the order of the signature.
             var orderedParameters = [ParameterReference?](repeating: nil, count: signature.parameters.count)
             var remainingDocumentedParameters = parameterReferences
-            
+
             // Some languages support both names and unnamed parameters, and allow mixing them in the same declaration.
             // It's an uncommon style to mix both in the same declaration but if the developer's code does this we try to minimize warnings
             // and display as much written documentation as possible on the rendered page by matching _named_ parameters first.
@@ -178,7 +178,7 @@ struct ParametersAndReturnValidator {
             //  - One that the "anything" parameter doesn't exist in the function signature.
             //
             // Again, unless the developer documents the mixed named and unnamed parameters out-of-order, both approaches behave the same.
-            
+
             // As described above, match the named function parameters first.
             for (index, functionParameter) in signature.parameters.enumerated() where !functionParameter.isUnnamed {
                 // While we're looping over the parameters, gather information about the function parameters to use in diagnostics later in this method body.
@@ -186,7 +186,7 @@ struct ParametersAndReturnValidator {
                     parameterNamesByExternalName[externalName, default: []].insert(functionParameter.name)
                 }
                 allKnownFunctionParameterNames.insert(functionParameter.name)
-                
+
                 // Match this function parameter with a named documented parameter.
                 guard let parameterIndex = remainingDocumentedParameters.firstIndex(where: { $0.name == functionParameter.name }) else {
                     continue
@@ -195,9 +195,9 @@ struct ParametersAndReturnValidator {
                 parameter.isMatchedInAnySignature = true
                 orderedParameters[index] = parameter
             }
-            
+
             // As describe above, match the unnamed parameters last.
-            var unnamedParameterNumber = 0 // Track how many unnamed parameters we've encountered.
+            var unnamedParameterNumber = 0  // Track how many unnamed parameters we've encountered.
             for (index, functionParameter) in signature.parameters.enumerated() where functionParameter.isUnnamed {
                 defer { unnamedParameterNumber += 1 }
                 guard !remainingDocumentedParameters.isEmpty else {
@@ -210,19 +210,19 @@ struct ParametersAndReturnValidator {
                 parameter.isMatchedInAnySignature = true
                 orderedParameters[index] = parameter
             }
-            
+
             // Add a missing error parameter documentation if needed.
             if trait == .objectiveC, Self.shouldAddObjectiveCErrorParameter(signatures, parameters) {
                 orderedParameters.append(
                     ParameterReference(
-                        Parameter(name: "error", contents: Self.objcErrorDescription) // This parameter is synthesized and doesn't have a source range.
+                        Parameter(name: "error", contents: Self.objcErrorDescription)  // This parameter is synthesized and doesn't have a source range.
                     )
                 )
             }
-            
+
             variants[trait] = ParametersSection(parameters: orderedParameters.compactMap { $0?.wrapped })
         }
-        
+
         // Diagnose documented parameters that aren't found in any language representation's function signature.
         for parameterReference in parameterReferences where !parameterReference.isMatchedInAnySignature && !allKnownFunctionParameterNames.contains(parameterReference.name) {
             let parameter = parameterReference.wrapped
@@ -232,16 +232,16 @@ struct ParametersAndReturnValidator {
                 diagnosticEngine.emit(makeExtraParameterDiagnostic(parameter, knownParameterNames: allKnownFunctionParameterNames, symbolKind: symbolKind))
             }
         }
-        
+
         // Diagnose parameters that are documented more than once.
         let documentedParametersByName = [String: [Parameter]](grouping: parameters, by: \.name)
         for (name, parameters) in documentedParametersByName where allKnownFunctionParameterNames.contains(name) && parameters.count > 1 {
-            let first = parameters.first! // Each group is guaranteed to be non-empty.
+            let first = parameters.first!  // Each group is guaranteed to be non-empty.
             for parameter in parameters.dropFirst() {
                 diagnosticEngine.emit(makeDuplicateParameterDiagnostic(parameter, previous: first))
             }
         }
-        
+
         // Diagnose missing parameters.
         //
         // In all programming languages that DocC supports so far, a language representation's function signature may support a subset of the parameters
@@ -250,7 +250,7 @@ struct ParametersAndReturnValidator {
         // function signature).
         if let parameterNameOrder = signatures.values.map(\.parameters).max(by: { $0.count < $1.count })?.map(\.name) {
             let parametersEndLocation = parameters.last?.range?.upperBound
-            
+
             var missingParameterNames = allKnownFunctionParameterNames.subtracting(["error"]).filter { documentedParametersByName[$0] == nil }
             for parameter in parameters {
                 // Parameters that are documented using their external name already has raised a more specific diagnostic.
@@ -263,21 +263,21 @@ struct ParametersAndReturnValidator {
                 // Look for the parameter that should come after the missing parameter to insert the placeholder documentation in the right location.
                 let parameterAfter = parameterNameOrder.drop(while: { $0 != parameterName }).dropFirst()
                     .mapFirst(where: { documentedParametersByName[$0]?.first! /* Each group is guaranteed to be non-empty */ })
-                
+
                 // Match the placeholder formatting with the other parameters; either as a standalone parameter or as an item in a parameters outline.
                 let standalone = parameterAfter?.isStandalone ?? parameters.first?.isStandalone ?? false
                 diagnosticEngine.emit(makeMissingParameterDiagnostic(name: parameterName, before: parameterAfter, standalone: standalone, lastParameterEndLocation: parametersEndLocation))
             }
-            
+
             for unnamedParameterNumber in undocumentedUnnamedParameters.sorted() {
                 let standalone = parameters.first?.isStandalone ?? false
                 diagnosticEngine.emit(makeMissingUnnamedParameterProblem(unnamedParameterNumber: unnamedParameterNumber, standalone: standalone, lastParameterEndLocation: parametersEndLocation))
             }
         }
-        
+
         return variants
     }
-    
+
     /// Creates a validated returns section containing only the return values that exist in each language representation's function signature.
     ///
     /// - Parameters:
@@ -296,18 +296,18 @@ struct ParametersAndReturnValidator {
     ) -> DocumentationDataVariants<ReturnsSection> {
         let returnsSection = returns.map { ReturnsSection(content: $0.contents) }
         var variants = DocumentationDataVariants<ReturnsSection>()
-        
+
         var traitsWithNonVoidReturnValues = Set(signatures.keys)
         for (trait, signature) in signatures {
             let language = trait.sourceLanguage
-            
+
             // The function signature for Swift initializers indicate a Void return type.
             // However, initializers have a _conceptual_ return value that's sometimes worth documenting (rdar://131913065).
             if language == .swift, swiftSymbolKind == .`init` {
                 variants[trait] = returnsSection
                 continue
             }
-            
+
             /// A Boolean value that indicates whether the current signature returns a known "void" value.
             var returnsKnownVoidValue: Bool {
                 guard let language, let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language] else {
@@ -315,7 +315,7 @@ struct ParametersAndReturnValidator {
                 }
                 return signature.returns.allSatisfy { voidReturnValues.contains($0) }
             }
-            
+
             // Don't display any return value documentation for language representations that return nothing or that only return void.
             if signature.returns.isEmpty || returnsKnownVoidValue {
                 traitsWithNonVoidReturnValues.remove(trait)
@@ -323,40 +323,40 @@ struct ParametersAndReturnValidator {
                 variants[trait] = ReturnsSection(content: [])
                 continue
             }
-            
+
             variants[trait] = returnsSection
         }
-        
+
         // Check if there's new or updated return value content that we should add for Objective-C
         if returns != nil || hasDocumentedParameters, let newContent = Self.newObjectiveCReturnsContent(signatures, returns: returns) {
             variants[.objectiveC] = ReturnsSection(content: newContent)
         }
-        
+
         // Diagnose if the symbol had documented its return values but all language representations only return void.
         if let returns, traitsWithNonVoidReturnValues.isEmpty {
             diagnosticEngine.emit(makeReturnsDocumentedForVoidDiagnostic(returns, symbolKind: documentedSymbolKind))
         }
         return variants
     }
-    
+
     // MARK: Helpers
-    
+
     /// Checks if the symbol's documentation is inherited from another source location.
     private func hasInheritedDocumentationComment(symbol: UnifiedSymbolGraph.Symbol) -> Bool {
         guard let documentedSymbol = symbol.documentedSymbol else {
             // If there's no doc comment, any documentation comes from an extension file and isn't inherited from another symbol.
             return false
         }
-        
+
         // A symbol has inherited documentation if the doc comment doesn't come from the current module.
         let moduleNames = symbol.modules.values.reduce(into: Set()) { $0.insert($1.name) }
         return !moduleNames.contains(where: { moduleName in
             documentedSymbol.isDocCommentFromSameModule(symbolModuleName: moduleName) == true
         })
     }
-    
+
     private typealias Signatures = [DocumentationDataVariantsTrait: SymbolGraph.Symbol.FunctionSignature]
-    
+
     /// Returns the symbol's function signatures for each variant trait, or `nil` if the symbol doesn't have any function signature data.
     private static func traitSpecificSignatures(_ symbol: UnifiedSymbolGraph.Symbol) -> Signatures? {
         var signatures: [DocumentationDataVariantsTrait: SymbolGraph.Symbol.FunctionSignature] = [:]
@@ -364,27 +364,27 @@ struct ParametersAndReturnValidator {
             guard var signature = mixin.getValueIfPresent(for: SymbolGraph.Symbol.FunctionSignature.self) else {
                 continue
             }
-            
+
             if let alternateSymbols = mixin.getValueIfPresent(for: SymbolGraph.Symbol.AlternateSymbols.self) {
                 for alternateSymbol in alternateSymbols.alternateSymbols {
                     guard let alternateSignature = alternateSymbol.functionSignature else { continue }
                     signature.merge(with: alternateSignature, selector: selector)
                 }
             }
-            
+
             let trait = DocumentationDataVariantsTrait(for: selector)
             // Check if we've already encountered a different signature for another platform
             guard let existing = signatures.removeValue(forKey: trait) else {
                 signatures[trait] = signature
                 continue
             }
-            
+
             signature.merge(with: existing, selector: selector)
             signatures[trait] = signature
         }
-        
+
         guard !signatures.isEmpty else { return nil }
-        
+
         // If the unified symbol has at least one function signature, fill in empty signatures for the other language representations.
         //
         // This, for example, makes it so that a functions in C which corresponds to property in Swift, displays its parameters and return value documentation
@@ -393,36 +393,36 @@ struct ParametersAndReturnValidator {
         for trait in traitsWithoutSignatures {
             signatures[trait] = .init(parameters: [], returns: [])
         }
-        
+
         return signatures
     }
-    
+
     /// Checks if the language specific function signatures describe a throwing function in Swift that bridges to an Objective-C method with a trailing error parameter.
     private static func hasSwiftThrowsObjectiveCErrorBridging(_ signatures: Signatures) -> Bool {
         guard let objcSignature = signatures[.objectiveC],
-              objcSignature.parameters.last?.name == "error",
-              objcSignature.returns != knownVoidReturnValuesByLanguage[.objectiveC]!
+            objcSignature.parameters.last?.name == "error",
+            objcSignature.returns != knownVoidReturnValuesByLanguage[.objectiveC]!
         else {
             return false
         }
         guard let swiftSignature = signatures[.swift],
-              swiftSignature.parameters.last?.name != "error"
+            swiftSignature.parameters.last?.name != "error"
         else {
             return false
         }
-        
+
         return true
     }
-    
+
     /// Checks if the validator should synthesize documentation for an Objective-C error parameter.
     private static func shouldAddObjectiveCErrorParameter(_ signatures: Signatures, _ parameters: [Parameter]?) -> Bool {
         parameters?.last?.name != "error" && hasSwiftThrowsObjectiveCErrorBridging(signatures)
     }
-    
+
     /// Returns the updated return value content, with an added description of what happens when an error occurs, if needed.
     private static func newObjectiveCReturnsContent(_ signatures: Signatures, returns: Return?) -> [any Markup]? {
         guard hasSwiftThrowsObjectiveCErrorBridging(signatures) else { return nil }
-        
+
         guard let returns, !returns.contents.isEmpty else {
             if signatures[.objectiveC]?.returns == [.init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")] {
                 // There is no documented return value and the Objective-C signature returns BOOL
@@ -431,7 +431,7 @@ struct ParametersAndReturnValidator {
                 return nil
             }
         }
-        
+
         if returns.possiblyDocumentsFailureBehavior() {
             // If the existing returns value documentation appears to describe the failure / error behavior, don't add anything
             return nil
@@ -440,7 +440,7 @@ struct ParametersAndReturnValidator {
             // If the Objective-C function signature returns BOOL, don't add anything
             return nil
         }
-        
+
         let lastSentenceEndsWithPunctuation = returns.contents.last?.format().removingTrailingWhitespace().last?.isPunctuation == true
         if let inlineContents = returns.contents as? [any InlineMarkup] {
             return [Paragraph(inlineContents + objcObjectErrorAddition(endPreviousSentence: !lastSentenceEndsWithPunctuation))]
@@ -453,7 +453,7 @@ struct ParametersAndReturnValidator {
             return returns.contents + [Paragraph(objcObjectErrorAddition(endPreviousSentence: false))]
         }
     }
-    
+
     /// The known declaration fragment alternatives that represents "void" in each programming language.
     static var knownVoidReturnValuesByLanguage: [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]] = [
         .swift: [
@@ -465,12 +465,12 @@ struct ParametersAndReturnValidator {
             .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v"),
         ]
     ]
-    
+
     /// Translates a relative documentation comment source range to the absolute location in that source file.
     private func adjusted(_ range: SourceRange?) -> SourceRange? {
         range.map { adjusted($0) }
     }
-    
+
     /// Translates a relative documentation comment source range to the absolute location in that source file.
     private func adjusted(_ range: SourceRange) -> SourceRange {
         var range = range
@@ -482,9 +482,9 @@ struct ParametersAndReturnValidator {
         }
         return range
     }
-    
+
     // MARK: Diagnostics
-    
+
     /// Creates a new diagnostic about return value documentation for a symbol that returns void.
     ///
     /// ## Example
@@ -517,7 +517,7 @@ struct ParametersAndReturnValidator {
             ]
         )
     }
-    
+
     /// Creates a new diagnostic about documentation for a parameter that's not known to that symbol.
     ///
     /// ## Example
@@ -538,31 +538,35 @@ struct ParametersAndReturnValidator {
     /// - Returns: A new diagnostic that suggests that the developer removes the documentation for the unknown parameter.
     private func makeExtraParameterDiagnostic(_ parameter: Parameter, knownParameterNames: Set<String>, symbolKind: SymbolGraph.Symbol.Kind?) -> Diagnostic {
         let source = parameter.range?.source
-        
+
         let summary = "Parameter \(parameter.name.singleQuoted) not found in \(symbolKind.map { $0.displayName.lowercased() } ?? "the") declaration"
         let identifier = "org.swift.docc.DocumentedParameterNotFound"
-        
+
         let nearMisses = NearMiss.bestMatches(for: knownParameterNames, against: parameter.name)
-        
+
         if nearMisses.isEmpty {
             // If this parameter doesn't resemble any of this symbols parameters, suggest to remove it.
-            return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.range), identifier: identifier, summary: summary, solutions: [
-                Solution(
-                    summary: "Remove \(parameter.name.singleQuoted) parameter documentation",
-                    replacements: parameter.range.map { [.init(range: adjusted($0), replacement: "")] } ?? []
-                )
-            ])
+            return Diagnostic(
+                source: source, severity: .warning, range: adjusted(parameter.range), identifier: identifier, summary: summary,
+                solutions: [
+                    Solution(
+                        summary: "Remove \(parameter.name.singleQuoted) parameter documentation",
+                        replacements: parameter.range.map { [.init(range: adjusted($0), replacement: "")] } ?? []
+                    )
+                ])
         }
-        
+
         // Otherwise, suggest to replace the documented parameter name with the one of the similarly named parameters.
-        return Diagnostic(source: source, severity: .warning, range: adjusted(parameter.nameRange), identifier: identifier, summary: summary, solutions: nearMisses.map { candidate in
-            Solution(
-                summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
-                replacements: parameter.nameRange.map { [.init(range: adjusted($0), replacement: candidate)] } ?? []
-            )
-        })
+        return Diagnostic(
+            source: source, severity: .warning, range: adjusted(parameter.nameRange), identifier: identifier, summary: summary,
+            solutions: nearMisses.map { candidate in
+                Solution(
+                    summary: "Replace \(parameter.name.singleQuoted) with \(candidate.singleQuoted)",
+                    replacements: parameter.nameRange.map { [.init(range: adjusted($0), replacement: candidate)] } ?? []
+                )
+            })
     }
-    
+
     /// Creates a new diagnostic about a parameter that's documented using its "external name" instead of its "name".
     ///
     /// ## Example
@@ -595,7 +599,7 @@ struct ParametersAndReturnValidator {
             }
         )
     }
-    
+
     /// Creates a new diagnostic about a parameter that's documented more than once.
     ///
     /// ## Example
@@ -614,12 +618,13 @@ struct ParametersAndReturnValidator {
     ///   - previous: The previous occurrence of documentation for this parameter
     /// - Returns: A new diagnostic that suggests that the developer removes the duplicated parameter documentation.
     private func makeDuplicateParameterDiagnostic(_ parameter: Parameter, previous: Parameter) -> Diagnostic {
-        let notes: [Diagnostic.Note] = if let previousRange = previous.range, let source = previousRange.source {
-            [.init(source: source, range: adjusted(previousRange), message: "Previously documented here")]
-        } else {
-            []
-        }
-        
+        let notes: [Diagnostic.Note] =
+            if let previousRange = previous.range, let source = previousRange.source {
+                [.init(source: source, range: adjusted(previousRange), message: "Previously documented here")]
+            } else {
+                []
+            }
+
         return Diagnostic(
             source: parameter.range?.source,
             severity: .warning,
@@ -635,11 +640,11 @@ struct ParametersAndReturnValidator {
             ]
         )
     }
-    
+
     /// Creates a new diagnostic about a named parameter that's missing documentation.
     ///
     /// ## Example
-    /// 
+    ///
     /// ```swift
     /// /// - Parameters:
     /// ///   - firstValue: Description of the first parameter
@@ -647,7 +652,7 @@ struct ParametersAndReturnValidator {
     /// ///                                                   Parameter 'secondValue' is missing documentation
     /// func doSomething(with firstValue: Int, and secondValue: Int) {}
     /// ```
-    /// 
+    ///
     /// - Parameters:
     ///   - name: The (non-external) name of the undocumented parameter
     ///   - nextParameter: The next documented parameter for this symbol or `nil`, if the undocumented parameter is the last parameter for the symbol.
@@ -667,7 +672,7 @@ struct ParametersAndReturnValidator {
     /// Creates a new diagnostic about an unnamed parameter that's missing documentation.
     ///
     /// ## Example
-    /// 
+    ///
     /// ```c
     /// /// - Parameters:
     /// ///   - firstValue: Description of the first parameter
@@ -675,7 +680,7 @@ struct ParametersAndReturnValidator {
     /// ///                                                   Unnamed parameter #1 is missing documentation
     /// void doSomething(int firstValue, int /*unnamed*/);
     /// ```
-    /// 
+    ///
     /// - Parameters:
     ///   - unnamedParameterNumber: A number indicating which unnamed parameter this diagnostic refers to.
     ///   - standalone: `true` if the existing documented parameters use the standalone syntax `- Parameter someValue:` or `false` if the existing documented parameters use the `- someValue` syntax within a `- Parameters:` list.
@@ -691,7 +696,7 @@ struct ParametersAndReturnValidator {
             lastParameterEndLocation: lastParameterEndLocation
         )
     }
-    
+
     private func _makeMissingParameterDiagnostic(
         diagnosticSummary: String,
         solutionText: String,
@@ -718,26 +723,28 @@ struct ParametersAndReturnValidator {
                 replacement = extraWhitespace + replacementText
             }
             solutions = [
-                Solution(summary: solutionText, replacements: [
-                    .init(range: adjusted(insertLocation ..< insertLocation), replacement: replacement)
-                ])
+                Solution(
+                    summary: solutionText,
+                    replacements: [
+                        .init(range: adjusted(insertLocation..<insertLocation), replacement: replacement)
+                    ])
             ]
         } else {
             solutions = []
         }
-        
+
         return Diagnostic(
             source: lastParameterEndLocation?.source ?? nextParameter?.range?.source,
             severity: .warning,
-            range: adjusted(lastParameterEndLocation.map { $0 ..< $0 }),
+            range: adjusted(lastParameterEndLocation.map { $0..<$0 }),
             identifier: "org.swift.docc.MissingParameterDocumentation",
             summary: diagnosticSummary,
             solutions: solutions
         )
     }
-    
+
     // MARK: Generated content
-    
+
     private static let objcErrorDescription: [any Markup] = [
         Paragraph([
             Text("On output, a pointer to an error object that describes why the method failed, or ") as (any InlineMarkup), InlineCode("nil"), Text(" if no error occurred. If you are not interested in the error information, pass "), InlineCode("nil"), Text(" for this parameter.")
@@ -751,11 +758,11 @@ struct ParametersAndReturnValidator {
     private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [any InlineMarkup] {
         [Text("\(endPreviousSentence ? "." : "") On failure, this method returns "), InlineCode("nil"), Text(".")]
     }
-    
+
     private static func newParameterDescription(name: String, standalone: Bool) -> String {
         "- \(standalone ? "Parameter " : "")\(name): <#parameter description#>"
     }
-    
+
     private static func newUnnamedParameterDescription(standalone: Bool) -> String {
         "- \(standalone ? "Parameter " : "")<#uniqueParameterName#>: <#parameter description#>"
     }
@@ -768,13 +775,13 @@ private extension Return {
     func possiblyDocumentsFailureBehavior() -> Bool {
         contents.contains(where: { markup in
             let formatted = markup.format().lowercased()
-            
+
             // Check if the authored markup contains one of a handful of words as an indication that it possibly documents what happens when an error occurs.
-            return returnValueDescribesErrorRegex.firstMatch(in: formatted, range: NSRange(formatted.startIndex ..< formatted.endIndex, in: formatted)) != nil
+            return returnValueDescribesErrorRegex.firstMatch(in: formatted, range: NSRange(formatted.startIndex..<formatted.endIndex, in: formatted)) != nil
         })
     }
 }
-    
+
 /// A regular expression that finds the words; "error", "fail", "fails", "failure", "failures", "nil", and "null".
 /// These words only match at word boundaries or when surrounded by single backticks ("`").
 ///
@@ -797,11 +804,11 @@ private extension SymbolGraph.Symbol.FunctionSignature {
                 self.parameters.insert(element, at: offset)
             }
         }
-        
+
         // If the already encountered signature has a void return type, replace it with the non-void return type.
         // This allows for documenting the return values that are only available on some platforms.
         if self.returns != signature.returns,
-           let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage[.init(id: selector.interfaceLanguage)]
+            let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage[.init(id: selector.interfaceLanguage)]
         {
             for knownVoidReturnValue in knownVoidReturnValues where [knownVoidReturnValue] == self.returns {
                 // The current return value was a known void return value so we replace it with the new return value.

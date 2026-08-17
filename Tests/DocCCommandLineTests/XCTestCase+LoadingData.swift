@@ -27,14 +27,14 @@ extension XCTestCase {
         configuration: DocumentationContext.Configuration = .init()
     ) async throws -> (DocumentationBundle, DocumentationContext) {
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
-        
+
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
         let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
         return (bundle, context)
     }
-    
+
     func testCatalogURL(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {
         try XCTUnwrap(
             Bundle.module.url(forResource: name, withExtension: "docc", subdirectory: "Test Bundles"),
