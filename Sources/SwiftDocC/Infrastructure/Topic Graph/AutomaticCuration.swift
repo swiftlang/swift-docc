@@ -190,9 +190,8 @@ public struct AutomaticCuration {
                 .filter { reference in
                     // Don't include the current node.
                     reference != node.reference
-                    &&
                     // Don't include nodes that aren't available in any of the given traits.
-                    !context.sourceLanguages(for: reference).isDisjoint(with: variantLanguages)
+                    && !context.sourceLanguages(for: reference).isDisjoint(with: variantLanguages)
                 }
                 // Don't create too long See Also sections
                 .prefix(automaticSeeAlsoLimit)
