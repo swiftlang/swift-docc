@@ -493,7 +493,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                             firstCardImageDarkURL: DataAsset.Metadata(svgID: nil),
                         ],
                         context: .display
-                    ),
+                    )
                 ),
 
                 ImageReference(
@@ -511,7 +511,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                             secondCardImageTripleURL: DataAsset.Metadata(svgID: nil),
                         ],
                         context: .display
-                    ),
+                    )
                 ),
 
                 ImageReference(
@@ -524,7 +524,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                     identifier: RenderReferenceIdentifier("external-icon-2"),
                     altText: "Second external icon alt text",
                     imageAsset: DataAsset()  // this image reference didn't have an asset in the test setup
-                )
+                ),
             ])
     }
 
@@ -1070,7 +1070,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                         ## See Also
 
                         - <doc://com.external.testbundle/something>
-                        """),
+                        """)
             ])
 
         let resolver = TestExternalReferenceResolver()
@@ -1093,7 +1093,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(
             seeAlso.identifiers,
             [
-                "doc://com.external.testbundle/externally/resolved/path",
+                "doc://com.external.testbundle/externally/resolved/path"
             ])
     }
 
@@ -1123,7 +1123,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                                         ],
                                         returns: []
                                     )
-                                ],
+                                ]
                             )
                         ]
                     )),
@@ -1148,7 +1148,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                                         ],
                                         returns: []
                                     )
-                                ],
+                                ]
                             )
                         ]
                     )),
@@ -1478,7 +1478,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                         # Root
 
                         Link to an external page: <doc://com.example.test/something>
-                        """),
+                        """)
             ])
 
         // Only decoded link summaries support absolute presentation URLs.

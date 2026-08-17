@@ -20,7 +20,7 @@ class RenderContentMetadataTests: XCTestCase {
         let metadata = RenderContentMetadata(
             anchor: "anchor", title: "title",
             abstract: [
-                RenderInlineContent.text("Content"),
+                RenderInlineContent.text("Content")
             ])
 
         let image = RenderInlineContent.image(identifier: .init("image-1"), metadata: metadata)
@@ -39,7 +39,7 @@ class RenderContentMetadataTests: XCTestCase {
         let metadata = RenderContentMetadata(
             anchor: "anchor", title: "title",
             abstract: [
-                RenderInlineContent.text("Content"),
+                RenderInlineContent.text("Content")
             ])
 
         let table = RenderBlockContent.table(.init(header: .both, rows: [], extendedData: [], metadata: metadata))
@@ -58,7 +58,7 @@ class RenderContentMetadataTests: XCTestCase {
         let metadata = RenderContentMetadata(
             anchor: "anchor", title: "title",
             abstract: [
-                RenderInlineContent.text("Content"),
+                RenderInlineContent.text("Content")
             ])
 
         let code = RenderBlockContent.codeListing(.init(syntax: nil, code: [], metadata: metadata, options: nil))
@@ -146,7 +146,7 @@ class RenderContentMetadataTests: XCTestCase {
             .init(rowIndex: 1, columnIndex: 0, colspan: 2, rowspan: 2),
             .init(rowIndex: 1, columnIndex: 1, colspan: 0, rowspan: 1),
             .init(rowIndex: 2, columnIndex: 0, colspan: 2, rowspan: 0),
-            .init(rowIndex: 2, columnIndex: 1, colspan: 0, rowspan: 1)
+            .init(rowIndex: 2, columnIndex: 1, colspan: 0, rowspan: 1),
         ]
 
         switch renderedTable {

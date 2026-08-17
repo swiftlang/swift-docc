@@ -73,7 +73,7 @@ class OptionsTests: XCTestCase {
             XCTAssertEqual(
                 diagnostics,
                 [
-                    "1: warning – org.swift.docc.UnknownArgument",
+                    "1: warning – org.swift.docc.UnknownArgument"
                 ])
         }
     }
@@ -120,7 +120,7 @@ class OptionsTests: XCTestCase {
             XCTAssertEqual(
                 diagnostics,
                 [
-                    "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed",
+                    "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"
                 ])
         }
     }
@@ -193,7 +193,7 @@ class OptionsTests: XCTestCase {
             XCTAssertEqual(
                 diagnostics,
                 [
-                    "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed",
+                    "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"
                 ])
         }
     }
@@ -240,7 +240,7 @@ class OptionsTests: XCTestCase {
             XCTAssertEqual(
                 diagnostics,
                 [
-                    "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed",
+                    "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"
                 ])
         }
     }

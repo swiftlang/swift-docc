@@ -623,7 +623,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                                 var slothName = SlothGenerator().generateName()
                                 var slothDiet = SlothGenerator().generateDiet()
                                 """
-                        )
+                        ),
                     ])
             ]),
             """
@@ -651,7 +651,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                                 var slothName = "slothy"
                                 var slothDiet = .vegetarian
                                 """
-                        ),
+                        )
                     ]),
                 Solution(
                     summary: "Create a bee.",
@@ -662,8 +662,8 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                                 var beeName = "Bee"
                                 var beeDiet = .vegetarian
                                 """
-                        ),
-                    ])
+                        )
+                    ]),
             ]),
             """
             \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m [test-identifier]

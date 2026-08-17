@@ -79,7 +79,7 @@ package extension MarkdownRenderer {
                 named: "a", children: [consume text],
                 attributes: [
                     "href": path(to: reference),
-                    "class": fragment.kind.htmlClassName
+                    "class": fragment.kind.htmlClassName,
                 ])
         case .keyword, .attribute, .number, .string, .internalParameter:
             // The declaration element is expected to scroll, so individual fragments don't need to contain explicit word breaks.

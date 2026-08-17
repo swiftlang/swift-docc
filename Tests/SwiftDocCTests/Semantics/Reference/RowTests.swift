@@ -75,7 +75,7 @@ struct RowTests {
                         columns: [
                             RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
                             RenderBlockContent.Row.Column(size: 1, alignment: .leading, content: ["Hello there."]),
-                            RenderBlockContent.Row.Column(size: 4, alignment: .leading, content: ["Hello there."])
+                            RenderBlockContent.Row.Column(size: 4, alignment: .leading, content: ["Hello there."]),
                         ]
                     )))
     }
@@ -435,7 +435,7 @@ struct RowTests {
                                 size: 1,
                                 alignment: .leading,
                                 content: ["Default aligned"]
-                            )
+                            ),
                         ]
                     )))
     }
@@ -483,7 +483,7 @@ struct RowTests {
                                 size: 1,
                                 alignment: .trailing,
                                 content: ["Valid"]
-                            )
+                            ),
                         ]
                     )))
     }

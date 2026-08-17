@@ -41,7 +41,7 @@ extension XCTestCase {
                                 accessLevel: .public,
                                 kind: .init(parsedIdentifier: .func, displayName: "Function"),
                                 mixins: [:]
-                            )
+                            ),
                         ]
                     )),
 

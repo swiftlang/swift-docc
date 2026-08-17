@@ -19,7 +19,7 @@ struct VariantOverridesTests {
             .replace(
                 pointer: JSONPointer(pathComponents: ["a"]),
                 value: AnyCodable("value1")
-            ),
+            )
         ]
     )
 
@@ -46,7 +46,7 @@ struct VariantOverridesTests {
                     .replace(
                         pointer: JSONPointer(pathComponents: ["b", "c"]),
                         value: AnyCodable("value2")
-                    ),
+                    )
                 ]
             )
         )
@@ -103,7 +103,7 @@ struct VariantOverridesTests {
                                 "op": "replace",
                             ]
                         ],
-                    ],
+                    ]
                 ]
         )
     }

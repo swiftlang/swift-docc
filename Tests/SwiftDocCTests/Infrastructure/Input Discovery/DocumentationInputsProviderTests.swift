@@ -58,7 +58,7 @@ class DocumentationInputsProviderTests: XCTestCase {
                                                 Folder(
                                                     name: "Nested.docc",
                                                     content: [
-                                                        TextFile(name: "EEE.md", utf8Content: ""),
+                                                        TextFile(name: "EEE.md", utf8Content: "")
                                                     ]),
 
                                                 // A nested Info.plist is considered a miscellaneous resource.
@@ -151,12 +151,12 @@ class DocumentationInputsProviderTests: XCTestCase {
                             Folder(
                                 name: "three",
                                 content: [
-                                    Folder(name: "four", content: []),
-                                ]),
+                                    Folder(name: "four", content: [])
+                                ])
                         ]),
                     // This catalog is outside the provider's search scope
                     Folder(name: "OutsideScope.docc", content: []),
-                ]),
+                ])
         ])
 
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
@@ -213,11 +213,11 @@ class DocumentationInputsProviderTests: XCTestCase {
                             Folder(
                                 name: "three",
                                 content: [
-                                    Folder(name: "four.docc", content: []),
+                                    Folder(name: "four.docc", content: [])
                                 ]),
                             Folder(name: "five.docc", content: []),
-                        ]),
-                ]),
+                        ])
+                ])
         ])
 
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
@@ -251,8 +251,8 @@ class DocumentationInputsProviderTests: XCTestCase {
                             Folder(
                                 name: "three",
                                 content: [
-                                    Folder(name: "four", content: []),
-                                ]),
+                                    Folder(name: "four", content: [])
+                                ])
                         ]),
                     // This catalog is outside the provider's search scope
                     Folder(name: "OutsideScope.docc", content: []),
@@ -266,9 +266,9 @@ class DocumentationInputsProviderTests: XCTestCase {
                         name: "to",
                         content: [
                             // The path to this symbol graph file is passed via the options
-                            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something")),
+                            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something"))
                         ])
-                ])
+                ]),
         ])
 
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
@@ -285,7 +285,7 @@ class DocumentationInputsProviderTests: XCTestCase {
         XCTAssertEqual(
             foundInputs.symbolGraphURLs.map(\.path),
             [
-                "/path/to/Something.symbols.json",
+                "/path/to/Something.symbols.json"
             ])
     }
 }

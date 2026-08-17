@@ -50,9 +50,9 @@ class FolderStructureTests: XCTestCase {
                         Folder(
                             name: "C",
                             content: [
-                                TextFile(name: "test.txt", utf8Content: "Lorem ipsum"),
-                            ]),
-                    ])
+                                TextFile(name: "test.txt", utf8Content: "Lorem ipsum")
+                            ])
+                    ]),
             ])
         let folderURL = try folder.write(inside: tempFolder)
 
@@ -96,7 +96,7 @@ class FolderStructureTests: XCTestCase {
                 Folder(
                     name: "B2",
                     content: [
-                        Folder(name: "C1", content: []),
+                        Folder(name: "C1", content: [])
                     ])
             ])
         partialFolderHierarchy.assertExist(at: folderURL)

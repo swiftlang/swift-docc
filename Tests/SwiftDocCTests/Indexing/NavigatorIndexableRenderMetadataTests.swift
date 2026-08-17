@@ -51,7 +51,7 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
         metadataView = createRenderMetadataVariantView(platforms: [
             createPlatform(name: "iOS", isBeta: false),
             createPlatform(name: "macOS", isBeta: false),
-            createPlatform(name: "watchOS", isBeta: false)
+            createPlatform(name: "watchOS", isBeta: false),
         ])
         XCTAssertFalse(metadataView.isBeta, "isBeta should be false when multiple platforms are non-beta")
 
@@ -66,7 +66,7 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
         metadataView = createRenderMetadataVariantView(platforms: [
             createPlatform(name: "iOS", isBeta: true),
             createPlatform(name: "macOS", isBeta: false),
-            createPlatform(name: "watchOS", isBeta: true)
+            createPlatform(name: "watchOS", isBeta: true),
         ])
         XCTAssertFalse(metadataView.isBeta, "isBeta should be false when some platforms are beta and some are non-beta")
 
@@ -78,7 +78,7 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
         metadataView = createRenderMetadataVariantView(platforms: [
             createPlatform(name: "iOS", isBeta: true),
             createPlatform(name: "macOS", isBeta: true),
-            createPlatform(name: "watchOS", isBeta: true)
+            createPlatform(name: "watchOS", isBeta: true),
         ])
         XCTAssertTrue(metadataView.isBeta, "isBeta should be true when multiple platforms are beta")
     }
@@ -100,7 +100,7 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
         metadata = createRenderMetadata(platforms: [
             createPlatform(name: "iOS", isBeta: false),
             createPlatform(name: "macOS", isBeta: false),
-            createPlatform(name: "tvOS", isBeta: false)
+            createPlatform(name: "tvOS", isBeta: false),
         ])
         XCTAssertFalse(metadata.isBeta, "isBeta should be false when all platforms are non-beta")
 
@@ -115,7 +115,7 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
         metadata = createRenderMetadata(platforms: [
             createPlatform(name: "iOS", isBeta: false),
             createPlatform(name: "macOS", isBeta: true),
-            createPlatform(name: "tvOS", isBeta: false)
+            createPlatform(name: "tvOS", isBeta: false),
         ])
         XCTAssertFalse(metadata.isBeta, "isBeta should be false when some platforms are beta and some are non-beta")
 
@@ -127,7 +127,7 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
         metadata = createRenderMetadata(platforms: [
             createPlatform(name: "iOS", isBeta: true),
             createPlatform(name: "macOS", isBeta: true),
-            createPlatform(name: "tvOS", isBeta: true)
+            createPlatform(name: "tvOS", isBeta: true),
         ])
         XCTAssertTrue(metadata.isBeta, "isBeta should be true when all platforms are beta")
     }

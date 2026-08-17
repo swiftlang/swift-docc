@@ -26,7 +26,7 @@ struct DirectiveIndex {
     ]
 
     static let topLevelTutorialDirectives: [any AutomaticDirectiveConvertible.Type] = [
-        Tutorial.self,
+        Tutorial.self
     ]
 
     /// Children of tutorial directives that have not yet been converted to be automatically

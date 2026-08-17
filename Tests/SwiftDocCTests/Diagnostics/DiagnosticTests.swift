@@ -226,7 +226,7 @@ fileprivate let diagnostics: [String: Diagnostic] = [
             ```swift
             func bar() {}
             ```
-            """),
+            """)
 ]
 
 private enum Diagnostics {

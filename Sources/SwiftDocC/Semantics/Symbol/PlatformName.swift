@@ -91,7 +91,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         .tvOS, .tvOSAppExtension,
         .visionOS,
         .watchOS, .watchOSAppExtension,
-        .swift
+        .swift,
     ]
 
     /// A common platform names fast lookup index.

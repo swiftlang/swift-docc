@@ -592,7 +592,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                               - first: Some description of the parameter that is available on all three platforms.
                               - second: Some description of the parameter that is only available on platform 2.
                             - Returns: Some description of the return value that is only available on platform 3.
-                            """)
+                            """),
                 ])
 
         let (bundle, context) = try await loadBundle(catalog: catalog)
@@ -999,7 +999,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         content: [
                             // The generated symbol graph uses a fake source file where the documentation comment starts at line 7, column 6
                             TextFile(name: "SomeFile.swift", utf8Content: String(repeating: "\n", count: 7) + docComment.splitByNewlines.map { "  /// \($0)" }.joined(separator: "\n"))
-                        ]),
+                        ])
                 ]),
 
             Folder(
@@ -1014,7 +1014,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                             parameters: parameters,
                             returnValue: returnValue
                         ))
-                ])
+                ]),
         ])
 
         let logStorage = LogHandle.LogStorage()

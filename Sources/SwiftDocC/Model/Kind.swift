@@ -202,7 +202,7 @@ extension DocumentationNode.Kind {
         // Extended Symbols
         .extendedModule, .extendedStructure, .extendedClass, .extendedEnumeration, .extendedProtocol, .unknownExtendedType,
         // Other
-        .keyword, .restAPI, .tag, .propertyList, .object
+        .keyword, .restAPI, .tag, .propertyList, .object,
     ]
 
     /// Returns whether this symbol kind is a synthetic "Extended Symbol" symbol kind.

@@ -62,10 +62,10 @@ class SymbolDisambiguationTests: XCTestCase {
     func testSameSymbolWithDifferentKindsInDifferentLanguages() async throws {
         let references = try await disambiguatedReferencesForSymbols(
             swift: [
-                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .enum),
+                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .enum)
             ],
             objectiveC: [
-                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .protocol),
+                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .protocol)
             ]
         )
 
@@ -80,10 +80,10 @@ class SymbolDisambiguationTests: XCTestCase {
     func testDifferentSymbolsWithDifferentKindsInDifferentLanguages() async throws {
         let references = try await disambiguatedReferencesForSymbols(
             swift: [
-                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .struct),
+                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .struct)
             ],
             objectiveC: [
-                TestSymbolData(preciseID: "second", pathComponents: ["Something", "First"], kind: .protocol),
+                TestSymbolData(preciseID: "second", pathComponents: ["Something", "First"], kind: .protocol)
             ]
         )
 
@@ -103,10 +103,10 @@ class SymbolDisambiguationTests: XCTestCase {
     func testSameSymbolWithDifferentNamesInDifferentLanguages() async throws {
         let references = try await disambiguatedReferencesForSymbols(
             swift: [
-                TestSymbolData(preciseID: "first", pathComponents: ["Something", "first(one:two:)"], kind: .method),
+                TestSymbolData(preciseID: "first", pathComponents: ["Something", "first(one:two:)"], kind: .method)
             ],
             objectiveC: [
-                TestSymbolData(preciseID: "first", pathComponents: ["Something", "firstWithOne:two:"], kind: .method),
+                TestSymbolData(preciseID: "first", pathComponents: ["Something", "firstWithOne:two:"], kind: .method)
             ]
         )
 
@@ -125,7 +125,7 @@ class SymbolDisambiguationTests: XCTestCase {
                 TestSymbolData(preciseID: "type-method", pathComponents: ["Something", "first(one:two:)"], kind: .typeMethod),
             ],
             objectiveC: [
-                TestSymbolData(preciseID: "type-method", pathComponents: ["Something", "firstWithOne:two:"], kind: .typeMethod),
+                TestSymbolData(preciseID: "type-method", pathComponents: ["Something", "firstWithOne:two:"], kind: .typeMethod)
             ]
         )
 
@@ -144,7 +144,7 @@ class SymbolDisambiguationTests: XCTestCase {
     func testStructAndEnumAndTypeAliasCollisionOfSameSymbol() async throws {
         let references = try await disambiguatedReferencesForSymbols(
             swift: [
-                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .struct),
+                TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .struct)
             ],
             objectiveC: [
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .enum),

@@ -78,7 +78,7 @@ extension DocCHTMLTestSuites {
                             li(contents: [.text("Third")]),
                             li(contents: [.text("Fourth")]),
                         ])
-                    ])
+                    ]),
                 ])
             ])
 
@@ -257,7 +257,7 @@ extension DocCHTMLTestSuites {
                     a(
                         attributes: [.href("#something")],
                         contents: [
-                            .text("Some plain text"),
+                            .text("Some plain text")
                         ])
                 ])
 
@@ -274,7 +274,7 @@ extension DocCHTMLTestSuites {
                     a(
                         attributes: [.href("#something"), .class("some-class")],
                         contents: [
-                            .text("Some plain text"),
+                            .text("Some plain text")
                         ])
                 ])
 
@@ -335,7 +335,7 @@ extension DocCHTMLTestSuites {
                                 .td, attributes: [.colSpan(2), .id("some-id")],
                                 contents: [
                                     .text("Two attributes")
-                                ])
+                                ]),
                         ])
                 ])
 
@@ -407,7 +407,7 @@ extension DocCHTMLTestSuites {
                         .text("The range in which to create a random value. "),
                         code(contents: [.text("range")]),
                         .text(" must not be empty."),
-                    ]),
+                    ])
                 ]),
 
                 dt(contents: [.text("range")]),
@@ -456,8 +456,8 @@ extension DocCHTMLTestSuites {
                     ol(contents: [
                         li(contents: [.text("Third")]),
                         li(contents: [.text("Fourth")]),
-                    ]),
-                ])
+                    ])
+                ]),
             ])
 
             #expect(htmlString(for: listOfLists) == #"<ul><li>First</li><li>Second</li><li><ol><li>Third</li><li>Fourth</li></ol></li></ul>"#)

@@ -163,7 +163,7 @@ class TutorialArticleTests: XCTestCase {
                 name: "Something.docc",
                 content: [
                     InfoPlist(identifier: "org.swift.docc.example"),
-                    DataFile(name: "myimage.png", data: Data())
+                    DataFile(name: "myimage.png", data: Data()),
                 ]))
 
         if let directive {
@@ -282,7 +282,7 @@ class TutorialArticleTests: XCTestCase {
                     DataFile(name: "customize-text-view.png", data: Data()),
                     DataFile(name: "this-is-leading.png", data: Data()),
                     DataFile(name: "this-is-trailing.png", data: Data()),
-                    DataFile(name: "this-is-still-trailing.png", data: Data())
+                    DataFile(name: "this-is-still-trailing.png", data: Data()),
                 ]))
 
         if let directive {
@@ -384,7 +384,7 @@ class TutorialArticleTests: XCTestCase {
                 name: "Something.docc",
                 content: [
                     InfoPlist(identifier: "org.swift.docc.example"),
-                    DataFile(name: "myimage.png", data: Data())
+                    DataFile(name: "myimage.png", data: Data()),
                 ]))
 
         if let directive {

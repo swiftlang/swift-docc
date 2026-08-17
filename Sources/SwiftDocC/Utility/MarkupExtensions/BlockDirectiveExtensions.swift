@@ -67,7 +67,7 @@ extension BlockDirective {
         TutorialSection.directiveName,
         VideoMedia.directiveName,
         Volume.directiveName,
-        XcodeRequirement.directiveName
+        XcodeRequirement.directiveName,
     ]
 
     /// Directives which are removed from the markdown content after being parsed.

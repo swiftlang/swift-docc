@@ -32,7 +32,7 @@ class RenderNodeDataExtractorTests: XCTestCase {
                         "title": "Advanced Augmented Reality App",
                         "projectFiles": "project.zip",
                         "estimatedTimeInMinutes": 50
-                    },
+                    }
                 ],
                 "references": {
                     "project.zip": {

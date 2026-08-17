@@ -239,7 +239,7 @@ struct TestFileSystemTests {
 
         #expect(
             fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent) == [
-                "myfile2.txt",
+                "myfile2.txt"
             ])
     }
 

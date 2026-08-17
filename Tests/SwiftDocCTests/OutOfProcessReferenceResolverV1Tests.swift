@@ -241,7 +241,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 TopicImage(
                     type: .card,
                     identifier: RenderReferenceIdentifier("external-card")
-                ),
+                )
             ],
             references: [
                 ImageReference(
@@ -259,7 +259,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                             ],
                             context: .display
                         )
-                ),
+                )
             ],
             variants: [
                 .init(
@@ -600,7 +600,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
                 language: .swift,  // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
                 availableLanguages: [
                     .swift,
-                    .init(name: "Variant Language Name", id: "com.test.other-language.id")
+                    .init(name: "Variant Language Name", id: "com.test.other-language.id"),
                 ],
                 platforms: [.init(name: "Platform Name", introduced: "1.0.0", isBeta: false)],
                 declarationFragments: .init(declarationFragments: [

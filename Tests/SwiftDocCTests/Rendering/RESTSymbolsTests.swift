@@ -350,7 +350,7 @@ class RESTSymbolsTests: XCTestCase {
                         content: makeSymbolGraph(
                             moduleName: "ModuleName",
                             symbols: symbols
-                        )),
+                        ))
                 ] + extraFiles
             )
             let (_, context) = try await loadBundle(catalog: catalog)

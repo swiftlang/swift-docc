@@ -47,7 +47,7 @@ class CoverageDetailedOutputTests: XCTestCase {
                 isCurated: false,
                 hasCodeListing: false,
                 availability: nil,
-                kindSpecificData: .class(memberStats: [:])),
+                kindSpecificData: .class(memberStats: [:]))
         ]
 
         let result = CoverageDataEntry.generateSummary(

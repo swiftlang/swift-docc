@@ -43,7 +43,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
                 symbolGraph: makeSymbolGraph(
                     moduleName: "Something",
                     symbols: [
-                        makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: markdown),
+                        makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: markdown)
                     ]))
         }
     }

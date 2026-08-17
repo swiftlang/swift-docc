@@ -265,7 +265,7 @@ package struct HTMLRenderer {
         let hgroup = XMLNode.element(
             named: "hgroup",
             children: [
-                .element(named: "p", children: [.text(symbol.roleHeading)]),
+                .element(named: "p", children: [.text(symbol.roleHeading)])
             ])
         switch symbol.titleVariants.values(goal: goal) {
         case .single(let title):

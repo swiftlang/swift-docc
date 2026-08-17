@@ -53,7 +53,7 @@ package extension HTMLRenderer {
                         "rel": "stylesheet",
                         "href": "\(pathPrefixToArchiveRoot)reference.css",
                     ]),
-                .element(named: "title", children: [.text(metadata.title)])
+                .element(named: "title", children: [.text(metadata.title)]),
             ])
         if let description = metadata.description {
             head.addChild(
@@ -84,7 +84,7 @@ package extension HTMLRenderer {
                     // FIXME: Support switching between language representations of the page (rdar://177705327)
                     // The rough idea is to use <select> & <option> elements (when there are multiple languages)
                     // and to add some very minimal JavaScript to modify the display of the "swift-only" and "occ-only" CSS classes based on that selection.
-                    .element(named: "span", children: [.text("Language: Swift")])
+                    .element(named: "span", children: [.text("Language: Swift")]),
                 ]))
 
         // 3. The unique documentation content for this page

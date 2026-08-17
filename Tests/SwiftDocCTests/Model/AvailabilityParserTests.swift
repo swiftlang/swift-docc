@@ -54,7 +54,7 @@ class AvailabilityParserTests: XCTestCase {
                     "domain": "watchOS",
                     "message": "deprecated",
                     "isUnconditionallyDeprecated" : true
-                },
+                }
             ]
             """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
@@ -84,7 +84,7 @@ class AvailabilityParserTests: XCTestCase {
                     "domain": "watchOS",
                     "message": "deprecated",
                     "isUnconditionallyDeprecated" : true
-                },
+                }
             ]
             """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
@@ -122,7 +122,7 @@ class AvailabilityParserTests: XCTestCase {
                 {
                     "domain": "watchOS",
                     "deprecated": { "major": 10, "minor": 17 }
-                },
+                }
             ]
             """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
@@ -144,7 +144,7 @@ class AvailabilityParserTests: XCTestCase {
                     "domain": "watchOS",
                     "message" : "deprecated",
                     "deprecated": { "major": 10, "minor": 17 }
-                },
+                }
             ]
             """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
@@ -192,7 +192,7 @@ class AvailabilityParserTests: XCTestCase {
                     "domain": "watchOS",
                     "message" : "deprecated",
                     "deprecated": { "major": 10, "minor": 17 }
-                },
+                }
             ]
             """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
@@ -213,7 +213,7 @@ class AvailabilityParserTests: XCTestCase {
                 {
                     "domain": "macOS",
                     "deprecated": { "major": 10, "minor": 17 }
-                },
+                }
             ]
             """
         let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)

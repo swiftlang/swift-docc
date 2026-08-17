@@ -69,7 +69,7 @@ class ReferenceURLTests: XCTestCase {
         var asset = DataAsset()
         asset.variants = [
             DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightImageURL,
-            DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkImageURL
+            DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkImageURL,
         ]
         let reference = ImageReference(identifier: RenderReferenceIdentifier("image"), imageAsset: asset)
 
@@ -87,7 +87,7 @@ class ReferenceURLTests: XCTestCase {
                 urls,
                 [
                     lightImageURL.path,
-                    darkImageURL.path
+                    darkImageURL.path,
                 ])
         }
     }
@@ -99,7 +99,7 @@ class ReferenceURLTests: XCTestCase {
         var asset = DataAsset()
         asset.variants = [
             DataTraitCollection(userInterfaceStyle: .light): lightImageURL,
-            DataTraitCollection(userInterfaceStyle: .dark): darkImageURL
+            DataTraitCollection(userInterfaceStyle: .dark): darkImageURL,
         ]
         let reference = VideoReference(identifier: RenderReferenceIdentifier("video"), videoAsset: asset, poster: nil)
 
@@ -117,7 +117,7 @@ class ReferenceURLTests: XCTestCase {
                 urls,
                 [
                     lightImageURL.path,
-                    darkImageURL.path
+                    darkImageURL.path,
                 ])
         }
     }

@@ -71,7 +71,7 @@ struct DeprecationSummaryTests {
                                     Some in-source documentation with a deprecation summary for this type alias
                                     """,
                                 availability: [
-                                    Self.makeInSourceAvailabilityInfo(domain: "FirstPlatform", deprecated: .init(major: 4, minor: 5, patch: 6)),
+                                    Self.makeInSourceAvailabilityInfo(domain: "FirstPlatform", deprecated: .init(major: 4, minor: 5, patch: 6))
                                 ])
                         ])),
 
@@ -81,7 +81,7 @@ struct DeprecationSummaryTests {
                         # ``SomeTypeAlias``
                         \(markupBeforeDirective)
                         \(Self.deprecationSummaryDirective)
-                        """)
+                        """),
             ])
 
         let context = try await load(catalog: catalog)
@@ -130,7 +130,7 @@ struct DeprecationSummaryTests {
                         Some additional documentation for this type alias.
                            
                         \(directiveLocation == .extensionFile ? Self.deprecationSummaryDirective : "")
-                        """)
+                        """),
             ])
 
         let context = try await load(catalog: catalog)
@@ -173,7 +173,7 @@ struct DeprecationSummaryTests {
                         Some additional documentation for this type alias.
                            
                         \(directiveLocation == .extensionFile ? Self.deprecationSummaryDirective : "")
-                        """)
+                        """),
             ])
 
         let context = try await load(catalog: catalog)
@@ -279,7 +279,7 @@ struct DeprecationSummaryTests {
         arguments: DirectiveLocation.allCases,
         [
             [],  // No in-source availability attributes
-            [Self.makeInSourceAvailabilityInfo(domain: "SecondPlatform", deprecated: nil)]
+            [Self.makeInSourceAvailabilityInfo(domain: "SecondPlatform", deprecated: nil)],
         ])
     func doesNotWarnAboutDeprecationSummaryIfVersionInfoIsProvidedInAvailabilityDirective(
         _ directiveLocation: DirectiveLocation,
@@ -317,7 +317,7 @@ struct DeprecationSummaryTests {
                         Some additional documentation for this type alias.
                            
                         \(directiveLocation == .extensionFile ? directives : "")
-                        """)
+                        """),
             ])
 
         let context = try await load(catalog: catalog)
@@ -434,11 +434,11 @@ struct DeprecationSummaryTests {
                                         isUnconditionallyDeprecated: true,
                                         isUnconditionallyUnavailable: false,
                                         willEventuallyBeDeprecated: false
-                                    ),
-                                ])
+                                    )
+                                ]),
                         ],
                         relationships: [
-                            .init(source: "deprecated-symbol-id", target: "parent-symbol-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "deprecated-symbol-id", target: "parent-symbol-id", kind: .memberOf, targetFallback: nil)
                         ]))
             ])
 
@@ -480,11 +480,11 @@ struct DeprecationSummaryTests {
                                         isUnconditionallyDeprecated: true,
                                         isUnconditionallyUnavailable: false,
                                         willEventuallyBeDeprecated: false
-                                    ),
-                                ])
+                                    )
+                                ]),
                         ],
                         relationships: [
-                            .init(source: "deprecated-symbol-id", target: "parent-symbol-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "deprecated-symbol-id", target: "parent-symbol-id", kind: .memberOf, targetFallback: nil)
                         ]))
             ])
 

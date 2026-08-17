@@ -83,7 +83,7 @@ public struct ConformanceSection: Codable, Equatable {
             return [
                 RenderInlineContent.codeVoice(code: ConformanceSection.displayNameForConformingType(constraint.leftTypeName)),
                 RenderInlineContent.text(constraint.kind.spelling.spaceDelimited),
-                RenderInlineContent.codeVoice(code: constraint.rightTypeName)
+                RenderInlineContent.codeVoice(code: constraint.rightTypeName),
             ]
         }
 
@@ -165,7 +165,7 @@ public struct ConformanceSection: Codable, Equatable {
 
         return [
             RenderInlineContent.codeVoice(code: ConformanceSection.displayNameForConformingType(constraints[0].leftTypeName)),
-            RenderInlineContent.text(constraints[0].kind.spelling.spaceDelimited)
+            RenderInlineContent.text(constraints[0].kind.spelling.spaceDelimited),
         ] + constraintCompoundName
     }
 }

@@ -82,7 +82,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
                 "tvOS 12.0", "tvOS App Extension 12.0",
                 "visionOS 12.0",
                 "watchOS 6.0", "watchOS App Extension 6.0",
-                "Swift 4.2"
+                "Swift 4.2",
             ])
 
         // Test roundtrip to verify availability items are correctly
@@ -102,7 +102,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
                 "tvOS 12.0", "tvOS App Extension 12.0",
                 "visionOS 12.0",
                 "watchOS 6.0", "watchOS App Extension 6.0",
-                "Swift 4.2"
+                "Swift 4.2",
             ])
     }
 }

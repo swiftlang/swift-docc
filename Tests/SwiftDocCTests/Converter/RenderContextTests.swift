@@ -20,7 +20,7 @@ class RenderContextTests: XCTestCase {
                 symbolGraph: makeSymbolGraph(
                     moduleName: "MyKit",
                     symbols: [
-                        makeSymbol(id: "s:6MyKit5MyClassC", kind: .class, pathComponents: ["MyClass"]),
+                        makeSymbol(id: "s:6MyKit5MyClassC", kind: .class, pathComponents: ["MyClass"])
                     ]))
             DataFile(name: "image.png", data: Data())
         }

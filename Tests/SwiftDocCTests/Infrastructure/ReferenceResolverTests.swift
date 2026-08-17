@@ -492,7 +492,7 @@ class ReferenceResolverTests: XCTestCase {
             [
                 .text("This is a test module with an extension to "),
                 .codeVoice(code: "Swift/Array"),
-                .text(".")
+                .text("."),
             ])
     }
 

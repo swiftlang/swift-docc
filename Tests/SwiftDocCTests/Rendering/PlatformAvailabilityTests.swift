@@ -190,7 +190,7 @@ class PlatformAvailabilityTests: XCTestCase {
     /// Ensure that adding `@Available` directives for platform versions marked as beta in an article causes the final RenderNode to contain the appropriate availability data.
     func testBetaPlatformAvailabilityFromArticle() async throws {
         let platformMetadata = [
-            "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
+            "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true)
         ]
         let (_, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
@@ -255,7 +255,7 @@ class PlatformAvailabilityTests: XCTestCase {
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
     func testBetaPlatformAvailabilityFromExtension() async throws {
         let platformMetadata = [
-            "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
+            "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true)
         ]
         let (_, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(

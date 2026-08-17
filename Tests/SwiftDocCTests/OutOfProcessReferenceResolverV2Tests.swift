@@ -82,7 +82,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 .text(" "),
                 .strong(inlineContent: [.text("formatted")]),
                 .text(" and a link: "),
-                .reference(identifier: linkedReference, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+                .reference(identifier: linkedReference, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
             ],
             availableLanguages: [
                 .swift,
@@ -134,7 +134,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                         .text(" "),
                         .strong(inlineContent: [.text("formatted")]),
                         .text(" and a link: "),
-                        .reference(identifier: linkedVariantReference, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+                        .reference(identifier: linkedVariantReference, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
                     ],
                     subheadingDeclarationFragments: .init([
                         .init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)
@@ -214,7 +214,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                     .text(" "),
                     .strong(inlineContent: [.text("formatted")]),
                     .text(" and a link: "),
-                    .reference(identifier: .init("doc://com.test.bundle/something-else"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+                    .reference(identifier: .init("doc://com.test.bundle/something-else"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
                 ])
 
             XCTAssertFalse(topicRenderReference.isBeta)
@@ -246,7 +246,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                     .text(" "),
                     .strong(inlineContent: [.text("formatted")]),
                     .text(" and a link: "),
-                    .reference(identifier: .init("doc://com.test.bundle/something-else-2"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+                    .reference(identifier: .init("doc://com.test.bundle/something-else-2"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
                 ])
 
             let fragmentVariant = try XCTUnwrap(topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
@@ -340,7 +340,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             identifier: linkRef,
             title: "Resolved title of link inside abstract",
             abstract: [
-                .text("This transient content is not displayed anywhere"),
+                .text("This transient content is not displayed anywhere")
             ],
             url: "/path/to/other-page",
             kind: .article

@@ -380,7 +380,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             linksGroup.identifiers,
             [
-                "doc://org.swift.docc.example/documentation/Test-Bundle/article",
+                "doc://org.swift.docc.example/documentation/Test-Bundle/article"
             ])
 
         let lastGroup = try XCTUnwrap(node.topicSections.last)
@@ -388,7 +388,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             lastGroup.identifiers,
             [
-                "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
+                "doc://org.swift.docc.example/documentation/Test-Bundle/article2"
             ])
     }
 
@@ -442,10 +442,10 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .top
-                ),
+                )
             ]
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
 
@@ -478,7 +478,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .top
                 ),
@@ -489,7 +489,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .bottom
                 ),
@@ -500,7 +500,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .bottom
                 ),
@@ -554,7 +554,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(
                 renderNode.topicSections.map(\.title),
                 [
-                    "Basics",
+                    "Basics"
                 ])
         }
 
@@ -569,10 +569,10 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .top
-                ),
+                )
             ]
             let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
 
@@ -599,7 +599,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .top
                 ),
@@ -610,7 +610,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .bottom
                 ),
@@ -621,7 +621,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        ),
+                        )
                     ],
                     renderPositionPreference: .bottom
                 ),
@@ -663,12 +663,12 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(
                 renderNode.topicSections.map(\.title),
                 [
-                    "Default Implementations",
+                    "Default Implementations"
                 ])
             XCTAssertEqual(
                 renderNode.topicSections.map(\.identifiers),
                 [
-                    ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations"],
+                    ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations"]
                 ])
 
         }
@@ -686,12 +686,12 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(
                 renderNode.topicSections.map(\.title),
                 [
-                    "Instance Methods",
+                    "Instance Methods"
                 ])
             XCTAssertEqual(
                 renderNode.topicSections.map(\.identifiers),
                 [
-                    ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()"],
+                    ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()"]
                 ])
 
         }
@@ -748,21 +748,21 @@ class RenderNodeTranslatorTests: XCTestCase {
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/FancyProtocolConformer", catalog: catalog),
             [
-                "FancyProtocol Implementations",
+                "FancyProtocol Implementations"
             ]
         )
 
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/OtherFancyProtocolConformer", catalog: catalog),
             [
-                "OtherFancyProtocol Implementations",
+                "OtherFancyProtocol Implementations"
             ]
         )
 
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/FooConformer", catalog: catalog),
             [
-                "Foo Implementations",
+                "Foo Implementations"
             ]
         )
     }
@@ -788,7 +788,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
-                "Foo Implementations",
+                "Foo Implementations"
             ]
         )
 
@@ -825,7 +825,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     """,
                 with: """
                     "architecture": "arm64",
-                    """,
+                    """
             )
             .replacingOccurrences(
                 of: """
@@ -833,7 +833,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     """,
                 with: """
                     "name": "ios",
-                    """,
+                    """
             )
 
         let catalog = Folder(name: "unit-test.docc") {
@@ -850,7 +850,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
-                "Foo Implementations",
+                "Foo Implementations"
             ]
         )
 
@@ -1246,7 +1246,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     metadata: [
                         URL(string: "/images/figure1.png")!: DataAsset.Metadata(),
                         URL(string: "/images/figure1~dark.png")!: DataAsset.Metadata(),
-                    ],
+                    ]
                 )
             )
         )
@@ -1262,7 +1262,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     ],
                     metadata: [
                         URL(string: "/images/plus.svg")!: DataAsset.Metadata(svgID: "plus-id")
-                    ],
+                    ]
                 )
             )
         )
@@ -1271,8 +1271,8 @@ class RenderNodeTranslatorTests: XCTestCase {
             Set(roundTrippedArticle.metadata.images),
             [
                 TopicImage(type: .icon, identifier: RenderReferenceIdentifier("plus.svg")),
-                TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png"))
-            ],
+                TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png")),
+            ]
         )
 
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.count, 1)
@@ -1595,17 +1595,17 @@ class RenderNodeTranslatorTests: XCTestCase {
                                 makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["OtherSymbol"]),
                                 makeSymbol(id: "multiple-swift-variants-symbol-id", kind: .class, pathComponents: ["MultipleSwiftVariantsSymbol"]),
                             ]
-                        ),
+                        )
                     ),
                     JSONFile(
                         name: "unit-test.occ.symbols.json",
                         content: makeSymbolGraph(
                             moduleName: "unit-test",
                             symbols: [
-                                makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                                makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"])
                             ]
-                        ),
-                    )
+                        )
+                    ),
                 ]
             ))
 
@@ -1625,7 +1625,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             renderNode.variants,
             [
                 .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/symbol"]),
-                .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unit-test/counterpartsymbol"])
+                .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unit-test/counterpartsymbol"]),
             ])
 
         // Assert that alternate representations which can't be resolved are ignored
@@ -1634,7 +1634,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             renderNode.variants,
             [
-                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/othersymbol"]),
+                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/othersymbol"])
             ])
 
         // Assert that duplicate alternate representations are not added as variants
@@ -1643,7 +1643,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             renderNode.variants,
             [
-                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/multipleswiftvariantssymbol"]),
+                .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/multipleswiftvariantssymbol"])
             ])
     }
 
@@ -1682,7 +1682,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             article.variants,
             [
                 .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unittest"]),
-                .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unittest"])
+                .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unittest"]),
             ])
     }
 
@@ -1722,8 +1722,8 @@ struct RenderNodeTranslatorTests_new {
                         relationships: [
                             .init(source: "s:x", target: "s:Foo", kind: .memberOf, targetFallback: nil),
                             .init(source: "s:y", target: "s:Foo", kind: .memberOf, targetFallback: nil),
-                        ],
-                    )),
+                        ]
+                    ))
             ])
 
         let context = try await load(catalog: catalog)

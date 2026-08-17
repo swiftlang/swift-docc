@@ -45,7 +45,7 @@ struct RenderBlockContent_AsideTests {
         "Tip", "tip",
         "Experiment", "experiment",
         "Important", "important",
-        "Warning", "warning"
+        "Warning", "warning",
     ])
     func creatingSupportedAside(name: String) throws {
 

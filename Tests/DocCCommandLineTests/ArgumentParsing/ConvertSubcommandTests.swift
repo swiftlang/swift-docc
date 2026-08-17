@@ -63,7 +63,7 @@ class ConvertSubcommandTests: XCTestCase {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             XCTAssertNoThrow(
                 try Docc.Convert.parse([
-                    sourceURL.path,
+                    sourceURL.path
                 ]))
         }
 
@@ -78,7 +78,7 @@ class ConvertSubcommandTests: XCTestCase {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             XCTAssertThrowsError(
                 try Docc.Convert.parse([
-                    URL(fileURLWithPath: "123").path,
+                    URL(fileURLWithPath: "123").path
                 ]))
         }
 
@@ -93,7 +93,7 @@ class ConvertSubcommandTests: XCTestCase {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             XCTAssertThrowsError(
                 try Docc.Convert.parse([
-                    sourceAsSingleFileURL.path,
+                    sourceAsSingleFileURL.path
                 ]))
         }
 
@@ -102,7 +102,7 @@ class ConvertSubcommandTests: XCTestCase {
             UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
             XCTAssertNoThrow(
                 try Docc.Convert.parse([
-                    sourceURL.path,
+                    sourceURL.path
                 ]))
         }
 
@@ -132,7 +132,7 @@ class ConvertSubcommandTests: XCTestCase {
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
 
             let convert = try Docc.Convert.parse([
-                testBundleURL.path,
+                testBundleURL.path
             ])
             XCTAssertEqual(
                 convert.templateOption.templateURL?.standardizedFileURL,
@@ -150,7 +150,7 @@ class ConvertSubcommandTests: XCTestCase {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, URL(fileURLWithPath: "123").path)
             XCTAssertThrowsError(
                 try Docc.Convert.parse([
-                    sourceURL.path,
+                    sourceURL.path
                 ]))
         }
 
@@ -158,7 +158,7 @@ class ConvertSubcommandTests: XCTestCase {
         do {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             let parseResult = try Docc.Convert.parse([
-                sourceURL.path,
+                sourceURL.path
             ])
 
             XCTAssertEqual(parseResult.outputURL, sourceURL.appendingPathComponent(".docc-build"))
@@ -197,7 +197,7 @@ class ConvertSubcommandTests: XCTestCase {
 
     func testAnalyzerIsTurnedOffByDefault() throws {
         let convertOptions = try Docc.Convert.parse([
-            testBundleURL.path,
+            testBundleURL.path
         ])
 
         XCTAssertFalse(convertOptions.diagnosticOptions.analyze)
@@ -207,7 +207,7 @@ class ConvertSubcommandTests: XCTestCase {
         // Default to nil when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testBundleURL.path
             ])
 
             XCTAssertNil(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName)
@@ -248,7 +248,7 @@ class ConvertSubcommandTests: XCTestCase {
         // Default to [] when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testBundleURL.path
             ])
 
             XCTAssertEqual(convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory, nil)
@@ -416,7 +416,7 @@ class ConvertSubcommandTests: XCTestCase {
         let argumentsToParse = [
             testBundleURL.path,
             "--dependency",
-            dependencyDir.path
+            dependencyDir.path,
         ]
 
         // The dependency doesn't exist

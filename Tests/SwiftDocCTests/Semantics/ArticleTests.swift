@@ -194,7 +194,7 @@ class ArticleTests: XCTestCase {
         XCTAssertEqual(
             diagnostics.map(\.identifier),
             [
-                "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren",
+                "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren"
             ])
 
         XCTAssertEqual(diagnostics.count, 1)

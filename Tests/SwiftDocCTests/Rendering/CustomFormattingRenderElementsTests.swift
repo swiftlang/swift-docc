@@ -52,14 +52,14 @@ class CustomFormattingRenderElementsTests: XCTestCase {
             [
                 RenderBlockContent.TermListItem(
                     term: .init(inlineContent: [
-                        .text("This is a term"),
+                        .text("This is a term")
                     ]),
                     definition: .init(content: [
                         .paragraph(
                             .init(inlineContent: [
-                                .text("This is a definition"),
-                            ])),
-                    ])),
+                                .text("This is a definition")
+                            ]))
+                    ]))
             ])
     }
 }

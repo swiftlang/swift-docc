@@ -154,8 +154,8 @@ struct DocumentationContentRendererTests {
                         relationships: [
                             .init(source: "s:Bar", target: "s:Outer", kind: .memberOf, targetFallback: nil),
                             .init(source: "s:member", target: "s:Bar", kind: .memberOf, targetFallback: nil),
-                        ],
-                    )),
+                        ]
+                    ))
             ])
 
         let context = try await load(catalog: catalog)
@@ -194,7 +194,7 @@ struct DocumentationContentRendererTests {
             sourceLanguage: .swift,
             availableSourceLanguages: [
                 .swift,
-                DocumentationDataVariantsTrait.otherLanguage.sourceLanguage!
+                DocumentationDataVariantsTrait.otherLanguage.sourceLanguage!,
             ],
             name: .symbol(name: ""),
             markup: Document(parsing: ""),

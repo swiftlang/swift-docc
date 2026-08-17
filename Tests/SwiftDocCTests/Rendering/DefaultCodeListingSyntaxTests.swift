@@ -55,7 +55,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
                         ```\(fenceLanguage ?? "")
                         Some code goes 
                         ```
-                        """)
+                        """),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)

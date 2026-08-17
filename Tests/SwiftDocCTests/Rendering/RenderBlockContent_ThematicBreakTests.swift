@@ -47,7 +47,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         let expectedContent: [RenderBlockContent] = [
             .thematicBreak,
             .thematicBreak,
-            .thematicBreak
+            .thematicBreak,
         ]
 
         XCTAssertEqual(expectedContent, renderContent)
@@ -74,7 +74,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         let expectedContent: [RenderBlockContent] = [
             .thematicBreak,
             .thematicBreak,
-            .thematicBreak
+            .thematicBreak,
         ]
 
         XCTAssertEqual(expectedContent, renderContent)
@@ -102,7 +102,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
 
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item)) }) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
-            .thematicBreak, .thematicBreak, .thematicBreak, .thematicBreak, .thematicBreak, .thematicBreak
+            .thematicBreak, .thematicBreak, .thematicBreak, .thematicBreak, .thematicBreak, .thematicBreak,
         ]
 
         XCTAssertEqual(expectedContent, renderContent)

@@ -38,8 +38,8 @@ class AutomaticCurationTests: XCTestCase {
                                     makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
                                 ],
                                 relationships: [
-                                    .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
-                                ],
+                                    .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                                ]
                             ))
                     ])
 
@@ -401,7 +401,7 @@ class AutomaticCurationTests: XCTestCase {
             XCTAssertEqual(
                 renderNode.seeAlsoSections.first?.identifiers,
                 [
-                    "doc://org.swift.docc.example/documentation/SideKit/SideClassSeven",
+                    "doc://org.swift.docc.example/documentation/SideKit/SideClassSeven"
                 ])
         }
 
@@ -741,7 +741,7 @@ class AutomaticCurationTests: XCTestCase {
         XCTAssertEqual(
             renderNode.topicSections[1].identifiers,
             [
-                "doc://org.swift.docc.sample/documentation/SampleBundle/MyUncuratedSample",
+                "doc://org.swift.docc.sample/documentation/SampleBundle/MyUncuratedSample"
             ]
         )
     }
@@ -874,7 +874,7 @@ class AutomaticCurationTests: XCTestCase {
         XCTAssertEqual(
             defaultTopic.identifiers,
             [
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
             ])
     }
 
@@ -1045,7 +1045,7 @@ class AutomaticCurationTests: XCTestCase {
                             makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
                         ],
                         relationships: [
-                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil)
                         ])),
 
                 TextFile(
@@ -1083,7 +1083,7 @@ class AutomaticCurationTests: XCTestCase {
                             makeSymbol(id: "first-member-symbol-id", kind: .func, pathComponents: ["FirstClass", "firstMember"]),
                         ],
                         relationships: [
-                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil)
                         ])),
 
                 TextFile(
@@ -1119,7 +1119,7 @@ class AutomaticCurationTests: XCTestCase {
                             makeSymbol(id: "first-member-symbol-id", kind: .func, pathComponents: ["FirstClass", "firstMember"]),
                         ],
                         relationships: [
-                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil)
                         ])),
 
                 TextFile(
@@ -1282,7 +1282,7 @@ class AutomaticCurationTests: XCTestCase {
                             makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
                         ],
                         relationships: [
-                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil)
                         ])),
 
                 TextFile(
@@ -1339,7 +1339,7 @@ class AutomaticCurationTests: XCTestCase {
                                 makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
                             ],
                             relationships: [
-                                .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
+                                .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
                             ])),
                     TextFile(
                         name: "SomeArticle.md",

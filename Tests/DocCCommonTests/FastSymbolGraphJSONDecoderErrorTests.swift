@@ -92,7 +92,7 @@ struct FastSymbolGraphJSONDecoderErrorTests {
                 {
                   "name": "First",
                   "id": "Not a number" 
-                },
+                }              
               ]
             }
             """#

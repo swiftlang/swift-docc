@@ -55,7 +55,7 @@ extension Collection<Double> {
 
         let (_, minMaxSlope) = fitSimpleLinearRegression([
             (x: 0.0, y: self.min()!),
-            (x: Double(self.count), y: self.max()!)
+            (x: Double(self.count), y: self.max()!),
         ])
 
         if (self.max()! - self.min()!) < self.mean().ulp {

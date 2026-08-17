@@ -390,7 +390,7 @@ class TutorialTests: XCTestCase {
             XCTAssertEqual(
                 diagnostics.map(\.identifier),
                 [
-                    "org.swift.docc.\(Tutorial.self).DuplicateSectionTitle",
+                    "org.swift.docc.\(Tutorial.self).DuplicateSectionTitle"
                 ])
         }
     }

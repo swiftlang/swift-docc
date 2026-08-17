@@ -55,7 +55,7 @@ package extension MarkdownRenderer {
 
             var attributes = [
                 "aria-label": "\(text), \(description)",
-                "title": description
+                "title": description,
             ]
             if $0.isBeta {
                 attributes["class"] = "beta"

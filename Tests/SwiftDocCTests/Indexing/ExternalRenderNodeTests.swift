@@ -46,7 +46,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 declarationFragments: .init(declarationFragments: [
                     .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
                     .init(kind: .text, spelling: " ", preciseIdentifier: nil),
-                    .init(kind: .identifier, spelling: "SwiftSymbol", preciseIdentifier: nil)
+                    .init(kind: .identifier, spelling: "SwiftSymbol", preciseIdentifier: nil),
                 ]),
                 platforms: [.init(name: "iOS", introduced: nil, isBeta: true)]
             )
@@ -62,7 +62,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: "(", preciseIdentifier: nil),
                     .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: nil),
                     .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
-                    .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
+                    .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil),
                 ]),
                 platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
             )
@@ -76,7 +76,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 declarationFragments: .init(declarationFragments: [
                     .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
                     .init(kind: .text, spelling: " ", preciseIdentifier: nil),
-                    .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol", preciseIdentifier: nil)
+                    .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol", preciseIdentifier: nil),
                 ]),
                 navigatorTitle: .init(declarationFragments: [
                     .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol (navigator title)", preciseIdentifier: nil)
@@ -95,7 +95,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: "(", preciseIdentifier: nil),
                     .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: nil),
                     .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
-                    .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
+                    .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil),
                 ]),
                 navigatorTitle: .init(declarationFragments: [
                     .init(kind: .identifier, spelling: "NavigatorTitleObjCSymbol (navigator title)", preciseIdentifier: nil)

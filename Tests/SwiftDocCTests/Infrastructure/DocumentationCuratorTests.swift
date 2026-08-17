@@ -744,7 +744,7 @@ struct DocumentationCuratorTests_new {
                 // The automatic default `["/documentation/ModuleName"]` curation _shouldn't_ be here.
 
                 // The authored curation in the uncurated API collection
-                ["/documentation/ModuleName", "/documentation/unit-test/API-Collection"],
+                ["/documentation/ModuleName", "/documentation/unit-test/API-Collection"]
             ], "Unexpected 'paths' to the symbol page \(assertionMessageDescription)")
 
         // Verify that the symbol page shouldn't auto-curate in its canonical location.
@@ -773,7 +773,7 @@ struct DocumentationCuratorTests_new {
         )
         #expect(
             rootRenderNode.topicSections.map(\.identifiers) == [
-                ["doc://unit-test/documentation/unit-test/API-Collection"],
+                ["doc://unit-test/documentation/unit-test/API-Collection"]
             ], "Unexpected rendered topic sections on the module page \(assertionMessageDescription)")
     }
 
@@ -790,14 +790,14 @@ struct DocumentationCuratorTests_new {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: "swift-only-class", language: .swift, kind: .class, pathComponents: ["SwiftOnlyClass"]),
+                                    makeSymbol(id: "swift-only-class", language: .swift, kind: .class, pathComponents: ["SwiftOnlyClass"])
                                 ])),
                         JSONFile(
                             name: "ModuleName-objc.symbols.json",
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"]),
+                                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"])
                                 ])),
                         TextFile(
                             name: "SwiftOnlyClass.md",
@@ -854,14 +854,14 @@ struct DocumentationCuratorTests_new {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: "swift-only-class", language: .swift, kind: .class, pathComponents: ["SwiftOnlyClass"]),
+                                    makeSymbol(id: "swift-only-class", language: .swift, kind: .class, pathComponents: ["SwiftOnlyClass"])
                                 ])),
                         JSONFile(
                             name: "ModuleName-objc.symbols.json",
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"]),
+                                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"])
                                 ])),
                         TextFile(
                             name: "SwiftOnlyClass.md",
@@ -908,7 +908,7 @@ struct DocumentationCuratorTests_new {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"]),
+                                    makeSymbol(id: "objc-only-class", language: .objectiveC, kind: .class, pathComponents: ["ObjcOnlyClass"])
                                 ])),
                         TextFile(
                             name: "SomeContainer.md",

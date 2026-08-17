@@ -48,7 +48,7 @@ public final class SupportedLanguage: Semantic, AutomaticDirectiveConvertible {
     public var language: SourceLanguage
 
     static var keyPaths: [String: AnyKeyPath] = [
-        "language": \SupportedLanguage._language,
+        "language": \SupportedLanguage._language
     ]
 
     @available(

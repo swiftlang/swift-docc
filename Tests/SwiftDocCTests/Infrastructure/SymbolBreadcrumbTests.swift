@@ -144,12 +144,12 @@ class SymbolBreadcrumbTests: XCTestCase {
             XCTAssertEqual(
                 resolver.breadcrumbs(of: reference, in: .swift)?.map(\.path),
                 [
-                    "/documentation/MixedLanguageFramework",
+                    "/documentation/MixedLanguageFramework"
                 ])
             XCTAssertEqual(
                 resolver.breadcrumbs(of: reference, in: .objectiveC)?.map(\.path),
                 [
-                    "/documentation/MixedLanguageFramework",
+                    "/documentation/MixedLanguageFramework"
                 ])
 
             assertNoVariantsForRenderHierarchy(reference, context, bundle)  // Same breadcrumbs in both languages

@@ -117,7 +117,7 @@ class CallToActionTests: XCTestCase {
 
         let validLinks: [String] = [
             "url: \"https://example.com/sample.zip\"",
-            "file: \"Downloads/plus.svg\""
+            "file: \"Downloads/plus.svg\"",
         ]
 
         var validLabels: [String] = [

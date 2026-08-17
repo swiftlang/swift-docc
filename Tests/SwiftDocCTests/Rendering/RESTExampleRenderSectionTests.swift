@@ -43,7 +43,7 @@ class RESTExampleRenderSectionTests: XCTestCase {
         XCTAssertEqual(
             e.example.content,
             [
-                CodeExample.Code(collapsible: false, code: ["lines of code", "goes here..."]),
+                CodeExample.Code(collapsible: false, code: ["lines of code", "goes here..."])
             ])
     }
 

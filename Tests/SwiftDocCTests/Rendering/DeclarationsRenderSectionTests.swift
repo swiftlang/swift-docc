@@ -75,7 +75,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                             declarations: [.init(tokens: [.init(text: "", kind: token)], identifier: "identifier")],
                             displayIndex: 0
                         )
-                    ),
+                    )
                 ])
             )
         }
@@ -338,7 +338,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 declarationAndHighlights(for: declarations.tokens),
                 [
                     "func overload2(p1: ((Int) -> Int)?, p2: Int)",
-                    "                   ~~   ~~~~~~~~~~          "
+                    "                   ~~   ~~~~~~~~~~          ",
                 ]
             )
 
@@ -585,7 +585,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
 func declarationAndHighlights(for tokens: [DeclarationRenderSection.Token]) -> [String] {
     [
         tokens.map({ $0.text }).joined(),
-        tokens.map({ String(repeating: $0.highlight == .changed ? "~" : " ", count: $0.text.count) }).joined()
+        tokens.map({ String(repeating: $0.highlight == .changed ? "~" : " ", count: $0.text.count) }).joined(),
     ]
 }
 

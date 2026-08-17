@@ -76,9 +76,9 @@ class ConvertActionTests: XCTestCase {
                         Folder(
                             name: "com.test.example",
                             content: [
-                                CopyOfFile(original: imageFile, newName: testImageName),
-                            ]),
-                    ]),
+                                CopyOfFile(original: imageFile, newName: testImageName)
+                            ])
+                    ])
             ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
 
@@ -132,9 +132,9 @@ class ConvertActionTests: XCTestCase {
                         Folder(
                             name: "com.test.example",
                             content: [
-                                CopyOfFile(original: videoFile, newName: testVideoName),
-                            ]),
-                    ]),
+                                CopyOfFile(original: videoFile, newName: testVideoName)
+                            ])
+                    ])
             ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
 
@@ -200,9 +200,9 @@ class ConvertActionTests: XCTestCase {
                         Folder(
                             name: "com.test.example",
                             content: [
-                                CopyOfFile(original: downloadFile),
-                            ]),
-                    ]),
+                                CopyOfFile(original: downloadFile)
+                            ])
+                    ])
             ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
@@ -214,7 +214,7 @@ class ConvertActionTests: XCTestCase {
         let bundle = Folder(
             name: "unit-test.docc",
             content: [
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
             ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -248,7 +248,7 @@ class ConvertActionTests: XCTestCase {
         let bundle = Folder(
             name: "unit-test.docc",
             content: [
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
             ])
 
         let input = Folder(name: "nested", content: [Folder(name: "folders", content: [bundle, Folder.emptyHTMLTemplateDirectory])])
@@ -349,7 +349,7 @@ class ConvertActionTests: XCTestCase {
         let target = Folder(
             name: "target",
             content: [
-                Folder(name: "output", content: []),
+                Folder(name: "output", content: [])
             ])
 
         // We add only the source to the file system
@@ -386,7 +386,7 @@ class ConvertActionTests: XCTestCase {
                 Folder(
                     name: "target",
                     content: [
-                        Folder(name: "output", content: []),
+                        Folder(name: "output", content: [])
                     ])
             ])
 
@@ -447,8 +447,8 @@ class ConvertActionTests: XCTestCase {
                         Folder(
                             name: "com.test.example",
                             content: [
-                                CopyOfFile(original: imageFile, newName: "TEST.png"),
-                            ]),
+                                CopyOfFile(original: imageFile, newName: "TEST.png")
+                            ])
                     ]),
                 Folder(
                     name: "videos",
@@ -456,9 +456,9 @@ class ConvertActionTests: XCTestCase {
                         Folder(
                             name: "com.test.example",
                             content: [
-                                CopyOfFile(original: imageFile, newName: "VIDEO.mov"),
-                            ]),
-                    ])
+                                CopyOfFile(original: imageFile, newName: "VIDEO.mov")
+                            ])
+                    ]),
             ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
@@ -679,8 +679,8 @@ class ConvertActionTests: XCTestCase {
                     Folder(
                         name: "data",
                         content: [
-                            Folder(name: "tutorials", content: []),
-                        ]),
+                            Folder(name: "tutorials", content: [])
+                        ])
                 ])
             expectedOutput.assertExist(at: targetDirectory, fileManager: testDataProvider)
         }
@@ -769,7 +769,7 @@ class ConvertActionTests: XCTestCase {
                 name: "path",
                 content: [
                     Folder(name: "to", content: [])
-                ])
+                ]),
         ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
@@ -857,7 +857,7 @@ class ConvertActionTests: XCTestCase {
                         topicImages: nil,
                         references: nil,
                         redirects: nil
-                    ),
+                    )
                 ]
             case "/documentation/TestBed/A":
                 return [
@@ -874,7 +874,7 @@ class ConvertActionTests: XCTestCase {
                         topicImages: nil,
                         references: nil,
                         redirects: nil
-                    ),
+                    )
                 ]
             case "/documentation/TestBundle/Article":
                 return [
@@ -890,7 +890,7 @@ class ConvertActionTests: XCTestCase {
                         topicImages: nil,
                         references: nil,
                         redirects: nil
-                    ),
+                    )
                 ]
             case "/documentation/TestBundle/SampleArticle":
                 return [
@@ -1200,7 +1200,7 @@ class ConvertActionTests: XCTestCase {
                 name: "path",
                 content: [
                     Folder(name: "to", content: [])
-                ])
+                ]),
         ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
@@ -1299,7 +1299,7 @@ class ConvertActionTests: XCTestCase {
                         topicImages: nil,
                         references: nil,
                         redirects: nil
-                    ),
+                    )
                 ]
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
@@ -1369,7 +1369,7 @@ class ConvertActionTests: XCTestCase {
         let bundle = Folder(
             name: "unit-test.docc",
             content: [
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
             ])
 
         // Check that they're all written when `--emit-digest` is set
@@ -1486,9 +1486,9 @@ class ConvertActionTests: XCTestCase {
                         Folder(
                             name: "unit-test.docc",
                             content: [
-                                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-                            ]),
-                    ]),
+                                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+                            ])
+                    ])
             ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1529,9 +1529,9 @@ class ConvertActionTests: XCTestCase {
                             Folder(
                                 name: "unit-test.docc",
                                 content: [
-                                    InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-                                ]),
-                        ]),
+                                    InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+                                ])
+                        ])
                 ])
             let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
             let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
@@ -1562,7 +1562,7 @@ class ConvertActionTests: XCTestCase {
         // Test whether the non-missing platforms don't copy the availability information from the fallback platform.
         action = try makeConvertAction(currentPlatforms: [
             "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
-            "Mac Catalyst": PlatformVersion(.init(11, 0, 0), beta: false)
+            "Mac Catalyst": PlatformVersion(.init(11, 0, 0), beta: false),
         ])
         XCTAssertEqual(
             action.configuration.externalMetadata.currentPlatforms,
@@ -2228,7 +2228,7 @@ class ConvertActionTests: XCTestCase {
                 name: "path",
                 content: [
                     Folder(name: "to", content: [])
-                ])
+                ]),
         ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
@@ -2359,7 +2359,7 @@ class ConvertActionTests: XCTestCase {
                 JSONFile(
                     name: "metadata.json",
                     content: BuildMetadata(bundleDisplayName: "TestBundle", bundleID: "com.test.example")
-                ),
+                )
             ])
 
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
@@ -2434,7 +2434,7 @@ class ConvertActionTests: XCTestCase {
         let catalogURL = try Folder(
             name: "unit-test.docc",
             content: [
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
             ]
         ).write(inside: temporaryDirectory)
         try emitEmptySymbolGraph(moduleName: "docc", destination: catalogURL)
@@ -2586,7 +2586,7 @@ class ConvertActionTests: XCTestCase {
                 info,
                 header,
                 footer,
-                technologyPage
+                technologyPage,
             ])
 
         let tempURL = try createTemporaryDirectory()
@@ -2782,7 +2782,7 @@ class ConvertActionTests: XCTestCase {
         let symbolGraphFiles = Folder(
             name: "Not-a-doc-bundle",
             content: [
-                CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json"),
+                CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json")
             ])
 
         let outputLocation = Folder(name: "output", content: [])
@@ -2825,7 +2825,7 @@ class ConvertActionTests: XCTestCase {
             name: "Not-a-doc-bundle",
             content: [
                 CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json"),
-                CopyOfFile(original: sideKitSymbolGraph, newName: "SideKit.symbols.json")
+                CopyOfFile(original: sideKitSymbolGraph, newName: "SideKit.symbols.json"),
             ])
 
         let outputLocation = Folder(name: "output", content: [])
@@ -2848,7 +2848,7 @@ class ConvertActionTests: XCTestCase {
                     infoPlistFallbacks: ["CFBundleIdentifier": "com.example.test"],
                     additionalSymbolGraphFiles: [
                         URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json"),
-                        URL(fileURLWithPath: "/Not-a-doc-bundle/SideKit.symbols.json")
+                        URL(fileURLWithPath: "/Not-a-doc-bundle/SideKit.symbols.json"),
                     ]
                 )
             )
@@ -3002,7 +3002,7 @@ class ConvertActionTests: XCTestCase {
                         # ``ModuleThatDoesNotExist``
 
                         This will result in two errors from two different phases of the build
-                        """)
+                        """),
             ])
         let testDataProvider = try TestFileSystem(folders: [
             catalog,
@@ -3011,7 +3011,7 @@ class ConvertActionTests: XCTestCase {
                 name: "path",
                 content: [
                     Folder(name: "to", content: [])
-                ])
+                ]),
         ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
         let diagnosticOutputFile = URL(fileURLWithPath: "/path/to/some-custom-diagnostics-file.json")
@@ -3130,7 +3130,7 @@ class ConvertActionTests: XCTestCase {
                 "/images/unit-test/image-name.png",
                 "/images/unit-test/image-name@2x.png",
                 "/images/unit-test/image-name~dark.png",
-                "/images/unit-test/image-name~dark@2x.png"
+                "/images/unit-test/image-name~dark@2x.png",
             ])
     }
 

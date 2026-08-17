@@ -29,7 +29,7 @@ class MetadataAvailabilityTests: XCTestCase {
                 diagnosticExplanations,
                 [
                     "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
-                    "Available expects an argument for an unnamed parameter that\'s convertible to \'Platform\'"
+                    "Available expects an argument for an unnamed parameter that\'s convertible to \'Platform\'",
                 ])
         }
     }
@@ -73,7 +73,7 @@ class MetadataAvailabilityTests: XCTestCase {
             XCTAssertEqual(
                 diagnosticExplanations,
                 [
-                    "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
+                    "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')"
                 ])
         }
     }
@@ -99,7 +99,7 @@ class MetadataAvailabilityTests: XCTestCase {
                 [
                     .iOS,
                     .macOS,
-                    .other("Package")
+                    .other("Package"),
                 ])
 
             let introducedVersions = directive.availability.map { $0.introduced }
@@ -108,7 +108,7 @@ class MetadataAvailabilityTests: XCTestCase {
                 [
                     SemanticVersion(major: 3, minor: 5, patch: 2),
                     SemanticVersion(major: 3, minor: 5, patch: 0),
-                    SemanticVersion(major: 3, minor: 0, patch: 0)
+                    SemanticVersion(major: 3, minor: 0, patch: 0),
                 ])
 
             let deprecatedVersions = directive.availability.map { $0.deprecated }
@@ -117,7 +117,7 @@ class MetadataAvailabilityTests: XCTestCase {
                 [
                     SemanticVersion(major: 5, minor: 6, patch: 7),
                     SemanticVersion(major: 5, minor: 6, patch: 0),
-                    SemanticVersion(major: 5, minor: 0, patch: 0)
+                    SemanticVersion(major: 5, minor: 0, patch: 0),
                 ])
 
         }
@@ -126,7 +126,7 @@ class MetadataAvailabilityTests: XCTestCase {
     func testValidIntroducedDirective() async throws {
         // Assemble all the combinations of arguments you could give
         let validArguments: [String] = [
-            "deprecated: \"1.0\"",
+            "deprecated: \"1.0\""
         ]
         // separate those that give a version so we can test the `*` platform separately
         var validArgumentsWithVersion = ["introduced: \"1.0\""]

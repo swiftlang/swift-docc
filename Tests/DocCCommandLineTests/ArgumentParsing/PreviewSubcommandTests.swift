@@ -28,7 +28,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(TemplateOption.environmentVariableKey, templateDir.path, 1)
             XCTAssertNoThrow(
                 try Docc.Preview.parse([
-                    testBundleURL.path,
+                    testBundleURL.path
                 ]))
         }
 
@@ -37,7 +37,7 @@ class PreviewSubcommandTests: XCTestCase {
             unsetenv(TemplateOption.environmentVariableKey)
             XCTAssertThrowsError(
                 try Docc.Preview.parse([
-                    testBundleURL.path,
+                    testBundleURL.path
                 ]))
         }
 
@@ -64,7 +64,7 @@ class PreviewSubcommandTests: XCTestCase {
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
 
             let preview = try Docc.Preview.parse([
-                testBundleURL.path,
+                testBundleURL.path
             ])
             XCTAssertEqual(
                 preview.previewOptions.convertCommand.templateOption.templateURL?.standardizedFileURL,

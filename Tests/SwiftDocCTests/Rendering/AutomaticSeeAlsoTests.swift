@@ -268,7 +268,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
                         makeSymbol(id: "some-method-id", kind: .case, pathComponents: ["MyClass", "myFunction()"]),
                     ],
                     relationships: [
-                        .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                        .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil)
                     ]))
 
             // The tutorial has the same file name (excluding the file extension) as the module and as the bundle.

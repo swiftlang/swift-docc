@@ -95,10 +95,10 @@ class RenderBlockContent_CapitalizationTests: XCTestCase {
         let list = RenderBlockContent.unorderedList(
             .init(items: [
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("hello,")])),
+                    .paragraph(.init(inlineContent: [.text("hello,")]))
                 ]),
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("world!")])),
+                    .paragraph(.init(inlineContent: [.text("world!")]))
                 ]),
             ])
         ).capitalizingFirstWord()
@@ -114,10 +114,10 @@ class RenderBlockContent_CapitalizationTests: XCTestCase {
         let list = RenderBlockContent.orderedList(
             .init(items: [
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("hello,")])),
+                    .paragraph(.init(inlineContent: [.text("hello,")]))
                 ]),
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("world!")])),
+                    .paragraph(.init(inlineContent: [.text("world!")]))
                 ]),
             ])
         ).capitalizingFirstWord()

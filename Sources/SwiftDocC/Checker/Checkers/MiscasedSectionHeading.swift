@@ -42,7 +42,7 @@ struct MiscasedSectionHeading: Checker {
                     Solution(
                         summary: "Replace '\(actual)' with '\(expected)'",
                         replacements: [.init(range: headingRange, replacement: "## \(expected)")]
-                    ),
+                    )
                 ]
             )
         }

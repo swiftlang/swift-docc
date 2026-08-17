@@ -120,9 +120,9 @@ class TabNavigatorTests: XCTestCase {
                                             RenderBlockContent.TabNavigator.Tab(
                                                 title: "bad",
                                                 content: []
-                                            ),
+                                            )
                                         ]
-                                    ))
+                                    )),
                             ]
                         ),
                     ]
@@ -193,7 +193,7 @@ class TabNavigatorTests: XCTestCase {
                                                 size: 1,
                                                 alignment: .leading,
                                                 content: ["Hello there!"]
-                                            )
+                                            ),
                                         ]
                                     )),
 
@@ -210,9 +210,9 @@ class TabNavigatorTests: XCTestCase {
 
                                 // Because the the "Snippets/Snippets/MySnippet" snippet failed to resolve, we're not including any snippet content here.
                             ]
-                        )
+                        ),
                     ]
-                )),
+                ))
         )
     }
 }

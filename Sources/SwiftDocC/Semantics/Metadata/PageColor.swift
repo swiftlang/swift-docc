@@ -60,7 +60,7 @@ public final class PageColor: Semantic, AutomaticDirectiveConvertible {
     }
 
     static var keyPaths: [String: AnyKeyPath] = [
-        "color": \PageColor._color,
+        "color": \PageColor._color
     ]
 
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")

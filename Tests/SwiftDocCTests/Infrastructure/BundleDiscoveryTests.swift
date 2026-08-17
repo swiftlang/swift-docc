@@ -123,7 +123,7 @@ class BundleDiscoveryTests: XCTestCase {
                                 Folder(name: "Four", content: allFiles[30...].map { CopyOfFile(original: $0) })
                             )
                         )
-                    )
+                    ),
                 ])
         )
     }
@@ -147,7 +147,7 @@ class BundleDiscoveryTests: XCTestCase {
 
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
-                "CFBundleDisplayName": "Fallback Display Name",
+                "CFBundleDisplayName": "Fallback Display Name"
             ],
             additionalSymbolGraphFiles: [
                 URL(fileURLWithPath: "path/to/Not a catalog/mykit-iOS.symbols.json"),
@@ -181,7 +181,7 @@ class BundleDiscoveryTests: XCTestCase {
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
-                "CFBundleIdentifier": "com.fallback.bundle.identifier"
+                "CFBundleIdentifier": "com.fallback.bundle.identifier",
             ],
             additionalSymbolGraphFiles: []
         )
@@ -260,7 +260,7 @@ class BundleDiscoveryTests: XCTestCase {
                           },
                           "features": {}
                         }
-                        """),
+                        """)
             ])
 
         let fileSystem = try TestFileSystem(folders: [catalog])

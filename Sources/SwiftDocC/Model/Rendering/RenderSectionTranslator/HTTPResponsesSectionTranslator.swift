@@ -113,6 +113,6 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
         502: "Bad Gateway",
         503: "Service Unavailable",
         504: "Gateway Time-out",
-        505: "HTTP Version not supported"
+        505: "HTTP Version not supported",
     ]
 }

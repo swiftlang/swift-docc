@@ -231,7 +231,7 @@ func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
           -Xswiftc -emit-symbol-graph \
           -Xswiftc -emit-symbol-graph-dir -Xswiftc \(symbolGraphOutputDirectory.path) \
           -Xswiftc -symbol-graph-minimum-access-level -Xswiftc internal
-        """
+        """,
     ]
 
     try process.run()
@@ -620,7 +620,7 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
             title: directive.name,
             navigator: [
                 .init(kind: .attribute, spelling: "@", preciseIdentifier: nil),
-                .init(kind: .identifier, spelling: directive.name, preciseIdentifier: directive.usr)
+                .init(kind: .identifier, spelling: directive.name, preciseIdentifier: directive.usr),
             ],
             subHeading: navigatorFragments,
             prose: nil

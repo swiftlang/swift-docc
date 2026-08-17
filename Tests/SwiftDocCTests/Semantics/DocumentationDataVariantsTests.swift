@@ -70,14 +70,14 @@ class DocumentationDataVariantsTests: XCTestCase {
         XCTAssertEqual(
             DocumentationDataVariants<String>(values: [
                 objectiveCTrait: "Objective-C",
-                .swift: "Swift"
+                .swift: "Swift",
             ]).firstValue, "Swift")
 
         XCTAssertEqual(
             DocumentationDataVariants<String>(values: [
                 objectiveCTrait: "Objective-C",
                 .swift: "Swift",
-                .fallback: "Fallback"
+                .fallback: "Fallback",
             ]).firstValue, "Swift")
 
         var variants = DocumentationDataVariants<String>(defaultVariantValue: "Default value")

@@ -200,7 +200,7 @@ class MergeActionTests: XCTestCase {
         let logStorage = LogHandle.LogStorage()
         let action = MergeAction(
             archives: [
-                URL(fileURLWithPath: "/Empty.doccarchive"),
+                URL(fileURLWithPath: "/Empty.doccarchive")
             ],
             landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
@@ -711,7 +711,7 @@ class MergeActionTests: XCTestCase {
         let logStorage = LogHandle.LogStorage()
         let action = MergeAction(
             archives: [
-                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/First.doccarchive")
             ],
             landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
@@ -729,12 +729,12 @@ class MergeActionTests: XCTestCase {
             synthesizedRootNode.topicSections.flatMap { [$0.title].compactMap({ $0 }) + $0.identifiers },
             [
                 // No title
-                "doc://org.swift.test/documentation/first.json",
+                "doc://org.swift.test/documentation/first.json"
             ])
         XCTAssertEqual(
             synthesizedRootNode.references.keys.sorted(),
             [
-                "doc://org.swift.test/documentation/first.json",
+                "doc://org.swift.test/documentation/first.json"
             ])
     }
 
@@ -826,7 +826,7 @@ class MergeActionTests: XCTestCase {
             Self.makeArchive(
                 name: "Output",
                 documentationPages: [
-                    "Something",
+                    "Something"
                 ], tutorialPages: [], images: [], videos: [], downloads: []),
             Self.makeArchive(
                 name: "First",
@@ -975,7 +975,7 @@ class MergeActionTests: XCTestCase {
             XCTAssertEqual(
                 inputs.miscResourceURLs.map(\.lastPathComponent),
                 [
-                    "\(name.lowercased())-card.png",
+                    "\(name.lowercased())-card.png"
                 ])
 
             let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
@@ -1186,7 +1186,7 @@ class MergeActionTests: XCTestCase {
                 ],
                 images: ["first-image.png", "second-image.png"],
                 videos: ["some-video.mov"],
-                downloads: ["some-download.zip"],
+                downloads: ["some-download.zip"]
             ).dump(),
             """
             Something.doccarchive/
@@ -1309,17 +1309,17 @@ class MergeActionTests: XCTestCase {
             Folder(
                 name: "css",
                 content: [
-                    TextFile(name: "something.css", utf8Content: ""),
+                    TextFile(name: "something.css", utf8Content: "")
                 ]),
             Folder(
                 name: "js",
                 content: [
-                    TextFile(name: "something.js", utf8Content: ""),
+                    TextFile(name: "something.js", utf8Content: "")
                 ]),
             Folder(
                 name: "img",
                 content: [
-                    TextFile(name: "something.svg", utf8Content: ""),
+                    TextFile(name: "something.svg", utf8Content: "")
                 ]),
             TextFile(name: "favicon.svg", utf8Content: ""),
         ]
@@ -1329,21 +1329,21 @@ class MergeActionTests: XCTestCase {
         if !documentationPages.isEmpty {
             if supportsStaticHosting {
                 content += [
-                    Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased())/index.html" })),
+                    Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased())/index.html" }))
                 ]
             }
             dataContent += [
-                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/documentation")),
+                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/documentation"))
             ]
         }
         if !tutorialPages.isEmpty {
             if supportsStaticHosting {
                 content += [
-                    Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased())/index.html" })),
+                    Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased())/index.html" }))
                 ]
             }
             dataContent += [
-                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/tutorials")),
+                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/tutorials"))
             ]
         }
         if !dataContent.isEmpty {
@@ -1360,7 +1360,7 @@ class MergeActionTests: XCTestCase {
                         name: identifier,
                         content: images.map {
                             DataFile(name: $0, data: Data())
-                        }),
+                        })
                 ]),
             Folder(
                 name: "videos",
@@ -1369,7 +1369,7 @@ class MergeActionTests: XCTestCase {
                         name: identifier,
                         content: videos.map {
                             DataFile(name: $0, data: Data())
-                        }),
+                        })
                 ]),
             Folder(
                 name: "downloads",
@@ -1378,7 +1378,7 @@ class MergeActionTests: XCTestCase {
                         name: identifier,
                         content: downloads.map {
                             DataFile(name: $0, data: Data())
-                        }),
+                        })
                 ]),
 
             // Additional data
@@ -1388,7 +1388,7 @@ class MergeActionTests: XCTestCase {
                     JSONFile(name: "index.json", content: RenderIndex(interfaceLanguages: [:], includedArchiveIdentifiers: [identifier]))
                 ]),
 
-            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleID: DocumentationBundle.Identifier(rawValue: identifier)))
+            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleID: DocumentationBundle.Identifier(rawValue: identifier))),
         ]
 
         return Folder(name: "\(name).doccarchive", content: content)

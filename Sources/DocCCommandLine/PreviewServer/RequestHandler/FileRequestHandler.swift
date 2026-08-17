@@ -102,7 +102,7 @@ struct FileRequestHandler: RequestHandlerFactory {
                 case "zip": return "application/zip"
                 default: return "application/octet-stream"
                 }
-            })
+            }),
     ]
 
     struct TopLevelAssetFileMetadata {

@@ -261,7 +261,7 @@ class ConvertServiceTests: XCTestCase {
                             )
                         )
                     ),
-                    ConvertRequest.Line(text: "line 2")
+                    ConvertRequest.Line(text: "line 2"),
                 ]
             ],
             markupFiles: [],
@@ -387,7 +387,7 @@ class ConvertServiceTests: XCTestCase {
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"],
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
             ],
             markupFiles: [myFunctionExtensionData],
             miscResourceURLs: []
@@ -439,7 +439,7 @@ class ConvertServiceTests: XCTestCase {
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"],
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
             ],
             markupFiles: [],
             miscResourceURLs: []
@@ -474,7 +474,7 @@ class ConvertServiceTests: XCTestCase {
         }
 
         request.knownDisambiguatedSymbolPathComponents = [
-            "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()-swift.method"],
+            "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()-swift.method"]
         ]
 
         try processAndAssert(request: request) { message in
@@ -562,7 +562,7 @@ class ConvertServiceTests: XCTestCase {
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"],
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
             ],
             markupFiles: [],
             miscResourceURLs: []
@@ -624,7 +624,7 @@ class ConvertServiceTests: XCTestCase {
             knownDisambiguatedSymbolPathComponents: [
                 // Only provide a single path component when this USR should
                 // produce two
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class"],
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class"]
             ],
             markupFiles: [],
             miscResourceURLs: []
@@ -1001,7 +1001,7 @@ class ConvertServiceTests: XCTestCase {
                 FileReference(
                     identifier: beforeIdentifier, fileName: "Something.swift", fileType: "swift", syntax: "swift",
                     content: [
-                        "// This is an example swift file",
+                        "// This is an example swift file"
                     ], highlights: [])
             )
             XCTAssertEqual(
@@ -1209,10 +1209,10 @@ class ConvertServiceTests: XCTestCase {
                 firstCardImageReference.asset,
                 DataAsset(
                     variants: [
-                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-card-image.png")!,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-card-image.png")!
                     ],
                     metadata: [
-                        URL(string: "docs-media:///path/to/first-page-card-image.png")!: DataAsset.Metadata(svgID: nil),
+                        URL(string: "docs-media:///path/to/first-page-card-image.png")!: DataAsset.Metadata(svgID: nil)
                     ],
                     context: .display
                 ))
@@ -1222,10 +1222,10 @@ class ConvertServiceTests: XCTestCase {
                 firstIconImageReference.asset,
                 DataAsset(
                     variants: [
-                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-icon-image.png")!,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-icon-image.png")!
                     ],
                     metadata: [
-                        URL(string: "docs-media:///path/to/first-page-icon-image.png")!: DataAsset.Metadata(svgID: nil),
+                        URL(string: "docs-media:///path/to/first-page-icon-image.png")!: DataAsset.Metadata(svgID: nil)
                     ],
                     context: .display
                 ))
@@ -1235,10 +1235,10 @@ class ConvertServiceTests: XCTestCase {
                 secondCardImageReference.asset,
                 DataAsset(
                     variants: [
-                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/second-page-card-image.png")!,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/second-page-card-image.png")!
                     ],
                     metadata: [
-                        URL(string: "docs-media:///path/to/second-page-card-image.png")!: DataAsset.Metadata(svgID: nil),
+                        URL(string: "docs-media:///path/to/second-page-card-image.png")!: DataAsset.Metadata(svgID: nil)
                     ],
                     context: .display
                 ))
@@ -1248,10 +1248,10 @@ class ConvertServiceTests: XCTestCase {
                 secondIconImageReference.asset,
                 DataAsset(
                     variants: [
-                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/second-page-icon-image.png")!,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/second-page-icon-image.png")!
                     ],
                     metadata: [
-                        URL(string: "docs-media:///path/to/second-page-icon-image.png")!: DataAsset.Metadata(svgID: nil),
+                        URL(string: "docs-media:///path/to/second-page-icon-image.png")!: DataAsset.Metadata(svgID: nil)
                     ],
                     context: .display
                 ))
@@ -1261,10 +1261,10 @@ class ConvertServiceTests: XCTestCase {
                 firstMarkdownImageReference.asset,
                 DataAsset(
                     variants: [
-                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-markdown-image.png")!,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-markdown-image.png")!
                     ],
                     metadata: [
-                        URL(string: "docs-media:///path/to/first-page-markdown-image.png")!: DataAsset.Metadata(svgID: nil),
+                        URL(string: "docs-media:///path/to/first-page-markdown-image.png")!: DataAsset.Metadata(svgID: nil)
                     ],
                     context: .display
                 ))
@@ -1275,10 +1275,10 @@ class ConvertServiceTests: XCTestCase {
                 firstDirectiveImageReference.asset,
                 DataAsset(
                     variants: [
-                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-directive-image.png")!,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-directive-image.png")!
                     ],
                     metadata: [
-                        URL(string: "docs-media:///path/to/first-page-directive-image.png")!: DataAsset.Metadata(svgID: nil),
+                        URL(string: "docs-media:///path/to/first-page-directive-image.png")!: DataAsset.Metadata(svgID: nil)
                     ],
                     context: .display
                 ))
@@ -2417,7 +2417,7 @@ class ConvertServiceTests: XCTestCase {
 
                     // This catalog doesn't have any symbol graph files
 
-                    InfoPlist(identifier: "com.example.something")
+                    InfoPlist(identifier: "com.example.something"),
                 ])
         ])
         let bundleURL = tempURL.appendingPathComponent("unit-test.docc")

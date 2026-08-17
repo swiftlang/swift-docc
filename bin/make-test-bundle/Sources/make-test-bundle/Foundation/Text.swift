@@ -20,7 +20,7 @@ fileprivate let sentences = [
     "Define your application's structure using the rich data model and relationships defined by expressing relationships in a graph of nodes that interact with each other throughout the app life.",
     "Create your own custom node-based graph models by using the TestFramework rich APIs for describing connections between entities that are related via rich connections.",
     "Apply powerful modifiers to expressive chain-able queries that allow you to fetch batches of nodes via a rich query language from a graph-based in-memory model.",
-    "You can integrate your app's workflow directly with TestFramework by adopting a hierarchy of protocol-based models that describe an in-memory model graph data queries."
+    "You can integrate your app's workflow directly with TestFramework by adopting a hierarchy of protocol-based models that describe an in-memory model graph data queries.",
 ]
 
 /// A list of words to use for naming things.
@@ -41,7 +41,7 @@ var words = WrappingEnumerator<String>(items: [
     "Guava",
     "Kiwi",
     "Lemon",
-    "Lime"
+    "Lime",
 ])
 
 /// A set of functions to generate gibberish text.

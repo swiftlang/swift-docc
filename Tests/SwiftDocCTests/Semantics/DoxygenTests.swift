@@ -91,7 +91,7 @@ class DoxygenTests: XCTestCase {
                                     mixins: [:]
                                 ),
                             ]
-                        )),
+                        ))
                 ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -107,7 +107,7 @@ class DoxygenTests: XCTestCase {
             [
                 #"\abstract This is description with abstract."#,
                 #"\discussion This is a discussion linking to ``doc://unit-test/documentation/ModuleName/AnotherClass`` and ``doc://unit-test/documentation/ModuleName/AnotherClass/prop``."#,
-                #"\note This is a note linking to ``doc://unit-test/documentation/ModuleName/Class3`` and ``Class3/prop2``."#
+                #"\note This is a note linking to ``doc://unit-test/documentation/ModuleName/Class3`` and ``Class3/prop2``."#,
             ])
 
         // Verify the expected content in the render model
@@ -140,7 +140,7 @@ class DoxygenTests: XCTestCase {
                             overridingTitle: nil,
                             overridingTitleInlineContent: nil
                         ),
-                        .text(".")
+                        .text("."),
                     ])),
 
                 .aside(
@@ -158,9 +158,9 @@ class DoxygenTests: XCTestCase {
                                     ),
                                     .text(" and "),
                                     .codeVoice(code: "Class3/prop2"),
-                                    .text(".")
-                                ])),
-                        ]))
+                                    .text("."),
+                                ]))
+                        ])),
             ])
     }
 }

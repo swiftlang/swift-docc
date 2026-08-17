@@ -258,7 +258,7 @@ class OutputBundle {
                 envURL, directory: outputURL,
                 arguments: [
                     "swiftc",
-                    "-print-target-info"
+                    "-print-target-info",
                 ]
             ).data(using: .utf8)!)
 
@@ -278,7 +278,7 @@ class OutputBundle {
                 "-sdk",
                 sdkPath,
                 "-output-dir",
-                docsURL.path
+                docsURL.path,
             ])
     }
 

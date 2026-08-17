@@ -1068,8 +1068,8 @@ class NavigatorIndexingTests: XCTestCase {
                     content: makeSymbolGraph(
                         moduleName: "Foo",
                         symbols: [
-                            makeSymbol(id: "some-symbol", language: SourceLanguage.data, kind: .class, pathComponents: ["SomeSymbol"]),
-                        ]))
+                            makeSymbol(id: "some-symbol", language: SourceLanguage.data, kind: .class, pathComponents: ["SomeSymbol"])
+                        ])),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -1428,7 +1428,7 @@ class NavigatorIndexingTests: XCTestCase {
         XCTAssertEqual(
             imageReference.asset.variants.values.map(\.path).sorted(),
             [
-                "/images/\(context.inputs.id)/plus.svg",
+                "/images/\(context.inputs.id)/plus.svg"
             ])
     }
 
@@ -1956,7 +1956,7 @@ class NavigatorIndexingTests: XCTestCase {
                             "kind": "typeIdentifier",
                             "preciseIdentifier": "s:s5ErrorP",
                             "text": "Error"
-                        },
+                        }
                     ]
                 """
         )
@@ -1978,7 +1978,7 @@ class NavigatorIndexingTests: XCTestCase {
                         {
                             "text": "Subscriber",
                             "kind": "identifier"
-                        },
+                        }
                     ]
                 """
         )
@@ -2021,7 +2021,7 @@ class NavigatorIndexingTests: XCTestCase {
                     {
                         "text": ")",
                         "kind": "text"
-                    },
+                    }
                 ]
                 """
         )
@@ -2039,7 +2039,7 @@ class NavigatorIndexingTests: XCTestCase {
                     {
                         "kind": "text",
                         "text": "(Double)"
-                    },
+                    }
                 ]
                 """
         )
@@ -2283,7 +2283,7 @@ class NavigatorIndexingTests: XCTestCase {
                         @Metadata {
                           @DisplayName("Some custom name")
                         }
-                        """)
+                        """),
             ])
         let (_, context) = try await loadBundle(catalog: catalog)
 

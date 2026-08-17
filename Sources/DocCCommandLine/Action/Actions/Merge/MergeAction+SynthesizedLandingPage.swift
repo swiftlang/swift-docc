@@ -93,7 +93,7 @@ extension MergeAction {
         } else {
             // Otherwise, create a single unnamed topic section
             renderNode.topicSections = [
-                .init(title: nil, abstract: nil, discussion: nil, identifiers: (rootRenderReferences.all).map(\.rawIdentifier)),
+                .init(title: nil, abstract: nil, discussion: nil, identifiers: (rootRenderReferences.all).map(\.rawIdentifier))
             ]
         }
 

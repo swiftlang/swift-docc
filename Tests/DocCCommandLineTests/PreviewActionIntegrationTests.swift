@@ -35,7 +35,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 Folder(
                     name: "Symbols",
                     content: [
-                        CopyOfFile(original: symbolURL),
+                        CopyOfFile(original: symbolURL)
                     ]),
                 Folder(
                     name: "Resources",
@@ -44,7 +44,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                         CopyOfFile(original: overviewURL),
                         CopyOfFile(original: uncuratedArticleURL),
                     ]),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
 
         return source

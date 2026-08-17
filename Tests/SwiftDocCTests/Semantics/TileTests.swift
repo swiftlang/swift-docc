@@ -85,7 +85,7 @@ class TileTests: XCTestCase {
                 XCTAssertEqual(
                     diagnostics.map(\.identifier),
                     [
-                        "org.swift.docc.Resources.\(directiveName).HasContent",
+                        "org.swift.docc.Resources.\(directiveName).HasContent"
                     ])
             }
 

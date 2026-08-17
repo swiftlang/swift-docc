@@ -62,7 +62,7 @@ extension DocCHTMLTestSuites {
                     <h3 id="Three">
                       <a href="#Three">Three</a>
                     </h3>
-                    """,
+                    """
             )
 
             assert(
@@ -81,7 +81,7 @@ extension DocCHTMLTestSuites {
                     <h2 id="Two">
                       <a href="#Two">Two</a>
                     </h2>
-                    """,
+                    """
             )
 
             assert(
@@ -109,7 +109,7 @@ extension DocCHTMLTestSuites {
                         <code>Three</code>
                       </a>
                     </h3>
-                    """,
+                    """
             )
         }
 
@@ -141,7 +141,7 @@ extension DocCHTMLTestSuites {
                         </tr>
                       </tbody>
                     </table>
-                    """,
+                    """
             )
 
             assert(
@@ -176,7 +176,7 @@ extension DocCHTMLTestSuites {
                         </tr>
                       </tbody>
                     </table>
-                    """,
+                    """
             )
 
             assert(
@@ -215,7 +215,7 @@ extension DocCHTMLTestSuites {
                         </tr>
                       </tbody>
                     </table>
-                    """,
+                    """
             )
         }
 
@@ -266,7 +266,7 @@ extension DocCHTMLTestSuites {
                         </ol>
                       </li>
                     </ul>
-                    """,
+                    """
             )
         }
 

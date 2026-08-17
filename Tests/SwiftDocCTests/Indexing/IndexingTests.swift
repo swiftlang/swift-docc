@@ -166,10 +166,10 @@ class IndexingTests: XCTestCase {
         let list = RenderBlockContent.unorderedList(
             .init(items: [
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("Hello, ")])),
+                    .paragraph(.init(inlineContent: [.text("Hello, ")]))
                 ]),
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("world!")])),
+                    .paragraph(.init(inlineContent: [.text("world!")]))
                 ]),
             ]))
         XCTAssertEqual([], list.headings)
@@ -192,10 +192,10 @@ class IndexingTests: XCTestCase {
         let list = RenderBlockContent.orderedList(
             .init(items: [
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("Hello, ")])),
+                    .paragraph(.init(inlineContent: [.text("Hello, ")]))
                 ]),
                 .init(content: [
-                    .paragraph(.init(inlineContent: [.text("world!")])),
+                    .paragraph(.init(inlineContent: [.text("world!")]))
                 ]),
             ]))
         XCTAssertEqual([], list.headings)

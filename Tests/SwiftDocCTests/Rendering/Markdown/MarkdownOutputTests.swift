@@ -178,7 +178,7 @@ struct MarkdownOutputTests {
                         1. This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
                         2. Here is it again <doc:RowsAndColumns#Overview>
                     2. This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
-                    """)
+                    """),
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
@@ -258,7 +258,7 @@ struct MarkdownOutputTests {
                     moduleName: "MarkdownOutput",
                     symbols: [
                         makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
-                    ]))
+                    ])),
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
@@ -305,8 +305,8 @@ struct MarkdownOutputTests {
                     moduleName: "MarkdownOutput",
                     symbols: [
                         makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``OtherMarkdownSymbol``"),
-                        makeSymbol(id: "other-markdown-symbol-id", kind: .struct, pathComponents: ["OtherMarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``MarkdownSymbol``")
-                    ]))
+                        makeSymbol(id: "other-markdown-symbol-id", kind: .struct, pathComponents: ["OtherMarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``MarkdownSymbol``"),
+                    ])),
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
@@ -354,8 +354,8 @@ struct MarkdownOutputTests {
                 content: makeSymbolGraph(
                     moduleName: "MarkdownOutput",
                     symbols: [
-                        makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output."),
-                    ]))
+                        makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output.")
+                    ])),
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "RootDocument")
@@ -520,7 +520,7 @@ struct MarkdownOutputTests {
 
         let catalog = catalog(files: [
             tutorial,
-            resourceFolder
+            resourceFolder,
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/tutorials/MarkdownOutput/Tutorial")
@@ -741,7 +741,7 @@ struct MarkdownOutputTests {
                 Folder(name: "Images") {
                     DataFile(name: "image.png", data: Data())
                 }
-            }
+            },
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageArticle")
@@ -897,7 +897,7 @@ struct MarkdownOutputTests {
                         ],
                         relationships: [
                             SymbolGraph.Relationship(source: "local-conformer-id", target: "local-protocol-id", kind: .conformsTo, targetFallback: nil),
-                            SymbolGraph.Relationship(source: "local-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
+                            SymbolGraph.Relationship(source: "local-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable"),
                         ]
                     ))
         ])
@@ -931,7 +931,7 @@ struct MarkdownOutputTests {
                             makeSymbol(id: "local-subclass-id", kind: .class, pathComponents: ["LocalSub"]),
                         ],
                         relationships: [
-                            SymbolGraph.Relationship(source: "local-subclass-id", target: "local-superclass-id", kind: .inheritsFrom, targetFallback: nil),
+                            SymbolGraph.Relationship(source: "local-subclass-id", target: "local-superclass-id", kind: .inheritsFrom, targetFallback: nil)
                         ]
                     ))
         ])
@@ -985,7 +985,7 @@ struct MarkdownOutputTests {
                                 @Comment {
                                     This should be removed, but should not lead to a discussion heading.
                                 }
-                                """)
+                                """),
                     ],
                     relationships: [
                         .init(source: "markdown-symbol-my-function-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil)
@@ -1117,7 +1117,7 @@ struct MarkdownOutputTests {
                     moduleName: "MarkdownOutput",
                     symbols: [
                         makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
-                        makeSymbol(id: "markdown-symbol-init-name-id", kind: .`init`, pathComponents: ["MarkdownSymbol", "init(name:)"])
+                        makeSymbol(id: "markdown-symbol-init-name-id", kind: .`init`, pathComponents: ["MarkdownSymbol", "init(name:)"]),
                     ]))
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/init(name:)")
@@ -1158,7 +1158,7 @@ struct MarkdownOutputTests {
                     ])),
             InfoPlist(defaultAvailability: [
                 "MarkdownOutput": [.init(platformName: .iOS, platformVersion: "1.0.0")]
-            ])
+            ]),
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
@@ -1177,7 +1177,7 @@ struct MarkdownOutputTests {
                     ])),
             InfoPlist(defaultAvailability: [
                 "MarkdownOutput": [.init(platformName: .iOS, platformVersion: "1.0.0")]
-            ])
+            ]),
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
@@ -1211,7 +1211,7 @@ struct MarkdownOutputTests {
                     ## Overview
 
                     Overview goes here
-                    """)
+                    """),
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
@@ -1326,8 +1326,8 @@ struct MarkdownOutputTests {
                                     isUnconditionallyDeprecated: false,
                                     isUnconditionallyUnavailable: false,
                                     willEventuallyBeDeprecated: false
-                                )
-                            ])
+                                ),
+                            ]),
                     ]))
         ])
 
@@ -1354,7 +1354,7 @@ struct MarkdownOutputTests {
                 content: makeSymbolGraph(
                     moduleName: "MarkdownOutput",
                     symbols: [
-                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
                     ]))
         ])
 
@@ -1419,7 +1419,7 @@ struct MarkdownOutputTests {
                     moduleName: "MarkdownOutput",
                     symbols: [
                         makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
-                    ]))
+                    ])),
         ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
@@ -1439,7 +1439,7 @@ struct MarkdownOutputTests {
                 content: makeSymbolGraph(
                     moduleName: "MarkdownOutput",
                     symbols: [
-                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
                     ])),
             TextFile(
                 name: "RowsAndColumns.md",
@@ -1478,7 +1478,7 @@ struct MarkdownOutputTests {
 
                     - <doc:RowsAndColumns>
                     - ``MarkdownSymbol``
-                    """)
+                    """),
         ])
 
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "Links")
@@ -1509,7 +1509,7 @@ struct MarkdownOutputTests {
                         moduleName: "MarkdownOutput",
                         symbols: [
                             makeSymbol(id: "local-subclass-id", kind: .class, pathComponents: ["LocalSubclass"]),
-                            makeSymbol(id: "local-superclass-id", kind: .class, pathComponents: ["LocalSuperclass"])
+                            makeSymbol(id: "local-superclass-id", kind: .class, pathComponents: ["LocalSuperclass"]),
                         ],
                         relationships: [
                             SymbolGraph.Relationship(source: "local-subclass-id", target: "local-superclass-id", kind: .inheritsFrom, targetFallback: nil)
@@ -1544,11 +1544,11 @@ struct MarkdownOutputTests {
                         symbols: [
                             makeSymbol(id: "local-conformer-id", kind: .struct, pathComponents: ["LocalConformer"]),
                             makeSymbol(id: "local-protocol-id", kind: .protocol, pathComponents: ["LocalProtocol"]),
-                            makeSymbol(id: "external-conformer-id", kind: .struct, pathComponents: ["ExternalConformer"])
+                            makeSymbol(id: "external-conformer-id", kind: .struct, pathComponents: ["ExternalConformer"]),
                         ],
                         relationships: [
                             SymbolGraph.Relationship(source: "local-conformer-id", target: "local-protocol-id", kind: .conformsTo, targetFallback: nil),
-                            SymbolGraph.Relationship(source: "external-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
+                            SymbolGraph.Relationship(source: "external-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable"),
                         ]
                     ))
         ])

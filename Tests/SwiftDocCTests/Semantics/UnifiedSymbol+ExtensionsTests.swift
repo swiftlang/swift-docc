@@ -46,7 +46,7 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
     func testDefaultSelectorReturnsObjectiveCIfThereIsNoSwift() throws {
         assertDefaultSelectorForSymbol(
             infos: [
-                (language: "occ", platform: "macos", isMainGraph: true),
+                (language: "occ", platform: "macos", isMainGraph: true)
             ],
             expectedDefaultSelector: .init(interfaceLanguage: "occ", platform: "macOS")
         )

@@ -17,7 +17,7 @@ extension Folder {
     static let emptyHTMLTemplateDirectory = Folder(
         name: "template",
         content: [
-            TextFile(name: "index.html", utf8Content: ""), TextFile(name: "index-template.html", utf8Content: "")
+            TextFile(name: "index.html", utf8Content: ""), TextFile(name: "index-template.html", utf8Content: ""),
         ])
 
     static let testHTMLTemplate = """

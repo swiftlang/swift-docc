@@ -112,7 +112,7 @@ class SmallTests: XCTestCase {
                             .codeVoice(code: "copyright"),
                             .text(" "),
                             .strong(inlineContent: [.text("text")]),
-                            .text(".")
+                            .text("."),
                         ]
                     ))
             )
@@ -184,7 +184,7 @@ class SmallTests: XCTestCase {
                                     .small(
                                         RenderBlockContent.Small(
                                             inlineContent: [.text("Small text.")]
-                                        ))
+                                        )),
                                 ]
                             ),
 
@@ -192,11 +192,11 @@ class SmallTests: XCTestCase {
                                 size: 1,
                                 alignment: .leading,
                                 content: [
-                                    "Second column of regular text.",
+                                    "Second column of regular text."
                                 ]
                             ),
                         ]
-                    )),
+                    ))
             )
 
         }

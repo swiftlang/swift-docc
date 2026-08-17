@@ -59,7 +59,7 @@ class SnippetResolverTests: XCTestCase {
                         code: """
                             print("1 + 2 = \\(1+2)")
                             """
-                    )
+                    ),
                 ],
                 rootContent: """
                     @Snippet(path: \(pathPrefix)First)
@@ -121,7 +121,7 @@ class SnippetResolverTests: XCTestCase {
                 XCTAssertEqual(
                     codeListing.code,
                     [
-                        #"// Some code comment"#,
+                        #"// Some code comment"#
                     ])
             } else {
                 XCTFail("Missing expected rendered code block.")
@@ -241,7 +241,7 @@ class SnippetResolverTests: XCTestCase {
                         ## Overview
 
                         \(rootContent)
-                        """)
+                        """),
             ])
         // We make the "Overview" heading explicit above so that the rendered page will always have a `primaryContentSections`.
         // This makes it easier for the test to then

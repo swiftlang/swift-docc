@@ -167,7 +167,7 @@ private let builtinExcludedTerms: [NonInclusiveLanguageChecker.Term] = [
         expression: #"white\W*list\w{0,2}"#,
         message: "Choose a more inclusive alternative that's appropriate to the context, such as deny list/allow list or unapproved list/approved list.",
         replacement: "allow list"
-    )
+    ),
 ]
 
 /// The regular expressions for the default term list.

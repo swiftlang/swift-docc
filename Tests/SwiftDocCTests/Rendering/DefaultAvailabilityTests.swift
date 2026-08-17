@@ -169,7 +169,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Public status for Mac Catalyst
         try await assertRenderedPlatformsFor(
             currentPlatforms: [
-                "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
+                "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false)
             ],
             equal: [
                 "Mac Catalyst 13.5",
@@ -293,7 +293,7 @@ class DefaultAvailabilityTests: XCTestCase {
                     "name": "watchOS",
                     "version": "6.0",
                 ],
-            ],
+            ]
         ]
 
         let plistData = try PropertyListEncoder().encode(plistEntries)
@@ -331,7 +331,7 @@ class DefaultAvailabilityTests: XCTestCase {
                     "name": "watchOS",
                     "version": "6.0",
                 ],
-            ],
+            ]
         ]
         let plistData = try PropertyListEncoder().encode(plistEntries)
         let defaultAvailability = try PropertyListDecoder().decode(
@@ -373,7 +373,7 @@ class DefaultAvailabilityTests: XCTestCase {
 
         // even though the doc bundle includes default availability, the blanket deprecation on `doUncoolThings(with:)` should still be visible
         let expected: [RenderInlineContent] = [
-            .text("This class is deprecated."),
+            .text("This class is deprecated.")
         ]
 
         XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)
@@ -481,7 +481,7 @@ class DefaultAvailabilityTests: XCTestCase {
                     "name": "macOS",
                     "version": "10.15",
                 ]
-            ],
+            ]
         ]
         var module = try unwrapModuleDefaultAvailability(plistEntries)
         XCTAssertEqual(module.count, 1)
@@ -494,7 +494,7 @@ class DefaultAvailabilityTests: XCTestCase {
                     "name": "iOS",
                     "version": "8.0",
                 ]
-            ],
+            ]
         ]
         module = try unwrapModuleDefaultAvailability(plistEntries)
         XCTAssertEqual(module.count, 3)
@@ -520,8 +520,8 @@ class DefaultAvailabilityTests: XCTestCase {
                 [
                     "name": "Mac Catalyst",
                     "version": "9.0",
-                ]
-            ],
+                ],
+            ]
         ]
         module = try unwrapModuleDefaultAvailability(plistEntries)
         XCTAssertEqual(
@@ -547,8 +547,8 @@ class DefaultAvailabilityTests: XCTestCase {
                 [
                     "name": "iPadOS",
                     "version": "10.0",
-                ]
-            ],
+                ],
+            ]
         ]
         module = try unwrapModuleDefaultAvailability(plistEntries)
         XCTAssertEqual(

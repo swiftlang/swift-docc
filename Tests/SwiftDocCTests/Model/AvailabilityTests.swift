@@ -546,7 +546,7 @@ struct AvailabilityTests {
                 "ModuleName": [
                     .init(platformName: .iOS, platformVersion: nil),
                     .init(platformName: .iPadOS, platformVersion: nil),
-                    .init(platformName: .catalyst, platformVersion: nil)
+                    .init(platformName: .catalyst, platformVersion: nil),
                 ]
             ])
         }
@@ -1747,7 +1747,7 @@ struct AvailabilityTests {
                             id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
                             availability: [
                                 .init(domainName: nil /* not specific to any platform */, introduced: nil, deprecated: nil, isUnconditionallyDeprecated: true)
-                            ]),
+                            ])
                     ]))
         }
         let context = try await load(catalog: catalog)

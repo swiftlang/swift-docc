@@ -25,7 +25,7 @@ class StepTests: XCTestCase {
         let step = Step(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertEqual(
             [
-                "org.swift.docc.HasContent",
+                "org.swift.docc.HasContent"
             ], diagnostics.map { $0.identifier })
         XCTAssertNotNil(step)
         step.map {

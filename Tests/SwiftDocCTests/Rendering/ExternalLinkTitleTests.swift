@@ -53,7 +53,7 @@ class ExternalLinkTitleTests: XCTestCase {
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
 
         let expectedLinkTitle: [RenderInlineContent] = [
-            .text("Example"),
+            .text("Example")
         ]
         XCTAssertEqual(linkReference?.title, "Example")
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Plain text title should have been rendered.")
@@ -80,7 +80,7 @@ class ExternalLinkTitleTests: XCTestCase {
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
 
         let expectedLinkTitle: [RenderInlineContent] = [
-            .emphasis(inlineContent: [.text("Apple")]),
+            .emphasis(inlineContent: [.text("Apple")])
         ]
         XCTAssertEqual(linkReference?.title, "Apple")
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Emphasized text title should have been rendered.")
@@ -107,7 +107,7 @@ class ExternalLinkTitleTests: XCTestCase {
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
 
         let expectedLinkTitle: [RenderInlineContent] = [
-            .strong(inlineContent: [.text("Apple")]),
+            .strong(inlineContent: [.text("Apple")])
         ]
         XCTAssertEqual(linkReference?.title, "Apple")
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Strong text title should have been rendered.")
@@ -134,7 +134,7 @@ class ExternalLinkTitleTests: XCTestCase {
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
 
         let expectedLinkTitle: [RenderInlineContent] = [
-            .codeVoice(code: "Apple"),
+            .codeVoice(code: "Apple")
         ]
         XCTAssertEqual(linkReference?.title, "Apple")
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Code voice text title should have been rendered.")
@@ -197,13 +197,13 @@ class ExternalLinkTitleTests: XCTestCase {
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
 
         let firstExpectedLinkTitle: [RenderInlineContent] = [
-            .strong(inlineContent: [.text("Apple")]),
+            .strong(inlineContent: [.text("Apple")])
         ]
         XCTAssertEqual(linkReference?.title, "Apple")
         XCTAssertEqual(linkReference?.titleInlineContent, firstExpectedLinkTitle, "Stronge text title should have been rendered.")
 
         let secondExpectedLinkTitle: [RenderInlineContent] = [
-            .emphasis(inlineContent: [.text("Apple")]),
+            .emphasis(inlineContent: [.text("Apple")])
         ]
         XCTAssertEqual(
             paragraphContent[5],

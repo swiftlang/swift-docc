@@ -40,7 +40,7 @@ let package = Package(
     name: "SwiftDocC",
     platforms: [
         .macOS(.v13),
-        .iOS(.v16)
+        .iOS(.v16),
     ],
     products: [
         .library(
@@ -50,7 +50,7 @@ let package = Package(
         .executable(
             name: "docc",
             targets: ["docc"]
-        )
+        ),
     ],
     targets: [
         // SwiftDocC library
@@ -89,7 +89,7 @@ let package = Package(
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
-                .product(name: "ArgumentParser", package: "swift-argument-parser")
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings(.v5)
@@ -124,7 +124,7 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "DocCCommandLine"),
+                .target(name: "DocCCommandLine")
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings(.v5)
@@ -136,7 +136,7 @@ let package = Package(
             dependencies: [
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
                 // Dependencies on SymbolKit and Markdown are find to add if they're needed for any functionality.
-                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit")
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings(.v6)
@@ -176,7 +176,7 @@ let package = Package(
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "DocCCommandLine"),
+                .target(name: "DocCCommandLine")
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings(.v5)

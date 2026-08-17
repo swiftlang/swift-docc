@@ -103,7 +103,7 @@ class MultipleChoiceTests: XCTestCase {
                 name: "Something.docc",
                 content: [
                     DataFile(name: "blah.png", data: Data()),
-                    InfoPlist(identifier: "org.swift.docc.example")
+                    InfoPlist(identifier: "org.swift.docc.example"),
                 ]))
 
         if let directive {

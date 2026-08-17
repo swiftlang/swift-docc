@@ -20,7 +20,7 @@ class LinkTitleResolverTests: XCTestCase {
                 symbolGraph: makeSymbolGraph(
                     moduleName: "MyKit",
                     symbols: [
-                        makeSymbol(id: "s:6MyKit10MyProtocolP", kind: .protocol, pathComponents: ["MyProtocol"]),
+                        makeSymbol(id: "s:6MyKit10MyProtocolP", kind: .protocol, pathComponents: ["MyProtocol"])
                     ]))
         }
         let (_, context) = try await loadBundle(catalog: catalog)

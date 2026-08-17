@@ -135,7 +135,7 @@ struct PathHierarchyTests_new {
     }
 
     @Test(arguments: [
-        "/", "Þ", "π", "→", "⠞", "😀", "🏁"
+        "/", "Þ", "π", "→", "⠞", "😀", "🏁",
     ])
     func transformsSpecialCharactersInPaths(character: String) async throws {
         let symbolName = "Symbol\(character)Name\(character)\(character)"
@@ -145,7 +145,7 @@ struct PathHierarchyTests_new {
                 symbolGraph: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: [symbolName]),
+                        makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: [symbolName])
                     ]))
         }
         let context = try await load(catalog: catalog)
@@ -174,7 +174,7 @@ struct PathHierarchyTests_new {
                     content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(id: symbolID, kind: .enum, pathComponents: ["FirstName"]),
+                            makeSymbol(id: symbolID, kind: .enum, pathComponents: ["FirstName"])
                         ]
                     )),
                 JSONFile(
@@ -183,9 +183,9 @@ struct PathHierarchyTests_new {
                         moduleName: "ModuleName",
                         platform: .init(operatingSystem: .init(name: "ios")),
                         symbols: [
-                            makeSymbol(id: symbolID, kind: .enum, pathComponents: ["SecondName"]),
+                            makeSymbol(id: symbolID, kind: .enum, pathComponents: ["SecondName"])
                         ]
-                    ))
+                    )),
             ])
 
         let context = try await load(catalog: catalog)
@@ -214,9 +214,9 @@ struct PathHierarchyTests_new {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: symbolID, kind: .enum, pathComponents: ["FirstName"]),
+                                    makeSymbol(id: symbolID, kind: .enum, pathComponents: ["FirstName"])
                                 ]
-                            )),
+                            ))
                     ]),
                 Folder(
                     name: "B",
@@ -227,10 +227,10 @@ struct PathHierarchyTests_new {
                                 moduleName: "ModuleName",
                                 platform: .init(operatingSystem: .init(name: "ios")),
                                 symbols: [
-                                    makeSymbol(id: symbolID, kind: .enum, pathComponents: ["SecondName"]),
+                                    makeSymbol(id: symbolID, kind: .enum, pathComponents: ["SecondName"])
                                 ]
-                            )),
-                    ])
+                            ))
+                    ]),
             ])
 
         let context = try await load(catalog: catalog)
@@ -530,7 +530,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(
                 error.solutions,
                 [
-                    .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 1, 13)]),
+                    .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 1, 13)])
                 ])
         }
         try assertPathRaisesErrorMessage(
@@ -542,7 +542,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(
                 error.solutions,
                 [
-                    .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 15, 27)]),
+                    .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 15, 27)])
                 ])
         }
 
@@ -1581,7 +1581,7 @@ class PathHierarchyTests: XCTestCase {
                 symbolGraph: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"])
                     ]))
 
             TextFile(
@@ -1759,7 +1759,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             "Int",
             functionSignatureParameterTypeName([
-                .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si")
             ]))
 
         // Array<Int>
@@ -1776,7 +1776,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             "NSArray",
             functionSignatureParameterTypeName([
-                .init(kind: .typeIdentifier, spelling: "NSArray", preciseIdentifier: "c:objc(cs)NSArray"),
+                .init(kind: .typeIdentifier, spelling: "NSArray", preciseIdentifier: "c:objc(cs)NSArray")
             ]))
 
         // MyArray<Int>
@@ -1793,7 +1793,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             "Any",
             functionSignatureParameterTypeName([
-                .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil),
+                .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil)
             ]))
 
         // Array<Any>
@@ -2125,7 +2125,7 @@ class PathHierarchyTests: XCTestCase {
                             ], children: [])
                     ],
                     returns: [
-                        .init(kind: .typeIdentifier, spelling: "id", preciseIdentifier: "c:*Qo"),
+                        .init(kind: .typeIdentifier, spelling: "id", preciseIdentifier: "c:*Qo")
                     ])
             )
             XCTAssertEqual(stringArgument?.parameterTypeNames, ["NSString*"])
@@ -2145,7 +2145,7 @@ class PathHierarchyTests: XCTestCase {
                             ], children: [])
                     ],
                     returns: [
-                        .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v"),
+                        .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
                     ])
             )
             XCTAssertEqual(genericArrayArgument?.parameterTypeNames, ["NSArray<NSString*>*"])
@@ -2293,7 +2293,7 @@ class PathHierarchyTests: XCTestCase {
                             ], children: [])
                     ],
                     returns: [
-                        .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida"),
+                        .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
                     ])
             )
             XCTAssertEqual(dictionaryWithOptionalsArgument?.parameterTypeNames, ["[Int?:String??]"])
@@ -2572,14 +2572,14 @@ class PathHierarchyTests: XCTestCase {
                                                 .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
                                                 .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
                                                 parameterTypeFragment,
-                                                .init(kind: .text, spelling: ">", preciseIdentifier: nil)
+                                                .init(kind: .text, spelling: ">", preciseIdentifier: nil),
                                             ], children: [])
                                     ],
                                     returns: [
                                         .init(kind: .text, spelling: "()", preciseIdentifier: nil)  // 'Void' in text representation
-                                    ],
+                                    ]
                                 ))
-                        })),
+                        }))
             ])
         let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
@@ -3284,7 +3284,7 @@ class PathHierarchyTests: XCTestCase {
                         symbols: symbolPaths.map {
                             makeSymbol(id: $0.joined(separator: "."), kind: .class, pathComponents: $0)
                         }
-                    )),
+                    ))
             ])
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
@@ -3326,9 +3326,9 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
-                                ],
-                            )),
+                                    makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"])
+                                ]
+                            ))
                     ]),
 
                 Folder(
@@ -3339,8 +3339,8 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
-                                ],
+                                    makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"])
+                                ]
                             )),
 
                         JSONFile(
@@ -3348,11 +3348,11 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ExtendingModule",
                                 symbols: [
-                                    makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                                    makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"])
                                 ],
                                 relationships: [
                                     .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                                ],
+                                ]
                             )),
                     ]),
             ])
@@ -3380,9 +3380,9 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: containerID, language: .objectiveC, kind: .typealias, pathComponents: ["ContainerName"]),
-                                ],
-                            )),
+                                    makeSymbol(id: containerID, language: .objectiveC, kind: .typealias, pathComponents: ["ContainerName"])
+                                ]
+                            ))
                     ]),
 
                 Folder(
@@ -3393,8 +3393,8 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
-                                ],
+                                    makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"])
+                                ]
                             )),
 
                         JSONFile(
@@ -3402,11 +3402,11 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ExtendingModule",
                                 symbols: [
-                                    makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                                    makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"])
                                 ],
                                 relationships: [
                                     .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                                ],
+                                ]
                             )),
                     ]),
             ])
@@ -3439,8 +3439,8 @@ class PathHierarchyTests: XCTestCase {
                                 ],
                                 relationships: [
                                     .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                                ],
-                            )),
+                                ]
+                            ))
                     ]),
 
                 Folder(
@@ -3456,8 +3456,8 @@ class PathHierarchyTests: XCTestCase {
                                 ],
                                 relationships: [
                                     .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                                ],
-                            )),
+                                ]
+                            ))
                     ]),
             ])
 
@@ -3498,7 +3498,7 @@ class PathHierarchyTests: XCTestCase {
                                 ],
                                 relationships: [
                                     .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                                ],
+                                ]
                             ))
                     }),
 
@@ -3515,9 +3515,9 @@ class PathHierarchyTests: XCTestCase {
                                 ],
                                 relationships: [
                                     .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                                ],
+                                ]
                             ))
-                    })
+                    }),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
@@ -3579,9 +3579,9 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ObjectiveCContainerName"]),
-                                ],
-                            )),
+                                    makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ObjectiveCContainerName"])
+                                ]
+                            ))
                     ]),
 
                 Folder(
@@ -3592,8 +3592,8 @@ class PathHierarchyTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: containerID, kind: .class, pathComponents: ["SwiftContainerName"]),
-                                ],
+                                    makeSymbol(id: containerID, kind: .class, pathComponents: ["SwiftContainerName"])
+                                ]
                             )),
 
                         JSONFile(
@@ -3605,7 +3605,7 @@ class PathHierarchyTests: XCTestCase {
                                 ],
                                 relationships: [
                                     .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                                ],
+                                ]
                             )),
                     ]),
             ])
@@ -3636,8 +3636,8 @@ class PathHierarchyTests: XCTestCase {
                             makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName1"]),
                         ],
                         relationships: [
-                            .init(source: memberID, target: containerID, kind: .optionalMemberOf, targetFallback: nil),
-                        ],
+                            .init(source: memberID, target: containerID, kind: .optionalMemberOf, targetFallback: nil)
+                        ]
                     ))
             ])
 
@@ -3659,7 +3659,7 @@ class PathHierarchyTests: XCTestCase {
                     content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"]),
+                            makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"])
                         ],
                         relationships: []
                     )),
@@ -3700,7 +3700,7 @@ class PathHierarchyTests: XCTestCase {
                         ## Topics
 
                         - ``SymbolName``
-                        """)
+                        """),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -3767,7 +3767,7 @@ class PathHierarchyTests: XCTestCase {
                     content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(id: symbolID, kind: .class, pathComponents: ["SymbolName"]),
+                            makeSymbol(id: symbolID, kind: .class, pathComponents: ["SymbolName"])
                         ],
                         relationships: []
                     )),
@@ -3782,7 +3782,7 @@ class PathHierarchyTests: XCTestCase {
                         }
 
                         A technology root with the same file name as the module name.
-                        """)
+                        """),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -3811,7 +3811,7 @@ class PathHierarchyTests: XCTestCase {
                     relationships: [
                         .init(source: protocolRequirementID, target: protocolID, kind: .requirementOf, targetFallback: nil),
                         .init(source: defaultImplementationID, target: protocolRequirementID, kind: .defaultImplementationOf, targetFallback: nil),
-                    ],
+                    ]
                 ))
         }
 
@@ -3833,7 +3833,7 @@ class PathHierarchyTests: XCTestCase {
         let singlePlatformCatalog = Folder(
             name: "unit-test.docc",
             content: [
-                makeSymbolGraphFile(platformName: "PlatformOne"),
+                makeSymbolGraphFile(platformName: "PlatformOne")
             ])
         let (_, singlePlatformContext) = try await loadBundle(catalog: singlePlatformCatalog)
         let singlePlatformPaths = singlePlatformContext.linkResolver.localResolver.pathHierarchy.caseInsensitiveDisambiguatedPaths()
@@ -3883,7 +3883,7 @@ class PathHierarchyTests: XCTestCase {
                                 kind: .method,
                                 pathComponents: ["ExtendedType", "extensionMethod()"],
                                 otherMixins: [extensionMixin]
-                            )
+                            ),
                         ],
                         relationships: [
                             .init(
@@ -3897,9 +3897,9 @@ class PathHierarchyTests: XCTestCase {
                                 target: extendedTypeID,
                                 kind: .extensionTo,
                                 targetFallback: "ExtendedModule.ExtendedType"
-                            )
-                        ],
-                    ))
+                            ),
+                        ]
+                    )),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
@@ -4036,7 +4036,7 @@ class PathHierarchyTests: XCTestCase {
                                 ],
                                 relationships: [ /* all required memberOf relationships all missing */]
                             ))
-                    })
+                    }),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -4150,7 +4150,7 @@ class PathHierarchyTests: XCTestCase {
                                 .init(kind: .text, spelling: " ", preciseIdentifier: nil),
                                 .init(kind: .internalParameter, spelling: "first", preciseIdentifier: nil),
                                 .init(kind: .text, spelling: " ", preciseIdentifier: nil),
-                                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS")
+                                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
                             ], children: []),
 
                         .init(
@@ -4162,7 +4162,7 @@ class PathHierarchyTests: XCTestCase {
                                 .init(kind: .text, spelling: " (", preciseIdentifier: nil),
                                 closureParameterType,
                                 .init(kind: .text, spelling: ") -> ()", preciseIdentifier: nil),
-                            ], children: [])
+                            ], children: []),
                     ],
                     returns: [.init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")]
                 )
@@ -5232,7 +5232,7 @@ class PathHierarchyTests: XCTestCase {
             // Function call
             "()",
             // Other
-            ","
+            ",",
         ]
 
         for operatorSymbol in knownCxxOperators {
@@ -5298,7 +5298,7 @@ class PathHierarchyTests: XCTestCase {
                         # Some root page
 
                         A single-file article-only catalog
-                        """),
+                        """)
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)

@@ -17,7 +17,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     func testRenderNodeSkipsReferences() throws {
         var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
-            "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
+            "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
         ]
 
         // Verify encoding references
@@ -54,7 +54,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Create a render node
         var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
-            "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
+            "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
         ]
 
         let encoder = RenderJSONEncoder.makeEncoder()

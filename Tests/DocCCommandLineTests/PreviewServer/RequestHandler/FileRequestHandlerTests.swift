@@ -24,17 +24,17 @@ struct FileRequestHandlerTests {
             Folder(
                 name: "data",
                 content: [
-                    TextFile(name: "test.json", utf8Content: "data"),
+                    TextFile(name: "test.json", utf8Content: "data")
                 ]),
             Folder(
                 name: "css",
                 content: [
-                    TextFile(name: "test.css", utf8Content: "css"),
+                    TextFile(name: "test.css", utf8Content: "css")
                 ]),
             Folder(
                 name: "js",
                 content: [
-                    TextFile(name: "test.js", utf8Content: "js"),
+                    TextFile(name: "test.js", utf8Content: "js")
                 ]),
             Folder(
                 name: "fonts",
@@ -66,12 +66,12 @@ struct FileRequestHandlerTests {
             Folder(
                 name: "downloads",
                 content: [
-                    TextFile(name: "project.zip", utf8Content: "zip"),
+                    TextFile(name: "project.zip", utf8Content: "zip")
                 ]),
             Folder(
                 name: "index",
                 content: [
-                    TextFile(name: "index.json", utf8Content: "data"),
+                    TextFile(name: "index.json", utf8Content: "data")
                 ]),
         ])
 
@@ -126,7 +126,7 @@ struct FileRequestHandlerTests {
             Folder(
                 name: "videos",
                 content: [
-                    TextFile(name: "video.mov", utf8Content: "Hello!"),
+                    TextFile(name: "video.mov", utf8Content: "Hello!")
                 ])
         ])
 
@@ -148,7 +148,7 @@ struct FileRequestHandlerTests {
             Folder(
                 name: "videos",
                 content: [
-                    TextFile(name: "video.mov", utf8Content: "Hello!"),
+                    TextFile(name: "video.mov", utf8Content: "Hello!")
                 ])
         ])
 
@@ -166,7 +166,7 @@ struct FileRequestHandlerTests {
             Folder(
                 name: "videos",
                 content: [
-                    TextFile(name: "video.mov", utf8Content: "Hello!"),
+                    TextFile(name: "video.mov", utf8Content: "Hello!")
                 ])
         ])
 

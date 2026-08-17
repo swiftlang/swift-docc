@@ -35,7 +35,7 @@ class HeadingAnchorTests: XCTestCase {
 
                             ### Some heading
                             - <doc:#Some-heading>
-                            """),
+                            """)
                 ])
 
         let (_, context) = try await loadBundle(catalog: catalog)

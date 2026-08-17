@@ -19,7 +19,7 @@ let package = Package(
     products: [
         .executable(
             name: "benchmark",
-            targets: ["benchmark"]),
+            targets: ["benchmark"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.2"),

@@ -707,7 +707,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
                 name: "Dependency.docc",
                 content: [
                     InfoPlist(identifier: "com.example.dependency"),  // This isn't necessary but makes it easier to distinguish the identifier from the module name in the external references.
-                    JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols))
+                    JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols)),
                 ])
         )
 

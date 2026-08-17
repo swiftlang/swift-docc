@@ -28,7 +28,7 @@ class ImageMediaTests: XCTestCase {
         XCTAssertEqual(
             diagnostics.map(\.identifier),
             [
-                "org.swift.docc.HasArgument.source",
+                "org.swift.docc.HasArgument.source"
             ])
     }
 

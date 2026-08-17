@@ -47,7 +47,7 @@ class LinksTests: XCTestCase {
             XCTAssertEqual(
                 diagnostics,
                 [
-                    "1: warning – org.swift.docc.HasArgument.visualStyle",
+                    "1: warning – org.swift.docc.HasArgument.visualStyle"
                 ]
             )
 
@@ -141,7 +141,7 @@ class LinksTests: XCTestCase {
                         RenderBlockContent.Links(
                             style: .compactGrid,
                             items: [
-                                "doc://org.swift.docc.Book/documentation/BestBook/MyArticle",
+                                "doc://org.swift.docc.Book/documentation/BestBook/MyArticle"
                             ]
                         ))
                 ]

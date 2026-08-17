@@ -23,7 +23,7 @@ struct LiveReloadTests {
     @Test
     func scriptInjected() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
-            TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
+            TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>")
         ])
 
         let request = makeRequestHead(uri: "/")
@@ -44,7 +44,7 @@ struct LiveReloadTests {
     @Test
     func scriptNotInjectedWithoutBodyTag() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
-            TextFile(name: "index.html", utf8Content: "<html>No body tag here</html>"),
+            TextFile(name: "index.html", utf8Content: "<html>No body tag here</html>")
         ])
 
         let request = makeRequestHead(uri: "/")
@@ -58,7 +58,7 @@ struct LiveReloadTests {
     @Test
     func scriptNotInjectedOnUnsupportedPlatform() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
-            TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
+            TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>")
         ])
 
         let request = makeRequestHead(uri: "/")

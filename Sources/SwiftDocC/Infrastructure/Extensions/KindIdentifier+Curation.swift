@@ -19,7 +19,7 @@ extension SymbolGraph.Symbol.KindIdentifier {
         .httpParameter,
         .module,
         .snippet,
-        .snippetGroup
+        .snippetGroup,
     ]
 
     /// Indicates whether this kind of symbol should generate a page.

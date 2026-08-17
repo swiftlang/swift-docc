@@ -26,8 +26,8 @@ struct PreviewHTTPHandlerTests {
             Folder(
                 name: "css",
                 content: [
-                    TextFile(name: "test.css", utf8Content: "css"),
-                ])
+                    TextFile(name: "test.css", utf8Content: "css")
+                ]),
         ])
 
         let channel = EmbeddedChannel()

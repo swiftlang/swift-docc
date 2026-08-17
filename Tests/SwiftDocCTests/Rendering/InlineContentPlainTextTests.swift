@@ -16,7 +16,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This text is code voiced."
 
         let codeVoiceContent: [RenderInlineContent] = [
-            .codeVoice(code: testText),
+            .codeVoice(code: testText)
         ]
 
         XCTAssertEqual(codeVoiceContent.plainText, testText)
@@ -26,7 +26,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This text is emphasized."
 
         let emphasisContent: [RenderInlineContent] = [
-            .emphasis(inlineContent: [.text(testText)]),
+            .emphasis(inlineContent: [.text(testText)])
         ]
 
         XCTAssertEqual(emphasisContent.plainText, testText)
@@ -36,7 +36,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This is strong text."
 
         let strongContent: [RenderInlineContent] = [
-            .strong(inlineContent: [.text(testText)]),
+            .strong(inlineContent: [.text(testText)])
         ]
 
         XCTAssertEqual(strongContent.plainText, testText)
@@ -48,13 +48,13 @@ class InlineContentPlainTextTests: XCTestCase {
         let firstImageContent: [RenderInlineContent] = [
             .image(
                 identifier: RenderReferenceIdentifier("id"),
-                metadata: RenderContentMetadata(anchor: nil, title: nil, abstract: [.text(testText)])),
+                metadata: RenderContentMetadata(anchor: nil, title: nil, abstract: [.text(testText)]))
         ]
 
         let secondImageContent: [RenderInlineContent] = [
             .image(
                 identifier: RenderReferenceIdentifier("id"),
-                metadata: RenderContentMetadata(anchor: nil, title: nil, abstract: nil)),
+                metadata: RenderContentMetadata(anchor: nil, title: nil, abstract: nil))
         ]
 
         XCTAssertEqual(firstImageContent.plainText, testText)
@@ -67,25 +67,25 @@ class InlineContentPlainTextTests: XCTestCase {
         let firstReferenceContent: [RenderInlineContent] = [
             .reference(
                 identifier: RenderReferenceIdentifier("test"),
-                isActive: true, overridingTitle: testText, overridingTitleInlineContent: [.text(testText)]),
+                isActive: true, overridingTitle: testText, overridingTitleInlineContent: [.text(testText)])
         ]
 
         let secondReferenceContent: [RenderInlineContent] = [
             .reference(
                 identifier: RenderReferenceIdentifier("test"),
-                isActive: true, overridingTitle: testText, overridingTitleInlineContent: nil),
+                isActive: true, overridingTitle: testText, overridingTitleInlineContent: nil)
         ]
 
         let thirdReferenceContent: [RenderInlineContent] = [
             .reference(
                 identifier: RenderReferenceIdentifier("test"),
-                isActive: true, overridingTitle: nil, overridingTitleInlineContent: [.text(testText)]),
+                isActive: true, overridingTitle: nil, overridingTitleInlineContent: [.text(testText)])
         ]
 
         let fourthReferenceContent: [RenderInlineContent] = [
             .reference(
                 identifier: RenderReferenceIdentifier("test"),
-                isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+                isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
         ]
 
         XCTAssertEqual(firstReferenceContent.plainText, testText)
@@ -98,7 +98,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This is plain text."
 
         let textContent: [RenderInlineContent] = [
-            .text(testText),
+            .text(testText)
         ]
 
         XCTAssertEqual(textContent.plainText, testText)
@@ -108,7 +108,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This is a new term."
 
         let newTermContent: [RenderInlineContent] = [
-            .newTerm(inlineContent: [.text(testText)]),
+            .newTerm(inlineContent: [.text(testText)])
         ]
 
         XCTAssertEqual(newTermContent.plainText, testText)
@@ -118,7 +118,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This is an inline header."
 
         let inlineHeadContent: [RenderInlineContent] = [
-            .inlineHead(inlineContent: [.text(testText)]),
+            .inlineHead(inlineContent: [.text(testText)])
         ]
 
         XCTAssertEqual(inlineHeadContent.plainText, testText)
@@ -128,7 +128,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This is a subscript."
 
         let subscriptContent: [RenderInlineContent] = [
-            .subscript(inlineContent: [.text(testText)]),
+            .subscript(inlineContent: [.text(testText)])
         ]
 
         XCTAssertEqual(subscriptContent.plainText, testText)
@@ -138,7 +138,7 @@ class InlineContentPlainTextTests: XCTestCase {
         let testText = "This is a superscript."
 
         let superscriptContent: [RenderInlineContent] = [
-            .superscript(inlineContent: [.text(testText)]),
+            .superscript(inlineContent: [.text(testText)])
         ]
 
         XCTAssertEqual(superscriptContent.plainText, testText)

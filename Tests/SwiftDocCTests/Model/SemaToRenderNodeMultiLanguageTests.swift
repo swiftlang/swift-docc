@@ -257,7 +257,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "Tutorial",
                 "Tutorial Article",
                 "_MixedLanguageFrameworkVersionNumber",
-                "_MixedLanguageFrameworkVersionString"
+                "_MixedLanguageFrameworkVersionString",
             ],
             referenceFragments: [
                 "class Bar",
@@ -325,7 +325,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "Tutorial",
                 "Tutorial Article",
                 "_MixedLanguageFrameworkVersionNumber",
-                "_MixedLanguageFrameworkVersionString"
+                "_MixedLanguageFrameworkVersionString",
             ],
             referenceFragments: [
                 "@interface Bar : NSObject",
@@ -365,7 +365,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "Foo",
             ],
             discussionSection: [
-                "This is the foo’s description.",
+                "This is the foo’s description."
             ],
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/init(rawValue:)",
@@ -418,7 +418,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 ";",
             ],
             discussionSection: [
-                "This is the foo’s description.",
+                "This is the foo’s description."
             ],
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/first",
@@ -533,7 +533,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "myStringFunction(_:)",
             ],
             referenceFragments: [
-                "class func myStringFunction(String) throws -> String",
+                "class func myStringFunction(String) throws -> String"
             ],
             failureMessage: { fieldName in
                 "Swift variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
@@ -559,7 +559,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "myStringFunction:error:",
             ],
             referenceFragments: [
-                "+ myStringFunction:error:",
+                "+ myStringFunction:error:"
             ],
             failureMessage: { fieldName in
                 "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
@@ -594,7 +594,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "_MixedLanguageFrameworkVersionNumber",
             ],
             referenceFragments: [
-                "struct SwiftOnlyStruct",
+                "struct SwiftOnlyStruct"
             ],
             failureMessage: { fieldName in
                 "Swift variant of 'APICollection' article has unexpected content for '\(fieldName)'."
@@ -615,7 +615,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber"
             ],
             seeAlsoSectionIdentifiers: [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article"
             ],
             referenceTitles: [
                 "Article",
@@ -624,7 +624,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "_MixedLanguageFrameworkVersionNumber",
             ],
             referenceFragments: [
-                "struct SwiftOnlyStruct",
+                "struct SwiftOnlyStruct"
             ],
             failureMessage: { fieldName in
                 "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
@@ -694,7 +694,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertEqual(
             objectiveCVariantNode.topicSections.flatMap(\.identifiers),
             [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()"
                 // Not the "MixedLanguageProtocol Implementations" page, because it only contains Swift-only symbols.
             ]
         )
@@ -810,7 +810,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "Inherits From",
                 "doc://org.swift.MixedLanguageFramework/objc(cs)NSObject",
                 "Conforms To",
-                "doc://org.swift.MixedLanguageFramework/SH"
+                "doc://org.swift.MixedLanguageFramework/SH",
             ]
         )
 
@@ -820,7 +820,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             objectiveCSymbol.relationshipSections.flatMap { [$0.title] + $0.identifiers },
             [
                 "Inherits From",
-                "doc://org.swift.MixedLanguageFramework/objc(cs)NSObject"
+                "doc://org.swift.MixedLanguageFramework/objc(cs)NSObject",
             ]
         )
     }
@@ -922,14 +922,14 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: "some-class", language: .swift, kind: .class, pathComponents: ["SomeClass"]),
+                                    makeSymbol(id: "some-class", language: .swift, kind: .class, pathComponents: ["SomeClass"])
                                 ])),
                         JSONFile(
                             name: "ModuleName-objc.symbols.json",
                             content: makeSymbolGraph(
                                 moduleName: "ModuleName",
                                 symbols: [
-                                    makeSymbol(id: "some-class", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"]),
+                                    makeSymbol(id: "some-class", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"])
                                 ])),
                         TextFile(
                             name: "ModuleName.md",

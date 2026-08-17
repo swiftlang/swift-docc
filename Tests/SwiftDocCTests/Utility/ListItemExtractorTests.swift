@@ -501,14 +501,14 @@ class ListItemExtractorTests: XCTestCase {
                         .paragraph(
                             .init(inlineContent: [
                                 .text("First inner unordered list item")
-                            ])),
+                            ]))
                     ]),
                     .init(content: [
                         .paragraph(
                             .init(inlineContent: [
                                 .text("Second inner unordered list item")
-                            ])),
-                    ])
+                            ]))
+                    ]),
                 ])),
 
             // ![](some-image)
@@ -525,14 +525,14 @@ class ListItemExtractorTests: XCTestCase {
                         .paragraph(
                             .init(inlineContent: [
                                 .text("First inner ordered list item")
-                            ])),
+                            ]))
                     ]),
                     .init(content: [
                         .paragraph(
                             .init(inlineContent: [
                                 .text("Second inner ordered list item")
-                            ])),
-                    ])
+                            ]))
+                    ]),
                 ])),
 
             // ```
@@ -551,7 +551,7 @@ class ListItemExtractorTests: XCTestCase {
                                 .codeVoice(code: "ThirdNotFoundSymbol"),
                                 .text(" link"),
                             ]))
-                    ]))
+                    ])),
         ]
 
         XCTAssertEqual(expectedRenderContent.count, Array(renderContent).count, "Unexpected number of rendered items", file: file, line: line)

@@ -462,8 +462,8 @@ struct ParametersAndReturnValidator {
             .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida"),
         ],
         .objectiveC: [
-            .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v"),
-        ]
+            .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+        ],
     ]
 
     /// Translates a relative documentation comment source range to the absolute location in that source file.
@@ -747,12 +747,12 @@ struct ParametersAndReturnValidator {
 
     private static let objcErrorDescription: [any Markup] = [
         Paragraph([
-            Text("On output, a pointer to an error object that describes why the method failed, or ") as (any InlineMarkup), InlineCode("nil"), Text(" if no error occurred. If you are not interested in the error information, pass "), InlineCode("nil"), Text(" for this parameter.")
+            Text("On output, a pointer to an error object that describes why the method failed, or ") as (any InlineMarkup), InlineCode("nil"), Text(" if no error occurred. If you are not interested in the error information, pass "), InlineCode("nil"), Text(" for this parameter."),
         ])
     ]
     private static let objcBoolErrorDescription: [any Markup] = [
         Paragraph([
-            InlineCode("YES") as (any InlineMarkup), Text(" if the method succeeded, otherwise "), InlineCode("NO"), Text(".")
+            InlineCode("YES") as (any InlineMarkup), Text(" if the method succeeded, otherwise "), InlineCode("NO"), Text("."),
         ])
     ]
     private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [any InlineMarkup] {

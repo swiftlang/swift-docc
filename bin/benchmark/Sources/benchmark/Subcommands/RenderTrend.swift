@@ -108,7 +108,7 @@ struct RenderTrendAction {
 
     // There are 8 blocks that increasingly fill form left to right.
     static let partialBarCharacters: [String] = [
-        "▏", "▎", "▍", "▌", "▋", "▊", "▉", "█"
+        "▏", "▎", "▍", "▌", "▋", "▊", "▉", "█",
     ]
 }
 

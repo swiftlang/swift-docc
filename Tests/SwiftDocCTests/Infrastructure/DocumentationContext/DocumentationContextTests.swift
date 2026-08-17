@@ -465,7 +465,7 @@ class DocumentationContextTests: XCTestCase {
                                       }
                                    }
                                 }
-                                """),
+                                """)
                     ]),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
@@ -483,7 +483,7 @@ class DocumentationContextTests: XCTestCase {
                 "/tutorials/Technology-file:-with---whitespace,-and_punctuation",
                 // From the volume's title and the chapter's names, appended to their technology's identifier
                 "/tutorials/Technology-file:-with---whitespace,-and_punctuation/Volume_Section-Title:-with---various!-whitespace,-and/punctuation",
-                "/tutorials/Technology-file:-with---whitespace,-and_punctuation/Volume_Section-Title:-with---various!-whitespace,-and/punctuation/Chapter_Title:-with---various!-whitespace,-and/punctuation"
+                "/tutorials/Technology-file:-with---whitespace,-and_punctuation/Volume_Section-Title:-with---various!-whitespace,-and/punctuation/Chapter_Title:-with---various!-whitespace,-and/punctuation",
             ])
     }
 
@@ -665,7 +665,7 @@ class DocumentationContextTests: XCTestCase {
                     Folder(
                         name: "First",
                         content: [
-                            TextFile(name: "Something.tutorial", utf8Content: minimumTutorialContent),
+                            TextFile(name: "Something.tutorial", utf8Content: minimumTutorialContent)
                         ]),
                     Folder(
                         name: "path",
@@ -676,10 +676,10 @@ class DocumentationContextTests: XCTestCase {
                                     Folder(
                                         name: "Second",
                                         content: [
-                                            TextFile(name: "something.tutorial", utf8Content: minimumTutorialContent),
-                                        ]),
-                                ]),
-                        ])
+                                            TextFile(name: "something.tutorial", utf8Content: minimumTutorialContent)
+                                        ])
+                                ])
+                        ]),
                 ]))
 
         XCTAssertEqual(context.diagnostics.map(\.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -719,7 +719,7 @@ class DocumentationContextTests: XCTestCase {
                     Folder(
                         name: "First",
                         content: [
-                            TextFile(name: "Something.md", utf8Content: "# First"),
+                            TextFile(name: "Something.md", utf8Content: "# First")
                         ]),
                     Folder(
                         name: "path",
@@ -730,10 +730,10 @@ class DocumentationContextTests: XCTestCase {
                                     Folder(
                                         name: "Second",
                                         content: [
-                                            TextFile(name: "Something.md", utf8Content: "# Second"),
-                                        ]),
-                                ]),
-                        ])
+                                            TextFile(name: "Something.md", utf8Content: "# Second")
+                                        ])
+                                ])
+                        ]),
                 ]))
 
         XCTAssertEqual(context.diagnostics.map(\.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -773,7 +773,7 @@ class DocumentationContextTests: XCTestCase {
                     Folder(
                         name: "Something",
                         content: [
-                            TextFile(name: "FileName.md", utf8Content: "# First"),
+                            TextFile(name: "FileName.md", utf8Content: "# First")
                         ]),
                     Folder(
                         name: "Something Else",
@@ -781,9 +781,9 @@ class DocumentationContextTests: XCTestCase {
                             Folder(
                                 name: "Subdirectory",
                                 content: [
-                                    TextFile(name: "FileName.md", utf8Content: "# Second"),
-                                ]),
-                        ])
+                                    TextFile(name: "FileName.md", utf8Content: "# Second")
+                                ])
+                        ]),
                 ])
         ])
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
@@ -875,7 +875,7 @@ class DocumentationContextTests: XCTestCase {
 
                             Here is a regular article about MyEnum.
                             """
-                    )
+                    ),
                 ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -940,7 +940,7 @@ class DocumentationContextTests: XCTestCase {
                             original: Bundle.module.url(
                                 forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                                 .appendingPathComponent("documentation")
-                                .appendingPathComponent("myprotocol.md")),
+                                .appendingPathComponent("myprotocol.md"))
                     ]),
                 Folder(
                     name: "Symbols",
@@ -948,7 +948,7 @@ class DocumentationContextTests: XCTestCase {
                         CopyOfFile(
                             original: Bundle.module.url(
                                 forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-                                .appendingPathComponent("mykit-iOS.symbols.json")),
+                                .appendingPathComponent("mykit-iOS.symbols.json"))
                     ]),
             ])
 
@@ -1334,7 +1334,7 @@ class DocumentationContextTests: XCTestCase {
                         TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
                         TextFile(name: "mykit-macOS.symbols.json", utf8Content: graphContentmacOS),
                         TextFile(name: "mykit-tvOS.symbols.json", utf8Content: graphContenttvOS),
-                    ])
+                    ]),
             ])
 
         let (_, context) = try await loadBundle(catalog: testCatalog)
@@ -1466,7 +1466,7 @@ class DocumentationContextTests: XCTestCase {
                 Folder(
                     name: "Symbols",
                     content: [
-                        TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
+                        TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS)
                     ]),
             ])
 
@@ -1872,7 +1872,7 @@ class DocumentationContextTests: XCTestCase {
         let catalog = Folder(
             name: "unit-test.docc",
             content: [
-                JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName")),
+                JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName"))
             ])
         let (_, context) = try await loadBundle(catalog: catalog)
 
@@ -1970,7 +1970,7 @@ class DocumentationContextTests: XCTestCase {
                         moduleName: "SomeModuleName",
                         symbols: [
                             makeSymbol(id: "some-symbol-id", kind: .init(identifier: "blip-blop"), pathComponents: ["SomeUnknownSymbol"])
-                        ])),
+                        ]))
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -2404,7 +2404,7 @@ class DocumentationContextTests: XCTestCase {
                     content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SymbolName"]),
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SymbolName"])
                         ]
                     )),
 
@@ -2449,7 +2449,7 @@ class DocumentationContextTests: XCTestCase {
                     content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol Name"]),
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol Name"])
                         ]
                     )),
 
@@ -2899,7 +2899,7 @@ class DocumentationContextTests: XCTestCase {
                                    "end": { "line": 16, "character": 56 }
                                  },
                                  "text" : "Resolvable: ``refVariable``, ``References``, ``References/refVariable``. Unresolvable: ``Foundation/URL``."
-                             },
+                             }
                            ]
                         },
                         "location": {
@@ -2939,7 +2939,7 @@ class DocumentationContextTests: XCTestCase {
                           "uri": "\(source)",
                           "position": { "line": 20, "character": 10 }
                         }
-                     },
+                     }
                   ]
                 }
                 """
@@ -3185,7 +3185,7 @@ class DocumentationContextTests: XCTestCase {
             content: [],
             originalLinkRangesByGroup: [
                 [
-                    SourceLocation(line: 9, column: 41, source: URL(fileURLWithPath: "/howardst/747.md"))..<SourceLocation(line: 9, column: 42, source: URL(fileURLWithPath: "/howardst/747.md")),
+                    SourceLocation(line: 9, column: 41, source: URL(fileURLWithPath: "/howardst/747.md"))..<SourceLocation(line: 9, column: 42, source: URL(fileURLWithPath: "/howardst/747.md"))
                 ]
             ])
 
@@ -3301,7 +3301,7 @@ class DocumentationContextTests: XCTestCase {
                                     - ``NotFoundSymbol``
                                     - <doc:NotFoundArticle>
                                     - <doc:#NotFoundHeading>
-                                    """),
+                                    """)
                         ])
                 let (_, context) = try await loadBundle(catalog: catalog)
 
@@ -3717,8 +3717,8 @@ class DocumentationContextTests: XCTestCase {
                                         ],
                                         relationships: [
                                             .init(source: "swift-only-member-id", target: symbolID, kind: .memberOf, targetFallback: nil)
-                                        ]),
-                                ),
+                                        ])
+                                )
                             ]),
 
                         Folder(
@@ -3750,8 +3750,8 @@ class DocumentationContextTests: XCTestCase {
                                         ],
                                         relationships: [
                                             .init(source: "objc-only-member-id", target: symbolID, kind: .memberOf, targetFallback: nil)
-                                        ]),
-                                ),
+                                        ])
+                                )
                             ]),
 
                         TextFile(
@@ -3778,7 +3778,7 @@ class DocumentationContextTests: XCTestCase {
                                 - ``ObjectiveCName/swiftOnlyMemberName``
                                 - ``SwiftName/objectiveCOnlyMemberName``
                                 """),
-                    ]),
+                    ])
         )
 
         XCTAssertEqual(
@@ -3811,7 +3811,7 @@ class DocumentationContextTests: XCTestCase {
                     // This links remain as they were authored because they didn't resolve
                     "ObjectiveCName/swiftOnlyMemberName",
                     "SwiftName/objectiveCOnlyMemberName",
-                ]
+                ],
             ])
     }
 
@@ -4499,10 +4499,10 @@ class DocumentationContextTests: XCTestCase {
                 {
                   "kind": "identifier",
                   "spelling": "Test"
-                },
+                }
               ],
               "accessLevel": "public"
-            },
+            }
           ],
           "relationships": []
         }
@@ -4844,7 +4844,7 @@ class DocumentationContextTests: XCTestCase {
                             )
                         )
                     ]),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
 
         let (_, context) = try await loadBundle(catalog: exampleDocumentation)
@@ -5009,8 +5009,8 @@ class DocumentationContextTests: XCTestCase {
                                         ),
                                     ],
                                     relationships: [
-                                        .init(source: "some-error-code-case-id", target: "some-error-code-id", kind: .memberOf, targetFallback: nil),
-                                    ],
+                                        .init(source: "some-error-code-case-id", target: "some-error-code-id", kind: .memberOf, targetFallback: nil)
+                                    ]
                                 ))
                         ]),
 
@@ -5079,7 +5079,7 @@ class DocumentationContextTests: XCTestCase {
                                         .init(source: "some-error-code-id", target: "some-error-id", kind: .memberOf, targetFallback: nil),
                                         // case is member of enum
                                         .init(source: "some-error-code-case-id", target: "some-error-code-id", kind: .memberOf, targetFallback: nil),
-                                    ],
+                                    ]
                                 ))
                         ]),
 
@@ -5365,7 +5365,7 @@ class DocumentationContextTests: XCTestCase {
                                 </dict>
                             </dict>
                             </plist>
-                            """.utf8))
+                            """.utf8)),
                 ])
         let (_, context) = try await loadBundle(catalog: catalog)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -5597,7 +5597,7 @@ class DocumentationContextTests: XCTestCase {
                             moduleName: "ModuleName",
                             platform: .init(operatingSystem: .init(name: "macosx")),
                             symbols: [
-                                makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                                makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"])
                             ])),
                     JSONFile(
                         name: "ModuleName-ios.symbols.json",
@@ -5679,7 +5679,7 @@ class DocumentationContextTests: XCTestCase {
                             moduleName: "ModuleName",
                             platform: .init(operatingSystem: .init(name: "macosx")),
                             symbols: [
-                                makeSymbol(id: "RegularSymbol", kind: .class, pathComponents: ["RegularSymbol"]),
+                                makeSymbol(id: "RegularSymbol", kind: .class, pathComponents: ["RegularSymbol"])
                             ])),
                     JSONFile(
                         name: "OtherModule@ModuleName.symbols.json",
@@ -5756,7 +5756,7 @@ class DocumentationContextTests: XCTestCase {
                             moduleName: "ModuleName",
                             platform: .init(operatingSystem: .init(name: "macosx")),
                             symbols: [
-                                makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                                makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"])
                             ])),
                     JSONFile(
                         name: "ModuleName-ios.symbols.json",
@@ -5849,7 +5849,7 @@ class DocumentationContextTests: XCTestCase {
                                 ## Topics
 
                                 - ``SymbolName-\(symbolKindID.identifier)``
-                                """)
+                                """),
                     ])
 
             let (_, context) = try await loadBundle(catalog: catalog)
@@ -5909,7 +5909,7 @@ class DocumentationContextTests: XCTestCase {
                                 ## Topics
 
                                 - ``SymbolName-abc123``
-                                """)
+                                """),
                     ])
 
             let (_, context) = try await loadBundle(catalog: catalog)
@@ -5967,7 +5967,7 @@ class DocumentationContextTests: XCTestCase {
                                 ## Topics
 
                                 - ``Symbol``
-                                """)
+                                """),
                     ])
 
             let (_, context) = try await loadBundle(catalog: catalog)
@@ -6010,7 +6010,7 @@ class DocumentationContextTests: XCTestCase {
                                 # ``\(externalModuleName)``
 
                                 Some description of this module.
-                                """)
+                                """),
                     ]),
                 configuration: configuration
             )
@@ -6039,7 +6039,7 @@ class DocumentationContextTests: XCTestCase {
                         A single-file article-only catalog.
 
                         This root links to an external module ``/\(externalModuleName)``
-                        """),
+                        """)
             ])
 
         let (linkResolutionInformation, linkSummaries) = try await makeExternalDependencyFiles()
@@ -6088,8 +6088,8 @@ class DocumentationContextTests: XCTestCase {
                 .paragraph(
                     .init(inlineContent: [
                         .text("This root links to an external module "),
-                        .reference(identifier: RenderReferenceIdentifier(externalReference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
-                    ]))
+                        .reference(identifier: RenderReferenceIdentifier(externalReference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+                    ])),
             ])
 
         // Verify that the rendered page has the render details about the resolved reference
@@ -6121,28 +6121,28 @@ class DocumentationContextTests: XCTestCase {
                         content: makeSymbolGraph(
                             moduleName: "unit-test",
                             symbols: [
-                                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"])
                             ]
-                        ),
+                        )
                     ),
                     JSONFile(
                         name: "unit-test.occ.symbols.json",
                         content: makeSymbolGraph(
                             moduleName: "unit-test",
                             symbols: [
-                                makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                                makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"])
                             ]
-                        ),
+                        )
                     ),
                     JSONFile(
                         name: "unit-test.js.symbols.json",
                         content: makeSymbolGraph(
                             moduleName: "unit-test",
                             symbols: [
-                                makeSymbol(id: "other-counterpart-symbol-id", language: .javaScript, kind: .class, pathComponents: ["OtherCounterpartSymbol"]),
+                                makeSymbol(id: "other-counterpart-symbol-id", language: .javaScript, kind: .class, pathComponents: ["OtherCounterpartSymbol"])
                             ]
-                        ),
-                    )
+                        )
+                    ),
                 ]
             ))
 
@@ -6213,7 +6213,7 @@ class DocumentationContextTests: XCTestCase {
                                 makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
                                 makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["SwiftSymbol"]),
                             ]
-                        ),
+                        )
                     ),
                     JSONFile(
                         name: "unit-test.occ.symbols.json",
@@ -6223,8 +6223,8 @@ class DocumentationContextTests: XCTestCase {
                                 makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
                                 makeSymbol(id: "other-counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["OtherCounterpartSymbol"]),
                             ]
-                        ),
-                    )
+                        )
+                    ),
                 ]
             ))
 
@@ -6285,10 +6285,10 @@ class DocumentationContextTests: XCTestCase {
                         content: makeSymbolGraph(
                             moduleName: "unit-test",
                             symbols: [
-                                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"])
                             ]
                         )
-                    )
+                    ),
                 ]
             ))
 

@@ -21,7 +21,7 @@ struct DefaultRequestHandlerTests {
     @Test
     func defaultHandlerServesIndexData() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
-            TextFile(name: "index.html", utf8Content: "Hello!"),
+            TextFile(name: "index.html", utf8Content: "Hello!")
         ])
 
         // Default handler should be invoked for any non-asset path

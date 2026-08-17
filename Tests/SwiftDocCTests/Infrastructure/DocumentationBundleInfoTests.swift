@@ -71,7 +71,7 @@ class DocumentationBundleInfoTests: XCTestCase {
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
-                "CFBundleIdentifier": "com.fallback.Identifier"
+                "CFBundleIdentifier": "com.fallback.Identifier",
             ]
         )
 

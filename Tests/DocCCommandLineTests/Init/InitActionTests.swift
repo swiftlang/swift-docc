@@ -33,7 +33,7 @@ final class InitActionTests: XCTestCase {
             outputCatalogContent,
             [
                 "\(documentationTitle).md",
-                "Resources"
+                "Resources",
             ].sorted())
     }
 
@@ -58,7 +58,7 @@ final class InitActionTests: XCTestCase {
                 "Chapter01",
                 "Chapter01/page-01.tutorial",
                 "Chapter01/Resources",
-                "Resources"
+                "Resources",
             ].sorted())
     }
 

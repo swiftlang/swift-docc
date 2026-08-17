@@ -104,12 +104,12 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "FooObjC",
                 "FooSwift",
                 "Genre",
-                "Month"
+                "Month",
             ],
             referenceFragments: [
                 "object Artist",
                 "string Genre",
-                "string Month"
+                "string Month",
             ],
             failureMessage: { fieldName in
                 "'DictionaryData' module has unexpected content for '\(fieldName)'."
@@ -140,12 +140,12 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "FooObjC",
                 "FooSwift",
                 "Genre",
-                "Month"
+                "Month",
             ],
             referenceFragments: [
                 "object Artist",
                 "string Genre",
-                "string Month"
+                "string Month",
             ],
             failureMessage: { fieldName in
                 "'DictionaryData' module has unexpected content for '\(fieldName)'."
@@ -169,7 +169,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "Artist",
             ],
             discussionSection: [
-                "The artist discussion.",
+                "The artist discussion."
             ],
             topicSectionIdentifiers: [],
             referenceTitles: [
@@ -259,7 +259,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             attributes: [.maximumLength("40"), .allowedTypes([[type1], [type2]])],
             declarationTokens: [
                 "string ",
-                "Genre"
+                "Genre",
             ],
             discussionSection: nil,
             topicSectionIdentifiers: [],

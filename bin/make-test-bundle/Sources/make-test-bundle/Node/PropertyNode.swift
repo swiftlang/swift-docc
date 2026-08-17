@@ -26,7 +26,7 @@ class PropertyNode: TypeMemberNode {
         ("String", "\"Test value\""),
         ("Int", "1024"),
         ("Bool", "true"),
-        ("CGFloat", "108.34")
+        ("CGFloat", "108.34"),
     ]
 
     override class func keyword() -> String { return "var" }

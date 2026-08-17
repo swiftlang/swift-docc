@@ -322,7 +322,7 @@ class VideoMediaTests: XCTestCase {
             diagnostics,
             [
                 "1: warning – org.swift.docc.unresolvedResource.Image",
-                "1: warning – org.swift.docc.unresolvedResource.Video"
+                "1: warning – org.swift.docc.unresolvedResource.Video",
             ]
         )
 

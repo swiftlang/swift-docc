@@ -34,7 +34,7 @@ class RenderNodeSerializationTests: XCTestCase {
             .reference(identifier: .init("GettingStartedInXcode.md"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
             .text(". Then run "),
             .codeVoice(code: "swift package generate-xcodeproj"),
-            .text(".")
+            .text("."),
         ]
 
         let blockContent: [RenderBlockContent] = [
@@ -50,7 +50,7 @@ class RenderNodeSerializationTests: XCTestCase {
                                 .text(" menu item, or the following code:"),
                             ])),
                         .codeListing(.init(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil, options: nil)),
-                    ]))
+                    ])),
         ]
 
         let steps: [RenderBlockContent] = [

@@ -805,7 +805,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(
             diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] },
             [
-                ["Replace 'otherFunction()' with 'myFunction()'", "myFunction()"],
+                ["Replace 'otherFunction()' with 'myFunction()'", "myFunction()"]
             ])
         XCTAssertEqual(
             try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")),
@@ -856,7 +856,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(
             diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] },
             [
-                ["Replace 'MyClas' with 'MyClass'", "MyClass"],
+                ["Replace 'MyClas' with 'MyClass'", "MyClass"]
             ])
         XCTAssertEqual(
             try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")),
@@ -907,7 +907,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(
             diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] },
             [
-                ["Replace 'MyClas' with 'MyClass'", "MyClass"],
+                ["Replace 'MyClas' with 'MyClass'", "MyClass"]
             ])
         XCTAssertEqual(
             try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")),
@@ -958,7 +958,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(
             diagnostic.solutions.map { [$0.summary, $0.replacements.first!.replacement] },
             [
-                ["Replace 'MyClas' with 'MyClass'", "MyClass"],
+                ["Replace 'MyClas' with 'MyClass'", "MyClass"]
             ])
         XCTAssertEqual(
             try diagnostic.solutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")),
@@ -1074,7 +1074,7 @@ class SymbolTests: XCTestCase {
             accessLevel: .init(rawValue: "public"),
             kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "myFunction"),
             mixins: [
-                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.swift", position: range.start),
+                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.swift", position: range.start)
             ]
         )
 
@@ -1382,12 +1382,12 @@ class SymbolTests: XCTestCase {
         let lines = [
             "One",
             "Two Words",
-            "With Trailing Whitespace "
+            "With Trailing Whitespace ",
         ]
         let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "Two Words",
-            "With Trailing Whitespace "
+            "With Trailing Whitespace ",
         ]
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
     }
@@ -1396,12 +1396,12 @@ class SymbolTests: XCTestCase {
         let lines = [
             "    One",
             "    Two Words",
-            "    With Trailing Whitespace "
+            "    With Trailing Whitespace ",
         ]
         let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "Two Words",
-            "With Trailing Whitespace "
+            "With Trailing Whitespace ",
         ]
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
     }
@@ -1410,12 +1410,12 @@ class SymbolTests: XCTestCase {
         let lines = [
             " One",
             "  Two Words",
-            "   With Trailing Whitespace "
+            "   With Trailing Whitespace ",
         ]
         let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             " Two Words",
-            "  With Trailing Whitespace "
+            "  With Trailing Whitespace ",
         ]
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
     }
@@ -1424,12 +1424,12 @@ class SymbolTests: XCTestCase {
         let lines = [
             "   One",
             "  Two Words",
-            " With Trailing Whitespace "
+            " With Trailing Whitespace ",
         ]
         let linesWithoutLeadingWhitespace: [Substring] = [
             "  One",
             " Two Words",
-            "With Trailing Whitespace "
+            "With Trailing Whitespace ",
         ]
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
     }
@@ -1440,14 +1440,14 @@ class SymbolTests: XCTestCase {
             "      ",
             "    Two Words",
             "    ",
-            "    With Trailing Whitespace "
+            "    With Trailing Whitespace ",
         ]
         let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "  ",
             "Two Words",
             "",
-            "With Trailing Whitespace "
+            "With Trailing Whitespace ",
         ]
 
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
@@ -1459,14 +1459,14 @@ class SymbolTests: XCTestCase {
             "",
             "    Two Words",
             "",
-            "    With Trailing Whitespace "
+            "    With Trailing Whitespace ",
         ]
         let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "",
             "Two Words",
             "",
-            "With Trailing Whitespace "
+            "With Trailing Whitespace ",
         ]
 
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)

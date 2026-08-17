@@ -26,7 +26,7 @@ class ResourcesTests: XCTestCase {
         XCTAssertEqual(
             diagnostics.map(\.identifier),
             [
-                "org.swift.docc.Resources.HasContent",
+                "org.swift.docc.Resources.HasContent"
             ])
 
         XCTAssert(diagnostics.allSatisfy { $0.severity == .warning })

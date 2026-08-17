@@ -112,7 +112,7 @@ class MergeSubcommandTests: XCTestCase {
             let command = try Docc.Merge.parse([
                 "/path/to/First.doccarchive",
                 "/path/to/Second.doccarchive",
-                "--landing-page-catalog", "/path/to/LandingPage.docc"
+                "--landing-page-catalog", "/path/to/LandingPage.docc",
             ])
             XCTAssertEqual(
                 command.inputsAndOutputs.archives,
@@ -133,7 +133,7 @@ class MergeSubcommandTests: XCTestCase {
             let command = try Docc.Merge.parse([
                 "/path/to/First.doccarchive",
                 "--synthesized-landing-page-name", "Test Landing Page Name",
-                "--synthesized-landing-page-kind", "Test Landing Page Kind"
+                "--synthesized-landing-page-kind", "Test Landing Page Kind",
             ])
             XCTAssertEqual(command.synthesizedLandingPageOptions.name, "Test Landing Page Name")
             XCTAssertEqual(command.synthesizedLandingPageOptions.kind, "Test Landing Page Kind")
@@ -160,7 +160,7 @@ class MergeSubcommandTests: XCTestCase {
                             Folder(name: "First.doccarchive", content: []),
                             Folder(name: "Second.doccarchive", content: []),
                             Folder(name: "LandingPage.docc", content: []),
-                        ]),
+                        ])
                 ]),
             Folder(
                 name: "other",
@@ -172,9 +172,9 @@ class MergeSubcommandTests: XCTestCase {
                                 name: "to",
                                 content: [
                                     // Intentionally empty
-                                ]),
-                        ]),
-                ])
+                                ])
+                        ])
+                ]),
         ])
         Docc.Merge._fileManager = fileSystem
 
@@ -185,7 +185,7 @@ class MergeSubcommandTests: XCTestCase {
                 "/path/to/First.doccarchive",
                 "/path/to/Second.doccarchive",
                 "--landing-page-catalog", "/path/to/LandingPage.docc",
-                "--output-path", "/other/path/to/output-dir"
+                "--output-path", "/other/path/to/output-dir",
             ])
             XCTAssertEqual(
                 command.inputsAndOutputs.archives,

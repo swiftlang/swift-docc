@@ -503,8 +503,8 @@ class SemaToRenderNodeTests: XCTestCase {
         return RenderBlockContent.ListItem(content: [
             RenderBlockContent.paragraph(
                 .init(inlineContent: [
-                    .reference(identifier: .init(reference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
-                ])),
+                    .reference(identifier: .init(reference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+                ]))
         ])
     }
 
@@ -1762,8 +1762,8 @@ class SemaToRenderNodeTests: XCTestCase {
             .unorderedList(
                 .init(items: [
                     .init(content: [.paragraph(.init(inlineContent: [.text("Task one")]))], checked: false),
-                    .init(content: [.paragraph(.init(inlineContent: [.text("Task two")]))], checked: true)
-                ]))
+                    .init(content: [.paragraph(.init(inlineContent: [.text("Task two")]))], checked: true),
+                ])),
         ]
         XCTAssertEqual(expectedContent, renderContent)
     }
@@ -2128,7 +2128,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                     "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
                     "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
-                    "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true)
+                    "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
                 ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
 
             let node = try context.entity(with: reference)
@@ -2178,7 +2178,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                     "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
                     "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
-                    "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true)
+                    "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
                 ], referencePath: "/documentation/MyKit")
 
             let node = try context.entity(with: reference)
@@ -2211,7 +2211,7 @@ class SemaToRenderNodeTests: XCTestCase {
             let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: .init(major: 13, minor: 0, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
+                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: .init(major: 13, minor: 0, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
             ])
         }
 
@@ -2680,7 +2680,7 @@ class SemaToRenderNodeTests: XCTestCase {
         let catalog = Folder(
             name: "unit-test.docc",
             content: [
-                CopyOfFile(original: asidesSGFURL, newName: "Asides.symbols.json"),
+                CopyOfFile(original: asidesSGFURL, newName: "Asides.symbols.json")
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -2907,7 +2907,7 @@ class SemaToRenderNodeTests: XCTestCase {
                         .init(inlineContent: [
                             .text("Doc extension discussion. Missing: "),
                             .text("."),
-                        ]))
+                        ])),
                 ])
         }
     }
@@ -3815,7 +3815,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
                     "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
                     "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
-                    "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake"
+                    "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake",
                 ])
         }
 
@@ -3848,7 +3848,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     "Type Properties",
                     "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
                     "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
-                    "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero"
+                    "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero",
                 ])
 
             let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)

@@ -33,36 +33,36 @@ struct LinkCompletionToolsTests {
         assertParsing(
             "SomeClass",
             equal: [
-                ("SomeClass", .none),
+                ("SomeClass", .none)
             ])
         // The leading slash indicate an absolute symbol link
         assertParsing(
             "/SomeModule",
             equal: [
-                ("SomeModule", .none),
+                ("SomeModule", .none)
             ])
         // Trailing slash
         assertParsing(
             "SomeClass/",
             equal: [
-                ("SomeClass", .none),
+                ("SomeClass", .none)
             ])
 
         // Disambiguation
         assertParsing(
             "SomeClass-class",
             equal: [
-                ("SomeClass", .kindAndOrHash(kind: "class", hash: nil)),
+                ("SomeClass", .kindAndOrHash(kind: "class", hash: nil))
             ])
         assertParsing(
             "SomeClass-swift.class",
             equal: [
-                ("SomeClass", .kindAndOrHash(kind: "class", hash: nil)),
+                ("SomeClass", .kindAndOrHash(kind: "class", hash: nil))
             ])
         assertParsing(
             "SomeClass-p2kr1",
             equal: [
-                ("SomeClass", .kindAndOrHash(kind: nil, hash: "p2kr1")),
+                ("SomeClass", .kindAndOrHash(kind: nil, hash: "p2kr1"))
             ])
 
         // Slash in symbol names
@@ -83,42 +83,42 @@ struct LinkCompletionToolsTests {
         assertParsing(
             "doSomething(with:and:)->()",
             equal: [
-                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: [])),
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: []))
             ])
         assertParsing(
             "doSomething(with:and:)->_",
             equal: [
-                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["_"])),
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["_"]))
             ])
         assertParsing(
             "doSomething(with:and:)->Bool",
             equal: [
-                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"])),
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))
             ])
         assertParsing(
             "doSomething(with:and:)->(Int,_,Double)",
             equal: [
-                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "Double"])),
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "Double"]))
             ])
         assertParsing(
             "doSomething(with:and:)-(_,_)",
             equal: [
-                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["_", "_"], returnTypes: nil)),
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["_", "_"], returnTypes: nil))
             ])
         assertParsing(
             "doSomething(with:and:)-(String,_)",
             equal: [
-                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: nil)),
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: nil))
             ])
         assertParsing(
             "doSomething()-()",
             equal: [
-                ("doSomething()", .typeSignature(parameterTypes: [], returnTypes: nil)),
+                ("doSomething()", .typeSignature(parameterTypes: [], returnTypes: nil))
             ])
         assertParsing(
             "doSomething(with:and:)-(String,_)->Bool",
             equal: [
-                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: ["Bool"])),
+                ("doSomething(with:and:)", .typeSignature(parameterTypes: ["String", "_"], returnTypes: ["Bool"]))
             ])
     }
 
@@ -163,9 +163,9 @@ struct LinkCompletionToolsTests {
 
         #expect(
             LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: [
-                enumCase, property
+                enumCase, property,
             ]) == [
-                "-enum.case", "-property"
+                "-enum.case", "-property",
             ])
 
         let operator1 = LinkCompletionTools.SymbolInformation(kind: "func.op", symbolIDHash: "vt1x", parameterTypes: ["Int", "String"], returnTypes: ["Bool"])

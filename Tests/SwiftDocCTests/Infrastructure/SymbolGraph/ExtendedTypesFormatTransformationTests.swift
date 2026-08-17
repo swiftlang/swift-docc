@@ -307,7 +307,7 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
                     kind: .init(parsedIdentifier: .extension, displayName: "Extension"),
                     mixins: [
                         SymbolGraph.Symbol.Swift.Extension.mixinKey: SymbolGraph.Symbol.Swift.Extension(extendedModule: "\(extendedModule)", typeKind: .struct, constraints: [])
-                    ])
+                    ]),
             ]
                 + (withExtensionMembers
                     ? [
@@ -330,16 +330,16 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
                             kind: .init(parsedIdentifier: .property, displayName: "Property"),
                             mixins: [
                                 SymbolGraph.Symbol.Swift.Extension.mixinKey: SymbolGraph.Symbol.Swift.Extension(extendedModule: "\(extendedModule)", typeKind: .struct, constraints: [])
-                            ])
+                            ]),
                     ] : []),
             relationships: [
                 .init(source: "s:e:s:\(extendedModule)\(pathPrefix.joined())\(extendedType)two", target: "s:\(extendedModule)\(pathPrefix.joined())\(extendedType)", kind: .extensionTo, targetFallback: "\(extendedModule).\(titlePrefix)\(extendedType)"),
-                .init(source: "s:e:s:\(extendedModule)\(pathPrefix.joined())\(extendedType)one", target: "s:\(extendedModule)\(pathPrefix.joined())\(extendedType)", kind: .extensionTo, targetFallback: "\(extendedModule).\(titlePrefix)\(extendedType)")
+                .init(source: "s:e:s:\(extendedModule)\(pathPrefix.joined())\(extendedType)one", target: "s:\(extendedModule)\(pathPrefix.joined())\(extendedType)", kind: .extensionTo, targetFallback: "\(extendedModule).\(titlePrefix)\(extendedType)"),
             ]
                 + (withExtensionMembers
                     ? [
                         .init(source: "s:\(extendedModule)\(pathPrefix.joined())\(extendedType)two", target: "s:e:s:\(extendedModule)\(pathPrefix.joined())\(extendedType)two", kind: .memberOf, targetFallback: "\(extendedModule).\(titlePrefix)\(extendedType)"),
-                        .init(source: "s:\(extendedModule)\(pathPrefix.joined())\(extendedType)one", target: "s:e:s:\(extendedModule)\(pathPrefix.joined())\(extendedType)one", kind: .memberOf, targetFallback: "\(extendedModule).\(titlePrefix)\(extendedType)")
+                        .init(source: "s:\(extendedModule)\(pathPrefix.joined())\(extendedType)one", target: "s:e:s:\(extendedModule)\(pathPrefix.joined())\(extendedType)one", kind: .memberOf, targetFallback: "\(extendedModule).\(titlePrefix)\(extendedType)"),
                     ] : []))
     }
 

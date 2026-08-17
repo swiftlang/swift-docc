@@ -63,7 +63,7 @@ class MetadataAlternateRepresentationTests: XCTestCase {
             diagnostics,
             [
                 "1: note – org.swift.docc.Metadata.NoConfiguration",
-                "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"
+                "2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed",
             ])
     }
 }

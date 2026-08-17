@@ -38,7 +38,7 @@ class RenderContentCompilerTests: XCTestCase {
                         # Third
                         """),
 
-                InfoPlist(identifier: "org.swift.docc.example")
+                InfoPlist(identifier: "org.swift.docc.example"),
             ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -130,7 +130,7 @@ class RenderContentCompilerTests: XCTestCase {
                 overridingTitle: "Custom Image Content ",
                 overridingTitleInlineContent: [
                     RenderInlineContent.text("Custom Image Content "),
-                    RenderInlineContent.image(identifier: .init(forExternalLink: "https://example.com/test.png"), metadata: nil)
+                    RenderInlineContent.image(identifier: .init(forExternalLink: "https://example.com/test.png"), metadata: nil),
                 ]
             )
             XCTAssertEqual(paragraph, RenderBlockContent.Paragraph(inlineContent: [link]))
@@ -580,7 +580,7 @@ class RenderContentCompilerTests: XCTestCase {
                 RenderBlockContent.CodeBlockOptions.LineAnnotation(
                     style: "highlight",
                     range: line3..<line3
-                )
+                ),
             ])
     }
 
@@ -639,7 +639,7 @@ class RenderContentCompilerTests: XCTestCase {
                 RenderBlockContent.CodeBlockOptions.LineAnnotation(
                     style: "strikeout",
                     range: line5..<line5
-                )
+                ),
             ])
     }
 
@@ -696,7 +696,7 @@ class RenderContentCompilerTests: XCTestCase {
                 RenderBlockContent.CodeBlockOptions.LineAnnotation(
                     style: "strikeout",
                     range: line3..<line3
-                )
+                ),
             ])
     }
 
@@ -753,7 +753,7 @@ class RenderContentCompilerTests: XCTestCase {
                 RenderBlockContent.CodeBlockOptions.LineAnnotation(
                     style: "strikeout",
                     range: line1..<line1
-                )
+                ),
             ])
     }
 }

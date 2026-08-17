@@ -35,7 +35,7 @@ class BenchmarkResultsTests: XCTestCase {
                 .init(id: "test-extra-output-size", displayName: "Test extra output size", value: .bytesOnDisk(12345678)),
                 .init(id: "total-archive-output-size", displayName: "Total DocC archive size", value: .bytesOnDisk(1231030)),
                 .init(id: "topic-anchor-hash", displayName: "Topic Anchor Checksum", value: .checksum("5afbde3ec6d3ee7b84e8aa1342f6839a")),
-                .init(id: "topic-graph-hash", displayName: "Topic Graph Checksum", value: .checksum("9dd02a80ae466010c8925aebe9a1ca02"))
+                .init(id: "topic-graph-hash", displayName: "Topic Graph Checksum", value: .checksum("9dd02a80ae466010c8925aebe9a1ca02")),
             ])
     }
 }
@@ -122,7 +122,7 @@ private let legacyBenchmark = """
           "displayName": "Index subdirectory size (bytes)",
           "result": 13768,
           "identifier": "index-subdirectory-output-size"
-        },
+        }
       ],
       "date": "\(legacyEncodedDate)"
     }

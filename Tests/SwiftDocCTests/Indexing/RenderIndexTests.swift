@@ -587,7 +587,7 @@ final class RenderIndexTests: XCTestCase {
                             "path": "/documentation/framework/foo",
                             "title": "Foo",
                             "type": "namespace"
-                        },
+                        }
                     ]
                 },
                 "schemaVersion": {
@@ -612,7 +612,7 @@ final class RenderIndexTests: XCTestCase {
                         "title": "Foo",
                         "type": "struct",
                         "\(property)": true
-                      },
+                      }
                     ]
                   },
                   "schemaVersion": {
@@ -642,7 +642,7 @@ final class RenderIndexTests: XCTestCase {
             name: "unit-test-swift.docc",
             content: [
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-                CopyOfFile(original: swiftWithDeprecatedSymbolGraphFile)
+                CopyOfFile(original: swiftWithDeprecatedSymbolGraphFile),
             ])
 
         // The navigator index needs to test with the real File Manager
@@ -672,7 +672,7 @@ final class RenderIndexTests: XCTestCase {
                                 "path": "/documentation/mylibrary/foo()",
                                 "title": "func foo() -> Int",
                                 "type": "func"
-                            },
+                            }
                         ]
                     },
                     "includedArchiveIdentifiers": [
@@ -759,7 +759,7 @@ final class RenderIndexTests: XCTestCase {
                                         unconditionallyDeprecated: true
                                     ),
                                 ]
-                            ),
+                            )
                         ]
                     )),
             ])

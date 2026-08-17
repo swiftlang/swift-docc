@@ -53,14 +53,14 @@ class NearMissTests: XCTestCase {
             "init(from:)",
             "wrappedValue",
             // Default Implementations
-            "description"
+            "description",
         ]
 
         checkBestMatches(
             for: argumentSubpaths, against: "wrappedValue",
             expectedMatches: [
                 // These need to be in the best matches in this order.
-                "wrappedValue",
+                "wrappedValue"
             ],
             acceptedMatches: [
                 // These don't need to be in the best matches but it's acceptable if they are.
@@ -87,7 +87,7 @@ class NearMissTests: XCTestCase {
                 // The start doesn't match.
                 "wrappedValue",
                 // Replacing "wrappedValue" with "from" is somewhat close.
-                "init(from:)"
+                "init(from:)",
             ])
 
         checkBestMatches(
@@ -124,14 +124,14 @@ class NearMissTests: XCTestCase {
             // Supporting Types
             "FlagExclusivity",
             // Default Implementations
-            "description"
+            "description",
         ]
 
         checkBestMatches(
             for: flagSubpaths, against: "wrappedValue",
             expectedMatches: [
                 // These need to be in the best matches in this order.
-                "wrappedValue",
+                "wrappedValue"
             ],
             acceptedMatches: [
                 // These don't need to be in the best matches but it's acceptable if they are.
@@ -178,14 +178,14 @@ class NearMissTests: XCTestCase {
                 // These don't need to be in the best matches but it's acceptable if they are.
                 //
                 // The start doesn't match and is most of the string.
-                "withUncheckedChildren(_:)",
+                "withUncheckedChildren(_:)"
             ])
 
         checkBestMatches(
             for: markupSubpaths, against: "FromParent",
             expectedMatches: [
                 // These need to be in the best matches in this order.
-                "detachedFromParent",
+                "detachedFromParent"
             ],
             acceptedMatches: [
                 // These don't need to be in the best matches but it's acceptable if they are.
@@ -326,7 +326,7 @@ class NearMissTests: XCTestCase {
                 // Most of the string doesn't match.
                 "ConvertRequestContextWrapper",
                 // Start doesn't match.
-                "MarkupConvertible"
+                "MarkupConvertible",
             ])
 
         checkBestMatches(

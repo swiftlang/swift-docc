@@ -48,7 +48,7 @@ struct FastSymbolGraphJSONDecoderTest {
                       },
                       {
                         "text" : "    let b = (\"a\", 1, 2, 3, 4, 5)"
-                      },
+                      }
                     ]
                   }
             """#
@@ -88,7 +88,7 @@ struct FastSymbolGraphJSONDecoderTest {
                       },
                       {
                         "text" : "branch, i.e. the conditionally-available branch."
-                      },
+                      }
                     ]
                   }
             """#

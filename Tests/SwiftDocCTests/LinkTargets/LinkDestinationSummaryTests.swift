@@ -447,7 +447,7 @@ struct LinkDestinationSummaryTests {
                 {
                   "type": "text",
                   "text": "A brief explanation of my class."
-                },
+                }
               ],
               "platforms": [
                 {
@@ -467,7 +467,7 @@ struct LinkDestinationSummaryTests {
                 {
                   "kind": "identifier",
                   "text": "ClassName"
-                },
+                }
               ]
             }
             """

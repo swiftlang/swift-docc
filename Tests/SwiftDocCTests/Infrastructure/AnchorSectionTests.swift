@@ -181,7 +181,7 @@ struct AnchorSectionTests {
                                 ## Topics
                                 - <doc:First#Some-symbol-heading>
                                 - <doc:OtherArticle#Some-article-heading>
-                                """)
+                                """),
                     ]))
 
             TextFile(

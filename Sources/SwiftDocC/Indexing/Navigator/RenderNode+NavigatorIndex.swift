@@ -160,7 +160,7 @@ extension NavigatorIndexableRenderNodeRepresentation {
 }
 
 private let typesThatShouldNotUseNavigatorTitle: Set<NavigatorIndex.PageType> = [
-    .framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType, .extension
+    .framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType, .extension,
 ]
 
 extension NavigatorIndexableRenderNodeRepresentation {

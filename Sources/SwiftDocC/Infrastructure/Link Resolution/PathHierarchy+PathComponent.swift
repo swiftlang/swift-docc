@@ -23,7 +23,7 @@ private let knownSymbolKinds: Set<String> = {
             .extendedClass,
             .extendedEnumeration,
             .unknownExtendedType,
-            .extendedModule
+            .extendedModule,
         ]
     return Set(knownKinds.map(\.identifier))
 }()

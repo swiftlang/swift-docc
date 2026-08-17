@@ -195,13 +195,13 @@ class SymbolReferenceTests: XCTestCase {
                                         },
                                         "declarationFragments" : [
                                         ]
-                                      },
+                                      }
                                   ],
                                   "relationships" : [
                                   ]
                                 }
-                                """),
-                    ])
+                                """)
+                    ]),
             ])
 
         let (_, context) = try await loadBundle(catalog: testCatalog)
