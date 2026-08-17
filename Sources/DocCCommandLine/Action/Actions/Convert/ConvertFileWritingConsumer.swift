@@ -46,8 +46,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
         self.context = context
         self.renderNodeWriter = JSONEncodingRenderNodeWriter(
             targetFolder: targetFolder,
-            fileManager: fileManager,
-            outputFileManager: outputFileManager,
+            fileManager: outputFileManager,
             transformForStaticHostingIndexHTML: transformForStaticHostingIndexHTML
         )
         self.indexer = indexer

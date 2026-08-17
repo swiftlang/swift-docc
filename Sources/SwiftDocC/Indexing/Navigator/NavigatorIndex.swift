@@ -77,7 +77,7 @@ public class NavigatorIndex {
     public let url: URL
     
     /// The filesystem to use.
-    public var fileManager: any FileManagerProtocol
+    var fileManager: any FileManagerProtocol
 
     /// The LMDB environment.
     var environment: LMDB.Environment?

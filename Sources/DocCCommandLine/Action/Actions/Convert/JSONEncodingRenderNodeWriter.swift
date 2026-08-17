@@ -18,7 +18,6 @@ class JSONEncodingRenderNodeWriter {
     private let targetFolder: URL
     private let transformForStaticHostingIndexHTML: URL?
     private let fileManager: any FileManagerProtocol
-    private let outputFileManager: any FileManagerProtocol
     private let renderReferenceCache = RenderReferenceCache([:])
     
     /// Creates a writer object that write render node JSON into a given folder.
@@ -26,11 +25,10 @@ class JSONEncodingRenderNodeWriter {
     /// - Parameters:
     ///   - targetFolder: The folder to which the writer object writes the files.
     ///   - fileManager: The file manager with which the writer object writes data to files.
-    init(targetFolder: URL, fileManager: any FileManagerProtocol, outputFileManager: any FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
+    init(targetFolder: URL, fileManager: any FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
         self.targetFolder = targetFolder
         self.transformForStaticHostingIndexHTML = transformForStaticHostingIndexHTML
         self.fileManager = fileManager
-        self.outputFileManager = outputFileManager
     }
     
     // The already created directories on disk
@@ -72,16 +70,16 @@ class JSONEncodingRenderNodeWriter {
         // Note that it doesn't make sense to use the above-described `directoryIndex` for this use
         // case since we expect every 'index.html' file to require the creation of
         // its own unique parent directory.
-        try outputFileManager.createDirectory(
+        try fileManager.createDirectory(
             at: htmlTargetFolderURL,
             withIntermediateDirectories: true,
             attributes: nil
         )
         
-        if outputFileManager.fileExists(atPath: htmlTargetFileURL.path) {
-            try outputFileManager.removeItem(at: htmlTargetFileURL)
+        if fileManager.fileExists(atPath: htmlTargetFileURL.path) {
+            try fileManager.removeItem(at: htmlTargetFileURL)
         }
-        try outputFileManager.copyItem(at: indexHTML, to: htmlTargetFileURL, on: outputFileManager)
+        try fileManager.copyItem(at: indexHTML, to: htmlTargetFileURL, on: fileManager)
     }
     
     /// Writes a markdown node to a file at a location based on the node's relative URL.
@@ -116,7 +114,7 @@ class JSONEncodingRenderNodeWriter {
         try directoryIndex.sync { directoryIndex in
             let (insertedRenderNodeTargetFolderURL, _) = directoryIndex.insert(containingFolderURL)
             if insertedRenderNodeTargetFolderURL {
-                try outputFileManager.createDirectory(
+                try fileManager.createDirectory(
                     at: containingFolderURL,
                     withIntermediateDirectories: true,
                     attributes: nil
@@ -124,6 +122,6 @@ class JSONEncodingRenderNodeWriter {
             }
         }
         
-        try outputFileManager.createFile(at: fileURL, contents: data, options: nil)
+        try fileManager.createFile(at: fileURL, contents: data, options: nil)
     }
 }

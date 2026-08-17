@@ -460,6 +460,10 @@ public struct ConvertAction: AsyncAction {
         // Output the diagnostics encountered during the convert process to the user.
         diagnosticEngine.emit(postConversionDiagnostics)
 
+        // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
+        // New tasks and computations should be added above this line so that they're included in the benchmark.
+        benchmark(end: totalTimeMetric)
+
         if !didEncounterError {
             let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
             postConversionDiagnostics.append(contentsOf: coverageResults.diagnostics)
@@ -475,9 +479,6 @@ public struct ConvertAction: AsyncAction {
                 try Self.moveOutput(from: generateInFolder, to: targetDirectory, fileManager: generateInFileManager)
             }
         }
-
-        // Stop the "total time" metric here. While moveOutput isn't interesting, compression is.
-        benchmark(end: totalTimeMetric)
 
         // Log the output size.
         benchmark(
