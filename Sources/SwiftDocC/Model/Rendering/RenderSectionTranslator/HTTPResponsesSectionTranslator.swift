@@ -34,10 +34,7 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
     }
 
     private func translateResponse(_ response: HTTPResponse, _ renderNodeTranslator: inout RenderNodeTranslator) -> RESTResponse {
-        let responseContent =
-            renderNodeTranslator.visitMarkupContainer(
-                MarkupContainer(response.contents)
-            ) as! [RenderBlockContent]
+        let responseContent = renderNodeTranslator.visitMarkupContainer(MarkupContainer(response.contents)) as! [RenderBlockContent]
 
         var renderedTokens: [DeclarationRenderSection.Token]? = nil
 

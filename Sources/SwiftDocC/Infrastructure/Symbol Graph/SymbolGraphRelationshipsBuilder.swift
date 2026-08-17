@@ -79,9 +79,7 @@ struct SymbolGraphRelationshipsBuilder {
         if optionalInterfaceNode == nil {
             // Take the interface language of the target symbol
             // or if external - default to the language of the current symbol.
-            let language =
-                localCache[edge.target]?.sourceLanguage
-                ?? implementorNode.reference.sourceLanguage
+            let language = localCache[edge.target]?.sourceLanguage ?? implementorNode.reference.sourceLanguage
 
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
@@ -171,9 +169,7 @@ struct SymbolGraphRelationshipsBuilder {
         } else {
             // Take the interface language of the target symbol
             // or if external - default to the language of the current symbol.
-            let language =
-                localCache[edge.target]?.sourceLanguage
-                ?? conformingNode.reference.sourceLanguage
+            let language = localCache[edge.target]?.sourceLanguage ?? conformingNode.reference.sourceLanguage
 
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {

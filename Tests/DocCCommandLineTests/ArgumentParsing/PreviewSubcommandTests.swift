@@ -45,10 +45,7 @@ class PreviewSubcommandTests: XCTestCase {
         do {
             unsetenv(TemplateOption.environmentVariableKey)
             let tempFolder = try createTemporaryDirectory()
-            let doccExecutableLocation =
-                tempFolder
-                .appendingPathComponent("bin")
-                .appendingPathComponent("docc-executable-name")
+            let doccExecutableLocation = tempFolder.appendingPathComponent("bin").appendingPathComponent("docc-executable-name")
             let defaultTemplateDir =
                 tempFolder
                 .appendingPathComponent("share")

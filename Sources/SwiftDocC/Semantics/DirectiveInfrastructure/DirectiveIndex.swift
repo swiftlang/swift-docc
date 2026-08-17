@@ -40,10 +40,7 @@ struct DirectiveIndex {
         Choice.self,
     ]
 
-    private static var allTopLevelDirectives =
-        topLevelTutorialDirectives
-        + topLevelReferenceDirectives
-        + otherTutorialDirectives
+    private static var allTopLevelDirectives = topLevelTutorialDirectives + topLevelReferenceDirectives + otherTutorialDirectives
 
     let indexedDirectives: [String: DirectiveMirror.ReflectedDirective]
 

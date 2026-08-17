@@ -75,10 +75,7 @@ struct ValidatedURLTests {
             "doc:SymbolName/memberName()->Int?",
             "doc://com.example.test/SymbolName/memberName()->Int?",
         ] {
-            let expectedPath =
-                linkText.hasPrefix("doc://")
-                ? "/SymbolName/memberName()->Int?"
-                : "SymbolName/memberName()->Int?"
+            let expectedPath = linkText.hasPrefix("doc://") ? "/SymbolName/memberName()->Int?" : "SymbolName/memberName()->Int?"
 
             try validate(linkText: linkText, expectedPath: expectedPath)
             try validate(linkText: linkText + "#Heading-Name", expectedPath: expectedPath, expectedFragment: "Heading-Name")
@@ -131,10 +128,7 @@ struct ValidatedURLTests {
 
         let linkText = baseLink + escapedFragment
 
-        let expectedPath =
-            linkText.hasPrefix("doc://")
-            ? "/SymbolName"
-            : "SymbolName"
+        let expectedPath = linkText.hasPrefix("doc://") ? "/SymbolName" : "SymbolName"
 
         let validated = try #require(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
 

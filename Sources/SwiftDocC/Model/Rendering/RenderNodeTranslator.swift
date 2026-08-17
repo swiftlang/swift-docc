@@ -2114,10 +2114,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
     /// Generate a RenderProperty object from markup content and symbol data.
     mutating func createRenderProperty(name: String, contents: [any Markup], required: Bool, symbol: SymbolGraph.Symbol?) -> RenderProperty {
-        let parameterContent =
-            self.visitMarkupContainer(
-                MarkupContainer(contents)
-            ) as! [RenderBlockContent]
+        let parameterContent = self.visitMarkupContainer(MarkupContainer(contents)) as! [RenderBlockContent]
 
         var renderedTokens: [DeclarationRenderSection.Token]? = nil
         var attributes: [RenderAttribute] = []

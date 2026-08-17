@@ -497,9 +497,7 @@ class ConvertActionTests: XCTestCase {
             .appendingPathComponent("data", isDirectory: true)
             .appendingPathComponent("documentation", isDirectory: true)
 
-        let fillIntroducedDirectoryURL =
-            documentationDataDirectoryURL
-            .appendingPathComponent("fillintroduced", isDirectory: true)
+        let fillIntroducedDirectoryURL = documentationDataDirectoryURL.appendingPathComponent("fillintroduced", isDirectory: true)
 
         let renderNodeURLs = [
             documentationDataDirectoryURL
@@ -569,9 +567,7 @@ class ConvertActionTests: XCTestCase {
             .appendingPathComponent("data", isDirectory: true)
             .appendingPathComponent("documentation", isDirectory: true)
 
-        let fillIntroducedDirectoryURL =
-            documentationDataDirectoryURL
-            .appendingPathComponent("fillintroduced", isDirectory: true)
+        let fillIntroducedDirectoryURL = documentationDataDirectoryURL.appendingPathComponent("fillintroduced", isDirectory: true)
 
         let renderNodeURLs = [
             documentationDataDirectoryURL
@@ -2812,12 +2808,8 @@ class ConvertActionTests: XCTestCase {
 
     func testConvertWithoutBundleErrorsForMultipleModulesSymbolGraph() async throws {
         let testBundle = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        let myKitSymbolGraph =
-            testBundle
-            .appendingPathComponent("mykit-iOS.symbols.json")
-        let sideKitSymbolGraph =
-            testBundle
-            .appendingPathComponent("sidekit.symbols.json")
+        let myKitSymbolGraph = testBundle.appendingPathComponent("mykit-iOS.symbols.json")
+        let sideKitSymbolGraph = testBundle.appendingPathComponent("sidekit.symbols.json")
 
         XCTAssert(FileManager.default.fileExists(atPath: myKitSymbolGraph.path))
         XCTAssert(FileManager.default.fileExists(atPath: sideKitSymbolGraph.path))

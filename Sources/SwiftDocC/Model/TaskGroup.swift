@@ -200,10 +200,7 @@ public struct TaskGroup {
             return nil
         }
 
-        var discussionChildren =
-            originalContent
-            .prefix(while: { !($0 is UnorderedList) })
-            .filter({ !($0 is BlockDirective) })
+        var discussionChildren = originalContent.prefix(while: { !($0 is UnorderedList) }).filter({ !($0 is BlockDirective) })
 
         // Drop the abstract
         if discussionChildren.first is Paragraph {

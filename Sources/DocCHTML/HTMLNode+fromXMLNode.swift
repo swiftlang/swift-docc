@@ -25,18 +25,12 @@ package extension HTMLNode {
                 return nil
             }
 
-            let attributes =
-                element.attributes?.compactMap {
-                    HTMLNode.Attribute($0)
-                } ?? []
+            let attributes = element.attributes?.compactMap { HTMLNode.Attribute($0) } ?? []
 
             if tag.isVoid {
                 self = ._voidElement(tag, attributes: attributes)
             } else {
-                let contents =
-                    xmlNode.children?.compactMap {
-                        HTMLNode(from: $0)
-                    } ?? []
+                let contents = xmlNode.children?.compactMap { HTMLNode(from: $0) } ?? []
                 self = ._element(tag, attributes: attributes, contents: contents)
             }
         } else if xmlNode.kind == .text, let text = xmlNode.stringValue {

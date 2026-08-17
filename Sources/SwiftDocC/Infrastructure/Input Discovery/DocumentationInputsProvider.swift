@@ -149,10 +149,7 @@ extension DocumentationContext.InputsProvider {
     func makeInputs(contentOf catalogURL: CatalogURL, options: Options) throws -> DocumentationContext.Inputs {
         let url = catalogURL.url
         let shallowContent = try fileManager.contentsOfDirectory(at: url, options: [.skipsHiddenFiles]).files
-        let infoPlistData =
-            try shallowContent
-            .first(where: FileTypes.isInfoPlistFile)
-            .map { try fileManager.contents(of: $0) }
+        let infoPlistData = try shallowContent.first(where: FileTypes.isInfoPlistFile).map { try fileManager.contents(of: $0) }
 
         let info = try DocumentationContext.Inputs.Info(
             from: infoPlistData,

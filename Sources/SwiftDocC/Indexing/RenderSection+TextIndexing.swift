@@ -262,15 +262,9 @@ extension RESTBodyRenderSection {
     }
 
     public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
-        let contentText =
-            (content?.map {
-                return $0.rawIndexableTextContent(references: references)
-            }.joined(separator: " ")) ?? ""
+        let contentText = (content?.map { return $0.rawIndexableTextContent(references: references) }.joined(separator: " ")) ?? ""
 
-        let parametersText =
-            (parameters?.map {
-                return $0.rawIndexableTextContent(references: references)
-            }.joined(separator: " ")) ?? ""
+        let parametersText = (parameters?.map { return $0.rawIndexableTextContent(references: references) }.joined(separator: " ")) ?? ""
 
         return contentText + " " + parametersText
     }

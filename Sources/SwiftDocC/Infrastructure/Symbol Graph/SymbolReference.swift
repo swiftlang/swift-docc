@@ -67,10 +67,7 @@ public struct SymbolReference {
         if shouldAddKind {
             let interfaceLanguage = symbol.identifier.interfaceLanguage
 
-            let languageIdentifier =
-                SourceLanguage(
-                    knownLanguageIdentifier: interfaceLanguage
-                )?.linkDisambiguationID ?? interfaceLanguage
+            let languageIdentifier = SourceLanguage(knownLanguageIdentifier: interfaceLanguage)?.linkDisambiguationID ?? interfaceLanguage
 
             name = name.appending("-\(languageIdentifier).\(symbol.kind.identifier.identifier)")
         }

@@ -25,9 +25,8 @@ extension Semantic.Analyses {
         ) {
             self.severityIfFound = severityIfFound
             var allowedDirectives =
-                allowedDirectives
-                /* Comments are always allowed because they are ignored. */
-            + [Comment.directiveName]
+                allowedDirectives /* Comments are always allowed because they are ignored. */
+                + [Comment.directiveName]
 
             if allowsStructuredMarkup {
                 allowedDirectives += DirectiveIndex.shared.renderableDirectives.values.map {

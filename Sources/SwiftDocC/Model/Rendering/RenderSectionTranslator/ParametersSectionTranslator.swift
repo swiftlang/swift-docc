@@ -25,10 +25,7 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
             return ParametersRenderSection(
                 parameters: parameters.parameters
                     .map { parameter in
-                        let parameterContent =
-                            renderNodeTranslator.visitMarkupContainer(
-                                MarkupContainer(parameter.contents)
-                            ) as! [RenderBlockContent]
+                        let parameterContent = renderNodeTranslator.visitMarkupContainer(MarkupContainer(parameter.contents)) as! [RenderBlockContent]
 
                         guard !parameterContent.isEmpty else {
                             return ParameterRenderSection(name: parameter.name, content: parameterContent)

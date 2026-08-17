@@ -15,9 +15,7 @@ import DocCCommon
 // Creates a formatted string in the form of "X/Y% (X/Y)"
 func ratio(_ x: Int, _ y: Int, length: Int? = nil) -> String {
     let percentage = RatioStatistic.numberFormatter.string(from: NSNumber(value: Double(x) / Double(y)))!
-    let result =
-        percentage
-        .appending(" (\(x)/\(y))")
+    let result = percentage.appending(" (\(x)/\(y))")
     guard let length else { return result }
 
     return

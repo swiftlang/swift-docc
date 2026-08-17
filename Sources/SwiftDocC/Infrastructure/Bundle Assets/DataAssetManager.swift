@@ -81,9 +81,7 @@ struct DataAssetManager {
             let userInterfaceStyle: UserInterfaceStyle = darkSuffixRegex.matches(in: dataReference) ? .dark : .light
 
             // Process variants with different scale if a file name modifier is found.
-            let displayScale =
-                displayScaleRegex.firstMatch(in: dataReference)
-                .flatMap(DisplayScale.init(rawValue:)) ?? .standard
+            let displayScale = displayScaleRegex.firstMatch(in: dataReference).flatMap(DisplayScale.init(rawValue:)) ?? .standard
 
             // Remove traits information from the image reference to store multiple variants.
             // Remove the dark suffix from the image reference.

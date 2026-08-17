@@ -196,8 +196,7 @@ extension CoverageDataEntry {
         let semanticSymbol = documentationNode.semantic as? Symbol
         let kind = documentationNode.kind
         let hasAbstract = semanticSymbol?.abstractSection != nil  // How should we this handle 'possible' failure?
-        let isCurated =
-            context.manuallyCuratedReferences?.contains(documentationNode.reference) ?? false
+        let isCurated = context.manuallyCuratedReferences?.contains(documentationNode.reference) ?? false
         let referencePath = renderNode.identifier.description
         let sourceLanguage = documentationNode.sourceLanguage
         let availableSourceLanguages = documentationNode.availableSourceLanguages
@@ -419,8 +418,7 @@ extension CoverageDataEntry {
                         "Failed to get backing SwiftDocC.Symbol for `\(documentationNode)`"
                 )
             }
-            let documentedParameterCount =
-                semanticSymbol.parametersSection?.parameters.count ?? 0
+            let documentedParameterCount = semanticSymbol.parametersSection?.parameters.count ?? 0
 
             let totalCount = functionSignature.parameters.count
             let statistic = try RatioStatistic.create(

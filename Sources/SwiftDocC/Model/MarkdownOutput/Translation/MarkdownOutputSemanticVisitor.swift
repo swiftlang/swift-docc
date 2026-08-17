@@ -153,10 +153,7 @@ extension MarkdownOutputSemanticVisitor {
         markdownWalker.visit(symbol.abstract)
         // TODO: rdar://166606746 include alternate declarations
         if let declarationFragments = symbol.declaration.first?.value.declarationFragments {
-            let declaration =
-                declarationFragments
-                .map { $0.spelling }
-                .joined()
+            let declaration = declarationFragments.map { $0.spelling }.joined()
             let code = CodeBlock(declaration)
             markdownWalker.visit(code)
         }

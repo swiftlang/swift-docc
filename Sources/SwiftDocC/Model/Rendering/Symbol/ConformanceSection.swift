@@ -159,9 +159,7 @@ public struct ConformanceSection: Codable, Equatable {
         let separators = NativeLanguage.english.listSeparators(itemsCount: constraints.count, listType: .union)
             .map { return RenderInlineContent.text($0) }
 
-        let constraintCompoundName =
-            zip(constraintTypeNames, separators).flatMap { [$0, $1] }
-            + constraintTypeNames[separators.count...]
+        let constraintCompoundName = zip(constraintTypeNames, separators).flatMap { [$0, $1] } + constraintTypeNames[separators.count...]
 
         return [
             RenderInlineContent.codeVoice(code: ConformanceSection.displayNameForConformingType(constraints[0].leftTypeName)),

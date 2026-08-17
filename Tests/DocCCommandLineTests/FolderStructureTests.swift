@@ -63,11 +63,7 @@ class FolderStructureTests: XCTestCase {
         XCTAssert(FileManager.default.fileExists(atPath: emptySubFolderLocation.path, isDirectory: &isFolder))
         XCTAssert(isFolder.boolValue)
 
-        let textFileURL =
-            folderURL
-            .appendingPathComponent("B2")
-            .appendingPathComponent("C")
-            .appendingPathComponent("test.txt")
+        let textFileURL = folderURL.appendingPathComponent("B2").appendingPathComponent("C").appendingPathComponent("test.txt")
 
         XCTAssert(FileManager.default.fileExists(atPath: textFileURL.path))
         XCTAssertEqual(try String(contentsOf: textFileURL), "Lorem ipsum")

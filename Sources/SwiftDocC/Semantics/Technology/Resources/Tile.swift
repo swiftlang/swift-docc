@@ -213,10 +213,7 @@ public final class Tile: Semantic, DirectiveConvertible {
             let possibleTileDirectiveNames = Tile.DirectiveNames.allCases
                 .map { $0.rawValue.singleQuoted }
                 .list(finalConjunction: .or)
-            let directiveReference =
-                directive.name.isEmpty
-                ? "anonymous child directive"
-                : "child directive \(directive.name.singleQuoted)"
+            let directiveReference = directive.name.isEmpty ? "anonymous child directive" : "child directive \(directive.name.singleQuoted)"
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.Resources.UnknownTile", summary: "Unknown \(directiveReference) of \(Resources.directiveName.singleQuoted); must be one of \(possibleTileDirectiveNames)")
             diagnostics.append(diagnostic)
             return nil

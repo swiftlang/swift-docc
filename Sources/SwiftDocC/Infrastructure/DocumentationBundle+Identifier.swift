@@ -18,11 +18,7 @@ extension DocumentationBundle {
         public init(rawValue: String) {
             // To ensure that the identifier can be used as a valid "host" component of a resolved topic reference's url,
             // replace any consecutive sequence of unsupported characters with a "-".
-            self.rawValue =
-                rawValue
-                .components(separatedBy: Self.charactersToReplace)
-                .filter { !$0.isEmpty }
-                .joined(separator: "-")
+            self.rawValue = rawValue.components(separatedBy: Self.charactersToReplace).filter { !$0.isEmpty }.joined(separator: "-")
         }
 
         private static let charactersToReplace = CharacterSet.urlHostAllowed.inverted.union([":"])

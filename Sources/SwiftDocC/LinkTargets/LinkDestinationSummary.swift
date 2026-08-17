@@ -384,10 +384,7 @@ extension LinkDestinationSummary {
 
         guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.sourceLanguage == documentationNode.sourceLanguage }) else {
             // Only symbol documentation currently support multi-language variants (rdar://86580915)
-            let references =
-                referenceIdentifiers
-                .compactMap { renderNode.references[$0.identifier] }
-                .sorted(by: \.identifier.identifier)
+            let references = referenceIdentifiers.compactMap { renderNode.references[$0.identifier] }.sorted(by: \.identifier.identifier)
 
             self.init(
                 kind: documentationNode.kindForLinkDestinationSummary,
@@ -472,10 +469,7 @@ extension LinkDestinationSummary {
             )
         }
 
-        let references =
-            referenceIdentifiers
-            .compactMap { renderNode.references[$0.identifier] }
-            .sorted(by: \.identifier.identifier)
+        let references = referenceIdentifiers.compactMap { renderNode.references[$0.identifier] }.sorted(by: \.identifier.identifier)
 
         self.init(
             kind: kind,

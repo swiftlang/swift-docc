@@ -178,9 +178,7 @@ extension PathHierarchy.PathParser {
             }
         } else {
             let name = components.first.map(String.init)
-            isAbsolute =
-                name == NodeURLGenerator.Path.documentationFolderName
-                || name == NodeURLGenerator.Path.tutorialsFolderName
+            isAbsolute = name == NodeURLGenerator.Path.documentationFolderName || name == NodeURLGenerator.Path.tutorialsFolderName
         }
 
         return (components, isAbsolute, anchor)

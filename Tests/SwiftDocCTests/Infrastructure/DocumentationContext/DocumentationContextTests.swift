@@ -1315,9 +1315,7 @@ class DocumentationContextTests: XCTestCase {
                 forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 .appendingPathComponent("mykit-iOS.symbols.json"))
 
-        let graphContentmacOS =
-            graphContentiOS
-            .replacingOccurrences(of: "\"name\" : \"ios\"", with: "\"name\" : \"macosx\"")
+        let graphContentmacOS = graphContentiOS.replacingOccurrences(of: "\"name\" : \"ios\"", with: "\"name\" : \"macosx\"")
 
         let graphContenttvOS =
             graphContentiOS
@@ -4721,9 +4719,7 @@ class DocumentationContextTests: XCTestCase {
         // does not trip the context when building the topic graph
         do {
             // Rename a top-level symbol to match the framework name.
-            let symbolGraphFixture =
-                testSymbolGraphSource
-                .replacingOccurrences(of: #"Test"#, with: #"Minimal_docs"#)
+            let symbolGraphFixture = testSymbolGraphSource.replacingOccurrences(of: #"Test"#, with: #"Minimal_docs"#)
 
             let infoPlistURL = try XCTUnwrap(Bundle.module.url(forResource: "Info+Availability", withExtension: "plist", subdirectory: "Test Resources"))
             let testBundle = Folder(
