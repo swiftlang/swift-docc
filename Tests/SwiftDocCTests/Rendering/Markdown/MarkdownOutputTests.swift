@@ -903,14 +903,24 @@ struct MarkdownOutputTests {
                             """),
                         makeSymbol(id: "markdown-symbol-my-function-id", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
                     Everything is described in the abstract.
-                    
+
                     - Parameters:
-                      - arg: The first argument. 
-                    
+                      - arg: The first argument.
+
                     @Comment {
                         This should be removed, but should not lead to a discussion heading.
                     }
-                    """)
+                    """),
+                        // A symbol with no children, so that no automatic curation is added to it.
+                        makeSymbol(id: "childless-symbol-id", kind: .struct, pathComponents: ["ChildlessSymbol"], docComment: """
+                            Abstract.
+
+                            These headings are `Section`s with no content, so they should not appear.
+
+                            ## Topics
+
+                            ## See Also
+                            """)
                     ],
                     relationships: [
                         .init(source: "markdown-symbol-my-function-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil)
@@ -920,12 +930,17 @@ struct MarkdownOutputTests {
         let (functionNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
         #expect(functionNode.markdown.contains("## Parameters"))
         #expect(functionNode.markdown.contains("## Discussion") == false)
-        
+
         let (structNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         #expect(structNode.markdown.contains("## Overview"))
         #expect(structNode.markdown.contains("## Random heading"))
-        #expect(structNode.markdown.contains("## Topics") == false)
         #expect(structNode.markdown.contains("## See Also") == false)
+
+        // `MarkdownSymbol` has a member, so its "Topics" section is filled in by automatic curation. A symbol with no
+        // children has nothing to curate, so its empty authored section is not given a heading.
+        let (childlessNode, _) = try await markdownOutput(catalog: catalog, path: "ChildlessSymbol")
+        #expect(childlessNode.markdown.contains("## Topics") == false)
+        #expect(childlessNode.markdown.contains("## See Also") == false)
     }
     
     // MARK: - Automatic curation

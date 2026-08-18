@@ -67,6 +67,67 @@ extension MarkdownOutputSemanticVisitor {
     }
 }
 
+// MARK: - Automatic curation
+
+extension MarkdownOutputSemanticVisitor {
+
+    /// The variant trait to generate automatic curation for.
+    ///
+    /// Unlike render nodes, which describe every language representation of a page in a single document, the markdown
+    /// output only describes the page's primary language, so only that language's curation is included.
+    var automaticCurationTrait: DocumentationDataVariantsTrait {
+        DocumentationDataVariantsTrait(sourceLanguage: documentationNode.sourceLanguage)
+    }
+
+    /// Renders automatically generated task groups, adding a "Topics" heading if the page doesn't already have one.
+    ///
+    /// Each group becomes a level 3 heading followed by a link to each of its references, in the same "link, then abstract"
+    /// format as an authored link list. Empty groups—and the "Topics" heading itself—are only rendered if there's something to render.
+    ///
+    /// - Parameters:
+    ///   - groups: The automatically generated task groups to render, in the order they should appear.
+    ///   - hasTopicsHeading: Whether the page already has a "Topics" heading. If it doesn't, and this call renders any
+    ///     groups, a heading is added and this value is set to `true` so that later calls don't add a second one.
+    mutating func visit(automaticTaskGroups groups: [AutomaticCuration.TaskGroup], hasTopicsHeading: inout Bool) {
+        let groups = groups.filter { !$0.references.isEmpty }
+        guard !groups.isEmpty else { return }
+
+        if !hasTopicsHeading {
+            markdownWalker.visit(Heading(level: 2, Text(TopicsSection.title ?? "Topics")))
+            hasTopicsHeading = true
+        }
+
+        // Copied to a local because the walker requires exclusive access to `self` for the duration of the closure below.
+        let context = self.context
+        markdownWalker.withRenderingLinkList {
+            for group in groups {
+                // Automatically generated task groups always have a title.
+                $0.visit(Heading(level: 3, Text(group.title ?? "Group")))
+                for reference in group.references {
+                    // Rendering the reference as markup—instead of formatting a link directly—reuses the walker's link
+                    // handling, which resolves the link's title, appends the target's abstract, and records the
+                    // "belongs to topic" relationship for the manifest.
+                    if context.documentationCache[reference]?.semantic is Symbol {
+                        $0.visit(Paragraph(SymbolLink(destination: reference.absoluteString)))
+                    } else {
+                        $0.visit(Paragraph(Link(destination: reference.absoluteString)))
+                    }
+                }
+            }
+        }
+    }
+
+    /// The automatically generated task groups for the given automatic task group sections with the given render position preference.
+    func automaticTaskGroups(
+        _ sections: [AutomaticTaskGroupSection],
+        at position: AutomaticTaskGroupSection.PositionPreference
+    ) -> [AutomaticCuration.TaskGroup] {
+        sections
+            .filter { $0.renderPositionPreference == position }
+            .map { (title: $0.title, references: $0.references) }
+    }
+}
+
 // MARK: Article Output
 extension MarkdownOutputSemanticVisitor {
     
@@ -93,11 +154,48 @@ extension MarkdownOutputSemanticVisitor {
         
         // Only care about references from these sections
         markdownWalker.outgoingReferences = []
+        let markdownBeforeTopics = markdownWalker.markdown
         markdownWalker.withRenderingLinkList {
             $0.visit(section: article.topics, addingHeading: "Topics")
+        }
+        // The walker reverts a section that turns out to have no content, so comparing the markdown is the only reliable
+        // way to know whether an authored "Topics" heading was added.
+        var hasTopicsHeading = markdownWalker.markdown != markdownBeforeTopics
+
+        // Place "top" rendering preference automatic task groups after any authored task groups but before automatic curation.
+        visit(
+            automaticTaskGroups: automaticTaskGroups(article.automaticTaskGroups, at: .top),
+            hasTopicsHeading: &hasTopicsHeading
+        )
+
+        // If there's no authored curation and no automatic task groups, curate this page's children in groups named after
+        // their kind, matching `RenderNodeTranslator.visitArticle(_:)`.
+        if article.topics?.taskGroups.isEmpty ?? true, article.automaticTaskGroups.isEmpty {
+            let alreadyCurated = Set(markdownWalker.outgoingReferences.map(\.sourceIdentifier))
+            let generatedGroups = (try? AutomaticCuration.topics(
+                for: documentationNode,
+                withTraits: [automaticCurationTrait],
+                context: context
+            ))?.compactMap { group -> AutomaticCuration.TaskGroup? in
+                // Remove references that have already been curated, and groups left with no references.
+                let references = group.references.filter { !alreadyCurated.contains($0.path) }
+                guard !references.isEmpty else { return nil }
+                return (title: group.title, references: references)
+            } ?? []
+
+            visit(automaticTaskGroups: generatedGroups, hasTopicsHeading: &hasTopicsHeading)
+        }
+
+        // Place "bottom" rendering preference automatic task groups after automatic curation.
+        visit(
+            automaticTaskGroups: automaticTaskGroups(article.automaticTaskGroups, at: .bottom),
+            hasTopicsHeading: &hasTopicsHeading
+        )
+
+        markdownWalker.withRenderingLinkList {
             $0.visit(section: article.seeAlso, addingHeading: "See Also")
         }
-        
+
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
@@ -173,8 +271,42 @@ extension MarkdownOutputSemanticVisitor {
         markdownWalker.visit(section: symbol.discussion, addingHeading: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
         
         markdownWalker.outgoingReferences = []
+        let markdownBeforeTopics = markdownWalker.markdown
         markdownWalker.withRenderingLinkList {
             $0.visit(section: symbol.topics, addingHeading: "Topics")
+        }
+        // The walker reverts a section that turns out to have no content, so comparing the markdown is the only reliable
+        // way to know whether an authored "Topics" heading was added.
+        var hasTopicsHeading = markdownWalker.markdown != markdownBeforeTopics
+
+        let automaticTaskGroupSections = symbol.automaticTaskGroupsVariants[automaticCurationTrait] ?? []
+
+        // Place "top" rendering preference automatic task groups after any authored task groups but before automatic curation.
+        visit(
+            automaticTaskGroups: automaticTaskGroups(automaticTaskGroupSections, at: .top),
+            hasTopicsHeading: &hasTopicsHeading
+        )
+
+        // Children of this symbol that haven't been curated manually are curated in groups named after their kind,
+        // matching `RenderNodeTranslator.visitSymbol(_:)`.
+        //
+        // Unlike render nodes, a generated group whose title matches an authored section is rendered as a separate group
+        // rather than merged into the authored one (rdar://61899214). Both groups link to the same anchor, so the
+        // manifest relationships are unaffected.
+        let generatedGroups = (try? AutomaticCuration.topics(
+            for: documentationNode,
+            withTraits: [automaticCurationTrait],
+            context: context
+        )) ?? []
+        visit(automaticTaskGroups: generatedGroups, hasTopicsHeading: &hasTopicsHeading)
+
+        // Place "bottom" rendering preference automatic task groups after automatic curation.
+        visit(
+            automaticTaskGroups: automaticTaskGroups(automaticTaskGroupSections, at: .bottom),
+            hasTopicsHeading: &hasTopicsHeading
+        )
+
+        markdownWalker.withRenderingLinkList {
             $0.visit(section: symbol.seeAlso, addingHeading: "See Also")
         }
         
