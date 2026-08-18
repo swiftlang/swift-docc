@@ -23,11 +23,45 @@ jobs:
       # The package and tests build on Windows, but the tests don't pass yet,
       # due to issues with filenames on Windows. For now, the Windows CI runs
       # build the package, and only build the tests without running them.
-      # Related PRs:
-      #
-      # - Filenames: https://github.com/swiftlang/swift-docc/pull/668
-      # - CMake: https://github.com/swiftlang/swift-docc/pull/1115
+      # Filenames PR: https://github.com/swiftlang/swift-docc/pull/668
       windows_build_command: "Invoke-Program swift build --build-tests"
+
+  cmake:
+    name: CMake
+    uses: swiftlang/github-workflows/.github/workflows/swift_package_test.yml@0.0.13
+    with:
+      enable_linux_checks: false
+      windows_swift_versions: '["nightly-6.3"]'
+      windows_pre_build_command: 'Invoke-Program .\.github\scripts\prebuild.ps1 -InstallCMake -SkipAndroid'
+      windows_build_command: |
+        $Src = Join-Path $PWD ".build\checkouts"
+        $Bin = Join-Path $PWD "BinaryCache"
+        $Install = Join-Path $PWD "InstallCache"
+        $CMakeArgs = @(
+          "-DCMAKE_MAKE_PROGRAM=$((Get-Command ninja).Path)",
+          "-DCMAKE_C_COMPILER=$((Get-Command clang).Path)",
+          "-DCMAKE_CXX_COMPILER=$((Get-Command clang).Path)",
+          "-DCMAKE_Swift_COMPILER=$((Get-Command swiftc).Path)",
+          "-DCMAKE_STATIC_LIBRARY_PREFIX_Swift=lib",
+          "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL"
+        )
+        function Build($BinDir, $SrcDir, $ConfigureArgs) {
+          Invoke-Program cmake -B $BinDir -G Ninja -DCMAKE_BUILD_TYPE=Release @ConfigureArgs @CMakeArgs -S $SrcDir
+          Invoke-Program cmake --build $BinDir
+        }
+        # Build dependencies
+        Invoke-Program swift package resolve
+        Build "$Bin\swift-argument-parser" "$Src\swift-argument-parser" @("-DBUILD_SHARED_LIBS=YES", "-DBUILD_TESTING=NO", "-DBUILD_EXAMPLES=NO")
+        Build "$Bin\swift-asn1" "$Src\swift-asn1" @("-DBUILD_SHARED_LIBS=NO")
+        Build "$Bin\swift-crypto" "$Src\swift-crypto" @("-DBUILD_SHARED_LIBS=NO", "-DSwiftASN1_DIR=$Bin\swift-asn1\cmake\modules")
+        Build "$Bin\swift-cmark" "$Src\swift-cmark" @("-DBUILD_SHARED_LIBS=YES", "-DBUILD_TESTING=NO")
+        # cmark-gfm's exported CMake config is only complete after an install
+        Invoke-Program cmake --install "$Bin\swift-cmark" --prefix "$Install\swift-cmark"
+        Build "$Bin\swift-markdown" "$Src\swift-markdown" @("-DBUILD_SHARED_LIBS=NO", "-DArgumentParser_DIR=$Bin\swift-argument-parser\cmake\modules", "-Dcmark-gfm_DIR=$Install\swift-cmark\lib\cmake")
+        Build "$Bin\swift-lmdb" "$Src\swift-lmdb" @("-DBUILD_SHARED_LIBS=NO")
+        Build "$Bin\swift-docc-symbolkit" "$Src\swift-docc-symbolkit" @("-DBUILD_SHARED_LIBS=NO")
+        # Build DocC
+        Build "$Bin\swift-docc" "$PWD" @("-DBUILD_SHARED_LIBS=YES", "-DArgumentParser_DIR=$Bin\swift-argument-parser\cmake\modules", "-DSwiftASN1_DIR=$Bin\swift-asn1\cmake\modules", "-DSwiftCrypto_DIR=$Bin\swift-crypto\cmake\modules", "-DSwiftMarkdown_DIR=$Bin\swift-markdown\cmake\modules", "-DLMDB_DIR=$Bin\swift-lmdb\cmake\modules", "-DSymbolKit_DIR=$Bin\swift-docc-symbolkit\cmake\modules", "-Dcmark-gfm_DIR=$Install\swift-cmark\lib\cmake")
 
   soundness:
     name: Soundness
