@@ -1,5 +1,5 @@
 {
-  "originHash" : "eeed44b5b6e983a51b5d5a022a8c2b97a40041bb6c47f5b37c72fe7a3c051a91",
+  "originHash" : "2fff306cb5f2eafe5611ebea6e6ad4ae8fc7053e599ab8d227d0a103774977dd",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",
       "state" : {
-        "revision" : "7faebca1ea4f9aaf0cda1cef7c43aecd2311ddf6",
-        "version" : "1.3.0"
+        "revision" : "9f542610331815e29cc3821d3b6f488db8715517",
+        "version" : "1.6.0"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "06dc63c6d8da54ee11ceb268cde1fa68161afc96",
-        "version" : "3.9.1"
+        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version" : "3.15.1"
       }
     },
     {
@@ -70,7 +70,7 @@
       "location" : "https://github.com/swiftlang/swift-docc-symbolkit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "3ecb7056ce6895621c5378caa254e2d6959e8ee5"
+        "revision" : "c1f9484553d29afb981b95458b37c1c3d3e1bcd7"
       }
     },
     {
@@ -79,7 +79,7 @@
       "location" : "https://github.com/swiftlang/swift-lmdb.git",
       "state" : {
         "branch" : "main",
-        "revision" : "c42582487fe84f72a4d417dd2d8493757bd4d072"
+        "revision" : "a4bc87807721c1fd114bf35464457e2db0d0e6c0"
       }
     },
     {

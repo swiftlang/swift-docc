@@ -19,6 +19,7 @@ import Foundation
 import Testing
 @testable import DocCHTML
 
+extension DocCHTMLTestSuites {
 struct WordBreakTests {
     @Test
     func insertsWordBreaks() {
@@ -83,4 +84,5 @@ struct WordBreakTests {
         
         #expect(withWordBreaks == expectedHTML, sourceLocation: sourceLocation)
     }
+}
 }

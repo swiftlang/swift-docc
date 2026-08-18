@@ -23,6 +23,7 @@ public import SymbolKit
 /// ### Properties
 ///
 /// - ``titleVariants``
+/// - ``proseVariants``
 /// - ``subHeadingVariants``
 /// - ``navigatorVariants``
 /// - ``roleHeadingVariants``
@@ -99,6 +100,20 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The title of the symbol in each language variant the symbol is available in.
     internal(set) public var titleVariants: DocumentationDataVariants<String>
     
+    /// The prose form of the symbol's title for use in inline links and documentation prose, in each language variant the symbol is available in.
+    ///
+    /// Empty when the symbol graph does not provide a prose title. See ``SymbolGraph/Symbol/Names/prose``.
+    internal(set) public var proseVariants: DocumentationDataVariants<String> = .init()
+
+    /// The prose title for inline links, merged per-language: uses prose where available, falls back to title otherwise.
+    internal var proseTitleVariants: DocumentationDataVariants<String> {
+        var result = titleVariants
+        for (trait, prose) in proseVariants.allValues {
+            result[trait] = prose
+        }
+        return result
+    }
+
     /// The simplified version of the symbol's declaration in each language variant the symbol is available in.
     internal(set) public var subHeadingVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
     
@@ -260,6 +275,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     init(
         kindVariants: DocumentationDataVariants<SymbolGraph.Symbol.Kind>,
         titleVariants: DocumentationDataVariants<String>,
+        proseVariants: DocumentationDataVariants<String> = .init(),
         subHeadingVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>,
         navigatorVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>,
         roleHeadingVariants: DocumentationDataVariants<String>,
@@ -296,6 +312,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     ) {
         self.kindVariants = kindVariants
         self.titleVariants = titleVariants
+        self.proseVariants = proseVariants
         self.subHeadingVariants = subHeadingVariants
         self.navigatorVariants = navigatorVariants
         self.roleHeadingVariants = roleHeadingVariants

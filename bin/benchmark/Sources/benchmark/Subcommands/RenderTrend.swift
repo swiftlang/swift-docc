@@ -14,7 +14,7 @@ import SwiftDocC
 
 // For argument parsing and validation
 
-struct RenderTrend: @MainActor ParsableCommand {
+struct RenderTrend: ParsableCommand {
     @Option(
         name: .customLong("filter"),
         help: "A list metric IDs to render trends for. If no filters are specified, trends are rendered for all numeric metrics."
@@ -27,12 +27,13 @@ struct RenderTrend: @MainActor ParsableCommand {
     )
     var benchmarkResults: [URL]
     
-    @MainActor
     mutating func run() throws {
-        try RenderTrendAction(
-            metricFilters: metricFilters,
-            benchmarkResults: benchmarkResults
-        ).run()
+        try MainActor.assumeIsolated {
+            try RenderTrendAction(
+                metricFilters: metricFilters,
+                benchmarkResults: benchmarkResults
+            ).run()
+        }
     }
 }
 

@@ -536,6 +536,28 @@ struct AvailabilityTests {
         #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS"])
     }
     
+    @Test
+    func catalystInheritsWhenTheresNoInSourceCatalystAvailabilityButSymbolInCatalystSGF() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(name: "ModuleName-Catalyst.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "ios", introduced: SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0), deprecated: nil)
+                ])
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "12.0")
+    }
+    
     // MARK: Default Availability
     
     @Test

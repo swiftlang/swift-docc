@@ -1,0 +1,2 @@
+Sources/SwiftDocC/Checker/Checkers/NonInclusiveLanguageChecker.swift
+Tests/SwiftDocCTests/Checker/Checkers/NonInclusiveLanguageCheckerTests.swift

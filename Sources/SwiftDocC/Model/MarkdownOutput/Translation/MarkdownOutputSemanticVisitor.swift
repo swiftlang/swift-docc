@@ -58,14 +58,7 @@ extension MarkdownOutputSemanticVisitor {
     }
     
     mutating func add(fallbackTarget: String, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
-        let targetIdentifier: String
-        let components = fallbackTarget.components(separatedBy: ".")
-        if components.count > 1 {
-            targetIdentifier = "/documentation/\(components.joined(separator: "/"))"
-        } else {
-            targetIdentifier = fallbackTarget
-        }
-        add(targetIdentifier: targetIdentifier, type: type, subtype: subtype)
+        add(targetIdentifier: fallbackTarget, type: type, subtype: subtype)
     }
     
     mutating func add(targetIdentifier: String, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
@@ -132,14 +125,17 @@ extension MarkdownOutputSemanticVisitor {
         // Availability - defaults, overridden with symbol, overridden with metadata
         
         var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
-        if let primaryModule = metadata.symbol?.modules.first {
+        
+        let symbolAvailability = symbol.availability?.availability ?? []
+        // Framework defaults only apply if there are no specific availabilities at symbol level.
+        if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
             for availability in bundle.info.defaultAvailability?.modules[primaryModule] ?? [] {
                 let meta = MarkdownOutputNode.Metadata.Availability(availability)
                 availabilities[meta.platform] = meta
             }
         }
-         
-        for availability in symbol.availability?.availability ?? [] {
+        
+        for availability in symbolAvailability {
             let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
         }
@@ -184,14 +180,27 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
         
+        if symbol.relationships.groups.isEmpty == false {
+            markdownWalker.visit(Heading(level: 2, Text(RelationshipsSection.title)))
+        }
         for relationshipGroup in symbol.relationships.groups {
+            markdownWalker.visit(Heading(level: 3, Text(relationshipGroup.sectionTitle)))
             for destination in relationshipGroup.destinations {
                 switch context.resolve(destination, in: identifier) {
                 case .success(let resolved):
+                    // Add the relationship to the manifest
                     add(target: resolved, type: .relatedSymbol, subtype: relationshipGroup.kind)
+                    
+                    // Add the relationship to the markdown
+                    markdownWalker.startNewParagraphIfRequired()
+                    let link = Link(destination: resolved.path, title: resolved.lastPathComponent, [InlineCode(resolved.lastPathComponent)])
+                    markdownWalker.defaultVisit(link)
+                    
                 case .failure:
                     if let fallback = symbol.relationships.targetFallbacks[destination] {
                         add(fallbackTarget: fallback, type: .relatedSymbol, subtype: relationshipGroup.kind)
+                        markdownWalker.startNewParagraphIfRequired()
+                        markdownWalker.defaultVisit(InlineCode(fallback))
                     }
                 }
             }

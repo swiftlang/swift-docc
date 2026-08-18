@@ -9,7 +9,7 @@
 FROM swift:5.9-focal
 
 # Set up the current build user in the same way done in the Swift.org CI system: 
-# https://github.com/apple/swift-docker/blob/main/swift-ci/master/ubuntu/20.04/Dockerfile.
+# https://github.com/apple/swift-docker/blob/main/swift-ci/main/ubuntu/20.04/Dockerfile.
 
 RUN groupadd -g 998 build-user && \
   useradd -m -r -u 42 -g build-user build-user

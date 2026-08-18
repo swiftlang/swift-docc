@@ -19,3 +19,21 @@ public protocol MediaReference: RenderReference {
     /// This text helps screen readers describe the media.
     var altText: String? { get set }
 }
+
+/// A proxy value for information about an asset variant.
+protocol MediaVariantProxy {
+    /// The URL of the file for this variant.
+    var url: URL { get }
+    /// The traits of this variant.
+    var traits: [String] { get }
+}
+
+extension MediaVariantProxy {
+    /// Compares two variants by their rendered URL, and by traits for variants with identical URLs.
+    static func isInOrder(_ lhs: Self, _ rhs: Self) -> Bool {
+        if lhs.url.path != rhs.url.path {
+            return lhs.url.path < rhs.url.path
+        }
+        return lhs.traits.joined() < rhs.traits.joined()
+    }
+}

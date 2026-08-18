@@ -113,12 +113,10 @@ public enum RenderJSONEncoder {
     ) -> JSONEncoder {
         let encoder = JSONEncoder()
         
-        if prettyPrint {
-            if #available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) {
-                encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-            } else {
-                encoder.outputFormatting = [.prettyPrinted]
-            }
+        encoder.outputFormatting = if prettyPrint {
+            [.prettyPrinted, .sortedKeys]
+        } else {
+            [.sortedKeys]
         }
         
         if emitVariantOverrides {

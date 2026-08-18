@@ -72,17 +72,18 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         
         // convert the data asset to a serializable object
         var result = [VariantProxy]()
-        // sort assets by URL path for deterministic sorting of images
-        for (key, value) in asset.variants.sorted(by: \.value.path) {
+        for (key, value) in asset.variants {
             let url = renderURL(for: value, prefixComponent: encoder.assetPrefixComponent)
             result.append(VariantProxy(url: url, traits: key, svgID: asset.metadata[value]?.svgID))
         }
+        result.sort(by: VariantProxy.isInOrder)
+
         try container.encode(result, forKey: .variants)
     }
     
     
     /// A codable proxy value that the image reference uses to serialize information about its asset variants.
-    public struct VariantProxy: Codable, Equatable {
+    public struct VariantProxy: MediaVariantProxy, Codable, Equatable {
         /// The URL to the file for this image variant.
         public var url: URL
         /// The traits of this image reference.

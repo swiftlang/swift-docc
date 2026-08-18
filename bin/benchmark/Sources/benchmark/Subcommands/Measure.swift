@@ -56,7 +56,7 @@ struct MeasureOptions: ParsableCommand {
     }
 }
 
-struct Measure: @MainActor ParsableCommand {
+struct Measure: ParsableCommand {
     @Option(
         name: .customLong("output"),
         help: "The path to write the output benchmark measurements file.",
@@ -93,15 +93,16 @@ struct Measure: @MainActor ParsableCommand {
         }
     }
     
-    @MainActor
     mutating func run() throws {
-        try MeasureAction(
-            repeatCount: measureOptions.repeatCount,
-            outputLocation: outputLocation,
-            baseBenchmark: baseBenchmark,
-            doccConvertCommand: measureOptions.doccConvertCommand,
-            computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
-        ).run()
+        try MainActor.assumeIsolated {
+            try MeasureAction(
+                repeatCount: measureOptions.repeatCount,
+                outputLocation: outputLocation,
+                baseBenchmark: baseBenchmark,
+                doccConvertCommand: measureOptions.doccConvertCommand,
+                computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
+            ).run()
+        }
     }
 }
 

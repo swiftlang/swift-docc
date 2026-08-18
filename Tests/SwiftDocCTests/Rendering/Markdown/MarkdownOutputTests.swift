@@ -86,15 +86,15 @@ struct MarkdownOutputTests {
             TextFile(name: "RowsAndColumns.md", utf8Content: """
                 # Rows and Columns
                 
-                Just here for the links
+                Abstract rendered when curated
                 
                 ## Overview
                 
-                I am the overview
+                My section header will be specifically linked below
                 
                 ## Multi-word heading
                 
-                I am here to test the url readable fragment stuff
+                My section header is also linked below, and it has a hyphen in it and multiple words
                 """),
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -129,14 +129,85 @@ struct MarkdownOutputTests {
         let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
         #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
         
-        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nJust here for the links"
+        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nAbstract rendered when curated"
         #expect(node.markdown.contains(expectedLinkList))
         
         // No abstract
         let expectedLinkListAnchor = "[Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
         #expect(node.markdown.contains(expectedLinkListAnchor))
     }
-       
+
+    @Test
+    func articleInListItemIsTitleAndLink() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "RowsAndColumns.md", utf8Content: """
+                # Rows and Columns
+                
+                Just here for the links
+                
+                ## Overview
+                
+                Section is linked below
+                
+                ## Multi-word heading
+                
+                Multi-word section is linked below
+                """),
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                - This is an inline link: <doc:RowsAndColumns>
+                  - This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                - This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+                
+                1. This is an inline link: <doc:RowsAndColumns>
+                    1. This is a nested inline link with a heading: <doc:RowsAndColumns#Overview>
+                    2. Here is it again <doc:RowsAndColumns#Overview>
+                2. This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
+                """)
+            ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
+        let expectedInline = "- This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
+        #expect(node.markdown.contains(expectedInline))
+
+        let expectedInlineAnchor = "  - This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)"
+        #expect(node.markdown.contains(expectedInlineAnchor))
+        let expectedInlineAnchorMultiWord = "- This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
+        #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
+
+        let expectedOrdered = """
+        1. This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)
+           1. This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+           2. Here is it again [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
+        2. This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)
+        """
+        #expect(node.markdown.contains(expectedOrdered))
+    }
+
+    @Test
+    func nestedListsRetainNesting() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "NestedLists.md", utf8Content: """
+                # Nested Lists
+                
+                - This is a top-level list item
+                  - This is a nested list item
+                  - This is another nested list item
+                - This is back to the top-level
+                """)
+            ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "NestedLists")
+        let expectedOutput = """
+        - This is a top-level list item
+          - This is a nested list item
+          - This is another nested list item
+        - This is back to the top-level
+        """
+        #expect(node.markdown.contains(expectedOutput))
+    }
+    
     @Test 
     func curatedSymbolDisplaysLinkAndAbstractAsSeparateParagraphs() async throws {
         let catalog = catalog(files: [
@@ -150,6 +221,10 @@ struct MarkdownOutputTests {
                 This is an inline link: ``MarkdownSymbol``
                 
                 This is an unresolvable link: ``Unresolvable``
+                
+                This is a list of things that have links:
+                
+                - You can use ``MarkdownSymbol`` to do interesting things
 
                 ## Topics
 
@@ -160,7 +235,7 @@ struct MarkdownOutputTests {
                 
                 """),
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ]))
         ])
         
@@ -176,7 +251,9 @@ struct MarkdownOutputTests {
         let unresolvableAsCodeVoice = "unresolvable link: `Unresolvable`"
         #expect(node.markdown.contains(unresolvableAsCodeVoice))
         #expect(node.markdown.contains("UnresolvableInList") == false)
-                    
+        let expectedUnorderedListContent = "- You can use [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol) to do interesting things"
+        #expect(node.markdown.contains(expectedUnorderedListContent))
+
     }
     
     @Test 
@@ -199,8 +276,8 @@ struct MarkdownOutputTests {
                 - ``OtherMarkdownSymbol``
                 """),
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``OtherMarkdownSymbol``"),
-                makeSymbol(id: "OtherMarkdownSymbol", kind: .struct, pathComponents: ["OtherMarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``MarkdownSymbol``")
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``OtherMarkdownSymbol``"),
+                makeSymbol(id: "other-markdown-symbol-id", kind: .struct, pathComponents: ["OtherMarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``MarkdownSymbol``")
             ]))
         ])
         
@@ -210,6 +287,56 @@ struct MarkdownOutputTests {
         
         let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](/documentation/MarkdownOutput/OtherMarkdownSymbol)"
         #expect(node.markdown.contains(expectedLinkList))
+    }
+    
+    @Test
+    func linkTitlesAreRetained() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "RootDocument.md", utf8Content: """
+                # Links
+                
+                Tests the processing of named links
+                
+                ## Overview
+                
+                This is a [named *link*](doc:LinkDestination)
+                This is not <doc:LinkDestination>
+                
+                This is a [named symbol link](doc:MarkdownSymbol)
+                This is not <doc:MarkdownSymbol>
+                
+                This has an empty title [](doc:LinkDestination)
+                
+                This is a reference link with an empty title [][link-id]
+                This is a reference link with a title [title][link-id]
+                
+                [link-id]: doc:LinkDestination
+                """),
+            TextFile(name: "LinkDestination.md", utf8Content: """
+                # Link Destination
+                
+                This document title should not replace the specific title in the link
+                """),
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output."),
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "RootDocument")
+        
+        let expectedLinks = [
+            "This is a [named *link*](/documentation/MarkdownOutput/LinkDestination",
+            "This is not [Link Destination](/documentation/MarkdownOutput/LinkDestination",
+            "This is a [named symbol link](/documentation/MarkdownOutput/MarkdownSymbol",
+            "This is not [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)",
+            "This has an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination",
+            "This is a reference link with an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination)",
+            "This is a reference link with a title [title](/documentation/MarkdownOutput/LinkDestination)",
+        ]
+        
+        for expectedLink in expectedLinks {
+            #expect(node.markdown.contains(expectedLink))
+        }
     }
         
     @Test
@@ -689,6 +816,118 @@ struct MarkdownOutputTests {
         #expect(node.markdown.contains(expectedList))
     }
     
+    @Test
+    func protocolRelationshipsIncludedInExport() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(
+                        moduleName: "MarkdownOutput",
+                        symbols: [
+                            makeSymbol(id: "local-conformer-id", kind: .struct, pathComponents: ["LocalConformer"]),
+                            makeSymbol(id: "local-protocol-id", kind: .protocol, pathComponents: ["LocalProtocol"]),
+                        ],
+                        relationships: [
+                            SymbolGraph.Relationship(source: "local-conformer-id", target: "local-protocol-id", kind: .conformsTo, targetFallback: nil),
+                            SymbolGraph.Relationship(source: "local-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
+                        ]
+                    ))
+        ])
+        
+        let (conformerNode, _) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
+        let conformerMarkdown = conformerNode.markdown
+        #expect(conformerMarkdown.contains(RelationshipsGroup(kind: .conformsTo, destinations: []).sectionTitle))
+        let localProtocolLink = "\n[`LocalProtocol`](/documentation/MarkdownOutput/LocalProtocol)"
+        #expect(conformerMarkdown.contains(localProtocolLink))
+        let externalProtocolLink = "\n[`Hashable`](/documentation/Swift/Hashable)"
+        #expect(conformerMarkdown.contains(externalProtocolLink) == false)
+        #expect(conformerMarkdown.contains("\n`Swift.Hashable`"))
+        
+        let (protocolNode, _) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
+        let protocolMarkdown = protocolNode.markdown
+        #expect(protocolMarkdown.contains(RelationshipsGroup(kind: .conformingTypes, destinations: []).sectionTitle))
+        let conformerLink = "\n[`LocalConformer`](/documentation/MarkdownOutput/LocalConformer)"
+        #expect(protocolMarkdown.contains(conformerLink))
+    }
+        
+    @Test
+    func inheritanceRelationshipsIncludedInExport() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(
+                        moduleName: "MarkdownOutput",
+                        symbols: [
+                            makeSymbol(id: "local-superclass-id", kind: .class, pathComponents: ["LocalSuper"]),
+                            makeSymbol(id: "local-subclass-id", kind: .class, pathComponents: ["LocalSub"]),
+                        ],
+                        relationships: [
+                            SymbolGraph.Relationship(source: "local-subclass-id", target: "local-superclass-id", kind: .inheritsFrom, targetFallback: nil),
+                        ]
+                    ))
+        ])
+        
+        let (inheritorNode, _) = try await markdownOutput(catalog: catalog, path: "LocalSub")
+        let inheritorMarkdown = inheritorNode.markdown
+        #expect(inheritorMarkdown.contains(RelationshipsGroup(kind: .inheritsFrom, destinations: []).sectionTitle))
+        let superclassLink = "\n[`LocalSuper`](/documentation/MarkdownOutput/LocalSuper)"
+        #expect(inheritorMarkdown.contains(superclassLink))
+        
+        let (superclassNode, _) = try await markdownOutput(catalog: catalog, path: "LocalSuper")
+        let superclassMarkdown = superclassNode.markdown
+        #expect(superclassMarkdown.contains(RelationshipsGroup(kind: .inheritedBy, destinations: []).sectionTitle))
+        let subclassLink = "\n[`LocalSub`](/documentation/MarkdownOutput/LocalSub)"
+        #expect(superclassMarkdown.contains(subclassLink))
+    }
+     
+    @Test
+    func sectionsThatAreEmptyAfterFilteringDoNotHaveHeadingsAdded() async throws {
+        let catalog = catalog(files: [
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    symbols: [
+                        makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: """
+                            Abstract.
+                                                        
+                            The next heading will appear in the output as it does not imply a `Section` in the document so is just markdown content. The last two headings should not appear, because they are `Section`s, but have no section content.
+                            
+                            ## Random heading
+                            
+                            ## Topics
+                            
+                            ## See Also
+                            
+                            @Comment {
+                                This should be removed, but should not lead to a See Also heading.
+                            }
+                            """),
+                        makeSymbol(id: "markdown-symbol-my-function-id", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
+                    Everything is described in the abstract.
+                    
+                    - Parameters:
+                      - arg: The first argument. 
+                    
+                    @Comment {
+                        This should be removed, but should not lead to a discussion heading.
+                    }
+                    """)
+                    ],
+                    relationships: [
+                        .init(source: "markdown-symbol-my-function-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil)
+                    ]
+            ))
+        ])
+        let (functionNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
+        #expect(functionNode.markdown.contains("## Parameters"))
+        #expect(functionNode.markdown.contains("## Discussion") == false)
+        
+        let (structNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        #expect(structNode.markdown.contains("## Overview"))
+        #expect(structNode.markdown.contains("## Random heading"))
+        #expect(structNode.markdown.contains("## Topics") == false)
+        #expect(structNode.markdown.contains("## See Also") == false)
+    }
+    
     // MARK: - Metadata
     
     @Test 
@@ -773,7 +1012,7 @@ struct MarkdownOutputTests {
     func symbolDocumentHasSymbolType() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ]))
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
@@ -784,8 +1023,8 @@ struct MarkdownOutputTests {
     func symbolDocumentPopulatesMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
-                makeSymbol(id: "MarkdownSymbol_init_name", kind: .`init`, pathComponents: ["MarkdownSymbol", "init(name:)"])
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                makeSymbol(id: "markdown-symbol-init-name-id", kind: .`init`, pathComponents: ["MarkdownSymbol", "init(name:)"])
             ]))
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/init(name:)")
@@ -799,7 +1038,7 @@ struct MarkdownOutputTests {
     func symbolExtendedModulePopulatesMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "Array_asdf", kind: .property, pathComponents: ["Swift", "Array", "asdf"], otherMixins: [SymbolGraph.Symbol.Swift.Extension(extendedModule: "Swift", constraints: [])])
+                makeSymbol(id: "array-asdf-id", kind: .property, pathComponents: ["Swift", "Array", "asdf"], otherMixins: [SymbolGraph.Symbol.Swift.Extension(extendedModule: "Swift", constraints: [])])
                 ])
              )
         ])
@@ -807,11 +1046,14 @@ struct MarkdownOutputTests {
         #expect(node.metadata.symbol?.modules == ["MarkdownOutput", "Swift"])
     }
     
+    private let iOSPlatform = SymbolGraph.Platform(operatingSystem: .init(name: "ios"))
+    private let macOSPlatform = SymbolGraph.Platform(operatingSystem: .init(name: "macosx"))
+    
     @Test
     func symbolMetadataGetsDefaultAvailability() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
                 "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
@@ -823,10 +1065,25 @@ struct MarkdownOutputTests {
     }
     
     @Test
+    func symbolMetadataGetsSymbolLevelAvailability() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output", availability: [.init(domainName: "iOS", introduced: .init(string: "2.0.0"), deprecated: nil)])
+            ])),
+            InfoPlist(defaultAvailability: [
+                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+            ])
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        let availability = try #require(node.metadata.availability)
+        #expect(availability.contains(.init(platform: "iOS", introduced: "2.0.0", deprecated: nil, unavailable: false)))
+    }
+    
+    @Test
     func symbolAvailabilityIsCapturedFromMetadataBlock() async throws {
         let catalog = catalog(files: [
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", platform: iOSPlatform, symbols: [
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
                 "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
@@ -835,7 +1092,7 @@ struct MarkdownOutputTests {
                 # ``MarkdownSymbol``
                 
                 @Metadata {
-                    @Available(iPadOS, introduced: "13.1")
+                    @Available(iOS, introduced: "13.1")
                 }
                 
                 A basic symbol to test markdown output
@@ -847,8 +1104,47 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iPadOS", introduced: "13.1.0", deprecated: nil, unavailable: false)
+        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "13.1.0", deprecated: nil, unavailable: false)
         #expect(availability.contains(expected))
+    }
+    
+    @Test
+    func symbolAvailabilityOnePlatformDoesntUseDefaults() async throws {
+        // A symbol that only exists in the macOS graph should not show as available on iOS.
+        let catalog = catalog(files: [
+            JSONFile(
+                name: "MarkdownOutput-macOS.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    platform: macOSPlatform,
+                    symbols: [
+                        makeSymbol(
+                            id: "markdown-symbol-id",
+                            kind: .struct,
+                            pathComponents: ["MarkdownSymbol"],
+                            docComment: "A basic symbol to test markdown output"
+                        )
+                    ]
+                )),
+            JSONFile(
+                name: "MarkdownOutput-iOS.symbols.json",
+                content: makeSymbolGraph(
+                    moduleName: "MarkdownOutput",
+                    platform: iOSPlatform,
+                    symbols: []
+                )),
+            InfoPlist(defaultAvailability: [
+                "MarkdownOutput" : [
+                    .init(platformName: .iOS, platformVersion: "1.0.0"),
+                    .init(platformName: .macOS, platformVersion: "1.0.0"),
+                ]
+            ]),
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        let availability = try #require(node.metadata.availability)
+        #expect(availability.count == 1)
+        #expect(availability.first?.platform == "macOS")
     }
     
     @Test(arguments: [
@@ -876,9 +1172,9 @@ struct MarkdownOutputTests {
     func symbolDeprecationRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
                 makeSymbol(
-                    id: "MarkdownSymbol_fullName",
+                    id: "markdown-symbol_full-name-id",
                     kind: .property,
                     pathComponents: ["MarkdownSymbol", "fullName"],
                     docComment: "A basic property to test markdown output",
@@ -937,12 +1233,12 @@ struct MarkdownOutputTests {
     func symbolIdentifierMatchesSymbolGraph() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol_Identifier", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
             ]))
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
-        #expect(node.metadata.symbol?.preciseIdentifier == "MarkdownSymbol_Identifier")
+        #expect(node.metadata.symbol?.preciseIdentifier == "markdown-symbol-id")
     }
     
     @Test
@@ -993,7 +1289,7 @@ struct MarkdownOutputTests {
                 - ``MarkdownSymbol``
                 """),
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ]))
         ])
         
@@ -1010,7 +1306,7 @@ struct MarkdownOutputTests {
         
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "MarkdownSymbol_Identifier", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
             ])),
             TextFile(name: "RowsAndColumns.md", utf8Content: """
                 # Rows and Columns
@@ -1066,18 +1362,18 @@ struct MarkdownOutputTests {
     @Test
     func symbolInheritancePopulatesManifest() async throws {
         
-        let symbols = [
-            makeSymbol(id: "MO_Subclass", kind: .class, pathComponents: ["LocalSubclass"]),
-            makeSymbol(id: "MO_Superclass", kind: .class, pathComponents: ["LocalSuperclass"])
-        ]
-        
-        let relationships = [
-            SymbolGraph.Relationship(source: "MO_Subclass", target: "MO_Superclass", kind: .inheritsFrom, targetFallback: nil)
-        ]
-        
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content:
-                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+                    makeSymbolGraph(
+                        moduleName: "MarkdownOutput",
+                        symbols: [
+                            makeSymbol(id: "local-subclass-id", kind: .class, pathComponents: ["LocalSubclass"]),
+                            makeSymbol(id: "local-superclass-id", kind: .class, pathComponents: ["LocalSuperclass"])
+                        ],
+                        relationships: [
+                            SymbolGraph.Relationship(source: "local-subclass-id", target: "local-superclass-id", kind: .inheritsFrom, targetFallback: nil)
+                        ]
+                    ))
         ])
         
         
@@ -1096,21 +1392,21 @@ struct MarkdownOutputTests {
         
     @Test
     func symbolConformancePopulatesManifest() async throws {
-        
-        let symbols = [
-            makeSymbol(id: "MO_Conformer", kind: .struct, pathComponents: ["LocalConformer"]),
-            makeSymbol(id: "MO_Protocol", kind: .protocol, pathComponents: ["LocalProtocol"]),
-            makeSymbol(id: "MO_ExternalConformer", kind: .struct, pathComponents: ["ExternalConformer"])
-        ]
-        
-        let relationships = [
-            SymbolGraph.Relationship(source: "MO_Conformer", target: "MO_Protocol", kind: .conformsTo, targetFallback: nil),
-            SymbolGraph.Relationship(source: "MO_ExternalConformer", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
-        ]
-        
+                
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content:
-                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+                    makeSymbolGraph(
+                        moduleName: "MarkdownOutput",
+                        symbols: [
+                            makeSymbol(id: "local-conformer-id", kind: .struct, pathComponents: ["LocalConformer"]),
+                            makeSymbol(id: "local-protocol-id", kind: .protocol, pathComponents: ["LocalProtocol"]),
+                            makeSymbol(id: "external-conformer-id", kind: .struct, pathComponents: ["ExternalConformer"])
+                        ],
+                        relationships: [
+                            SymbolGraph.Relationship(source: "local-conformer-id", target: "local-protocol-id", kind: .conformsTo, targetFallback: nil),
+                            SymbolGraph.Relationship(source: "external-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
+                        ]
+                    ))
         ])
         
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
@@ -1127,8 +1423,9 @@ struct MarkdownOutputTests {
         
         let (_, externalManifest) = try await markdownOutput(catalog: catalog, path: "ExternalConformer")
         let externalRelated = externalManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        // Unresolved symbol should use the fallback identifier
         #expect(externalRelated.contains(where: {
-            $0.targetIdentifier == "/documentation/Swift/Hashable" && $0.subtype == .conformsTo
+            $0.targetIdentifier == "Swift.Hashable" && $0.subtype == .conformsTo
         }))
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+@preconcurrency import SymbolKit
 private import Markdown
 
 public struct RenderReferenceDependencies {
@@ -194,7 +194,9 @@ public class DocumentationContentRenderer {
         }
         
         let isLeaf = SymbolReference.isLeaf(symbol)
-        let parentName = context.parents(of: reference).first
+        // A symbol can be reached in the topic graph through one or more parent nodes.
+        // To ensure stable ordering, use the parent with the shortest path to the symbol.
+        let parentName = context.shortestFinitePath(to: reference)?.last
             .flatMap { try? context.entity(with: $0).symbol?.names.title }
         
         let options = ConformanceSection.ConstraintRenderOptions(

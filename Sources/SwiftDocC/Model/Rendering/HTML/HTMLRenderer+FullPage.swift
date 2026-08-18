@@ -16,7 +16,7 @@ package import FoundationEssentials
 package import Foundation
 #endif
 
-private import DocCHTML
+package import DocCHTML
 
 package extension HTMLRenderer {
     /// Wraps the unique rendered documentation content and its metadata into a full-page document.
@@ -32,7 +32,7 @@ package extension HTMLRenderer {
         for reference: ResolvedTopicReference,
         customHeader: XMLNode? = nil,
         customFooter: XMLNode? = nil
-    ) -> XMLDocument {
+    ) -> HTMLNode {
         // Use relative paths to shared assets like a style sheet or favicon.
         let pathPrefixToArchiveRoot = String(repeating: "../", count: reference.url.pathComponents.count - 1)
         
@@ -106,14 +106,9 @@ package extension HTMLRenderer {
             body.addChild(customFooter.copy() as! XMLNode)
         }
         
-        // Specify the "html" doctype for the document
-        let documentTypeDefinition = XMLDTD()
-        documentTypeDefinition.name = "html"
-        let page = XMLDocument(rootElement: .element(named: "html", children: [head, body], attributes: ["lang": "en-US"]))
-        page.documentContentKind = .html
-        page.dtd = documentTypeDefinition
+        let root = XMLNode.element(named: "html", children: [head, body], attributes: ["lang": "en-US"])
         
-        return page
+        return HTMLNode(from: root) ?? html(contents: [])
     }
     
     /// Prepares the provided custom header and footer files to be included in the full-page structure.

@@ -424,6 +424,49 @@ struct DeprecationSummaryTests {
         let topicRef = try #require(deprecatedRef, "Expected to find a topic render reference for SomeTypeAlias")
         #expect(topicRef.isDeprecated == true, "Symbol should be marked as deprecated with a message")
     }
+    
+    @Test(arguments: Self.allMainPlatforms)
+    func doesNotWarnAboutDeprecationSummaryIfSymbolIsDeprecatedForOnePlatform(_ deprecatedPlatform: SymbolGraph.Platform) async throws {
+        let name = "requestImageDataForAsset:options:resultHandler:"
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            for (number, platform) in zip(1..., Self.allMainPlatforms) {
+                JSONFile(name: "SomeModule-\(number).symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", platform: platform, symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .protocol, pathComponents: ["SomeClass", name], docComment: "Nothing", availability: [
+                        .init(domainName: platform.name, introduced: .init(major: 1, minor: 2, patch: 3), deprecated: platform == deprecatedPlatform ? .init(major: 2, minor: 3, patch: 4) : nil)
+                    ])
+                ]))
+            }
+            
+            TextFile(name: "SomeTypeAlias.md", utf8Content: """
+            # ``SomeClass/\(name)``
+            
+            A documentation extension file that provides a custom deprecation summary for this symbol.
+            
+            \(Self.deprecationSummaryDirective)
+            """)
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.map(\.identifier) == [],
+                "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        // Verify that DocC displays the deprecation text.
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationNodeConverter(context: context)
+        let renderNode = converter.convert(node)
+        
+        #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
+    }
+    
+    private static let allMainPlatforms: [SymbolGraph.Platform] = [
+        .init(operatingSystem: .init(name: "ios")),
+        .init(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst
+        .init(operatingSystem: .init(name: "macos")),
+        .init(operatingSystem: .init(name: "watchos")),
+        .init(operatingSystem: .init(name: "tvos")),
+        .init(operatingSystem: .init(name: "visionos")),
+    ]
 
     private static func makeInSourceAvailabilityInfo(
         domain: String?,

@@ -170,8 +170,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                     let conformance = renderNodeTranslator.contentRenderer.conformanceSectionFor(overloadReference, collectedConstraints: [:])
 
-                    let declarationFragments = overload.declarationVariants[trait]?.values
-                        .first?
+                    let declarationFragments = overload.declarationVariants[trait]?
+                        .mainRenderFragments()?
                         .declarationFragments
                     precondition(
                         declarationFragments != nil,
@@ -208,25 +208,19 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return platforms + fallbacks
             }
 
-            func comparePlatformNames(_ lhs: PlatformName?, _ rhs: PlatformName?) -> Bool {
-                guard let lhsValue = lhs, let rhsValue = rhs else {
-                    return lhs == nil
-                }
-                return lhsValue.rawValue < rhsValue.rawValue
-            }
-
-            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
-                platforms.sorted(by: comparePlatformNames(_:_:))
-            }
-
             var declarations: [DeclarationRenderSection] = []
             let renderLanguageIDs = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
             ]
+
+            // Use the highest-priority platform declaration to compute the LCS for the common fragments.
+            // `declarations` is checked to be non-nil above, so it is safe to force unwrap here.
+            let highestPriorityDeclaration = declaration.mainRenderFragments()!
+                .declarationFragments.flatMap(preProcessFragment(_:))
             for pair in declaration {
                 let (platforms, declaration) = pair
                 let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
-                let platformNames = sortPlatformNames(expandedPlatforms)
+                let platformNames = expandedPlatforms.sorted { PlatformName.isInOrder($0?.rawValue, $1?.rawValue) }
 
                 let renderedTokens: [DeclarationRenderSection.Token]
                 let otherDeclarations: DeclarationRenderSection.OtherDeclarations?
@@ -241,10 +235,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         OverloadDeclaration($0.declaration.flatMap(preProcessFragment(_:)), $0.reference, $0.conformance)
                     })
 
-                    // Collect the "common fragments" so we can highlight the ones that are different
-                    // in each declaration
+                    // Collect the "common fragments" so we can highlight the ones that differ
                     let commonFragments = commonFragments(
-                        for: (mainDeclaration, renderNode.identifier, nil),
+                        for: (highestPriorityDeclaration, renderNode.identifier, nil),
                         overloadDeclarations: processedOverloadDeclarations,
                         mainDeclarationIndex: overloads.displayIndex
                     )
@@ -276,7 +269,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
                     let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
-                    let platformNames = sortPlatformNames(expandedPlatforms)
+                    let platformNames = expandedPlatforms.sorted { PlatformName.isInOrder($0?.rawValue, $1?.rawValue) }
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
@@ -297,7 +290,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 guard let lhsPlatform = lhs.platforms.first, let rhsPlatform = rhs.platforms.first else {
                     return lhs.platforms.isEmpty
                 }
-                return comparePlatformNames(lhsPlatform, rhsPlatform)
+                return PlatformName.isInOrder(lhsPlatform?.rawValue, rhsPlatform?.rawValue)
             }
 
             return DeclarationsRenderSection(declarations: declarations)

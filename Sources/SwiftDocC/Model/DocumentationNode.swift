@@ -265,6 +265,11 @@ public struct DocumentationNode {
                 platformName: platformName,
                 keyPath: \.title
             ),
+            proseVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.names,
+                platformName: platformName,
+                keyPath: \.prose
+            ),
             subHeadingVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.names,
                 platformName: platformName,
@@ -803,6 +808,7 @@ public struct DocumentationNode {
         self.semantic = Symbol(
             kindVariants: .init(swiftVariant: symbol.kind),
             titleVariants: .init(swiftVariant: symbol.names.title),
+            proseVariants: .init(swiftVariant: symbol.names.prose),
             subHeadingVariants: .init(swiftVariant: symbol.names.subHeading),
             navigatorVariants: .init(swiftVariant: symbol.names.navigator),
             roleHeadingVariants: .init(swiftVariant: symbol.kind.displayName),
@@ -897,7 +903,7 @@ public struct DocumentationNode {
                 directive.name == DeprecationSummary.directiveName ? directive : nil
             }
         }
-        guard let deprecationSummaryDirective, let symbol = unifiedSymbol?.documentedSymbol else {
+        guard let deprecationSummaryDirective, let symbol, let unifiedSymbol else {
             // Nothing to warn about unless there is a DeprecationSummary directive in the markup
             return
         }
@@ -906,7 +912,15 @@ public struct DocumentationNode {
         
         // Check the information from both the source attributes and the Available directive before raising a warning.
         let availabilityFromSource = {
-            var availability = symbol.availability ?? []
+            var combinedInSourceAvailability: [String: SymbolGraph.Symbol.Availability.AvailabilityItem] = [:]
+            for availabilities in unifiedSymbol.availability.values {
+                for item in availabilities where item.obsoletedVersion == nil && !item.isUnconditionallyUnavailable {
+                    let name = item.domain.map({ PlatformName(operatingSystemName: $0.rawValue).displayName }) ?? "*"
+                    combinedInSourceAvailability[name] = item
+                }
+            }
+            
+            var availability = Array(combinedInSourceAvailability.values)
             let isDeprecatedPartitionIndex = availability.partition(by: { $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil })
             return (
                 available:  availability[..<isDeprecatedPartitionIndex],
