@@ -79,8 +79,6 @@ struct StaticHostingWithContentTests {
             includeContentInEachHTMLFile: includeHTMLContent,
             hostingBasePath: basePath
         )
-        // The old `Indexer` type doesn't work with virtual file systems.
-        action._completelySkipBuildingIndex = true
         
         _ = try await action.perform(logHandle: .none)
         
@@ -98,6 +96,8 @@ struct StaticHostingWithContentTests {
         ├─ images/
         │  ╰─ Something/
         ├─ index.html
+        ├─ index/
+        │  ╰─ index.json
         ├─ metadata.json
         ╰─ videos/
            ╰─ Something/
