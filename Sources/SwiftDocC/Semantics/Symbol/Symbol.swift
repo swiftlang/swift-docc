@@ -385,7 +385,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
 
         }
         
-        if !relationshipsVariants.isEmpty {
+        if relationshipsVariants.hasAnyValue {
             self.relationshipsVariants = relationshipsVariants
         }
         

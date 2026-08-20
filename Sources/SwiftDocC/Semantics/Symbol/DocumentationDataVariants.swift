@@ -36,7 +36,25 @@ public struct DocumentationDataVariants<Variant> {
     public var isEmpty: Bool {
         values.isEmpty
     }
-    
+
+    /// Whether this variant collection has a default value or any variant set.
+    ///
+    /// If the variant type is a collection type, this property will also check that the default
+    /// value is not empty, even if it's set.
+    public var hasAnyValue: Bool {
+        guard self.isEmpty else { return true }
+        guard let defaultVariantValue else { return false }
+
+        guard let collectionValue = defaultVariantValue as? (any Collection) else {
+            // If we have a default value and it's not a collection, we already know that
+            // it's set, so just return that a value exists
+            return true
+        }
+
+        // If we have a default value but it's a collection, check that it's not empty
+        return !collectionValue.isEmpty
+    }
+
     /// Creates a variants value.
     ///
     /// - Parameters:
