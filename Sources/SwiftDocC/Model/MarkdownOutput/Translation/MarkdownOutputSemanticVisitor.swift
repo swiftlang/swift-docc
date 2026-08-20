@@ -93,7 +93,7 @@ extension MarkdownOutputSemanticVisitor {
         guard !groups.isEmpty else { return }
 
         if !hasTopicsHeading {
-            markdownWalker.visit(Heading(level: 2, Text(TopicsSection.title ?? "Topics")))
+            markdownWalker.visit(Heading(level: 2, Text("Topics")))
             hasTopicsHeading = true
         }
 
@@ -102,7 +102,7 @@ extension MarkdownOutputSemanticVisitor {
         markdownWalker.withRenderingLinkList {
             for group in groups {
                 // Automatically generated task groups always have a title.
-                $0.visit(Heading(level: 3, Text(group.title ?? "Group")))
+                $0.visit(Heading(level: 3, Text(group.title ?? "Symbols")))
                 for reference in group.references {
                     // Rendering the reference as markup—instead of formatting a link directly—reuses the walker's link
                     // handling, which resolves the link's title, appends the target's abstract, and records the
