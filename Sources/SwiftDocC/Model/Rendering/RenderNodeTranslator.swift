@@ -1261,6 +1261,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
     }
     
+    /// A comparator that orders relationship destinations by their display title.
+    /// If the titles are identical, the reference URL is used as the tiebreaker.
+    static func relationshipDestinationsAreInIncreasingOrder(
+        _ lhs: TopicReference,
+        _ rhs: TopicReference,
+        titles: [TopicReference: String]
+    ) -> Bool {
+        let lhsTitle = titles[lhs] ?? ""
+        let rhsTitle = titles[rhs] ?? ""
+        if lhsTitle != rhsTitle {
+            return lhsTitle < rhsTitle
+        }
+        return (lhs.url?.absoluteString ?? "") < (rhs.url?.absoluteString ?? "")
+    }
+
     @discardableResult
     private mutating func collectUnresolvableSymbolReference(destination: UnresolvedTopicReference, title: String) -> UnresolvedTopicReference? {
         guard let url = ValidatedURL(destination.topicURL.url) else {
@@ -1663,7 +1678,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Links section
                 var orderedDestinations = Array(destinationsMap.keys)
                 orderedDestinations.sort { destination1, destination2 -> Bool in
-                    return destinationsMap[destination1]! <= destinationsMap[destination2]!
+                    Self.relationshipDestinationsAreInIncreasingOrder(
+                        destination1, destination2,
+                        titles: destinationsMap
+                    )
                 }
                 let groupSection = RelationshipsRenderSection(type: group.kind.rawValue, title: group.heading.plainText, identifiers: orderedDestinations.map({ $0.url!.absoluteString }))
                 groupSections.append(groupSection)
