@@ -26,7 +26,14 @@ extension RenderSectionTranslator {
         documentationDataVariants: DocumentationDataVariants<SymbolValue>,
         transform: (DocumentationDataVariantsTrait, SymbolValue) -> (any RenderSection)?
     ) -> VariantCollection<CodableContentSection?>? {
-        VariantCollection<CodableContentSection?>(
+        guard documentationDataVariants.hasAnyValue else {
+            // Creating a variant collection from an empty data variant will lead to creating
+            // invalid render sections, with neither a default value nor any variants.
+            // Bypass the initializer below and return nil so that it can be folded out
+            // in the render node translator.
+            return nil
+        }
+        return VariantCollection<CodableContentSection?>(
             from: documentationDataVariants,
             transform: { trait, value in
                 transform(trait, value).map(CodableContentSection.init)
