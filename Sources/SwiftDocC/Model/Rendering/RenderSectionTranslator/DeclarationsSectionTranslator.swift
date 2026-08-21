@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -220,7 +220,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             for pair in declaration {
                 let (platforms, declaration) = pair
                 let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
-                let platformNames = expandedPlatforms.sorted { PlatformName.isInOrder($0?.rawValue, $1?.rawValue) }
+                let platformNames = expandedPlatforms.sorted { PlatformName.areInIncreasingOrder($0?.rawValue, $1?.rawValue) }
 
                 let renderedTokens: [DeclarationRenderSection.Token]
                 let otherDeclarations: DeclarationRenderSection.OtherDeclarations?
@@ -269,7 +269,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
                     let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
-                    let platformNames = expandedPlatforms.sorted { PlatformName.isInOrder($0?.rawValue, $1?.rawValue) }
+                    let platformNames = expandedPlatforms.sorted { PlatformName.areInIncreasingOrder($0?.rawValue, $1?.rawValue) }
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
@@ -290,7 +290,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 guard let lhsPlatform = lhs.platforms.first, let rhsPlatform = rhs.platforms.first else {
                     return lhs.platforms.isEmpty
                 }
-                return PlatformName.isInOrder(lhsPlatform?.rawValue, rhsPlatform?.rawValue)
+                return PlatformName.areInIncreasingOrder(lhsPlatform?.rawValue, rhsPlatform?.rawValue)
             }
 
             return DeclarationsRenderSection(declarations: declarations)

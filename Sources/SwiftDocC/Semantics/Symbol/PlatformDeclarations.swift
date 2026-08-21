@@ -14,7 +14,7 @@ extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
     /// The declaration fragments for the group with the highest priority platform.
     func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
         self.min(by: { lhs, rhs in
-            PlatformName.isInOrder(
+            PlatformName.areInIncreasingOrder(
                 lhs.key.compactMap { $0 }.min()?.rawValue,
                 rhs.key.compactMap { $0 }.min()?.rawValue
             )

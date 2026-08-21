@@ -27,7 +27,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
     /// Compares two platform names using the order defined in ``sortedPlatforms``.
     /// Unknown platforms are lexicographically sorted after known platforms.
     public static func < (lhs: PlatformName, rhs: PlatformName) -> Bool {
-        isInOrder(lhs.rawValue, rhs.rawValue)
+        areInIncreasingOrder(lhs.rawValue, rhs.rawValue)
     }
     
     /// Creates a new platform name value.
@@ -149,19 +149,19 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
 
     /// Compares two platform name strings using the order defined in ``sortedPlatforms``.
     /// Unknown platforms are lexicographically sorted after known platforms.
-    static func isInOrder(_ lhs: String, _ rhs: String) -> Bool {
+    static func areInIncreasingOrder(_ lhs: String, _ rhs: String) -> Bool {
         let lhsIndex = platformOrderIndex[lhs.lowercased()] ?? Int.max
         let rhsIndex = platformOrderIndex[rhs.lowercased()] ?? Int.max
         if lhsIndex != rhsIndex { return lhsIndex < rhsIndex }
         return lhs < rhs
     }
 
-    /// An overload of ``isInOrder(_:_:)`` that accepts optional values. Nil values are sorted first.
-    static func isInOrder(_ lhs: String?, _ rhs: String?) -> Bool {
+    /// An overload of ``areInIncreasingOrder(_:_:)-(String,String)`` that accepts optional values. Nil values are sorted first.
+    static func areInIncreasingOrder(_ lhs: String?, _ rhs: String?) -> Bool {
         switch (lhs, rhs) {
         case (_, nil): false
         case (nil, _): true
-        case (let lhs?, let rhs?):  isInOrder(lhs, rhs)
+        case (let lhs?, let rhs?):  areInIncreasingOrder(lhs, rhs)
         }
     }
 }
