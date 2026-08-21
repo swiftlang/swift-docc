@@ -325,7 +325,7 @@ struct MarkdownOutputTests {
                                     .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
                                     .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
                                 ],
-                            ),
+                            )
                         ],
                         relationships: [
                             .init(source: "markdown-symbol-var-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil),
