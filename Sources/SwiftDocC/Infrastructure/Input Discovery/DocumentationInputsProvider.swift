@@ -73,7 +73,7 @@ extension DocumentationContext {
 
 extension DocumentationContext.InputsProvider {
 
-    private typealias FileTypes = DocumentationBundleFileTypes
+    private typealias FileTypes = DocumentationCatalogFileTypes
 
     /// A discovered documentation catalog.
     struct CatalogURL {

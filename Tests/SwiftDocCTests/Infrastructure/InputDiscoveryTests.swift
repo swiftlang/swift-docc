@@ -119,10 +119,10 @@ class InputDiscoveryTests: XCTestCase {
             Folder(name: "path", content: [
                 Folder(name: "to", content: [
                     // The test catalog without all the symbol graph files
-                    CopyOfFolder(original: testBundleLocation, filter: { !DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                    CopyOfFolder(original: testBundleLocation, filter: { !DocumentationCatalogFileTypes.isSymbolGraphFile($0) }),
                     
                     // Just the symbol graph files in a non-bundle folder
-                    CopyOfFolder(original: testBundleLocation, newName: "Not a catalog", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                    CopyOfFolder(original: testBundleLocation, newName: "Not a catalog", filter: { DocumentationCatalogFileTypes.isSymbolGraphFile($0) }),
                 ])
             ])
         ])

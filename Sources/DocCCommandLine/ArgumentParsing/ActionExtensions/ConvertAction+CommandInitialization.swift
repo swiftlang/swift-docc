@@ -113,5 +113,5 @@ private func symbolGraphFiles(in directory: URL?) -> [URL] {
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }
-        .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
+        .filter { DocumentationCatalogFileTypes.isSymbolGraphFile($0) }
 }

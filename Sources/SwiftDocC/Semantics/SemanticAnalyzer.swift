@@ -53,13 +53,13 @@ struct SemanticAnalyzer: MarkupVisitor {
             .list(finalConjunction: .or)
         
         if let source {
-            if !topLevelChildren.isEmpty, !DocumentationBundleFileTypes.isTutorialFile(source) {
+            if !topLevelChildren.isEmpty, !DocumentationCatalogFileTypes.isTutorialFile(source) {
                 // Only tutorials support top level directives. This document has top level directives but is not a tutorial file.
                 let directiveName = type(of: topLevelChildren.first! as! (any DirectiveConvertible)).directiveName
                 let diagnostic = Diagnostic(source: source, severity: .warning, range: document.range, identifier: "org.swift.docc.unsupportedTopLevelChild", summary: "Found unsupported \(directiveName.singleQuoted) directive in '.\(source.pathExtension)' file", explanation: "Only '.tutorial' files support top-level directives")
                 diagnostics.append(diagnostic)
                 return nil
-            } else if topLevelChildren.isEmpty, !DocumentationBundleFileTypes.isReferenceDocumentationFile(source) {
+            } else if topLevelChildren.isEmpty, !DocumentationCatalogFileTypes.isReferenceDocumentationFile(source) {
                 // Only reference documentation support all markdown content. This document has no top level directives but is not a reference documentation file.
                 let diagnostic = Diagnostic(
                     source: source,

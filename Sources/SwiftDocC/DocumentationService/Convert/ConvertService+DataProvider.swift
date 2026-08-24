@@ -21,10 +21,10 @@ extension ConvertService {
             + request.miscResourceURLs.count
         )
         for markupFile in request.markupFiles {
-            files[makeURL().appendingPathExtension(DocumentationBundleFileTypes.referenceFileExtension)] = markupFile
+            files[makeURL().appendingPathExtension(DocumentationCatalogFileTypes.referenceFileExtension)] = markupFile
         }
         for tutorialFile in request.tutorialFiles {
-            files[makeURL().appendingPathExtension(DocumentationBundleFileTypes.tutorialFileExtension)] = tutorialFile
+            files[makeURL().appendingPathExtension(DocumentationCatalogFileTypes.tutorialFileExtension)] = tutorialFile
         }
         let markupFileURL = Array(files.keys)
         
