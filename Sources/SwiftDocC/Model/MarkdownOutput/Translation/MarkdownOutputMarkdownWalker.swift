@@ -240,10 +240,11 @@ extension MarkdownOutputMarkupWalker {
                 
         if isRenderingLinkList {
             linkListAbstract = (doc.semantic as? Symbol)?.abstract
-            if let fragments = symbol.navigator {
+            if let fragments = symbol.subHeadingVariants[.swift] ?? symbol.declaration.mainRenderFragments()?.declarationFragments {
                 linkTitle = fragments
                     .map { $0.spelling }
-                    .joined(separator: " ")
+                    .joined()
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
             }
             relationships.insert(relationship(source: resolved, type: .belongsToTopic, subtype: nil))
         }

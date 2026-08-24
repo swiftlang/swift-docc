@@ -88,6 +88,7 @@ package func makeSymbol(
     signature: SymbolGraph.Symbol.FunctionSignature? = nil,
     availability: [SymbolGraph.Symbol.Availability.AvailabilityItem]? = nil,
     declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment]? = nil,
+    subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment]? = nil,
     otherMixins: [any Mixin] = []
 ) -> SymbolGraph.Symbol {
     precondition(!pathComponents.isEmpty, "Need at least one path component to name the symbol")
@@ -110,7 +111,7 @@ package func makeSymbol(
         SymbolGraph.Symbol.Names(
             title: pathComponents.last!, // Verified above to exist
             navigator: declaration,
-            subHeading: declaration,
+            subHeading: subHeading ?? declaration,
             prose: nil
         )
     } else {

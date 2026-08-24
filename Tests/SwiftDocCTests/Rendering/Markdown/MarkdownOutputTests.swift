@@ -290,6 +290,56 @@ struct MarkdownOutputTests {
     }
     
     @Test
+    func curatedSymbolUsesSubheadingAsLinkTitle() async throws {
+        let catalog = catalog(files: [
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content:
+                    makeSymbolGraph(
+                        moduleName: "MarkdownOutput",
+                        symbols: [
+                            makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                            makeSymbol(
+                                id: "markdown-symbol-var-id",
+                                kind: .property,
+                                pathComponents: ["MarkdownSymbol", "property"],
+                                docComment: "A property of the symbol",
+                                declaration: [
+                                    .init(kind: .attribute, spelling: "@objc", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .keyword, spelling: "var", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .identifier, spelling: "property", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                                    .init(kind: .text, spelling: " { ", preciseIdentifier: nil),
+                                    .init(kind: .keyword, spelling: "get", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .keyword, spelling: "set", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " }", preciseIdentifier: nil),
+                                ],
+                                subHeading: [
+                                    .init(kind: .keyword, spelling: "var", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .identifier, spelling: "property", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                                ]
+                            )
+                        ],
+                        relationships: [
+                            .init(source: "markdown-symbol-var-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil),
+                        ]
+                    )
+            )
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        #expect(node.markdown.contains("[`var property: Int`](/documentation/MarkdownOutput/MarkdownSymbol/property"))
+        #expect(node.markdown.contains("@objc var property: Int { get set }") == false)
+    }
+    
+    @Test
     func linkTitlesAreRetained() async throws {
         let catalog = catalog(files: [
             TextFile(name: "RootDocument.md", utf8Content: """
