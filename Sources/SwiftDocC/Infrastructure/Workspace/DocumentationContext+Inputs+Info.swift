@@ -11,26 +11,26 @@
 public import Foundation
 
 extension DocumentationContext.Inputs {
-    /// Information about a documentation bundle that's unrelated to its documentation content.
+    /// Information about a collection of documentation inputs that's unrelated to its documentation content.
     ///
-    /// This information is meant to be decoded from the bundle's Info.plist file.
+    /// This information is meant to be decoded from the catalog's Info.plist file.
     public struct Info: Codable, Equatable {
-        /// The display name of the bundle.
+        /// The display name of the documentation.
         public var displayName: String
         
-        /// The unique identifier of the bundle.
+        /// The unique identifier of the documentation.
         public var id: DocumentationContext.Inputs.Identifier
         
-        /// The default language identifier for code listings in the bundle.
+        /// The default language identifier for code listings in the contents.
         public var defaultCodeListingLanguage: String?
         
-        /// The default availability for the various modules in the bundle.
+        /// The default availability for the inputs's module, if any.
         public var defaultAvailability: DefaultAvailability?
         
-        /// The default kind for the various modules in the bundle.
+        /// The default kind for the input's module, if any.
         public var defaultModuleKind: String?
 
-        /// The parsed feature flags that were set for this bundle.
+        /// The parsed feature flags that were set for this catalog.
         internal var featureFlags: BundleFeatureFlags?
 
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
@@ -76,13 +76,13 @@ extension DocumentationContext.Inputs {
             }
         }
         
-        /// Creates a new documentation bundle information value.
+        /// Creates a new documentation input information value.
         /// - Parameters:
-        ///   - displayName: The display name of the bundle.
-        ///   - id:  The unique identifier of the bundle.
-        ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
-        ///   - defaultAvailability: The default availability for the various modules in the bundle.
-        ///   - defaultModuleKind: The default kind for the various modules in the bundle.
+        ///   - displayName: The display name of the documentation.
+        ///   - id:  The unique identifier of the documentation.
+        ///   - defaultCodeListingLanguage: The default language identifier for code listings in the contents.
+        ///   - defaultAvailability: The default availability for the inputs' module, if any.
+        ///   - defaultModuleKind: The default kind for the inputs' module, if any.
         public init(
             displayName: String,
             id: DocumentationContext.Inputs.Identifier,
@@ -100,8 +100,8 @@ extension DocumentationContext.Inputs {
             )
         }
         
-        /// Creates documentation bundle information from the given Info.plist data, falling back to the values
-        /// in the given bundle discovery options if necessary.
+        /// Creates documentation input information from the given Info.plist data, falling back to the values
+        /// in the given catalog discovery options if necessary.
         init(
             from infoPlist: Data? = nil,
             catalogDiscoveryOptions options: CatalogDiscoveryOptions? = nil,
@@ -111,7 +111,7 @@ extension DocumentationContext.Inputs {
                 let propertyListDecoder = PropertyListDecoder()
                 
                 if let options {
-                    propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
+                    propertyListDecoder.userInfo[.catalogDiscoveryOptions] = options
                 }
                 
                 if let derivedDisplayName {
@@ -137,7 +137,7 @@ extension DocumentationContext.Inputs {
         }
         
         public init(from decoder: any Decoder) throws {
-            let catalogDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? CatalogDiscoveryOptions
+            let catalogDiscoveryOptions = decoder.userInfo[.catalogDiscoveryOptions] as? CatalogDiscoveryOptions
             let derivedDisplayName = decoder.userInfo[.derivedDisplayName] as? String
             
             try self.init(
@@ -249,18 +249,18 @@ extension DocumentationContext.Inputs {
 }
 
 extension CatalogDiscoveryOptions {
-    /// Creates new bundle discovery options with the given information.
-    /// 
-    /// The given fallback values will be used if any of the discovered bundles are missing that
+    /// Creates new catalog discovery options with the given information.
+    ///
+    /// The given fallback values will be used if any of the discovered catalogs are missing that
     /// value in their Info.plist configuration file.
     /// 
     /// - Parameters:
-    ///   - fallbackDisplayName: A fallback display name for the bundle.
-    ///   - fallbackIdentifier: A fallback identifier for the bundle.
-    ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
-    ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
-    ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
-    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    ///   - fallbackDisplayName: A fallback display name for the catalog.
+    ///   - fallbackIdentifier: A fallback identifier for the catalog.
+    ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the catalog.
+    ///   - fallbackDefaultModuleKind: A fallback default module kind for the catalog.
+    ///   - fallbackDefaultAvailability: A fallback default availability for the catalog.
+    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered catalogs.
     public init(
         fallbackDisplayName: String? = nil,
         fallbackIdentifier: String? = nil,
@@ -307,8 +307,8 @@ extension CatalogDiscoveryOptions {
 }
 
 private extension CodingUserInfoKey {
-    /// A user info key to store bundle discovery options in the decoder.
-    static let bundleDiscoveryOptions = CodingUserInfoKey(rawValue: "bundleDiscoveryOptions")!
+    /// A user info key to store catalog discovery options in the decoder.
+    static let catalogDiscoveryOptions = CodingUserInfoKey(rawValue: "catalogDiscoveryOptions")!
     /// A user info key to store derived display name in the decoder.
     static let derivedDisplayName = CodingUserInfoKey(rawValue: "derivedDisplayName")!
 }
