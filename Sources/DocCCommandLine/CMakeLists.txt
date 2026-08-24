@@ -33,7 +33,7 @@ add_library(DocCCommandLine STATIC
   ArgumentParsing/ArgumentValidation/URLArgumentValidator.swift
   ArgumentParsing/Options/DirectoryPathOption.swift
   ArgumentParsing/Options/DocumentationArchiveOption.swift
-  ArgumentParsing/Options/DocumentationBundleOption.swift
+  ArgumentParsing/Options/DocumentationCatalogOption.swift
   ArgumentParsing/Options/DocumentationCoverageOptionsArgument.swift
   ArgumentParsing/Options/InitOptions.swift
   ArgumentParsing/Options/OutOfProcessLinkResolverOption.swift
