@@ -31,7 +31,7 @@ extension DocumentationContext.Inputs {
         public var defaultModuleKind: String?
 
         /// The parsed feature flags that were set for this catalog.
-        internal var featureFlags: BundleFeatureFlags?
+        internal var featureFlags: CatalogFeatureFlags?
 
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .id]
@@ -227,7 +227,7 @@ extension DocumentationContext.Inputs {
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
-            self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
+            self.featureFlags = try decodeOrFallbackIfPresent(CatalogFeatureFlags.self, with: .featureFlags)
         }
 
         init(
@@ -236,7 +236,7 @@ extension DocumentationContext.Inputs {
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
-            featureFlags: BundleFeatureFlags? = nil
+            featureFlags: CatalogFeatureFlags? = nil
         ) {
             self.displayName = displayName
             self.id = id

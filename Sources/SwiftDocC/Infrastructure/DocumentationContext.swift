@@ -2008,7 +2008,7 @@ public class DocumentationContext {
         if let bundleFlags = inputs.info.featureFlags {
             for unknownFeatureFlag in bundleFlags.unknownFeatureFlags {
                 let suggestions = NearMiss.bestMatches(
-                    for: DocumentationContext.Inputs.Info.BundleFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
+                    for: DocumentationContext.Inputs.Info.CatalogFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
                     against: unknownFeatureFlag)
                 var summary: String = "Unknown feature flag in Info.plist: \(unknownFeatureFlag.singleQuoted)"
                 if !suggestions.isEmpty {
