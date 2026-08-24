@@ -79,7 +79,7 @@ class DocumentationInputsProviderTests: XCTestCase {
         
         for fileManager in [FileManager.default as (any FileManagerProtocol), testFileSystem as (any FileManagerProtocol)] {
             let inputsProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
-            let options = BundleDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
+            let options = CatalogDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
                 tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")
             ])
             let (inputs, _) = try XCTUnwrap(inputsProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))

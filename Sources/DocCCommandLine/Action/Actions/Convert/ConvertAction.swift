@@ -63,7 +63,7 @@ public struct ConvertAction: AsyncAction {
     ///   - fileManager: The file manager that the convert action uses to create directories and write data to files.
     ///   - outputFormat: The format that the convert action will output the documentation in when writing to the output location.
     ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
-    ///   - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
+    ///   - catalogDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
     ///   - diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
     ///   - diagnosticEngine: The engine that will collect and emit diagnostics during this action.
     ///   - diagnosticFilePath: The path to a file where the convert action should write diagnostic information.
@@ -95,7 +95,7 @@ public struct ConvertAction: AsyncAction {
         temporaryDirectory: URL,
         outputFormat: Docc.Convert.OutputFormat = .json,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
-        bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
+        catalogDiscoveryOptions: CatalogDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
         diagnosticEngine: DiagnosticEngine? = nil,
         diagnosticFilePath: URL? = nil,
@@ -196,7 +196,7 @@ public struct ConvertAction: AsyncAction {
             .inputsAndDataProvider(
                 startingPoint: documentationBundleURL,
                 allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
-                options: bundleDiscoveryOptions
+                options: catalogDiscoveryOptions
             )
         }
 

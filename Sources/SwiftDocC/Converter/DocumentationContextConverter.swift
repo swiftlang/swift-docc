@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,7 +40,7 @@ public class DocumentationContextConverter {
     
     /// Creates a new node converter for the given context.
     ///
-    /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
+    /// The converter uses context to resolve references to other documentation and describe the documentation hierarchy.
     ///
     /// - Parameters:
     ///   - context: The context that the converter uses to to resolve references it finds in the documentation node's content.

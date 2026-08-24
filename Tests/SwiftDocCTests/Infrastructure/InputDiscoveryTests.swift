@@ -127,7 +127,7 @@ class InputDiscoveryTests: XCTestCase {
             ])
         ])
         
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let catalogDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
             ],
@@ -139,7 +139,7 @@ class InputDiscoveryTests: XCTestCase {
         )
         
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-        let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: bundleDiscoveryOptions)
+        let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: catalogDiscoveryOptions)
         
         // The input information was overridden from the options
         XCTAssertEqual(inputs.id, "org.swift.docc.example")
@@ -160,7 +160,7 @@ class InputDiscoveryTests: XCTestCase {
     func testNoInfoPlist() throws {
         let catalog = Folder(name: "Something.docc", content: [])
 
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
                 "CFBundleIdentifier": "com.fallback.bundle.identifier"

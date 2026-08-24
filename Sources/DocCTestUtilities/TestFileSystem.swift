@@ -12,7 +12,7 @@ package import Foundation
 import XCTest
 import SwiftDocC
 
-/// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
+/// A data provider and file manager that accepts pre-built documentation catalogs with files on the local filesystem.
 ///
 /// `TestFileSystem` is a file manager that keeps a directory structure in memory including the file data
 /// for fast access without hitting the disk. When you create an instance pass all folders to the initializer like so:
@@ -22,7 +22,7 @@ import SwiftDocC
 /// ])
 ///
 /// let testDataProvider = try TestFileSystem(
-///   folders: [bundle, Folder.emptyHTMLTemplateDirectory]
+///   folders: [catalog, Folder.emptyHTMLTemplateDirectory]
 /// )
 /// ```
 /// This will create or copy from disk the `folders` list and you can use the data provider

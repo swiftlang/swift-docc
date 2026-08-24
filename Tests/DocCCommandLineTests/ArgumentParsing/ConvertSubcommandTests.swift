@@ -268,7 +268,7 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
             ])
 
-            XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+            XCTAssertEqual(convertOptions.catalogDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
                 "FillIntroduced.symbols.json",
                 "MyKit@SideKit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -316,7 +316,7 @@ class ConvertSubcommandTests: XCTestCase {
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         XCTAssertNil(action.rootURL)
         
-        XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+        XCTAssertEqual(convertOptions.catalogDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
             "FillIntroduced.symbols.json",
             "MyKit@SideKit.symbols.json",
             "mykit-iOS.symbols.json",

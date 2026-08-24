@@ -133,7 +133,7 @@ extension DocumentationContext.InputsProvider {
 
 extension DocumentationContext.InputsProvider {
 
-    package typealias Options = BundleDiscoveryOptions
+    package typealias Options = CatalogDiscoveryOptions
 
     /// Creates a collection of documentation inputs from the content of the given documentation catalog.
     /// 
@@ -150,7 +150,7 @@ extension DocumentationContext.InputsProvider {
 
         let info = try DocumentationContext.Inputs.Info(
             from: infoPlistData,
-            bundleDiscoveryOptions: options,
+            catalogDiscoveryOptions: options,
             derivedDisplayName: url.deletingPathExtension().lastPathComponent
         )
 
@@ -217,7 +217,7 @@ extension DocumentationContext.InputsProvider {
         }
         let derivedDisplayName = moduleNames.count == 1 ? moduleNames.first : nil
 
-        let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
+        let info = try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
         
         let topLevelPages: [URL]
         let provider: any DataProvider

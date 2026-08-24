@@ -140,12 +140,12 @@ public struct ConvertService: DocumentationService {
             if let bundleLocation = request.bundleLocation,
                let catalogURL = try inputProvider.findCatalog(startingPoint: bundleLocation, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
             {
-                let bundleDiscoveryOptions = try BundleDiscoveryOptions(
+                let catalogDiscoveryOptions = try CatalogDiscoveryOptions(
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 )
                 
-                inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
+                inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: catalogDiscoveryOptions)
                 dataProvider = FileManager.default
             } else {
                 (inputs, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)

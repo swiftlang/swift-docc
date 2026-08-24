@@ -104,7 +104,7 @@ extension DocumentationContext.Inputs {
         /// in the given bundle discovery options if necessary.
         init(
             from infoPlist: Data? = nil,
-            bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil,
+            catalogDiscoveryOptions options: CatalogDiscoveryOptions? = nil,
             derivedDisplayName: String? = nil
         ) throws {
             if let infoPlist {
@@ -130,26 +130,26 @@ extension DocumentationContext.Inputs {
             } else {
                 try self.init(
                     with: nil,
-                    bundleDiscoveryOptions: options,
+                    catalogDiscoveryOptions: options,
                     derivedDisplayName: derivedDisplayName
                 )
             }
         }
         
         public init(from decoder: any Decoder) throws {
-            let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? BundleDiscoveryOptions
+            let catalogDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? CatalogDiscoveryOptions
             let derivedDisplayName = decoder.userInfo[.derivedDisplayName] as? String
             
             try self.init(
                 with: decoder.container(keyedBy: CodingKeys.self),
-                bundleDiscoveryOptions: bundleDiscoveryOptions,
+                catalogDiscoveryOptions: catalogDiscoveryOptions,
                 derivedDisplayName: derivedDisplayName
             )
         }
         
         private init(
             with values: KeyedDecodingContainer<DocumentationContext.Inputs.Info.CodingKeys>?,
-            bundleDiscoveryOptions: BundleDiscoveryOptions?,
+            catalogDiscoveryOptions: CatalogDiscoveryOptions?,
             derivedDisplayName: String?
         ) throws {
             // Here we define two helper functions that simplify
@@ -164,7 +164,7 @@ extension DocumentationContext.Inputs {
                 with key: CodingKeys
             ) throws -> T? where T : Decodable {
                 try values?.decodeIfPresent(T.self, forKey: key)
-                    ?? bundleDiscoveryOptions?.infoPlistFallbacks.decodeIfPresent(T.self, forKey: key.rawValue)
+                    ?? catalogDiscoveryOptions?.infoPlistFallbacks.decodeIfPresent(T.self, forKey: key.rawValue)
             }
             
             /// Helper function that decodes a value of the given type for the given key
@@ -173,9 +173,9 @@ extension DocumentationContext.Inputs {
                 _ expectedType: T.Type,
                 with key: CodingKeys
             ) throws -> T where T : Decodable {
-                if let bundleDiscoveryOptions {
+                if let catalogDiscoveryOptions {
                     return try values?.decodeIfPresent(T.self, forKey: key)
-                    ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
+                    ?? catalogDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
                 } else if let values {
                     return try values.decode(T.self, forKey: key)
                 } else {
@@ -190,7 +190,7 @@ extension DocumentationContext.Inputs {
             // **all** missing required keys, instead of just the first one hit.
             
             var givenKeys = Set(values?.allKeys ?? []).union(
-                bundleDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
+                catalogDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
                     CodingKeys(stringValue: $0)
                 } ?? []
             )
@@ -248,7 +248,7 @@ extension DocumentationContext.Inputs {
     }
 }
 
-extension BundleDiscoveryOptions {
+extension CatalogDiscoveryOptions {
     /// Creates new bundle discovery options with the given information.
     /// 
     /// The given fallback values will be used if any of the discovered bundles are missing that
