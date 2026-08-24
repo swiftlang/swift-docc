@@ -29,16 +29,16 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
     
     init(
         targetFolder: URL,
-        bundleRootFolder: URL?,
+        catalogRootFolder: URL?,
         fileManager: any FileManagerProtocol,
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
         transformForStaticHostingIndexHTML: URL?,
-        bundleID: DocumentationContext.Inputs.Identifier?
+        inputsID: DocumentationContext.Inputs.Identifier?
     ) {
         self.targetFolder = targetFolder
-        self.bundleRootFolder = bundleRootFolder
+        self.bundleRootFolder = catalogRootFolder
         self.fileManager = fileManager
         self.context = context
         self.renderNodeWriter = JSONEncodingRenderNodeWriter(
@@ -48,7 +48,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         )
         self.indexer = indexer
         self.enableCustomTemplates = enableCustomTemplates
-        self.assetPrefixComponent = bundleID?.rawValue.split(separator: "/").joined(separator: "-")
+        self.assetPrefixComponent = inputsID?.rawValue.split(separator: "/").joined(separator: "-")
     }
     
     func consume(renderNode: RenderNode) throws {

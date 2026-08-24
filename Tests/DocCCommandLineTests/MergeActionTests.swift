@@ -938,7 +938,7 @@ class MergeActionTests: XCTestCase {
             let realTempURL = try createTemporaryDirectory() // The navigator builder only support real file systems
             let indexer = try ConvertAction.Indexer(outputURL: realTempURL, bundleID: inputs.id)
             
-            let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, bundleRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, bundleID: inputs.id)
+            let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, catalogRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, inputsID: inputs.id)
             
             try await ConvertActionConverter.convert(context: context, outputConsumer: outputConsumer, htmlContentConsumer: nil, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
             

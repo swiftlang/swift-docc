@@ -333,14 +333,14 @@ public struct ConvertAction: AsyncAction {
         
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
-            bundleRootFolder: rootURL,
+            catalogRootFolder: rootURL,
             fileManager: fileManager,
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             // Don't transform for static hosting if the `FileWritingHTMLContentConsumer` will create per-page index.html files
             transformForStaticHostingIndexHTML: transformForStaticHosting && !includeContentInEachHTMLFile ? indexHTML : nil,
-            bundleID: inputs.id
+            inputsID: inputs.id
         )
         
         let htmlConsumer: (any HTMLContentConsumer)?
@@ -481,12 +481,12 @@ public struct ConvertAction: AsyncAction {
 
             let outputConsumer = ConvertFileWritingConsumer(
                 targetFolder: targetDirectory,
-                bundleRootFolder: rootURL,
+                catalogRootFolder: rootURL,
                 fileManager: fileManager,
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleID: inputs.id
+                inputsID: inputs.id
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
