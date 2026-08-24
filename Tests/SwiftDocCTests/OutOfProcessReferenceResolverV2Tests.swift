@@ -303,7 +303,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
     }
     
     func testLinksAndImagesInExternalAbstractAreIncludedInTheRenderedPageReferenecs() async throws {
-        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        let externalBundleID: DocumentationContext.Inputs.Identifier = "com.example.test"
         
         let imageRef = RenderReferenceIdentifier("some-external-card-image-identifier")
         let linkRef = RenderReferenceIdentifier("doc://\(externalBundleID)/path/to/other-page")
@@ -417,7 +417,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
     }
     
     func testExternalLinkFailureResultInDiagnosticWithSolutions() async throws {
-        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        let externalBundleID: DocumentationContext.Inputs.Identifier = "com.example.test"
         
         let resolver: OutOfProcessReferenceResolver
         do {
@@ -511,7 +511,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
     }
     
     func testOnlySendsPathAndFragmentInLinkRequest() async throws {
-        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        let externalBundleID: DocumentationContext.Inputs.Identifier = "com.example.test"
         
         let resolver: OutOfProcessReferenceResolver
         let savedRequestsFile: URL

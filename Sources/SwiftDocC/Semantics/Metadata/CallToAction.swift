@@ -150,7 +150,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
 
 extension CallToAction {
     func resolveFile(
-        for bundle: DocumentationBundle,
+        for bundle: DocumentationContext.Inputs,
         in context: DocumentationContext,
         diagnostics: inout [Diagnostic]
     ) -> ResourceReference? {

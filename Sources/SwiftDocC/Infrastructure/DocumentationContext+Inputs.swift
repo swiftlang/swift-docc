@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,7 @@
 public import Foundation
 import DocCCommon
 
+extension DocumentationContext {
 /// A collection of the build inputs for a unit of documentation.
 ///
 /// A unit of documentation may for example cover a framework, library, or tool.
@@ -35,7 +36,7 @@ import DocCCommon
 /// - ``info``
 /// - ``displayName``
 /// - ``identifier``
-public struct DocumentationBundle {
+public struct Inputs {
     public enum PropertyListError: DescribedError {
         case invalidVersionString(String)
         case keyNotFound(String)
@@ -58,8 +59,8 @@ public struct DocumentationBundle {
         info.displayName
     }
     
-    /// The documentation bundle's stable and locally unique identifier.
-    public var id: DocumentationBundle.Identifier {
+    /// A stable and locally unique identifier for this collection of build inputs.
+    public var id: DocumentationContext.Inputs.Identifier {
         info.id
     }
     
@@ -154,3 +155,7 @@ public struct DocumentationBundle {
     /// Default path to resolve articles.
     public var articlesDocumentationRootReference: ResolvedTopicReference
 }
+}
+
+@available(*, deprecated, renamed: "DocumentationContext.Inputs", message: "Use 'DocumentationContext.Inputs' instead. This deprecated API will be removed after 6.5 is released.")
+public typealias DocumentationBundle = DocumentationContext.Inputs

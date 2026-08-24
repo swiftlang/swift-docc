@@ -117,7 +117,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     ///   - source: The location of the file that this article's content comes from.
     ///   - bundle: The documentation bundle that the source file belongs to.
     ///   - diagnostics: A mutable collection of diagnostics to update with any additional issues encountered while initializing the article.
-    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
             let range = markup.child(at: 0)?.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil)
 

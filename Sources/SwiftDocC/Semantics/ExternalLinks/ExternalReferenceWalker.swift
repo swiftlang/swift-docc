@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -32,7 +32,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     private var markupResolver: ExternalMarkupReferenceWalker
     
     /// Collected unresolved external references, grouped by the bundle ID.
-    var collectedExternalReferences: [DocumentationBundle.Identifier: [UnresolvedTopicReference]] {
+    var collectedExternalReferences: [DocumentationContext.Inputs.Identifier: [UnresolvedTopicReference]] {
         return markupResolver.collectedExternalLinks.mapValues { links in
             links.map(UnresolvedTopicReference.init(topicURL:))
         }
@@ -40,7 +40,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     
     /// Creates a new semantic walker that collects links to other documentation sources.
     /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    init(localBundleID: DocumentationBundle.Identifier) {
+    init(localBundleID: DocumentationContext.Inputs.Identifier) {
         self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
     }
     

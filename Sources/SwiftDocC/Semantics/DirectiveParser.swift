@@ -23,7 +23,7 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
         from markupElements: inout [any Markup],
         parentType: Semantic.Type,
         source: URL?,
-        bundle: DocumentationBundle,
+        bundle: DocumentationContext.Inputs,
         featureFlags: FeatureFlags,
         diagnostics: inout [Diagnostic]
     ) -> Directive? {

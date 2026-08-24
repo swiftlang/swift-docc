@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,7 +18,7 @@ import DocCCommon
 // instead to verify a mix of successes and failures in the same test.
 
 class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
-    var bundleID: DocumentationBundle.Identifier = "com.external.testbundle"
+    var bundleID: DocumentationContext.Inputs.Identifier = "com.external.testbundle"
     
     // The minimal information that the test resolver needs to create a resolved reference and documentation node
     struct EntityInfo {

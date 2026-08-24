@@ -207,7 +207,7 @@ public struct ConvertAction: AsyncAction {
     }
     
     let configuration: DocumentationContext.Configuration
-    private let inputs: DocumentationBundle
+    private let inputs: DocumentationContext.Inputs
     private let dataProvider: any DataProvider
     
     /// A block of extra work that tests perform to affect the time it takes to convert documentation

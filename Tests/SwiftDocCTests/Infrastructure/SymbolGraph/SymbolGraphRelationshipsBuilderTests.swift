@@ -18,7 +18,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     
     private func createSymbols(
         documentationCache: inout DocumentationContext.ContentCache<DocumentationNode>,
-        bundle: DocumentationBundle,
+        bundle: DocumentationContext.Inputs,
         sourceType: SymbolGraph.Symbol.Kind,
         targetType: SymbolGraph.Symbol.Kind
     ) -> SymbolGraph.Relationship {

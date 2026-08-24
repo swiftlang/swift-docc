@@ -20,12 +20,12 @@ extension XCTestCase {
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
     func loadBundle(
         from catalogURL: URL,
-        externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
+        externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:],
         externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
         fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
         configuration: DocumentationContext.Configuration = .init()
-    ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
         let context = try await loadFromDisk(
             catalogURL: catalogURL,
             externalResolvers: externalResolvers,
@@ -52,7 +52,7 @@ extension XCTestCase {
         diagnosticFilterLevel: DiagnosticSeverity = .warning,
         logOutput: some TextOutputStream = LogHandle.none,
         configuration: DocumentationContext.Configuration = .init()
-    ) async throws -> (DocumentationBundle, DocumentationContext) {
+    ) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
         let context = try await SwiftDocCTests.load(
             catalog: catalog,
             otherFileSystemDirectories: otherFileSystemDirectories,
@@ -73,13 +73,13 @@ extension XCTestCase {
     func testBundleAndContext(
         copying name: String,
         excludingPaths excludedPaths: [String] = [],
-        externalResolvers: [DocumentationBundle.Identifier : any ExternalDocumentationSource] = [:],
+        externalResolvers: [DocumentationContext.Inputs.Identifier : any ExternalDocumentationSource] = [:],
         externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
         fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
-    ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
         let sourceURL = try testCatalogURL(named: name)
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
@@ -110,16 +110,16 @@ extension XCTestCase {
     
     func testBundleAndContext(
         named name: String,
-        externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
+        externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:],
         fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         configuration: DocumentationContext.Configuration = .init()
-    ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
         let catalogURL = try testCatalogURL(named: name)
         let context = try await loadFromDisk(catalogURL: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
         return (catalogURL, context.inputs, context)
     }
     
-    func testBundleAndContext(named name: String, externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:]) async throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(named name: String, externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:]) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
         let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: name), externalResolvers: externalResolvers)
         return (context.inputs, context)
     }
@@ -131,19 +131,19 @@ extension XCTestCase {
         return try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
     }
     
-    func testBundle(named name: String) async throws -> DocumentationBundle {
+    func testBundle(named name: String) async throws -> DocumentationContext.Inputs {
         let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: name))
         return context.inputs
     }
     
-    func testBundleFromRootURL(named name: String) throws -> DocumentationBundle {
+    func testBundleFromRootURL(named name: String) throws -> DocumentationContext.Inputs {
         let rootURL = try testCatalogURL(named: name)
         let inputProvider = DocumentationContext.InputsProvider()
         let catalogURL = try XCTUnwrap(inputProvider.findCatalog(startingPoint: rootURL))
         return try inputProvider.makeInputs(contentOf: catalogURL, options: .init())
     }
     
-    func testBundleAndContext(configuration: DocumentationContext.Configuration = .init()) async throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
+    func testBundleAndContext(configuration: DocumentationContext.Configuration = .init()) async throws -> (bundle: DocumentationContext.Inputs, context: DocumentationContext) {
         let context = try await makeEmptyContext(configuration: configuration)
         return (context.inputs, context)
     }

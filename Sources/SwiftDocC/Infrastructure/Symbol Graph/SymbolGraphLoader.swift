@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,7 +27,7 @@ struct SymbolGraphLoader {
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private(set) var platformsFoundInSymbolGraphsByModule: [String: Set<PlatformName>] = [:]
     private let dataProvider: any DataProvider
-    private let bundle: DocumentationBundle
+    private let bundle: DocumentationContext.Inputs
     private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
     private let shouldCreateOverloadGroups: Bool
     
@@ -38,7 +38,7 @@ struct SymbolGraphLoader {
     ///   - shouldCreateOverloadGroups: Whether or not experimental support for combining overloaded symbol pages is enabled.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
-        bundle: DocumentationBundle,
+        bundle: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
         shouldCreateOverloadGroups: Bool,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil

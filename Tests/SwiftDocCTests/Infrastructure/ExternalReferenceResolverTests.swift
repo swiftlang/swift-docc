@@ -17,7 +17,7 @@ import DocCCommon
 
 class ExternalReferenceResolverTests: XCTestCase {
     class TestExternalReferenceResolver: ExternalDocumentationSource {
-        var bundleID: DocumentationBundle.Identifier = "com.external.testbundle"
+        var bundleID: DocumentationContext.Inputs.Identifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
         var expectedFragment: String? = nil
         var resolvedEntityTitle = "Externally Resolved Title"
@@ -1382,7 +1382,7 @@ class ExternalReferenceResolverTests: XCTestCase {
 
     func testExternalReferenceWithAbsolutePresentationURL() async throws {
         class Resolver: ExternalDocumentationSource {
-            let bundleID: DocumentationBundle.Identifier = "com.example.test"
+            let bundleID: DocumentationContext.Inputs.Identifier = "com.example.test"
             
             func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
                 .success(ResolvedTopicReference(bundleID: bundleID, path: "/path/to/something", sourceLanguage: .swift))

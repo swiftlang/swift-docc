@@ -87,7 +87,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     private var implementation: any _Implementation
     
     /// The bundle identifier for the reference resolver in the other process.
-    public var bundleID: DocumentationBundle.Identifier {
+    public var bundleID: DocumentationContext.Inputs.Identifier {
         implementation.bundleID
     }
     
@@ -130,7 +130,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     ///   - bundleID: The bundle identifier the server can resolve references for.
     ///   - server: The server to send link resolution requests to.
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
-    public init(bundleID: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+    public init(bundleID: DocumentationContext.Inputs.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
         self.implementation = (_ImplementationProvider() as any _ImplementationProviding).makeImplementation(
             for: .init(identifier: bundleID, capabilities: nil /* always use the V1 implementation */),
             longRunningProcess: LongRunningService(server: server, convertRequestIdentifier: convertRequestIdentifier)
@@ -138,10 +138,10 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     }
     
     fileprivate struct InitialHandshakeMessage: Decodable {
-        var identifier: DocumentationBundle.Identifier
+        var identifier: DocumentationContext.Inputs.Identifier
         var capabilities: Capabilities? // The old V1 handshake didn't include this but the V2 requires it.
         
-        init(identifier: DocumentationBundle.Identifier, capabilities: OutOfProcessReferenceResolver.Capabilities?) {
+        init(identifier: DocumentationContext.Inputs.Identifier, capabilities: OutOfProcessReferenceResolver.Capabilities?) {
             self.identifier = identifier
             self.capabilities = capabilities
         }
@@ -160,8 +160,8 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
                     """))
             }
             
-            self.identifier = try container.decodeIfPresent(DocumentationBundle.Identifier.self, forKey: .identifier)
-            ?? container.decode(DocumentationBundle.Identifier.self, forKey: .bundleIdentifier)
+            self.identifier = try container.decodeIfPresent(DocumentationContext.Inputs.Identifier.self, forKey: .identifier)
+            ?? container.decode(DocumentationContext.Inputs.Identifier.self, forKey: .bundleIdentifier)
             
             self.capabilities = try container.decodeIfPresent(Capabilities.self, forKey: .capabilities)
         }
@@ -187,7 +187,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
 // MARK: Implementations
 
 private protocol _Implementation: ExternalDocumentationSource, GlobalExternalSymbolResolver {
-    var bundleID: DocumentationBundle.Identifier { get }
+    var bundleID: DocumentationContext.Inputs.Identifier { get }
     var longRunningProcess: any ExternalLinkResolving { get }
     
     //
@@ -389,12 +389,12 @@ extension OutOfProcessReferenceResolver {
 extension OutOfProcessReferenceResolver {
     private final class ImplementationV2: _Implementation {
         let longRunningProcess: any ExternalLinkResolving
-        let bundleID: DocumentationBundle.Identifier
+        let bundleID: DocumentationContext.Inputs.Identifier
         let executableCapabilities: Capabilities
         
         init(
             longRunningProcess: any ExternalLinkResolving,
-            bundleID: DocumentationBundle.Identifier,
+            bundleID: DocumentationContext.Inputs.Identifier,
             executableCapabilities: Capabilities
         ) {
             self.longRunningProcess = longRunningProcess

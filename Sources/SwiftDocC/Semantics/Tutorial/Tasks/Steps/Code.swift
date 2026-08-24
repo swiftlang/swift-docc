@@ -68,7 +68,7 @@ public final class Code: Semantic, DirectiveConvertible {
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Code.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)

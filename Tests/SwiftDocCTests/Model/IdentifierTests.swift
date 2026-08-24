@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -66,7 +66,7 @@ class IdentifierTests: XCTestCase {
     }
     
     func testReusingReferences() {
-        let bundleID: DocumentationBundle.Identifier = #function
+        let bundleID: DocumentationContext.Inputs.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "Cache for this bundle shouldn't exist because caching is not enabled by default")
         
         // Add one reference
@@ -97,7 +97,7 @@ class IdentifierTests: XCTestCase {
     }
     
     func testReferencesAreNotCachedByDefault() {
-        let bundleID: DocumentationBundle.Identifier = #function
+        let bundleID: DocumentationContext.Inputs.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "References for this bundle shouldn't exist because caching is not enabled by default")
         
         _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)

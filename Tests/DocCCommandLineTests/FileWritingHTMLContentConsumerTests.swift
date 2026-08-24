@@ -601,7 +601,7 @@ struct FileWritingHTMLContentConsumerTests {
 
 private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     func consume(renderNode: RenderNode) throws { }
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
+    func consume(assetsInBundle bundle: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }

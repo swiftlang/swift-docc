@@ -33,7 +33,7 @@ extension ConvertAction {
         /// - Parameters:
         ///   - outputURL: The target directory to create the index file.
         ///   - bundleID: The identifier of the bundle being indexed.
-        init(outputURL: URL, bundleID: DocumentationBundle.Identifier) throws {
+        init(outputURL: URL, bundleID: DocumentationContext.Inputs.Identifier) throws {
             let indexURL = outputURL.appendingPathComponent("index", isDirectory: true)
             indexBuilder = Synchronized<NavigatorIndex.Builder>(
                 NavigatorIndex.Builder(

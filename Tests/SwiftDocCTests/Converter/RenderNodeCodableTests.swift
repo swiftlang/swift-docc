@@ -143,7 +143,7 @@ class RenderNodeCodableTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let bundleID: DocumentationBundle.Identifier = #function
+        let bundleID: DocumentationContext.Inputs.Identifier = #function
         
         let renderNodeWithUniqueBundleID = try String(contentsOf: exampleRenderNodeJSON)
             .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)

@@ -1509,7 +1509,7 @@ let expected = """
                        [["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyClass"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol", "doc://org.swift.docc.example/documentation/MyKit/MyClass"]])
     }
     
-    func createNode(in context: DocumentationContext, bundle: DocumentationBundle, parent: ResolvedTopicReference, name: String) throws -> (DocumentationNode, TopicGraph.Node) {
+    func createNode(in context: DocumentationContext, bundle: DocumentationContext.Inputs, parent: ResolvedTopicReference, name: String) throws -> (DocumentationNode, TopicGraph.Node) {
         let reference = parent.appendingPath(name)
         let node = DocumentationNode(reference: reference, kind: .article, sourceLanguage: .swift, name: .conceptual(title: name), markup: Document(parsing: "# \(name)"), semantic: nil)
         let tgNode = TopicGraph.Node(reference: reference, kind: .article, source: .external, title: name)
@@ -2817,7 +2817,7 @@ let expected = """
     }
     
     func testContextCachesReferences() async throws {
-        let bundleID: DocumentationBundle.Identifier = #function
+        let bundleID: DocumentationContext.Inputs.Identifier = #function
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         

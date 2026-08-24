@@ -334,7 +334,7 @@ public struct DocumentationNode {
     mutating func initializeSymbolContent(
         documentationExtension: Article?,
         engine: DiagnosticEngine,
-        bundle: DocumentationBundle,
+        bundle: DocumentationContext.Inputs,
         featureFlags: FeatureFlags
     ) {
         precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
@@ -504,7 +504,7 @@ public struct DocumentationNode {
     static func contentFrom(
         documentedSymbol: SymbolGraph.Symbol?,
         documentationExtension: Article?,
-        bundle: DocumentationBundle? = nil,
+        bundle: DocumentationContext.Inputs? = nil,
         featureFlags: FeatureFlags,
         engine: DiagnosticEngine
     ) -> (

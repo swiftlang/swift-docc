@@ -352,7 +352,7 @@ Root
     }
     
     func testLoadingNavigatorIndexDoesNotCacheReferences() throws {
-        let uniqueTestBundleIdentifier: DocumentationBundle.Identifier = #function
+        let uniqueTestBundleIdentifier: DocumentationContext.Inputs.Identifier = #function
         
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")

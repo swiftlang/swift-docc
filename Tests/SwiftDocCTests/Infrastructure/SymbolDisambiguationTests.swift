@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -321,8 +321,8 @@ class SymbolDisambiguationTests: XCTestCase {
         let uniqueSymbolCount = Set(swiftSymbols.map(\.preciseID) + objectiveCSymbols.map(\.preciseID)).count
         XCTAssertEqual(unified.symbols.count, uniqueSymbolCount)
         
-        let inputs = DocumentationBundle(
-            info: DocumentationBundle.Info(
+        let inputs = DocumentationContext.Inputs(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "SymbolDisambiguationTests",
                 id: "com.test.SymbolDisambiguationTests"),
             symbolGraphURLs: [swiftSymbolGraphURL, objcSymbolGraphURL],

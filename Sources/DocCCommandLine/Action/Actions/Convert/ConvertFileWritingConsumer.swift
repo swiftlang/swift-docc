@@ -35,7 +35,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
         transformForStaticHostingIndexHTML: URL?,
-        bundleID: DocumentationBundle.Identifier?
+        bundleID: DocumentationContext.Inputs.Identifier?
     ) {
         self.targetFolder = targetFolder
         self.bundleRootFolder = bundleRootFolder
@@ -79,7 +79,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         indexer?.index(externalRenderNode)
     }
     
-    func consume(assetsInBundle bundle: DocumentationBundle) throws {
+    func consume(assetsInBundle bundle: DocumentationContext.Inputs) throws {
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
             for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL {
                 let assetName = sourceURL.lastPathComponent

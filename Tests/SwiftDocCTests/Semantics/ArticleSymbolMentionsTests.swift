@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -39,7 +39,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
 
     // Test the sorting of articles mentioning a given symbol
     func testArticlesMentioningSorting() throws {
-        let bundleID: DocumentationBundle.Identifier = "org.swift.test"
+        let bundleID: DocumentationContext.Inputs.Identifier = "org.swift.test"
         let articles = ["a", "b", "c", "d", "e", "f"].map { letter in
             ResolvedTopicReference(
                 bundleID: bundleID,

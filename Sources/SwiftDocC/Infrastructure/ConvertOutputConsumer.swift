@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,7 +18,7 @@ public protocol ConvertOutputConsumer {
     func consume(renderNode: RenderNode) throws
     
     /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
-    func consume(assetsInBundle bundle: DocumentationBundle) throws
+    func consume(assetsInBundle bundle: DocumentationContext.Inputs) throws
     
     /// Consumes the linkable element summaries produced during a conversion.
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws

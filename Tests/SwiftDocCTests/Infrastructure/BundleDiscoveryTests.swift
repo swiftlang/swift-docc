@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -29,7 +29,7 @@ class BundleDiscoveryTests: XCTestCase {
     func testBundleFormat() throws {
         let allFiles = try flatListOfFiles()
         
-        func parsedBundle(from folder: any File) throws -> DocumentationBundle {
+        func parsedBundle(from folder: any File) throws -> DocumentationContext.Inputs {
             let fileSystem = try TestFileSystem(folders: [
                 Folder(name: "path", content: [
                     Folder(name: "to", content: [

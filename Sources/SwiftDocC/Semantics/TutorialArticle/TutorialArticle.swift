@@ -111,7 +111,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == TutorialArticle.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialArticle>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName])
@@ -161,7 +161,7 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) -> [MarkupLayout] {
+    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,

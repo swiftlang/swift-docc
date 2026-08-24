@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ extension UnresolvedTopicReference {
     /// - Parameters:
     ///   - symbolReference: A reference to a symbol.
     ///   - bundle: A documentation bundle.
-    init?(symbolReference: SymbolReference, bundle: DocumentationBundle) {
+    init?(symbolReference: SymbolReference, bundle: DocumentationContext.Inputs) {
         guard var components = URLComponents(string: symbolReference.path) else { return nil }
         components.scheme = ResolvedTopicReference.urlScheme
         components.host = bundle.id.rawValue

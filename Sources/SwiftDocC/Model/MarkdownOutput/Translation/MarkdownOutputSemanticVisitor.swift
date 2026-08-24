@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,7 +40,7 @@ struct MarkdownOutputSemanticVisitor: SemanticVisitor {
 }
 
 extension MarkdownOutputNode.Metadata {
-    init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference, title: String) {
+    init(documentType: DocumentType, bundle: DocumentationContext.Inputs, reference: ResolvedTopicReference, title: String) {
         self.init(
             documentType: documentType,
             identifier: reference.path,
@@ -346,7 +346,7 @@ extension MarkdownOutputSemanticVisitor {
 import SymbolKit
 
 private extension MarkdownOutputNode.Metadata.Symbol {
-    init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationBundle) {
+    init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationContext.Inputs) {
                 
         // Gather modules
         var modules = [String]()

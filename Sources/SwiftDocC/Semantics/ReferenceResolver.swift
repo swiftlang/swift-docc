@@ -539,7 +539,7 @@ fileprivate extension URL {
 }
 
 extension Image {
-    func reference(in bundle: DocumentationBundle) -> ResourceReference? {
+    func reference(in bundle: DocumentationContext.Inputs) -> ResourceReference? {
         guard let source else {
             return ResourceReference(bundleID: bundle.id, path: "")
         }

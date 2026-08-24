@@ -570,7 +570,7 @@ class SemaToRenderNodeTests: XCTestCase {
         )
     }
     
-    private func assertCompileOverviewWithNoVolumes(bundle: DocumentationBundle, context: DocumentationContext, expectedDiagnosticsCount: Int = 0) throws {
+    private func assertCompileOverviewWithNoVolumes(bundle: DocumentationContext.Inputs, context: DocumentationContext, expectedDiagnosticsCount: Int = 0) throws {
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {

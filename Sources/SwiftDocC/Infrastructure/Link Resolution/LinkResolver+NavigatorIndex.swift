@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,17 +15,17 @@ private import DocCCommon
 /// A rendering-friendly representation of a external node.
 package struct ExternalRenderNode {
     private var entity: LinkResolver.ExternalEntity
-    private var topicRenderReference:  TopicRenderReference
+    private var topicRenderReference: TopicRenderReference
     
     /// The bundle identifier for this external node.
-    private var bundleIdentifier: DocumentationBundle.Identifier
+    private var bundleIdentifier: DocumentationContext.Inputs.Identifier
 
     // This type is designed to misrepresent external content as local content to fit in with the navigator.
     // This spreads the issue to more code rather than fixing it, which adds technical debt and can be fragile.
     //
     // At the time of writing this comment, this type and the issues it comes with has spread to 6 files (+ 3 test files).
     // Luckily, none of that code is public API so we can modify or even remove it without compatibility restrictions.
-    init(externalEntity: LinkResolver.ExternalEntity, bundleIdentifier: DocumentationBundle.Identifier) {
+    init(externalEntity: LinkResolver.ExternalEntity, bundleIdentifier: DocumentationContext.Inputs.Identifier) {
         self.entity = externalEntity
         self.bundleIdentifier = bundleIdentifier
         self.topicRenderReference = externalEntity.makeTopicRenderReference()

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -106,7 +106,7 @@ final class PathHierarchyBasedLinkResolver {
     // MARK: - Adding non-symbols
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
-    func addMappingForRoots(bundle: DocumentationBundle) {
+    func addMappingForRoots(bundle: DocumentationContext.Inputs) {
         resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.tutorialsContainerReference
         resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = bundle.articlesDocumentationRootReference
         resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialTableOfContentsContainer

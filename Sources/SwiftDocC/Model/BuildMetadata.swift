@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,14 +24,14 @@ public struct BuildMetadata: Codable {
     public var bundleDisplayName: String
     
     /// The bundle identifier of the documentation bundle that DocC built.
-    public let bundleID: DocumentationBundle.Identifier
+    public let bundleID: DocumentationContext.Inputs.Identifier
     
     /// Creates a build metadata value for a documentation bundle built by DocC.
     ///
     /// - Parameters:
     ///   - bundleDisplayName: The display name of the documentation bundle.
     ///   - bundleID: The bundle identifier of the documentation bundle.
-    public init(bundleDisplayName: String, bundleID: DocumentationBundle.Identifier) {
+    public init(bundleDisplayName: String, bundleID: DocumentationContext.Inputs.Identifier) {
         self.bundleDisplayName = bundleDisplayName
         self.bundleID = bundleID
     }

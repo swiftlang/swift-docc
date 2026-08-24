@@ -14,10 +14,10 @@ import Markdown
 struct SemanticAnalyzer: MarkupVisitor {
     var diagnostics = [Diagnostic]()
     let source: URL?
-    let bundle: DocumentationBundle
+    let bundle: DocumentationContext.Inputs
     let featureFlags: FeatureFlags
     
-    init(source: URL?, bundle: DocumentationBundle, featureFlags: FeatureFlags) {
+    init(source: URL?, bundle: DocumentationContext.Inputs, featureFlags: FeatureFlags) {
         self.source = source
         self.bundle = bundle
         self.featureFlags = featureFlags

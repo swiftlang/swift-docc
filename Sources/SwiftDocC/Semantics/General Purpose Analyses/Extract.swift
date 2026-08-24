@@ -30,7 +30,7 @@ extension Semantic.Analyses {
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> ([Child], remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationContext.Inputs, diagnostics: inout [Diagnostic]) -> ([Child], remainder: MarkupContainer) {
             return Semantic.Analyses.extractAll(
                 childType: Child.self,
                 children: children,
@@ -46,7 +46,7 @@ extension Semantic.Analyses {
         childType: any DirectiveConvertible.Type,
         children: some Sequence<any Markup>,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for bundle: DocumentationContext.Inputs,
         featureFlags: FeatureFlags,
         diagnostics: inout [Diagnostic]
     ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {

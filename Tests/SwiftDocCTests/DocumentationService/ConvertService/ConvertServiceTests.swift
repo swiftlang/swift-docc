@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ import DocCTestUtilities
 import DocCCommon
 
 class ConvertServiceTests: XCTestCase {
-    private let testBundleInfo = DocumentationBundle.Info(
+    private let testBundleInfo = DocumentationContext.Inputs.Info(
         displayName: "TestBundle",
         id: "identifier"
     )
@@ -2483,7 +2483,7 @@ private extension ConvertServiceTests {
 }
 
 struct ConvertServiceProseNameTests {
-    private let testBundleInfo = DocumentationBundle.Info(displayName: "TestBundle", id: "identifier")
+    private let testBundleInfo = DocumentationContext.Inputs.Info(displayName: "TestBundle", id: "identifier")
 
     @Test
     func convertResponseUsesProseNameForSymbolReference() async throws {

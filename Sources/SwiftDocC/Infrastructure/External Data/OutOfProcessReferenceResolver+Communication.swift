@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -110,7 +110,7 @@ extension OutOfProcessReferenceResolver {
         ///
         /// The capabilities that your external link resolver declares in this message determines which optional request messages that DocC will send.
         /// If your resolver doesn't declare _any_ capabilities it only needs to handle the 3 default requests. See <doc:RequestV2#Base-requests>.
-        case identifierAndCapabilities(DocumentationBundle.Identifier, Capabilities)
+        case identifierAndCapabilities(DocumentationContext.Inputs.Identifier, Capabilities)
         /// A response with human-readable information about the problem that the external link resolver encountered while resolving the requested link or symbol.
         ///
         /// - Note: DocC doesn't display any diagnostics about failed ``RequestV2/symbol(_:)`` requests because they wouldn't be actionable;
@@ -148,7 +148,7 @@ extension OutOfProcessReferenceResolver {
             self = switch container.allKeys.first {
                 case .identifier?, .capabilities?:
                     .identifierAndCapabilities(
-                        try container.decode(DocumentationBundle.Identifier.self, forKey: .identifier),
+                        try container.decode(DocumentationContext.Inputs.Identifier.self, forKey: .identifier),
                         try container.decode(Capabilities.self, forKey: .capabilities)
                     )
                 case .failure?:

@@ -99,7 +99,7 @@ extension AutomaticDirectiveConvertible {
     public init?(
         from directive: BlockDirective,
         source: URL? = nil,
-        for bundle: DocumentationBundle,
+        for bundle: DocumentationContext.Inputs,
         featureFlags: FeatureFlags
     ) {
         var diagnostics = [Diagnostic]()
@@ -116,7 +116,7 @@ extension AutomaticDirectiveConvertible {
     public init?(
         from directive: BlockDirective,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for bundle: DocumentationContext.Inputs,
         featureFlags: FeatureFlags,
         diagnostics: inout [Diagnostic]
     ) {
