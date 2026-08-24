@@ -12,7 +12,7 @@ import Testing
 import Foundation
 @testable import SwiftDocC
 
-struct DocumentationBundleIdentifierTests {
+struct DocumentationInputsIdentifierTests {
     private typealias Identifier = DocumentationContext.Inputs.Identifier
     
     @Test(arguments: [

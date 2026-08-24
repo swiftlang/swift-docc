@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 
-class DocumentationBundleInfoTests: XCTestCase {
+class DocumentationInputsInfoTests: XCTestCase {
     func testLoadTestBundleInfoPlist() throws {
         let infoPlistURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
