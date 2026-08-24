@@ -1676,7 +1676,7 @@ class ConvertServiceTests: XCTestCase {
         """)
         #else
         let (testBundleURL, _, _) = try await testBundleAndContext(
-            // Use a bundle that contains only articles, one of which is declared as the TechnologyRoot and curates the
+            // Use a catalog that contains only articles, one of which is declared as the TechnologyRoot and curates the
             // other articles.
             copying: "BundleWithTechnologyRoot"
         )
@@ -2369,7 +2369,7 @@ class ConvertServiceTests: XCTestCase {
             markupFiles: [],
             miscResourceURLs: []
         )
-        XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the bundle IDs are different.")
+        XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the IDs are different.")
         
         let requestWithSameBundleID = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something"),

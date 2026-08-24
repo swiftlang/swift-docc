@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -163,8 +163,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (bundle, context) = try await testBundleAndContext()
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let context = try await makeEmptyContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - term First term : A paragraph that
@@ -206,8 +206,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (bundle, context) = try await testBundleAndContext()
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let context = try await makeEmptyContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - Not a term list, and

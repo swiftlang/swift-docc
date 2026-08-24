@@ -313,7 +313,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal))
         
-        // Make copy of the bundle on disk, modify the document, and write it
+        // Make copy of the catalog on disk, modify the document, and write it
         let (_, _, contextModified) = try await testBundleAndContext(copying: bundleName) { url in
             try modification(url)
         }

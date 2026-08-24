@@ -14,7 +14,7 @@ import DocCTestUtilities
 import SymbolKit
 
 extension XCTestCase {
-    /// Creates a test bundle for testing "Mentioned In" features.
+    /// Creates a test catalog for testing "Mentioned In" features.
     func createMentionedInTestBundle(isFeatureFlagEnabled: Bool = true) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
         let catalog = Folder(name: "MentionedIn.docc", content: [
             JSONFile(name: "MentionedIn.symbols.json", content: makeSymbolGraph(
@@ -75,7 +75,6 @@ extension XCTestCase {
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isMentionedInEnabled = isFeatureFlagEnabled
         
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
-        return (bundle, context)
+        return try await loadBundle(catalog: catalog, configuration: configuration)
     }
 }

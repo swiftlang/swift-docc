@@ -28,7 +28,6 @@ class PreviewActionIntegrationTests: XCTestCase {
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
          
-        // Write source documentation bundle.
         let source = Folder(name: "unit-test.docc", content: [
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: symbolURL),
@@ -470,7 +469,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             url.path.utf8.count <= 103
         }
         
-        // Prefer a temporary socket URL that's relative to the unit test bundle location if possible
+        // Prefer a temporary socket URL that's relative to the unit test catalog location if possible
         let bundleRelativeSocketURL = try createTemporaryDirectory().appendingPathComponent("s", isDirectory: false)
         if isShortEnoughUnixDomainSocket(bundleRelativeSocketURL) {
             return bundleRelativeSocketURL.path

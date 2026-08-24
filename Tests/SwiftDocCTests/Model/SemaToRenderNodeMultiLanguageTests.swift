@@ -82,10 +82,10 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: String) async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFramework",
-            configureBundle: { bundleURL in
+            configureBundle: { catalogURL in
                 // Update the clang symbol graph with the Objective-C identifier given in variantInterfaceLanguage.
                 
-                let clangSymbolGraphLocation = bundleURL
+                let clangSymbolGraphLocation = catalogURL
                     .appendingPathComponent("symbol-graphs")
                     .appendingPathComponent("clang")
                     .appendingPathComponent("MixedLanguageFramework.symbols.json")
@@ -657,11 +657,11 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() async throws {
         let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFramework",
-            configureBundle: { bundleURL in
+            configureBundle: { catalogURL in
                 // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
                 // available in Swift only.
                 
-                let clangSymbolGraphLocation = bundleURL
+                let clangSymbolGraphLocation = catalogURL
                     .appendingPathComponent("symbol-graphs")
                     .appendingPathComponent("clang")
                     .appendingPathComponent("MixedLanguageFramework.symbols.json")

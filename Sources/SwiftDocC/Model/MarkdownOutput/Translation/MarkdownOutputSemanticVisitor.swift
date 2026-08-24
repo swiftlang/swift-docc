@@ -40,12 +40,12 @@ struct MarkdownOutputSemanticVisitor: SemanticVisitor {
 }
 
 extension MarkdownOutputNode.Metadata {
-    init(documentType: DocumentType, bundle: DocumentationContext.Inputs, reference: ResolvedTopicReference, title: String) {
+    init(documentType: DocumentType, inputs: DocumentationContext.Inputs, reference: ResolvedTopicReference, title: String) {
         self.init(
             documentType: documentType,
             identifier: reference.path,
             title: title,
-            framework: bundle.displayName
+            framework: inputs.displayName
         )
     }
 }
@@ -132,7 +132,7 @@ extension MarkdownOutputSemanticVisitor {
 extension MarkdownOutputSemanticVisitor {
     
     mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
-        var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: context.inputs, reference: identifier, title: article.title?.plainText ?? identifier.lastPathComponent)
+        var metadata = MarkdownOutputNode.Metadata(documentType: .article, inputs: context.inputs, reference: identifier, title: article.title?.plainText ?? identifier.lastPathComponent)
                 
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,
@@ -207,10 +207,10 @@ import Markdown
 extension MarkdownOutputSemanticVisitor {
     
     mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
-        let bundle = context.inputs
-        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier, title: symbol.title)
+        let inputs = context.inputs
+        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, inputs: inputs, reference: identifier, title: symbol.title)
         
-        metadata.symbol = .init(symbol, context: context, bundle: bundle)
+        metadata.symbol = .init(symbol, context: context)
         metadata.role = symbol.kind.displayName
         
         let document = MarkdownOutputManifest.Document(
@@ -218,7 +218,7 @@ extension MarkdownOutputSemanticVisitor {
             documentType: .symbol,
             title: metadata.title
         )
-        manifest = MarkdownOutputManifest(title: bundle.displayName, documents: [document])
+        manifest = MarkdownOutputManifest(title: inputs.displayName, documents: [document])
         
         // Availability - defaults, overridden with symbol, overridden with metadata
         
@@ -227,7 +227,7 @@ extension MarkdownOutputSemanticVisitor {
         let symbolAvailability = symbol.availability?.availability ?? []
         // Framework defaults only apply if there are no specific availabilities at symbol level.
         if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
-            for availability in bundle.info.defaultAvailability?.modules[primaryModule] ?? [] {
+            for availability in inputs.info.defaultAvailability?.modules[primaryModule] ?? [] {
                 let meta = MarkdownOutputNode.Metadata.Availability(availability)
                 availabilities[meta.platform] = meta
             }
@@ -346,7 +346,7 @@ extension MarkdownOutputSemanticVisitor {
 import SymbolKit
 
 private extension MarkdownOutputNode.Metadata.Symbol {
-    init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationContext.Inputs) {
+    init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext) {
                 
         // Gather modules
         var modules = [String]()
@@ -407,7 +407,7 @@ extension MarkdownOutputSemanticVisitor {
     
     mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
         let title = tutorial.intro.title.isEmpty ? identifier.lastPathComponent : tutorial.intro.title
-        let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: context.inputs, reference: identifier, title: title)
+        let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, inputs: context.inputs, reference: identifier, title: title)
         
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,

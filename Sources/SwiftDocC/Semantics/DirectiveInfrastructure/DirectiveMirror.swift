@@ -172,7 +172,7 @@ extension DirectiveMirror {
         let propertyLabel: String
         let argument: any _DirectiveArgumentProtocol
         
-        let parseArgument: (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Any?)
+        let parseArgument: (_ inputs: DocumentationContext.Inputs, _ argumentValue: String) -> (Any?)
         
         func setValue(
             on containingDirective: some AutomaticDirectiveConvertible,

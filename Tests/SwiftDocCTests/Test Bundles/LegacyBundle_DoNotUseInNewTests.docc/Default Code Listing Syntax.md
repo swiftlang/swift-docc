@@ -11,8 +11,8 @@ func foo()
     func foo()
 
 ```objective-c
-/// This is a fenced code block with an explicit language set, and it should override the default language for the bundle.
+/// This is a fenced code block with an explicit language set, and it should override the default language for the catalog.
 - (void)foo;
 ```
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2026 Apple Inc and the Swift Project authors. All Rights Reserved. -->

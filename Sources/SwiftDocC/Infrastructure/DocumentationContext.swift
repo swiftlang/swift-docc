@@ -248,7 +248,7 @@ public class DocumentationContext {
     ///   - engine: The diagnostic engine to report about any issue encountered during analysis.
     /// - Returns: The result of the semantic analysis.
     private func analyze(_ document: Document, at source: URL, engine: DiagnosticEngine) -> Semantic? {
-        var analyzer = SemanticAnalyzer(source: source, bundle: inputs, featureFlags: configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: source, inputs: inputs, featureFlags: configuration.featureFlags)
         let result = analyzer.visit(document)
         engine.emit(analyzer.diagnostics)
         return result
@@ -936,7 +936,7 @@ public class DocumentationContext {
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
             engine: diagnosticEngine,
-            bundle: inputs,
+            inputs: inputs,
             featureFlags: configuration.featureFlags
         )
 
@@ -1104,7 +1104,7 @@ public class DocumentationContext {
                             kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                             mixins: [:])
                     let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguages: moduleInterfaceLanguages, defaultSymbol: moduleSymbol)
-                    moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: inputs)
+                    moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, inputs: inputs)
                     
                     signposter.withIntervalSignpost("Add symbols to topic graph", id: signposter.makeSignpostID()) {
                         addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference)
@@ -2025,7 +2025,7 @@ public class DocumentationContext {
         // Load symbol information and construct data structures that only rely on symbol information.
         async let loadSymbols = { [signposter, inputs, dataProvider, configuration] in
             var symbolGraphLoader = SymbolGraphLoader(
-                bundle: inputs,
+                inputs: inputs,
                 dataProvider: dataProvider,
                 shouldCreateOverloadGroups: configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
@@ -2120,7 +2120,7 @@ public class DocumentationContext {
         try shouldContinueRegistration()
         self.linkResolver.localResolver = hierarchyBasedResolver
         self.snippetResolver = snippetResolver
-        hierarchyBasedResolver.addMappingForRoots(bundle: inputs)
+        hierarchyBasedResolver.addMappingForRoots(inputs: inputs)
         for tutorial in tutorials {
             hierarchyBasedResolver.addTutorial(tutorial)
         }

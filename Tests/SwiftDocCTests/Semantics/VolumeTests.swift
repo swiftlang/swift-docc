@@ -98,9 +98,9 @@ class VolumeTests: XCTestCase {
             """)
         ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         let node = try context.entity(
-            with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+            with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         )
 
         let tutorial = try XCTUnwrap(node.semantic as? TutorialTableOfContents)

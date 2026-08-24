@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -73,8 +73,8 @@ class RenderMetadataTests: XCTestCase {
     func testAllPagesHaveTitleMetadata() async throws {
         var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
         
-        for bundleName in ["LegacyBundle_DoNotUseInNewTests"] {
-            let (_, context) = try await testBundleAndContext(named: bundleName)
+        for catalogName in ["LegacyBundle_DoNotUseInNewTests"] {
+            let (_, context) = try await testBundleAndContext(named: catalogName)
             
             let renderContext = RenderContext(documentationContext: context)
             let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
@@ -82,7 +82,7 @@ class RenderMetadataTests: XCTestCase {
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 
-                XCTAssertNotNil(renderNode.metadata.title, "Missing `title` in metadata for \(identifier.absoluteString) of kind \(entity.kind.id) in the \(bundleName) bundle")
+                XCTAssertNotNil(renderNode.metadata.title, "Missing `title` in metadata for \(identifier.absoluteString) of kind \(entity.kind.id) in the \(catalogName) catalog")
                 
                 typesOfPages.removeAll(where: { type(of: entity.semantic!) == $0 })
             }

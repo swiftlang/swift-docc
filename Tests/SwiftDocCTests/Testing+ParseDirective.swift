@@ -125,7 +125,7 @@ private func parseDirective<Directive: RenderableDirectiveConvertible>(
     
     let blockDirectiveContainer = try #require(document.child(at: 0) as? BlockDirective, sourceLocation: sourceLocation)
     
-    var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+    var analyzer = SemanticAnalyzer(source: source, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
     let result = analyzer.visit(blockDirectiveContainer)
     context.diagnosticEngine.emit(analyzer.diagnostics)
     

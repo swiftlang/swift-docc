@@ -52,14 +52,14 @@ struct SymbolGraphRelationshipsBuilder {
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
     ///   - selector: The symbol graph selector in which the relationship is relevant.
-    ///   - bundle: A documentation bundle.
+    ///   - inputs: A collection of build inputs.
     ///   - context: A documentation context.
     ///   - localCache: A cache of local documentation content.
     ///   - engine: A diagnostic collecting engine.
     static func addImplementationRelationship(
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
-        in bundle: DocumentationContext.Inputs,
+        in inputs: DocumentationContext.Inputs,
         context: DocumentationContext,
         localCache: DocumentationContext.LocalCache,
         engine: DiagnosticEngine
@@ -83,7 +83,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? implementorNode.reference.sourceLanguage
             
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: inputs) else {
                 // The symbol reference format is invalid.
                 assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
@@ -137,14 +137,14 @@ struct SymbolGraphRelationshipsBuilder {
     /// - Parameters:
     ///   - edge: A symbol-graph relationship with a source and a target.
     ///   - selector: The symbol graph selector in which the relationship is relevant.
-    ///   - bundle: A documentation bundle.
+    ///   - inputs: A collection of build inputs.
     ///   - localCache: A cache of local documentation content.
     ///   - externalCache: A cache of external documentation content.
     ///   - engine: A diagnostic collecting engine.
     static func addConformanceRelationship(
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
-        in bundle: DocumentationContext.Inputs,
+        in inputs: DocumentationContext.Inputs,
         localCache: DocumentationContext.LocalCache,
         externalCache: DocumentationContext.ExternalCache,
         engine: DiagnosticEngine
@@ -173,7 +173,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? conformingNode.reference.sourceLanguage
 
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: inputs) else {
                 // The symbol reference format is invalid.
                 assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
@@ -226,14 +226,14 @@ struct SymbolGraphRelationshipsBuilder {
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
     ///   - selector: The symbol graph selector in which the relationship is relevant.
-    ///   - bundle: A documentation bundle.
+    ///   - inputs: A collection of build inputs.
     ///   - localCache: A cache of local documentation content.
     ///   - externalCache: A cache of external documentation content.
     ///   - engine: A diagnostic collecting engine.
     static func addInheritanceRelationship(
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
-        in bundle: DocumentationContext.Inputs,
+        in inputs: DocumentationContext.Inputs,
         localCache: DocumentationContext.LocalCache,
         externalCache: DocumentationContext.ExternalCache,
         engine: DiagnosticEngine
@@ -260,7 +260,7 @@ struct SymbolGraphRelationshipsBuilder {
             let language = childNode.reference.sourceLanguage
             
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: nil)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: inputs) else {
                 // The symbol reference format is invalid.
                 assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return

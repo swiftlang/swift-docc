@@ -11,7 +11,7 @@
 public import Foundation
 public import SwiftDocC
 
-/// An action that creates an index of a documentation bundle.
+/// An action that creates an index of a collection of documentation inputs.
 public struct IndexAction: AsyncAction {
     let archiveURL: URL
     let outputURL: URL
@@ -30,7 +30,7 @@ public struct IndexAction: AsyncAction {
         self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: archiveURL))
     }
     
-    /// Converts each eligible file from the source documentation bundle,
+    /// Converts each eligible file from the source documentation catalog,
     /// saves the results in the given output alongside the template files.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let diagnostics = try buildIndex()

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -634,7 +634,7 @@ final class RenderIndexTests: XCTestCase {
                 subdirectory: "Test Resources"
             )!
 
-        let bundle = Folder(name: "unit-test-swift.docc", content: [
+        let catalog = Folder(name: "unit-test-swift.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: swiftWithDeprecatedSymbolGraphFile)
         ])
@@ -643,10 +643,10 @@ final class RenderIndexTests: XCTestCase {
         let testTemporaryDirectory = try createTemporaryDirectory()
 
         let bundleDirectory = testTemporaryDirectory.appendingPathComponent(
-           bundle.name,
+           catalog.name,
            isDirectory: true
         )
-        try bundle.write(to: bundleDirectory)
+        try catalog.write(to: bundleDirectory)
 
         let (_, _, context) = try await loadBundle(from: bundleDirectory)
 

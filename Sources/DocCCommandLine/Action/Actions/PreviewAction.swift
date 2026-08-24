@@ -32,7 +32,7 @@ fileprivate func trapSignals() {
     }
 }
 
-/// An action that monitors a documentation bundle for changes and runs a live web-preview.
+/// An action that monitors a documentation catalog for changes and runs a live web-preview.
 public final class PreviewAction: AsyncAction {
     /// A test configuration allowing running multiple previews for concurrent testing.
     static var allowConcurrentPreviews = false
@@ -81,9 +81,9 @@ public final class PreviewAction: AsyncAction {
         self.printHTMLTemplatePath = printTemplatePath
     }
     
-    /// Converts a documentation bundle and starts a preview server to render the result of that conversion.
+    /// Converts a documentation catalog and starts a preview server to render the result of that conversion.
     ///
-    /// > Important: On macOS, the bundle will be converted each time the source is modified.
+    /// > Important: On macOS, the catalog will be converted each time the source is modified.
     ///
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
@@ -120,7 +120,7 @@ public final class PreviewAction: AsyncAction {
         }
 
         let previewResult: ActionResult
-        // Preview the output and monitor the source bundle for changes.
+        // Preview the output and monitor the source catalog for changes.
         do {
             print(String(repeating: "=", count: 40))
             if let previewURL = URL(string: "http://localhost:\(port)") {

@@ -203,7 +203,7 @@ class MetadataTests: XCTestCase {
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child.")
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
     }
@@ -227,7 +227,7 @@ class MetadataTests: XCTestCase {
         
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map { $0.summary })")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
     }
@@ -288,7 +288,7 @@ class MetadataTests: XCTestCase {
         
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
     }

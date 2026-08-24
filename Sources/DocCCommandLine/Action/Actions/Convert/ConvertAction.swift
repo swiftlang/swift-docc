@@ -19,7 +19,7 @@ private import DocCHTML
 private import os
 #endif
 
-/// An action that converts a source bundle into compiled documentation.
+/// An action that converts a collection of documentation inputs into compiled documentation.
 public struct ConvertAction: AsyncAction {
     private let signposter = ConvertActionConverter.signposter
     
@@ -77,7 +77,7 @@ public struct ConvertAction: AsyncAction {
     ///   - featureFlags: A collection of feature flags that the convert action uses to enable or disable certain optional behaviors.
     ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
     ///   - includeContentInEachHTMLFile: `true` if the convert action should process each static hosting HTML file so that it includes documentation content for environments without JavaScript enabled, otherwise `false`.
-    ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
+    ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation catalog if it doesn't discover another catalog, otherwise `false`.
     ///   - hostingBasePath: The base path where the built documentation archive will be hosted at.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - temporaryDirectory: The location where the convert action should write temporary files while converting the documentation.
@@ -191,7 +191,7 @@ public struct ConvertAction: AsyncAction {
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        let (bundle, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
+        let (inputs, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
             try DocumentationContext.InputsProvider(fileManager: fileManager)
             .inputsAndDataProvider(
                 startingPoint: documentationBundleURL,
@@ -202,7 +202,7 @@ public struct ConvertAction: AsyncAction {
 
         self.configuration = configuration
         
-        self.inputs = bundle
+        self.inputs = inputs
         self.dataProvider = dataProvider
     }
     
@@ -218,7 +218,7 @@ public struct ConvertAction: AsyncAction {
     /// Tests that don't verify the contents of the navigator index can set this to `true` so that they can use a virtual, in-memory, file system.
     var _completelySkipBuildingIndex: Bool = false
     
-    /// Converts each eligible file from the source documentation bundle,
+    /// Converts each eligible file from the source documentation inputs,
     /// saves the results in the given output alongside the template files.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         try await perform(logHandle: &logHandle).0

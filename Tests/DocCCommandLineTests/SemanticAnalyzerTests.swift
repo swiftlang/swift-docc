@@ -56,9 +56,9 @@ class SemanticAnalyzerTests: XCTestCase {
     ])
     
     func testDoNotCrashOnInvalidContent() async throws {
-        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
         
-        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/Oops", sourceLanguage: .swift)))
+        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/Oops", sourceLanguage: .swift)))
     }
     
     func testWarningsAboutDirectiveSupport() async throws {
@@ -114,7 +114,7 @@ class SemanticAnalyzerTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalogHierarchy)
         
         let document = Document(parsing: "", options: .parseBlockDirectives)
-        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         let semantic = analyzer.visitDocument(document)
         XCTAssertNil(semantic)
         XCTAssert(analyzer.diagnostics.isEmpty)

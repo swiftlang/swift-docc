@@ -27,23 +27,23 @@ struct SymbolGraphLoader {
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private(set) var platformsFoundInSymbolGraphsByModule: [String: Set<PlatformName>] = [:]
     private let dataProvider: any DataProvider
-    private let bundle: DocumentationContext.Inputs
+    private let inputs: DocumentationContext.Inputs
     private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
     private let shouldCreateOverloadGroups: Bool
     
     /// Creates a new symbol graph loader
     /// - Parameters:
-    ///   - bundle: The documentation bundle from which to load symbol graphs.
+    ///   - inputs: The collection of build inputs that lists the symbol graphs for the loader.
     ///   - dataProvider: A provider that the loader uses to read symbol graph data.
     ///   - shouldCreateOverloadGroups: Whether or not experimental support for combining overloaded symbol pages is enabled.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
-        bundle: DocumentationContext.Inputs,
+        inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
         shouldCreateOverloadGroups: Bool,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
-        self.bundle = bundle
+        self.inputs = inputs
         self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
         self.shouldCreateOverloadGroups = shouldCreateOverloadGroups
@@ -121,9 +121,9 @@ struct SymbolGraphLoader {
             }
         }
         
-        let numberOfSymbolGraphs = bundle.symbolGraphURLs.count
+        let numberOfSymbolGraphs = inputs.symbolGraphURLs.count
         let decodeSignpostHandle = signposter.beginInterval("Decode symbol graphs", id: signposter.makeSignpostID(), "Decode \(numberOfSymbolGraphs) symbol graphs")
-        bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
+        inputs.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
         signposter.endInterval("Decode symbol graphs", decodeSignpostHandle)
         
         // define an appropriate merging strategy based on the graph formats
@@ -162,7 +162,7 @@ struct SymbolGraphLoader {
             var defaultUnavailablePlatforms = [PlatformName]()
             var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
 
-            if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
+            if let defaultAvailabilities = inputs.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
                 let (unavailablePlatforms, availablePlatforms) = defaultAvailabilities.categorize(where: { $0.versionInformation == .unavailable })
                 defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
                 defaultAvailableInformation = availablePlatforms
@@ -263,7 +263,7 @@ struct SymbolGraphLoader {
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
         // Check if there are defined default availabilities for the current module
-        if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
+        if let defaultAvailabilities = inputs.info.defaultAvailability?.modules[moduleName],
             let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
 
             // Prepare a default availability versions lookup for this module.

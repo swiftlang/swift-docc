@@ -18,7 +18,7 @@ import DocCTestUtilities
 class IndexActionTests: XCTestCase {
     #if !os(iOS)
     func testIndexActionOutputIsDeterministic() async throws {
-        // Convert a test bundle as input for the IndexAction
+        // Convert a test catalog as input for the IndexAction
         let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let targetURL = try createTemporaryDirectory()
@@ -41,7 +41,7 @@ class IndexActionTests: XCTestCase {
         
         let bundleIdentifier = "org.swift.docc.example"
         
-        // Repeatedly index the same bundle and verify that the result is the same every time.
+        // Repeatedly index the same catalog and verify that the result is the same every time.
         
         var resultIndexDumps = Set<String>()
         
@@ -62,7 +62,7 @@ class IndexActionTests: XCTestCase {
             
             resultIndexDumps.insert(index.navigatorTree.root.dumpTree())
             XCTAssert(engine.diagnostics.isEmpty, "Unexpected problems:\n\(engine.diagnostics.map(\.summary).joined(separator: "\n"))")
-            XCTAssertTrue(engine.diagnostics.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
+            XCTAssertTrue(engine.diagnostics.isEmpty, "Indexing catalog at \(targetURL) resulted in unexpected issues")
         }
         
         // All dumps should be the same, so there should only be one unique index dump
@@ -71,7 +71,6 @@ class IndexActionTests: XCTestCase {
     #endif
     
     func testIndexActionOutputContainsInterfaceLanguageContent() async throws {
-        // Convert a test bundle as input for the IndexAction
         let bundleURL = Bundle.module.url(
             forResource: "SingleArticleTestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()

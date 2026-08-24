@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -212,10 +212,10 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
             ])
 
-            let (bundle, context) = try await loadBundle(catalog: catalog)
+            let (_, context) = try await loadBundle(catalog: catalog)
 
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/PlatformSpecificDeclarations/myInit",
                 sourceLanguage: .swift
             )
@@ -252,7 +252,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
         // Make sure that type decorators like arrays, dictionaries, and optionals are correctly highlighted.
         do {
@@ -263,7 +263,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload1(param: Set<Int>) {}
             // func overload1(param: [Int: Int]) {}
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload1(param:)",
                 sourceLanguage: .swift
             )
@@ -314,7 +314,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload2(p1: (Int) -> Int?, p2: Int) {}
             // func overload2(p1: ((Int) -> Int)?, p2: Int) {} // <- overload group
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload2(p1:p2:)",
                 sourceLanguage: .swift
             )
@@ -369,7 +369,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload3<T: Hashable>(_ p: [T: T]) {}
             // func overload3<K: Hashable, V>(_ p: [K: V]) {}
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload3(_:)",
                 sourceLanguage: .swift
             )
@@ -499,11 +499,11 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
 
         for hash in ["7eht8", "8p1lo", "858ja"] {
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload3(_:)-\(hash)",
                 sourceLanguage: .swift
             )
@@ -533,13 +533,13 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
         // MyClass<T>
         // - myFunc() where T: Equatable
         // - myFunc() where T: Hashable // <- overload group
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/ConformanceOverloads/MyClass/myFunc()",
             sourceLanguage: .swift
         )

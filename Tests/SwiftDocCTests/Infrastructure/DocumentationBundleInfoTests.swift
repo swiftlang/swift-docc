@@ -12,7 +12,6 @@ import XCTest
 @testable import SwiftDocC
 
 class DocumentationBundleInfoTests: XCTestCase {
-    // Test whether the bundle correctly loads the test bundle Info.plist file.
     func testLoadTestBundleInfoPlist() throws {
         let infoPlistURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -157,7 +157,7 @@ private struct RootNodeRenderReference: Decodable {
                     abstract: selfReference.abstract
                 )
                 
-                // Image references don't include the bundle ID that they're part of and can collide with other images.
+                // Image references don't include the ID of the archive that they're part of and can collide with other images.
                 for index in selfReference.images.indices {
                     selfReference.images[index].identifier.addPrefix(imageReferencePrefix)
                 }
@@ -173,7 +173,7 @@ private struct RootNodeRenderReference: Decodable {
         let metadata = try container.decode(RenderMetadata.self, forKey: .metadata)
         
         var prefixedImages = metadata.images
-        // Image references don't include the bundle ID that they're part of and can collide with other images.
+        // Image references don't include the ID of the archive that they're part of and can collide with other images.
         for index in prefixedImages.indices {
             prefixedImages[index].identifier.addPrefix(imageReferencePrefix)
         }
@@ -209,7 +209,7 @@ private struct RootNodeRenderReference: Decodable {
         var references: [any RenderReference] = []
 
         for image in images {
-            // Image references don't include the bundle ID that they're part of and can collide with other images.
+            // Image references don't include the ID of the archive that they're part of and can collide with other images.
             var imageRef = try container.decode(ImageReference.self, forKey: .init(stringValue: image.identifier.identifier))
             imageRef.identifier.addPrefix(imageReferencePrefix)
             

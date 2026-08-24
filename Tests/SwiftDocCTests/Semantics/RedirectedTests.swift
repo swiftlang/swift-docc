@@ -113,7 +113,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertNotNil(tutorialTableOfContents, "A tutorial table-of-contents value can be created with a Redirected child.")
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got\n\(analyzer.diagnostics.map(\.summary))")
     }
@@ -210,7 +210,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertNotNil(tutorial, "A Tutorial value can be created with a Redirected child.")
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got \(analyzer.diagnostics.map(\.summary))")
     }
@@ -238,7 +238,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertNotNil(article, "A TutorialArticle value can be created with a Redirected child.")
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got\n\(analyzer.diagnostics.map(\.summary))")
     }
@@ -308,7 +308,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
 
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
 
@@ -343,7 +343,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
 
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
 
@@ -380,7 +380,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
         XCTAssert(diagnostics.isEmpty, "There shouldn't be any diagnostics. Got:\n\(diagnostics.map(\.summary))")
                 
-        var analyzer = SemanticAnalyzer(source: nil, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.diagnostics.isEmpty, "Expected no diagnostics. Got:\n\(analyzer.diagnostics.map(\.summary))")
 

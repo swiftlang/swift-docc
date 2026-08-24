@@ -17,7 +17,7 @@ import DocCCommon
 
 extension XCTestCase {
     
-    /// Loads a documentation bundle from the given source URL and creates a documentation context.
+    /// Loads documentation from the given catalog URL and creates a documentation context.
     func loadBundle(
         from catalogURL: URL,
         externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:],
@@ -45,7 +45,7 @@ extension XCTestCase {
     ///   - diagnosticFilterLevel: The minimum severity for diagnostics to emit.
     ///   - logOutput: An output stream to capture log output from creating the context.
     ///   - configuration: Configuration for the created context.
-    /// - Returns: The loaded documentation bundle and context for the given catalog input.
+    /// - Returns: The documentation inputs and the loaded context for the given catalog input.
     func loadBundle(
         catalog: Folder,
         otherFileSystemDirectories: [Folder] = [],
@@ -83,23 +83,23 @@ extension XCTestCase {
         let sourceURL = try testCatalogURL(named: name)
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
-        let bundleURL = sourceExists
+        let catalogURL = sourceExists
             ? try createTemporaryDirectory().appendingPathComponent("\(name).docc")
             : try createTemporaryDirectory(named: "\(name).docc")
         
         if sourceExists {
-            try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
+            try FileManager.default.copyItem(at: sourceURL, to: catalogURL)
         }
         
         for path in excludedPaths {
-            try FileManager.default.removeItem(at: bundleURL.appendingPathComponent(path))
+            try FileManager.default.removeItem(at: catalogURL.appendingPathComponent(path))
         }
         
-        // Do any additional setup to the custom bundle - adding, modifying files, etc
-        try configureBundle?(bundleURL)
+        // Do any additional setup to the custom catalog - adding, modifying files, etc
+        try configureBundle?(catalogURL)
         
         return try await loadBundle(
-            from: bundleURL,
+            from: catalogURL,
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
             fallbackResolver: fallbackResolver,
@@ -143,7 +143,7 @@ extension XCTestCase {
         return try inputProvider.makeInputs(contentOf: catalogURL, options: .init())
     }
     
-    func testBundleAndContext(configuration: DocumentationContext.Configuration = .init()) async throws -> (bundle: DocumentationContext.Inputs, context: DocumentationContext) {
+    func testBundleAndContext(configuration: DocumentationContext.Configuration = .init()) async throws -> (inputs: DocumentationContext.Inputs, context: DocumentationContext) {
         let context = try await makeEmptyContext(configuration: configuration)
         return (context.inputs, context)
     }
@@ -199,18 +199,18 @@ extension XCTestCase {
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
-        in bundleName: String? = nil,
+        in catalogName: String? = nil,
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
-        let (renderedContent, diagnostics, directive, _) = try await parseDirective(directive, in: bundleName, content: content, file: file, line: line)
+        let (renderedContent, diagnostics, directive, _) = try await parseDirective(directive, in: catalogName, content: content, file: file, line: line)
         return (renderedContent, diagnostics, directive)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
-        in bundleName: String? = nil,
+        in catalogName: String? = nil,
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -221,8 +221,8 @@ extension XCTestCase {
         collectedReferences: [String : any RenderReference]
     ) {
         let context: DocumentationContext
-        if let bundleName {
-            (_, context) = try await testBundleAndContext(named: bundleName)
+        if let catalogName {
+            (_, context) = try await testBundleAndContext(named: catalogName)
         } else {
             (_, context) = try await testBundleAndContext()
         }
@@ -264,7 +264,7 @@ extension XCTestCase {
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs, featureFlags: context.configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: source, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         let result = analyzer.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(analyzer.diagnostics)
         

@@ -133,7 +133,7 @@ public struct ConvertService: DocumentationService {
                 configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
             }
             
-            let bundle: DocumentationContext.Inputs
+            let inputs: DocumentationContext.Inputs
             let dataProvider: any DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
@@ -145,13 +145,13 @@ public struct ConvertService: DocumentationService {
                     additionalSymbolGraphFiles: []
                 )
                 
-                bundle = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
+                inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
                 dataProvider = FileManager.default
             } else {
-                (bundle, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
+                (inputs, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
             }
             
-            let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
+            let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
             let renderContext = RenderContext(documentationContext: context)

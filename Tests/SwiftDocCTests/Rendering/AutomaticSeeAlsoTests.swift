@@ -267,7 +267,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
                 .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
             ]))
             
-            // The tutorial has the same file name (excluding the file extension) as the module and as the bundle.
+            // The tutorial has the same file name (excluding the file extension) as the module and as the catalog.
             TextFile(name: "MyKit.tutorial", utf8Content: """
             @Tutorials(name: "My Tutorials") {
                 @Intro(title: "My Intro") {
