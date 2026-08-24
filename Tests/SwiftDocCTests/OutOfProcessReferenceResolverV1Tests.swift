@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,7 +50,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { errorMessage in
             XCTFail("No error output is expected for this test executable. Got:\n\(errorMessage)")
         })
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver.id, "com.test.bundle")
         #endif
     }
     
@@ -91,7 +91,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         )
         
         let resolver = try makeResolver(testMetadata)
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver.id, "com.test.bundle")
         
         // Resolve the reference
         let unresolved = TopicReference.unresolved(
@@ -273,7 +273,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         
         let resolver = try makeResolver(testMetadata)
         
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver.id, "com.test.bundle")
         
         // Resolve the symbol
         let (_, entity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
@@ -430,14 +430,14 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
             XCTAssertEqual(errorMessage, "Some error output\n")
             didReadErrorOutputExpectation.fulfill()
         })
-        XCTAssertEqual(resolver?.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver?.id, "com.test.bundle")
         
         wait(for: [didReadErrorOutputExpectation], timeout: 20.0)
         #endif
     }
     
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver, file: StaticString = #filePath, line: UInt = #line) throws {
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
+        XCTAssertEqual(resolver.id, "com.test.bundle", file: file, line: line)
         let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)))
         guard case .failure(_, let error) = resolverResult else {
             XCTFail("Encountered an unexpected type of error.", file: file, line: line)
@@ -681,10 +681,10 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
         
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver.id, "com.test.bundle")
         
         if case .failure(_, let errorInfo) = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingAuthoredLink: "doc://com.test.bundle/something")!))) {
-            XCTAssertEqual(errorInfo.message, "Executable sent bundle identifier message again, after it was already received.")
+            XCTAssertEqual(errorInfo.message, "Executable sent identifier message again, after it was already received.")
         } else {
             XCTFail("Unexpectedly resolved the link from an identifier and capabilities response")
         }
@@ -726,7 +726,7 @@ class OutOfProcessReferenceResolverV1Tests: XCTestCase {
         )
                 
         let resolver = try makeResolver(testMetadata)
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
+        XCTAssertEqual(resolver.id, "com.test.bundle", file: file, line: line)
 
         // Resolve the reference
         let unresolved = TopicReference.unresolved(

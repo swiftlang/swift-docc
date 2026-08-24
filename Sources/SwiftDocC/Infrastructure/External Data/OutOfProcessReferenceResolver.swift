@@ -87,9 +87,11 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     private var implementation: any _Implementation
     
     /// The identifier for the reference resolver in the other process.
-    public var bundleID: DocumentationContext.Inputs.Identifier {
-        implementation.bundleID
+    public var id: DocumentationContext.Inputs.Identifier {
+        implementation.id
     }
+    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.5 is released.")
+    public var bundleID: DocumentationContext.Inputs.Identifier { id }
     
     // This variable is used below for the `ConvertServiceFallbackResolver` conformance.
     private var assetCache: [AssetReference: DataAsset] = [:]
@@ -115,7 +117,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         let longRunningProcess = try LongRunningProcess(location: processLocation, errorOutputHandler: errorOutputHandler)
         
         guard let handshake: InitialHandshakeMessage = try? longRunningProcess.readInitialHandshakeMessage() else {
-            throw Error.invalidBundleIdentifierOutputFromExecutable(processLocation)
+            throw Error.invalidIdentifierOutputFromExecutable(processLocation)
         }
         
         // This private type and protocol exist to silence deprecation warnings
@@ -127,14 +129,18 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     /// The documentation service is expected to be able to handle messages of kind "resolve-reference".
     ///
     /// - Parameters:
-    ///   - bundleID: The bundle identifier the server can resolve references for.
+    ///   - id: The identifier the server can resolve references for.
     ///   - server: The server to send link resolution requests to.
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
-    public init(bundleID: DocumentationContext.Inputs.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+    public init(id: DocumentationContext.Inputs.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
         self.implementation = (_ImplementationProvider() as any _ImplementationProviding).makeImplementation(
-            for: .init(identifier: bundleID, capabilities: nil /* always use the V1 implementation */),
+            for: .init(identifier: id, capabilities: nil /* always use the V1 implementation */),
             longRunningProcess: LongRunningService(server: server, convertRequestIdentifier: convertRequestIdentifier)
         )
+    }
+    @available(*, deprecated, renamed: "init(id:server:convertRequestIdentifier:)", message: "Use 'init(id:server:convertRequestIdentifier:)' instead. This deprecated API will be removed after 6.5 is released.")
+    public convenience init(bundleID: DocumentationContext.Inputs.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+        try self.init(id: bundleID, server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
     
     fileprivate struct InitialHandshakeMessage: Decodable {
@@ -187,7 +193,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
 // MARK: Implementations
 
 private protocol _Implementation: ExternalDocumentationSource, GlobalExternalSymbolResolver {
-    var bundleID: DocumentationContext.Inputs.Identifier { get }
+    var id: DocumentationContext.Inputs.Identifier { get }
     var longRunningProcess: any ExternalLinkResolving { get }
     
     //
@@ -202,7 +208,7 @@ private extension _Implementation {
                 return resolved
                 
             case let .unresolved(unresolvedReference):
-                guard unresolvedReference.bundleID == bundleID else {
+                guard unresolvedReference.bundleID == id else {
                     fatalError("""
                     Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
                     DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
@@ -229,9 +235,9 @@ private extension OutOfProcessReferenceResolver {
         @available(*, deprecated) // The V1 implementation is built around several now-deprecated types. This deprecation silences those depreciation warnings.
         func makeImplementation(for handshake: OutOfProcessReferenceResolver.InitialHandshakeMessage, longRunningProcess: any ExternalLinkResolving) -> any _Implementation {
             if let capabilities = handshake.capabilities {
-                return ImplementationV2(longRunningProcess: longRunningProcess, bundleID: handshake.identifier, executableCapabilities: capabilities)
+                return ImplementationV2(longRunningProcess: longRunningProcess, id: handshake.identifier, executableCapabilities: capabilities)
             } else {
-                return ImplementationV1(longRunningProcess: longRunningProcess, bundleID: handshake.identifier)
+                return ImplementationV1(longRunningProcess: longRunningProcess, id: handshake.identifier)
             }
         }
     }
@@ -245,12 +251,12 @@ extension OutOfProcessReferenceResolver {
     /// This implementation uses ``Request`` and ``Response`` which aren't extensible and have restrictions on the details of the response payloads.
     @available(*, deprecated) // The V1 implementation is built around several now-deprecated types. This deprecation silences those depreciation warnings.
     private final class ImplementationV1: _Implementation {
-        let bundleID: DocumentationBundle.Identifier
+        let id: DocumentationContext.Inputs.Identifier
         let longRunningProcess: any ExternalLinkResolving
         
-        init(longRunningProcess: any ExternalLinkResolving, bundleID: DocumentationBundle.Identifier) {
+        init(longRunningProcess: any ExternalLinkResolving, id: DocumentationContext.Inputs.Identifier) {
             self.longRunningProcess = longRunningProcess
-            self.bundleID = bundleID
+            self.id = id
         }
         
         // This is fileprivate so that the ConvertService conformance below can access it.
@@ -295,7 +301,7 @@ extension OutOfProcessReferenceResolver {
             
             switch response {
                 case .bundleIdentifier:
-                    throw Error.executableSentBundleIdentifierAgain
+                    throw Error.executableSentIdentifierAgain
                     
                 case .errorMessage(let errorMessage):
                     throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
@@ -321,7 +327,7 @@ extension OutOfProcessReferenceResolver {
             
             switch response {
                 case .bundleIdentifier:
-                    throw Error.executableSentBundleIdentifierAgain
+                    throw Error.executableSentIdentifierAgain
                     
                 case .errorMessage(let errorMessage):
                     throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
@@ -337,7 +343,7 @@ extension OutOfProcessReferenceResolver {
         
         private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
             return ResolvedTopicReference(
-                bundleID: bundleID,
+                bundleID: id,
                 path: resolvedInformation.url.path,
                 fragment: resolvedInformation.url.fragment,
                 sourceLanguages: sourceLanguages(for: resolvedInformation)
@@ -389,16 +395,16 @@ extension OutOfProcessReferenceResolver {
 extension OutOfProcessReferenceResolver {
     private final class ImplementationV2: _Implementation {
         let longRunningProcess: any ExternalLinkResolving
-        let bundleID: DocumentationContext.Inputs.Identifier
+        let id: DocumentationContext.Inputs.Identifier
         let executableCapabilities: Capabilities
         
         init(
             longRunningProcess: any ExternalLinkResolving,
-            bundleID: DocumentationContext.Inputs.Identifier,
+            id: DocumentationContext.Inputs.Identifier,
             executableCapabilities: Capabilities
         ) {
             self.longRunningProcess = longRunningProcess
-            self.bundleID = bundleID
+            self.id = id
             self.executableCapabilities = executableCapabilities
         }
         
@@ -418,10 +424,10 @@ extension OutOfProcessReferenceResolver {
             
             switch response {
                 case .identifierAndCapabilities:
-                    throw Error.executableSentBundleIdentifierAgain
+                    throw Error.executableSentIdentifierAgain
                     
                 case .failure(let diagnosticMessage):
-                    let prefixLength = 2 /* for "//" */ + bundleID.rawValue.utf8.count
+                    let prefixLength = 2 /* for "//" */ + id.rawValue.utf8.count
                     let solutions: [Solution] = (diagnosticMessage.solutions ?? []).map {
                         Solution(summary: $0.summary, replacements: $0.replacement.map { replacement in
                             [.init(
@@ -630,13 +636,13 @@ extension OutOfProcessReferenceResolver {
         case resolverNotExecutable(URL)
         /// The other process exited unexpectedly while docc was still running.
         case processDidExit(code: Int)
-        /// The other process didn't send a bundle identifier as its first message.
-        case invalidBundleIdentifierOutputFromExecutable(URL)
+        /// The other process didn't send an identifier as its first message.
+        case invalidIdentifierOutputFromExecutable(URL)
         
         // Loop
         
-        /// The other process sent a bundle identifier again, after it was already received.
-        case executableSentBundleIdentifierAgain
+        /// The other process sent an identifier again, after it was already received.
+        case executableSentIdentifierAgain
         /// A wrapped error message from the external link resolver.
         case forwardedErrorFromClient(errorMessage: String)
         /// Unable to determine the kind of message received.
@@ -660,11 +666,11 @@ extension OutOfProcessReferenceResolver {
                 return "File at at '\(url.path)' is not executable."
             case .processDidExit(let code):
                 return "Link resolver process did exit unexpectedly while docc was still running. Exit code '\(code)'."
-            case .invalidBundleIdentifierOutputFromExecutable(let resolverLocation):
-                return "Expected bundle identifier output from '\(resolverLocation.lastPathComponent)'."
+            case .invalidIdentifierOutputFromExecutable(let resolverLocation):
+                return "Expected identifier output from '\(resolverLocation.lastPathComponent)'."
             // Loop
-            case .executableSentBundleIdentifierAgain:
-                return "Executable sent bundle identifier message again, after it was already received."
+            case .executableSentIdentifierAgain:
+                return "Executable sent identifier message again, after it was already received."
             case .forwardedErrorFromClient(let errorMessage):
                 return errorMessage
             case .invalidResponseKindFromClient:
