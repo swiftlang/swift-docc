@@ -21,7 +21,7 @@ class TestRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer 
         }
     }
     
-    func consume(assetsInBundle bundle: DocumentationContext.Inputs) throws { }
+    func consume(assetsInInputs _: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }

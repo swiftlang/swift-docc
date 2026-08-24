@@ -646,7 +646,7 @@ private class TestExternalRenderNodeOutputConsumer: ConvertOutputConsumer, Exter
         try self.indexBuilder.sync { try $0.index(renderNode: renderNode) }
     }
 
-    func consume(assetsInBundle bundle: DocumentationContext.Inputs) throws { }
+    func consume(assetsInInputs _: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }

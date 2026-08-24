@@ -17,8 +17,8 @@ public protocol ConvertOutputConsumer {
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
     
-    /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
-    func consume(assetsInBundle bundle: DocumentationContext.Inputs) throws
+    /// Consumes a collection of documentation inputs with the purpose of extracting its on-disk assets.
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws
     
     /// Consumes the linkable element summaries produced during a conversion.
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws
@@ -69,4 +69,19 @@ package protocol ExternalNodeConsumer {
     /// Consumes a external render node that was generated during a conversion.
     /// > Warning: This method might be called concurrently.
     func consume(externalRenderNode: ExternalRenderNode) throws
+}
+
+extension ConvertOutputConsumer {
+    @available(*, deprecated, renamed: "consume(assetsInInputs:)", message: "Use 'consume(assetsInInputs:)' instead. This deprecated API will be removed after 6.5 is released.")
+    func consume(assetsInBundle inputs: DocumentationContext.Inputs) throws {
+        try consume(assetsInInputs: inputs)
+    }
+}
+
+// Default implementation so that conforming types don't need to implement deprecated API.
+public extension ConvertOutputConsumer {
+    @available(*, deprecated)
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws {
+        try consume(assetsInBundle: inputs)
+    }
 }
