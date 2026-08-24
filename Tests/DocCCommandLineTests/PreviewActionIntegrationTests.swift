@@ -391,7 +391,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         // Modify a file in the catalog and wait for the preview server to notice the change and start rebuilding the documentation.
         do {
-            let expectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input and started rebuilding", expectedText: "Source bundle was modified")
+            let expectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input and started rebuilding", expectedText: "Source catalog was modified")
             
             // Modify a file in the catalog to trigger a rebuild.
             try? "".write(to: sourceURL.appendingPathComponent("file1.txt"), atomically: true, encoding: .utf8)

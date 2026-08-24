@@ -201,7 +201,7 @@ extension PreviewAction {
         }
 
         monitor = try DirectoryMonitor(root: rootURL) { _, _ in
-            self.print("Source bundle was modified, converting... ", terminator: "")
+            self.print("Source catalog was modified, converting... ", terminator: "")
             self.monitoredConvertTask?.cancel()
             self.monitoredConvertTask = Task {
                 do {
