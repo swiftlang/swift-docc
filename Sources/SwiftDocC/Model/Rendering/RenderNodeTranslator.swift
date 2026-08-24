@@ -23,7 +23,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
     var collectedTopicReferences: [ResolvedTopicReference] = []
     
-    /// Unresolvable topic references outside the current bundle.
+    /// Unresolvable topic references outside the current inputs.
     var collectedUnresolvedTopicReferences: [UnresolvedTopicReference] = []
     
     /// Any collected constraints to symbol relationships.
@@ -1038,7 +1038,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         inSeeAlsoSection: Bool = false
     ) -> Bool {
         // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
-        // and is external to the bundle, then curate the topic irrespective of the source
+        // and is external to the local inputs, then curate the topic irrespective of the source
         // language of the page or reference, since non-symbol kinds are not tied to a language.
         // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
         // FIXME: This should ideally be solved by making the article language-agnostic rather
@@ -1977,7 +1977,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return moduleVersionTriplet >= targetPlatformVersion.version
     }
     
-    /// The default availability for modules in a given bundle and module.
+    /// The default availability for modules in a given inputs and module.
     private mutating func defaultAvailability(moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [String: AvailabilityRenderItem]? {
         // FIXME: Move this logic out of the rendering code (rdar://172280267)
         if let cached = defaultAvailabilityCacheByModuleName[moduleName] {

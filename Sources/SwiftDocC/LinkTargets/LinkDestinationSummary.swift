@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,13 +15,13 @@ public import DocCCommon
 
 // Link resolution works in two parts:
 //
-//  1. When DocC compiles a documentation bundle and encounters an "external" reference it will call out to
-//     resolve that reference using the external resolver that's been registered for that bundle identifier.
-//     The reference may be a page in another documentation bundle or a page from another source.
+//  1. When DocC compiles documentation inputs and encounters an "external" reference it will call out to
+//     resolve that reference using the external resolver that's been registered for that identifier.
+//     The reference may be a page in another documentation archive or a page from another source.
 //
-//  2. Once DocC has finished compiling the documentation bundle it will summarize all the pages and on-page
+//  2. Once DocC has finished compiling the documentation inputs it will summarize all the pages and on-page
 //     elements that can be linked to.
-//     This information is returned when another documentation bundle resolves a reference for that page.
+//     This information is returned when another documentation inputs resolves a reference for that page.
 //
 //
 //   DocC                                                                                           Backend endpoint
@@ -29,7 +29,7 @@ public import DocCCommon
 //  │ ┌──────────────────────────┐                             │                                   │                               │
 //  │ │                          │                             │                                   │                               │
 //  │ │   DocumentationContext   │                             │                                   │                               │
-//  │ │     Register bundle      │                             │                                   │                               │
+//  │ │     Register inputs      │                             │                                   │                               │
 //  │ │                          │                             │                                   │                               │
 //  │ └──────────────────────────┘       Resolve external      │                                   │                               │
 //  │               │                       references         │                                   │                               │
@@ -64,9 +64,9 @@ public import DocCCommon
 //  │                                                          │    └───────────────────────┘      │                               │
 //  └──────────────────────────────────────────────────────────┘                                   └───────────────────────────────┘
 
-/// A summary of an element that you can link to from outside the documentation bundle.
+/// A summary of an element that you can link to from outside the local documentation.
 ///
-/// The non-optional properties of this summary are all the information needed when another bundle references this element.
+/// The non-optional properties of this summary are all the information needed when another unit of documentation references this element.
 ///
 /// Various information from the summary is used depending on what content references the summarized element. For example:
 ///  - In a paragraph of text, a link to this element will use the ``title`` as the link text and style the tile in code font if the ``kind`` is a type of symbol.
@@ -306,7 +306,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
 // MARK: - Accessing the externally linkable elements
 
 public extension DocumentationNode {
-    /// Summarizes the node and all of its child elements that you can link to from outside the bundle.
+    /// Summarizes the node and all of its child elements that you can link to from outside the local documentation.
     ///
     /// - Parameters:
     ///   - context: The context in which references that are found the node's content are resolved in.
@@ -317,7 +317,7 @@ public extension DocumentationNode {
         renderNode: RenderNode
     ) -> [LinkDestinationSummary] {
         guard context.inputs.id == reference.bundleID else {
-            // Don't return anything for external references that don't have a bundle in the context.
+            // Don't return anything for external references in the local context.
             return []
         }
         let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)

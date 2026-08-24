@@ -52,7 +52,7 @@ private import SymbolKit
 ///
 /// ## Interacting with a Convert Service
 ///
-/// When creating an out-of-process resolver using ``init(bundleID:server:convertRequestIdentifier:)`` to communicate with another process using a ``ConvertService``;
+/// When creating an out-of-process resolver using ``init(id:server:convertRequestIdentifier:)`` to communicate with another process using a ``ConvertService``;
 /// DocC sends that service `"resolve-reference"` messages with a``OutOfProcessReferenceResolver/Request`` payload and expects a `"resolved-reference-response"` responses with a ``OutOfProcessReferenceResolver/Response`` payload.
 ///
 /// Because the ``ConvertService`` messages are _implicitly_ tied to these outdated—and no longer recommended—request and response types, the richness of its responses is limited.

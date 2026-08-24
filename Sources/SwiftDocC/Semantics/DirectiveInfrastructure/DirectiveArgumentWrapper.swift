@@ -137,7 +137,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     private init(
         value: Value?,
         name: _DirectiveArgumentName,
-        transform: @escaping (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
+        transform: @escaping (_ inputs: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]?,
         expectedFormat: String?,
         required: Bool?,
@@ -172,7 +172,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     init(
         wrappedValue: Value,
         name: _DirectiveArgumentName = .inferredFromPropertyName,
-        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        parseArgument: @escaping (_ inputs: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
         expectedFormat: String? = nil,
         required: Bool,
@@ -193,7 +193,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     @available(*, deprecated, message: "Use an optional type or a default value to control whether or not a directive argument is required.")
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
-        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        parseArgument: @escaping (_ inputs: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
         expectedFormat: String? = nil,
         required: Bool,

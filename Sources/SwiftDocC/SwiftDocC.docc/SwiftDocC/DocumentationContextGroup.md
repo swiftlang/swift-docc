@@ -15,7 +15,7 @@ The context is generally responsible for:
 
 ### Creating a Context
 
-Use ``DocumentationContext/init(bundle:dataProvider:diagnosticEngine:configuration:)`` to create a context for a given bundle:
+Use ``DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)`` to create a context for a given collection of inputs:
 
 ```swift
 let inputsProvider = DocumentationContext.InputsProvider()
@@ -24,7 +24,7 @@ let (inputs, dataProvider) = try inputsProvider.inputsAndDataProvider(
     options: bundleDiscoveryOptions
 )
 
-let context = try DocumentationContext(bundle: inputs, dataProvider: dataProvider)
+let context = try DocumentationContext(inputs: inputs, dataProvider: dataProvider)
 ```
 
 ### Accessing Documentation
@@ -33,7 +33,7 @@ Use ``DocumentationContext/entity(with:)`` to access a documentation node by its
 
 ```swift
 let reference = ResolvedTopicReference(
-    bundleID: "com.mybundle",
+    bundleID: "com.example",
     path: "/documentation/ValidationKit/EmailValidator",
     fragment: nil,
     sourceLanguage: .swift)

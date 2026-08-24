@@ -354,7 +354,7 @@ public class DocumentationContext {
         semanticObjects.concurrentPerform { _, semantic in
             autoreleasepool {
                 // Walk the node and extract external link references.
-                var externalLinksCollector = ExternalReferenceWalker(localBundleID: inputs.id)
+                var externalLinksCollector = ExternalReferenceWalker(localID: inputs.id)
                 externalLinksCollector.visit(semantic)
 
                 // Avoid any synchronization overhead if there are no references to add.

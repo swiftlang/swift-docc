@@ -12,7 +12,7 @@ import Foundation
 import Markdown
 
 /**
- Walks a `Semantic` tree and collects any and all links external to the given bundle.
+ Walks a `Semantic` tree and collects any and all links external to the given collection of documentation inputs.
  
  Visits semantic nodes and descends into all their children that do have (indirectly or directly) content.
  When visiting a node that directly contains markup content visits the markup with an instance of ``ExternalMarkupReferenceWalker``
@@ -31,7 +31,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     /// A markup walker to use for collecting links from markup elements.
     private var markupResolver: ExternalMarkupReferenceWalker
     
-    /// Collected unresolved external references, grouped by the bundle ID.
+    /// Collected unresolved external references, grouped by the source ID.
     var collectedExternalReferences: [DocumentationContext.Inputs.Identifier: [UnresolvedTopicReference]] {
         return markupResolver.collectedExternalLinks.mapValues { links in
             links.map(UnresolvedTopicReference.init(topicURL:))
@@ -39,9 +39,9 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
     
     /// Creates a new semantic walker that collects links to other documentation sources.
-    /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    init(localBundleID: DocumentationContext.Inputs.Identifier) {
-        self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
+    /// - Parameter localID: The identifier of the local collection of documentation inputs, used to identify and skip absolute fully qualified local links.
+    init(localID: DocumentationContext.Inputs.Identifier) {
+        self.markupResolver = ExternalMarkupReferenceWalker(localID: localID)
     }
     
     mutating func visitCode(_ code: Code) { }

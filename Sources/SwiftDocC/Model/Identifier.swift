@@ -141,7 +141,7 @@ extension TopicReferenceResolutionErrorInfo {
 /// > Important: This type has copy-on-write semantics and wraps an underlying class to store
 /// > its data.
 public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomStringConvertible {
-    typealias ReferenceBundleIdentifier = DocumentationContext.Inputs.Identifier
+    typealias ReferenceIdentifier = DocumentationContext.Inputs.Identifier
     private struct ReferenceKey: Hashable {
         var path: String
         var fragment: String?
@@ -149,16 +149,16 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     /// A synchronized reference cache to store resolved references.
-    private static let sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: ResolvedTopicReference]]())
+    private static let sharedPool = Synchronized([ReferenceIdentifier: [ReferenceKey: ResolvedTopicReference]]())
     
-    /// Clears cached references belonging to the bundle with the given identifier.
-    /// - Parameter id: The identifier of the bundle to which the method should clear belonging references.
-    static func purgePool(for id: ReferenceBundleIdentifier) {
+    /// Clears cached references belonging to the given identifier.
+    /// - Parameter id: The identifier to which the method should clear belonging references.
+    static func purgePool(for id: ReferenceIdentifier) {
         sharedPool.sync { $0.removeValue(forKey: id) }
     }
     
-    /// Enables reference caching for any identifiers created with the given bundle identifier.
-    static func enableReferenceCaching(for id: ReferenceBundleIdentifier) {
+    /// Enables reference caching for any identifiers created with the given identifier.
+    static func enableReferenceCaching(for id: ReferenceIdentifier) {
         sharedPool.sync { sharedPool in
             if !sharedPool.keys.contains(id) {
                 sharedPool[id] = [:]
@@ -177,12 +177,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The storage for the resolved topic reference's state.
     let _storage: Storage
     
-    /// The identifier of the bundle that owns this documentation topic.
+    /// The identifier of the collection of inputs that owns this documentation topic.
     public var bundleID: DocumentationContext.Inputs.Identifier {
         _storage.bundleID
     }
     
-    /// The absolute path from the bundle to this topic, delimited by `/`.
+    /// The absolute path to this topic, delimited by `/`.
     public var path: String {
         return _storage.path
     }
@@ -249,7 +249,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
 
         // Cache the reference
         Self.sharedPool.sync { sharedPool in
-            // If we have a shared pool for this bundle identifier, cache the reference
+            // If we have a shared pool for this identifier, cache the reference
             sharedPool[bundleID]?[key] = self
         }
     }
@@ -304,9 +304,9 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     ///
     /// You use a fragment to reference an element within a page:
     /// ```
-    /// doc://your.bundle.identifier/path/to/page#element-in-page
-    ///                                           ╰──────┬──────╯
-    ///                                               fragment
+    /// doc://your..identifier/path/to/page#element-in-page
+    ///                                     ╰──────┬──────╯
+    ///                                         fragment
     /// ```
     /// On-page elements can then be linked to using a fragment need to conform to the ``Landmark`` protocol.
     ///
@@ -509,7 +509,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     // For testing the caching
-    static func _numberOfCachedReferences(bundleID: ReferenceBundleIdentifier) -> Int? {
+    static func _numberOfCachedReferences(bundleID: ReferenceIdentifier) -> Int? {
         return Self.sharedPool.sync { $0[bundleID]?.count }
     }
 }

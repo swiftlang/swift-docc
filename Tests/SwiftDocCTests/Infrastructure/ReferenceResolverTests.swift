@@ -794,7 +794,7 @@ class ReferenceResolverTests: XCTestCase {
             let diagnostic = try XCTUnwrap(diagnostics.first)
             XCTAssertEqual(diagnostic.summary, "Can't resolve 'NotFoundArticle'")
             XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
-            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:)`
             XCTAssertEqual(diagnostic.range?.lowerBound.line, 3)
             XCTAssertEqual(diagnostic.range?.upperBound.line, 3)
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 44)
@@ -804,7 +804,7 @@ class ReferenceResolverTests: XCTestCase {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst().first)
             XCTAssertEqual(diagnostic.summary, "Can't resolve 'NotFoundSymbol'")
             XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
-            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:)`
             XCTAssertEqual(diagnostic.range?.lowerBound.line, 3)
             XCTAssertEqual(diagnostic.range?.upperBound.line, 3)
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 18)
@@ -836,7 +836,7 @@ class ReferenceResolverTests: XCTestCase {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst(4).first)
             XCTAssertEqual(diagnostic.summary, "Resource 'not-found-image' couldn't be found")
             XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
-            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:)`
             XCTAssertEqual(diagnostic.range?.lowerBound.line, 5)
             XCTAssertEqual(diagnostic.range?.upperBound.line, 5)
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 32)
