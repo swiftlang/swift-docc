@@ -117,23 +117,27 @@ public struct NodeURLGenerator {
     }
     
     /// Returns a string path appropriate for the given semantic node.
-    public static func pathForSemantic(_ semantic: Semantic, source: URL, bundle: DocumentationContext.Inputs) -> String {
+    public static func pathForSemantic(_ semantic: Semantic, source: URL, inputs: DocumentationContext.Inputs) -> String {
         let fileName = source.deletingPathExtension().lastPathComponent
         
         switch semantic {
         case is TutorialTableOfContents:
             return Path.tutorialTableOfContents(name: fileName).stringValue
         case is Tutorial, is TutorialArticle:
-            return Path.tutorial(bundleName: bundle.displayName, tutorialName: fileName).stringValue
+            return Path.tutorial(bundleName: inputs.displayName, tutorialName: fileName).stringValue
         case let article as Article:
             if article.metadata?.technologyRoot != nil {
                 return Path.documentation(path: fileName).stringValue
             } else {
-                return Path.article(bundleName: bundle.displayName, articleName: fileName).stringValue
+                return Path.article(bundleName: inputs.displayName, articleName: fileName).stringValue
             }
         default:
             return fileName
         }
+    }
+    @available(*, deprecated, renamed: "pathForSemantic(_:source:inputs:)", message: "Use 'pathForSemantic(_:source:inputs:)' instead. This deprecated API will be removed after 6.5 is released.")
+    public static func pathForSemantic(_ semantic: Semantic, source: URL, bundle: DocumentationContext.Inputs) -> String {
+        pathForSemantic(semantic, source: source, inputs: bundle)
     }
     
     /// Returns the reference's path in a format that is safe for writing to disk.

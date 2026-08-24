@@ -213,7 +213,7 @@ public class DocumentationContext {
     /// Initializes a documentation context with a given `bundle`.
     ///
     /// - Parameters:
-    ///   - bundle: The bundle to register with the context.
+    ///   - inputs: The inputs to register with the context.
     ///   - fileManager: The file manager that the context uses to read files from the bundle.
     ///   - diagnosticEngine: The pre-configured engine that will collect diagnostics encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
@@ -784,7 +784,7 @@ public class DocumentationContext {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.
             let (url, analyzed) = analyzedDocument
 
-            let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: inputs)
+            let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, inputs: inputs)
             var reference = ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguage: .swift)
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
@@ -1914,7 +1914,7 @@ public class DocumentationContext {
             return nil
         }
         
-        let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: inputs)
+        let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, inputs: inputs)
         
         // Use the languages specified by the `@SupportedLanguage` directives if present.
         let availableSourceLanguages = article.value.supportedLanguages ?? availableSourceLanguages
