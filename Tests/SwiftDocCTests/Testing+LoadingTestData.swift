@@ -45,7 +45,7 @@ func load(
     defer {
         diagnosticEngine.flush() // Write to the logOutput
     }
-    return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+    return try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
 
 func makeEmptyContext(configuration: DocumentationContext.Configuration = .init()) async throws -> DocumentationContext {
@@ -60,7 +60,7 @@ func makeEmptyContext(configuration: DocumentationContext.Configuration = .init(
         miscResourceURLs: []
     )
     
-    return try await DocumentationContext(bundle: inputs, dataProvider: TestFileSystem(folders: []), configuration: configuration)
+    return try await DocumentationContext(inputs: inputs, dataProvider: TestFileSystem(folders: []), configuration: configuration)
 }
 
 // MARK: Using the real file system
@@ -92,7 +92,7 @@ func loadFromDisk(
     let (inputs, dataProvider) = try DocumentationContext.InputsProvider()
         .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
     
-    return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+    return try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
 
 /// Loads a documentation catalog for a test fixture with the given catalog name from the real file system and creates a documentation context.

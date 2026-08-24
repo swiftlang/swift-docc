@@ -166,7 +166,7 @@ struct FileWritingHTMLContentConsumerTests {
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
         
-        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: .init())
         
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),
@@ -529,7 +529,7 @@ struct FileWritingHTMLContentConsumerTests {
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
         
-        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: .init())
         
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),

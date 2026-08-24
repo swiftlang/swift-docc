@@ -219,7 +219,7 @@ public class DocumentationContext {
     ///   - configuration: A collection of configuration for the created context.
     /// - Throws: If an error is encountered while registering a documentation bundle.
     package init(
-        bundle inputs: DocumentationContext.Inputs,
+        inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()

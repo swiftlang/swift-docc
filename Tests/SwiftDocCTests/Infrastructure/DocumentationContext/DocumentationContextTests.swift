@@ -718,7 +718,7 @@ class DocumentationContextTests: XCTestCase {
         ])
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: startURL.appendingPathComponent("Arbitrary directory name"), allowArbitraryCatalogDirectories: true, options: .init())
-        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider)
         
         XCTAssertEqual(context.diagnostics.map(\.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
         

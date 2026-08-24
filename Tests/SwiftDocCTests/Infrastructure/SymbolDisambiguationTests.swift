@@ -335,7 +335,7 @@ class SymbolDisambiguationTests: XCTestCase {
             objcSymbolGraphURL: try JSONEncoder().encode(graph2),
         ], fallback: nil)
         
-        let context = try await DocumentationContext(bundle: inputs, dataProvider: provider)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: provider)
         
         return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], context: context)
     }

@@ -31,7 +31,7 @@ extension XCTestCase {
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
-        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: configuration)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: configuration)
         return (inputs, context)
     }
     

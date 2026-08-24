@@ -50,7 +50,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
                 additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
             )
         )
-        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider)
 
         let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: outputURL)
         let curation = try writer.generateDefaultCurationContents(fromSymbol: startingPointSymbolLink, depthLimit: depthLimit)

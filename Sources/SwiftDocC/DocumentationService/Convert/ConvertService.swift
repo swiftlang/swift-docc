@@ -151,7 +151,7 @@ public struct ConvertService: DocumentationService {
                 (inputs, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
             }
             
-            let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: configuration)
+            let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
             let renderContext = RenderContext(documentationContext: context)

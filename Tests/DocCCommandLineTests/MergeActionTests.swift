@@ -925,7 +925,7 @@ class MergeActionTests: XCTestCase {
                 "\(name.lowercased())-card.png",
             ])
             
-            let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
+            let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: .init())
 
             XCTAssert(
                 context.diagnostics.filter { $0.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,

@@ -940,7 +940,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/unit-test.docc"), options: .init())
 
-        _ = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
+        _ = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
         
         diagnosticEngine.flush()
         return logStorage.text.trimmingCharacters(in: .newlines)
