@@ -347,7 +347,7 @@ extension Docc {
                 name: [.customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback bundle identifier if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
                 If no identifier is provided in the catalogs's Info.plist file or via the '--fallback-bundle-identifier' option, \
-                DocC will infer a identifier from the display name.
+                DocC will infer an identifier from the display name.
                 """)
             )
             var fallbackBundleIdentifier: String?

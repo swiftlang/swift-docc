@@ -22,7 +22,7 @@ private import SymbolKit
 /// When creating an out-of-process resolver using ``init(processLocation:errorOutputHandler:)`` to communicate with another executable;
 /// DocC launches your link resolver executable and declares _its_ own ``Capabilities`` as a raw value passed via the `--capabilities` option.
 /// Your link resolver executable is expected to respond with a ``ResponseV2/identifierAndCapabilities(_:_:)`` message that declares:
-/// - The documentation identifier that the executable can to resolve links for.
+/// - The documentation identifier that the executable can resolve links for.
 /// - The capabilities that the resolver supports.
 ///
 /// After this "handshake" your link resolver executable is expected to wait for ``RequestV2`` messages from DocC and respond with exactly one ``ResponseV2`` per message.
