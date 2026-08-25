@@ -45,6 +45,9 @@ class DocumentationDataVariantsTests: XCTestCase {
     func testIsEmpty() throws {
         XCTAssert(DocumentationDataVariants<String>().isEmpty)
         XCTAssertFalse(DocumentationDataVariants<String>(values: [.swift : "Swift"]).isEmpty)
+
+        // isEmpty only checks the variant values, not the default value
+        XCTAssert(DocumentationDataVariants<String>(defaultVariantValue: "Default value").isEmpty)
     }
     
     func testHasVariant() throws {
@@ -96,5 +99,19 @@ class DocumentationDataVariantsTests: XCTestCase {
             ).interfaceLanguage,
             "MyLanguage"
         )
+    }
+
+    func testHasAnyValue() {
+        // hasAnyValue returns true only if a value is set in either the default or in a variant
+        XCTAssertFalse(DocumentationDataVariants<String>().hasAnyValue)
+        XCTAssert(DocumentationDataVariants<String>(defaultVariantValue: "Default value").hasAnyValue)
+        XCTAssert(DocumentationDataVariants<String>(values: [.swift: "Swift"]).hasAnyValue)
+
+        // When the variant type is a collection, hasAnyValue will return false if the only available
+        // collections are empty
+        XCTAssertFalse(DocumentationDataVariants<[String]>(defaultVariantValue: []).hasAnyValue)
+        XCTAssertFalse(DocumentationDataVariants<[String]>(values: [.swift: []]).hasAnyValue)
+        XCTAssert(DocumentationDataVariants<[String]>(defaultVariantValue: ["DefaultValue"]).hasAnyValue)
+        XCTAssert(DocumentationDataVariants<[String]>(values: [.swift: ["Swift"]]).hasAnyValue)
     }
 }
