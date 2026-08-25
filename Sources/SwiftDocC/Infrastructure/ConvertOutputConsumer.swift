@@ -82,6 +82,8 @@ extension ConvertOutputConsumer {
 public extension ConvertOutputConsumer {
     @available(*, deprecated)
     func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws {
-        try consume(assetsInBundle: inputs)
+        // Despite this protocol being public, it's not possible to configure an output consumer from outside this package.
+        // Because of this, we'll only encounter known conforming types that have been updated to use the new name.
+        // This default implementation only exist for the unlikely case that an out-of-package client conforms to this protocol.
     }
 }
