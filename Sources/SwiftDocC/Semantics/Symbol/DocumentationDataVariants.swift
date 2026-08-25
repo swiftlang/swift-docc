@@ -39,20 +39,23 @@ public struct DocumentationDataVariants<Variant> {
 
     /// Whether this variant collection has a default value or any variant set.
     ///
-    /// If the variant type is a collection type, this property will also check that the default
-    /// value is not empty, even if it's set.
+    /// If the variant type is a collection type, this property will also make sure that
+    /// any collection value, whether in the default value or any variant value, is non-empty.
+    /// In other words, if a `DocumentationDataVariants<[String]>` has a
+    /// default value of `[]` and no variants, this property will still return false.
     public var hasAnyValue: Bool {
-        guard self.isEmpty else { return true }
-        guard let defaultVariantValue else { return false }
-
-        guard let collectionValue = defaultVariantValue as? (any Collection) else {
-            // If we have a default value and it's not a collection, we already know that
-            // it's set, so just return that a value exists
-            return true
+        func hasValue(_ value: Variant?) -> Bool {
+            if let collectionValue = value as? (any Collection) {
+                // If the variant type is a collection type, also check whether or not it's
+                // empty
+                return !collectionValue.isEmpty
+            } else {
+                // Otherwise, just return whether or not the value is nil
+                return value != nil
+            }
         }
 
-        // If we have a default value but it's a collection, check that it's not empty
-        return !collectionValue.isEmpty
+        return hasValue(defaultVariantValue) || values.values.contains(where: hasValue(_:))
     }
 
     /// Creates a variants value.
