@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(NIOHTTP1)
+#if PREVIEW_SERVER
 import Foundation
 public import SwiftDocC
 
@@ -249,4 +249,4 @@ extension DocumentationContext {
         }
     }
 }
-#endif // canImport(NIOHTTP1)
+#endif // PREVIEW_SERVER

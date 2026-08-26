@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(NIOHTTP1)
+#if PREVIEW_SERVER
 import XCTest
 @testable import SwiftDocC
 @_spi(Testing) @testable import DocCCommandLine
