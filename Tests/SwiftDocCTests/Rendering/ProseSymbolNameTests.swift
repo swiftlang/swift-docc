@@ -10,6 +10,7 @@
 
 import Testing
 import SymbolKit
+import DocCHTML
 import DocCTestUtilities
 @testable import SwiftDocC
 
@@ -61,20 +62,20 @@ struct ProseSymbolNameTests {
     @Test(arguments: [
         MultiLanguageSetup(name: "Swift prose only",
                            swiftProse: "swiftProseName", objcProse: nil,
-                           expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
-                           expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
+                           expectedSwiftHTML: "swift<wbr>Prose<wbr>Name",
+                           expectedObjCHTML: "objc<wbr>Symbol<wbr>Title:"),
         MultiLanguageSetup(name: "Objective-C prose only",
                            swiftProse: nil, objcProse: "objcProseName",
-                           expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
-                           expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
+                           expectedSwiftHTML: "swift<wbr>Symbol<wbr>Title(<wbr>with:)",
+                           expectedObjCHTML: "objc<wbr>Prose<wbr>Name"),
         MultiLanguageSetup(name: "Both languages have prose",
                            swiftProse: "swiftProseName", objcProse: "objcProseName",
-                           expectedSwiftHTML: "swift<wbr></wbr>Prose<wbr></wbr>Name",
-                           expectedObjCHTML: "objc<wbr></wbr>Prose<wbr></wbr>Name"),
+                           expectedSwiftHTML: "swift<wbr>Prose<wbr>Name",
+                           expectedObjCHTML: "objc<wbr>Prose<wbr>Name"),
         MultiLanguageSetup(name: "Neither language has prose",
                            swiftProse: nil, objcProse: nil,
-                           expectedSwiftHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)",
-                           expectedObjCHTML: "objc<wbr></wbr>Symbol<wbr></wbr>Title:"),
+                           expectedSwiftHTML: "swift<wbr>Symbol<wbr>Title(<wbr>with:)",
+                           expectedObjCHTML: "objc<wbr>Symbol<wbr>Title:"),
     ])
     func usesProseNameForInlineLinkTextInAllOutputFormats(_ setup: MultiLanguageSetup) async throws {
         let (context, reference) = try await loadMultiLanguageContext(
@@ -90,10 +91,10 @@ struct ProseSymbolNameTests {
     @Test(arguments: [
         SingleLanguageSetup(name: "Prose set",
                             prose: "singleProseName",
-                            expectedHTML: "single<wbr></wbr>Prose<wbr></wbr>Name"),
+                            expectedHTML: "single<wbr>Prose<wbr>Name"),
         SingleLanguageSetup(name: "Prose not set",
                             prose: nil,
-                            expectedHTML: "swift<wbr></wbr>Symbol<wbr></wbr>Title(<wbr></wbr>with:)"),
+                            expectedHTML: "swift<wbr>Symbol<wbr>Title(<wbr>with:)"),
     ])
     func usesProseNameForSingleLanguageSymbolInAllOutputFormats(_ setup: SingleLanguageSetup) async throws {
         let (context, reference) = try await loadSingleLanguageContext(prose: setup.prose)
@@ -142,7 +143,7 @@ struct ProseSymbolNameTests {
         // text uses the symbol's title or its prose name.
         let symbol = try #require(node.semantic as? Symbol)
         var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: .init())
-        let html = renderer.renderSymbol(symbol).content.xmlString
+        let html = String(decoding: HTMLFormatter.format(renderer.renderSymbol(symbol).content), as: UTF8.self)
         if let expectedObjC {
             #expect(html.contains(#"<code class="swift-only">\#(expectedSwift.html)</code>"#),
                     "Swift-only HTML missing expected code \(expectedSwift.html); got: \(html)")

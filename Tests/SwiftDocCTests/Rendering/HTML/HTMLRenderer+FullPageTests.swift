@@ -9,13 +9,6 @@
 */
 
 import Testing
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-import FoundationXML
-import FoundationEssentials
-#else
-import Foundation
-#endif
 import DocCHTML
 @testable import SwiftDocC
 import DocCTestUtilities
@@ -25,8 +18,8 @@ struct HTMLRenderFullPageTests {
     
     @Test
     func includesMainContentInFullPage() async throws {
-        let mainContent = XMLNode.element(named: "article", children: [
-            .element(named: "p", children: [
+        let mainContent = article(contents: [
+            p(contents: [
                 .text("Some documentation")
             ])
         ])
@@ -81,17 +74,17 @@ struct HTMLRenderFullPageTests {
     
     @Test
     func includesCustomHeaderAndFooterInFullPage() async throws {
-        let customHeader = XMLNode.element(named: "header", children: [
+        let customHeader = header(contents: [
             .text("A custom header")
         ])
-        let customFooter = XMLNode.element(named: "footer", children: [
+        let customFooter = footer(contents: [
             .text("A custom footer")
         ])
         
         // Render the page a few times in parallel to verify that the custom header/footer nodes can be "reused".
         [1,2,3].concurrentPerform { _ in    
-            let mainContent = XMLNode.element(named: "article", children: [
-                .element(named: "p", children: [
+            let mainContent = article(contents: [
+                p(contents: [
                     .text("Some documentation")
                 ])
             ])

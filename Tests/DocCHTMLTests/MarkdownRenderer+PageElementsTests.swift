@@ -8,21 +8,14 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-import FoundationXML
-import FoundationEssentials
-#else
-import Foundation
-#endif
+import struct Foundation.URL
 
 import Testing
-import DocCHTML
+@testable import DocCHTML
 import Markdown
 import DocCCommon
 import SymbolKit
 
-extension DocCHTMLTestSuites {
 struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
     func renderingBreadcrumbs(goal: RenderGoal) {
@@ -565,14 +558,14 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         switch goal {
         case .richness:
-            #expect(declaration.childCount == 2)
-            #expect((declaration.children ?? []).first?.plainTextForTesting == """
+            #expect(declaration.childCountForTesting == 2)
+            #expect(declaration.childrenForTesting.first?.plainTextForTesting == """
             func doSomething(
                 with first: FirstParameterValue,
                 and second: SecondParameterValue
             ) throws -> ReturnValue
             """)
-            #expect((declaration.children ?? []).last?.plainTextForTesting == """
+            #expect(declaration.childrenForTesting.last?.plainTextForTesting == """
             - (ReturnValue) doSomethingWithFirst: (FirstParameterValue) first
                                        andSecond: (SecondParameterValue) second
                                            error: (NSError **) error;
@@ -870,7 +863,6 @@ struct MarkdownRenderer_PageElementsTests {
         return Array(document.children)
     }
 }
-}
 
 struct MultiValueLinkProvider: LinkProvider {
     var elementsToReturn: [URL: LinkedElement]
@@ -900,17 +892,28 @@ extension RenderGoal: CaseIterable {
     }
 }
 
-private extension XMLNode {
+private extension HTMLNode {
     var plainTextForTesting: String {
         var result = ""
-        for child in self.children ?? [] {
-            if child.kind == .text {
-                result.append(child.stringValue ?? "")
-            } else {
-                result.append(child.plainTextForTesting)
+        for child in self.childrenForTesting {
+            switch child._storage {
+                case .text(let text): result.append(text)
+                case .element:        result.append(child.plainTextForTesting)
+                case .voidElement:    continue
             }
         }
         return result
+    }
+    
+    var childrenForTesting: [HTMLNode] {
+        switch _storage {
+            case .element(_, _, let contents): contents
+            case .text, .voidElement:          []
+        }
+    }
+    
+    var childCountForTesting: Int {
+        childrenForTesting.count
     }
 }
 

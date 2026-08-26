@@ -1,27 +1,21 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-package import FoundationXML
-package import FoundationEssentials
-#else
-package import Foundation
-#endif
+package import struct Foundation.URL
 private import DocCCommon
 
 package extension MarkdownRenderer {
     /// Creates an HTML element for the breadcrumbs that lead to the renderer's current page.
-    func breadcrumbs(references: [URL], currentPageNames: LinkedElement.Names) -> XMLNode {
+    func breadcrumbs(references: [URL], currentPageNames: LinkedElement.Names) -> HTMLNode {
         // Breadcrumbs handle symbols differently than most elements in that everything uses a default style (no "code voice")
-        func nameElements(for names: LinkedElement.Names) -> [XMLNode] {
+        func nameElements(for names: LinkedElement.Names) -> [HTMLNode] {
             switch names {
             case .single(.conceptual(let name)), .single(.symbol(let name)):
                 return [.text(name)]
@@ -35,7 +29,7 @@ package extension MarkdownRenderer {
                     } else {
                         names.map { language, name in
                             // Wrap the name in a span so that it can be given a language specific "class" attribute.
-                            .element(named: "span", children: [.text(name)], attributes: ["class": "\(language.id)-only"])
+                            span(attributes: [language.filterAttribute], contents: [.text(name)])
                         }
                     }
                 case .conciseness:
@@ -46,23 +40,23 @@ package extension MarkdownRenderer {
         }
         
         // Create links for each of the breadcrumbs
-        var items: [XMLNode] = references.compactMap {
+        var items: [HTMLNode] = references.compactMap {
             linkProvider.element(for: $0).map { page in
-                .element(named: "li", children: [
-                    .element(named: "a", children: nameElements(for: page.names), attributes: ["href": self.path(to: page.path)])
+                li(contents: [
+                    anchor(linkingTo: page, contents: nameElements(for: page.names))
                 ])
             }
         }
         
         // Add the name of the current page. It doesn't display as a link because it would refer to the current page.
         items.append(
-            .element(named: "li", children: nameElements(for: currentPageNames))
+            li(contents: nameElements(for: currentPageNames))
         )
-        let list = XMLNode.element(named: "ul", children: items)
+        let list = ul(contents: items)
         
         return switch goal {
         case .conciseness: list // If the goal is conciseness, don't wrap the list in a `<nav>` HTML element with an "id".
-        case .richness:    .element(named: "nav", children: [list], attributes: ["id": "breadcrumbs"])
+        case .richness:    nav(attributes: [.id("breadcrumbs")], contents: [list])
         }
     }
 }

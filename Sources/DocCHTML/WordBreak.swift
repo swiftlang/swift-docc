@@ -1,24 +1,17 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-import FoundationXML
-#else
-import Foundation
-#endif
-
 import DocCCommon
 
 enum RenderHelpers {
-    /// Inserts `<wbr/>` elements into a symbol name so that it can wrap better on the rendered page.
+    /// Inserts `<wbr>` elements into a symbol name so that it can wrap better on the rendered page.
     ///
     /// For example, a method call like this (below), inserts line break elements at the highlighted locations:
     ///
@@ -26,8 +19,8 @@ enum RenderHelpers {
     ///       △          ▲         ▲    △      ▲   △
     ///       │          ╰─────────┴───╴│╶─────┴──╴│╶─── after syntax
     ///       ╰─────────────────────────┴──────────┴──── between words
-    static func wordBreak(symbolName: String) -> [XMLNode] {
-        var result: [XMLNode] = []
+    static func wordBreak(symbolName: String) -> [HTMLNode] {
+        var result: [HTMLNode] = []
         
         let utf8View = symbolName.utf8
         let indices = utf8View.indices
@@ -45,7 +38,7 @@ enum RenderHelpers {
             
             result.append(.text(String(utf8View[fromIndex ..< index])!))
             if index < utf8View.endIndex {
-                result.append(.element(named: "wbr"))
+                result.append(wbr)
             }
             fromIndex = index
         }
