@@ -10,7 +10,7 @@
 
 #if canImport(FoundationXML)
 // TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-// XML nodes is still used to parse raw HTML in the markup.
+// XML nodes are still used to parse raw HTML in the markup.
 private import FoundationXML
 package import FoundationEssentials
 internal import struct Foundation.CharacterSet
@@ -850,9 +850,8 @@ func urlReadableFragment(_ fragment: some StringProtocol) -> String {
     return fragment
 }
 
-
 extension MarkdownRenderer {
-    /// Created a `<a>` element with a relative link to the given element.
+    /// Creates an `<a>` element with a relative link to the given element.
     func anchor(linkingTo element: LinkedElement, contents: [HTMLNode]) -> HTMLNode {
         a(attributes: [.href(path(to: element.path))], contents: contents)
     }

@@ -10,7 +10,7 @@
 
 #if canImport(FoundationXML)
 // TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-// XML nodes is still used to parse the raw HTML for the header and footer files.
+// XML nodes are still used to parse the raw HTML for the header and footer files.
 private import FoundationXML
 #else
 package import class Foundation.XMLElement

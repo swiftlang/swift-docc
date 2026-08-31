@@ -231,7 +231,7 @@ private enum DeclarationFormatter {
     /// - Parameters:
     ///   - fragments: The SymbolKit declaration fragments to create a pretty printed HTML output for.
     ///   - renderer: The renderer that resolves USRs and determines the relative path from the current page to the linked page.
-    /// - Returns: The list of XML nodes that represent the syntax-highlightable declaration fragments.
+    /// - Returns: The list of HTML nodes that represent the syntax-highlightable declaration fragments.
     static func prettyPrintedSwiftDeclaration<LinkProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider>) -> [HTMLNode] {
         return withJoinedConsecutiveFragments(fragments) { fragments, externalParametersCount, _ in
             guard !fragments.isEmpty else {
