@@ -13,6 +13,7 @@ import XCTest
 import SymbolKit
 import DocCTestUtilities
 import DocCCommon
+import Markdown
 
 class SnippetResolverTests: XCTestCase {
     

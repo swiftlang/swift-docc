@@ -10,6 +10,7 @@
 
 import Testing
 import SymbolKit
+import SwiftDocC
 
 struct SemanticVersion_ComparableTests {
     typealias Version = SymbolGraph.SemanticVersion

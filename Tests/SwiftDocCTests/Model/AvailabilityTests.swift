@@ -12,6 +12,7 @@ import Testing
 import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 struct AvailabilityTests {
     
