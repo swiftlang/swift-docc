@@ -142,7 +142,7 @@ package struct HTMLRenderer {
         ///
         /// The string representation of this node hierarchy is intended to be inserted _somewhere_ inside the `<body>` HTML element.
         /// It _doesn't_ include a page header, footer, navigator, etc. and may be an insufficient representation of the "entire" page
-        var content: HTMLNode
+        var content: HTMLNode?
         /// The title and description/abstract of the page.
         var metadata: Metadata
         /// Meta information about the page that belongs in the HTML `<head>` element.

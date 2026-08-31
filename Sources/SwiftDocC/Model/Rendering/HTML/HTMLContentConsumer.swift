@@ -12,8 +12,7 @@ package import DocCHTML
 
 /// A consumer for HTML content produced during documentation conversion.
 package protocol HTMLContentConsumer {
-    // One reason that this is its own protocol, rather than an extension of ConvertOutputConsumer, is so that we can avoid exposing `XMLNode` in any public API.
-    // That way, we are completely free to replace the entire internal HTML rendering implementation with something else in the future, without breaking API.
+    // This is its own protocol, rather than an extension of ConvertOutputConsumer, so that we can freely make changes without breaking public API.
     
     /// Consumes the HTML content and metadata for a given page.
     ///
@@ -25,7 +24,7 @@ package protocol HTMLContentConsumer {
     ///   - metadata: Metadata information (title and description) about this page.
     ///   - reference: The resolved topic reference that identifies this page.
     func consume(
-        mainContent: HTMLNode,
+        mainContent: HTMLNode?,
         metadata: (
             title: String,
             description: String?

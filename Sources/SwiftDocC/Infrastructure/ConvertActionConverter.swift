@@ -92,13 +92,18 @@ package enum ConvertActionConverter {
                             let isStaticHTMLOutput = htmlContentConsumer._isPrimaryOutputFormat
                             var renderer = HTMLRenderer(reference: identifier, context: context, goal: isStaticHTMLOutput ? .richness : .conciseness, featureFlags: featureFlags)
                             
+                            let pageInfo: HTMLRenderer.RenderedPageInfo
                             if let symbol = entity.semantic as? Symbol {
-                                let renderedPageInfo = renderer.renderSymbol(symbol)
-                                try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                                pageInfo = renderer.renderSymbol(symbol)
                             } else if let article = entity.semantic as? Article {
-                                let renderedPageInfo = renderer.renderArticle(article)
-                                try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                                pageInfo = renderer.renderArticle(article)
+                            } else {
+                                pageInfo = .init(content: nil, metadata: .init(
+                                    title: entity.name.plainText,
+                                    plainDescription: (entity.semantic as? (any Abstracted))?.abstract?.plainText
+                                ))
                             }
+                            try htmlContentConsumer.consume(pageInfo: pageInfo, forPage: identifier)
                             
                             if isStaticHTMLOutput {
                                 return // Don't create a (JSON) render node for this page
