@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -258,7 +258,7 @@ struct RenderContentCompiler: MarkupVisitor {
             return cached
         }
 
-        // The symbol link may be written with a scheme and bundle identifier.
+        // The symbol link may be written with a scheme and identifier.
         let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
         if case let .success(resolved) = context.resolve(.unresolved(.init(topicURL: url)), in: identifier, fromSymbolLink: true) {
             return resolved

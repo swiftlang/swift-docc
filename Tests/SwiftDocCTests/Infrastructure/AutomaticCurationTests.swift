@@ -420,7 +420,7 @@ class AutomaticCurationTests: XCTestCase {
         let topLevelCurationSGFURL = Bundle.module.url(
             forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!
         
-        // Create a test bundle copy with the symbol graph from above
+        // Create a test catalog copy with the symbol graph from above
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: topLevelCurationSGFURL, to: url.appendingPathComponent("TopLevelCuration.symbols.json"))
         }
@@ -453,7 +453,7 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testNoAutoCuratedMixedLanguageDuplicates() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
 
             // Load the existing Obj-C symbol graph from this fixture.
             let path = "symbol-graphs/clang/MixedLanguageFramework.symbols.json"
@@ -480,7 +480,7 @@ class AutomaticCurationTests: XCTestCase {
         // Load the "MixedLanguageProtocol Implementations" API COllection
         let protocolImplementationsNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
                 sourceLanguages: [.swift, .objectiveC]
             )
@@ -502,11 +502,11 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         
         let frameworkDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/MixedLanguageFramework",
                 sourceLanguages: [.swift, .objectiveC]
             )
@@ -575,7 +575,7 @@ class AutomaticCurationTests: XCTestCase {
         let whatsitSymbols = Bundle.module.url(
             forResource: "Whatsit-Objective-C.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (bundleURL, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: whatsitSymbols, to: url.appendingPathComponent("Whatsit-Objective-C.symbols.json"))
         }
         defer {
@@ -584,7 +584,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let frameworkDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/Whatsit",
                 sourceLanguages: [.objectiveC]
             )
@@ -610,7 +610,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let classDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/Whatsit/Whatsit",
                 sourceLanguages: [.objectiveC]
             )
@@ -636,7 +636,7 @@ class AutomaticCurationTests: XCTestCase {
         let symbolURL = Bundle.module.url(
             forResource: "TypeSubscript.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (bundleURL, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: symbolURL, to: url.appendingPathComponent("TypeSubscript.symbols.json"))
         }
         defer {
@@ -645,7 +645,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let containerDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/ThirdOrder/SomeStruct",
                 sourceLanguages: [.swift]
             )
@@ -668,11 +668,11 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testCPlusPlusSymbolsAreCuratedProperly() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "CxxSymbols")
+        let (_, context) = try await testBundleAndContext(named: "CxxSymbols")
 
         let rootDocumentationNode = try context.entity(
             with: .init(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/CxxSymbols",
                 sourceLanguage: .objectiveC
             )
@@ -806,7 +806,7 @@ class AutomaticCurationTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let (_, bundle, context) = try await testBundleAndContext(copying: "OverloadedSymbols", configuration: configuration) { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "OverloadedSymbols", configuration: configuration) { url in
             try """
             # ``OverloadedProtocol``
 
@@ -823,7 +823,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let protocolDocumentationNode = try context.entity(
             with: .init(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/ShapeKit/OverloadedProtocol",
                 sourceLanguage: .swift))
 
@@ -1271,7 +1271,7 @@ class AutomaticCurationTests: XCTestCase {
      }
 
     func testAutomaticallyCuratedArticlesAreSortedByTitle() async throws {
-        // Test bundle with articles where file names and titles are in different orders
+        // Test catalog with articles where file names and titles are in different orders
         let catalog = Folder(name: "TestBundle.docc", content: [
             JSONFile(name: "TestModule.symbols.json", content: makeSymbolGraph(moduleName: "TestModule")),
             
@@ -1288,7 +1288,6 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
         
-        // Load the bundle
         let (_, context) = try await loadBundle(catalog: catalog)
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
@@ -1353,7 +1352,6 @@ class AutomaticCurationTests: XCTestCase {
             """),
         ])
 
-        // Load the bundle
         let (_, context) = try await loadBundle(catalog: catalog)
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         

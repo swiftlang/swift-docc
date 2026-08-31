@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@ import Foundation
 import Markdown
 
 /**
- Walks a `Semantic` tree and collects any and all links external to the given bundle.
+ Walks a `Semantic` tree and collects any and all links external to the given collection of documentation inputs.
  
  Visits semantic nodes and descends into all their children that do have (indirectly or directly) content.
  When visiting a node that directly contains markup content visits the markup with an instance of ``ExternalMarkupReferenceWalker``
@@ -31,17 +31,17 @@ struct ExternalReferenceWalker: SemanticVisitor {
     /// A markup walker to use for collecting links from markup elements.
     private var markupResolver: ExternalMarkupReferenceWalker
     
-    /// Collected unresolved external references, grouped by the bundle ID.
-    var collectedExternalReferences: [DocumentationBundle.Identifier: [UnresolvedTopicReference]] {
+    /// Collected unresolved external references, grouped by the source ID.
+    var collectedExternalReferences: [DocumentationContext.Inputs.Identifier: [UnresolvedTopicReference]] {
         return markupResolver.collectedExternalLinks.mapValues { links in
             links.map(UnresolvedTopicReference.init(topicURL:))
         }
     }
     
     /// Creates a new semantic walker that collects links to other documentation sources.
-    /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    init(localBundleID: DocumentationBundle.Identifier) {
-        self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
+    /// - Parameter localID: The identifier of the local collection of documentation inputs, used to identify and skip absolute fully qualified local links.
+    init(localID: DocumentationContext.Inputs.Identifier) {
+        self.markupResolver = ExternalMarkupReferenceWalker(localID: localID)
     }
     
     mutating func visitCode(_ code: Code) { }

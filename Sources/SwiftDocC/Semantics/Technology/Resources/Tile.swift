@@ -175,7 +175,7 @@ public final class Tile: Semantic, DirectiveConvertible {
         self.init(from: directive, source: source, for: unusedBundle, featureFlags: unusedFeatures, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationBundle, featureFlags _: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationContext.Inputs, featureFlags _: FeatureFlags, diagnostics: inout [Diagnostic]) {
         switch directive.name {
         case Tile.DirectiveNames.documentation.rawValue:
             self.init(genericTile: directive,

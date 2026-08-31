@@ -277,11 +277,11 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         
-        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+        let (inputs, _) = try DocumentationContext.InputsProvider(fileManager: fs)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
         
-        let baseURL = bundle.baseURL
-        let source = try XCTUnwrap(bundle.markupURLs.first)
+        let baseURL = inputs.baseURL
+        let source = try XCTUnwrap(inputs.markupURLs.first)
         let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 36, source: source)
 
         let logStorage = LogHandle.LogStorage()
@@ -419,11 +419,11 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         
-        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+        let (inputs, _) = try DocumentationContext.InputsProvider(fileManager: fs)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
         
-        let baseURL = bundle.baseURL
-        let source = try XCTUnwrap(bundle.markupURLs.first)
+        let baseURL = inputs.baseURL
+        let source = try XCTUnwrap(inputs.markupURLs.first)
         
         typealias Location = (line: Int, column: Int)
         func logMessageFor(start: Location, end: Location) throws -> String {

@@ -78,7 +78,7 @@ class FileManagerCopyItemTests: XCTestCase {
         let cssDir = sourceDir.appendingPathComponent("css")
         try FileManager.default.createDirectory(at: cssDir, withIntermediateDirectories: true)
         try Data("body {}".utf8).write(to: cssDir.appendingPathComponent("style.css"))
-        try Data("<svg/>".utf8).write(to: sourceDir.appendingPathComponent("favicon.svg"))
+        try Data("<svg>".utf8).write(to: sourceDir.appendingPathComponent("favicon.svg"))
         try Data("<html><head></head><body></body></html>".utf8)
             .write(to: sourceDir.appendingPathComponent("index.html"))
         try Data("<html>{{BASE_PATH}}</html>".utf8)

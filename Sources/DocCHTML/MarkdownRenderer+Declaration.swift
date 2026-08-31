@@ -8,13 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-package import FoundationXML
-#else
-package import Foundation
-#endif
-
 package import DocCCommon
 package import SymbolKit
 
@@ -27,32 +20,32 @@ package extension MarkdownRenderer {
     /// When the renderer has a ``RenderGoal/richness`` goal, it creates a `<span>` element for each declaration fragment to enable syntax highlighting.
     ///
     /// When the renderer has a ``RenderGoal/conciseness`` goal, it joins the different fragments into string.
-    func declaration(_ fragmentsByLanguage: [SourceLanguage: [DeclarationFragment]]) -> XMLElement {
+    func declaration(_ fragmentsByLanguage: [SourceLanguage: [DeclarationFragment]]) -> HTMLNode {
         let fragmentsByLanguage = RenderHelpers.sortedLanguageSpecificValues(fragmentsByLanguage)
         
         guard goal == .richness else {
             // On the rendered page, language specific content _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
             // So that tools don't need to filter out language specific content themselves, include only the primary language's (plain text) declaration.
-            let plainTextDeclaration: [XMLNode] = fragmentsByLanguage.first.map { _, fragments in
+            let plainTextDeclaration: [HTMLNode] = fragmentsByLanguage.first.map { _, fragments in
                 // The main purpose of individual HTML elements per declaration fragment would be syntax highlighting on the rendered page.
                 // That structure likely won't be beneficial (and could even be detrimental) to the tool's ability to consume the declaration information.
-                [.element(named: "code", children: [.text(fragments.map(\.spelling).joined())])]
+                [code(contents: [.text(fragments.map(\.spelling).joined())])]
             } ?? []
-            return .element(named: "pre", children: plainTextDeclaration)
+            return pre(contents: plainTextDeclaration)
         }
         
-        let declarations: [XMLElement] = if fragmentsByLanguage.count == 1 {
+        let declarations: [HTMLNode] = if fragmentsByLanguage.count == 1 {
             // If there's only a single language there's no need to mark anything as language specific.
-            [XMLNode.element(named: "code", children: _declarationTokens(for: fragmentsByLanguage[0].value, in: fragmentsByLanguage[0].key))]
+            [code(contents: _declarationTokens(for: fragmentsByLanguage[0].value, in: fragmentsByLanguage[0].key))]
         } else {
             fragmentsByLanguage.map { language, fragments in
-                XMLNode.element(named: "code", children: _declarationTokens(for: fragments, in: language), attributes: ["class": "\(language.id)-only"])
+                code(attributes: [language.filterAttribute], contents: _declarationTokens(for: fragments, in: language))
             }
         }
-        return .element(named: "pre", children: declarations, attributes: ["id": "declaration"])
+        return pre(attributes: [.id("declaration")], contents: declarations)
     }
     
-    private func _declarationTokens(for fragments: [DeclarationFragment], in language: SourceLanguage) -> [XMLNode] {
+    private func _declarationTokens(for fragments: [DeclarationFragment], in language: SourceLanguage) -> [HTMLNode] {
         switch language {
             case .swift:      DeclarationFormatter.prettyPrintedSwiftDeclaration(fragments, using: self)
             case .objectiveC: DeclarationFormatter.prettyPrintedObjectiveCDeclaration(fragments, using: self)
@@ -60,8 +53,8 @@ package extension MarkdownRenderer {
         }
     }
     
-    fileprivate func render(_ fragment: DeclarationFormatter.Fragment) -> XMLNode {
-        let text = XMLNode.text(fragment.text)
+    fileprivate func render(_ fragment: DeclarationFormatter.Fragment) -> HTMLNode {
+        let text = HTMLNode.text(String(fragment.text))
         
         switch fragment.kind {
         case .text:
@@ -72,13 +65,13 @@ package extension MarkdownRenderer {
                 fallthrough
             }
             // If the token refers to a symbol that the `linkProvider` is aware of, make that fragment a link to that symbol.
-            return .element(named: "a", children: [consume text], attributes: [
-                "href": path(to: reference),
-                "class": fragment.kind.htmlClassName
-            ])
+            return a(attributes: [
+                .class(fragment.kind.htmlClassName),
+                .href(path(to: reference)),
+            ], contents: [consume text])
         case .keyword, .attribute, .number, .string, .internalParameter:
             // The declaration element is expected to scroll, so individual fragments don't need to contain explicit word breaks.
-            return .element(named: "span", children: [consume text], attributes: ["class": fragment.kind.htmlClassName])
+            return span(attributes: [.class(fragment.kind.htmlClassName)], contents: [consume text])
         }
     }
 }
@@ -238,8 +231,8 @@ private enum DeclarationFormatter {
     /// - Parameters:
     ///   - fragments: The SymbolKit declaration fragments to create a pretty printed HTML output for.
     ///   - renderer: The renderer that resolves USRs and determines the relative path from the current page to the linked page.
-    /// - Returns: The list of XML nodes that represent the syntax-highlightable declaration fragments.
-    static func prettyPrintedSwiftDeclaration<LinkProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider>) -> [XMLNode] {
+    /// - Returns: The list of HTML nodes that represent the syntax-highlightable declaration fragments.
+    static func prettyPrintedSwiftDeclaration<LinkProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider>) -> [HTMLNode] {
         return withJoinedConsecutiveFragments(fragments) { fragments, externalParametersCount, _ in
             guard !fragments.isEmpty else {
                 return []
@@ -315,7 +308,7 @@ private enum DeclarationFormatter {
     ///   - fragments: The SymbolKit declaration fragments to create a pretty printed HTML output for.
     ///   - renderer: The renderer that resolves USRs and determines the relative path from the current page to the linked page.
     /// - Returns: The list of XML nodes that represent the syntax-highlightable declaration fragments.
-    static func prettyPrintedObjectiveCDeclaration<LinkProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider>) -> [XMLNode] {
+    static func prettyPrintedObjectiveCDeclaration<LinkProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider>) -> [HTMLNode] {
         return withJoinedConsecutiveFragments(fragments) { fragments, _, internalParametersCount in
             guard !fragments.isEmpty else {
                 return []

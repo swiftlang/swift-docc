@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -213,7 +213,7 @@ class IndexingTests: XCTestCase {
             // information for MyProtocol (both in the render node and in the indexing record.
             let plistURL = url.appendingPathComponent("Info.plist")
             let plistData = try Data(contentsOf: plistURL)
-            var plist = try DocumentationBundle.Info(from: plistData)
+            var plist = try DocumentationContext.Inputs.Info(from: plistData)
             let existingAvailability = plist.defaultAvailability?.modules["FillIntroduced"]
             plist.defaultAvailability?.modules["MyKit"] = existingAvailability
             XCTAssertNotNil(plist.defaultAvailability?.modules["MyKit"])

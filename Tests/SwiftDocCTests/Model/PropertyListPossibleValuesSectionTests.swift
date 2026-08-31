@@ -104,7 +104,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testDocumentedPossibleValuesMatchSymbolGraphPossibleValues() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -118,7 +118,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         
@@ -128,7 +128,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testDocumentedPossibleValues() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -138,7 +138,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         

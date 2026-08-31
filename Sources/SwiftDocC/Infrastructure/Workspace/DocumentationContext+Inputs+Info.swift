@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,28 +10,28 @@
 
 public import Foundation
 
-extension DocumentationBundle {
-    /// Information about a documentation bundle that's unrelated to its documentation content.
+extension DocumentationContext.Inputs {
+    /// Information about a collection of documentation inputs that's unrelated to its documentation content.
     ///
-    /// This information is meant to be decoded from the bundle's Info.plist file.
+    /// This information is meant to be decoded from the catalog's Info.plist file.
     public struct Info: Codable, Equatable {
-        /// The display name of the bundle.
+        /// The display name of the documentation.
         public var displayName: String
         
-        /// The unique identifier of the bundle.
-        public var id: DocumentationBundle.Identifier
+        /// The unique identifier of the documentation.
+        public var id: DocumentationContext.Inputs.Identifier
         
-        /// The default language identifier for code listings in the bundle.
+        /// The default language identifier for code listings in the contents.
         public var defaultCodeListingLanguage: String?
         
-        /// The default availability for the various modules in the bundle.
+        /// The default availability for the inputs's module, if any.
         public var defaultAvailability: DefaultAvailability?
         
-        /// The default kind for the various modules in the bundle.
+        /// The default kind for the input's module, if any.
         public var defaultModuleKind: String?
 
-        /// The parsed feature flags that were set for this bundle.
-        internal var featureFlags: BundleFeatureFlags?
+        /// The parsed feature flags that were set for this catalog.
+        internal var featureFlags: CatalogFeatureFlags?
 
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .id]
@@ -76,16 +76,16 @@ extension DocumentationBundle {
             }
         }
         
-        /// Creates a new documentation bundle information value.
+        /// Creates a new documentation input information value.
         /// - Parameters:
-        ///   - displayName: The display name of the bundle.
-        ///   - id:  The unique identifier of the bundle.
-        ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
-        ///   - defaultAvailability: The default availability for the various modules in the bundle.
-        ///   - defaultModuleKind: The default kind for the various modules in the bundle.
+        ///   - displayName: The display name of the documentation.
+        ///   - id:  The unique identifier of the documentation.
+        ///   - defaultCodeListingLanguage: The default language identifier for code listings in the contents.
+        ///   - defaultAvailability: The default availability for the inputs' module, if any.
+        ///   - defaultModuleKind: The default kind for the inputs' module, if any.
         public init(
             displayName: String,
-            id: DocumentationBundle.Identifier,
+            id: DocumentationContext.Inputs.Identifier,
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
             defaultModuleKind: String?
@@ -100,18 +100,18 @@ extension DocumentationBundle {
             )
         }
         
-        /// Creates documentation bundle information from the given Info.plist data, falling back to the values
-        /// in the given bundle discovery options if necessary.
+        /// Creates documentation input information from the given Info.plist data, falling back to the values
+        /// in the given catalog discovery options if necessary.
         init(
             from infoPlist: Data? = nil,
-            bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil,
+            catalogDiscoveryOptions options: CatalogDiscoveryOptions? = nil,
             derivedDisplayName: String? = nil
         ) throws {
             if let infoPlist {
                 let propertyListDecoder = PropertyListDecoder()
                 
                 if let options {
-                    propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
+                    propertyListDecoder.userInfo[.catalogDiscoveryOptions] = options
                 }
                 
                 if let derivedDisplayName {
@@ -120,7 +120,7 @@ extension DocumentationBundle {
                 
                 do {
                     self = try propertyListDecoder.decode(
-                        DocumentationBundle.Info.self,
+                        DocumentationContext.Inputs.Info.self,
                         from: infoPlist
                     )
                 } catch DecodingError.dataCorrupted(let context) {
@@ -130,26 +130,26 @@ extension DocumentationBundle {
             } else {
                 try self.init(
                     with: nil,
-                    bundleDiscoveryOptions: options,
+                    catalogDiscoveryOptions: options,
                     derivedDisplayName: derivedDisplayName
                 )
             }
         }
         
         public init(from decoder: any Decoder) throws {
-            let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? BundleDiscoveryOptions
+            let catalogDiscoveryOptions = decoder.userInfo[.catalogDiscoveryOptions] as? CatalogDiscoveryOptions
             let derivedDisplayName = decoder.userInfo[.derivedDisplayName] as? String
             
             try self.init(
                 with: decoder.container(keyedBy: CodingKeys.self),
-                bundleDiscoveryOptions: bundleDiscoveryOptions,
+                catalogDiscoveryOptions: catalogDiscoveryOptions,
                 derivedDisplayName: derivedDisplayName
             )
         }
         
         private init(
-            with values: KeyedDecodingContainer<DocumentationBundle.Info.CodingKeys>?,
-            bundleDiscoveryOptions: BundleDiscoveryOptions?,
+            with values: KeyedDecodingContainer<DocumentationContext.Inputs.Info.CodingKeys>?,
+            catalogDiscoveryOptions: CatalogDiscoveryOptions?,
             derivedDisplayName: String?
         ) throws {
             // Here we define two helper functions that simplify
@@ -164,7 +164,7 @@ extension DocumentationBundle {
                 with key: CodingKeys
             ) throws -> T? where T : Decodable {
                 try values?.decodeIfPresent(T.self, forKey: key)
-                    ?? bundleDiscoveryOptions?.infoPlistFallbacks.decodeIfPresent(T.self, forKey: key.rawValue)
+                    ?? catalogDiscoveryOptions?.infoPlistFallbacks.decodeIfPresent(T.self, forKey: key.rawValue)
             }
             
             /// Helper function that decodes a value of the given type for the given key
@@ -173,13 +173,13 @@ extension DocumentationBundle {
                 _ expectedType: T.Type,
                 with key: CodingKeys
             ) throws -> T where T : Decodable {
-                if let bundleDiscoveryOptions {
+                if let catalogDiscoveryOptions {
                     return try values?.decodeIfPresent(T.self, forKey: key)
-                    ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
+                    ?? catalogDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
                 } else if let values {
                     return try values.decode(T.self, forKey: key)
                 } else {
-                    throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
+                    throw DocumentationContext.Inputs.PropertyListError.keyNotFound(key.rawValue)
                 }
             }
             
@@ -190,7 +190,7 @@ extension DocumentationBundle {
             // **all** missing required keys, instead of just the first one hit.
             
             var givenKeys = Set(values?.allKeys ?? []).union(
-                bundleDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
+                catalogDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
                     CodingKeys(stringValue: $0)
                 } ?? []
             )
@@ -227,16 +227,16 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
-            self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
+            self.featureFlags = try decodeOrFallbackIfPresent(CatalogFeatureFlags.self, with: .featureFlags)
         }
 
         init(
             displayName: String,
-            id: DocumentationBundle.Identifier,
+            id: DocumentationContext.Inputs.Identifier,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
-            featureFlags: BundleFeatureFlags? = nil
+            featureFlags: CatalogFeatureFlags? = nil
         ) {
             self.displayName = displayName
             self.id = id
@@ -248,19 +248,19 @@ extension DocumentationBundle {
     }
 }
 
-extension BundleDiscoveryOptions {
-    /// Creates new bundle discovery options with the given information.
-    /// 
-    /// The given fallback values will be used if any of the discovered bundles are missing that
+extension CatalogDiscoveryOptions {
+    /// Creates new catalog discovery options with the given information.
+    ///
+    /// The given fallback values will be used if any of the discovered catalogs are missing that
     /// value in their Info.plist configuration file.
     /// 
     /// - Parameters:
-    ///   - fallbackDisplayName: A fallback display name for the bundle.
-    ///   - fallbackIdentifier: A fallback identifier for the bundle.
-    ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
-    ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
-    ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
-    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    ///   - fallbackDisplayName: A fallback display name for the catalog.
+    ///   - fallbackIdentifier: A fallback identifier for the catalog.
+    ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the catalog.
+    ///   - fallbackDefaultModuleKind: A fallback default module kind for the catalog.
+    ///   - fallbackDefaultAvailability: A fallback default availability for the catalog.
+    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered catalogs.
     public init(
         fallbackDisplayName: String? = nil,
         fallbackIdentifier: String? = nil,
@@ -274,7 +274,7 @@ extension BundleDiscoveryOptions {
         // This ensures that when new coding keys are added, the compiler will enforce
         // that we handle them here as well.
         
-        let fallbacks = DocumentationBundle.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
+        let fallbacks = DocumentationContext.Inputs.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
             let value: Any?
             
             switch key {
@@ -307,8 +307,8 @@ extension BundleDiscoveryOptions {
 }
 
 private extension CodingUserInfoKey {
-    /// A user info key to store bundle discovery options in the decoder.
-    static let bundleDiscoveryOptions = CodingUserInfoKey(rawValue: "bundleDiscoveryOptions")!
+    /// A user info key to store catalog discovery options in the decoder.
+    static let catalogDiscoveryOptions = CodingUserInfoKey(rawValue: "catalogDiscoveryOptions")!
     /// A user info key to store derived display name in the decoder.
     static let derivedDisplayName = CodingUserInfoKey(rawValue: "derivedDisplayName")!
 }

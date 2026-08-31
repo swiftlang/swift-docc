@@ -925,7 +925,7 @@ class MergeActionTests: XCTestCase {
                 "\(name.lowercased())-card.png",
             ])
             
-            let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
+            let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: .init())
 
             XCTAssert(
                 context.diagnostics.filter { $0.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,
@@ -938,7 +938,7 @@ class MergeActionTests: XCTestCase {
             let realTempURL = try createTemporaryDirectory() // The navigator builder only support real file systems
             let indexer = try ConvertAction.Indexer(outputURL: realTempURL, bundleID: inputs.id)
             
-            let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, bundleRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, bundleID: inputs.id)
+            let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, catalogRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, inputsID: inputs.id)
             
             try await ConvertActionConverter.convert(context: context, outputConsumer: outputConsumer, htmlContentConsumer: nil, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
             
@@ -1303,7 +1303,7 @@ class MergeActionTests: XCTestCase {
                 JSONFile(name: "index.json", content: RenderIndex(interfaceLanguages: [:], includedArchiveIdentifiers: [identifier]))
             ]),
             
-            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleID: DocumentationBundle.Identifier(rawValue: identifier)))
+            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleID: DocumentationContext.Inputs.Identifier(rawValue: identifier)))
         ]
         
         return Folder(name: "\(name).doccarchive", content: content)

@@ -185,7 +185,7 @@ func aBlackListedFunc() {
 
     @Test
     func isDisabledByDefault() async throws {
-        // Create a test bundle with some non-inclusive content.
+        // Create a test catalog with some non-inclusive content.
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
         ])

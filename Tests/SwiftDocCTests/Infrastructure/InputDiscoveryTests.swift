@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
 
-class BundleDiscoveryTests: XCTestCase {
+class InputDiscoveryTests: XCTestCase {
     
     private let testBundleLocation = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
     private func flatListOfFiles() throws -> [URL] {
@@ -29,7 +29,7 @@ class BundleDiscoveryTests: XCTestCase {
     func testBundleFormat() throws {
         let allFiles = try flatListOfFiles()
         
-        func parsedBundle(from folder: any File) throws -> DocumentationBundle {
+        func parsedBundle(from folder: any File) throws -> DocumentationContext.Inputs {
             let fileSystem = try TestFileSystem(folders: [
                 Folder(name: "path", content: [
                     Folder(name: "to", content: [
@@ -39,17 +39,17 @@ class BundleDiscoveryTests: XCTestCase {
             ])
             
             let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-            let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
-            return bundle
+            let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+            return inputs
         }
         
         let expectedBundle = try parsedBundle(from: CopyOfFolder(original: testBundleLocation))
         
         func checkExpectedFilesFoundIn(_ folder: any File, file: StaticString = #filePath, line: UInt = #line) throws {
-            let bundle = try parsedBundle(from: folder)
+            let catalog = try parsedBundle(from: folder)
             
-            XCTAssertEqual(bundle.id, expectedBundle.id)
-            XCTAssertEqual(bundle.displayName, expectedBundle.displayName)
+            XCTAssertEqual(catalog.id, expectedBundle.id)
+            XCTAssertEqual(catalog.displayName, expectedBundle.displayName)
             
             func assertEqualFiles(_ got: [URL], _ expected: [URL], file: StaticString = #filePath, line: UInt = #line) {
                 let gotFileNames = Set(got.map { $0.lastPathComponent })
@@ -65,9 +65,9 @@ class BundleDiscoveryTests: XCTestCase {
                 XCTAssert(missingFiles.isEmpty, "Missing these files: \(extraFiles.sorted().map({ $0.singleQuoted }).joined(separator: ", "))", file: (file), line: line)
             }
             
-            assertEqualFiles(bundle.symbolGraphURLs, expectedBundle.symbolGraphURLs, file: (file), line: line)
-            assertEqualFiles(bundle.markupURLs, expectedBundle.markupURLs, file: (file), line: line)
-            assertEqualFiles(bundle.miscResourceURLs, expectedBundle.miscResourceURLs, file: (file), line: line)
+            assertEqualFiles(catalog.symbolGraphURLs, expectedBundle.symbolGraphURLs, file: (file), line: line)
+            assertEqualFiles(catalog.markupURLs, expectedBundle.markupURLs, file: (file), line: line)
+            assertEqualFiles(catalog.miscResourceURLs, expectedBundle.miscResourceURLs, file: (file), line: line)
         }
         
         // The TestBundle as-is.
@@ -97,7 +97,7 @@ class BundleDiscoveryTests: XCTestCase {
             ])
         )
         
-        // Deeply nested subfolders inside the bundle
+        // Deeply nested subfolders inside the catalog
         try checkExpectedFilesFoundIn(
             Folder(name: "TestBundle.docc", content: [
                 // The original Info.plist
@@ -118,16 +118,16 @@ class BundleDiscoveryTests: XCTestCase {
         let fileSystem = try TestFileSystem(folders: [
             Folder(name: "path", content: [
                 Folder(name: "to", content: [
-                    // The test bundle without all the symbol graph files
-                    CopyOfFolder(original: testBundleLocation, filter: { !DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                    // The test catalog without all the symbol graph files
+                    CopyOfFolder(original: testBundleLocation, filter: { !DocumentationCatalogFileTypes.isSymbolGraphFile($0) }),
                     
                     // Just the symbol graph files in a non-bundle folder
-                    CopyOfFolder(original: testBundleLocation, newName: "Not a catalog", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                    CopyOfFolder(original: testBundleLocation, newName: "Not a catalog", filter: { DocumentationCatalogFileTypes.isSymbolGraphFile($0) }),
                 ])
             ])
         ])
         
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let catalogDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
             ],
@@ -139,20 +139,20 @@ class BundleDiscoveryTests: XCTestCase {
         )
         
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: bundleDiscoveryOptions)
+        let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: catalogDiscoveryOptions)
         
-        // The bundle information was overridden from the options
-        XCTAssertEqual(bundle.id, "org.swift.docc.example")
-        XCTAssertEqual(bundle.displayName, "Test Bundle") // The fallback should not override this value
+        // The input information was overridden from the options
+        XCTAssertEqual(inputs.id, "org.swift.docc.example")
+        XCTAssertEqual(inputs.displayName, "Test Bundle") // The fallback should not override this value
         
-        // The additional symbol graph files are part of the bundle
-        XCTAssertEqual(bundle.symbolGraphURLs.count, 3)
-        XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("mykit-iOS.symbols.json"))
-        XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("MyKit@SideKit.symbols.json"))
-        XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("sidekit.symbols.json"))
+        // The additional symbol graph files are part of the inputs
+        XCTAssertEqual(inputs.symbolGraphURLs.count, 3)
+        XCTAssertTrue(inputs.symbolGraphURLs.map { $0.lastPathComponent }.contains("mykit-iOS.symbols.json"))
+        XCTAssertTrue(inputs.symbolGraphURLs.map { $0.lastPathComponent }.contains("MyKit@SideKit.symbols.json"))
+        XCTAssertTrue(inputs.symbolGraphURLs.map { $0.lastPathComponent }.contains("sidekit.symbols.json"))
         
-        // The symbol graph files are not located inside the doc bundle
-        for symbolGraphFile in bundle.symbolGraphURLs {
+        // The symbol graph files are not located inside the documentation catalog
+        for symbolGraphFile in inputs.symbolGraphURLs {
             XCTAssertFalse(symbolGraphFile.pathComponents.contains(where: { $0.hasSuffix(".docc") }))
         }
     }
@@ -160,7 +160,7 @@ class BundleDiscoveryTests: XCTestCase {
     func testNoInfoPlist() throws {
         let catalog = Folder(name: "Something.docc", content: [])
 
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
                 "CFBundleIdentifier": "com.fallback.bundle.identifier"
@@ -171,11 +171,11 @@ class BundleDiscoveryTests: XCTestCase {
         let fileSystem = try TestFileSystem(folders: [catalog])
         
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: bundleDiscoveryOptions)
+        let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: bundleDiscoveryOptions)
         
-        // The bundle information was specified via the options
-        XCTAssertEqual(bundle.id, "com.fallback.bundle.identifier")
-        XCTAssertEqual(bundle.displayName, "Fallback Display Name")
+        // The inputs information was specified via the options
+        XCTAssertEqual(inputs.id, "com.fallback.bundle.identifier")
+        XCTAssertEqual(inputs.displayName, "Fallback Display Name")
     }
 
     func testNoCustomTemplates() throws {
@@ -184,17 +184,14 @@ class BundleDiscoveryTests: XCTestCase {
         let fileSystem = try TestFileSystem(folders: [catalog])
         
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
+        let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
-        // Ensure that `customHeader` is `nil` if no top level `header.html`
-        // file was found in the bundle
-        XCTAssertNil(bundle.customHeader)
-        // Ensure that `customFooter` is `nil` if no top level `footer.html`
-        // file was found in the bundle
-        XCTAssertNil(bundle.customFooter)
-        // Ensure that `themeSettings` is `nil` if no `theme-settings.json`
-        // file was found in the bundle
-        XCTAssertNil(bundle.themeSettings)
+        // Ensure that `customHeader` is `nil` if no top level `header.html` file was found in the inputs
+        XCTAssertNil(inputs.customHeader)
+        // Ensure that `customFooter` is `nil` if no top level `footer.html` file was found in the inputs
+        XCTAssertNil(inputs.customFooter)
+        // Ensure that `themeSettings` is `nil` if no `theme-settings.json` file was found in the inputs
+        XCTAssertNil(inputs.themeSettings)
     }
 
     func testCustomTemplatesFound() throws {
@@ -210,14 +207,14 @@ class BundleDiscoveryTests: XCTestCase {
         let fileSystem = try TestFileSystem(folders: [catalog])
         
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
+        let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
         // Ensure that `customHeader` points to the location of a top level
-        // `header.html` file if one is found in the bundle
-        XCTAssertEqual(bundle.customHeader?.lastPathComponent, "header.html")
+        // `header.html` file if one is found in the inputs
+        XCTAssertEqual(inputs.customHeader?.lastPathComponent, "header.html")
         // Ensure that `customFooter` points to the location of a top level
-        // `footer.html` file if one is found in the bundle
-        XCTAssertEqual(bundle.customFooter?.lastPathComponent, "footer.html")
+        // `footer.html` file if one is found in the inputs
+        XCTAssertEqual(inputs.customFooter?.lastPathComponent, "footer.html")
     }
 
     func testThemeSettingsFound() throws {
@@ -238,10 +235,10 @@ class BundleDiscoveryTests: XCTestCase {
         let fileSystem = try TestFileSystem(folders: [catalog])
         
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
+        let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
         // Ensure that `themeSettings` points to the location of a
-        // `theme-settings.json` file if one is found in the bundle
-        XCTAssertEqual(bundle.themeSettings?.lastPathComponent, "theme-settings.json")
+        // `theme-settings.json` file if one is found in the inputs
+        XCTAssertEqual(inputs.themeSettings?.lastPathComponent, "theme-settings.json")
     }
 }

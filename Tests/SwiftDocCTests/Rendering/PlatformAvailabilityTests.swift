@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,9 +35,9 @@ class PlatformAvailabilityTests: XCTestCase {
 
     /// Ensure that adding `@Available` directives in an article causes the final RenderNode to contain the appropriate availability data.
     func testPlatformAvailabilityFromArticle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
@@ -60,9 +60,9 @@ class PlatformAvailabilityTests: XCTestCase {
 
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
     func testPlatformAvailabilityFromExtension() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -84,9 +84,9 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     func testMultiplePlatformAvailabilityFromArticle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
@@ -113,9 +113,9 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     func testArbitraryPlatformAvailability() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ArbitraryPlatforms",
             sourceLanguage: .swift
         )
@@ -138,10 +138,10 @@ class PlatformAvailabilityTests: XCTestCase {
     
     // Test that the Info.plist default availability does not affect the deprecated/unavailable availabilities provided by the symbol graph.
     func testAvailabilityParserWithInfoPlistDefaultAvailability() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityOverrideBundle")
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityOverrideBundle")
 
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -262,12 +262,12 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     
-    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) async throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        let (_, bundle, context) = try await loadBundle(from: bundleURL, configuration: configuration)
-        return (bundle, context)
+        let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+        return (context.inputs, context)
     }
 
 }

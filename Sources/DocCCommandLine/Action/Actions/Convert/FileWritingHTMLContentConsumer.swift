@@ -1,23 +1,17 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-import FoundationXML
-import FoundationEssentials
-#else
-import Foundation
-#endif
-
+import struct Foundation.URL
+import struct Foundation.Data
 import SwiftDocC
-private import DocCHTML
+import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool
@@ -80,7 +74,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         }
         
         func makeContent(
-            content: XMLNode,
+            content: HTMLNode,
             title: String,
             plainDescription: String?,
             prettyPrint: Bool
@@ -89,7 +83,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             // Replace the content in reverse order so that the earlier ranges remain valid.
             copy.replaceSubrange(contentReplacementRange, with: content.rendered(prettyPrinted: prettyPrint))
             if let plainDescription {
-                let metaDescription = XMLNode.element(named: "meta", attributes: ["name": "description", "content": plainDescription])
+                let metaDescription = meta(.content(plainDescription), .name("description"))
                 copy.replaceSubrange(descriptionReplacementRange, with: metaDescription.rendered(prettyPrinted: prettyPrint))
             }
             copy.replaceSubrange(titleReplacementRange, with: title)
@@ -135,7 +129,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     }
     
     func consume(
-        mainContent: XMLNode,
+        mainContent: HTMLNode,
         metadata: (title: String, description: String?),
         forPage reference: ResolvedTopicReference
     ) throws {
@@ -151,20 +145,9 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     }
 }
 
-private extension XMLNode {
+private extension HTMLNode {
     func rendered(prettyPrinted: Bool) -> String {
-        if let htmlNode = HTMLNode(from: self) {
-            let data = HTMLFormatter.format(htmlNode, options: prettyPrinted ? .prettyPrint : [])
-            return String(decoding: data, as: UTF8.self)
-        }
-         
-        assertionFailure("Failed to convert XMLNode \(name ?? "<no tag>") to an HTMLNode")
-        
-        // Fallback to the XMLNode string formatting for now.
-        return if prettyPrinted {
-            xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement])
-        } else {
-            xmlString(options: .nodeCompactEmptyElement)
-        }
+        let data = HTMLFormatter.format(self, options: prettyPrinted ? .prettyPrint : [])
+        return String(decoding: data, as: UTF8.self)
     }
 }

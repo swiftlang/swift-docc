@@ -17,8 +17,8 @@ import DocCCommon
 
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -26,7 +26,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var diagnostics = [Diagnostic]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
@@ -402,10 +402,10 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testTutorialBackgroundComesFromImageOrVideoPoster() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         func assertTutorialWithPath(_ tutorialPath: String, hasBackground backgroundIdentifier: String) throws {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: tutorialPath, sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: tutorialPath, sourceLanguage: .swift))
             
             guard let tutorialDirective = node.markup as? BlockDirective else {
                 XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -413,7 +413,7 @@ class SemaToRenderNodeTests: XCTestCase {
             }
             
             var diagnostics = [Diagnostic]()
-            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
                 XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
                 return
             }
@@ -432,8 +432,8 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileTutorialArticle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         let article = node.semantic as! TutorialArticle
         
@@ -493,12 +493,12 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileOverviewWithNoVolumes() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        try assertCompileOverviewWithNoVolumes(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        try assertCompileOverviewWithNoVolumes(context: context)
     }
     
     func testCompileOverviewWithEmptyChapter() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
@@ -563,15 +563,14 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         try assertCompileOverviewWithNoVolumes(
-            bundle: bundle,
             context: context,
             // Expect one diagnostic for the empty chapter.
             expectedDiagnosticsCount: 1
         )
     }
     
-    private func assertCompileOverviewWithNoVolumes(bundle: DocumentationBundle, context: DocumentationContext, expectedDiagnosticsCount: Int = 0) throws {
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+    private func assertCompileOverviewWithNoVolumes(context: DocumentationContext, expectedDiagnosticsCount: Int = 0) throws {
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -579,7 +578,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var diagnostics = [Diagnostic]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
@@ -719,7 +718,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileOverviewWithVolumes() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let overviewURL = root.appendingPathComponent("TestOverview.tutorial")
             let text = """
             @Tutorials(name: "Technology X") {
@@ -808,7 +807,7 @@ class SemaToRenderNodeTests: XCTestCase {
             try text.write(to: overviewURL, atomically: true, encoding: .utf8)
         }
     
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial table-of-contents not found as first child.")
@@ -816,7 +815,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var diagnostics = [Diagnostic]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
@@ -928,7 +927,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileSymbol() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             // Remove the SideClass sub heading to match the expectations of this test
             let graphURL = url.appendingPathComponent("sidekit.symbols.json")
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -942,7 +941,7 @@ class SemaToRenderNodeTests: XCTestCase {
             try JSONEncoder().encode(graph).write(to: graphURL)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         
         // Verify that `MyProtocol` the symbol is loaded in the topic graph, but the `MyProtocol` documentation extension was removed.
         let matches = context.knownPages.filter({ reference -> Bool in
@@ -1318,8 +1317,8 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Check for constraints in render node
         
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
@@ -1339,7 +1338,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }.joined(), "Label is Text, Observer inherits NSObject, and S conforms to StringProtocol.")
         
         // Check for constraints in render references
-        let parent = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let parent = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let parentSymbol = parent.semantic as! Symbol
         var parentTranslator = RenderNodeTranslator(context: context, identifier: parent.reference)
@@ -1371,8 +1370,8 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderConditionalConstraintsOnConformingType() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
@@ -1393,8 +1392,8 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderConditionalConstraintsOnProtocol() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
@@ -1415,8 +1414,8 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderReferenceResolving() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
@@ -1480,8 +1479,8 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testAvailabilityMetadata() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
@@ -1528,7 +1527,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Override with both a low and a high value
         for version in [SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1), SymbolGraph.SemanticVersion(major: 99, minor: 99, patch: 99)] {
-            let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+            let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
                 // Duplicate the symbol graph
                 let myKitURL = url.appendingPathComponent("mykit-iOS.symbols.json")
                 let myClassUSR = "s:5MyKit0A5ClassC"
@@ -1554,7 +1553,7 @@ class SemaToRenderNodeTests: XCTestCase {
                 }
             })
             
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
             
             // Compile docs and verify contents
             let symbol = node.semantic as! Symbol
@@ -1580,8 +1579,8 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testMediaReferencesWithSpaces() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TutorialMediaWithSpaces", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TutorialMediaWithSpaces", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -1589,7 +1588,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var diagnostics = [Diagnostic]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
             XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
@@ -1641,8 +1640,8 @@ Document @1:1-11:19
 """,
                        markup.debugDescription(options: .printSourceLocations))
         
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestTutorial", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestTutorial", sourceLanguage: .swift))
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
             .paragraph(.init(inlineContent: [
@@ -1683,8 +1682,8 @@ Document
 """,
                        markup.debugDescription())
 
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestTutorial", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestTutorial", sourceLanguage: .swift))
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
                 .paragraph(.init(inlineContent: [
@@ -2661,9 +2660,9 @@ Document
 
     /// Tests parsing origin data from symbol graph.
     func testOriginMetadata() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
-        let myFuncReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let origin = try XCTUnwrap(symbol.origin)
@@ -2679,7 +2678,7 @@ Document
             forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-            // Replace the out-of-bundle origin with a symbol from the same bundle.
+            // Replace the out-of-bundle origin with a symbol from the same catalog.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5MyProtocol0Afunc()"#)
                 .write(to: url.appendingPathComponent("sidekit.symbols.json"), atomically: true, encoding: .utf8)
@@ -2699,13 +2698,13 @@ Document
         }
     }
 
-    /// Tests that we don't inherit docs by default from within the same bundle but not module.
+    /// Tests that we don't inherit docs by default from within the same catalog but not module.
     func testDocInheritanceInsideBundleButNotModule() async throws {
         let sgURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-            // Replace the out-of-bundle origin with a symbol from the same bundle but
+            // Replace the out-of-bundle origin with a symbol from the same catalog but
             // from the MyKit module.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5ClassC"#)
@@ -2902,7 +2901,7 @@ Document
             let sgURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
          
             let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
-                // Replace the out-of-bundle origin with a symbol from the same bundle but
+                // Replace the out-of-bundle origin with a symbol from the same catalog but
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
                 
@@ -3290,18 +3289,18 @@ Document
         //   │ ╰ doc://com.test.TestBed/documentation/Minimal_docs/A/B-swift.struct/Equatable-Implementations
         //   │   ╰ doc://com.test.TestBed/documentation/Minimal_docs/A/B-swift.struct/!=(_:_:)
         //   ╰ doc://com.test.TestBed/documentation/Minimal_docs/A/b-swift.property
-        let (bundle, context) = try await testBundleAndContext(named: "InheritedUnderCollision")
+        let (_, context) = try await testBundleAndContext(named: "InheritedUnderCollision")
 
         // Verify that the inherited symbol got a path that accounts for the collision between
         // the struct `B` and the property `b`.
         
-        let inheritedSymbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs/A/B-swift.struct/!=(_:_:)", sourceLanguage: .swift)
+        let inheritedSymbolReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Minimal_docs/A/B-swift.struct/!=(_:_:)", sourceLanguage: .swift)
         XCTAssertNoThrow(try context.entity(with: inheritedSymbolReference))
         
         // Verify that the inherited symbol is automatically curated with its correct
         // reference path under the inherited symbols API collection
         
-        let equatableImplementationsReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs/A/B-swift.struct/Equatable-Implementations", sourceLanguage: .swift)
+        let equatableImplementationsReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Minimal_docs/A/B-swift.struct/Equatable-Implementations", sourceLanguage: .swift)
         let equatableImplementationsNode = try context.entity(with: equatableImplementationsReference)
         let equatableImplementationsArticle = try XCTUnwrap(equatableImplementationsNode.semantic as? Article)
         let group = try XCTUnwrap(equatableImplementationsArticle.automaticTaskGroups.first)
@@ -3714,9 +3713,9 @@ Document
         
         XCTAssertEqual(markup.childCount, 1)
         
-        let (bundle, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [

@@ -179,6 +179,6 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         guard let lhsName = lhs.name, let rhsName = rhs.name else {
             return lhs.name != nil
         }
-        return PlatformName.isInOrder(lhsName, rhsName)
+        return PlatformName.areInIncreasingOrder(lhsName, rhsName)
     }
 }

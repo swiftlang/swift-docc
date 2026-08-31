@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,7 +30,7 @@ protocol MediaVariantProxy {
 
 extension MediaVariantProxy {
     /// Compares two variants by their rendered URL, and by traits for variants with identical URLs.
-    static func isInOrder(_ lhs: Self, _ rhs: Self) -> Bool {
+    static func areInIncreasingOrder(_ lhs: Self, _ rhs: Self) -> Bool {
         if lhs.url.path != rhs.url.path {
             return lhs.url.path < rhs.url.path
         }

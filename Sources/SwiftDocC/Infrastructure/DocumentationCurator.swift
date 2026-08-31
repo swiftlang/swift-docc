@@ -76,7 +76,7 @@ struct DocumentationCurator {
         }
         
         // Check if the link has been externally resolved already.
-        if let bundleID = unresolved.topicURL.components.host.map({ DocumentationBundle.Identifier(rawValue: $0) }),
+        if let bundleID = unresolved.topicURL.components.host.map({ DocumentationContext.Inputs.Identifier(rawValue: $0) }),
            context.configuration.externalDocumentationConfiguration.sources[bundleID] != nil || context.configuration.convertServiceConfiguration.fallbackResolver != nil {
             if case .success(let resolvedExternalReference) = context.externallyResolvedLinks[unresolved.topicURL] {
                 return resolvedExternalReference

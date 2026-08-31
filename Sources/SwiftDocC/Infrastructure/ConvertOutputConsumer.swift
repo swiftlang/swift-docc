@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,8 +17,8 @@ public protocol ConvertOutputConsumer {
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
     
-    /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
-    func consume(assetsInBundle bundle: DocumentationBundle) throws
+    /// Consumes a collection of documentation inputs with the purpose of extracting its on-disk assets.
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws
     
     /// Consumes the linkable element summaries produced during a conversion.
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws
@@ -69,4 +69,21 @@ package protocol ExternalNodeConsumer {
     /// Consumes a external render node that was generated during a conversion.
     /// > Warning: This method might be called concurrently.
     func consume(externalRenderNode: ExternalRenderNode) throws
+}
+
+extension ConvertOutputConsumer {
+    @available(*, deprecated, renamed: "consume(assetsInInputs:)", message: "Use 'consume(assetsInInputs:)' instead. This deprecated API will be removed after 6.5 is released.")
+    func consume(assetsInBundle inputs: DocumentationContext.Inputs) throws {
+        try consume(assetsInInputs: inputs)
+    }
+}
+
+// Default implementation so that conforming types don't need to implement deprecated API.
+public extension ConvertOutputConsumer {
+    @available(*, deprecated)
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws {
+        // Despite this protocol being public, it's not possible to configure an output consumer from outside this package.
+        // Because of this, we'll only encounter known conforming types that have been updated to use the new name.
+        // This default implementation only exist for the unlikely case that an out-of-package client conforms to this protocol.
+    }
 }

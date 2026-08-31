@@ -42,7 +42,7 @@ public final class Comment: Semantic, DirectiveConvertible {
         self.init(from: directive, source: source, for: unusedBundle, featureFlags: unusedFeatures, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationBundle, featureFlags _: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationContext.Inputs, featureFlags _: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Comment.directiveName)
         self.init(originalMarkup: directive, content: MarkupContainer(directive.children))
     }

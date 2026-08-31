@@ -84,7 +84,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<ContentAndMedia>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Layout.argumentName, Semantics.Eyebrow.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
         Semantic.Analyses.HasOnlyKnownDirectives<ContentAndMedia>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
@@ -94,7 +94,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         
         let layout = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Layout>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
         
-        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
+        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: inputs, diagnostics: &diagnostics)
         
         let mediaPosition: MediaPosition
         if let firstChildDirective = directive.child(at: 0) as? BlockDirective,

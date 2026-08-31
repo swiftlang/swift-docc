@@ -478,7 +478,7 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     func testCuratedExtensionWithDanglingReferenceToFragment() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+        let (_, _, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
             let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
             try FileManager.default.removeItem(at: topLevelArticle)
 
@@ -498,15 +498,15 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(replacement.replacement, "`Swift/Array`")
 
         // Also make sure that the extension pages are still gone
-        let extendedModule = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        let extendedModule = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedModule }))
 
-        let extendedStructure = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        let extendedStructure = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
 
     func testCuratedExtensionWithDocumentationExtension() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+        let (_, _, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
             let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
             try FileManager.default.removeItem(at: topLevelArticle)
 
@@ -527,10 +527,10 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertFalse(context.diagnostics.contains(where: { $0.identifier == "org.swift.docc.removedExtensionLinkDestination" || $0.identifier == "org.swift.docc.unresolvedTopicReference" }))
 
         // Because the `Swift/Array` extension has an extension article, the pages should not be marked as virtual
-        let extendedModule = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        let extendedModule = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
         XCTAssert(context.knownPages.contains(where: { $0 == extendedModule }))
 
-        let extendedStructure = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        let extendedStructure = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssert(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
 
@@ -794,7 +794,7 @@ class ReferenceResolverTests: XCTestCase {
             let diagnostic = try XCTUnwrap(diagnostics.first)
             XCTAssertEqual(diagnostic.summary, "Can't resolve 'NotFoundArticle'")
             XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
-            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:)`
             XCTAssertEqual(diagnostic.range?.lowerBound.line, 3)
             XCTAssertEqual(diagnostic.range?.upperBound.line, 3)
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 44)
@@ -804,7 +804,7 @@ class ReferenceResolverTests: XCTestCase {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst().first)
             XCTAssertEqual(diagnostic.summary, "Can't resolve 'NotFoundSymbol'")
             XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
-            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:)`
             XCTAssertEqual(diagnostic.range?.lowerBound.line, 3)
             XCTAssertEqual(diagnostic.range?.upperBound.line, 3)
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 18)
@@ -836,7 +836,7 @@ class ReferenceResolverTests: XCTestCase {
             let diagnostic = try XCTUnwrap(diagnostics.dropFirst(4).first)
             XCTAssertEqual(diagnostic.summary, "Resource 'not-found-image' couldn't be found")
             XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
-            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:)`
             XCTAssertEqual(diagnostic.range?.lowerBound.line, 5)
             XCTAssertEqual(diagnostic.range?.upperBound.line, 5)
             XCTAssertEqual(diagnostic.range?.lowerBound.column, 32)

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(NIOHTTP1)
+#if PREVIEW_SERVER
 import XCTest
 @testable import SwiftDocC
 @_spi(Testing) @testable import DocCCommandLine
@@ -28,7 +28,6 @@ class PreviewActionIntegrationTests: XCTestCase {
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
          
-        // Write source documentation bundle.
         let source = Folder(name: "unit-test.docc", content: [
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: symbolURL),
@@ -392,7 +391,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         // Modify a file in the catalog and wait for the preview server to notice the change and start rebuilding the documentation.
         do {
-            let expectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input and started rebuilding", expectedText: "Source bundle was modified")
+            let expectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input and started rebuilding", expectedText: "Source catalog was modified")
             
             // Modify a file in the catalog to trigger a rebuild.
             try? "".write(to: sourceURL.appendingPathComponent("file1.txt"), atomically: true, encoding: .utf8)
@@ -470,7 +469,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             url.path.utf8.count <= 103
         }
         
-        // Prefer a temporary socket URL that's relative to the unit test bundle location if possible
+        // Prefer a temporary socket URL that's relative to the unit test catalog location if possible
         let bundleRelativeSocketURL = try createTemporaryDirectory().appendingPathComponent("s", isDirectory: false)
         if isShortEnoughUnixDomainSocket(bundleRelativeSocketURL) {
             return bundleRelativeSocketURL.path

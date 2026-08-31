@@ -72,7 +72,7 @@ public final class Volume: Semantic, DirectiveConvertible, Abstracted, Redirecte
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Volume.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<Volume>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
@@ -83,14 +83,14 @@ public final class Volume: Semantic, DirectiveConvertible, Abstracted, Redirecte
         
         let image: ImageMedia?
         var remainder: MarkupContainer
-        (image, remainder) = Semantic.Analyses.HasExactlyOne<Volume, ImageMedia>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
+        (image, remainder) = Semantic.Analyses.HasExactlyOne<Volume, ImageMedia>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: inputs, diagnostics: &diagnostics)
         
         let chapters: [Chapter]
-        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Volume, Chapter>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Volume, Chapter>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         _ = Semantic.Analyses.HasContent<Volume>(additionalContext: "A \(Volume.directiveName.singleQuoted) directive should at least have a sentence summarizing what the reader will learn").analyze(directive, children: remainder, source: source, diagnostics: &diagnostics)
         
         let redirects: [Redirect]
-        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
         guard let name = requiredName else {
             return nil

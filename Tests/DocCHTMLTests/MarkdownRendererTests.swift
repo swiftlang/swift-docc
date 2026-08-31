@@ -8,20 +8,12 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-import FoundationXML
-import FoundationEssentials
-#else
 import Foundation
-#endif
-
 import Testing
 import DocCHTML
 import Markdown
 import DocCCommon
 
-extension DocCHTMLTestSuites {
 struct MarkdownRendererTests {
     @Test
     func renderingParagraphsWithFormattedText() {
@@ -654,26 +646,20 @@ struct MarkdownRendererTests {
         )
     }
 }
-}
 
 // MARK: Helpers
 
-extension XMLNode {
+extension HTMLNode {
     func assertMatches(prettyFormatted: Bool, expected: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
         #expect(rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) == expected, sourceLocation: sourceLocation)
     }
     
     fileprivate func rendered(prettyFormatted: Bool, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> String {
-        guard let htmlNode = HTMLNode(from: self) else {
-            Issue.record("Failed to convert node \(self.xmlString(options: .nodeCompactEmptyElement)) to HTML node", sourceLocation: sourceLocation)
-            return ""
-        }
-        
-        return String(decoding: HTMLFormatter.format(htmlNode, options: prettyFormatted ? .prettyPrint : []), as: UTF8.self)
+        String(decoding: HTMLFormatter.format(self, options: prettyFormatted ? .prettyPrint : []), as: UTF8.self)
     }
 }
 
-extension Sequence<XMLNode> {
+extension Sequence<HTMLNode> {
     func assertMatches(prettyFormatted: Bool, expected: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
         #expect(rendered(prettyFormatted: prettyFormatted, sourceLocation: sourceLocation) == expected, sourceLocation: sourceLocation)
     }

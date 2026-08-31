@@ -111,7 +111,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == TutorialArticle.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialArticle>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName])
@@ -125,20 +125,20 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
             
         var remainder: MarkupContainer
         let optionalIntro: Intro?
-        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
+        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: inputs, diagnostics: &diagnostics)
         
-        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
-        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics)
         
         let optionalAssessments: Assessments?
-        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
         let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
         let redirects: [Redirect]
-        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
         self.init(originalMarkup: directive, durationMinutes: optionalTime, intro: optionalIntro, content: content, assessments: optionalAssessments, callToActionImage: optionalCallToActionImage, landmarks: headings, redirects: redirects.isEmpty ? nil : redirects)
     }
@@ -161,14 +161,14 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) -> [MarkupLayout] {
+    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,
-                   let stack = Stack(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) {
+                   let stack = Stack(from: directive, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics) {
                     accumulation.append(.stack(stack))
                 } else if directive.name == ContentAndMedia.directiveName,
-                          let contentAndMedia = ContentAndMedia(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) {
+                          let contentAndMedia = ContentAndMedia(from: directive, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics) {
                     accumulation.append(.contentAndMedia(contentAndMedia))
                 }
             } else {

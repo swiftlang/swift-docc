@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -240,10 +240,11 @@ extension MarkdownOutputMarkupWalker {
                 
         if isRenderingLinkList {
             linkListAbstract = (doc.semantic as? Symbol)?.abstract
-            if let fragments = symbol.navigator {
+            if let fragments = symbol.subHeadingVariants[.swift] ?? symbol.declaration.mainRenderFragments()?.declarationFragments {
                 linkTitle = fragments
                     .map { $0.spelling }
-                    .joined(separator: " ")
+                    .joined()
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
             }
             relationships.insert(relationship(source: resolved, type: .belongsToTopic, subtype: nil))
         }
@@ -350,22 +351,22 @@ extension MarkdownOutputMarkupWalker {
     }
     
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) {
-        let bundle = context.inputs
+        let inputs = context.inputs
         switch blockDirective.name {
         case VideoMedia.directiveName:
-            guard let video = VideoMedia(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
+            guard let video = VideoMedia(from: blockDirective, for: inputs, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             visit(video)
                         
         case ImageMedia.directiveName:
-            guard let image = ImageMedia(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
+            guard let image = ImageMedia(from: blockDirective, for: inputs, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             visit(image)
             
         case Row.directiveName:
-            guard let row = Row(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
+            guard let row = Row(from: blockDirective, for: inputs, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             for column in row.columns {
@@ -375,7 +376,7 @@ extension MarkdownOutputMarkupWalker {
                 }
             }
         case TabNavigator.directiveName:
-            guard let tabs = TabNavigator(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
+            guard let tabs = TabNavigator(from: blockDirective, for: inputs, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             if let defaultLanguage = context.sourceLanguages(for: identifier).first?.name,
@@ -402,7 +403,7 @@ extension MarkdownOutputMarkupWalker {
                 }
             }
         case Snippet.directiveName:
-            guard let snippet = Snippet(from: blockDirective, for: bundle, featureFlags: context.configuration.featureFlags) else {
+            guard let snippet = Snippet(from: blockDirective, for: inputs, featureFlags: context.configuration.featureFlags) else {
                 return
             }
             guard case .success(let resolved) = context.snippetResolver.resolveSnippet(path: snippet.path) else {

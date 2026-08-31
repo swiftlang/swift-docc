@@ -8,16 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-import FoundationXML
-import FoundationEssentials
-#else
-import Foundation
-#endif
-
+import struct Foundation.URL
 import SwiftDocC
-private import DocCHTML
+import DocCHTML
 
 // I'm not convinced that this is the best long-term design for HTML as a primary output format.
 // It currently exist because the consumers are created in the DocCCommandLine target but the core logic is in SwiftDocC.
@@ -25,8 +18,8 @@ private import DocCHTML
 struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     let _isPrimaryOutputFormat = true
     
-    private let customHeader: XMLNode?
-    private let customFooter: XMLNode?
+    private let customHeader: HTMLNode?
+    private let customFooter: HTMLNode?
     private let prettyPrint: Bool
     
     // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
@@ -50,7 +43,7 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     }
     
     func consume(
-        mainContent: XMLNode,
+        mainContent: HTMLNode,
         metadata: (title: String, description: String?),
         forPage reference: ResolvedTopicReference
     ) throws {

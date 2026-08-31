@@ -290,6 +290,56 @@ struct MarkdownOutputTests {
     }
     
     @Test
+    func curatedSymbolUsesSubheadingAsLinkTitle() async throws {
+        let catalog = catalog(files: [
+            JSONFile(
+                name: "MarkdownOutput.symbols.json",
+                content:
+                    makeSymbolGraph(
+                        moduleName: "MarkdownOutput",
+                        symbols: [
+                            makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                            makeSymbol(
+                                id: "markdown-symbol-var-id",
+                                kind: .property,
+                                pathComponents: ["MarkdownSymbol", "property"],
+                                docComment: "A property of the symbol",
+                                declaration: [
+                                    .init(kind: .attribute, spelling: "@objc", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .keyword, spelling: "var", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .identifier, spelling: "property", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                                    .init(kind: .text, spelling: " { ", preciseIdentifier: nil),
+                                    .init(kind: .keyword, spelling: "get", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .keyword, spelling: "set", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " }", preciseIdentifier: nil),
+                                ],
+                                subHeading: [
+                                    .init(kind: .keyword, spelling: "var", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .identifier, spelling: "property", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                                ]
+                            )
+                        ],
+                        relationships: [
+                            .init(source: "markdown-symbol-var-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil),
+                        ]
+                    )
+            )
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        #expect(node.markdown.contains("[`var property: Int`](/documentation/MarkdownOutput/MarkdownSymbol/property"))
+        #expect(node.markdown.contains("@objc var property: Int { get set }") == false)
+    }
+    
+    @Test
     func linkTitlesAreRetained() async throws {
         let catalog = catalog(files: [
             TextFile(name: "RootDocument.md", utf8Content: """
@@ -903,14 +953,24 @@ struct MarkdownOutputTests {
                             """),
                         makeSymbol(id: "markdown-symbol-my-function-id", kind: .method, pathComponents: ["MarkdownSymbol", "myFunction(_:)"], docComment: """
                     Everything is described in the abstract.
-                    
+
                     - Parameters:
-                      - arg: The first argument. 
-                    
+                      - arg: The first argument.
+
                     @Comment {
                         This should be removed, but should not lead to a discussion heading.
                     }
-                    """)
+                    """),
+                        // A symbol with no children, so that no automatic curation is added to it.
+                        makeSymbol(id: "childless-symbol-id", kind: .struct, pathComponents: ["ChildlessSymbol"], docComment: """
+                            Abstract.
+
+                            These headings are `Section`s with no content, so they should not appear.
+
+                            ## Topics
+
+                            ## See Also
+                            """)
                     ],
                     relationships: [
                         .init(source: "markdown-symbol-my-function-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil)
@@ -920,17 +980,316 @@ struct MarkdownOutputTests {
         let (functionNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/myFunction(_:)")
         #expect(functionNode.markdown.contains("## Parameters"))
         #expect(functionNode.markdown.contains("## Discussion") == false)
-        
+
         let (structNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         #expect(structNode.markdown.contains("## Overview"))
         #expect(structNode.markdown.contains("## Random heading"))
-        #expect(structNode.markdown.contains("## Topics") == false)
         #expect(structNode.markdown.contains("## See Also") == false)
+
+        // `MarkdownSymbol` has a member, so its "Topics" section is filled in by automatic curation. A symbol with no
+        // children has nothing to curate, so its empty authored section is not given a heading.
+        let (childlessNode, _) = try await markdownOutput(catalog: catalog, path: "ChildlessSymbol")
+        #expect(childlessNode.markdown.contains("## Topics") == false)
+        #expect(childlessNode.markdown.contains("## See Also") == false)
     }
     
+    // MARK: - Automatic curation
+
+    // The render JSON equivalent of this test is `AutomaticCurationTests.testAutomaticTopicsGenerationForSameModuleTypes`,
+    // which asserts that uncurated members appear in generated `topicSections` named after their symbol kind.
+    // The group order matches `AutomaticCuration.groupKindOrder`.
+    @Test
+    func automaticTopicGroupsAreIncludedForSymbols() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: "A class with members that aren't manually curated."),
+                    makeSymbol(id: "some-init-id", kind: .`init`, pathComponents: ["SomeClass", "init()"], docComment: "The initializer abstract."),
+                    makeSymbol(id: "some-property-id", kind: .property, pathComponents: ["SomeClass", "someProperty"], docComment: "The property abstract."),
+                    makeSymbol(id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod()"], docComment: "The method abstract."),
+                ],
+                relationships: [
+                    .init(source: "some-init-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                    .init(source: "some-property-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                    .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                ]
+            ))
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SomeClass")
+        let markdown = node.markdown
+
+        #expect(markdown.contains("## Topics"))
+
+        // Each member is curated in a generated group named after its symbol kind.
+        let initializersHeading = try #require(markdown.range(of: "### \(AutomaticCuration.groupTitle(for: .`init`))"))
+        let propertiesHeading = try #require(markdown.range(of: "### \(AutomaticCuration.groupTitle(for: .property))"))
+        let methodsHeading = try #require(markdown.range(of: "### \(AutomaticCuration.groupTitle(for: .method))"))
+
+        // The groups are ordered by `AutomaticCuration.groupKindOrder`: initializers, then properties, then methods.
+        #expect(initializersHeading.lowerBound < propertiesHeading.lowerBound)
+        #expect(propertiesHeading.lowerBound < methodsHeading.lowerBound)
+
+        // Each group links to its member and displays that member's abstract, like an authored link list does.
+        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/init()"))
+        #expect(markdown.contains("The initializer abstract."))
+
+        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/someProperty"))
+        #expect(markdown.contains("The property abstract."))
+
+        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/someMethod()"))
+        #expect(markdown.contains("The method abstract."))
+    }
+
+    // The render JSON equivalent is `RenderNodeTranslatorTests.testAutomaticTaskGroupsOrderingInSymbols`,
+    // which asserts that the authored task groups are listed before the generated ones.
+    @Test
+    func automaticTopicGroupsFollowAuthoredTopicGroups() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: "A class with a mix of manual and automatic curation."),
+                    makeSymbol(id: "curated-method-id", kind: .method, pathComponents: ["SomeClass", "curatedMethod()"], docComment: "The manually curated method."),
+                    makeSymbol(id: "uncurated-property-id", kind: .property, pathComponents: ["SomeClass", "uncuratedProperty"], docComment: "The uncurated property."),
+                ],
+                relationships: [
+                    .init(source: "curated-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                    .init(source: "uncurated-property-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                ]
+            )),
+            TextFile(name: "SomeClass.md", utf8Content: """
+                # ``MarkdownOutput/SomeClass``
+
+                Curate one member manually and leave the other to automatic curation.
+
+                ## Topics
+
+                ### Basics
+
+                - ``curatedMethod()``
+                """)
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SomeClass")
+        let markdown = node.markdown
+
+        // A single `## Topics` heading covers both the authored and the generated groups.
+        #expect(markdown.components(separatedBy: "## Topics").count - 1 == 1)
+
+        let authoredHeading = try #require(markdown.range(of: "### Basics"))
+        let generatedHeading = try #require(markdown.range(of: "### \(AutomaticCuration.groupTitle(for: .property))"))
+        #expect(authoredHeading.lowerBound < generatedHeading.lowerBound)
+    }
+
+    // The render JSON equivalent is `AutomaticCurationTests.testAutomaticTopicsSkippingCustomCuratedSymbols`,
+    // which asserts that manually curated members are not curated a second time by automatic curation.
+    @Test
+    func manuallyCuratedMembersAreNotAutomaticallyCurated() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: "A class where every member is manually curated."),
+                    makeSymbol(id: "first-method-id", kind: .method, pathComponents: ["SomeClass", "firstMethod()"], docComment: "The first method."),
+                    makeSymbol(id: "second-method-id", kind: .method, pathComponents: ["SomeClass", "secondMethod()"], docComment: "The second method."),
+                ],
+                relationships: [
+                    .init(source: "first-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                    .init(source: "second-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                ]
+            )),
+            TextFile(name: "SomeClass.md", utf8Content: """
+                # ``MarkdownOutput/SomeClass``
+
+                Curate one of the two members manually.
+
+                ## Topics
+
+                ### Basics
+
+                - ``firstMethod()``
+                """)
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SomeClass")
+        let markdown = node.markdown
+
+        // The manually curated member is listed once, under the authored group only.
+        #expect(markdown.components(separatedBy: "/documentation/MarkdownOutput/SomeClass/firstMethod()").count - 1 == 1)
+
+        // The uncurated member is automatically curated.
+        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/secondMethod()"))
+    }
+
+    // Articles that aren't manually curated are collected into an "Articles" task group with a `.top`
+    // render position preference. See `DocumentationContext.autoCurateArticles(_:startingFrom:)`, and the
+    // render JSON equivalent `AutomaticCurationTests.testAutomaticallyCuratedArticlesAreSortedByTitle`.
+    @Test
+    func automaticArticleGroupIsIncludedForModulePage() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"], docComment: "A top level symbol."),
+                ]
+            )),
+            TextFile(name: "UncuratedArticle.md", utf8Content: """
+                # An Uncurated Article
+
+                This article isn't curated anywhere, so it's automatically curated under the module.
+                """)
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/MarkdownOutput")
+        let markdown = node.markdown
+
+        #expect(markdown.contains("## Topics"))
+
+        // The "Articles" group is placed before the generated symbol-kind groups.
+        let articlesHeading = try #require(markdown.range(of: "### Articles"))
+        let structuresHeading = try #require(markdown.range(of: "### \(AutomaticCuration.groupTitle(for: .struct))"))
+        #expect(articlesHeading.lowerBound < structuresHeading.lowerBound)
+
+        #expect(markdown.contains("/documentation/MarkdownOutput/UncuratedArticle"))
+        #expect(markdown.contains("/documentation/MarkdownOutput/SomeStruct"))
+    }
+
+    // Default implementations are collected into a generated "<Protocol> Implementations" API collection page
+    // by `GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(relationships:context:)`. That page is an
+    // article whose members come from `automaticTaskGroups`. The render JSON equivalent is
+    // `RenderNodeTranslatorTests.testOrderingOfAutomaticGroupsInDefiningProtocol`.
+    @Test
+    func automaticTopicGroupsAreIncludedForGeneratedAPICollections() async throws {
+        var inheritedMemberRelationship = SymbolGraph.Relationship(
+            source: "conformer-method-id",
+            target: "conformer-id",
+            kind: .memberOf,
+            targetFallback: nil
+        )
+        inheritedMemberRelationship.mixins["sourceOrigin"] = SymbolGraph.Relationship.SourceOrigin(
+            identifier: "protocol-method-id",
+            displayName: "SomeProtocol.someMethod()"
+        )
+
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "protocol-id", kind: .protocol, pathComponents: ["SomeProtocol"], docComment: "A protocol with a default implementation."),
+                    makeSymbol(id: "protocol-method-id", kind: .method, pathComponents: ["SomeProtocol", "someMethod()"], docComment: "The protocol requirement."),
+                    makeSymbol(id: "conformer-id", kind: .struct, pathComponents: ["Conformer"], docComment: "A type that conforms to the protocol."),
+                    // The inherited member needs Swift extension information for it to be collected into an API collection.
+                    makeSymbol(
+                        id: "conformer-method-id",
+                        kind: .method,
+                        pathComponents: ["Conformer", "someMethod()"],
+                        docComment: "The inherited default implementation.",
+                        otherMixins: [
+                            SymbolGraph.Symbol.Swift.Extension(extendedModule: "MarkdownOutput", typeKind: .struct, constraints: [])
+                        ]
+                    ),
+                ],
+                relationships: [
+                    .init(source: "protocol-method-id", target: "protocol-id", kind: .requirementOf, targetFallback: nil),
+                    .init(source: "conformer-id", target: "protocol-id", kind: .conformsTo, targetFallback: nil),
+                    inheritedMemberRelationship,
+                ]
+            ))
+        ])
+
+        // The conforming type links to the generated collection under a "Default Implementations" group.
+        let (conformerNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer")
+        #expect(conformerNode.markdown.contains("### Default Implementations"))
+        #expect(conformerNode.markdown.contains("/documentation/MarkdownOutput/Conformer/SomeProtocol-Implementations"))
+
+        // The generated collection page lists the inherited member.
+        let (collectionNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer/SomeProtocol-Implementations")
+        #expect(collectionNode.markdown.contains("## Topics"))
+        #expect(collectionNode.markdown.contains("### \(AutomaticCuration.groupTitle(for: .method))"))
+        #expect(collectionNode.markdown.contains("/documentation/MarkdownOutput/Conformer/someMethod()"))
+    }
+
+    // Automatically curated members produce the same `belongsToTopic` manifest relationships as manually
+    // curated ones do in `manifestIncludesRelationshipsForCuratedPages`, anchored on the generated group's heading.
+    @Test
+    func automaticTopicGroupsPopulateManifestRelationships() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: "A class with an uncurated member."),
+                    makeSymbol(id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod()"], docComment: "The method abstract."),
+                ],
+                relationships: [
+                    .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                ]
+            ))
+        ])
+
+        let (_, manifest) = try await markdownOutput(catalog: catalog, path: "SomeClass")
+
+        let expected = MarkdownOutputManifest.Relationship(
+            sourceIdentifier: "/documentation/MarkdownOutput/SomeClass/someMethod()",
+            relationshipType: .belongsToTopic,
+            targetIdentifier: "/documentation/MarkdownOutput/SomeClass#Instance-Methods"
+        )
+        #expect(manifest.relationships.contains(expected))
+    }
+
+    // Render JSON merges a generated group into an authored section with the same title (rdar://61899214).
+    // The markdown output is built as a linear string, so it emits a separate group with the same heading instead.
+    // Both groups anchor to the same fragment, so manifest relationships are unaffected.
+    // The render JSON behavior is covered by
+    // `AutomaticCurationTests.testAutomaticallyCuratedSymbolTopicsAreMergedWithManuallyCuratedTopics`.
+    @Test
+    func automaticGroupWithSameTitleAsAuthoredGroupIsEmittedSeparately() async throws {
+        let topicSectionTitle = AutomaticCuration.groupTitle(for: .method)
+
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: "A class with an authored section that collides with a generated one."),
+                    makeSymbol(id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod()"], docComment: "The uncurated method."),
+                ],
+                relationships: [
+                    .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                ]
+            )),
+            TextFile(name: "SomeArticle.md", utf8Content: """
+                # Some Article
+
+                An article curated under a section named after a symbol kind.
+                """),
+            TextFile(name: "SomeClass.md", utf8Content: """
+                # ``MarkdownOutput/SomeClass``
+
+                Curate an article under a section whose title matches a generated group's title.
+
+                ## Topics
+
+                ### \(topicSectionTitle)
+
+                - <doc:SomeArticle>
+                """)
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SomeClass")
+        let markdown = node.markdown
+
+        // Unlike render JSON, the two groups are not merged into one section.
+        #expect(markdown.components(separatedBy: "### \(topicSectionTitle)").count - 1 == 2)
+
+        // Both the manually curated article and the automatically curated member are listed.
+        #expect(markdown.contains("/documentation/MarkdownOutput/SomeArticle"))
+        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/someMethod()"))
+    }
+
     // MARK: - Metadata
-    
-    @Test 
+
+    @Test
     func metadataForArticleHasArticleTypeAndRole() async throws {
         let catalog = catalog(files: [
             TextFile(name: "ArticleRole.md", utf8Content: """

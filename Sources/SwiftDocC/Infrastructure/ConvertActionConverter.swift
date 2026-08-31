@@ -65,7 +65,7 @@ package enum ConvertActionConverter {
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
 
         // Copy images, sample files, and other static assets.
-        try outputConsumer.consume(assetsInBundle: context.inputs)
+        try outputConsumer.consume(assetsInInputs: context.inputs)
         
         let converter = DocumentationContextConverter(
             context: context,

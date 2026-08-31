@@ -23,7 +23,7 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
         from markupElements: inout [any Markup],
         parentType: Semantic.Type,
         source: URL?,
-        bundle: DocumentationBundle,
+        inputs: DocumentationContext.Inputs,
         featureFlags: FeatureFlags,
         diagnostics: inout [Diagnostic]
     ) -> Directive? {
@@ -36,7 +36,7 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
             return Directive(
                 from: childDirective,
                 source: source,
-                for: bundle,
+                for: inputs,
                 featureFlags: featureFlags,
                 diagnostics: &diagnostics
             )

@@ -327,9 +327,9 @@ extension Docc {
             )
             var defaultCodeListingLanguage: String?
         
-            /// A user-provided fallback display name for the documentation bundle.
+            /// A user-provided fallback display name for the documentation inputs.
             ///
-            /// If the documentation catalogs's Info.plist file contains a bundle display name, the documentation catalog ignores this fallback name.
+            /// If the documentation catalogs's Info.plist file contains a "bundle display name", the documentation catalog ignores this fallback name.
             @Option(
                 name: [.customLong("fallback-display-name"), .customLong("display-name")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback display name if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
@@ -340,14 +340,14 @@ extension Docc {
             )
             var fallbackBundleDisplayName: String?
         
-            /// A user-provided fallback identifier for the documentation bundle.
+            /// A user-provided fallback identifier for the documentation inputs.
             ///
-            /// If the documentation catalogs's Info.plist file contains a bundle identifier, the documentation catalog ignores this fallback identifier.
+            /// If the documentation catalogs's Info.plist file contains a "bundle identifier", the documentation catalog ignores this fallback identifier.
             @Option(
                 name: [.customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback bundle identifier if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
-                If no bundle identifier is provided in the catalogs's Info.plist file or via the '--fallback-bundle-identifier' option, \
-                DocC will infer a bundle identifier from the display name.
+                If no identifier is provided in the catalogs's Info.plist file or via the '--fallback-bundle-identifier' option, \
+                DocC will infer an identifier from the display name.
                 """)
             )
             var fallbackBundleIdentifier: String?
@@ -367,7 +367,7 @@ extension Docc {
                 name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")],
                 help: .hidden
             )
-            @available(*, deprecated, message: "The bundle version isn't used for anything.")
+            @available(*, deprecated, message: "The version isn't used for anything.")
             var _unusedVersionForBackwardsCompatibility: String?
             
             func validate() throws {

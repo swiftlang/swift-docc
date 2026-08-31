@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -39,7 +39,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
 
     // Test the sorting of articles mentioning a given symbol
     func testArticlesMentioningSorting() throws {
-        let bundleID: DocumentationBundle.Identifier = "org.swift.test"
+        let bundleID: DocumentationContext.Inputs.Identifier = "org.swift.test"
         let articles = ["a", "b", "c", "d", "e", "f"].map { letter in
             ResolvedTopicReference(
                 bundleID: bundleID,
@@ -88,18 +88,18 @@ class ArticleSymbolMentionsTests: XCTestCase {
     }
 
     func testSymbolLinkCollectorEnabled() async throws {
-        let (bundle, context) = try await createMentionedInTestBundle()
+        let (_, context) = try await createMentionedInTestBundle()
 
-        // The test bundle currently only has one article with symbol mentions
+        // The test catalog currently only has one article with symbol mentions
         // in the abstract/discussion.
         XCTAssertEqual(1, context.articleSymbolMentions.mentions.count)
 
         let mentioningArticle = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift)
         let mentionedSymbol = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
         
@@ -110,11 +110,11 @@ class ArticleSymbolMentionsTests: XCTestCase {
     }
 
     func testSymbolLinkCollectorDisabled() async throws {
-        let (bundle, context) = try await createMentionedInTestBundle(isFeatureFlagEnabled: false)
+        let (_, context) = try await createMentionedInTestBundle(isFeatureFlagEnabled: false)
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
 

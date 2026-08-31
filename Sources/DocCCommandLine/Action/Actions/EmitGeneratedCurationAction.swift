@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -43,14 +43,14 @@ struct EmitGeneratedCurationAction: AsyncAction {
     
     func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
-        let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
+        let (inputs, dataProvider) = try inputProvider.inputsAndDataProvider(
             startingPoint: catalogURL,
-            options: BundleDiscoveryOptions(
+            options: CatalogDiscoveryOptions(
                 infoPlistFallbacks: [:],
                 additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
             )
         )
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider)
 
         let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: outputURL)
         let curation = try writer.generateDefaultCurationContents(fromSymbol: startingPointSymbolLink, depthLimit: depthLimit)
@@ -69,5 +69,5 @@ private func symbolGraphFiles(in directory: URL?) -> [URL] {
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }
-        .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
+        .filter { DocumentationCatalogFileTypes.isSymbolGraphFile($0) }
 }

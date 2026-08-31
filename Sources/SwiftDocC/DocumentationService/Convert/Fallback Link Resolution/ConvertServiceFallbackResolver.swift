@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,7 +24,7 @@ protocol ConvertServiceFallbackResolver {
     /// The bundle identifier for the fallback resolver.
     ///
     /// The fallback resolver will only resolve links with this bundle identifier.
-    var bundleID: DocumentationBundle.Identifier { get }
+    var bundleID: DocumentationContext.Inputs.Identifier { get }
     
     // MARK: References
     

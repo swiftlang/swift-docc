@@ -30,12 +30,12 @@ extension Semantic.Analyses {
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> ([Child], remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, diagnostics: inout [Diagnostic]) -> ([Child], remainder: MarkupContainer) {
             return Semantic.Analyses.extractAll(
                 childType: Child.self,
                 children: children,
                 source: source,
-                for: bundle,
+                for: inputs,
                 featureFlags: featureFlags,
                 diagnostics: &diagnostics
             ) as! ([Child], MarkupContainer)
@@ -46,7 +46,7 @@ extension Semantic.Analyses {
         childType: any DirectiveConvertible.Type,
         children: some Sequence<any Markup>,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for inputs: DocumentationContext.Inputs,
         featureFlags: FeatureFlags,
         diagnostics: inout [Diagnostic]
     ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {
@@ -58,7 +58,7 @@ extension Semantic.Analyses {
             return childDirective
         }
         let converted = candidates.compactMap {
-            childType.init(from: $0, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+            childType.init(from: $0, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
         return (converted, remainder: MarkupContainer(remainder))
     }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -106,10 +106,10 @@ final class PathHierarchyBasedLinkResolver {
     // MARK: - Adding non-symbols
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
-    func addMappingForRoots(bundle: DocumentationBundle) {
-        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.tutorialsContainerReference
-        resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = bundle.articlesDocumentationRootReference
-        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialTableOfContentsContainer
+    func addMappingForRoots(inputs: DocumentationContext.Inputs) {
+        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = inputs.tutorialsContainerReference
+        resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = inputs.articlesDocumentationRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = inputs.tutorialTableOfContentsContainer
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
@@ -287,7 +287,7 @@ final class PathHierarchyBasedLinkResolver {
                    pathComponents.count == componentsCount
                 {
                     let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
-                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: context.inputs)
+                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, inputs: context.inputs)
                 }
                 
                 guard let path = disambiguatedPaths[uniqueIdentifier] else {

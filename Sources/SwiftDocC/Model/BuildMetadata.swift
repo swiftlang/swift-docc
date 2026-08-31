@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// A value that encapsulates metadata for a documentation bundle that DocC built.
+/// A value that encapsulates metadata for a documentation archive that DocC built.
 public struct BuildMetadata: Codable {
     
     /// The current version of the build metadata schema.
@@ -20,18 +20,18 @@ public struct BuildMetadata: Codable {
         patch: 0
     )
     
-    /// The display name of the documentation bundle that DocC built.
+    /// The display name of the documentation archive that DocC built.
     public var bundleDisplayName: String
     
-    /// The bundle identifier of the documentation bundle that DocC built.
-    public let bundleID: DocumentationBundle.Identifier
+    /// The bundle identifier of the documentation archive that DocC built.
+    public let bundleID: DocumentationContext.Inputs.Identifier
     
-    /// Creates a build metadata value for a documentation bundle built by DocC.
+    /// Creates a build metadata value for a documentation archive built by DocC.
     ///
     /// - Parameters:
-    ///   - bundleDisplayName: The display name of the documentation bundle.
-    ///   - bundleID: The bundle identifier of the documentation bundle.
-    public init(bundleDisplayName: String, bundleID: DocumentationBundle.Identifier) {
+    ///   - bundleDisplayName: The display name of the documentation archive.
+    ///   - bundleID: The bundle identifier of the documentation archive.
+    public init(bundleDisplayName: String, bundleID: DocumentationContext.Inputs.Identifier) {
         self.bundleDisplayName = bundleDisplayName
         self.bundleID = bundleID
     }

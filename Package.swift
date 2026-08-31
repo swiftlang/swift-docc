@@ -1,4 +1,4 @@
-// swift-tools-version:6.0
+// swift-tools-version:6.1
 /*
  This source file is part of the Swift.org open source project
 
@@ -36,6 +36,16 @@ func swiftSettings(_ languageMode: SwiftLanguageMode) -> [SwiftSetting] {
     return settings
 }
 
+// NIOHTTP1 is not available on Windows.
+let NIOPlatforms: [Platform] = [.macOS, .iOS, .linux, .android]
+// The preview server requires NIOHTTP1.
+// Gate it behind a trait so it can be excluded from builds.
+let previewServerTrait = "PreviewServer"
+
+let previewServerSettings: [SwiftSetting] = [
+    .define("PREVIEW_SERVER", .when(platforms: NIOPlatforms, traits: [previewServerTrait]))
+]
+
 let package = Package(
     name: "SwiftDocC",
     platforms: [
@@ -50,7 +60,14 @@ let package = Package(
         .executable(
             name: "docc",
             targets: ["docc"]
-        )
+        ),
+    ],
+    traits: [
+        .trait(
+            name: previewServerTrait,
+            description: "Build the DocC preview server, which depends on SwiftNIO."
+        ),
+        .default(enabledTraits: [previewServerTrait])
     ],
     targets: [
         // SwiftDocC library
@@ -88,11 +105,11 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
+                .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: NIOPlatforms, traits: [previewServerTrait])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
             exclude: ["CMakeLists.txt"],
-            swiftSettings: swiftSettings(.v5)
+            swiftSettings: swiftSettings(.v5) + previewServerSettings
         ),
         .testTarget(
             name: "DocCCommandLineTests",
@@ -106,7 +123,7 @@ let package = Package(
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
             ],
-            swiftSettings: swiftSettings(.v5)
+            swiftSettings: swiftSettings(.v5) + previewServerSettings
         ),
 
         // Test utility library

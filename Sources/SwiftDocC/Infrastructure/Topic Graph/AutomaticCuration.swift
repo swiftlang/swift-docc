@@ -146,7 +146,6 @@ public struct AutomaticCuration {
     /// - Parameters:
     ///   - node: A node for which to generate a See Also group.
     ///   - context: A documentation context.
-    ///   - bundle: A documentation bundle.
     /// - Returns: A group title and the group's references or links.
     ///   `nil` if the method can't find any relevant links to automatically generate a See Also content.
     static func seeAlso(

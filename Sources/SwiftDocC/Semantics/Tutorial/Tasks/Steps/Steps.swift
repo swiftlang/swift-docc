@@ -43,7 +43,7 @@ public final class Steps: Semantic, DirectiveConvertible {
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Steps.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<Steps>(severityIfFound: .warning, allowedArguments: [])
@@ -55,7 +55,7 @@ public final class Steps: Semantic, DirectiveConvertible {
         let stepsContent: [Semantic] = directive.children.compactMap { child -> Semantic? in
             if let directive = child as? BlockDirective,
                 directive.name == Step.directiveName {
-                return Step(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+                return Step(from: directive, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics)
             } else {
                 return MarkupContainer(child)
             }

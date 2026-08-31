@@ -48,7 +48,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { errorMessage in
             XCTFail("No error output is expected for this test executable. Got:\n\(errorMessage)")
         })
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver.id, "com.test.bundle")
     }
     
     private func makeTestSummary() -> (summary: LinkDestinationSummary, imageReference: RenderReferenceIdentifier, imageURLs: (light: URL, dark: URL)) {
@@ -187,7 +187,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
                 
                 resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-                XCTAssertEqual(resolver.bundleID, "com.test.bundle")
+                XCTAssertEqual(resolver.id, "com.test.bundle")
             }
             
             let entity = try XCTUnwrap(requestKind.perform(resolver: resolver))
@@ -297,13 +297,13 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             XCTAssertEqual(errorMessage, "Some error output\n")
             didReadErrorOutputExpectation.fulfill()
         })
-        XCTAssertEqual(resolver?.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver?.id, "com.test.bundle")
         
         wait(for: [didReadErrorOutputExpectation], timeout: 20.0)
     }
     
     func testLinksAndImagesInExternalAbstractAreIncludedInTheRenderedPageReferenecs() async throws {
-        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        let externalBundleID: DocumentationContext.Inputs.Identifier = "com.example.test"
         
         let imageRef = RenderReferenceIdentifier("some-external-card-image-identifier")
         let linkRef = RenderReferenceIdentifier("doc://\(externalBundleID)/path/to/other-page")
@@ -417,7 +417,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
     }
     
     func testExternalLinkFailureResultInDiagnosticWithSolutions() async throws {
-        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        let externalBundleID: DocumentationContext.Inputs.Identifier = "com.example.test"
         
         let resolver: OutOfProcessReferenceResolver
         do {
@@ -511,7 +511,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
     }
     
     func testOnlySendsPathAndFragmentInLinkRequest() async throws {
-        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        let externalBundleID: DocumentationContext.Inputs.Identifier = "com.example.test"
         
         let resolver: OutOfProcessReferenceResolver
         let savedRequestsFile: URL
@@ -671,10 +671,10 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
         
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
+        XCTAssertEqual(resolver.id, "com.test.bundle")
         
         if case .failure(_, let errorInfo) = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingAuthoredLink: "doc://com.test.bundle/something")!))) {
-            XCTAssertEqual(errorInfo.message, "Executable sent bundle identifier message again, after it was already received.")
+            XCTAssertEqual(errorInfo.message, "Executable sent identifier message again, after it was already received.")
         } else {
             XCTFail("Unexpectedly resolved the link from an identifier and capabilities response")
         }
@@ -713,7 +713,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
                 
                 resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-                XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
+                XCTAssertEqual(resolver.id, "com.test.bundle", file: file, line: line)
             }
 
             let (_, symbolEntity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")

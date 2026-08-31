@@ -94,12 +94,12 @@ extension AutomaticDirectiveConvertible {
     /// - Parameters:
     ///   - directive: The block directive that will be parsed
     ///   - source: An optional URL for the source location where this directive is written.
-    ///   - bundle: The documentation bundle that owns the directive.
+    ///   - inputs: The collection of build inputs that the directive's markup belongs to.
     ///   - featureFlags: A collection of feature flags.
     public init?(
         from directive: BlockDirective,
         source: URL? = nil,
-        for bundle: DocumentationBundle,
+        for inputs: DocumentationContext.Inputs,
         featureFlags: FeatureFlags
     ) {
         var diagnostics = [Diagnostic]()
@@ -107,7 +107,7 @@ extension AutomaticDirectiveConvertible {
         self.init(
             from: directive,
             source: source,
-            for: bundle,
+            for: inputs,
             featureFlags: featureFlags,
             diagnostics: &diagnostics
         )
@@ -116,7 +116,7 @@ extension AutomaticDirectiveConvertible {
     public init?(
         from directive: BlockDirective,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for inputs: DocumentationContext.Inputs,
         featureFlags: FeatureFlags,
         diagnostics: inout [Diagnostic]
     ) {
@@ -147,7 +147,7 @@ extension AutomaticDirectiveConvertible {
                 allowedValues: reflectedArgument.allowedValues,
                 expectedFormat: reflectedArgument.expectedFormat,
                 convert: { argumentValue in
-                    return reflectedArgument.parseArgument(bundle, argumentValue)
+                    return reflectedArgument.parseArgument(inputs, argumentValue)
                 },
                 valueTypeDiagnosticName: reflectedArgument.typeDisplayName
             )
@@ -180,7 +180,7 @@ extension AutomaticDirectiveConvertible {
             childType: Comment.self,
             children: remainder,
             source: source,
-            for: bundle,
+            for: inputs,
             featureFlags: featureFlags,
             diagnostics: &diagnostics
         )
@@ -194,7 +194,7 @@ extension AutomaticDirectiveConvertible {
                     parentDirective: directive,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     featureFlags: featureFlags,
                     diagnostics: &diagnostics
                 )
@@ -219,7 +219,7 @@ extension AutomaticDirectiveConvertible {
                     parentDirective: directive,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     featureFlags: featureFlags,
                     diagnostics: &diagnostics
                 )
@@ -243,7 +243,7 @@ extension AutomaticDirectiveConvertible {
                     childType: childDirective.type,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     featureFlags: featureFlags,
                     diagnostics: &diagnostics
                 )
@@ -258,7 +258,7 @@ extension AutomaticDirectiveConvertible {
                     parentDirective: directive,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     featureFlags: featureFlags,
                     diagnostics: &diagnostics
                 )

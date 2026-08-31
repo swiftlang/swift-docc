@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import DocCCommon
 
 class RenderNodeDiffingBundleTests: XCTestCase {
     let testBundleName = "LegacyBundle_DoNotUseInNewTests"
-    let testBundleID: DocumentationBundle.Identifier = "org.swift.docc.example"
+    let testBundleID: DocumentationContext.Inputs.Identifier = "org.swift.docc.example"
     
     func testDiffSymbolFromBundleWithDiscussionSectionRemoved() async throws {
         let pathToSymbol = "/documentation/MyKit"
@@ -300,7 +300,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
     }
     
     func getDiffsFromModifiedDocument(bundleName: String,
-                                      bundleID: DocumentationBundle.Identifier,
+                                      bundleID: DocumentationContext.Inputs.Identifier,
                                       topicReferencePath: String,
                                       modification: @escaping (URL) throws -> ()
     ) async throws -> JSONPatchDifferences {
@@ -313,7 +313,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal))
         
-        // Make copy of the bundle on disk, modify the document, and write it
+        // Make copy of the catalog on disk, modify the document, and write it
         let (_, _, contextModified) = try await testBundleAndContext(copying: bundleName) { url in
             try modification(url)
         }

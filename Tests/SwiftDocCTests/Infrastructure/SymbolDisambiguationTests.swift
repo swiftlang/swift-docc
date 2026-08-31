@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -191,7 +191,7 @@ class SymbolDisambiguationTests: XCTestCase {
     func testMixedLanguageFramework() async throws {
         let (inputs, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         
-        var loader = SymbolGraphLoader(bundle: inputs, dataProvider: context.dataProvider, shouldCreateOverloadGroups: false)
+        var loader = SymbolGraphLoader(inputs: inputs, dataProvider: context.dataProvider, shouldCreateOverloadGroups: false)
         try loader.loadAll()
         
         let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, context: context).mapValues(\.path)
@@ -321,8 +321,8 @@ class SymbolDisambiguationTests: XCTestCase {
         let uniqueSymbolCount = Set(swiftSymbols.map(\.preciseID) + objectiveCSymbols.map(\.preciseID)).count
         XCTAssertEqual(unified.symbols.count, uniqueSymbolCount)
         
-        let inputs = DocumentationBundle(
-            info: DocumentationBundle.Info(
+        let inputs = DocumentationContext.Inputs(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "SymbolDisambiguationTests",
                 id: "com.test.SymbolDisambiguationTests"),
             symbolGraphURLs: [swiftSymbolGraphURL, objcSymbolGraphURL],
@@ -335,7 +335,7 @@ class SymbolDisambiguationTests: XCTestCase {
             objcSymbolGraphURL: try JSONEncoder().encode(graph2),
         ], fallback: nil)
         
-        let context = try await DocumentationContext(bundle: inputs, dataProvider: provider)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: provider)
         
         return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], context: context)
     }

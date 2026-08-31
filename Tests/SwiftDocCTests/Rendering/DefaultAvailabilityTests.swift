@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,8 +19,8 @@ class DefaultAvailabilityTests: XCTestCase {
 
     // Test whether missing default availability key correctly produces nil availability
     func testBundleWithoutDefaultAvailability() async throws {
-        let bundle = try await testBundle(named: "BundleWithoutAvailability")
-        XCTAssertNil(bundle.info.defaultAvailability)
+        let catalog = try await testBundle(named: "BundleWithoutAvailability")
+        XCTAssertNil(catalog.info.defaultAvailability)
     }
 
     // Test resource with default availability included
@@ -35,7 +35,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is loaded from Info.plist and applied during render time
     func testBundleWithDefaultAvailability() async throws {
         // Copy an Info.plist with default availability
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { (url) in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
             
@@ -56,9 +56,9 @@ class DefaultAvailabilityTests: XCTestCase {
             try myKitDocExtension.write(to: myKitDocExtensionFile, atomically: true, encoding: .utf8)
         }
         
-        // Verify the bundle has loaded the default availability
+        // Verify the catalog has loaded the default availability
         XCTAssertEqual(
-            bundle.info.defaultAvailability?
+            context.inputs.info.defaultAvailability?
                 .modules["MyKit"]?
                 .map({ "\($0.platformName.displayName) \($0.introducedVersion ?? "")" })
                 .sorted(),
@@ -66,7 +66,7 @@ class DefaultAvailabilityTests: XCTestCase {
         )
         
         // Bail the rendering part of the test if the availability hasn't been loaded
-        guard bundle.info.defaultAvailability != nil else {
+        guard context.inputs.info.defaultAvailability != nil else {
             return
         }
         
@@ -235,7 +235,7 @@ class DefaultAvailabilityTests: XCTestCase {
     /// verifies that `DefaultAvailability` is correctly initialized with only **one** Mac
     /// Catalyst `ModuleAvailability`.
     ///
-    /// It used to be that if a bundle include "Mac Catalyst" in it's default availabilities , the ``ModuleAvailability``
+    /// It used to be that if a catalog include "Mac Catalyst" in it's default availabilities , the ``ModuleAvailability``
     /// instances that were created would include an extra Mac Catalyst entry, where the ``PlatformName``s of
     /// the modules looked like this:
     ///
@@ -332,14 +332,14 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test that setting default availability doesn't prevent symbols with "universal" deprecation
     // (i.e. a platform of '*' and unconditional deprecation) from showing up as deprecated.
     func testUniversalDeprecationWithDefaultAvailability() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: []) { (url) in
+        let (_, _, context) = try await testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
         
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -354,7 +354,7 @@ class DefaultAvailabilityTests: XCTestCase {
             return
         }
         
-        // even though the doc bundle includes default availability, the blanket deprecation on `doUncoolThings(with:)` should still be visible
+        // even though the catalog includes default availability, the blanket deprecation on `doUncoolThings(with:)` should still be visible
         let expected: [RenderInlineContent] = [
             .text("This class is deprecated."),
         ]
@@ -412,7 +412,7 @@ class DefaultAvailabilityTests: XCTestCase {
             </plist>
             """
         
-        let decodedInfo = try DocumentationBundle.Info(from: Data(infoPlist.utf8))
+        let decodedInfo = try DocumentationContext.Inputs.Info(from: Data(infoPlist.utf8))
         let reEncodedInfo = try PropertyListEncoder().encode(decodedInfo.defaultAvailability)
         let defaultAvailability = try PropertyListDecoder().decode(
             DefaultAvailability.self,

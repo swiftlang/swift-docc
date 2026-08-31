@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -45,12 +45,12 @@ func load(
     defer {
         diagnosticEngine.flush() // Write to the logOutput
     }
-    return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+    return try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
 
 func makeEmptyContext(configuration: DocumentationContext.Configuration = .init()) async throws -> DocumentationContext {
-    let bundle = DocumentationBundle(
-        info: DocumentationBundle.Info(
+    let inputs = DocumentationContext.Inputs(
+        info: DocumentationContext.Inputs.Info(
             displayName: "Test",
             id: "com.example.test"
         ),
@@ -60,7 +60,7 @@ func makeEmptyContext(configuration: DocumentationContext.Configuration = .init(
         miscResourceURLs: []
     )
     
-    return try await DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []), configuration: configuration)
+    return try await DocumentationContext(inputs: inputs, dataProvider: TestFileSystem(folders: []), configuration: configuration)
 }
 
 // MARK: Using the real file system
@@ -77,7 +77,7 @@ func makeEmptyContext(configuration: DocumentationContext.Configuration = .init(
 /// - Returns: The loaded documentation context for the given catalog input.
 func loadFromDisk(
     catalogURL: URL,
-    externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
+    externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:],
     externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
     fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
     diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
@@ -92,7 +92,7 @@ func loadFromDisk(
     let (inputs, dataProvider) = try DocumentationContext.InputsProvider()
         .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
     
-    return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+    return try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
 
 /// Loads a documentation catalog for a test fixture with the given catalog name from the real file system and creates a documentation context.
@@ -105,7 +105,7 @@ func loadFromDisk(
 /// - Returns: The loaded documentation context for the given catalog input.
 func loadFromDisk(
     catalogName: String,
-    externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
+    externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:],
     fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
     configuration: DocumentationContext.Configuration = .init(),
     sourceLocation: Testing.SourceLocation = #_sourceLocation

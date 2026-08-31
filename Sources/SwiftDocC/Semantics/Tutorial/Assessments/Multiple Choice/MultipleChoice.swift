@@ -60,7 +60,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == MultipleChoice.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<MultipleChoice>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
@@ -79,7 +79,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         }
         
         let choices: [Choice]
-        (choices, remainder) = Semantic.Analyses.ExtractAll<Choice>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (choices, remainder) = Semantic.Analyses.ExtractAll<Choice>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
         if choices.count < 2 || choices.count > 4 {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).CorrectNumberOfChoices", summary: "`\(MultipleChoice.directiveName)` should contain 2-4 `\(Choice.directiveName)` child directives")
@@ -121,7 +121,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         }
         
         let images: [ImageMedia]
-        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>(featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
         if images.count > 1 {
             for extraneousImage in images.suffix(from: 1) {

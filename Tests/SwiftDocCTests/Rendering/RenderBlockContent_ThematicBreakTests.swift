@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -39,9 +39,9 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (bundle, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
@@ -66,9 +66,9 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (bundle, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
@@ -96,9 +96,9 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 6)
         
-        let (bundle, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [

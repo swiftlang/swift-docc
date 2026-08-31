@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ import DocCTestUtilities
 import DocCCommon
 
 class ConvertServiceTests: XCTestCase {
-    private let testBundleInfo = DocumentationBundle.Info(
+    private let testBundleInfo = DocumentationContext.Inputs.Info(
         displayName: "TestBundle",
         id: "identifier"
     )
@@ -1676,7 +1676,7 @@ class ConvertServiceTests: XCTestCase {
         """)
         #else
         let (testBundleURL, _, _) = try await testBundleAndContext(
-            // Use a bundle that contains only articles, one of which is declared as the TechnologyRoot and curates the
+            // Use a catalog that contains only articles, one of which is declared as the TechnologyRoot and curates the
             // other articles.
             copying: "BundleWithTechnologyRoot"
         )
@@ -2369,7 +2369,7 @@ class ConvertServiceTests: XCTestCase {
             markupFiles: [],
             miscResourceURLs: []
         )
-        XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the bundle IDs are different.")
+        XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the IDs are different.")
         
         let requestWithSameBundleID = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something"),
@@ -2483,7 +2483,7 @@ private extension ConvertServiceTests {
 }
 
 struct ConvertServiceProseNameTests {
-    private let testBundleInfo = DocumentationBundle.Info(displayName: "TestBundle", id: "identifier")
+    private let testBundleInfo = DocumentationContext.Inputs.Info(displayName: "TestBundle", id: "identifier")
 
     @Test
     func convertResponseUsesProseNameForSymbolReference() async throws {

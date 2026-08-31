@@ -63,7 +63,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Resources.directiveName)
         
         var remainder: [any Markup]
@@ -85,7 +85,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+            return Redirect(from: childDirective, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
         
         let tiles: [Tile]
@@ -93,7 +93,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard let childDirective = child as? BlockDirective, Tile.DirectiveNames(rawValue: childDirective.name) != nil else {
                 return nil
             }
-            return Tile(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+            return Tile(from: childDirective, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
         
         var seenTileDirectiveNames = Set<String>()

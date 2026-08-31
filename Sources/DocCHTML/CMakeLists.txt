@@ -24,8 +24,8 @@ add_library(DocCHTML STATIC
   MarkdownRenderer+Topics.swift
   MarkdownRenderer.swift
   StaticResources.swift
-  WordBreak.swift
-  XMLNode+element.swift)
+  SourceLanguage+Attribute.swift
+  WordBreak.swift)
 target_link_libraries(DocCHTML PRIVATE
   DocCCommon)
 target_link_libraries(DocCHTML PUBLIC

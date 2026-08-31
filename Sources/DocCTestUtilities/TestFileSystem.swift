@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,17 +12,17 @@ package import Foundation
 import XCTest
 import SwiftDocC
 
-/// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
+/// A data provider and file manager that accepts pre-built documentation catalogs with files on the local filesystem.
 ///
 /// `TestFileSystem` is a file manager that keeps a directory structure in memory including the file data
 /// for fast access without hitting the disk. When you create an instance pass all folders to the initializer like so:
 /// ```swift
-/// let bundle = Folder(name: "unit-test.docc", content: [
+/// let catalog = Folder(name: "unit-test.docc", content: [
 ///   ... files ...
 /// ])
 ///
 /// let testDataProvider = try TestFileSystem(
-///   folders: [bundle, Folder.emptyHTMLTemplateDirectory]
+///   folders: [catalog, Folder.emptyHTMLTemplateDirectory]
 /// )
 /// ```
 /// This will create or copy from disk the `folders` list and you can use the data provider

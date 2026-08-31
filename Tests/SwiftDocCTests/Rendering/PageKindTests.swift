@@ -17,9 +17,9 @@ import DocCCommon
 class PageKindTests: XCTestCase {
     
     private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) async throws -> RenderNode {
-        let (bundle, context) = try await testBundleAndContext(named: bundleName)
+        let (_, context) = try await testBundleAndContext(named: bundleName)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: resolvedTopicPath,
             sourceLanguage: .swift
         )

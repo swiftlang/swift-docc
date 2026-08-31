@@ -47,12 +47,12 @@ extension ConvertAction {
         // into a dictionary. This will throw with a descriptive error upon failure.
         let parsedPlatforms = try PlatformArgumentParser.parse(convert.availabilityOptions.platforms)
 
-        let bundleDiscoveryOptions = convert.bundleDiscoveryOptions
+        let catalogDiscoveryOptions = convert.catalogDiscoveryOptions
         
         // The `preview` and `convert` action defaulting to the current working directory is only supported
         // when running `docc preview` and `docc convert` without any of the fallback options.
         let documentationBundleURL: URL?
-        if bundleDiscoveryOptions.infoPlistFallbacks.isEmpty {
+        if catalogDiscoveryOptions.infoPlistFallbacks.isEmpty {
             documentationBundleURL = convert.inputsAndOutputs.documentationCatalog.urlOrFallback
         } else {
             documentationBundleURL = convert.inputsAndOutputs.documentationCatalog.url
@@ -73,7 +73,7 @@ extension ConvertAction {
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
+            catalogDiscoveryOptions: catalogDiscoveryOptions,
             diagnosticLevel: convert.diagnosticOptions.diagnosticLevel,
             diagnosticFilePath: convert.diagnosticOptions.diagnosticsOutputPath,
             formatConsoleOutputForTools: convert.diagnosticOptions.formatConsoleOutputForTools,
@@ -95,10 +95,10 @@ extension ConvertAction {
 }
 
 package extension Docc.Convert {
-    var bundleDiscoveryOptions: BundleDiscoveryOptions {
+    var catalogDiscoveryOptions: CatalogDiscoveryOptions {
         let additionalSymbolGraphFiles = symbolGraphFiles(in: inputsAndOutputs.additionalSymbolGraphDirectory)
         
-        return BundleDiscoveryOptions(
+        return CatalogDiscoveryOptions(
             fallbackDisplayName: infoPlistFallbacks.fallbackBundleDisplayName,
             fallbackIdentifier: infoPlistFallbacks.fallbackBundleIdentifier,
             fallbackDefaultCodeListingLanguage: infoPlistFallbacks.defaultCodeListingLanguage,
@@ -113,5 +113,5 @@ private func symbolGraphFiles(in directory: URL?) -> [URL] {
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }
-        .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
+        .filter { DocumentationCatalogFileTypes.isSymbolGraphFile($0) }
 }

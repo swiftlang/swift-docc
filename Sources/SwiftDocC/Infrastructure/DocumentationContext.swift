@@ -137,7 +137,7 @@ public class DocumentationContext {
     /// references for lookup.
     var documentationCache = LocalCache()
     /// The asset managers for each documentation bundle, keyed by the bundle's identifier.
-    var assetManagers = [DocumentationBundle.Identifier: DataAssetManager]()
+    var assetManagers = [DocumentationContext.Inputs.Identifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
     
@@ -213,13 +213,13 @@ public class DocumentationContext {
     /// Initializes a documentation context with a given `bundle`.
     ///
     /// - Parameters:
-    ///   - bundle: The bundle to register with the context.
+    ///   - inputs: The inputs to register with the context.
     ///   - fileManager: The file manager that the context uses to read files from the bundle.
     ///   - diagnosticEngine: The pre-configured engine that will collect diagnostics encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
     /// - Throws: If an error is encountered while registering a documentation bundle.
     package init(
-        bundle inputs: DocumentationBundle,
+        inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
@@ -248,7 +248,7 @@ public class DocumentationContext {
     ///   - engine: The diagnostic engine to report about any issue encountered during analysis.
     /// - Returns: The result of the semantic analysis.
     private func analyze(_ document: Document, at source: URL, engine: DiagnosticEngine) -> Semantic? {
-        var analyzer = SemanticAnalyzer(source: source, bundle: inputs, featureFlags: configuration.featureFlags)
+        var analyzer = SemanticAnalyzer(source: source, inputs: inputs, featureFlags: configuration.featureFlags)
         let result = analyzer.visit(document)
         engine.emit(analyzer.diagnostics)
         return result
@@ -350,11 +350,11 @@ public class DocumentationContext {
         // If there are no external resolvers added we will not resolve any links.
         guard !configuration.externalDocumentationConfiguration.sources.isEmpty else { return }
         
-        let collectedExternalLinks = Synchronized([DocumentationBundle.Identifier: Set<UnresolvedTopicReference>]())
+        let collectedExternalLinks = Synchronized([DocumentationContext.Inputs.Identifier: Set<UnresolvedTopicReference>]())
         semanticObjects.concurrentPerform { _, semantic in
             autoreleasepool {
                 // Walk the node and extract external link references.
-                var externalLinksCollector = ExternalReferenceWalker(localBundleID: inputs.id)
+                var externalLinksCollector = ExternalReferenceWalker(localID: inputs.id)
                 externalLinksCollector.visit(semantic)
 
                 // Avoid any synchronization overhead if there are no references to add.
@@ -784,7 +784,7 @@ public class DocumentationContext {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.
             let (url, analyzed) = analyzedDocument
 
-            let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: inputs)
+            let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, inputs: inputs)
             var reference = ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguage: .swift)
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
@@ -936,7 +936,7 @@ public class DocumentationContext {
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
             engine: diagnosticEngine,
-            bundle: inputs,
+            inputs: inputs,
             featureFlags: configuration.featureFlags
         )
 
@@ -1104,7 +1104,7 @@ public class DocumentationContext {
                             kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                             mixins: [:])
                     let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguages: moduleInterfaceLanguages, defaultSymbol: moduleSymbol)
-                    moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: inputs)
+                    moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, inputs: inputs)
                     
                     signposter.withIntervalSignpost("Add symbols to topic graph", id: signposter.makeSignpostID()) {
                         addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference)
@@ -1655,7 +1655,7 @@ public class DocumentationContext {
         try assetManagers[inputs.id, default: DataAssetManager()].register(data: miscResources)
     }
     
-    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleID: DocumentationContext.Inputs.Identifier) -> [DataAsset] {
         guard let resources = assetManagers[bundleID]?.storage.values else {
             return []
         }
@@ -1676,7 +1676,7 @@ public class DocumentationContext {
     ///
     /// - Parameter bundleID: The identifier of the bundle to return image assets for.
     /// - Returns: A list of all the image assets for the given bundle.
-    public func registeredImageAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+    public func registeredImageAssets(for bundleID: DocumentationContext.Inputs.Identifier) -> [DataAsset] {
         registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleID)
     }
     
@@ -1684,7 +1684,7 @@ public class DocumentationContext {
     ///
     /// - Parameter bundleID: The identifier of the bundle to return video assets for.
     /// - Returns: A list of all the video assets for the given bundle.
-    public func registeredVideoAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+    public func registeredVideoAssets(for bundleID: DocumentationContext.Inputs.Identifier) -> [DataAsset] {
         registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleID)
     }
     
@@ -1692,7 +1692,7 @@ public class DocumentationContext {
     ///
     /// - Parameter bundleID: The identifier of the bundle to return download assets for.
     /// - Returns: A list of all the download assets for the given bundle.
-    public func registeredDownloadsAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+    public func registeredDownloadsAssets(for bundleID: DocumentationContext.Inputs.Identifier) -> [DataAsset] {
         registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleID)
     }
     
@@ -1908,13 +1908,13 @@ public class DocumentationContext {
         for article: DocumentationContext.SemanticResult<Article>,
         availableSourceLanguages: Set<SourceLanguage>? = nil,
         kind: DocumentationNode.Kind,
-        in inputs: DocumentationBundle
+        in inputs: DocumentationContext.Inputs
     ) -> (node: DocumentationNode, title: String)? {
         guard let articleMarkup = article.value.markup else {
             return nil
         }
         
-        let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: inputs)
+        let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, inputs: inputs)
         
         // Use the languages specified by the `@SupportedLanguage` directives if present.
         let availableSourceLanguages = article.value.supportedLanguages ?? availableSourceLanguages
@@ -2008,7 +2008,7 @@ public class DocumentationContext {
         if let bundleFlags = inputs.info.featureFlags {
             for unknownFeatureFlag in bundleFlags.unknownFeatureFlags {
                 let suggestions = NearMiss.bestMatches(
-                    for: DocumentationBundle.Info.BundleFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
+                    for: DocumentationContext.Inputs.Info.CatalogFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
                     against: unknownFeatureFlag)
                 var summary: String = "Unknown feature flag in Info.plist: \(unknownFeatureFlag.singleQuoted)"
                 if !suggestions.isEmpty {
@@ -2025,7 +2025,7 @@ public class DocumentationContext {
         // Load symbol information and construct data structures that only rely on symbol information.
         async let loadSymbols = { [signposter, inputs, dataProvider, configuration] in
             var symbolGraphLoader = SymbolGraphLoader(
-                bundle: inputs,
+                inputs: inputs,
                 dataProvider: dataProvider,
                 shouldCreateOverloadGroups: configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
@@ -2120,7 +2120,7 @@ public class DocumentationContext {
         try shouldContinueRegistration()
         self.linkResolver.localResolver = hierarchyBasedResolver
         self.snippetResolver = snippetResolver
-        hierarchyBasedResolver.addMappingForRoots(bundle: inputs)
+        hierarchyBasedResolver.addMappingForRoots(inputs: inputs)
         for tutorial in tutorials {
             hierarchyBasedResolver.addTutorial(tutorial)
         }
@@ -2999,7 +2999,7 @@ public class DocumentationContext {
         resolveAsset(named: name, bundleID: parent.bundleID, withType: type)
     }
     
-    func resolveAsset(named name: String, bundleID: DocumentationBundle.Identifier, withType expectedType: AssetType?) -> DataAsset? {
+    func resolveAsset(named name: String, bundleID: DocumentationContext.Inputs.Identifier, withType expectedType: AssetType?) -> DataAsset? {
         if let localAsset = assetManagers[bundleID]?.allData(named: name) {
             if let expectedType {
                 guard localAsset.hasVariant(withAssetType: expectedType) else {

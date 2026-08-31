@@ -33,7 +33,7 @@ extension UnifiedSymbolGraph.Symbol {
                 
                 if lhsMatchingPlatformsCount == rhsMatchingPlatformsCount {
                     // If they have the same number of matching platforms, use the hierarchical platform order.
-                    return PlatformName.isInOrder(lhsSelector.platform, rhsSelector.platform)
+                    return PlatformName.areInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
                 }
                 
                 return lhsMatchingPlatformsCount > rhsMatchingPlatformsCount
@@ -43,7 +43,7 @@ extension UnifiedSymbolGraph.Symbol {
                 return false
             default:
                 // Use the hierarchical platform order
-                return PlatformName.isInOrder(lhsSelector.platform, rhsSelector.platform)
+                return PlatformName.areInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
             }
         }.first
     }

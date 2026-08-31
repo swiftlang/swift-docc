@@ -12,9 +12,9 @@ let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
 guard let catalogURL = try inputProvider.findCatalog(startingPoint: startingPoint) else {
     return
 }
-let bundle = try inputProvider.makeInputs(contentOf: catalogURL, options: BundleDiscoveryOptions())
+let inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: BundleDiscoveryOptions())
 
-print("A bundle with ID: \(bundle.identifier)")
+print("A collection of build inputs with ID: \(inputs.identifier)")
 ```
 
 You can also create documentation inputs, without a documentation catalog, from a list of symbol graph files: 
@@ -22,7 +22,7 @@ You can also create documentation inputs, without a documentation catalog, from 
 ```swift
 let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
 
-guard let (bundle, dataProvider) = try inputProvider.makeInputsFromSymbolGraphs(
+guard let (inputs, dataProvider) = try inputProvider.makeInputsFromSymbolGraphs(
     options: BundleDiscoveryOptions(
         additionalSymbolGraphFiles: listOfSymbolGraphLocations
     )
@@ -30,7 +30,7 @@ guard let (bundle, dataProvider) = try inputProvider.makeInputsFromSymbolGraphs(
     return
 }
 
-print("A bundle with ID: \(bundle.identifier)")
+print("A collection of build inputs with ID: \(inputs.identifier)")
 ```
 
 > Note: use the returned `dataProvider` to create a ``DocumentationContext`` from this ``DocumentationBundle``. 
@@ -42,21 +42,21 @@ For this use-case, use the
 ```swift
 let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
 
-let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
+let (inputs, dataProvider) = try inputProvider.inputsAndDataProvider(
     startingPoint: maybeStartingPoint,
     options: BundleDiscoveryOptions(
         additionalSymbolGraphFiles: listOfSymbolGraphLocations
     )
 )
 
-print("A bundle with ID: \(bundle.identifier)")
+print("A collection of build inputs with ID: \(inputs.identifier)")
 ```
 
 ### Bundle Contents
 
-A ``DocumentationBundle`` represents the list of "discovered" input files--categorized by their kind--to use as documentation inputs.
+A ``DocumentationContext/Inputs`` represents the list of "discovered" input files--categorized by their kind--to use as documentation inputs.
 
-Use a ``DataProvider`` that the ``DocumentationContext/InputsProvider`` returned alongside the bundle to read the files in the bundle.
+Use a ``DataProvider`` that the ``DocumentationContext/InputsProvider`` returned alongside the inputs to read the files in those inputs.
 
 ## Topics
 
@@ -65,9 +65,9 @@ Use a ``DataProvider`` that the ``DocumentationContext/InputsProvider`` returned
 - ``DocumentationContext/InputsProvider``
 - ``DocumentationContext/InputsProvider/inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)``
 
-### Documentation Bundle
+### Documentation Inputs
 
-- ``DocumentationBundle``
+- ``DocumentationContext/Inputs``
 - ``BundleIdentifier``
 - ``DocumentationBundleFileTypes``
 
@@ -83,4 +83,4 @@ Use a ``DataProvider`` that the ``DocumentationContext/InputsProvider`` returned
 - ``DefaultAvailability``
 - ``PlatformVersion``
 
-<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2026 Apple Inc and the Swift Project authors. All Rights Reserved. -->

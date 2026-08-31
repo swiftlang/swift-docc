@@ -12,8 +12,8 @@ import Testing
 import Foundation
 @testable import SwiftDocC
 
-struct DocumentationBundleIdentifierTests {
-    private typealias Identifier = DocumentationBundle.Identifier
+struct DocumentationInputsIdentifierTests {
+    private typealias Identifier = DocumentationContext.Inputs.Identifier
     
     @Test(arguments: [
         "com.example.test": "com.example.test",

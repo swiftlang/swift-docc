@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,61 +11,61 @@
 import XCTest
 @testable import SwiftDocC
 
-class DocumentationBundleFileTypesTests: XCTestCase {
+class DocumentationCatalogFileTypesTests: XCTestCase {
     func testIsCustomHeader() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "/header.html")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "header")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "/header.html/foo")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "DocC.docc/header.html")))
     }
 
     func testIsCustomFooter() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "/footer.html")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "footer")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "/footer.html/foo")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "DocC.docc/footer.html")))
     }
 
     func testIsThemeSettingsFile() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isThemeSettingsFile(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isThemeSettingsFile(
             URL(fileURLWithPath: "theme-settings.json")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isThemeSettingsFile(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isThemeSettingsFile(
             URL(fileURLWithPath: "/a/b/theme-settings.json")))
 
-        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isThemeSettingsFile(
             URL(fileURLWithPath: "theme-settings.txt")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isThemeSettingsFile(
             URL(fileURLWithPath: "not-theme-settings.json")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isThemeSettingsFile(
             URL(fileURLWithPath: "/a/theme-settings.json/bar")))
     }
 
     func testIsCustomFavicon() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFavicon(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFavicon(
             URL(fileURLWithPath: "favicon.ico")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFavicon(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFavicon(
             URL(fileURLWithPath: "/favicon.ico")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFavicon(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFavicon(
             URL(fileURLWithPath: "DocC.docc/favicon.ico")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFavicon(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFavicon(
             URL(fileURLWithPath: "favicon")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFavicon(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFavicon(
             URL(fileURLWithPath: "/favicon.ico/foo")))
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ import DocCTestUtilities
 import DocCCommon
 
 class LineHighlighterTests: XCTestCase {
-    static let bundleID: DocumentationBundle.Identifier = "org.swift.docc.LineHighlighterTests"
+    static let bundleID: DocumentationContext.Inputs.Identifier = "org.swift.docc.LineHighlighterTests"
     static let defaultOverview = TextFile(name: "TechnologyX.tutorial", utf8Content: """
         @Technology(name: "TechnologyX") {
            @Intro(title: "Technology X") {
@@ -50,9 +50,9 @@ class LineHighlighterTests: XCTestCase {
     
     func highlights(tutorialFile: TextFile, codeFiles: [TextFile]) async throws -> [LineHighlighter.Result] {
         let catalog = Self.makeCatalog(tutorial: tutorialFile, codeFiles: codeFiles)
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
-        let tutorialReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Line-Highlighter-Tests/Tutorial", fragment: nil, sourceLanguage: .swift)
+        let tutorialReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Line-Highlighter-Tests/Tutorial", fragment: nil, sourceLanguage: .swift)
         let tutorial = try context.entity(with: tutorialReference).semantic as! Tutorial
         let section = tutorial.sections.first!
         return LineHighlighter(context: context, tutorialSection: section, tutorialReference: tutorialReference).highlights

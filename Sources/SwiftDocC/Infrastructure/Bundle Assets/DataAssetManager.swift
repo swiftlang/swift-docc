@@ -43,7 +43,7 @@ struct DataAssetManager {
      Returns all the data objects for a given name, respective of Bundle rules.
      
      If multiple data objects are registered, the first one will be returned in a non-deterministic way.
-     For example if figure1 is asked and the bundle has figure1.png and figure1.jpg, one of the two will be returned.
+     For example if figure1 is asked and the inputs have figure1.png and figure1.jpg, one of the two will be returned.
      
      Returns `nil` if there is no asset registered with the `name` name.
      */
@@ -137,7 +137,7 @@ struct DataAssetManager {
 /// A container for a collection of data that represent multiple ways to describe a single asset.
 ///
 /// Assets can be media files, source code files, or files for download.
-/// A ``DataAsset`` instance represents one bundle asset, which might be represented by multiple files. For example, a single image
+/// A ``DataAsset`` instance represents one asset, which might be represented by multiple files. For example, a single image
 /// asset might have a light and dark variants, and 1x, 2x, and 3x image sizes.
 ///
 /// Each variant of an asset is identified by a ``DataTraitCollection`` and represents the best asset file for the given
@@ -364,10 +364,10 @@ public struct AssetReference: Hashable, Codable {
     public var assetName: String
     
     /// The identifier of the bundle the asset is apart of.
-    public let bundleID: DocumentationBundle.Identifier
+    public let bundleID: DocumentationContext.Inputs.Identifier
     
     /// Creates a reference from a given asset name and the bundle it is apart of.
-    public init(assetName: String, bundleID: DocumentationBundle.Identifier) {
+    public init(assetName: String, bundleID: DocumentationContext.Inputs.Identifier) {
         self.assetName = assetName
         self.bundleID = bundleID
     }

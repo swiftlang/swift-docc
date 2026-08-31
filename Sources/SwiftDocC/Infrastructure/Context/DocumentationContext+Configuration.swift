@@ -36,7 +36,7 @@ extension DocumentationContext {
             /// path components into the documentation context.
             var knownDisambiguatedSymbolPathComponents: [String: [String]]?
             
-            /// Controls whether bundle registration should allow registering articles when no technology root is defined.
+            /// Controls whether input registration should allow registering articles when no technology root is defined.
             ///
             /// Set this property to `true` to enable registering documentation for standalone articles,
             /// for example when using ``ConvertService``.
@@ -75,8 +75,8 @@ extension DocumentationContext {
         
         /// A collection of configuration related to external sources of documentation.
         public struct ExternalDocumentationConfiguration {
-            /// The lookup of external documentation sources by their bundle identifiers.
-            public var sources: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:]
+            /// The lookup of external documentation sources by their source identifiers.
+            public var sources: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:]
             /// A type that resolves all symbols that are referenced in symbol graph files but can't be found in any of the locally available symbol graph files.
             public var globalSymbolResolver: (any GlobalExternalSymbolResolver)?
             /// A list of URLs to documentation archives that the local documentation depends on.

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,7 +25,7 @@ class DocumentationInputsProviderTests: XCTestCase {
                     
                     // This is the catalog that both file system should find
                     Folder(name: "Found.docc", content: [
-                        // This top-level Info.plist will be read for bundle information
+                        // This top-level Info.plist will be read for input's information
                         InfoPlist(displayName: "CustomDisplayName"),
                         
                         // These top-level files will be treated as a custom footer, custom theme, and custom favicon
@@ -79,23 +79,23 @@ class DocumentationInputsProviderTests: XCTestCase {
         
         for fileManager in [FileManager.default as (any FileManagerProtocol), testFileSystem as (any FileManagerProtocol)] {
             let inputsProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
-            let options = BundleDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
+            let options = CatalogDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
                 tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")
             ])
-            let (bundle, _) = try XCTUnwrap(inputsProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
+            let (inputs, _) = try XCTUnwrap(inputsProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
             
             func relativePathString(_ url: URL) -> String {
                 url.relative(to: tempDirectory.appendingPathComponent("/one/two/three"))!.path
             }
             
-            XCTAssertEqual(bundle.displayName, "CustomDisplayName")
-            XCTAssertEqual(bundle.id, "com.example.test")
-            XCTAssertEqual(bundle.markupURLs.map(relativePathString).sorted(), [
+            XCTAssertEqual(inputs.displayName, "CustomDisplayName")
+            XCTAssertEqual(inputs.id, "com.example.test")
+            XCTAssertEqual(inputs.markupURLs.map(relativePathString).sorted(), [
                 "Found.docc/CCC.md",
                 "Found.docc/Inner/DDD.md",
                 "Found.docc/Inner/Nested.docc/EEE.md",
             ])
-            XCTAssertEqual(bundle.miscResourceURLs.map(relativePathString).sorted(), [
+            XCTAssertEqual(inputs.miscResourceURLs.map(relativePathString).sorted(), [
                 "Found.docc/Info.plist",
                 "Found.docc/Inner/Info.plist",
                 "Found.docc/Inner/header.html",
@@ -105,15 +105,15 @@ class DocumentationInputsProviderTests: XCTestCase {
                 "Found.docc/footer.html",
                 "Found.docc/theme-settings.json",
             ])
-            XCTAssertEqual(bundle.symbolGraphURLs.map(relativePathString).sorted(), [
+            XCTAssertEqual(inputs.symbolGraphURLs.map(relativePathString).sorted(), [
                 "../../../path/to/SomethingAdditional.symbols.json",
                 "Found.docc/Inner/SomethingNested.symbols.json",
                 "Found.docc/SomethingTopLevel.symbols.json",
             ])
-            XCTAssertEqual(bundle.customFooter.map(relativePathString), "Found.docc/footer.html")
-            XCTAssertEqual(bundle.customHeader.map(relativePathString), nil)
-            XCTAssertEqual(bundle.themeSettings.map(relativePathString), "Found.docc/theme-settings.json")
-            XCTAssertEqual(bundle.customFavicon.map(relativePathString), "Found.docc/favicon.ico")
+            XCTAssertEqual(inputs.customFooter.map(relativePathString), "Found.docc/footer.html")
+            XCTAssertEqual(inputs.customHeader.map(relativePathString), nil)
+            XCTAssertEqual(inputs.themeSettings.map(relativePathString), "Found.docc/theme-settings.json")
+            XCTAssertEqual(inputs.customFavicon.map(relativePathString), "Found.docc/favicon.ico")
         }
     }
     

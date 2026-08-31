@@ -55,7 +55,7 @@ public final class Step: Semantic, DirectiveConvertible {
         self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(directive.name == Step.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<Step>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
@@ -64,10 +64,10 @@ public final class Step: Semantic, DirectiveConvertible {
         
         var remainder: MarkupContainer
         let optionalMedia: (any Media)?
-        (optionalMedia, remainder) = Semantic.Analyses.HasExactlyOneMedia<Step>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: bundle, diagnostics: &diagnostics)
+        (optionalMedia, remainder) = Semantic.Analyses.HasExactlyOneMedia<Step>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: inputs, diagnostics: &diagnostics)
         
         let optionalCode: Code?
-        (optionalCode, remainder) = Semantic.Analyses.HasExactlyOne<Step, Code>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: bundle, diagnostics: &diagnostics)
+        (optionalCode, remainder) = Semantic.Analyses.HasExactlyOne<Step, Code>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: remainder, source: source, for: inputs, diagnostics: &diagnostics)
         
         let paragraphs: [Paragraph]
         (paragraphs, remainder) = Semantic.Analyses.ExtractAllMarkup<Paragraph>().analyze(directive, children: remainder, source: source, diagnostics: &diagnostics)

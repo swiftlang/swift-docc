@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,8 +18,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
     /// Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
     func testTransformForStaticHostingTestExternalOutput() async throws {
-        
-        // Convert a test bundle as input for the TransformForStaticHostingAction
+        // Convert a test catalog as input for the TransformForStaticHostingAction
         let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
         
@@ -98,8 +97,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
     
     // Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
     func testTransformForStaticHostingActionTestInPlaceOutput() async throws {
-        
-        // Convert a test bundle as input for the TransformForStaticHostingAction
+        // Convert a test catalog as input for the TransformForStaticHostingAction
         let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
             

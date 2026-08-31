@@ -1313,12 +1313,12 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testUnrealisticMixedTestCatalog() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let linkResolver = try XCTUnwrap(context.linkResolver.localResolver)
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
         
         // Test finding the parent via the `fromTopicReference` integration shim.
-        let parentID = linkResolver.resolvedReferenceMap[ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)]!
+        let parentID = linkResolver.resolvedReferenceMap[ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift)]!
         XCTAssertNotNil(parentID)
         XCTAssertEqual(try tree.findSymbol(path: "globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
         XCTAssertEqual(try tree.findSymbol(path: "MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,7 +31,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
 
     func testExplicitlySetLanguageOverridesDefaultLanguage() async throws {
         let codeListing = try await makeCodeBlock(fenceLanguage: "objective-c", infoPlistLanguage: "swift")
-        XCTAssertEqual(codeListing.language, "objective-c", "The explicit language of the code listing should override the bundle's default language")
+        XCTAssertEqual(codeListing.language, "objective-c", "The explicit language of the code listing should override the catalog's default language")
     }
 
     private struct CodeListing {

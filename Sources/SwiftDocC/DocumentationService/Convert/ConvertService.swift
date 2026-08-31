@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -124,7 +124,7 @@ public struct ConvertService: DocumentationService {
             
             if let linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
-                    bundleID: request.bundleInfo.id,
+                    id: request.bundleInfo.id,
                     server: linkResolvingServer,
                     convertRequestIdentifier: messageIdentifier
                 )
@@ -133,25 +133,25 @@ public struct ConvertService: DocumentationService {
                 configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
             }
             
-            let bundle: DocumentationBundle
+            let inputs: DocumentationContext.Inputs
             let dataProvider: any DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
             if let bundleLocation = request.bundleLocation,
                let catalogURL = try inputProvider.findCatalog(startingPoint: bundleLocation, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
             {
-                let bundleDiscoveryOptions = try BundleDiscoveryOptions(
+                let catalogDiscoveryOptions = try CatalogDiscoveryOptions(
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 )
                 
-                bundle = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
+                inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: catalogDiscoveryOptions)
                 dataProvider = FileManager.default
             } else {
-                (bundle, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
+                (inputs, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
             }
             
-            let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
+            let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
             let renderContext = RenderContext(documentationContext: context)

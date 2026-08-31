@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -41,7 +41,7 @@ public struct FeatureFlags: Codable {
     public init() {}
 
     /// Set feature flags that were loaded from a bundle's Info.plist.
-    internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationBundle.Info.BundleFeatureFlags) {
+    internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationContext.Inputs.Info.CatalogFeatureFlags) {
         if let overloadsPresentation = bundleFlags.experimentalOverloadedSymbolPresentation {
             self.isExperimentalOverloadedSymbolPresentationEnabled = overloadsPresentation
         }

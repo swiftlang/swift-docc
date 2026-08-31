@@ -1,21 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-package import FoundationXML
-package import FoundationEssentials
-#else
-package import Foundation
-#endif
-
+package import struct Foundation.URL
 package import Markdown
 package import DocCCommon
 
@@ -42,21 +35,21 @@ package extension MarkdownRenderer {
     ///
     /// If the API has the _same_ task groups in all language representations, only pass the task groups for one language.
     /// This produces a named section that doesn't hide any task groups for any of the languages (the same as if the symbol only had one language representation).
-    func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> [XMLNode] {
+    func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> [HTMLNode] {
         let taskGroups = RenderHelpers.sortedLanguageSpecificValues(taskGroups)
         
-        let items: [XMLElement] = if taskGroups.count == 1 {
+        let items: [HTMLNode] = if taskGroups.count == 1 {
             taskGroups.first!.value.flatMap { taskGroup in
                 _singleTaskGroupElements(for: taskGroup)
             }
         } else {
             // TODO: As a future improvement we could diff the references and only mark them as language-specific if the group and reference doesn't appear in all languages.
             taskGroups.flatMap { language, taskGroups in
-                let attribute = XMLNode.attribute(withName: "class", stringValue: "\(language.id)-only") as! XMLNode
+                let attributes = [language.filterAttribute]
                 
-                let elements = taskGroups.flatMap { _singleTaskGroupElements(for: $0) }
-                for element in elements {
-                    element.addAttribute(attribute)
+                var elements = taskGroups.flatMap { _singleTaskGroupElements(for: $0) }
+                for index in elements.indices {
+                    elements[index]._addAttributes(attributes)
                 }
                 return elements
             }
@@ -65,14 +58,14 @@ package extension MarkdownRenderer {
         return selfReferencingSection(named: sectionName, content: items)
     }
     
-    private func _singleTaskGroupElements(for taskGroup: TaskGroupInfo) -> [XMLElement] {
+    private func _singleTaskGroupElements(for taskGroup: TaskGroupInfo) -> [HTMLNode] {
         let listItems = taskGroup.references.compactMap { reference in
             linkProvider.element(for: reference).map { _taskGroupItem(for: $0) }
         }
         // Don't return a title or abstract/discussion if this group has no links to display.
         guard !listItems.isEmpty else { return [] }
         
-        var items: [XMLElement] = []
+        var items: [HTMLNode] = []
         // Title
         if let title = taskGroup.title {
             items.append(selfReferencingHeading(level: 3, content: [.text(title)], plainTextTitle: title))
@@ -80,34 +73,31 @@ package extension MarkdownRenderer {
         // Abstract/Discussion
         for markup in taskGroup.content {
             let rendered = visit(markup)
-            if let element = rendered as? XMLElement {
-                items.append(element)
-            } else {
+            if rendered._isText {
                 // Wrap any inline content in an element. This is not expected to happen in practice
-                items.append(.element(named: "p", children: [rendered]))
+                items.append(p(contents: [rendered]))
+            } else {
+                items.append(rendered)
             }
         }
         // Links
-        items.append(.element(named: "ul", children: listItems))
+        items.append(ul(contents: listItems))
         
         return items
     }
     
-    private func _taskGroupItem(for element: LinkedElement) -> XMLElement {
-        let items: [XMLNode]
+    private func _taskGroupItem(for element: LinkedElement) -> HTMLNode {
+        let items: [HTMLNode]
         switch element.subheadings {
         case .single(.conceptual(let title)):
-            let item = XMLNode.element(named: "p", children: [.text(title)])
-            if goal == .richness {
-                // TODO: Pass information about the type of icon that the conceptual element should display.
-                item.addAttributes(["class": "api-collection"])
-            }
+            // TODO: Pass information about the type of icon that the conceptual element should display.
+            let item = p(attributes: goal == .richness ? [.class("api-collection")] : [], contents: [.text(title)])
             items = [item]
             
         case .single(.symbol(let fragments)):
             items = switch goal {
             case .conciseness:
-                [ .element(named: "code", children: [.text(fragments.map(\.text).joined())]) ]
+                [ code(contents: [.text(fragments.map(\.text).joined())]) ]
             case .richness:
                 [ _symbolSubheading(fragments, languageFilter: nil) ]
             }
@@ -127,17 +117,17 @@ package extension MarkdownRenderer {
             }
         }
         
-        let listItem = XMLNode.element(named: "li", children: [
+        var content = [
             // DocC-Render only makes the item's name an anchor, not its abstract
-            .element(named: "a", children: items, attributes: ["href": path(to: element.path)])
-        ])
+            anchor(linkingTo: element, contents: items)
+        ]
         
         // Add the formatted abstract if the linked element has one.
         if let abstract = element.abstract {
-            listItem.addChild(visit(abstract))
+            content.append(visit(abstract))
         }
         
-        return listItem
+        return li(contents: content)
     }
     
     /// Transforms the symbol name fragments into a `<code>` HTML element that represents a symbol's subheading.
@@ -146,7 +136,7 @@ package extension MarkdownRenderer {
     /// ```
     /// <code class="swift-only">
     ///   <span class="decorator">class </span>
-    ///   <span class="identifier">Some<wbr/>Class</span>
+    ///   <span class="identifier">Some<wbr>Class</span>
     /// </code>
     /// ```
     ///
@@ -154,22 +144,15 @@ package extension MarkdownRenderer {
     /// ```
     /// <code>class SomeClass</code>
     /// ```
-    private func _symbolSubheading(_ fragments: [LinkedElement.SymbolNameFragment], languageFilter: SourceLanguage?) -> XMLElement {
-        switch goal {
+    private func _symbolSubheading(_ fragments: [LinkedElement.SymbolNameFragment], languageFilter: SourceLanguage?) -> HTMLNode {
+        let attributes = languageFilter.map { [$0.filterAttribute] } ?? []
+        return switch goal {
         case .richness:
-            .element(
-                named: "code",
-                children: fragments.map {
-                    .element(named: "span", children: wordBreak(symbolName: $0.text), attributes: ["class": $0.kind.rawValue])
-                },
-                attributes: languageFilter.map { ["class": "\($0.id)-only"] }
-            )
+            code(attributes: attributes, contents: fragments.map {
+                span(attributes: [.class($0.kind.rawValue)], contents: wordBreak(symbolName: $0.text))
+            })
         case .conciseness:
-            .element(
-                named: "code",
-                children: [.text(fragments.map(\.text).joined())],
-                attributes: languageFilter.map { ["class": "\($0.id)-only"] }
-            )
+            code(attributes: attributes, contents: [.text(fragments.map(\.text).joined())])
         }
     }
 }

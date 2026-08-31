@@ -507,9 +507,9 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     /// This test verifies that when the manual curation is mixed with automatic and then manual again
-    /// we do crawl all of the nodes in the source bundle.
+    /// we do crawl all of the nodes in the source catalog.
     ///
-    /// We specifically test this scenario in the "MixedManualAutomaticCuration.docc" test bundle:
+    /// We specifically test this scenario in the "MixedManualAutomaticCuration.docc" test catalog:
     /// ```
     /// Framework
     ///  +-- TopClass (Manually curated)
@@ -554,9 +554,9 @@ class DocumentationCuratorTests: XCTestCase {
     /// In case a symbol has automatically curated children and is manually curated multiple times,
     /// the hierarchy should be created as it's authored. rdar://75453839
     func testMultipleManualCurationIsPreserved() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let (_, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
         
         XCTAssertEqual(context.finitePaths(to: reference).map({ $0.map({ $0.path }) }), [
             [

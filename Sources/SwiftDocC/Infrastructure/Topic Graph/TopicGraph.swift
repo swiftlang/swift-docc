@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -314,11 +314,11 @@ struct TopicGraph {
     /// ```
     /// This will produce output along the lines of:
     /// ```
-    /// doc://com.testbundle/documentation/MyFramework
-    /// ├ doc://com.testbundle/documentation/MyFramework/MyProtocol
-    /// │ ╰ doc://com.testbundle/documentation/MyFramework/MyClass
-    /// │   ├ doc://com.testbundle/documentation/MyFramework/MyClass/myfunction()
-    /// │   ╰ doc://com.testbundle/documentation/MyFramework/MyClass/init()
+    /// doc://com.example/documentation/MyFramework
+    /// ├ doc://com.example/documentation/MyFramework/MyProtocol
+    /// │ ╰ doc://com.example/documentation/MyFramework/MyClass
+    /// │   ├ doc://com.example/documentation/MyFramework/MyClass/myfunction()
+    /// │   ╰ doc://com.example/documentation/MyFramework/MyClass/init()
     /// ...
     /// ```
     ///

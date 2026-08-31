@@ -34,10 +34,10 @@ public protocol DirectiveConvertible {
     /// - Parameters:
     ///   -  directive: The parsed block directive to create a semantic object from.
     ///   -  source: The location of the source file that contains the markup for the parsed block directive.
-    ///   -  bundle: The documentation bundle that the source file belongs to.
+    ///   -  inputs: The collection of build inputs that the source file belongs to.
     ///   -  featureFlags: A collection of feature flags.
     ///   - diagnostics: A mutable collection of diagnostics to update with any additional issues encountered while initializing the directive.
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic])
+    init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic])
     
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem])

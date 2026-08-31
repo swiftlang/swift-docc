@@ -108,7 +108,7 @@ class ExternalRenderNodeTests: XCTestCase {
         
     func testExternalRenderNode() async throws {
         let externalResolver = generateExternalResolver()
-        let (_, bundle, context) = try await testBundleAndContext(
+        let (_, _, context) = try await testBundleAndContext(
             copying: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
@@ -130,7 +130,7 @@ class ExternalRenderNodeTests: XCTestCase {
         }
         
         let externalRenderNodes = context.externalCache.valuesByReference.values.map {
-            ExternalRenderNode(externalEntity: $0, bundleIdentifier: bundle.id)
+            ExternalRenderNode(externalEntity: $0, bundleIdentifier: context.inputs.id)
         }.sorted(by: \.titleVariants.defaultValue)
         XCTAssertEqual(externalRenderNodes.count, 4)
         
@@ -554,11 +554,11 @@ class ExternalRenderNodeTests: XCTestCase {
 
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.diagnostics.isEmpty, "Unexpectedly found problems: \(context.diagnostics.map(\.summary))")
 
         let renderIndexFolder = try createTemporaryDirectory()
-        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         indexBuilder.setup()
         let outputConsumer = TestExternalRenderNodeOutputConsumer(indexBuilder: indexBuilder)
 
@@ -646,7 +646,7 @@ private class TestExternalRenderNodeOutputConsumer: ConvertOutputConsumer, Exter
         try self.indexBuilder.sync { try $0.index(renderNode: renderNode) }
     }
 
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
+    func consume(assetsInInputs _: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }

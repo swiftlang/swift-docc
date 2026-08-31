@@ -32,13 +32,13 @@ extension Semantic.Analyses {
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> (Child?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, diagnostics: inout [Diagnostic]) -> (Child?, remainder: MarkupContainer) {
             return Semantic.Analyses.extractExactlyOne(
                 childType: Child.self,
                 parentDirective: directive,
                 children: children,
                 source: source,
-                for: bundle,
+                for: inputs,
                 severityIfNotFound: severityIfNotFound,
                 featureFlags: featureFlags,
                 diagnostics: &diagnostics
@@ -51,7 +51,7 @@ extension Semantic.Analyses {
         parentDirective: BlockDirective,
         children: some Sequence<any Markup>,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for inputs: DocumentationContext.Inputs,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         featureFlags: FeatureFlags,
         diagnostics: inout [Diagnostic]
@@ -102,7 +102,7 @@ extension Semantic.Analyses {
             }
         }
         
-        return (childType.init(from: candidate, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics), MarkupContainer(remainder))
+        return (childType.init(from: candidate, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics), MarkupContainer(remainder))
     }
     
     /// Checks a parent directive for the presence of exactly one of two child directives---but not both---to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
@@ -123,7 +123,7 @@ extension Semantic.Analyses {
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> (Child1?, Child2?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, diagnostics: inout [Diagnostic]) -> (Child1?, Child2?, remainder: MarkupContainer) {
             let (candidates, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil
@@ -151,12 +151,12 @@ extension Semantic.Analyses {
             
             switch candidate.name {
             case Child1.directiveName:
-                guard let first = Child1(from: candidate, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) else {
+                guard let first = Child1(from: candidate, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics) else {
                     return (nil, nil, remainder: MarkupContainer(remainder))
                 }
                 return (first, nil, remainder: MarkupContainer(remainder))
             case Child2.directiveName:
-                guard let second = Child2(from: candidate, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) else {
+                guard let second = Child2(from: candidate, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics) else {
                     return (nil, nil, remainder: MarkupContainer(remainder))
                 }
                 return (nil, second, remainder: MarkupContainer(remainder))
@@ -184,8 +184,8 @@ extension Semantic.Analyses {
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> ((any Media)?, remainder: MarkupContainer) {
-            let (foundImage, foundVideo, remainder) = HasExactlyOneOf<Parent, ImageMedia, VideoMedia>(severityIfNotFound: severityIfNotFound, featureFlags: featureFlags).analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, diagnostics: inout [Diagnostic]) -> ((any Media)?, remainder: MarkupContainer) {
+            let (foundImage, foundVideo, remainder) = HasExactlyOneOf<Parent, ImageMedia, VideoMedia>(severityIfNotFound: severityIfNotFound, featureFlags: featureFlags).analyze(directive, children: children, source: source, for: inputs, diagnostics: &diagnostics)
             return (foundImage ?? foundVideo, remainder)
         }
     }
@@ -207,7 +207,7 @@ extension Semantic.Analyses {
             return analyze(directive, children: children, source: source, for: bundle, diagnostics: &diagnostics)
         }
         
-        func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, diagnostics: inout [Diagnostic]) -> ((any Media)?, remainder: MarkupContainer) {
+        func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, diagnostics: inout [Diagnostic]) -> ((any Media)?, remainder: MarkupContainer) {
             let (mediaDirectives, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil
@@ -242,12 +242,12 @@ extension Semantic.Analyses {
             
             switch firstMedia.name {
             case ImageMedia.directiveName:
-                guard let image = ImageMedia(from: firstMedia, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) else {
+                guard let image = ImageMedia(from: firstMedia, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics) else {
                     return (nil, remainder: MarkupContainer(remainder))
                 }
                 return (image, remainder: MarkupContainer(remainder))
             case VideoMedia.directiveName:
-                guard let video = VideoMedia(from: firstMedia, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics) else {
+                guard let video = VideoMedia(from: firstMedia, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics) else {
                     return (nil, remainder: MarkupContainer(remainder))
                 }
                 return (video, remainder: MarkupContainer(remainder))

@@ -28,7 +28,7 @@ struct URLReferenceTests {
 
     @Test
     func imageReferenceRoundtripsAcrossBundles() throws {
-        // Encode the reference in bundle 1
+        // Encode the reference in catalog 1
         var encoder = RenderJSONEncoder.makeEncoder(assetPrefixComponent: "com.example.bundle1")
         var asset = DataAsset()
         asset.register(URL(string: "image.png")!, with: .init())
@@ -39,7 +39,7 @@ struct URLReferenceTests {
         var decodedReference = try RenderJSONDecoder.makeDecoder().decode(ImageReference.self, from: jsonData)
         #expect(Array(decodedReference.asset.metadata.keys) == [URL(string: "/images/com.example.bundle1/image.png")!])
 
-        // Re-encode the reference from bundle 1 in bundle 2 and ensure that the URL has not changed
+        // Re-encode the reference from catalog 1 in catalog 2 and ensure that the URL has not changed
         encoder = RenderJSONEncoder.makeEncoder(assetPrefixComponent: "com.example.bundle2")
         jsonData = try encoder.encode(decodedReference)
         decodedReference = try RenderJSONDecoder.makeDecoder().decode(ImageReference.self, from: jsonData)
@@ -48,7 +48,7 @@ struct URLReferenceTests {
 
     @Test
     func downloadReferenceRoundtripsAcrossBundles() throws {
-        // Encode the reference in bundle 1
+        // Encode the reference in catalog 1
         var encoder = RenderJSONEncoder.makeEncoder(assetPrefixComponent: "com.example.bundle1")
         let reference = DownloadReference(identifier: .init("download"), renderURL: URL(string: "download.zip")!, checksum: nil)
 
@@ -57,7 +57,7 @@ struct URLReferenceTests {
         var decodedReference = try RenderJSONDecoder.makeDecoder().decode(DownloadReference.self, from: jsonData)
         #expect(decodedReference.url == URL(string: "/downloads/com.example.bundle1/download.zip")!)
 
-        // Re-encode the reference from bundle 1 in bundle 2 and ensure that the URL has not changed
+        // Re-encode the reference from catalog 1 in catalog 2 and ensure that the URL has not changed
         encoder = RenderJSONEncoder.makeEncoder(assetPrefixComponent: "com.example.bundle2")
         jsonData = try encoder.encode(decodedReference)
         decodedReference = try RenderJSONDecoder.makeDecoder().decode(DownloadReference.self, from: jsonData)
@@ -66,7 +66,7 @@ struct URLReferenceTests {
 
     @Test
     func videoReferenceRoundtripsAcrossBundles() throws {
-        // Encode the reference in bundle 1
+        // Encode the reference in catalog 1
         var encoder = RenderJSONEncoder.makeEncoder(assetPrefixComponent: "com.example.bundle1")
         var asset = DataAsset()
         asset.register(URL(string: "video.mov")!, with: .init())
@@ -77,7 +77,7 @@ struct URLReferenceTests {
         var decodedReference = try RenderJSONDecoder.makeDecoder().decode(VideoReference.self, from: jsonData)
         #expect(Array(decodedReference.asset.metadata.keys) == [URL(string: "/videos/com.example.bundle1/video.mov")!])
 
-        // Re-encode the reference from bundle 1 in bundle 2 and ensure that the URL has not changed
+        // Re-encode the reference from catalog 1 in catalog 2 and ensure that the URL has not changed
         encoder = RenderJSONEncoder.makeEncoder(assetPrefixComponent: "com.example.bundle2")
         jsonData = try encoder.encode(decodedReference)
         decodedReference = try RenderJSONDecoder.makeDecoder().decode(VideoReference.self, from: jsonData)

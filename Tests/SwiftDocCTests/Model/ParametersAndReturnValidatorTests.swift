@@ -19,7 +19,7 @@ import DocCCommon
 class ParametersAndReturnValidatorTests: XCTestCase {
     
     func testFiltersParameters() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "ErrorParameters")
+        let (_, context) = try await testBundleAndContext(named: "ErrorParameters")
         
         // /// - Parameters:
         // ///   - someValue: Some value.
@@ -27,7 +27,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: `YES` if doing something was successful, or `NO` if an error occurred.
         // - (void)doSomethingWith:(NSInteger)someValue error:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -48,7 +48,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: Some string. If an error occurs, this method returns `nil` and assigns an appropriate error object to the `error` parameter.
         // - (nullable NSString *)returnSomethingAndReturnError:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -69,7 +69,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func doSomething(with someValue: Int) throws { }
         do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -94,7 +94,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func returnSomething() throws -> String { "" }
         do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -154,11 +154,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 ])
             ])
             
-            let (bundle, context) = try await loadBundle(catalog: catalog)
+            let (_, context) = try await loadBundle(catalog: catalog)
             
             XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
             
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -491,11 +491,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     ))
                 ])
             ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -551,11 +551,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 """)
             ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -595,11 +595,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 ])
             ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -769,11 +769,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             ))
         ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -829,11 +829,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
                     ))
                 ])
-                let (bundle, context) = try await loadBundle(catalog: catalog)
+                let (_, context) = try await loadBundle(catalog: catalog)
                 
                 XCTAssert(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
                 
-                let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+                let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
                 let node = try context.entity(with: reference)
                 let symbol = try XCTUnwrap(node.semantic as? Symbol)
                 
@@ -937,10 +937,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let diagnosticEngine = DiagnosticEngine()
         diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, dataProvider: fileSystem))
         
-        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/unit-test.docc"), options: .init())
 
-        _ = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
+        _ = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
         
         diagnosticEngine.flush()
         return logStorage.text.trimmingCharacters(in: .newlines)

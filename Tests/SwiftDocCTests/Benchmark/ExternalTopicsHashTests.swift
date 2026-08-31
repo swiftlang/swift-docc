@@ -46,7 +46,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     }
     
     func testNoMetricAddedIfNoExternalTopicsAreResolved() async throws {
-        // Load bundle without using external resolvers
+        // Load catalog without using external resolvers
         let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something"))
         })
@@ -135,7 +135,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     func testExternalTopicsDetectsChanges() async throws {
         let externalResolver = self.externalResolver
 
-        // Load a bundle with external links
+        // Load a catalog with external links
         let catalog = makeExampleCatalog(markdown: """
         Curate some external links.
 
