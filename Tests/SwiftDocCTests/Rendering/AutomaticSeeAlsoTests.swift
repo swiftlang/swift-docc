@@ -14,7 +14,6 @@ import XCTest
 import DocCTestUtilities
 import DocCCommon
 import SymbolKit
-import SymbolKit
 
 class AutomaticSeeAlsoTests: XCTestCase {
     
