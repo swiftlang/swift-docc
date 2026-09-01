@@ -20,6 +20,7 @@ func swiftSettings(_ languageMode: SwiftLanguageMode) -> [SwiftSetting] {
         
         .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
         .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
+        .enableUpcomingFeature("MemberImportVisibility"), // SE-0444: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0444-member-import-visibility.md
     ]
     
     // Some upcoming language features are enabled by default in the Swift 6 language mode and warn if they're redundantly explicitly enabled.
