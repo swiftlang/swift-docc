@@ -5038,12 +5038,13 @@ class PathHierarchyTests: XCTestCase {
 }
 
 extension PathHierarchy {
-    func findNode(path rawPath: String, onlyFindSymbols: Bool, parent: ResolvedIdentifier? = nil) throws(PathHierarchy.Error) -> PathHierarchy.Node {
+    // These only throw `PathHierarchy.Error` but the compiler crashes in the lifetime checker if either of these helpers use typed throws.
+    func findNode(path rawPath: String, onlyFindSymbols: Bool, parent: ResolvedIdentifier? = nil) throws -> PathHierarchy.Node {
         let id = try find(path: rawPath, parent: parent, onlyFindSymbols: onlyFindSymbols)
         return lookup[id]!
     }
     
-    func findSymbol(path rawPath: String, parent: ResolvedIdentifier? = nil) throws(PathHierarchy.Error) -> SymbolGraph.Symbol {
+    func findSymbol(path rawPath: String, parent: ResolvedIdentifier? = nil) throws -> SymbolGraph.Symbol {
         return try findNode(path: rawPath, onlyFindSymbols: true, parent: parent).symbol!
     }
 }
