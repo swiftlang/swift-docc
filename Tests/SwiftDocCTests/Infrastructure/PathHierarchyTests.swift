@@ -4073,7 +4073,7 @@ class PathHierarchyTests: XCTestCase {
     func testMinimalTypeDisambiguation() async throws {
         enum DeclToken: ExpressibleByStringLiteral {
             case text(String)
-            case internalParameter(String)
+            case identifier(String)
             case typeIdentifier(String, precise: String)
             
             init(stringLiteral value: String) {
@@ -4084,9 +4084,9 @@ class PathHierarchyTests: XCTestCase {
         func makeFragments(_ tokens: [DeclToken]) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
             tokens.map {
                 switch $0 {
-                case .text(let spelling):                        return .init(kind: .text,              spelling: spelling, preciseIdentifier: nil)
-                case .typeIdentifier(let spelling, let precise): return .init(kind: .typeIdentifier,    spelling: spelling, preciseIdentifier: precise)
-                case .internalParameter(let spelling):           return .init(kind: .internalParameter, spelling: spelling, preciseIdentifier: nil)
+                case .text(let spelling):                        .init(kind: .text,           spelling: spelling, preciseIdentifier: nil)
+                case .typeIdentifier(let spelling, let precise): .init(kind: .typeIdentifier, spelling: spelling, preciseIdentifier: precise)
+                case .identifier(let spelling):                  .init(kind: .identifier,     spelling: spelling, preciseIdentifier: nil)
                 }
             }
         }
@@ -4104,7 +4104,7 @@ class PathHierarchyTests: XCTestCase {
         let voidType       = DeclToken.typeIdentifier("Void",   precise: "s:s4Voida")
         
         func makeParameter(_ name: String, decl: [DeclToken]) -> SymbolGraph.Symbol.FunctionSignature.FunctionParameter {
-            .init(name: name,  externalName: nil, declarationFragments: makeFragments([.internalParameter(name), .text(" ")] + decl), children: [])
+            .init(name: name,  externalName: nil, declarationFragments: makeFragments([.identifier(name), .text(" ")] + decl), children: [])
         }
         
         func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
@@ -4216,8 +4216,8 @@ class PathHierarchyTests: XCTestCase {
             func makeSignature(first: DeclToken..., second: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
                 .init(
                     parameters: [
-                        .init(name: "first",  externalName: nil, declarationFragments: makeFragments(first),  children: []),
-                        .init(name: "second", externalName: nil, declarationFragments: makeFragments(second), children: [])
+                        .init(name: "first",  externalName: nil, declarationFragments: makeFragments([.identifier("first"),  .text(" :")] + first),  children: []),
+                        .init(name: "second", externalName: nil, declarationFragments: makeFragments([.identifier("second"), .text(" :")] + second), children: [])
                     ],
                     returns: makeFragments([voidType])
                 )
@@ -4265,7 +4265,7 @@ class PathHierarchyTests: XCTestCase {
         do {
             func makeSignature(first: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
                 .init(
-                    parameters: [.init(name: "first",  externalName: "with", declarationFragments: makeFragments(first),  children: []),],
+                    parameters: [.init(name: "first",  externalName: "with", declarationFragments: makeFragments([.identifier("first"), .text(" :")] + first),  children: []),],
                     returns: makeFragments([voidType])
                 )
             }
@@ -4947,12 +4947,12 @@ class PathHierarchyTests: XCTestCase {
 }
 
 extension PathHierarchy {
-    func findNode(path rawPath: String, onlyFindSymbols: Bool, parent: ResolvedIdentifier? = nil) throws -> PathHierarchy.Node {
+    func findNode(path rawPath: String, onlyFindSymbols: Bool, parent: ResolvedIdentifier? = nil) throws(PathHierarchy.Error) -> PathHierarchy.Node {
         let id = try find(path: rawPath, parent: parent, onlyFindSymbols: onlyFindSymbols)
         return lookup[id]!
     }
     
-    func findSymbol(path rawPath: String, parent: ResolvedIdentifier? = nil) throws -> SymbolGraph.Symbol {
+    func findSymbol(path rawPath: String, parent: ResolvedIdentifier? = nil) throws(PathHierarchy.Error) -> SymbolGraph.Symbol {
         return try findNode(path: rawPath, onlyFindSymbols: true, parent: parent).symbol!
     }
 }
