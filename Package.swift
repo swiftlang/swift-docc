@@ -37,20 +37,8 @@ func swiftSettings(_ languageMode: SwiftLanguageMode) -> [SwiftSetting] {
     return settings
 }
 
-// NIOHTTP1 is not available on Windows.
-let NIOPlatforms: [Platform] = [.macOS, .iOS, .linux, .android]
-// The preview server requires NIOHTTP1.
-// Gate it behind a trait so it can be excluded from builds.
-let previewServerTrait = "PreviewServer"
-
-// This variable is set in Swift.org CI, and is used to point to local checkouts of dependencies,
-// and skip gating SwiftNIO behind package traits so it can resolve with SwiftPM's `--multiroot-data-file`.
+// This variable is set in Swift.org CI, and is used to point to local checkouts of dependencies.
 let useLocalDependencies = ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] != nil
-
-let previewServerSettings: [SwiftSetting] = [
-    .define("PREVIEW_SERVER", .when(platforms: NIOPlatforms, traits: [previewServerTrait]))
-]
-
 let package = Package(
     name: "SwiftDocC",
     platforms: [
@@ -65,14 +53,7 @@ let package = Package(
         .executable(
             name: "docc",
             targets: ["docc"]
-        ),
-    ],
-    traits: [
-        .trait(
-            name: previewServerTrait,
-            description: "Build the DocC preview server, which depends on SwiftNIO."
-        ),
-        .default(enabledTraits: [previewServerTrait])
+        )
     ],
     targets: [
         // SwiftDocC library
@@ -110,13 +91,11 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                // build-script-helper.py uses a multiroot workspace, which does not work with trait-conditional dependencies.
-                // When building in Swift.org CI, do not use a package trait gate for SwiftNIO.
-                .product(name: "NIOHTTP1", package: "swift-nio", condition: useLocalDependencies ? .when(platforms: NIOPlatforms) : .when(platforms: NIOPlatforms, traits: [previewServerTrait])),
+                .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
             exclude: ["CMakeLists.txt"],
-            swiftSettings: swiftSettings(.v5) + previewServerSettings
+            swiftSettings: swiftSettings(.v5)
         ),
         .testTarget(
             name: "DocCCommandLineTests",
@@ -130,7 +109,7 @@ let package = Package(
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
             ],
-            swiftSettings: swiftSettings(.v5) + previewServerSettings
+            swiftSettings: swiftSettings(.v5)
         ),
 
         // Test utility library
