@@ -15,6 +15,7 @@ package import os
 #endif
 
 private import DocCHTML
+private import Markdown
 
 package enum ConvertActionConverter {
 #if canImport(os)
