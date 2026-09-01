@@ -11,6 +11,7 @@
 import Foundation
 import Markdown
 private import SymbolKit
+private import DocCCommon
 
 /// Crawls a context and curates nodes if necessary.
 struct DocumentationCurator {

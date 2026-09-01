@@ -13,6 +13,7 @@ import SymbolKit
 import DocCHTML
 import DocCTestUtilities
 @testable import SwiftDocC
+import DocCCommon
 
 struct ProseSymbolNameTests {
     // The symbol has the same precise identifier in both languages so that the
