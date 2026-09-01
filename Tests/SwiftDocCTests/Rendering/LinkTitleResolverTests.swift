@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
+import SymbolKit
 
 class LinkTitleResolverTests: XCTestCase {
     func testSymbolTitleResolving() async throws {

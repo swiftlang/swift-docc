@@ -13,6 +13,7 @@ import XCTest
 import Markdown
 import DocCCommon
 import DocCTestUtilities
+import SymbolKit
 
 class ExternalTopicsGraphHashTests: XCTestCase {
     
