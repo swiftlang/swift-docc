@@ -29,7 +29,13 @@ extension PathHierarchy {
     
     /// Creates a type disambiguation string from the given function parameter declaration fragments.
     private static func parameterTypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
-        let accumulated = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        let accumulated = utf8TypeSpelling(
+            // For Swift parameters, skip all fragments past the first "identifier".
+            // This filters out Swift attributes, result builders, etc. that appear before the parameter's name.
+            // For disambiguation we're only interested in the parameter's type, which fully comes after its name in Swift.
+            for: isSwift ? fragments.drop(while: { $0.kind != .identifier }).dropFirst() : fragments[...],
+            isSwift: isSwift
+        )
         
         return String(decoding: accumulated, as: UTF8.self)
     }
@@ -43,7 +49,7 @@ extension PathHierarchy {
             // We don't want to list "void" return values as type disambiguation
             return []
         }
-        let spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        let spelling = utf8TypeSpelling(for: fragments[...], isSwift: isSwift)
         
         guard isSwift, spelling[...].shapeOfSwiftTypeSpelling() == .tuple else {
             return [String(decoding: spelling, as: UTF8.self)]
@@ -83,7 +89,7 @@ extension PathHierarchy {
     private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
     
     /// Returns the type name spelling as sequence of UTF-8 code units _without_ null-termination.
-    private static func utf8TypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> ContiguousArray<UTF8.CodeUnit> {
+    private static func utf8TypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment].SubSequence, isSwift: Bool) -> ContiguousArray<UTF8.CodeUnit> {
         // This function joins the spelling of the text and identifier declaration fragments and applies Swift syntactic sugar;
         // `Array<Element>` -> `[Element]`, `Optional<Wrapped>` -> `Wrapped?`, and `Dictionary<Key,Value>` -> `[Key:Value]`
         
