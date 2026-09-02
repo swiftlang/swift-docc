@@ -82,8 +82,8 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             var copy = original
             // Replace the content in reverse order so that the earlier ranges remain valid.
             
+            // Keep the "JavaScript required" information in the <noscript> tag unless we have a static HTML representation of the page's content.
             if let content {
-                // Keep the "JavaScript required" information in the <noscript> tag unless we have a static HTML representation of the page's content.
                 copy.replaceSubrange(contentReplacementRange, with: content.rendered(prettyPrinted: prettyPrint))
             }
             if let plainDescription {
