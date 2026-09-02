@@ -1,0 +1,23 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>parameters(_:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Creates a “parameters” section that describes all the parameters for a symbol." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">DocCHTML</a>
+        </li>
+        <li>
+            <a href="../index.html">MarkdownRenderer</a>
+        </li>
+        <li>parameters(_:)</li>
+    </ul>
+    <p>Instance Method</p>
+    <h1>parameters(_:)</h1>
+    <p>Creates a “parameters” section that describes all the parameters for a symbol.</p>
+    <pre>
+        <code>func parameters(_ info: [SourceLanguage : [ParameterInfo]]) -&gt; [HTMLNode]</code>
+    </pre>
+</section>
+<h2>Discussion</h2>
+<p>If each language representation of the symbol has its own language-specific parameters, pass the parameter information for all language representations.</p>
+<p>If all language representations of the symbol have the <i>same</i>
+     parameters, only pass the parameter information for one language. This produces a “parameters” section that doesn’t hide any parameters for any of the languages (same as if the symbol only had one language representation)</p>
+</article></noscript><div id="app"></div></body></html>

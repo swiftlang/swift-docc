@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchOperation.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L43"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L41"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

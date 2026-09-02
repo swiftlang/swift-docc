@@ -120,14 +120,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicColor\/standardColorIdentifier"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicColor\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -211,17 +203,6 @@
   "title" : "TopicColor",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topiccolor"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicColor/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicColor\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topiccolor\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicColor/init(from:)": {
   "abstract" : [

@@ -162,14 +162,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/treeLines(_:_:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -384,17 +376,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/==(_:_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/add(child:)": {
   "abstract" : [
     {
@@ -426,15 +407,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -562,15 +534,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -758,15 +721,6 @@
     {
       "kind" : "text",
       "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -1014,15 +968,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CodeColors.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -88,7 +88,8 @@
         "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
-        "doc:\/\/SwiftDocC\/SQ"
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -157,8 +158,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Decodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Encodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Equatable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Encodable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -261,17 +261,6 @@
   "title" : "Encodable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/codecolors\/encodable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/codecolors\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/CodeColors/background": {
   "abstract" : [
@@ -1488,6 +1477,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

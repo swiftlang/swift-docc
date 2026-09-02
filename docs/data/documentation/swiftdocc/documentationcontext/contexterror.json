@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L44"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -133,15 +133,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/errorDescription"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/Error-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/LocalizedError-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -287,28 +278,6 @@
   "title" : "DocumentationContext.ContextError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/error-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/localizederror-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/errorDescription": {
   "abstract" : [

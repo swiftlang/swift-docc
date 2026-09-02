@@ -1,0 +1,176 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation\/URL"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation\/URL\/FastJSONDecodable-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "DocCCommon"
+      }
+    ],
+    "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
+    "title" : "FastJSONDecodable Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation\/URL\/init(using:)"
+      ],
+      "title" : "Initializers"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommon\/foundation\/url\/fastjsondecodable-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommon/documentation/DocCCommon": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommon",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon"
+},
+"doc://DocCCommon/documentation/DocCCommon/Foundation": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "Foundation",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/foundation"
+},
+"doc://DocCCommon/documentation/DocCCommon/Foundation/URL": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation\/URL",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "URL"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "URL",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/foundation\/url"
+},
+"doc://DocCCommon/documentation/DocCCommon/Foundation/URL/init(using:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "using"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV",
+      "text" : "FastSymbolGraphJSONDecoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation\/URL\/init(using:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(using:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/foundation\/url\/init(using:)"
+}
+}
+}

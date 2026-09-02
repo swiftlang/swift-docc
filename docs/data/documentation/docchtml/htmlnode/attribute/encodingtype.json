@@ -1,0 +1,585 @@
+{
+  "abstract" : [
+    {
+      "text" : "A value for the ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/encType(_:)",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " attribute.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "DocCHTML",
+    "externalID" : "s:8DocCHTML8HTMLNodeV9AttributeV12EncodingTypeO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "EncodingType"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "EncodingType"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "HTMLNode+Attributes.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Attributes.swift#L567"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "HTMLNode.Attribute.EncodingType"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "EncodingType"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/SQ",
+        "doc:\/\/DocCHTML\/SH",
+        "doc:\/\/DocCHTML\/SY",
+        "doc:\/\/DocCHTML\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/multiPartFormData",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/textPlain",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/wwwFormURLEncoded"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/htmlnode\/attribute\/encodingtype"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/SH": {
+  "identifier" : "doc:\/\/DocCHTML\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://DocCHTML/SQ": {
+  "identifier" : "doc:\/\/DocCHTML\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://DocCHTML/SY": {
+  "identifier" : "doc:\/\/DocCHTML\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute": {
+  "abstract" : [
+    {
+      "text" : "An attribute that can be applies to one or more HTML elements.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/EncodingType": {
+  "abstract" : [
+    {
+      "text" : "A value for the ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/encType(_:)",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " attribute.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EncodingType"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EncodingType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.EncodingType",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/encodingtype"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/EncodingType/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/encodingtype\/init(rawvalue:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/EncodingType/multiPartFormData": {
+  "abstract" : [
+    {
+      "text" : "Submits the form as a multipart request body.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "multiPartFormData"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/multiPartFormData",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.EncodingType.multiPartFormData",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/encodingtype\/multipartformdata"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/EncodingType/textPlain": {
+  "abstract" : [
+    {
+      "text" : "Submits the form as plain text.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "textPlain"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/textPlain",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.EncodingType.textPlain",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/encodingtype\/textplain"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/EncodingType/wwwFormURLEncoded": {
+  "abstract" : [
+    {
+      "text" : "Submits the form as URL encoded key-value pairs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "wwwFormURLEncoded"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/EncodingType\/wwwFormURLEncoded",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.EncodingType.wwwFormURLEncoded",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/encodingtype\/wwwformurlencoded"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/Method/post": {
+  "abstract" : [
+    {
+      "text" : "The form data is sent as the body in a POST request.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "post"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Method\/post",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.Method.post",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/method\/post"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/encType(_:)": {
+  "abstract" : [
+    {
+      "text" : "The MIME type of the ",
+      "type" : "text"
+    },
+    {
+      "code" : "<form>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element’s submission if the ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/method(_:)",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " attribute’s value is ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Method\/post",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encType"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV12EncodingTypeO",
+      "text" : "EncodingType"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/encType(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encType(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/enctype(_:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/method(_:)": {
+  "abstract" : [
+    {
+      "text" : "The HTTP method that the browser should use to submit the ",
+      "type" : "text"
+    },
+    {
+      "code" : "<form>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "method"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV6MethodO",
+      "text" : "Method"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/method(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "method(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/method(_:)"
+},
+"doc://DocCHTML/s8SendableP": {
+  "identifier" : "doc:\/\/DocCHTML\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

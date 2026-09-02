@@ -56,6 +56,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC18JSONPatchOperationO012variantPatchD07pointerAcA07VariantfD0OyxG_AA11JSONPointerVtcSeRzSERzlufc5ValueL_xmfp",
         "text" : "Value"
       },
       {
@@ -87,7 +88,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchOperation.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L76"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L74"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -141,6 +142,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC18JSONPatchOperationO012variantPatchD07pointerAcA07VariantfD0OyxG_AA11JSONPointerVtcSeRzSERzlufc5ValueL_xmfp",
               "text" : "Value"
             },
             {
@@ -384,6 +386,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18JSONPatchOperationO012variantPatchD07pointerAcA07VariantfD0OyxG_AA11JSONPointerVtcSeRzSERzlufc5ValueL_xmfp",
       "text" : "Value"
     },
     {

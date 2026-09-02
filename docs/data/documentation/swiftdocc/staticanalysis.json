@@ -41,6 +41,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmarking"
       ],
       "title" : "Diagnostics and Analysis"
@@ -96,6 +97,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Adding-Diagnostics": {
+  "abstract" : [
+    {
+      "text" : "Display information to the developer about actionable issues with their documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding user-facing diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/adding-diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AnyChecker": {
   "abstract" : [
@@ -232,15 +247,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections": {
   "abstract" : [
     {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "code" : "Document",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " may only have one level-2 “Topics” heading at the top level, since it serves as structured data for a documentation bundle’s hierarchy.",
+      "text" : "A checker that warns about multiple “Topics” sections.",
       "type" : "text"
     }
   ],
@@ -288,7 +295,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle": {
   "abstract" : [
     {
-      "text" : "A document should have a single title, i.e. a single first-level heading.",
+      "text" : "A checker that warns about additional first-level headings.",
       "type" : "text"
     }
   ],

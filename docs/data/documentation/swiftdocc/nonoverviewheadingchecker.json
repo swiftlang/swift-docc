@@ -123,9 +123,9 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/diagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/nonOverviewHeadings",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/overviewHeading",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/problems"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/overviewHeading"
       ],
       "title" : "Instance Properties"
     },
@@ -136,16 +136,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitHeading(_:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/Checker-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/MarkupVisitor-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/MarkupWalker-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -223,15 +213,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections": {
   "abstract" : [
     {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "code" : "Document",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " may only have one level-2 “Topics” heading at the top level, since it serves as structured data for a documentation bundle’s hierarchy.",
+      "text" : "A checker that warns about multiple “Topics” sections.",
       "type" : "text"
     }
   ],
@@ -265,7 +247,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle": {
   "abstract" : [
     {
-      "text" : "A document should have a single title, i.e. a single first-level heading.",
+      "text" : "A checker that warns about additional first-level headings.",
       "type" : "text"
     }
   ],
@@ -395,38 +377,43 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/Checker-Implementations": {
+"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/diagnostics": {
   "abstract" : [
 
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/Checker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Checker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/checker-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/MarkupVisitor-Implementations": {
-  "abstract" : [
-
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnostics"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/MarkupVisitor-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupVisitor Implementations",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/diagnostics",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnostics",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/markupvisitor-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/MarkupWalker-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/MarkupWalker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupWalker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/markupwalker-implementations"
+  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/init(sourceFile:)": {
   "abstract" : [
@@ -541,44 +528,6 @@
   "title" : "overviewHeading",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/overviewheading"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/problems": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/problems",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "problems",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/problems"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/visitHeading(_:)": {
   "abstract" : [

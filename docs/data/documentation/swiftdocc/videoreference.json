@@ -167,14 +167,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/baseURL"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -594,17 +586,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/videoreference"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/VideoReference/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/videoreference\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/VideoReference/VariantProxy": {
   "abstract" : [
     {
@@ -789,7 +770,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -868,7 +857,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

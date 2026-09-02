@@ -1,0 +1,2715 @@
+{
+  "abstract" : [
+    {
+      "text" : "Display information to the developer about actionable issues with their documentation.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ],
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "article",
+    "roleHeading" : "Article",
+    "title" : "Adding user-facing diagnostics"
+  },
+  "primaryContentSections" : [
+    {
+      "content" : [
+        {
+          "anchor" : "Overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Swift-DocC uses its ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " type—which wraps a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " and a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " list—to surface information to the developer about actionable issues with their documentation.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Before you add a new diagnostic to DocC, imagine yourself receiving the diagnostic you’re about to add and think about what information you would find useful.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Think about what information you’d need to ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "both",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " understand what’s wrong and how to fix it.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Having thought about the information you’d like to receive, strive to make the new diagnostic close to that imagined ideal.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The code that checks for and identifies a given issue may run multiple times per page and need to take performance into consideration.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For the majority of projects, the majority of elements won’t suffer from the given issue and a lightweight check that can move on quickly is optimal.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "However, once an issue has been identified; even if a bit of information is computationally expensive to provide, that computation is often worth it if it saves the developer time to understand and address the issue.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "anchor" : "Pick-a-suitable-diagnostic-severity",
+          "level" : 3,
+          "text" : "Pick a suitable diagnostic severity",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Issues in DocC are classified as either ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/error",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ", ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/warning",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ", or ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/information",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "When deciding how severe an issue is, the first question to ask is: is it possible and is it meaningful for DocC to continue processing the rest of the documentation?",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If the answer is “no”—meaning that this issue is considered “build breaking”—then you can classify this issue as an ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/error",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "In practice DocC very rarely uses error-severity diagnostics and many of the current error-severity diagnostics represent unexpected issues that would likely be better represented by a thrown ",
+              "type" : "text"
+            },
+            {
+              "code" : "Swift.Error",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " type instead.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the answer is “yes”—that it’s both possible and meaningful to continue—then the other question to ask is: is the documentation output impacted by this issue?",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If the output is impacted—for example displaying an unresolved link, missing documentation for a parameter, or not organizing the documentation because of a syntax issue—then you should classify this issue as a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/warning",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If the output ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "isn’t",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " impacted—for example a Metadata directive that doesn’t configure anything—then ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/information",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " is likely the most appropriate severity but you ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "can",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " also classify this issue as a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/warning",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "DocC only displays errors and warnings by default, so even for issues that don’t impact the output, it can sometimes be useful to classify them as warnings so that DocC presents them to developers by default.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "anchor" : "Describe-the-issue",
+          "level" : 3,
+          "text" : "Describe the issue",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " has two places for textual information: a shorter ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/summary",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " and a longer ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/explanation",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " that can go into more detail.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Not all contexts that display DocC diagnostics include the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "Diagnostic\/explanation",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : ".",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If you only include some critical information in the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "explanation",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " it’s possible that some developers won’t see that information.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Important",
+          "style" : "important",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "DocC bases its recommendation for how to phrase diagnostic summaries on ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "https:\/\/github.com\/swiftlang\/swift\/blob\/main\/docs\/Diagnostics.md",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Following these recommendations help your new diagnostic fit in with both DocC’s other diagnostic and with the Swift compiler’s diagnostics.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Write your ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "summary",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " in a terse abbreviated style similar to English newspaper headlines or recipes.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "Use a single phrase or sentence, with no period at the end and omit words that don’t add information, such as grammatical words like “the”.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "If it’s important to include a second idea, use a semicolon to separate the two parts.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "For example:",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                },
+                {
+                  "items" : [
+                    {
+                      "content" : [
+                        {
+                          "inlineContent" : [
+                            {
+                              "text" : "“Level-3 heading ‘See Also’ cannot form a See Also section; did you mean to use a level-2 heading?”",
+                              "type" : "text"
+                            }
+                          ],
+                          "type" : "paragraph"
+                        }
+                      ]
+                    },
+                    {
+                      "content" : [
+                        {
+                          "inlineContent" : [
+                            {
+                              "text" : "“Organizing ‘NAME’ under itself forms a cycle”",
+                              "type" : "text"
+                            }
+                          ],
+                          "type" : "paragraph"
+                        }
+                      ]
+                    }
+                  ],
+                  "type" : "unorderedList"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Include information that shows that DocC understands the documentation.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "For example, referring to “level-2 heading ‘Some Heading’” or “instance method ‘someMethod()’” is usually unnecessary but the extra specificity can both help the developer pinpoint and reason about the issue and can increase implicit trust in the correctness of the diagnostic.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "If there is a single plausible fix or likely intended meaning, include that in the summary using a “did you mean…?” phrase, even if there’s a solution for it.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "For example:",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                },
+                {
+                  "code" : [
+                    "- Unexpected return value documentation ",
+                    "+ Return value documented for instance method returning void ",
+                    "",
+                    "- This heading doesn't sequentially follow the previous heading",
+                    "+ Level-4 heading doesn't sequentially follow the previous heading level (2); did you mean to use a level-3 heading?"
+                  ],
+                  "syntax" : "diff",
+                  "type" : "codeListing"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "When applicable, phrase diagnostics as rules rather than reporting that DocC failed to do something.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "Try to be specific about ",
+                      "type" : "text"
+                    },
+                    {
+                      "inlineContent" : [
+                        {
+                          "text" : "what",
+                          "type" : "text"
+                        }
+                      ],
+                      "type" : "emphasis"
+                    },
+                    {
+                      "text" : " is and isn’t allowed rather than saying that something is unsupported or not valid.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "For example:",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                },
+                {
+                  "code" : [
+                    "- Cannot organize 'NAME' under itself",
+                    "+ Organizing 'NAME' under itself forms a cycle",
+                    "",
+                    "- Invalid use of level-1 heading",
+                    "+ Page title can only be specified once",
+                    "",
+                    "- Incorrect use of symbol link",
+                    "+ Symbol links can only find symbols; did you mean to use a '<doc:>' link?"
+                  ],
+                  "syntax" : "diff",
+                  "type" : "codeListing"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Lead with the information that’s most specific about the issue and follow with information that provide context.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "IDEs and other environments sometimes present DocC diagnostics in space-constrained elements, where summaries above a certain length become truncated.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "For example:",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                },
+                {
+                  "code" : [
+                    "- Missing documentation for parameter 'NAME'",
+                    "+ Parameter 'NAME' is missing documentation",
+                    "",
+                    "- Snippet 'PATH' doesn't have a 'NAME' slice.",
+                    "+ Slice 'NAME' doesn't exist in snippet 'PATH'",
+                    "",
+                    "- 'NAME' (at 'PATH') cannot be disambiguated using 'TEXT' ",
+                    "+ 'TEXT' isn't a disambiguation for 'NAME' at 'PATH' "
+                  ],
+                  "syntax" : "diff",
+                  "type" : "codeListing"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "anchor" : "Explain-the-issue-in-more-detail",
+          "level" : 4,
+          "text" : "Explain the issue in more detail",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The diagnostic’s ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/explanation",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " is your opportunity to go into more detail about the issue.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Unlike the ",
+              "type" : "text"
+            },
+            {
+              "code" : "summary",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", you are free to phrase the ",
+              "type" : "text"
+            },
+            {
+              "code" : "explanation",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " however makes the most sense for the specific issue.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "There aren’t any ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "specific",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " length restrictions—although for most issues it’s good to keep to at most a paragraph or two—",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "and there aren’t any specific patterns or common phrasings to follow.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "When writing the explanation for your diagnostic, it can be good to imagine yourself receiving the diagnostic and think about what questions you have and try to preemptively answer those.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example, consider the five questions below. Their answers make for very good explanations to their respective diagnostics.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Why do I need a ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@Tutorials",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " page after I add a tutorial?",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Answer",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "\n",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@Tutorial",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " and ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@Article",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " pages require a ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@Tutorials",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " table of content page to define the hierarchy and recommended reading order of your documentation.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Question",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Why do I need to specify a “purpose” for my ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "CallToAction",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " directive?",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Answer",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "\n",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Without either a ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "purpose",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " or ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "label",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : ", the Call to Action has no text to display for its link on the page.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Question",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Why can’t I use ",
+                  "type" : "text"
+                },
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "another",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "emphasis"
+                },
+                {
+                  "text" : " first-level heading?",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Answer",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "\n",
+                  "type" : "text"
+                },
+                {
+                  "text" : "A first-level heading is reserved for specifying the title of an article or to define which symbol a documentation extension file is associated with.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Question",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Why can’t I organize this symbol under that other symbol?",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Answer",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "\n",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Links in a ‘Topics’ section organize your documentation into hierarchy. Pages can appear in more than one place but the hierarchy should remain a tree.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If this link contributed to the documentation hierarchy it would introduce this cycle: ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "<ASCII_DIAGRAM>",
+                  "type" : "codeVoice"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Question",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Why can’t I specify ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@TechnologyRoot",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " for this symbol?",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Answer",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "\n",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Symbols inherently belong to a module (in this case ‘MODULE_NAME’) which is already the root of the documentation hierarchy.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If this symbol became a root page it would move out of ‘MODULE_NAME’, creating a disjoint documentation hierarchy with two possible starting points.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Question",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Don’t merely repeat or rephrase information from the summary just to add an ",
+              "type" : "text"
+            },
+            {
+              "code" : "explanation",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If you can’t think of anything that’s unclear about the issue, unclear about how the developer can address it, or anything else that you think would make sense to describe in more detail,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "then it’s possible that this diagnostic doesn’t need an ",
+              "type" : "text"
+            },
+            {
+              "code" : "explanation",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " and that it’s clear and actionable from the summary alone.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "anchor" : "Provide-solutions",
+          "level" : 3,
+          "text" : "Provide solutions",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If you can identify one or more possible actions that would address the issue,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "it can save the developer a lot of time if they can pick and choose from a list of suggested solutions rather than come up with and apply the fix by hand themselves.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "That said, don’t overwhelm the developer with far fetched or irrelevant solutions.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the developer specified an unsupported value but DocC knows the list of all possible values (for example, the names of all image assets in the catalog or the names of all top-level symbols).",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Use ",
+              "type" : "text"
+            },
+            {
+              "code" : "NearMiss.bestMatches(for:against:)",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " to both filter and order the long list of possibilities based on how closely they match what the developer wrote.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Write your solution’s ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/summary",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " as a verb phrase that describes the action that the developer should take to address the issue.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Rename ‘FILE_NAME’”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Replace ‘WRONG’ with ‘CORRECT’”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Change to level-2 heading”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Remove duplicate parameter documentation”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Add a page title”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "A developer reading the diagnostic on the command line can’t apply the solution’s ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/replacements",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : ".",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "For this reason, include any hard to come by information—such as necessary link disambiguation—in the solution’s ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "summary",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " as well.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the solution requires some additional unknowable information that the developer needs to provide (for example, the value of a missing directive argument), use Xcode-syntax placeholders (",
+              "type" : "text"
+            },
+            {
+              "code" : "<#placeholder#>",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ") as necessary.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "It’s better to offer a solution with a placeholder in it than to offer no solution at all.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "header" : "row",
+          "rows" : [
+            [
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Solution summary",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ],
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Replacement text",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            ],
+            [
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Add a title",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ],
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "code" : "# <#Title#>",
+                      "type" : "codeVoice"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            ],
+            [
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Document ‘NAME’",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ],
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "code" : "- Parameter NAME: <#parameter description#>",
+                      "type" : "codeVoice"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            ],
+            [
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Change heading name",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ],
+              [
+                {
+                  "inlineContent" : [
+                    {
+                      "code" : "### <#New heading name#>",
+                      "type" : "codeVoice"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            ]
+          ],
+          "type" : "table"
+        },
+        {
+          "anchor" : "Organize-diagnostics-into-groups",
+          "level" : 3,
+          "text" : "Organize diagnostics into groups",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Developers can configure the severity of individual diagnostics using the ",
+              "type" : "text"
+            },
+            {
+              "code" : "--Wwarning <DIAGNOSTIC_ID>",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " and ",
+              "type" : "text"
+            },
+            {
+              "code" : "--Werror <DIAGNOSTIC_ID>",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " flags.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "In order to provide increasingly specific and actionable information about an issue, it’s sometimes best to create multiple related diagnostics.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "A missing ‘path’ value for a ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "Snippet",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " directive.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "A ‘slice’ name that doesn’t exist for the specified snippet.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "A repeated ‘path’ or ‘slice’ configuration for a snippet.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "An unrecognized or misspelled parameter for the ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "Snippet",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " directive.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "For both implementation reasons and for unit test specificity, it can make sense to use different diagnostic identifiers for each of these issues,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "but a developer may see them as a collection of snippet parameter issues.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "In this case you can specify a common ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/groupIdentifier",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " for all these different diagnostics.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "This allows the developer to configure the severity of all these related diagnostics together.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If you are refining a broad or less specific diagnostic into a collection of more specific diagnostics,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "it ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "can",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " make sense to use the old diagnostic identifier as the group identifier.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "This way, developers’ custom severity configurations for the previous diagnostic identifier continues to apply to the collection of more specific diagnostics.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Both individual diagnostic identifiers and diagnostic group identifiers are considered user-facing information.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Use a very terse but descriptive word or phrase of capitalized words joined together, for example ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "MultipleTopicsSections",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " and avoid internal development jargon.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "The identifier only needs to communicate which issues it’s referring to so that developers can configure the diagnostic’s severity.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "The identifier’s purpose ",
+                  "type" : "text"
+                },
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "is not",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " to make the developer understand what the issue is about.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "That responsibility belongs to the ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/summary",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " and the ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/explanation",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : ".",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Diagnostic identifiers with a “org.swift.docc.” prefix ",
+                  "type" : "text"
+                },
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "will not",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " be displayed to the developer (the diagnostic is presented without its identifier).",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "These identifiers aren’t considered user-facing yet and changing those identifiers ",
+                  "type" : "text"
+                },
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "is not",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " considered a breaking change.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "This gives us the opportunity to go through any existing diagnostics one by one and update them based on our most up-to-date understanding of what makes a clear and actionable diagnostic.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "anchor" : "Point-to-specific-markup",
+          "level" : 3,
+          "text" : "Point to specific markup",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "In addition to the diagnostic’s textual information, you can use the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/range",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " to refer the developer to the specific problematic documentation markup.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "IDEs, terminal output, and other environments that display DocC diagnostic information either display the diagnostic inline or include the diagnostic’s ",
+              "type" : "text"
+            },
+            {
+              "code" : "start",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " location in the textual diagnostic output.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Many such environments also highlight the markup between the range’s ",
+              "type" : "text"
+            },
+            {
+              "code" : "start",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " and ",
+              "type" : "text"
+            },
+            {
+              "code" : "end",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " locations.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "The more specific you can be with the diagnostic’s ",
+              "type" : "text"
+            },
+            {
+              "code" : "range",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", the easier it will be for the developer to contextualize the diagnostic’s textual information.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "A diagnostic about an unrecognized or misspelled directive should specify a ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "range",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " that’s only the name portion of the directive markup, rather than the directive’s full range which could span many lines.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "A diagnostic about an unsupported value for a known directive parameter should specify a ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "range",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " that’s only the markup for that value, rather than the full range of directive parameters which would span many lines.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "A diagnostic about a long symbol link where some link components resolve but not the full link should specify a ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "range",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " that’s the first link component that DocC can’t resolve, rather than the full range of the link.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "A diagnostic about a symbol link with unrecognized disambiguation should specify a ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "range",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " that’s only the unrecognized disambiguation, rather than the range of that link component.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Diagnostics about duplicate or conflicting information (for example: a parameter being documented twice, duplicate directives or directive parameters, or multiple documentation extensions for the same symbol) also have ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "another",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " location to specify.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "In these cases; add a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : "—which refers to the other markup—to the diagnostic.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If there’s an inherent order to the duplicate information—primarily if one appears before the other in the same file—use a “… previously … here” phrasing for the note.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If there’s no order between the duplicate or conflicting information—for example if the information comes from different files—use a “… also … here” phrasing instead for the note.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "In a few exceptions there may be other “… here” phrases that read better. Use your best judgement.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Previously documented here”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Metadata directive also defined here”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "“Overview section starts here”",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "A ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " is presented in the context of the diagnostic that the note is associated with.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Because of this, you can sometimes omit information that’s already present in the diagnostic.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "For example, the note associated with the diagnostic about a parameter being documented more than once simply says “Previously documented here” rather than “Parameter ‘NAME’ previously documented here”",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Tip",
+          "style" : "tip",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "anchor" : "Diagnostics-and-Analysis",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmarking"
+      ],
+      "title" : "Diagnostics and Analysis"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/adding-diagnostics"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Benchmarking": {
+  "abstract" : [
+    {
+      "text" : "Produce performance metrics to improve the compilation pipeline and track regressions.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmarking",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Benchmarking",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/benchmarking"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic": {
+  "abstract" : [
+    {
+      "text" : "A diagnostic explains a problem or issue that needs the end-user’s attention.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Diagnostic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Diagnostic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Diagnostic",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/explanation": {
+  "abstract" : [
+    {
+      "text" : "Additional details that explain the problem or issue to the end-user in plain language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "explanation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/explanation",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "explanation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/explanation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/groupIdentifier": {
+  "abstract" : [
+    {
+      "text" : "A unique string that identifies a group of diagnostics whose severity can be controlled by passing ",
+      "type" : "text"
+    },
+    {
+      "code" : "--Werror",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and ",
+      "type" : "text"
+    },
+    {
+      "code" : "--Wwarning",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " flags to ",
+      "type" : "text"
+    },
+    {
+      "code" : "docc",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "groupIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/groupIdentifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "groupIdentifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/groupidentifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/range": {
+  "abstract" : [
+    {
+      "text" : "The diagnostic’s source range if the diagnostic originated at a source document, else ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "range"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11SourceRangea",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/range",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "range",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/range"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/summary": {
+  "abstract" : [
+    {
+      "text" : "A brief summary that describe the problem or issue.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "summary"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/summary",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "summary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/summary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticNote"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticNote"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DiagnosticNote",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticnote"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/error": {
+  "abstract" : [
+    {
+      "text" : "An error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "error"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/error",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DiagnosticSeverity.error",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/error"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/information": {
+  "abstract" : [
+    {
+      "text" : "Information.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "information"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/information",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DiagnosticSeverity.information",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/information"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/warning": {
+  "abstract" : [
+    {
+      "text" : "A warning.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "warning"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/warning",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DiagnosticSeverity.warning",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/warning"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/EmittingDiagnostics": {
+  "abstract" : [
+    {
+      "text" : "Vend warnings and errors as part of an operation’s result.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Emitting Diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/emittingdiagnostics"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Problem": {
+  "abstract" : [
+    {
+      "text" : "A problem with a document along with possible solutions to the problem.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Problem"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Problem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Problem",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/problem"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Solution": {
+  "abstract" : [
+    {
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Solution"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Solution"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Solution",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/solution"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Solution/replacements": {
+  "abstract" : [
+    {
+      "text" : "A list of replacements that make up this solution to resolve the original problem or issue.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "replacements"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
+      "text" : "Replacement"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/replacements",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "replacements",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/solution\/replacements"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Solution/summary": {
+  "abstract" : [
+    {
+      "text" : "A brief summary that describes what the solution is to the end-user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "summary"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/summary",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "summary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/solution\/summary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
+  "abstract" : [
+    {
+      "text" : "Run static analysis checks on markup files.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Static Analysis",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/staticanalysis"
+},
+"https://github.com/swiftlang/swift/blob/main/docs/Diagnostics.md": {
+  "identifier" : "https:\/\/github.com\/swiftlang\/swift\/blob\/main\/docs\/Diagnostics.md",
+  "title" : "Swift’s contributor documentation about diagnostics",
+  "titleInlineContent" : [
+    {
+      "text" : "Swift’s contributor documentation about diagnostics",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/github.com\/swiftlang\/swift\/blob\/main\/docs\/Diagnostics.md"
+}
+}
+}

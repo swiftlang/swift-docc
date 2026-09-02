@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L722"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L793"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -87,9 +87,11 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
-        "doc:\/\/SwiftDocC\/SQ"
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -106,27 +108,29 @@
   ],
   "topicSections" : [
     {
-      "anchor" : "Initializers",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/init(from:)"
-      ],
-      "title" : "Initializers"
-    },
-    {
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/alignment-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/content",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/size"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Alignment-swift.enum"
+      ],
+      "title" : "Enumerations"
+    },
+    {
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Equatable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Decodable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Encodable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -276,16 +280,98 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/Equatable-Implementations": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/Alignment-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "The alignment of content within a column.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Alignment"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Alignment-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Alignment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Row.Column.Alignment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/alignment-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/Decodable-Implementations": {
   "abstract" : [
 
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Equatable-Implementations",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Decodable-Implementations",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
+  "title" : "Decodable Implementations",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/equatable-implementations"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/decodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/Encodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/Encodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Encodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/encodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/alignment-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The alignment of this column’s content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "alignment"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO3RowV6ColumnV9AlignmentO",
+      "text" : "Alignment"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/alignment-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "alignment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/alignment-swift.property"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/content": {
   "abstract" : [
@@ -328,48 +414,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/content"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/init(from:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "from"
-    },
-    {
-      "kind" : "text",
-      "text" : ": any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:s7DecoderP",
-      "text" : "Decoder"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row\/Column\/init(from:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(from:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/init(from:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row/Column/size": {
   "abstract" : [
     {
@@ -406,6 +450,16 @@
   "title" : "size",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row\/column\/size"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
+  "type" : "unresolvable"
 }
 }
 }

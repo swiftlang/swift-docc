@@ -1,0 +1,621 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML13LinkedElementV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "LinkedElement"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "LinkedElement"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "LinkProvider.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/LinkProvider.swift#L30"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "LinkedElement"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "LinkedElement"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Structures",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/SymbolNameFragment"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/init(path:names:subheadings:abstract:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/abstract",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/names-swift.property",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/path",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/subheadings-swift.property"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Enumerations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Name",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Names-swift.enum",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheading",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheadings-swift.enum"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/linkedelement"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkedElement"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkedElement"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkedElement",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Name": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Name"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Name",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Name"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkedElement.Name",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/name"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Names-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "The single name or language-specific names to use when referring to a linked element in inline content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Names"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Names-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Names"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkedElement.Names",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/names-swift.enum"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Subheading": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Subheading"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheading",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Subheading"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkedElement.Subheading",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/subheading"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Subheadings-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "The single subheading or language-specific subheadings to use when referring to a linked element in either a Topics section, See Also section, or in a ",
+      "type" : "text"
+    },
+    {
+      "code" : "@Links",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " directive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Subheadings"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheadings-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Subheadings"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkedElement.Subheadings",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/subheadings-swift.enum"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/SymbolNameFragment": {
+  "abstract" : [
+    {
+      "text" : "A fragment in a symbol’s name",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolNameFragment"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/SymbolNameFragment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolNameFragment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkedElement.SymbolNameFragment",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/symbolnamefragment"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/abstract": {
+  "abstract" : [
+    {
+      "text" : "The abstract of the page—to be displayed in either a Topics section, See Also section, or in a ",
+      "type" : "text"
+    },
+    {
+      "code" : "@Links",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " directive—or ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the linked element doesn’t have an abstract.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "abstract"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9ParagraphV",
+      "text" : "Paragraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/abstract",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "abstract",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/abstract"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/init(path:names:subheadings:abstract:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "path"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "names"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13LinkedElementV5NamesO",
+      "text" : "Names"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "subheadings"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13LinkedElementV11SubheadingsO",
+      "text" : "Subheadings"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "abstract"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9ParagraphV",
+      "text" : "Paragraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/init(path:names:subheadings:abstract:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(path:names:subheadings:abstract:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/init(path:names:subheadings:abstract:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/names-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The names of the linked element, for display when the element is referenced in inline content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "names"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13LinkedElementV5NamesO",
+      "text" : "Names"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/names-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "names",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/names-swift.property"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/path": {
+  "abstract" : [
+    {
+      "text" : "The path within the output archive to the linked element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "path"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/path",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "path",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/path"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/subheadings-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The subheadings of the linked element, for display when the element is referenced in either a Topics section, See Also section, or in a ",
+      "type" : "text"
+    },
+    {
+      "code" : "@Links",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " directive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "subheadings"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13LinkedElementV11SubheadingsO",
+      "text" : "Subheadings"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/subheadings-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "subheadings",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/subheadings-swift.property"
+}
+}
+}

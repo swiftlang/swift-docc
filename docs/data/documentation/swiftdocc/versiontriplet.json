@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalMetadata.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -127,15 +127,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/init(_:_:_:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Comparable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -243,28 +234,6 @@
   "title" : "VersionTriplet",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/versiontriplet"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/Comparable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Comparable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Comparable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/versiontriplet\/comparable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/versiontriplet\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/_(_:_:)": {
   "abstract" : [

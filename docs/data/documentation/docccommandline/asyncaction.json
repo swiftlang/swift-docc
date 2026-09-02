@@ -1,0 +1,555 @@
+{
+  "abstract" : [
+    {
+      "text" : "An independent unit of work in the command-line workflow.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:15DocCCommandLine11AsyncActionP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "AsyncAction"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommandLine"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "AsyncAction"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "Action.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Action.swift#L16"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "AsyncAction"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "AsyncAction"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "An action represents a discrete documentation task; it takes options and inputs, performs its work, reports any diagnostics it encounters, and outputs it generates.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/IndexAction",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/InitAction",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/PreviewAction"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction\/perform(logHandle:)",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction\/performAndHandleResult(logHandle:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommandline\/asyncaction"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommandLine/documentation/DocCCommandLine": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommandLine",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/ActionResult": {
+  "abstract" : [
+    {
+      "text" : "The result of executing an action.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ActionResult"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ActionResult",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ActionResult"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ActionResult",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/actionresult"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/AsyncAction": {
+  "abstract" : [
+    {
+      "text" : "An independent unit of work in the command-line workflow.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AsyncAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AsyncAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AsyncAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/asyncaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/AsyncAction/perform(logHandle:)": {
+  "abstract" : [
+    {
+      "text" : "Performs the action and returns an ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ActionResult",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "perform"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "logHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
+      "text" : "LogHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:15DocCCommandLine12ActionResultV",
+      "text" : "ActionResult"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction\/perform(logHandle:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "perform(logHandle:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/asyncaction\/perform(loghandle:)"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/AsyncAction/performAndHandleResult(logHandle:)": {
+  "abstract" : [
+    {
+      "text" : "Performs the action and checks for any error-severity issues in the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "performAndHandleResult"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "logHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
+      "text" : "LogHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction\/performAndHandleResult(logHandle:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "performAndHandleResult(logHandle:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/asyncaction\/performandhandleresult(loghandle:)"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction": {
+  "abstract" : [
+    {
+      "text" : "An action that converts a collection of documentation inputs into compiled documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConvertAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/convertaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CoverageAction": {
+  "abstract" : [
+    {
+      "text" : "An action that creates documentation coverage info for a collection of documentation inputs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CoverageAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CoverageAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CoverageAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/coverageaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/IndexAction": {
+  "abstract" : [
+    {
+      "text" : "An action that creates an index of a collection of documentation inputs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "IndexAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/IndexAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "IndexAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "IndexAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/indexaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/InitAction": {
+  "abstract" : [
+    {
+      "text" : "An action that generates a documentation catalog from a template seed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/InitAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "InitAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/initaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/PreviewAction": {
+  "abstract" : [
+    {
+      "text" : "An action that monitors a documentation catalog for changes and runs a live web-preview.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PreviewAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/PreviewAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PreviewAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PreviewAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/previewaction"
+}
+}
+}

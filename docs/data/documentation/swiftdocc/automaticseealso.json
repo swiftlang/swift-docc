@@ -154,14 +154,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso\/Enabledness-swift.enum"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -281,17 +273,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/automaticseealso"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AutomaticSeeAlso/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/automaticseealso\/directiveconvertible-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/AutomaticSeeAlso/Enabledness-swift.enum": {
   "abstract" : [
     {
@@ -386,15 +367,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16AutomaticSeeAlsoC",
-      "text" : "AutomaticSeeAlso"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNode.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L836"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L847"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -117,16 +117,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/Error-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/LocalizedError-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -270,39 +260,6 @@
   "title" : "DocumentationNode.Error",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/error"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/error\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/error\/error-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/error\/localizederror-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/errorDescription": {
   "abstract" : [

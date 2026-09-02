@@ -88,7 +88,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Indexable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Indexable.swift#L71"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Indexable.swift#L74"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

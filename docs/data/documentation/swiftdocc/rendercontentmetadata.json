@@ -141,14 +141,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/rawIndexableTextContent(references:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -261,17 +253,6 @@
   "title" : "RenderContentMetadata",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendercontentmetadata"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderContentMetadata/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendercontentmetadata\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderContentMetadata/abstract": {
   "abstract" : [
@@ -566,7 +547,15 @@
     },
     {
       "kind" : "text",
-      "text" : " : any "
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

@@ -86,6 +86,7 @@
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/SH"
       ],
       "kind" : "relationships",
@@ -128,8 +129,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Comparable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/CustomStringConvertible-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Decodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Equatable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Decodable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -281,17 +281,6 @@
   "title" : "Decodable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct\/decodable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Platform/Version-swift.struct/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Platform/Version-swift.struct/init(string:)": {
   "abstract" : [
@@ -532,6 +521,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

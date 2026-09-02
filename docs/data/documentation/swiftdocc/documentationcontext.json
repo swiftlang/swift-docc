@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L35"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -84,6 +84,7 @@
     {
       "kind" : "mentions",
       "mentions" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompilerPipeline",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkResolution"
       ]
@@ -197,9 +198,19 @@
       "anchor" : "Structures",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider"
       ],
       "title" : "Structures"
+    },
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(inputs:dataProvider:diagnosticEngine:configuration:)"
+      ],
+      "title" : "Initializers"
     },
     {
       "anchor" : "Instance-Properties",
@@ -207,6 +218,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/configuration-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/diagnosticEngine",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/diagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/knownIdentifiers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/knownPages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/linkResolver",
@@ -236,14 +248,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/updateAsset(named:asset:in:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Type-Aliases",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ReferenceCheck"
-      ],
-      "title" : "Type Aliases"
     },
     {
       "anchor" : "Type-Methods",
@@ -290,6 +294,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AddingFeatureFlags": {
+  "abstract" : [
+    {
+      "text" : "Develop experimental features by adding feature flags.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding Feature Flags",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/addingfeatureflags"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AutomaticCuration": {
   "abstract" : [
@@ -484,17 +502,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ReferenceCheck": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs": {
   "abstract" : [
     {
-      "text" : "A closure type getting the information about a reference in a context and returns any possible problems with it.",
+      "text" : "A collection of the build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "typealias"
+      "text" : "struct"
     },
     {
       "kind" : "text",
@@ -502,21 +520,55 @@
     },
     {
       "kind" : "identifier",
-      "text" : "ReferenceCheck"
+      "text" : "Inputs"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ReferenceCheck",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "ReferenceCheck"
+      "text" : "Inputs"
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationContext.ReferenceCheck",
+  "title" : "DocumentationContext.Inputs",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/referencecheck"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/InputsProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides inputs for a unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InputsProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InputsProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.InputsProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputsprovider"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/children(of:kind:)": {
   "abstract" : [
@@ -670,15 +722,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC13ConfigurationV",
       "text" : "Configuration"
     }
@@ -693,7 +736,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/diagnosticEngine": {
   "abstract" : [
     {
-      "text" : "The engine that collects problems encountered while registering and processing the documentation bundles in this context.",
+      "text" : "The engine that collects diagnostics encountered while registering and processing the documentation bundles in this context.",
       "type" : "text"
     }
   ],
@@ -726,6 +769,47 @@
   "title" : "diagnosticEngine",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/diagnosticengine"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/diagnostics": {
+  "abstract" : [
+    {
+      "text" : "A convenient accessor for the diagnostic engine’s list of diagnostics.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnostics"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/diagnostics",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/documentURL(for:)": {
   "abstract" : [
@@ -894,15 +978,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC0D5ErrorO",
       "text" : "ContextError"
     },
@@ -998,6 +1073,135 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/identifier(forassetname:in:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)": {
+  "abstract" : [
+    {
+      "text" : "Initializes a documentation context with a given ",
+      "type" : "text"
+    },
+    {
+      "code" : "bundle",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "dataProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12DataProviderP",
+      "text" : "DataProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "diagnosticEngine"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16DiagnosticEngineC",
+      "text" : "DiagnosticEngine"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "configuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC13ConfigurationV",
+      "text" : "Configuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(inputs:dataProvider:diagnosticEngine:configuration:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(inputs:dataProvider:diagnosticEngine:configuration:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/init(inputs:dataprovider:diagnosticengine:configuration:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/isFileExtension(_:supported:)": {
   "abstract" : [
     {
@@ -1062,15 +1266,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -1347,11 +1542,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/problems": {
   "abstract" : [
-    {
-      "text" : "A list of all the problems that was encountered while registering and processing the documentation bundles in this context.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1478,8 +1671,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
     },
     {
       "kind" : "text",
@@ -1487,7 +1680,16 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV10IdentifierV",
       "text" : "Identifier"
     },
     {
@@ -1553,8 +1755,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
     },
     {
       "kind" : "text",
@@ -1562,7 +1764,16 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV10IdentifierV",
       "text" : "Identifier"
     },
     {
@@ -1628,8 +1839,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
     },
     {
       "kind" : "text",
@@ -1637,7 +1848,16 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV10IdentifierV",
       "text" : "Identifier"
     },
     {
@@ -1818,15 +2038,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC9AssetTypeO",
       "text" : "AssetType"
     },
@@ -1978,15 +2189,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

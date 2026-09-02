@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "A list of all the problems that was encountered while registering and processing the documentation bundles in this context.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -54,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L154"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L159"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -184,11 +189,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/problems": {
   "abstract" : [
-    {
-      "text" : "A list of all the problems that was encountered while registering and processing the documentation bundles in this context.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -230,6 +233,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

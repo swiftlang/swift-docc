@@ -89,7 +89,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticSeverity.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L65"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L58"
     },
     "role" : "symbol",
     "roleHeading" : "Operator",

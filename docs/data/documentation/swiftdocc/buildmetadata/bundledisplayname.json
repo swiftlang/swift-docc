@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The display name of the documentation bundle that DocC built.",
+      "text" : "The display name of the documentation archive that DocC built.",
       "type" : "text"
     }
   ],
@@ -134,7 +134,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata": {
   "abstract" : [
     {
-      "text" : "A value that encapsulates metadata for a documentation bundle that DocC built.",
+      "text" : "A value that encapsulates metadata for a documentation archive that DocC built.",
       "type" : "text"
     }
   ],
@@ -168,7 +168,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/bundleDisplayName": {
   "abstract" : [
     {
-      "text" : "The display name of the documentation bundle that DocC built.",
+      "text" : "The display name of the documentation archive that DocC built.",
       "type" : "text"
     }
   ],

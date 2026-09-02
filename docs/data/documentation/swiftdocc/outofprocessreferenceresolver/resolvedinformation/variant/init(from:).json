@@ -77,9 +77,6 @@
         "name" : "SwiftDocC"
       }
     ],
-    "platforms" : [
-
-    ],
     "role" : "symbol",
     "roleHeading" : "Initializer",
     "symbolKind" : "init",

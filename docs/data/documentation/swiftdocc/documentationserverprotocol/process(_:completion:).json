@@ -141,11 +141,11 @@
             },
             {
               "kind" : "attribute",
-              "text" : "@escaping "
+              "text" : "@escaping"
             },
             {
               "kind" : "text",
-              "text" : "("
+              "text" : " ("
             },
             {
               "kind" : "typeIdentifier",

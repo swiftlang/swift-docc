@@ -1,0 +1,330 @@
+{
+  "abstract" : [
+    {
+      "text" : "Equivalent to the ",
+      "type" : "text"
+    },
+    {
+      "code" : "Content-Security-Policy",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " HTTP header.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/HTTPEquivalent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/HTTPEquivalent\/contentSecurityPolicy"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML8HTMLNodeV9AttributeV14HTTPEquivalentO21contentSecurityPolicyyA2GmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "contentSecurityPolicy"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "HTMLNode+Attributes.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Attributes.swift#L622"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "HTMLNode.Attribute.HTTPEquivalent.contentSecurityPolicy"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "contentSecurityPolicy"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/htmlnode\/attribute\/httpequivalent\/contentsecuritypolicy"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute": {
+  "abstract" : [
+    {
+      "text" : "An attribute that can be applies to one or more HTML elements.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/HTTPEquivalent": {
+  "abstract" : [
+    {
+      "text" : "A value for the ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/httpEquiv(_:)",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " attribute.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HTTPEquivalent"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/HTTPEquivalent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HTTPEquivalent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.HTTPEquivalent",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/httpequivalent"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/HTTPEquivalent/contentSecurityPolicy": {
+  "abstract" : [
+    {
+      "text" : "Equivalent to the ",
+      "type" : "text"
+    },
+    {
+      "code" : "Content-Security-Policy",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " HTTP header.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentSecurityPolicy"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/HTTPEquivalent\/contentSecurityPolicy",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.HTTPEquivalent.contentSecurityPolicy",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/httpequivalent\/contentsecuritypolicy"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/httpEquiv(_:)": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "code" : "<meta>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element configuration that instructs the browser to process the page as if certain HTTP headers were present.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpEquiv"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV14HTTPEquivalentO",
+      "text" : "HTTPEquivalent"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/httpEquiv(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "httpEquiv(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/httpequiv(_:)"
+}
+}
+}

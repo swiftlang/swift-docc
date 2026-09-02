@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PatchOperation.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/PatchOperation.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/PatchOperation.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

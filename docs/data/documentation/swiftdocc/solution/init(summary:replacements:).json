@@ -27,7 +27,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC8SolutionV7summary12replacementsACSS_SayAA11ReplacementVGtcfc",
+    "externalID" : "s:9SwiftDocC8SolutionV7summary12replacementsACSS_SayAC11ReplacementVGtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -64,7 +64,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+        "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
         "text" : "Replacement"
       },
       {
@@ -131,9 +131,9 @@
               "text" : ": ["
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Replacement",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+              "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
               "text" : "Replacement"
             },
             {
@@ -153,7 +153,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "A brief description of the solution to a problem",
+                  "text" : "A brief description of the solution",
                   "type" : "text"
                 }
               ],
@@ -167,7 +167,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The replacements necessary to fix a problem. This array may be empty.",
+                  "text" : "A list of replacements that make up this solution, if this solution can be described as a series of replacements.",
                   "type" : "text"
                 }
               ],
@@ -215,52 +215,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Replacement": {
-  "abstract" : [
-    {
-      "text" : "A textual replacement.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Replacement"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Replacement"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Replacement",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/replacement"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Solution": {
   "abstract" : [
     {
-      "text" : "A solution to a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Problem",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
       "type" : "text"
     }
   ],
@@ -290,6 +248,40 @@
   "title" : "Solution",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/solution"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Solution/Replacement": {
+  "abstract" : [
+    {
+      "text" : "A textual replacement that makes up part of a solution to resolve the specific problem or issue with the end-user’s documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Replacement"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Replacement",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Replacement"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Solution.Replacement",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/solution\/replacement"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Solution/init(summary:replacements:)": {
   "abstract" : [
@@ -342,7 +334,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+      "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
       "text" : "Replacement"
     },
     {

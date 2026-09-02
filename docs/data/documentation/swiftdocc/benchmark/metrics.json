@@ -35,7 +35,15 @@
       },
       {
         "kind" : "text",
-        "text" : ": [any "
+        "text" : ": ["
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -54,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Benchmark.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L56"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L58"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -86,7 +94,15 @@
             },
             {
               "kind" : "text",
-              "text" : ": [any "
+              "text" : ": ["
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkMetric",
@@ -196,7 +212,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": [any "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

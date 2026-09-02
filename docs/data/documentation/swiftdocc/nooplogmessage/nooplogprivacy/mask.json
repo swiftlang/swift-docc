@@ -1,0 +1,299 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy\/Mask"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC14NoOpLogMessageV0cdE7PrivacyV4MaskO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Mask"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Mask"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "NoOpSignposterShim.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FoundationExtensions\/NoOpSignposterShim.swift#L122"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "NoOpLogMessage.NoOpLogPrivacy.Mask"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Mask"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy\/Mask\/hash",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy\/Mask\/none"
+      ],
+      "title" : "Enumeration Cases"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/nooplogmessage\/nooplogprivacy\/mask"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogPrivacy": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogPrivacy"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogPrivacy"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogPrivacy",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogprivacy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogPrivacy/Mask": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Mask"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy\/Mask",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Mask"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogPrivacy.Mask",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogprivacy\/mask"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogPrivacy/Mask/hash": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hash"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy\/Mask\/hash",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogPrivacy.Mask.hash",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogprivacy\/mask\/hash"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogPrivacy/Mask/none": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "none"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy\/Mask\/none",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogPrivacy.Mask.none",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogprivacy\/mask\/none"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

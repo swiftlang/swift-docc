@@ -1,0 +1,314 @@
+{
+  "abstract" : [
+    {
+      "text" : "An indication that the current document is a part of a series and that the next document in the series is the referenced document.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Rel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Rel\/next"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML8HTMLNodeV9AttributeV3RelO4nextyA2GmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "next"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "HTMLNode+Attributes.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Attributes.swift#L745"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "HTMLNode.Attribute.Rel.next"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "next"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/htmlnode\/attribute\/rel\/next"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute": {
+  "abstract" : [
+    {
+      "text" : "An attribute that can be applies to one or more HTML elements.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/Rel": {
+  "abstract" : [
+    {
+      "text" : "A value for the ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/rel(_:)",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " attribute.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Rel"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Rel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Rel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.Rel",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/rel"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/Rel/next": {
+  "abstract" : [
+    {
+      "text" : "An indication that the current document is a part of a series and that the next document in the series is the referenced document.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "next"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Rel\/next",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.Rel.next",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/rel\/next"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/rel(_:)": {
+  "abstract" : [
+    {
+      "text" : "A list of relationships between the current document and the ",
+      "type" : "text"
+    },
+    {
+      "code" : "<a>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element’s linked destination resource.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "rel"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV3RelO",
+      "text" : "Rel"
+    },
+    {
+      "kind" : "text",
+      "text" : "...) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/rel(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "rel(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/rel(_:)"
+}
+}
+}

@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "An array holding all problems encountered during the index build.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -55,7 +60,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L499"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L511"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -97,7 +102,15 @@
             },
             {
               "kind" : "text",
-              "text" : "] { get }"
+              "text" : "] { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -251,11 +264,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/problems": {
   "abstract" : [
-    {
-      "text" : "An array holding all problems encountered during the index build.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -297,6 +308,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

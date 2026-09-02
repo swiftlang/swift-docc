@@ -38,7 +38,6 @@
       "anchor" : "Operators",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/!=(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/==(_:_:)"
       ],
       "title" : "Operators"
@@ -132,6 +131,14 @@
     },
     {
       "kind" : "identifier",
+      "text" : "SymbolKit"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
       "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
       "text" : "SymbolGraph"
     },
@@ -167,68 +174,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/declarationfragments"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/Symbol/DeclarationFragments/!=(_:_:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "!="
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/!=(_:_:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "!=(_:_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/declarationfragments\/!=(_:_:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/Symbol/DeclarationFragments/==(_:_:)": {
   "abstract" : [
 
@@ -260,57 +205,11 @@
     },
     {
       "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-      "text" : "SymbolGraph"
+      "text" : "(`Self`"
     },
     {
       "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-      "text" : "Symbol"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
-      "text" : "DeclarationFragments"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-      "text" : "SymbolGraph"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-      "text" : "Symbol"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
-      "text" : "DeclarationFragments"
+      "text" : ", `Self`"
     },
     {
       "kind" : "text",

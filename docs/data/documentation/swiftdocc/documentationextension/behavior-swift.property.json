@@ -55,15 +55,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC22DocumentationExtensionC",
-        "text" : "DocumentationExtension"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC22DocumentationExtensionC8BehaviorO",
         "text" : "Behavior"
       }
@@ -122,16 +113,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC22DocumentationExtensionC",
-              "text" : "DocumentationExtension"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum",
@@ -342,15 +323,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22DocumentationExtensionC",
-      "text" : "DocumentationExtension"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

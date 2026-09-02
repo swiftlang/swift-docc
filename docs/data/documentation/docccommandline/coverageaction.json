@@ -1,0 +1,327 @@
+{
+  "abstract" : [
+    {
+      "text" : "An action that creates documentation coverage info for a collection of documentation inputs.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:15DocCCommandLine14CoverageActionV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "CoverageAction"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommandLine"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "CoverageAction"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "CoverageAction.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Actions\/CoverageAction.swift#L15"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "CoverageAction"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "CoverageAction"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction\/documentationCoverageOptions"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction\/perform(logHandle:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommandline\/coverageaction"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommandLine/documentation/DocCCommandLine": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommandLine",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/AsyncAction": {
+  "abstract" : [
+    {
+      "text" : "An independent unit of work in the command-line workflow.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AsyncAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AsyncAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AsyncAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/asyncaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CoverageAction": {
+  "abstract" : [
+    {
+      "text" : "An action that creates documentation coverage info for a collection of documentation inputs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CoverageAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CoverageAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CoverageAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/coverageaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CoverageAction/documentationCoverageOptions": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "documentationCoverageOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction\/documentationCoverageOptions",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "documentationCoverageOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/coverageaction\/documentationcoverageoptions"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CoverageAction/perform(logHandle:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "perform"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "logHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
+      "text" : "LogHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:15DocCCommandLine12ActionResultV",
+      "text" : "ActionResult"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CoverageAction\/perform(logHandle:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "perform(logHandle:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/coverageaction\/perform(loghandle:)"
+}
+}
+}

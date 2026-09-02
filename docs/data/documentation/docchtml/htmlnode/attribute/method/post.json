@@ -1,0 +1,314 @@
+{
+  "abstract" : [
+    {
+      "text" : "The form data is sent as the body in a POST request.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Method"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Method\/post"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML8HTMLNodeV9AttributeV6MethodO4postyA2GmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "post"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "HTMLNode+Attributes.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Attributes.swift#L676"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "HTMLNode.Attribute.Method.post"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "post"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/htmlnode\/attribute\/method\/post"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HTMLNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute": {
+  "abstract" : [
+    {
+      "text" : "An attribute that can be applies to one or more HTML elements.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Attribute"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/Method": {
+  "abstract" : [
+    {
+      "text" : "A value for the ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/method(_:)",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " attribute.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Method"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Method",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Method"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.Method",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/method"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/Method/post": {
+  "abstract" : [
+    {
+      "text" : "The form data is sent as the body in a POST request.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "post"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/Method\/post",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "HTMLNode.Attribute.Method.post",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/method\/post"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/method(_:)": {
+  "abstract" : [
+    {
+      "text" : "The HTTP method that the browser should use to submit the ",
+      "type" : "text"
+    },
+    {
+      "code" : "<form>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "method"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV6MethodO",
+      "text" : "Method"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/method(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "method(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/method(_:)"
+}
+}
+}

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L24"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -248,14 +248,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/currentSchemaVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -485,17 +477,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderindex"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderindex\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/Node": {
   "abstract" : [
     {
@@ -602,7 +583,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -685,7 +674,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -740,15 +737,6 @@
     {
       "kind" : "text",
       "text" : " : ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11RenderIndexV",
-      "text" : "RenderIndex"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -891,15 +879,6 @@
     {
       "kind" : "text",
       "text" : " : ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11RenderIndexV",
-      "text" : "RenderIndex"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

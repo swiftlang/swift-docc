@@ -339,14 +339,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Redirect\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Redirect\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -653,17 +645,6 @@
   "title" : "Redirect",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/redirect"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Redirect/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Redirect\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/redirect\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Redirect/directiveName": {
   "abstract" : [

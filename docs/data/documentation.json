@@ -1,15 +1,51 @@
 {
   "identifier" : {
     "interfaceLanguage" : "swift",
-    "url" : "doc:\/\/Documentation\/documentation"
+    "url" : "doc:\/\/SwiftDocC\/documentation"
   },
   "kind" : "article",
   "metadata" : {
     "role" : "collection",
     "roleHeading" : "Package",
-    "title" : "Documentation"
+    "title" : "SwiftDocC"
   },
   "references" : {
+    "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine" : {
+      "abstract" : [
+        {
+          "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+          "type" : "text"
+        }
+      ],
+      "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+      "kind" : "symbol",
+      "role" : "collection",
+      "title" : "DocCCommandLine",
+      "type" : "topic",
+      "url" : "\/documentation\/docccommandline"
+    },
+    "doc:\/\/DocCCommon\/documentation\/DocCCommon" : {
+      "abstract" : [
+
+      ],
+      "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+      "kind" : "symbol",
+      "role" : "collection",
+      "title" : "DocCCommon",
+      "type" : "topic",
+      "url" : "\/documentation\/docccommon"
+    },
+    "doc:\/\/DocCHTML\/documentation\/DocCHTML" : {
+      "abstract" : [
+
+      ],
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+      "kind" : "symbol",
+      "role" : "collection",
+      "title" : "DocCHTML",
+      "type" : "topic",
+      "url" : "\/documentation\/docchtml"
+    },
     "doc:\/\/SwiftDocC\/documentation\/SwiftDocC" : {
       "abstract" : [
         {
@@ -23,20 +59,6 @@
       "title" : "SwiftDocC",
       "type" : "topic",
       "url" : "\/documentation\/swiftdocc"
-    },
-    "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities" : {
-      "abstract" : [
-        {
-          "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
-          "type" : "text"
-        }
-      ],
-      "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-      "kind" : "symbol",
-      "role" : "collection",
-      "title" : "SwiftDocCUtilities",
-      "type" : "topic",
-      "url" : "\/documentation\/swiftdoccutilities"
     }
   },
   "schemaVersion" : {
@@ -50,8 +72,10 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities"
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     }
   ],

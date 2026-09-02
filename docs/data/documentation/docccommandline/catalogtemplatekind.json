@@ -1,0 +1,330 @@
+{
+  "abstract" : [
+    {
+      "text" : "Specifies the different template kinds available for",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "initializing the documentation catalog.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:15DocCCommandLine19CatalogTemplateKindO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "CatalogTemplateKind"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommandLine"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "CatalogTemplateKind"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "CatalogTemplateKind.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Actions\/Init\/CatalogTemplateKind.swift#L13"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "CatalogTemplateKind"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "CatalogTemplateKind"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/14ArgumentParser013ExpressibleByA0P",
+        "doc:\/\/DocCCommandLine\/s8CopyableP",
+        "doc:\/\/DocCCommandLine\/SQ",
+        "doc:\/\/DocCCommandLine\/s9EscapableP",
+        "doc:\/\/DocCCommandLine\/SH",
+        "doc:\/\/DocCCommandLine\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind\/articleOnly",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind\/tutorial"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommandline\/catalogtemplatekind"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommandLine/14ArgumentParser013ExpressibleByA0P": {
+  "identifier" : "doc:\/\/DocCCommandLine\/14ArgumentParser013ExpressibleByA0P",
+  "title" : "ArgumentParser.ExpressibleByArgument",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/SH": {
+  "identifier" : "doc:\/\/DocCCommandLine\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/SQ": {
+  "identifier" : "doc:\/\/DocCCommandLine\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/SY": {
+  "identifier" : "doc:\/\/DocCCommandLine\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommandLine",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CatalogTemplateKind": {
+  "abstract" : [
+    {
+      "text" : "Specifies the different template kinds available for",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "initializing the documentation catalog.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CatalogTemplateKind"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CatalogTemplateKind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CatalogTemplateKind",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/catalogtemplatekind"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CatalogTemplateKind/articleOnly": {
+  "abstract" : [
+    {
+      "text" : "A template designed for authoring article-only reference documentation, consisting of a catalog that contains only one markdown file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "articleOnly"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind\/articleOnly",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "CatalogTemplateKind.articleOnly",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/catalogtemplatekind\/articleonly"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CatalogTemplateKind/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/catalogtemplatekind\/init(rawvalue:)"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/CatalogTemplateKind/tutorial": {
+  "abstract" : [
+    {
+      "text" : "A template designed for authoring tutorials, consisting of a catalog that contains a table of contents and a chapter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tutorial"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/CatalogTemplateKind\/tutorial",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "CatalogTemplateKind.tutorial",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/catalogtemplatekind\/tutorial"
+},
+"doc://DocCCommandLine/s8CopyableP": {
+  "identifier" : "doc:\/\/DocCCommandLine\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/s9EscapableP": {
+  "identifier" : "doc:\/\/DocCCommandLine\/s9EscapableP",
+  "title" : "Swift.Escapable",
+  "type" : "unresolvable"
+}
+}
+}

@@ -1,0 +1,76 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>ByteMatches</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A very low level type that represents matching locations of a byte pattern in a collection of 8 bytes." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">DocCCommon</a>
+        </li>
+        <li>ByteMatches</li>
+    </ul>
+    <p>Structure</p>
+    <h1>ByteMatches</h1>
+    <p>A very low level type that represents matching locations of a byte pattern in a collection of 8 bytes.</p>
+    <pre>
+        <code>struct ByteMatches</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>Use this type to look for a specific byte in a sequence, checking 8 bytes at a time.</p>
+<h2>Topics</h2>
+<h3>Initializers</h3>
+<ul>
+    <li>
+        <a href="init(_:_:)/index.html">
+            <code>init(UInt64, UInt64)</code>
+        </a>
+        <p>Creates a new byte match result to find the first byte that matches the given search pattern.</p>
+    </li>
+</ul>
+<h3>Instance Properties</h3>
+<ul>
+    <li>
+        <a href="hasmatches/index.html">
+            <code>var hasMatches: Bool</code>
+        </a>
+        <p>A Boolean value indicating whether there are any matches.</p>
+    </li>
+    <li>
+        <a href="numberofleadingnonmatches/index.html">
+            <code>var numberOfLeadingNonMatches: Int</code>
+        </a>
+        <p>The number of leading bytes that don’t match the search pattern.</p>
+    </li>
+</ul>
+<h3>Instance Methods</h3>
+<ul>
+    <li>
+        <a href="isbefore(_:)/index.html">
+            <code>func isBefore(borrowing ByteMatches) -&gt; Bool</code>
+        </a>
+        <p>Returns a Boolean value indicating whether the first matching location in this byte match are before the first matching location in the other byte match.</p>
+    </li>
+</ul>
+<h3>Type Properties</h3>
+<ul>
+    <li>
+        <a href="backslashsearchpattern/index.html">
+            <code>static let backslashSearchPattern: UInt64</code>
+        </a>
+        <p>A search pattern for finding the “backslash” character (<code>0x5C</code>
+            ) in a sequence of 8 bytes.</p>
+    </li>
+    <li>
+        <a href="colonsearchpattern/index.html">
+            <code>static let colonSearchPattern: UInt64</code>
+        </a>
+        <p>A search pattern for finding the “colon” character (<code>0x3A</code>
+            ) in a sequence of 8 bytes.</p>
+    </li>
+    <li>
+        <a href="quotesearchpattern/index.html">
+            <code>static let quoteSearchPattern: UInt64</code>
+        </a>
+        <p>A search pattern for finding the “quote” character (<code>0x22</code>
+            ) in a sequence of 8 bytes.</p>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

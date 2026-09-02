@@ -100,7 +100,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkCompletionTools.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/LinkCompletionTools.swift#L176"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/LinkCompletionTools.swift#L175"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

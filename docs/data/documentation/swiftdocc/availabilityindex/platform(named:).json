@@ -100,7 +100,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AvailabilityIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex.swift#L97"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex.swift#L95"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

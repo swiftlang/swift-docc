@@ -1,0 +1,306 @@
+{
+  "abstract" : [
+    {
+      "text" : "The options used for configuring the init action.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc\/Init"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc\/Init\/initOptions"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:15DocCCommandLine4DoccV4InitV11initOptionsAA0eG0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "initOptions"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:15DocCCommandLine11InitOptionsV",
+        "text" : "InitOptions"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommandLine"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "Init.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/ArgumentParsing\/Subcommands\/Init.swift#L24"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "initOptions"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "attribute",
+              "text" : "@"
+            },
+            {
+              "kind" : "attribute",
+              "preciseIdentifier" : "s:14ArgumentParser11OptionGroupV",
+              "text" : "OptionGroup"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "initOptions"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/InitOptions",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:15DocCCommandLine11InitOptionsV",
+              "text" : "InitOptions"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommandline\/docc\/init\/initoptions"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommandLine/documentation/DocCCommandLine": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommandLine",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/Docc": {
+  "abstract" : [
+    {
+      "text" : "The default, command-line interface you use to compile and preview documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Docc",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/docc"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/Docc/Init": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Init"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc\/Init",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Init"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Docc.Init",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/docc\/init"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/Docc/Init/initOptions": {
+  "abstract" : [
+    {
+      "text" : "The options used for configuring the init action.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "initOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:15DocCCommandLine11InitOptionsV",
+      "text" : "InitOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc\/Init\/initOptions",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "initOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/docc\/init\/initoptions"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/InitOptions": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to run the init catalog actions.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InitOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/InitOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InitOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "InitOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/initoptions"
+}
+}
+}

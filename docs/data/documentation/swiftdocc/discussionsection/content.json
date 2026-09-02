@@ -43,7 +43,15 @@
       },
       {
         "kind" : "text",
-        "text" : ": [any "
+        "text" : ": ["
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -62,7 +70,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Discussion.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Discussion.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Discussion.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -94,7 +102,15 @@
             },
             {
               "kind" : "text",
-              "text" : ": [any "
+              "text" : ": ["
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -197,7 +213,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": [any "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationDataVariants.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DocumentationDataVariants.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DocumentationDataVariants.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -125,7 +125,6 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -185,14 +184,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariants\/subscript(_:default:)"
       ],
       "title" : "Subscripts"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariants\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -262,17 +253,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationdatavariants"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationDataVariants/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariants\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationdatavariants\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationDataVariants/allValues": {
   "abstract" : [
     {
@@ -316,6 +296,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
       "text" : "Variant"
     },
     {
@@ -419,6 +400,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
       "text" : "Variant"
     },
     {
@@ -435,6 +417,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
       "text" : "Variant"
     },
     {
@@ -513,6 +496,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
       "text" : "Variant"
     },
     {
@@ -570,6 +554,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
       "text" : "Variant"
     },
     {
@@ -578,6 +563,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
       "text" : "Variant"
     }
   ],
@@ -621,11 +607,6 @@
   "title" : "DocumentationDataVariantsTrait",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationdatavariantstrait"
-},
-"doc://SwiftDocC/s8CopyableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
-  "title" : "Swift.Copyable",
-  "type" : "unresolvable"
 }
 }
 }

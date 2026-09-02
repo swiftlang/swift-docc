@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Returns a string path appropriate for the given semantic node.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'pathForSemantic(_:source:inputs:)' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -19,7 +24,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC16NodeURLGeneratorV15pathForSemantic_6source6bundleSSAA0G0C_10Foundation3URLVAA19DocumentationBundleVtFZ",
+    "externalID" : "s:9SwiftDocC16NodeURLGeneratorV15pathForSemantic_6source6bundleSSAA0G0C_10Foundation3URLVAA20DocumentationContextC6InputsVtFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -81,8 +86,17 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-        "text" : "DocumentationBundle"
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+        "text" : "DocumentationContext"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+        "text" : "Inputs"
       },
       {
         "kind" : "text",
@@ -101,7 +115,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NodeURLGenerator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L120"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L139"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -195,10 +209,20 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-              "text" : "DocumentationBundle"
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+              "text" : "DocumentationContext"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+              "text" : "Inputs"
             },
             {
               "kind" : "text",
@@ -251,7 +275,41 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
+  "abstract" : [
+    {
+      "text" : "The documentation context manages the in-memory model for the built documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs": {
   "abstract" : [
     {
       "text" : "A collection of the build inputs for a unit of documentation.",
@@ -269,21 +327,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "Inputs"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "Inputs"
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationBundle",
+  "title" : "DocumentationContext.Inputs",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator": {
   "abstract" : [
@@ -318,11 +376,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/pathForSemantic(_:source:bundle:)": {
   "abstract" : [
-    {
-      "text" : "Returns a string path appropriate for the given semantic node.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -384,8 +440,17 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
     },
     {
       "kind" : "text",

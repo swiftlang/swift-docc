@@ -1,0 +1,346 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>Adding user-facing diagnostics</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Display information to the developer about actionable issues with their documentation." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">SwiftDocC</a>
+        </li>
+        <li>Adding user-facing diagnostics</li>
+    </ul>
+    <p>Article</p>
+    <h1>Adding user-facing diagnostics</h1>
+    <p>Display information to the developer about actionable issues with their documentation.</p>
+</section>
+<h2>Overview</h2>
+<p>Swift-DocC uses its <a href="../problem/index.html">
+        <code>Problem</code>
+    </a>
+     type—which wraps a <a href="../diagnostic/index.html">
+        <code>Diagnostic</code>
+    </a>
+     and a <a href="../solution/index.html">
+        <code>Solution</code>
+    </a>
+     list—to surface information to the developer about actionable issues with their documentation.</p>
+<p>Before you add a new diagnostic to DocC, imagine yourself receiving the diagnostic you’re about to add and think about what information you would find useful. Think about what information you’d need to <i>both</i>
+     understand what’s wrong and how to fix it. Having thought about the information you’d like to receive, strive to make the new diagnostic close to that imagined ideal.</p>
+<p>The code that checks for and identifies a given issue may run multiple times per page and need to take performance into consideration. For the majority of projects, the majority of elements won’t suffer from the given issue and a lightweight check that can move on quickly is optimal. However, once an issue has been identified; even if a bit of information is computationally expensive to provide, that computation is often worth it if it saves the developer time to understand and address the issue.</p>
+<h3>Pick a suitable diagnostic severity</h3>
+<p>Issues in DocC are classified as either <a href="../diagnosticseverity/error/index.html">
+        <code>DiagnosticSeverity.error</code>
+    </a>
+    , <a href="../diagnosticseverity/warning/index.html">
+        <code>DiagnosticSeverity.warning</code>
+    </a>
+    , or <a href="../diagnosticseverity/information/index.html">
+        <code>DiagnosticSeverity.information</code>
+    </a>
+    .</p>
+<p>When deciding how severe an issue is, the first question to ask is: is it possible and is it meaningful for DocC to continue processing the rest of the documentation? If the answer is “no”—meaning that this issue is considered “build breaking”—then you can classify this issue as an <a href="../diagnosticseverity/error/index.html">
+        <code>DiagnosticSeverity.error</code>
+    </a>
+    . In practice DocC very rarely uses error-severity diagnostics and many of the current error-severity diagnostics represent unexpected issues that would likely be better represented by a thrown <code>Swift.Error</code>
+     type instead.</p>
+<p>If the answer is “yes”—that it’s both possible and meaningful to continue—then the other question to ask is: is the documentation output impacted by this issue? If the output is impacted—for example displaying an unresolved link, missing documentation for a parameter, or not organizing the documentation because of a syntax issue—then you should classify this issue as a <a href="../diagnosticseverity/warning/index.html">
+        <code>DiagnosticSeverity.warning</code>
+    </a>
+    . If the output <i>isn’t</i>
+     impacted—for example a Metadata directive that doesn’t configure anything—then <a href="../diagnosticseverity/information/index.html">
+        <code>DiagnosticSeverity.information</code>
+    </a>
+     is likely the most appropriate severity but you <i>can</i>
+     also classify this issue as a <a href="../diagnosticseverity/warning/index.html">
+        <code>DiagnosticSeverity.warning</code>
+    </a>
+    . DocC only displays errors and warnings by default, so even for issues that don’t impact the output, it can sometimes be useful to classify them as warnings so that DocC presents them to developers by default.</p>
+<h3>Describe the issue</h3>
+<p>A <a href="../diagnostic/index.html">
+        <code>Diagnostic</code>
+    </a>
+     has two places for textual information: a shorter <a href="../diagnostic/summary/index.html">
+        <code>summary</code>
+    </a>
+     and a longer <a href="../diagnostic/explanation/index.html">
+        <code>explanation</code>
+    </a>
+     that can go into more detail.</p>
+<blockquote class="aside important">
+    <p class="label">Important</p>
+    <p> Not all contexts that display DocC diagnostics include the <code>Diagnostic/explanation</code>
+        . If you only include some critical information in the <code>explanation</code>
+         it’s possible that some developers won’t see that information.</p>
+</blockquote>
+<p>DocC bases its recommendation for how to phrase diagnostic summaries on <a href="https://github.com/swiftlang/swift/blob/main/docs/Diagnostics.md">Swift’s contributor documentation about diagnostics</a>
+    . Following these recommendations help your new diagnostic fit in with both DocC’s other diagnostic and with the Swift compiler’s diagnostics.</p>
+<ul>
+    <li>
+        <p>Write your <code>summary</code>
+             in a terse abbreviated style similar to English newspaper headlines or recipes. Use a single phrase or sentence, with no period at the end and omit words that don’t add information, such as grammatical words like “the”. If it’s important to include a second idea, use a semicolon to separate the two parts. For example:</p>
+        <ul>
+            <li>
+                <p>“Level-3 heading ‘See Also’ cannot form a See Also section; did you mean to use a level-2 heading?”</p>
+            </li>
+            <li>
+                <p>“Organizing ‘NAME’ under itself forms a cycle”</p>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <p>Include information that shows that DocC understands the documentation. For example, referring to “level-2 heading ‘Some Heading’” or “instance method ‘someMethod()’” is usually unnecessary but the extra specificity can both help the developer pinpoint and reason about the issue and can increase implicit trust in the correctness of the diagnostic. If there is a single plausible fix or likely intended meaning, include that in the summary using a “did you mean…?” phrase, even if there’s a solution for it. For example:</p>
+        <pre class="diff">
+            <code>- Unexpected return value documentation 
++ Return value documented for instance method returning void 
+
+- This heading doesn't sequentially follow the previous heading
++ Level-4 heading doesn't sequentially follow the previous heading level (2); did you mean to use a level-3 heading?
+</code>
+        </pre>
+    </li>
+    <li>
+        <p>When applicable, phrase diagnostics as rules rather than reporting that DocC failed to do something. Try to be specific about <i>what</i>
+             is and isn’t allowed rather than saying that something is unsupported or not valid. For example:</p>
+        <pre class="diff">
+            <code>- Cannot organize 'NAME' under itself
++ Organizing 'NAME' under itself forms a cycle
+
+- Invalid use of level-1 heading
++ Page title can only be specified once
+
+- Incorrect use of symbol link
++ Symbol links can only find symbols; did you mean to use a '&lt;doc:&gt;' link?
+</code>
+        </pre>
+    </li>
+    <li>
+        <p>Lead with the information that’s most specific about the issue and follow with information that provide context. IDEs and other environments sometimes present DocC diagnostics in space-constrained elements, where summaries above a certain length become truncated. For example:</p>
+        <pre class="diff">
+            <code>- Missing documentation for parameter 'NAME'
++ Parameter 'NAME' is missing documentation
+
+- Snippet 'PATH' doesn't have a 'NAME' slice.
++ Slice 'NAME' doesn't exist in snippet 'PATH'
+
+- 'NAME' (at 'PATH') cannot be disambiguated using 'TEXT' 
++ 'TEXT' isn't a disambiguation for 'NAME' at 'PATH' 
+</code>
+        </pre>
+    </li>
+</ul>
+<h4>Explain the issue in more detail</h4>
+<p>The diagnostic’s <a href="../diagnostic/explanation/index.html">
+        <code>explanation</code>
+    </a>
+     is your opportunity to go into more detail about the issue. Unlike the <code>summary</code>
+    , you are free to phrase the <code>explanation</code>
+     however makes the most sense for the specific issue. There aren’t any <i>specific</i>
+     length restrictions—although for most issues it’s good to keep to at most a paragraph or two— and there aren’t any specific patterns or common phrasings to follow.</p>
+<p>When writing the explanation for your diagnostic, it can be good to imagine yourself receiving the diagnostic and think about what questions you have and try to preemptively answer those. For example, consider the five questions below. Their answers make for very good explanations to their respective diagnostics.</p>
+<blockquote class="aside question">
+    <p class="label">Question</p>
+    <p>Why do I need a <code>@Tutorials</code>
+         page after I add a tutorial?</p>
+    <p>
+        <b>Answer</b>
+         <br/>
+        <code>@Tutorial</code>
+         and <code>@Article</code>
+         pages require a <code>@Tutorials</code>
+         table of content page to define the hierarchy and recommended reading order of your documentation.</p>
+</blockquote>
+<blockquote class="aside question">
+    <p class="label">Question</p>
+    <p>Why do I need to specify a “purpose” for my <code>CallToAction</code>
+         directive?</p>
+    <p>
+        <b>Answer</b>
+         <br/>
+        Without either a <code>purpose</code>
+         or <code>label</code>
+        , the Call to Action has no text to display for its link on the page.</p>
+</blockquote>
+<blockquote class="aside question">
+    <p class="label">Question</p>
+    <p>Why can’t I use <i>another</i>
+         first-level heading?</p>
+    <p>
+        <b>Answer</b>
+         <br/>
+        A first-level heading is reserved for specifying the title of an article or to define which symbol a documentation extension file is associated with.</p>
+</blockquote>
+<blockquote class="aside question">
+    <p class="label">Question</p>
+    <p>Why can’t I organize this symbol under that other symbol?</p>
+    <p>
+        <b>Answer</b>
+         <br/>
+        Links in a ‘Topics’ section organize your documentation into hierarchy. Pages can appear in more than one place but the hierarchy should remain a tree. If this link contributed to the documentation hierarchy it would introduce this cycle: <code>&lt;ASCII_DIAGRAM&gt;</code>
+    </p>
+</blockquote>
+<blockquote class="aside question">
+    <p class="label">Question</p>
+    <p>Why can’t I specify <code>@TechnologyRoot</code>
+         for this symbol?</p>
+    <p>
+        <b>Answer</b>
+         <br/>
+        Symbols inherently belong to a module (in this case ‘MODULE_NAME’) which is already the root of the documentation hierarchy. If this symbol became a root page it would move out of ‘MODULE_NAME’, creating a disjoint documentation hierarchy with two possible starting points.</p>
+</blockquote>
+<p>Don’t merely repeat or rephrase information from the summary just to add an <code>explanation</code>
+    . If you can’t think of anything that’s unclear about the issue, unclear about how the developer can address it, or anything else that you think would make sense to describe in more detail, then it’s possible that this diagnostic doesn’t need an <code>explanation</code>
+     and that it’s clear and actionable from the summary alone.</p>
+<h3>Provide solutions</h3>
+<p>If you can identify one or more possible actions that would address the issue, it can save the developer a lot of time if they can pick and choose from a list of suggested solutions rather than come up with and apply the fix by hand themselves. That said, don’t overwhelm the developer with far fetched or irrelevant solutions.</p>
+<p>If the developer specified an unsupported value but DocC knows the list of all possible values (for example, the names of all image assets in the catalog or the names of all top-level symbols). Use <code>NearMiss.bestMatches(for:against:)</code>
+     to both filter and order the long list of possibilities based on how closely they match what the developer wrote.</p>
+<p>Write your solution’s <a href="../solution/summary/index.html">
+        <code>summary</code>
+    </a>
+     as a verb phrase that describes the action that the developer should take to address the issue. For example:</p>
+<ul>
+    <li>
+        <p>“Rename ‘FILE_NAME’”</p>
+    </li>
+    <li>
+        <p>“Replace ‘WRONG’ with ‘CORRECT’”</p>
+    </li>
+    <li>
+        <p>“Change to level-2 heading”</p>
+    </li>
+    <li>
+        <p>“Remove duplicate parameter documentation”</p>
+    </li>
+    <li>
+        <p>“Add a page title”</p>
+    </li>
+</ul>
+<blockquote class="aside note">
+    <p class="label">Note</p>
+    <p> A developer reading the diagnostic on the command line can’t apply the solution’s <a href="../solution/replacements/index.html">
+            <code>replacements</code>
+        </a>
+        . For this reason, include any hard to come by information—such as necessary link disambiguation—in the solution’s <code>summary</code>
+         as well.</p>
+</blockquote>
+<p>If the solution requires some additional unknowable information that the developer needs to provide (for example, the value of a missing directive argument), use Xcode-syntax placeholders (<code>&lt;#placeholder#&gt;</code>
+    ) as necessary. It’s better to offer a solution with a placeholder in it than to offer no solution at all. For example:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Solution summary</th>
+            <th>Replacement text</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Add a title</td>
+            <td>
+                <code># &lt;#Title#&gt;</code>
+            </td>
+        </tr>
+        <tr>
+            <td>Document ‘NAME’</td>
+            <td>
+                <code>- Parameter NAME: &lt;#parameter description#&gt;</code>
+            </td>
+        </tr>
+        <tr>
+            <td>Change heading name</td>
+            <td>
+                <code>### &lt;#New heading name#&gt;</code>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<h3>Organize diagnostics into groups</h3>
+<p>Developers can configure the severity of individual diagnostics using the <code>--Wwarning &lt;DIAGNOSTIC_ID&gt;</code>
+     and <code>--Werror &lt;DIAGNOSTIC_ID&gt;</code>
+     flags. In order to provide increasingly specific and actionable information about an issue, it’s sometimes best to create multiple related diagnostics. For example:</p>
+<ul>
+    <li>
+        <p>A missing ‘path’ value for a <code>Snippet</code>
+             directive.</p>
+    </li>
+    <li>
+        <p>A ‘slice’ name that doesn’t exist for the specified snippet.</p>
+    </li>
+    <li>
+        <p>A repeated ‘path’ or ‘slice’ configuration for a snippet.</p>
+    </li>
+    <li>
+        <p>An unrecognized or misspelled parameter for the <code>Snippet</code>
+             directive.</p>
+    </li>
+</ul>
+<p>For both implementation reasons and for unit test specificity, it can make sense to use different diagnostic identifiers for each of these issues, but a developer may see them as a collection of snippet parameter issues.</p>
+<p>In this case you can specify a common <a href="../diagnostic/groupidentifier/index.html">
+        <code>groupIdentifier</code>
+    </a>
+     for all these different diagnostics. This allows the developer to configure the severity of all these related diagnostics together.</p>
+<p>If you are refining a broad or less specific diagnostic into a collection of more specific diagnostics, it <i>can</i>
+     make sense to use the old diagnostic identifier as the group identifier. This way, developers’ custom severity configurations for the previous diagnostic identifier continues to apply to the collection of more specific diagnostics.</p>
+<blockquote class="aside note">
+    <p class="label">Note</p>
+    <p> Both individual diagnostic identifiers and diagnostic group identifiers are considered user-facing information. Use a very terse but descriptive word or phrase of capitalized words joined together, for example <code>MultipleTopicsSections</code>
+         and avoid internal development jargon. The identifier only needs to communicate which issues it’s referring to so that developers can configure the diagnostic’s severity. The identifier’s purpose <b>is not</b>
+         to make the developer understand what the issue is about. That responsibility belongs to the <a href="../diagnostic/summary/index.html">
+            <code>summary</code>
+        </a>
+         and the <a href="../diagnostic/explanation/index.html">
+            <code>explanation</code>
+        </a>
+        .</p>
+    <p>Diagnostic identifiers with a “org.swift.docc.” prefix <b>will not</b>
+         be displayed to the developer (the diagnostic is presented without its identifier). These identifiers aren’t considered user-facing yet and changing those identifiers <b>is not</b>
+         considered a breaking change. This gives us the opportunity to go through any existing diagnostics one by one and update them based on our most up-to-date understanding of what makes a clear and actionable diagnostic.</p>
+</blockquote>
+<h3>Point to specific markup</h3>
+<p>In addition to the diagnostic’s textual information, you can use the <a href="../diagnostic/range/index.html">
+        <code>range</code>
+    </a>
+     to refer the developer to the specific problematic documentation markup. IDEs, terminal output, and other environments that display DocC diagnostic information either display the diagnostic inline or include the diagnostic’s <code>start</code>
+     location in the textual diagnostic output. Many such environments also highlight the markup between the range’s <code>start</code>
+     and <code>end</code>
+     locations. The more specific you can be with the diagnostic’s <code>range</code>
+    , the easier it will be for the developer to contextualize the diagnostic’s textual information. For example:</p>
+<ul>
+    <li>
+        <p>A diagnostic about an unrecognized or misspelled directive should specify a <code>range</code>
+             that’s only the name portion of the directive markup, rather than the directive’s full range which could span many lines.</p>
+    </li>
+    <li>
+        <p>A diagnostic about an unsupported value for a known directive parameter should specify a <code>range</code>
+             that’s only the markup for that value, rather than the full range of directive parameters which would span many lines.</p>
+    </li>
+    <li>
+        <p>A diagnostic about a long symbol link where some link components resolve but not the full link should specify a <code>range</code>
+             that’s the first link component that DocC can’t resolve, rather than the full range of the link.</p>
+    </li>
+    <li>
+        <p>A diagnostic about a symbol link with unrecognized disambiguation should specify a <code>range</code>
+             that’s only the unrecognized disambiguation, rather than the range of that link component.</p>
+    </li>
+</ul>
+<p>Diagnostics about duplicate or conflicting information (for example: a parameter being documented twice, duplicate directives or directive parameters, or multiple documentation extensions for the same symbol) also have <i>another</i>
+     location to specify. In these cases; add a <a href="../diagnosticnote/index.html">
+        <code>DiagnosticNote</code>
+    </a>
+    —which refers to the other markup—to the diagnostic.</p>
+<p>If there’s an inherent order to the duplicate information—primarily if one appears before the other in the same file—use a “… previously … here” phrasing for the note. If there’s no order between the duplicate or conflicting information—for example if the information comes from different files—use a “… also … here” phrasing instead for the note. In a few exceptions there may be other “… here” phrases that read better. Use your best judgement. For example:</p>
+<ul>
+    <li>
+        <p>“Previously documented here”</p>
+    </li>
+    <li>
+        <p>“Metadata directive also defined here”</p>
+    </li>
+    <li>
+        <p>“Overview section starts here”</p>
+    </li>
+</ul>
+<blockquote class="aside tip">
+    <p class="label">Tip</p>
+    <p> A <a href="../diagnosticnote/index.html">
+            <code>DiagnosticNote</code>
+        </a>
+         is presented in the context of the diagnostic that the note is associated with. Because of this, you can sometimes omit information that’s already present in the diagnostic. For example, the note associated with the diagnostic about a parameter being documented more than once simply says “Previously documented here” rather than “Parameter ‘NAME’ previously documented here”</p>
+</blockquote>
+</article></noscript><div id="app"></div></body></html>

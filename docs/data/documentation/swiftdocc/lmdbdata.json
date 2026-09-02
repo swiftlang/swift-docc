@@ -434,68 +434,14 @@
   "url" : "\/documentation\/swiftdocc\/foundation\/data"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Foundation/Date": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:10Foundation4DateV",
-      "text" : "Date"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Date"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Date",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/date"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Foundation/URL": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/URL",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "URL"
-    }
-  ],
-  "role" : "symbol",
   "title" : "URL",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/url"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/InterfaceLanguage": {
   "abstract" : [
@@ -654,6 +600,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8LMDBDataP4readyqd__qd__SWKXEKlF10ResultTypeL_qd__mfp",
       "text" : "ResultType"
     },
     {
@@ -670,6 +617,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8LMDBDataP4readyqd__qd__SWKXEKlF10ResultTypeL_qd__mfp",
       "text" : "ResultType"
     }
   ],
@@ -887,260 +835,44 @@
   "url" : "\/documentation\/swiftdocc\/swift\/array"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Bool": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Bool",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Bool"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Bool",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/bool"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Double": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Sd",
-      "text" : "Double"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Double",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Double"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Double",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/double"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Float": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Sf",
-      "text" : "Float"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Float"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Float",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/float"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Int": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Si",
-      "text" : "Int"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Int"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Int",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/int"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Int16": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s5Int16V",
-      "text" : "Int16"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int16",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Int16"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Int16",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/int16"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Int32": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s5Int32V",
-      "text" : "Int32"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int32",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Int32"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Int32",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/int32"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Int64": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s5Int64V",
-      "text" : "Int64"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int64",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Int64"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Int64",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/int64"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Int8": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s4Int8V",
-      "text" : "Int8"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int8",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Int8"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Int8",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/int8"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/String": {
   "abstract" : [
@@ -1186,164 +918,29 @@
   "url" : "\/documentation\/swiftdocc\/swift\/string"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Su",
-      "text" : "UInt"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "UInt"
-    }
-  ],
-  "role" : "symbol",
   "title" : "UInt",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt16": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s6UInt16V",
-      "text" : "UInt16"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt16",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "UInt16"
-    }
-  ],
-  "role" : "symbol",
   "title" : "UInt16",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint16"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt32": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s6UInt32V",
-      "text" : "UInt32"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "UInt32"
-    }
-  ],
-  "role" : "symbol",
   "title" : "UInt32",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint32"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt64": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s6UInt64V",
-      "text" : "UInt64"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "UInt64"
-    }
-  ],
-  "role" : "symbol",
   "title" : "UInt64",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint64"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt8": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:s5UInt8V",
-      "text" : "UInt8"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "UInt8"
-    }
-  ],
-  "role" : "symbol",
   "title" : "UInt8",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint8"
+  "type" : "unresolvable"
 }
 }
 }

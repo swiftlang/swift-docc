@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationDataVariants.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DocumentationDataVariants.swift#L131"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DocumentationDataVariants.swift#L137"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",
@@ -105,6 +105,26 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC30DocumentationDataVariantsTraitV",
               "text" : "DocumentationDataVariantsTrait"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }

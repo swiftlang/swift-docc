@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L441"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L453"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -122,16 +122,6 @@
   },
   "sections" : [
 
-  ],
-  "topicSections" : [
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Identifier\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
-    }
   ],
   "variants" : [
     {
@@ -270,17 +260,6 @@
   "title" : "NavigatorIndex.Identifier",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/identifier"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Identifier/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Identifier\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatorindex\/identifier\/equatable-implementations"
 }
 }
 }

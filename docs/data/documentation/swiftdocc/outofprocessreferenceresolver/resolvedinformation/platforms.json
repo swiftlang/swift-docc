@@ -51,24 +51,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-        "text" : "OutOfProcessReferenceResolver"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-        "text" : "ResolvedInformation"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV20PlatformAvailabilitya",
         "text" : "PlatformAvailability"
       },
@@ -81,9 +63,6 @@
       {
         "name" : "SwiftDocC"
       }
-    ],
-    "platforms" : [
-
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver+DeprecatedCommunication.swift",
@@ -120,26 +99,6 @@
             {
               "kind" : "text",
               "text" : ": ["
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-              "text" : "OutOfProcessReferenceResolver"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-              "text" : "ResolvedInformation"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/PlatformAvailability",
@@ -321,24 +280,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

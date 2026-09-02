@@ -47,15 +47,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-        "text" : "LinkDestinationSummary"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
         "text" : "DeclarationFragments"
       },
@@ -71,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L155"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L132"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -106,17 +97,7 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-              "text" : "LinkDestinationSummary"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments-swift.typealias",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
               "text" : "DeclarationFragments"
@@ -214,7 +195,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [
     {
-      "text" : "A summary of an element that you can link to from outside the documentation bundle.",
+      "text" : "A summary of an element that you can link to from outside the local documentation.",
       "type" : "text"
     }
   ],
@@ -245,7 +226,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/DeclarationFragments-swift.typealias": {
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/DeclarationFragments": {
   "abstract" : [
     {
       "text" : "The rendered fragments of a symbol’s declaration.",
@@ -266,7 +247,7 @@
       "text" : "DeclarationFragments"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments-swift.typealias",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -277,7 +258,7 @@
   "role" : "symbol",
   "title" : "LinkDestinationSummary.DeclarationFragments",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/declarationfragments-swift.typealias"
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/declarationfragments"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/subheadingDeclarationFragments": {
   "abstract" : [
@@ -310,15 +291,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

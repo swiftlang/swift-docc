@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Checker.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L180"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L197"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -134,7 +134,7 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/problems"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/diagnostics"
       ],
       "title" : "Instance Properties"
     },
@@ -165,16 +165,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitUnorderedList(_:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/Checker-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupVisitor-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupWalker-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -257,38 +247,43 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/anychecker"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/Checker-Implementations": {
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/diagnostics": {
   "abstract" : [
 
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/Checker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Checker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/anychecker\/checker-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/MarkupVisitor-Implementations": {
-  "abstract" : [
-
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnostics"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupVisitor-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupVisitor Implementations",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/diagnostics",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnostics",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/anychecker\/markupvisitor-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/MarkupWalker-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupWalker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupWalker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/anychecker\/markupwalker-implementations"
+  "url" : "\/documentation\/swiftdocc\/anychecker\/diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/init(_:)": {
   "abstract" : [
@@ -330,44 +325,6 @@
   "title" : "init(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/anychecker\/init(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/problems": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/problems",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "problems",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/anychecker\/problems"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitBlockQuote(_:)": {
   "abstract" : [

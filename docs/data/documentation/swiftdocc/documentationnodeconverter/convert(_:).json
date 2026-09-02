@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNodeConverter.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationNodeConverter.swift#L38"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationNodeConverter.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

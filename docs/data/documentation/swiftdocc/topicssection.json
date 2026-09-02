@@ -135,14 +135,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSection\/title"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSection\/GroupedSection-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -578,17 +570,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicssection"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/TopicsSection/GroupedSection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSection\/GroupedSection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "GroupedSection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicssection\/groupedsection-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/TopicsSection/content": {
   "abstract" : [
 
@@ -608,7 +589,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": [any "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -642,7 +631,7 @@
     },
     {
       "kind" : "keyword",
-      "text" : "var"
+      "text" : "let"
     },
     {
       "kind" : "text",

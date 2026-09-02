@@ -93,7 +93,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Coding.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L209"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L207"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

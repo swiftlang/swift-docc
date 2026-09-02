@@ -72,9 +72,14 @@
             },
             {
               "kind" : "text",
-              "text" : " = "
+              "text" : " = DocCCommon"
             },
             {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
               "text" : "SourceLanguage"
@@ -119,6 +124,40 @@
   ]
 , 
 "references": {
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage": {
+  "abstract" : [
+    {
+      "text" : "A programming language, for example “Swift” or “Objective-C”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SourceLanguage",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage"
+},
 "doc://SwiftDocC/documentation/SwiftDocC": {
   "abstract" : [
     {

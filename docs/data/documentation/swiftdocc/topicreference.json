@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -225,14 +225,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReference\/description"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReference\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -541,17 +533,6 @@
   "title" : "TopicReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicreference"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicReference/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReference\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicreference\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicReference/description": {
   "abstract" : [

@@ -304,15 +304,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
-        "text" : "TopicRenderReference"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV20PropertyListKeyNamesV",
         "text" : "PropertyListKeyNames"
       },
@@ -678,16 +669,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
-              "text" : "TopicRenderReference"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/PropertyListKeyNames-swift.struct",
@@ -1748,15 +1729,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
-      "text" : "TopicRenderReference"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

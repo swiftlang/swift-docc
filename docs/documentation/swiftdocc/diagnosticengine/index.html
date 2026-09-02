@@ -1,1 +1,118 @@
-<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>DiagnosticEngine</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.54db7914.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"><meta content="A type that collects and dispatches diagnostics during compilation." name="description"/></head><body data-color-scheme="auto"><noscript><article><section><ul><li><a href="../index.html">SwiftDocC</a></li><li>DiagnosticEngine</li></ul><p>Class</p><h1>DiagnosticEngine</h1><p>A type that collects and dispatches diagnostics during compilation.</p><pre><code>final class DiagnosticEngine</code></pre></section><h2>Topics</h2><h3>Initializers</h3><ul><li><a href="init(filterlevel:treatwarningsaserrors:)/index.html"><code>init(filterLevel: DiagnosticSeverity, treatWarningsAsErrors: Bool)</code><p>Creates a new diagnostic engine instance with no consumers.</p></a></li></ul><h3>Instance Properties</h3><ul><li><a href="filterlevel/index.html"><code>var filterLevel: DiagnosticSeverity</code><p>Determines which problems will be emitted to consumers.</p></a></li><li><a href="problems/index.html"><code>var problems: [Problem]</code><p>A convenience accessor for retrieving all of the diagnostics this engine currently holds.</p></a></li></ul><h3>Instance Methods</h3><ul><li><a href="add(_:)/index.html"><code>func add(any DiagnosticConsumer)</code><p>Subscribes a given consumer to the diagnostics emitted by this engine.</p></a></li><li><a href="cleardiagnostics()/index.html"><code>func clearDiagnostics()</code><p>Removes all of the encountered diagnostics from this engine.</p></a></li><li><a href="emit(_:)-1xqdb/index.html"><code>func emit(Problem)</code><p>Dispatches a diagnostic to all subscribed consumers.</p></a></li><li><a href="emit(_:)-5rcke/index.html"><code>func emit([Problem])</code><p>Dispatches multiple diagnostics to consumers.</p></a></li><li><a href="flush()/index.html"><code>func flush()</code></a></li><li><a href="hasconsumer(matching:)/index.html"><code>func hasConsumer(matching: (any DiagnosticConsumer) throws -&gt; Bool) rethrows -&gt; Bool</code><p>Returns a Boolean value indicating whether the engine contains a consumer that satisfies the given predicate.</p></a></li><li><a href="remove(_:)/index.html"><code>func remove(any DiagnosticConsumer)</code><p>Unsubscribes a given consumer</p></a></li></ul></article></noscript><div id="app"></div></body></html>
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>DiagnosticEngine</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A type that collects and dispatches diagnostics during compilation." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">SwiftDocC</a>
+        </li>
+        <li>DiagnosticEngine</li>
+    </ul>
+    <p>Class</p>
+    <h1>DiagnosticEngine</h1>
+    <p>A type that collects and dispatches diagnostics during compilation.</p>
+    <pre>
+        <code>final class DiagnosticEngine</code>
+    </pre>
+</section>
+<h2>Topics</h2>
+<h3>Initializers</h3>
+<ul>
+    <li>
+        <a href="init(filterlevel:treatwarningsaserrors:diagnosticidswithwarningseverity:diagnosticidswitherrorseverity:)/index.html">
+            <code>init(filterLevel: DiagnosticSeverity, treatWarningsAsErrors: Bool, diagnosticIDsWithWarningSeverity: Set&lt;String&gt;, diagnosticIDsWithErrorSeverity: Set&lt;String&gt;)</code>
+        </a>
+        <p>Creates a new diagnostic engine instance with no consumers.</p>
+    </li>
+</ul>
+<h3>Instance Properties</h3>
+<ul>
+    <li>
+        <a href="diagnosticidswitherrorseverity/index.html">
+            <code>var diagnosticIDsWithErrorSeverity: Set&lt;String&gt;</code>
+        </a>
+        <p>A list of diagnostic identifiers that are explicitly raised to an “error” severity.</p>
+    </li>
+    <li>
+        <a href="diagnosticidswithwarningseverity/index.html">
+            <code>var diagnosticIDsWithWarningSeverity: Set&lt;String&gt;</code>
+        </a>
+        <p>A list of diagnostic identifiers that are explicitly lowered to a “warning” severity.</p>
+    </li>
+    <li>
+        <a href="diagnostics/index.html">
+            <code>var diagnostics: [Diagnostic]</code>
+        </a>
+        <p>A convenience accessor for retrieving all of the diagnostics this engine currently holds.</p>
+    </li>
+    <li>
+        <a href="filterlevel/index.html">
+            <code>var filterLevel: DiagnosticSeverity</code>
+        </a>
+        <p>Determines which diagnostics will be reported to consumers.</p>
+    </li>
+    <li>
+        <a href="problems/index.html">
+            <code>var problems: [Problem]</code>
+        </a>
+    </li>
+</ul>
+<h3>Instance Methods</h3>
+<ul>
+    <li>
+        <a href="add(_:)/index.html">
+            <code>func add(any DiagnosticConsumer)</code>
+        </a>
+        <p>Subscribes a given consumer to the diagnostics emitted by this engine.</p>
+    </li>
+    <li>
+        <a href="cleardiagnostics()/index.html">
+            <code>func clearDiagnostics()</code>
+        </a>
+        <p>Removes all of the encountered diagnostics from this engine.</p>
+    </li>
+    <li>
+        <a href="emit(_:)-1xqdb/index.html">
+            <code>func emit(Problem)</code>
+        </a>
+    </li>
+    <li>
+        <a href="emit(_:)-538ml/index.html">
+            <code>func emit(some Sequence&lt;Diagnostic&gt;)</code>
+        </a>
+        <p>Dispatches multiple diagnostics to consumers.</p>
+    </li>
+    <li>
+        <a href="emit(_:)-5rcke/index.html">
+            <code>func emit([Problem])</code>
+        </a>
+    </li>
+    <li>
+        <a href="emit(_:)-98j6z/index.html">
+            <code>func emit(Diagnostic)</code>
+        </a>
+        <p>Dispatches a diagnostic to all subscribed consumers.</p>
+    </li>
+    <li>
+        <a href="flush()/index.html">
+            <code>func flush()</code>
+        </a>
+    </li>
+    <li>
+        <a href="hasconsumer(matching:)/index.html">
+            <code>func hasConsumer(matching: (any DiagnosticConsumer) throws -&gt; Bool) rethrows -&gt; Bool</code>
+        </a>
+        <p>Returns a Boolean value indicating whether the engine contains a consumer that satisfies the given predicate.</p>
+    </li>
+    <li>
+        <a href="remove(_:)/index.html">
+            <code>func remove(any DiagnosticConsumer)</code>
+        </a>
+        <p>Unsubscribes a given consumer</p>
+    </li>
+    <li>
+        <a href="willemitdiagnostic(id:defaultseverity:)/index.html">
+            <code>func willEmitDiagnostic(id: String, defaultSeverity: DiagnosticSeverity) -&gt; Bool</code>
+        </a>
+        <p>Determines whether or not the diagnostics engine will emit a diagnostic with the given ID or group ID.</p>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

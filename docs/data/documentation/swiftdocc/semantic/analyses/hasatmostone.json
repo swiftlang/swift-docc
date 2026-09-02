@@ -367,6 +367,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -416,7 +417,15 @@
     },
     {
       "kind" : "text",
-      "text" : "<any "
+      "text" : "<"
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -454,7 +463,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
       "text" : "DocumentationBundle"
     },
     {
@@ -488,6 +497,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC8AnalysesO12HasAtMostOneV5Childq_mfp",
       "text" : "Child"
     },
     {

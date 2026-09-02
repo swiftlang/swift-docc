@@ -56,6 +56,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
         "text" : "Variant"
       },
       {
@@ -70,7 +71,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationDataVariants.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DocumentationDataVariants.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DocumentationDataVariants.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -124,6 +125,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
               "text" : "Variant"
             },
             {
@@ -277,6 +279,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV7Variantxmfp",
       "text" : "Variant"
     },
     {

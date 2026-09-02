@@ -43,8 +43,9 @@
               "type" : "text"
             },
             {
-              "code" : "DocumentationContext\/InputsProvider",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " discovers documentation catalogs on the file system and creates a ",
@@ -69,9 +70,9 @@
             "guard let catalogURL = try inputProvider.findCatalog(startingPoint: startingPoint) else {",
             "    return",
             "}",
-            "let bundle = try inputProvider.makeInputs(contentOf: catalogURL, options: BundleDiscoveryOptions())",
+            "let inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: BundleDiscoveryOptions())",
             "",
-            "print(\"A bundle with ID: \\(bundle.identifier)\")"
+            "print(\"A collection of build inputs with ID: \\(inputs.identifier)\")"
           ],
           "syntax" : "swift",
           "type" : "codeListing"
@@ -89,7 +90,7 @@
           "code" : [
             "let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)",
             "",
-            "guard let (bundle, dataProvider) = try inputProvider.makeInputsFromSymbolGraphs(",
+            "guard let (inputs, dataProvider) = try inputProvider.makeInputsFromSymbolGraphs(",
             "    options: BundleDiscoveryOptions(",
             "        additionalSymbolGraphFiles: listOfSymbolGraphLocations",
             "    )",
@@ -97,7 +98,7 @@
             "    return",
             "}",
             "",
-            "print(\"A bundle with ID: \\(bundle.identifier)\")"
+            "print(\"A collection of build inputs with ID: \\(inputs.identifier)\")"
           ],
           "syntax" : "swift",
           "type" : "codeListing"
@@ -172,8 +173,9 @@
               "type" : "text"
             },
             {
-              "code" : "DocumentationContext\/InputsProvider\/inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider\/inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " method:",
@@ -186,14 +188,14 @@
           "code" : [
             "let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)",
             "",
-            "let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(",
+            "let (inputs, dataProvider) = try inputProvider.inputsAndDataProvider(",
             "    startingPoint: maybeStartingPoint,",
             "    options: BundleDiscoveryOptions(",
             "        additionalSymbolGraphFiles: listOfSymbolGraphLocations",
             "    )",
             ")",
             "",
-            "print(\"A bundle with ID: \\(bundle.identifier)\")"
+            "print(\"A collection of build inputs with ID: \\(inputs.identifier)\")"
           ],
           "syntax" : "swift",
           "type" : "codeListing"
@@ -211,7 +213,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
               "isActive" : true,
               "type" : "reference"
             },
@@ -229,19 +231,21 @@
               "type" : "text"
             },
             {
-              "code" : "DataProvider",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " that the ",
               "type" : "text"
             },
             {
-              "code" : "DocumentationContext\/InputsProvider",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
-              "text" : " returned alongside the bundle to read the files in the bundle.",
+              "text" : " returned alongside the inputs to read the files in those inputs.",
               "type" : "text"
             }
           ],
@@ -271,12 +275,20 @@
   ],
   "topicSections" : [
     {
-      "anchor" : "Documentation-Bundle",
+      "anchor" : "Input-Discovery",
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider\/inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)"
+      ],
+      "title" : "Input Discovery"
+    },
+    {
+      "anchor" : "Documentation-Inputs",
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes"
       ],
-      "title" : "Documentation Bundle"
+      "title" : "Documentation Inputs"
     },
     {
       "anchor" : "Bundle-Assets",
@@ -393,6 +405,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/dataasset"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DataProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides data for files.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/dataprovider"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DataTraitCollection": {
   "abstract" : [
     {
@@ -463,15 +509,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
-    {
-      "text" : "A collection of the build inputs for a unit of documentation.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -497,15 +541,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes": {
   "abstract" : [
-    {
-      "text" : "A collection of functions to check if a file is one of the documentation bundle files types.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -562,6 +604,170 @@
   "title" : "DocumentationContext",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs": {
+  "abstract" : [
+    {
+      "text" : "A collection of the build inputs for a unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Inputs"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Inputs"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.Inputs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/InputsProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides inputs for a unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InputsProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InputsProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.InputsProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputsprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/InputsProvider/inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)": {
+  "abstract" : [
+    {
+      "text" : "Traverses the file system from the given starting point to find a documentation catalog and creates a collection of documentation inputs from that catalog.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "inputsAndDataProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "startingPoint"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "allowArbitraryCatalogDirectories"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC14InputsProviderV7Optionsa",
+      "text" : "Options"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC14InputsProviderV0e7AndDataF0a",
+      "text" : "InputsAndDataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider\/inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputsprovider\/inputsanddataprovider(startingpoint:allowarbitrarycatalogdirectories:options:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextGroup": {
   "abstract" : [

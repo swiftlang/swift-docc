@@ -1,0 +1,137 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>MarkdownRenderer</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="An HTML renderer for DocC markdown content." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">DocCHTML</a>
+        </li>
+        <li>MarkdownRenderer</li>
+    </ul>
+    <p>Structure</p>
+    <h1>MarkdownRenderer</h1>
+    <p>An HTML renderer for DocC markdown content.</p>
+    <pre>
+        <code>struct MarkdownRenderer&lt;Provider&gt; where Provider : LinkProvider</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.</p>
+<h2>Topics</h2>
+<h3>Structures</h3>
+<ul>
+    <li>
+        <a href="availabilityinfo/index.html">
+            <code>struct AvailabilityInfo</code>
+        </a>
+        <p>Information about the versions that a piece of API is available for a given platform.</p>
+    </li>
+    <li>
+        <a href="listinfo/index.html">
+            <code>struct ListInfo</code>
+        </a>
+        <p>Information about a task group that organizes other API into a hierarchy on this page.</p>
+    </li>
+    <li>
+        <a href="parameterinfo/index.html">
+            <code>struct ParameterInfo</code>
+        </a>
+        <p>Information about a specific parameter for a piece of API.</p>
+    </li>
+    <li>
+        <a href="taskgroupinfo/index.html">
+            <code>struct TaskGroupInfo</code>
+        </a>
+        <p>Information about a task group that organizes other API into a hierarchy on this page.</p>
+    </li>
+</ul>
+<h3>Initializers</h3>
+<ul>
+    <li>
+        <a href="init(path:goal:linkprovider:)/index.html">
+            <code>init(path: URL, goal: RenderGoal, linkProvider: Provider)</code>
+        </a>
+    </li>
+</ul>
+<h3>Instance Methods</h3>
+<ul>
+    <li>
+        <a href="availability(_:)/index.html">
+            <code>func availability([AvailabilityInfo]) -&gt; HTMLNode</code>
+        </a>
+        <p>Creates an HTML element that describes the versions that a piece of API is available for the platforms described in the given availability information.</p>
+    </li>
+    <li>
+        <a href="breadcrumbs(references:currentpagenames:)/index.html">
+            <code>func breadcrumbs(references: [URL], currentPageNames: LinkedElement.Names) -&gt; HTMLNode</code>
+        </a>
+        <p>Creates an HTML element for the breadcrumbs that lead to the renderer’s current page.</p>
+    </li>
+    <li>
+        <a href="declaration(_:)/index.html">
+            <code>func declaration([SourceLanguage : [DeclarationFragment]]) -&gt; HTMLNode</code>
+        </a>
+        <p>Creates a<code>&lt;pre&gt;&lt;code&gt;</code>
+             HTML element hierarchy that represents the symbol’s language-specific declarations.</p>
+    </li>
+    <li>
+        <a href="discussion(_:fallbacksectionname:)/index.html">
+            <code>func discussion([any Markup], fallbackSectionName: String) -&gt; [HTMLNode]</code>
+        </a>
+        <p>Creates a discussion section with the given markup.</p>
+    </li>
+    <li>
+        <a href="groupedlistsection(named:groups:)/index.html">
+            <code>func groupedListSection(named: String, groups: [SourceLanguage : [ListInfo]]) -&gt; [HTMLNode]</code>
+        </a>
+        <p>Creates a grouped section with a given name, for example “relationships” or “mentioned in” lists groups of related pages without further description.</p>
+    </li>
+    <li>
+        <a href="groupedsection(named:groups:)/index.html">
+            <code>func groupedSection(named: String, groups: [SourceLanguage : [TaskGroupInfo]]) -&gt; [HTMLNode]</code>
+        </a>
+        <p>Creates a grouped section with a given name, for example “topics” or “see also” that describes and organizes groups of related API.</p>
+    </li>
+    <li>
+        <a href="parameters(_:)/index.html">
+            <code>func parameters([SourceLanguage : [ParameterInfo]]) -&gt; [HTMLNode]</code>
+        </a>
+        <p>Creates a “parameters” section that describes all the parameters for a symbol.</p>
+    </li>
+    <li>
+        <a href="path(to:)/index.html">
+            <code>func path(to: URL) -&gt; String</code>
+        </a>
+    </li>
+    <li>
+        <a href="returns(_:)/index.html">
+            <code>func returns([SourceLanguage : [any Markup]]) -&gt; [HTMLNode]</code>
+        </a>
+        <p>Creates a “returns” section that describes all return values of a symbol.</p>
+    </li>
+    <li>
+        <a href="visit(_:)-431sn/index.html">
+            <code>func visit(some Markup) -&gt; HTMLNode</code>
+        </a>
+    </li>
+    <li>
+        <a href="visit(_:)-6795k/index.html">
+            <code>func visit(Heading) -&gt; HTMLNode</code>
+        </a>
+        <p>Transforms a markdown heading into a<code>&lt;h[1...6]&gt;</code>
+             HTML element whose content is wrapped in an <code>&lt;a&gt;</code>
+             HTML element that references the heading itself.</p>
+    </li>
+    <li>
+        <a href="wordbreak(symbolname:)/index.html">
+            <code>func wordBreak(symbolName: String) -&gt; [HTMLNode]</code>
+        </a>
+    </li>
+</ul>
+<h3>Type Aliases</h3>
+<ul>
+    <li>
+        <a href="declarationfragment/index.html">
+            <code>typealias DeclarationFragment</code>
+        </a>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

@@ -163,14 +163,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -512,17 +504,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/videomedia"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/VideoMedia/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/videomedia\/directiveconvertible-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/VideoMedia/accept(_:)": {
   "abstract" : [
 
@@ -562,6 +543,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10VideoMediaC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -570,6 +552,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10VideoMediaC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {

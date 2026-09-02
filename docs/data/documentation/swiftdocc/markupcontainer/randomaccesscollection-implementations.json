@@ -33,12 +33,21 @@
   ],
   "topicSections" : [
     {
-      "anchor" : "Instance-Methods",
+      "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/index(_:offsetBy:limitedBy:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/endIndex",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/startIndex"
       ],
-      "title" : "Instance Methods"
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Subscripts",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/subscript(_:)"
+      ],
+      "title" : "Subscripts"
     }
   ],
   "variants" : [
@@ -125,14 +134,14 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/index(_:offsetBy:limitedBy:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/endIndex": {
   "abstract" : [
 
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "func"
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -140,65 +149,126 @@
     },
     {
       "kind" : "identifier",
-      "text" : "index"
+      "text" : "endIndex"
     },
     {
       "kind" : "text",
-      "text" : "("
+      "text" : ": ["
     },
     {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
+      "kind" : "keyword",
+      "text" : "any"
     },
     {
       "kind" : "text",
-      "text" : "."
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sl5IndexQa",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : "]."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sa5Indexa",
       "text" : "Index"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/endIndex",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "endIndex",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/endindex"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/startIndex": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : " "
     },
     {
-      "kind" : "externalParam",
-      "text" : "offsetBy"
+      "kind" : "identifier",
+      "text" : "startIndex"
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Si",
-      "text" : "Int"
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
     },
     {
       "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "limitedBy"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
+      "text" : "]."
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Self"
+      "preciseIdentifier" : "s:Sa5Indexa",
+      "text" : "Index"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/startIndex",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "startIndex",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/startindex"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/subscript(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "subscript"
     },
     {
       "kind" : "text",
-      "text" : "."
+      "text" : "(["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sl5IndexQa",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : "]."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sa5Indexa",
       "text" : "Index"
     },
     {
@@ -206,29 +276,25 @@
       "text" : ") -> "
     },
     {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
+      "kind" : "keyword",
+      "text" : "any"
     },
     {
       "kind" : "text",
-      "text" : "."
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sl5IndexQa",
-      "text" : "Index"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/index(_:offsetBy:limitedBy:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/subscript(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "index(_:offsetBy:limitedBy:)",
+  "title" : "subscript(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/index(_:offsetby:limitedby:)"
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/subscript(_:)"
 }
 }
 }

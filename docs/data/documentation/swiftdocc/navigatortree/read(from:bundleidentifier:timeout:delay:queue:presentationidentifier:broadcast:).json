@@ -157,15 +157,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-        "text" : "NavigatorTree"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC17BroadcastCallbacka",
         "text" : "BroadcastCallback"
       },
@@ -336,16 +327,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-              "text" : "NavigatorTree"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/BroadcastCallback",
@@ -731,15 +712,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

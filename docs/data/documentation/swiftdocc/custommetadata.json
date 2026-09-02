@@ -199,14 +199,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CustomMetadata\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CustomMetadata\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -275,17 +267,6 @@
   "title" : "CustomMetadata",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/custommetadata"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/CustomMetadata/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CustomMetadata\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/custommetadata\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/CustomMetadata/introducedVersion": {
   "abstract" : [

@@ -143,14 +143,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/version-swift.property"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -452,17 +444,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Platform/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/platform\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Platform/Name-swift.struct": {
   "abstract" : [
 
@@ -635,15 +616,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8PlatformV",
-      "text" : "Platform"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC8PlatformV4NameV",
       "text" : "Name"
     },
@@ -658,15 +630,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8PlatformV",
-      "text" : "Platform"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -735,15 +698,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8PlatformV",
-      "text" : "Platform"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC8PlatformV4NameV",
       "text" : "Name"
     }
@@ -802,15 +756,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8PlatformV",
-      "text" : "Platform"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

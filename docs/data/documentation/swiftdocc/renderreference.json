@@ -110,7 +110,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "The reference can refer to a resource within a documentation bundle (e.g., another symbol) or an external resource (e.g., a web URL).",
+              "text" : "The reference can refer to a resource within a unit of documentation (e.g., another symbol) or an external resource (e.g., a web URL).",
               "type" : "text"
             },
             {

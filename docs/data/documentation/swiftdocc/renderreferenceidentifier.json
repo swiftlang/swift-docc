@@ -110,6 +110,7 @@
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/SH"
       ],
       "kind" : "relationships",
@@ -168,14 +169,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceIdentifier\/encode(to:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceIdentifier\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -430,17 +423,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferenceidentifier"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceIdentifier/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceIdentifier\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderreferenceidentifier\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceIdentifier/encode(to:)": {
   "abstract" : [
 
@@ -468,7 +450,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -621,7 +611,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -780,6 +778,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

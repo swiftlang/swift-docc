@@ -151,7 +151,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroupRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroupRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -333,17 +332,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/taskgrouprendersection"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/TaskGroupRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroupRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/taskgrouprendersection\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/TaskGroupRenderSection/TextIndexing-Implementations": {
   "abstract" : [
 
@@ -459,7 +447,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": (any "
+      "text" : ": ("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -505,7 +501,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -625,7 +629,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -704,7 +716,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": (any "
+      "text" : ": ("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

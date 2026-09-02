@@ -91,6 +91,7 @@
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing"
       ],
       "kind" : "relationships",
@@ -150,7 +151,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResourcesRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResourcesRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -614,17 +614,6 @@
   "title" : "ResourcesRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/resourcesrendersection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ResourcesRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResourcesRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/resourcesrendersection\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ResourcesRenderSection/TextIndexing-Implementations": {
   "abstract" : [
@@ -1117,6 +1106,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

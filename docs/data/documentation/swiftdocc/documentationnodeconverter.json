@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNodeConverter.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationNodeConverter.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationNodeConverter.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,7 +105,6 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter\/init(bundle:context:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter\/init(context:)"
       ],
       "title" : "Initializers"
@@ -227,62 +226,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnodeconverter\/convert(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNodeConverter/init(bundle:context:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "bundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "context"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter\/init(bundle:context:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(bundle:context:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnodeconverter\/init(bundle:context:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNodeConverter/init(context:)": {
   "abstract" : [
     {
@@ -327,7 +270,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [
     {
-      "text" : "A summary of an element that you can link to from outside the documentation bundle.",
+      "text" : "A summary of an element that you can link to from outside the local documentation.",
       "type" : "text"
     }
   ],

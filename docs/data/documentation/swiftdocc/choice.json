@@ -177,14 +177,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Choice\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Choice\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -297,17 +289,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/choice"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Choice/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Choice\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/choice\/directiveconvertible-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Choice/accept(_:)": {
   "abstract" : [
 
@@ -347,6 +328,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6ChoiceC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -355,6 +337,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6ChoiceC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {

@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L376"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L461"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -118,14 +118,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/OrderedList\/startIndex"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/OrderedList\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -229,17 +221,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/orderedlist"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/OrderedList/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/OrderedList\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/orderedlist\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/OrderedList/init(items:startIndex:)": {
   "abstract" : [
     {
@@ -263,15 +244,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -330,15 +302,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

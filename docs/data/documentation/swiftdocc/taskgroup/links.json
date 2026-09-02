@@ -35,7 +35,15 @@
       },
       {
         "kind" : "text",
-        "text" : ": [any "
+        "text" : ": ["
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -54,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TaskGroup.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/TaskGroup.swift#L182"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/TaskGroup.swift#L178"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -86,7 +94,15 @@
             },
             {
               "kind" : "text",
-              "text" : ": [any "
+              "text" : ": ["
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyLink",
@@ -289,7 +305,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": [any "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

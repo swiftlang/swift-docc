@@ -81,15 +81,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC29RemoveHierarchyTransformationV",
-        "text" : "RemoveHierarchyTransformation"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP0cD20TransformationResulta",
         "text" : "RenderNodeTransformationResult"
       }
@@ -101,7 +92,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RemoveHierarchyTransformation.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveHierarchyTransformation.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveHierarchyTransformation.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -170,16 +161,6 @@
             {
               "kind" : "text",
               "text" : ") -> "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC29RemoveHierarchyTransformationV",
-              "text" : "RemoveHierarchyTransformation"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming\/RenderNodeTransformationResult",
@@ -333,15 +314,6 @@
     {
       "kind" : "text",
       "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29RemoveHierarchyTransformationV",
-      "text" : "RemoveHierarchyTransformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

@@ -88,6 +88,7 @@
         "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer"
       ],
       "kind" : "relationships",
@@ -186,8 +187,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Decodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Encodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/VariantContainer-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Encodable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -452,17 +452,6 @@
   "title" : "RenderMetadata.Role",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendermetadata\/role-swift.enum"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/VariantContainer-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/VariantContainer-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "VariantContainer Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendermetadata\/variantcontainer-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/category": {
   "abstract" : [
@@ -924,15 +913,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
-      "text" : "RenderMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV10CodingKeysV",
       "text" : "CodingKeys"
     },
@@ -1169,15 +1149,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
-      "text" : "RenderMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV6ModuleV",
       "text" : "Module"
     },
@@ -1225,15 +1196,6 @@
     {
       "kind" : "text",
       "text" : "<["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
-      "text" : "RenderMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -1478,15 +1440,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
-      "text" : "RenderMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV12RemoteSourceV",
       "text" : "RemoteSource"
     },
@@ -1534,15 +1487,6 @@
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
-      "text" : "RenderMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -2400,6 +2344,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

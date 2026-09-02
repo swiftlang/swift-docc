@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L87"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L88"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

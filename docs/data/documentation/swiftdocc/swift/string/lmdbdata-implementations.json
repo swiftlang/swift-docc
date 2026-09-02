@@ -36,8 +36,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)-82m2y"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)"
       ],
       "title" : "Initializers"
     },
@@ -45,8 +44,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)-7w4l3"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)"
       ],
       "title" : "Instance Methods"
     }
@@ -171,44 +169,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/string\/init(data:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/init(data:)-82m2y": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "data"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SW",
-      "text" : "UnsafeRawBufferPointer"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)-82m2y",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(data:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/string\/init(data:)-82m2y"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/String/read(_:)": {
   "abstract" : [
 
@@ -257,6 +217,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS9SwiftDocCE4readyxxSWKXEKlF10ResultTypeL_xmfp",
       "text" : "ResultType"
     },
     {
@@ -273,6 +234,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS9SwiftDocCE4readyxxSWKXEKlF10ResultTypeL_xmfp",
       "text" : "ResultType"
     }
   ],
@@ -282,80 +244,6 @@
   "title" : "read(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/string\/read(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/read(_:)-7w4l3": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "read"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ">(("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SW",
-      "text" : "UnsafeRawBufferPointer"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "rethrows"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "R"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)-7w4l3",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "read(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/string\/read(_:)-7w4l3"
 }
 }
 }

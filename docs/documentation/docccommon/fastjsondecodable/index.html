@@ -1,0 +1,326 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>FastJSONDecodable</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A protocol for types that can be decoded using a `FastSymbolGraphJSONDecoder`." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">DocCCommon</a>
+        </li>
+        <li>FastJSONDecodable</li>
+    </ul>
+    <p>Protocol</p>
+    <h1>FastJSONDecodable</h1>
+    <p>A protocol for types that can be decoded using a <code>FastSymbolGraphJSONDecoder</code>
+        .</p>
+    <pre>
+        <code>protocol FastJSONDecodable</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>The only “primitive” types that can be decoded are <code>Int</code>
+    , <code>String</code>
+    , and <code>Bool</code>
+     and array values and optional values of those primitive types. Any other type needs its own decoding implementation.</p>
+<p>If the decodable type is an “object”—meaning that it decodes individual properties for different string keys—its decoding implementation happens in 3 steps:</p>
+<ul>
+    <li>
+        <p>Declare local optional variables for each property that needs to be decoded</p>
+    </li>
+    <li>
+        <p>Advance the decoder and decode each value in the order that the keys appear in the data</p>
+    </li>
+    <li>
+        <p>Verify that all required properties were decoded.</p>
+    </li>
+</ul>
+<p>For example, a type with a “first” <code>String</code>
+     property and a “second” <code>Int</code>
+     property that defaults to 0 can be implement its decoding like this:</p>
+<pre>
+    <code>// Declare local variables for the properties that needs to be decoded
+var first: String?  // This needs to be optional to represent that it hasn't been decoded yet.
+var second: Int = 0 // This doesn't need to be optional because it has a default value.
+
+// Decode each property in the order they appear in the data
+try decoder.descendIntoObject()
+while try decoder.advanceToNextKey() {
+    if decoder.matchKey("first") {
+        first = try decoder.decode(String.self)
+    }
+    else if decoder.matchKey("second") {
+        second = try decoder.decode(Int.self)
+    }
+    // Do nothing for any unknown keys that the decoder might encounter
+    else {
+        // Your implementation explicitly needs to ignore this value so that the decoder can advance to the next key.
+        try decoder.ignoreValue()
+    }
+}
+
+// Verify that the property without a default value was decoded
+guard let first else {
+    throw .keyNotFound(...)
+}
+
+self.init(...)
+</code>
+</pre>
+<p>If the decodable type is <code>RawRepresentable</code>
+     it can decode its raw value and initialize itself like this:</p>
+<pre>
+    <code>let rawValue = try decoder.decode(RawValue.self)
+self = .init(rawValue: consume rawValue)
+</code>
+</pre>
+<h2>Topics</h2>
+<h3>Initializers</h3>
+<ul>
+    <li>
+        <a href="init(using:)/index.html">
+            <code>init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)</code>
+        </a>
+    </li>
+</ul>
+<h2>Relationships</h2>
+<h3>Conforming Types</h3>
+<ul>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/availability/availabilityitem/index.html">
+            <code>SymbolGraph.Symbol.Availability.AvailabilityItem</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/metadata/index.html">
+            <code>SymbolGraph.Metadata</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/operatingsystem/index.html">
+            <code>SymbolGraph.OperatingSystem</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/anyscalar/index.html">
+            <code>SymbolGraph.AnyScalar</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/alternatesymbols/alternatesymbol/index.html">
+            <code>SymbolGraph.Symbol.AlternateSymbols.AlternateSymbol</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/functionsignature/index.html">
+            <code>SymbolGraph.Symbol.FunctionSignature</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/swift/genericconstraint/kind/index.html">
+            <code>SymbolGraph.Symbol.Swift.GenericConstraint.Kind</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/swift/generics/index.html">
+            <code>SymbolGraph.Symbol.Swift.Generics</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/typedetail/index.html">
+            <code>SymbolGraph.Symbol.TypeDetail</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/index.html">
+            <code>SymbolGraph</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/linelist/index.html">
+            <code>SymbolGraph.LineList</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/accesscontrol/index.html">
+            <code>SymbolGraph.Symbol.AccessControl</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/platform/index.html">
+            <code>SymbolGraph.Platform</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/names/index.html">
+            <code>SymbolGraph.Symbol.Names</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/swift/genericconstraint/index.html">
+            <code>SymbolGraph.Symbol.Swift.GenericConstraint</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/anynumber/index.html">
+            <code>SymbolGraph.AnyNumber</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/http/endpoint/index.html">
+            <code>SymbolGraph.Symbol.HTTP.Endpoint</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/linelist/sourcerange/index.html">
+            <code>SymbolGraph.LineList.SourceRange</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/relationship/kind/index.html">
+            <code>SymbolGraph.Relationship.Kind</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/swift/extension/index.html">
+            <code>SymbolGraph.Symbol.Swift.Extension</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/kindidentifier/index.html">
+            <code>SymbolGraph.Symbol.KindIdentifier</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/swift/genericparameter/index.html">
+            <code>SymbolGraph.Symbol.Swift.GenericParameter</code>
+        </a>
+    </li>
+    <li>
+        <a href="../swift/bool/index.html">
+            <code>Bool</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/declarationfragments/index.html">
+            <code>SymbolGraph.Symbol.DeclarationFragments</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/declarationfragments/fragment/index.html">
+            <code>SymbolGraph.Symbol.DeclarationFragments.Fragment</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/overloaddata/index.html">
+            <code>SymbolGraph.Symbol.OverloadData</code>
+        </a>
+    </li>
+    <li>
+        <a href="../swift/optional/index.html">
+            <code>Optional</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/snippet/index.html">
+            <code>SymbolGraph.Symbol.Snippet</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/semanticversion/index.html">
+            <code>SymbolGraph.SemanticVersion</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/alternatesymbols/index.html">
+            <code>SymbolGraph.Symbol.AlternateSymbols</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/relationship/sourceorigin/index.html">
+            <code>SymbolGraph.Relationship.SourceOrigin</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/index.html">
+            <code>SymbolGraph.Symbol</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/linelist/sourcerange/position/index.html">
+            <code>SymbolGraph.LineList.SourceRange.Position</code>
+        </a>
+    </li>
+    <li>
+        <a href="../swift/int/index.html">
+            <code>Int</code>
+        </a>
+    </li>
+    <li>
+        <a href="../swift/range/index.html">
+            <code>Range</code>
+        </a>
+    </li>
+    <li>
+        <a href="../foundation/url/index.html">
+            <code>URL</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/module/index.html">
+            <code>SymbolGraph.Module</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/linelist/line/index.html">
+            <code>SymbolGraph.LineList.Line</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/relationship/index.html">
+            <code>SymbolGraph.Relationship</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/functionsignature/functionparameter/index.html">
+            <code>SymbolGraph.Symbol.FunctionSignature.FunctionParameter</code>
+        </a>
+    </li>
+    <li>
+        <a href="../swift/array/index.html">
+            <code>Array</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/identifier/index.html">
+            <code>SymbolGraph.Symbol.Identifier</code>
+        </a>
+    </li>
+    <li>
+        <a href="../swift/string/index.html">
+            <code>String</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/plistdetails/index.html">
+            <code>SymbolGraph.Symbol.PlistDetails</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/declarationfragments/fragment/kind/index.html">
+            <code>SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/location/index.html">
+            <code>SymbolGraph.Symbol.Location</code>
+        </a>
+    </li>
+    <li>
+        <a href="../swift/dictionary/index.html">
+            <code>Dictionary</code>
+        </a>
+    </li>
+    <li>
+        <a href="../symbolkit/symbolgraph/symbol/kind/index.html">
+            <code>SymbolGraph.Symbol.Kind</code>
+        </a>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

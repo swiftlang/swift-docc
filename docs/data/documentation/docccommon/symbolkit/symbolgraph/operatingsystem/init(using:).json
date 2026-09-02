@@ -1,0 +1,394 @@
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "FastJSONDecodable.init(using:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/OperatingSystem"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/OperatingSystem\/init(using:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "SymbolKit",
+    "externalID" : "s:9SymbolKit0A5GraphV15OperatingSystemV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "using"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "inout"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV",
+        "text" : "FastSymbolGraphJSONDecoder"
+      },
+      {
+        "kind" : "text",
+        "text" : ") "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "throws"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s13DecodingErrorO",
+        "text" : "DecodingError"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommon",
+        "relatedModules" : [
+          "SymbolKit"
+        ]
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "SymbolGraph+FastJSONDecodable.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommon\/JSONDecoding\/SymbolGraph+FastJSONDecodable.swift#L254"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(using:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "using"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "decoder"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "inout"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV",
+              "text" : "FastSymbolGraphJSONDecoder"
+            },
+            {
+              "kind" : "text",
+              "text" : ") "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "throws"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s13DecodingErrorO",
+              "text" : "DecodingError"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommon\/symbolkit\/symbolgraph\/operatingsystem\/init(using:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommon/documentation/DocCCommon": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommon",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder": {
+  "abstract" : [
+    {
+      "text" : "A custom JSON decoder for symbol graph files that focuses on performance and memory usage.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FastSymbolGraphJSONDecoder"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FastSymbolGraphJSONDecoder"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FastSymbolGraphJSONDecoder",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder"
+},
+"doc://DocCCommon/documentation/DocCCommon/SymbolKit": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/symbolkit"
+},
+"doc://DocCCommon/documentation/DocCCommon/SymbolKit/SymbolGraph": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/symbolkit\/symbolgraph"
+},
+"doc://DocCCommon/documentation/DocCCommon/SymbolKit/SymbolGraph/OperatingSystem": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV15OperatingSystemV",
+      "text" : "OperatingSystem"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/OperatingSystem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "OperatingSystem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.OperatingSystem",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/symbolkit\/symbolgraph\/operatingsystem"
+},
+"doc://DocCCommon/documentation/DocCCommon/SymbolKit/SymbolGraph/OperatingSystem/init(using:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "using"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV",
+      "text" : "FastSymbolGraphJSONDecoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/OperatingSystem\/init(using:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(using:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/symbolkit\/symbolgraph\/operatingsystem\/init(using:)"
+}
+}
+}

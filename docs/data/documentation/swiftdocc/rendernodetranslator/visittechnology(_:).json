@@ -38,7 +38,15 @@
       },
       {
         "kind" : "text",
-        "text" : ") -> (any "
+        "text" : ") -> ("
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -55,12 +63,9 @@
         "name" : "SwiftDocC"
       }
     ],
-    "platforms" : [
-
-    ],
     "remoteSource" : {
       "fileName" : "RenderNodeTranslator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L376"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L400"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -126,7 +131,15 @@
             },
             {
               "kind" : "text",
-              "text" : ") -> (any "
+              "text" : ") -> ("
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
@@ -243,7 +256,15 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> (any "
+      "text" : ") -> ("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L759"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L843"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -124,15 +124,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/Style-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/Style-swift.enum\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/Style-swift.enum\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -297,28 +288,6 @@
   "title" : "RenderBlockContent.Links.Style",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/links\/style-swift.enum"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Links/Style-swift.enum/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/Style-swift.enum\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/links\/style-swift.enum\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Links/Style-swift.enum/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/Style-swift.enum\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/links\/style-swift.enum\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Links/Style-swift.enum/compactGrid": {
   "abstract" : [

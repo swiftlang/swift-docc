@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L401"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L486"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -121,14 +121,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TutorialStep\/runtimePreview"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TutorialStep\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -231,17 +223,6 @@
   "title" : "RenderBlockContent.TutorialStep",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tutorialstep"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TutorialStep/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TutorialStep\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tutorialstep\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TutorialStep/caption": {
   "abstract" : [

@@ -111,7 +111,8 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/init(directoryPath:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/init(directoryPath:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/init(directoryPath:fileManager:)"
       ],
       "title" : "Initializers"
     },
@@ -395,6 +396,69 @@
   "title" : "init(directoryPath:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/filesystemserverprovider\/init(directorypath:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileSystemServerProvider/init(directoryPath:fileManager:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "directoryPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/init(directoryPath:fileManager:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(directoryPath:fileManager:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filesystemserverprovider\/init(directorypath:filemanager:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider": {
   "abstract" : [

@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalMetadata.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L54"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L52"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

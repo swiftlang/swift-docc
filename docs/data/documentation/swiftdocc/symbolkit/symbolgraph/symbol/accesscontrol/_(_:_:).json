@@ -131,7 +131,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AccessControl+Comparable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/AccessControl+Comparable.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/AccessControl+Comparable.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Operator",
@@ -351,6 +351,14 @@
     {
       "kind" : "text",
       "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolKit"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
     },
     {
       "kind" : "identifier",

@@ -1,0 +1,419 @@
+{
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to enable the documentation coverage feature.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:15DocCCommandLine36DocumentationCoverageOptionsArgumentV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "DocumentationCoverageOptionsArgument"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommandLine"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DocumentationCoverageOptionsArgument"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "DocumentationCoverageOptionsArgument.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/ArgumentParsing\/Options\/DocumentationCoverageOptionsArgument.swift#L17"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "DocumentationCoverageOptionsArgument"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "DocumentationCoverageOptionsArgument"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "These options are used by the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc\/Convert",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " subcommand.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/14ArgumentParser17ParsableArgumentsP",
+        "doc:\/\/DocCCommandLine\/Se"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/init()",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/symbolKindFilter"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/validate()"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommandline\/documentationcoverageoptionsargument"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommandLine/14ArgumentParser17ParsableArgumentsP": {
+  "identifier" : "doc:\/\/DocCCommandLine\/14ArgumentParser17ParsableArgumentsP",
+  "title" : "ArgumentParser.ParsableArguments",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/Se": {
+  "identifier" : "doc:\/\/DocCCommandLine\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommandLine",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/Docc/Convert": {
+  "abstract" : [
+    {
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Convert"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/Docc\/Convert",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Convert"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Docc.Convert",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/docc\/convert"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/DocumentationCoverageOptionsArgument": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to enable the documentation coverage feature.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptionsArgument"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptionsArgument"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptionsArgument",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/documentationcoverageoptionsargument"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/DocumentationCoverageOptionsArgument/init()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/init()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init()",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/documentationcoverageoptionsargument\/init()"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/DocumentationCoverageOptionsArgument/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/documentationcoverageoptionsargument\/init(from:)"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/DocumentationCoverageOptionsArgument/symbolKindFilter": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbolKindFilter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+      "text" : "DocumentationCoverageOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V",
+      "text" : "KindFilterOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V21BitFlagRepresentationO",
+      "text" : "BitFlagRepresentation"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/symbolKindFilter",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbolKindFilter",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/documentationcoverageoptionsargument\/symbolkindfilter"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/DocumentationCoverageOptionsArgument/validate()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "validate"
+    },
+    {
+      "kind" : "text",
+      "text" : "() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DocumentationCoverageOptionsArgument\/validate()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "validate()",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/documentationcoverageoptionsargument\/validate()"
+}
+}
+}

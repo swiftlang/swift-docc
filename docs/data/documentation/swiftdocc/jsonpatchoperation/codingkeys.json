@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchOperation.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L157"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L155"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -122,16 +122,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys\/init(stringValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys\/CodingKey-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -241,39 +231,6 @@
   "title" : "JSONPatchOperation.CodingKeys",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/codingkeys"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/CodingKeys/CodingKey-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys\/CodingKey-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "CodingKey Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/codingkeys\/codingkey-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/CodingKeys/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/codingkeys\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/CodingKeys/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/codingkeys\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/CodingKeys/init(intValue:)": {
   "abstract" : [

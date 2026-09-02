@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertOutputConsumer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -124,14 +124,13 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assets:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assetsInBundle:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assetsInInputs:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(benchmarks:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(documentationCoverageInfo:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(indexingRecords:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkableElementSummaries:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(page:for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderNode:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)"
       ],
@@ -239,7 +238,15 @@
     },
     {
       "kind" : "text",
-      "text" : " : [any "
+      "text" : " : ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -263,13 +270,14 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assets:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(assetsInBundle:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(assetsInInputs:)": {
   "abstract" : [
     {
-      "text" : "Consumes a documentation bundle with the purpose of extracting its on-disk assets.",
+      "text" : "Consumes a collection of documentation inputs with the purpose of extracting its on-disk assets.",
       "type" : "text"
     }
   ],
+  "defaultImplementations" : 1,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -289,7 +297,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "assetsInBundle"
+      "text" : "assetsInInputs"
     },
     {
       "kind" : "text",
@@ -297,8 +305,17 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
     },
     {
       "kind" : "text",
@@ -309,13 +326,13 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assetsInBundle:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assetsInInputs:)",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
-  "title" : "consume(assetsInBundle:)",
+  "title" : "consume(assetsInInputs:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assetsinbundle:)"
+  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assetsininputs:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(benchmarks:)": {
   "abstract" : [
@@ -642,73 +659,6 @@
   "title" : "consume(linkableElementSummaries:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkableelementsummaries:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(page:for:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "page"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSXMLNode",
-      "text" : "XMLNode"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "for"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
-      "text" : "ResolvedTopicReference"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(page:for:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "consume(page:for:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(page:for:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderNode:)": {
   "abstract" : [

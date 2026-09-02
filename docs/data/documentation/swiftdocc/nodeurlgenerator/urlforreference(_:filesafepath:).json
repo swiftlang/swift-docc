@@ -76,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NodeURLGenerator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L165"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L169"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

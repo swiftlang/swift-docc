@@ -83,7 +83,9 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/SH",
-        "doc:\/\/SwiftDocC\/SY"
+        "doc:\/\/SwiftDocC\/SY",
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -126,15 +128,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/rawValue"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -278,28 +271,6 @@
   "title" : "Metadata.Availability.Platform",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/metadata\/availability\/platform-swift.enum"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/Platform-swift.enum/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/metadata\/availability\/platform-swift.enum\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/Platform-swift.enum/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/metadata\/availability\/platform-swift.enum\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/Platform-swift.enum/iOS": {
   "abstract" : [
@@ -510,6 +481,16 @@
   "title" : "Metadata.Availability.Platform.watchOS",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/metadata\/availability\/platform-swift.enum\/watchos"
+},
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
 }
 }
 }

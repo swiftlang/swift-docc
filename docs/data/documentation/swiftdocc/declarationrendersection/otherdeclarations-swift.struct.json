@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeclarationsRenderSection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L179"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L183"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -120,14 +120,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/init(from:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -275,17 +267,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/init(declarations:displayIndex:)": {
   "abstract" : [
     {
@@ -309,24 +290,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
-      "text" : "DeclarationRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV17OtherDeclarationsV",
-      "text" : "OtherDeclarations"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

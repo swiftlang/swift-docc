@@ -5,6 +5,17 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'Diagnostic' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -54,7 +65,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Problem.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Problem.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Problem.swift#L22"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -96,7 +107,23 @@
             },
             {
               "kind" : "text",
-              "text" : "]"
+              "text" : "] { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -147,6 +174,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -181,6 +209,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -218,15 +247,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Solution": {
   "abstract" : [
     {
-      "text" : "A solution to a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Problem",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
       "type" : "text"
     }
   ],

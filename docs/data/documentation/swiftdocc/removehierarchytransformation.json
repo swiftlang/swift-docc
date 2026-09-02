@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RemoveHierarchyTransformation.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveHierarchyTransformation.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveHierarchyTransformation.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -132,14 +132,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/transform(renderNode:context:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/RenderNodeTransforming-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -220,17 +212,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/removehierarchytransformation"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RemoveHierarchyTransformation/RenderNodeTransforming-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/RenderNodeTransforming-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RenderNodeTransforming Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/removehierarchytransformation\/rendernodetransforming-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RemoveHierarchyTransformation/init()": {
   "abstract" : [
 
@@ -306,15 +287,6 @@
     {
       "kind" : "text",
       "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29RemoveHierarchyTransformationV",
-      "text" : "RemoveHierarchyTransformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

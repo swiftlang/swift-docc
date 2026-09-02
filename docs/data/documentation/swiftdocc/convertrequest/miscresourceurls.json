@@ -111,15 +111,6 @@
   "sections" : [
 
   ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Related-Documentation",
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/miscResourceURLs"
-      ],
-      "title" : "Related Documentation"
-    }
-  ],
   "variants" : [
     {
       "paths" : [
@@ -222,47 +213,6 @@
   "title" : "miscResourceURLs",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertrequest\/miscresourceurls"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/miscResourceURLs": {
-  "abstract" : [
-    {
-      "text" : "Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "miscResourceURLs"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/miscResourceURLs",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "miscResourceURLs",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/miscresourceurls"
 }
 }
 }

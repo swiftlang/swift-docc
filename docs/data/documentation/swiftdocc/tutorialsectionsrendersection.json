@@ -91,6 +91,7 @@
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing"
       ],
       "kind" : "relationships",
@@ -165,7 +166,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialSectionsRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialSectionsRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -857,17 +857,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tutorialsectionsrendersection"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/TutorialSectionsRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialSectionsRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/tutorialsectionsrendersection\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/TutorialSectionsRenderSection/Section": {
   "abstract" : [
     {
@@ -966,7 +955,15 @@
     },
     {
       "kind" : "text",
-      "text" : " : any "
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -1070,15 +1067,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29TutorialSectionsRenderSectionV",
-      "text" : "TutorialSectionsRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC29TutorialSectionsRenderSectionV0F0V",
       "text" : "Section"
     },
@@ -1154,15 +1142,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29TutorialSectionsRenderSectionV",
-      "text" : "TutorialSectionsRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC29TutorialSectionsRenderSectionV0F0V",
       "text" : "Section"
     },
@@ -1215,6 +1194,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

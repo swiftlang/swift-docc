@@ -39,6 +39,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
         "text" : "Value"
       },
       {
@@ -52,23 +53,6 @@
       {
         "kind" : "text",
         "text" : ": ["
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
-        "text" : "VariantCollection"
-      },
-      {
-        "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "typeIdentifier",
-        "text" : "Value"
-      },
-      {
-        "kind" : "text",
-        "text" : ">."
       },
       {
         "kind" : "typeIdentifier",
@@ -87,7 +71,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L37"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L35"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -123,6 +107,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
               "text" : "Value"
             },
             {
@@ -136,24 +121,6 @@
             {
               "kind" : "text",
               "text" : ": ["
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
-              "text" : "VariantCollection"
-            },
-            {
-              "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Value"
-            },
-            {
-              "kind" : "text",
-              "text" : ">."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Variant",
@@ -374,6 +341,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
       "text" : "Value"
     },
     {
@@ -387,23 +355,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
-      "text" : "VariantCollection"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Value"
-    },
-    {
-      "kind" : "text",
-      "text" : ">."
     },
     {
       "kind" : "typeIdentifier",

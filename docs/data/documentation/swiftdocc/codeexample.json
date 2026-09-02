@@ -138,14 +138,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeExample\/type"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeExample\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -259,17 +251,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/codeexample\/code"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CodeExample/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeExample\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/codeexample\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/CodeExample/content": {
   "abstract" : [
     {
@@ -293,15 +274,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11CodeExampleV",
-      "text" : "CodeExample"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

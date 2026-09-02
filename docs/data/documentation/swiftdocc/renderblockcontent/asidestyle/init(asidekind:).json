@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Creates an aside type for the specified aside kind.",
+      "text" : "Creates an aside style from a Swift Markdown aside kind.",
       "type" : "text"
     }
   ],
@@ -36,7 +36,11 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": Markdown"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -64,7 +68,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L571"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L651"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -96,7 +100,11 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": Markdown"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
             },
             {
               "kind" : "typeIdentifier",
@@ -122,23 +130,72 @@
       "kind" : "declarations"
     },
     {
-      "kind" : "parameters",
-      "parameters" : [
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The new aside style’s underlying raw string value will be the",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "markdown aside kind’s raw value.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
         {
           "content" : [
             {
               "inlineContent" : [
                 {
-                  "text" : "The aside kind that provides the display name.",
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If the lowercased raw value doesn’t match one of the aside styles supported",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "by DocC Render (one of note, tip, experiment, important, or warning) the",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "new aside style’s raw value will be set to note.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "asideKind"
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
         }
-      ]
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -248,7 +305,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(asideKind:)": {
   "abstract" : [
     {
-      "text" : "Creates an aside type for the specified aside kind.",
+      "text" : "Creates an aside style from a Swift Markdown aside kind.",
       "type" : "text"
     }
   ],
@@ -267,7 +324,11 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": Markdown"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

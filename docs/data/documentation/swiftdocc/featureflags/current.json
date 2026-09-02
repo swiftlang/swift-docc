@@ -1,16 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The current feature flags that Swift-DocC uses to conditionally enable",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "(usually experimental) behavior in Swift-DocC.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Pass a feature flags value instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -66,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FeatureFlags.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",
@@ -118,12 +115,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "mentions",
-      "mentions" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags"
-      ]
     }
   ],
   "schemaVersion" : {
@@ -162,20 +153,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AddingFeatureFlags": {
-  "abstract" : [
-    {
-      "text" : "Develop experimental features by adding feature flags.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags",
-  "kind" : "article",
-  "role" : "article",
-  "title" : "Adding Feature Flags",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/addingfeatureflags"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags": {
   "abstract" : [
     {
@@ -212,19 +189,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/current": {
   "abstract" : [
-    {
-      "text" : "The current feature flags that Swift-DocC uses to conditionally enable",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "(usually experimental) behavior in Swift-DocC.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

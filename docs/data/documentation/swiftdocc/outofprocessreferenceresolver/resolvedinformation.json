@@ -57,9 +57,6 @@
         "text" : "ResolvedInformation"
       }
     ],
-    "platforms" : [
-
-    ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver+DeprecatedCommunication.swift",
       "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver+DeprecatedCommunication.swift#L149"
@@ -522,24 +519,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV20DeclarationFragmentsa",
       "text" : "DeclarationFragments"
     },
@@ -702,24 +681,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV20PlatformAvailabilitya",
       "text" : "PlatformAvailability"
     },
@@ -734,24 +695,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -785,7 +728,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": [any "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -803,24 +754,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -1002,24 +935,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV20PlatformAvailabilitya",
       "text" : "PlatformAvailability"
     },
@@ -1058,7 +973,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": [any "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -1219,24 +1142,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

@@ -84,6 +84,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
         "text" : "Value"
       },
       {
@@ -98,7 +99,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection+Variant.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Variant.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Variant.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -182,6 +183,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
               "text" : "Value"
             },
             {
@@ -543,6 +545,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
       "text" : "Value"
     },
     {

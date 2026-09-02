@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC22ResolvedTopicReferenceV21addingSourceLanguagesyACShy0B7CCommon0G8LanguageVGF",
+    "externalID" : "s:9SwiftDocC22ResolvedTopicReferenceV21addingSourceLanguagesyACxSTRz0B7CCommon0G8LanguageV7ElementRtzlF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -38,9 +38,17 @@
         "text" : "("
       },
       {
+        "kind" : "keyword",
+        "text" : "some"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:Sh",
-        "text" : "Set"
+        "preciseIdentifier" : "s:ST",
+        "text" : "Sequence"
       },
       {
         "kind" : "text",
@@ -68,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L369"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L379"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -119,9 +127,17 @@
               "text" : ": "
             },
             {
+              "kind" : "keyword",
+              "text" : "some"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:Sh",
-              "text" : "Set"
+              "preciseIdentifier" : "s:ST",
+              "text" : "Sequence"
             },
             {
               "kind" : "text",
@@ -272,9 +288,17 @@
       "text" : "("
     },
     {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sh",
-      "text" : "Set"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",

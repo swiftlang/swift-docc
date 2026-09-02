@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "InvalidAdditionalTitle.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -174,7 +174,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle": {
   "abstract" : [
     {
-      "text" : "A document should have a single title, i.e. a single first-level heading.",
+      "text" : "A checker that warns about additional first-level headings.",
       "type" : "text"
     }
   ],

@@ -1,0 +1,47 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>convert(context:outputConsumer:htmlContentConsumer:sourceRepository:emitDigest:documentationCoverageOptions:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Converts the documentation in the given context and passes its output to a given consumer." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">SwiftDocC</a>
+        </li>
+        <li>
+            <a href="../index.html">ConvertActionConverter</a>
+        </li>
+        <li>convert(context:outputConsumer:htmlContentConsumer:sourceRepository:emitDigest:documentationCoverageOptions:)</li>
+    </ul>
+    <p>Type Method</p>
+    <h1>convert(context:outputConsumer:htmlContentConsumer:sourceRepository:emitDigest:documentationCoverageOptions:)</h1>
+    <p>Converts the documentation in the given context and passes its output to a given consumer.</p>
+    <pre>
+        <code>static func convert(context: DocumentationContext, outputConsumer: some ConvertOutputConsumer &amp; ExternalNodeConsumer, htmlContentConsumer: (any HTMLContentConsumer)?, sourceRepository: SourceRepository?, emitDigest: Bool, documentationCoverageOptions: DocumentationCoverageOptions) async throws</code>
+    </pre>
+</section>
+<h2>Parameters</h2>
+<dl>
+    <dt>context</dt>
+    <dd>
+        <p>The context that the bundle is a part of.</p>
+    </dd>
+    <dt>outputConsumer</dt>
+    <dd>
+        <p>The consumer that the conversion passes outputs of the conversion to.</p>
+    </dd>
+    <dt>htmlContentConsumer</dt>
+    <dd>
+        <p>The consumer for HTML content that the conversion produces, or <code>nil</code>
+             if the conversion shouldn’t produce any HTML content.</p>
+    </dd>
+    <dt>sourceRepository</dt>
+    <dd>
+        <p>The source repository where the documentation’s sources are hosted.</p>
+    </dd>
+    <dt>emitDigest</dt>
+    <dd>
+        <p>Whether the conversion should pass additional metadata output––such as linkable entities information, indexing information, or asset references by asset type––to the consumer.</p>
+    </dd>
+    <dt>documentationCoverageOptions</dt>
+    <dd>
+        <p>The level of experimental documentation coverage information that the conversion should pass to the consumer.</p>
+    </dd>
+</dl>
+</article></noscript><div id="app"></div></body></html>

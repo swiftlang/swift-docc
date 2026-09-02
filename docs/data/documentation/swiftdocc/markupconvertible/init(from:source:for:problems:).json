@@ -5,6 +5,17 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -19,7 +30,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17MarkupConvertibleP4from6source3for8problemsxSg8Markdown0C0_p_10Foundation3URLVSgAA19DocumentationBundleVSayAA7ProblemVGztcfc",
+    "externalID" : "s:9SwiftDocC17MarkupConvertibleP4from6source3for8problemsxSg8Markdown0C0_p_10Foundation3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -35,7 +46,15 @@
       },
       {
         "kind" : "text",
-        "text" : ": any "
+        "text" : ": "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -73,7 +92,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
         "text" : "DocumentationBundle"
       },
       {
@@ -113,7 +132,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkupConvertible.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/MarkupConvertible.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/MarkupConvertible.swift#L24"
     },
     "required" : true,
     "role" : "symbol",
@@ -154,7 +173,15 @@
             },
             {
               "kind" : "text",
-              "text" : ": any "
+              "text" : ": "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -201,7 +228,7 @@
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
               "text" : "DocumentationBundle"
             },
             {
@@ -339,15 +366,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
-    {
-      "text" : "A collection of the build inputs for a unit of documentation.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -378,6 +403,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -412,6 +438,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -427,7 +454,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -465,7 +500,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
       "text" : "DocumentationBundle"
     },
     {
@@ -513,6 +548,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

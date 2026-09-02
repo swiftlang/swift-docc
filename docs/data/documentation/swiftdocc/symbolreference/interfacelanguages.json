@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SymbolReference.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/SymbolReference.swift#L157"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/SymbolReference.swift#L158"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

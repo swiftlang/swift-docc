@@ -1,0 +1,1279 @@
+{
+  "abstract" : [
+    {
+      "text" : "A custom JSON decoder for symbol graph files that focuses on performance and memory usage.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "FastSymbolGraphJSONDecoder"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommon"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "FastSymbolGraphJSONDecoder"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "FastSymbolGraphJSONDecoder.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommon\/JSONDecoding\/FastSymbolGraphJSONDecoder.swift#L104"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "FastSymbolGraphJSONDecoder"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "FastSymbolGraphJSONDecoder"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The decoder is designed around a single linear scan through the bytes of the JSON data in order to minimize unnecessary work.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "This means that elements needs to be decoded in the order the they appear in the JSON data and that to ignore unknown elements in the JSON data,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "the decoder still needs to parse them to know where that ignored element ends.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The decoder also requires that all keys are static strings known at compile time, and compares their underlying raw bytes.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "This makes it unsuitable as a general purpose JSON decoder for arbitrary that needs to decode arbitrary structures,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "but it’s not an issue for decoding symbol graph data (or even other known structured that are known to use all ASCII keys that don’t require normalization).",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "abstract" : [
+        {
+          "text" : "Call the static ",
+          "type" : "text"
+        },
+        {
+          "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:from:)",
+          "isActive" : true,
+          "type" : "reference"
+        },
+        {
+          "text" : " method to decode a ",
+          "type" : "text"
+        },
+        {
+          "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastJSONDecodable",
+          "isActive" : true,
+          "type" : "reference"
+        },
+        {
+          "text" : " value.",
+          "type" : "text"
+        }
+      ],
+      "anchor" : "Essentials",
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:from:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastJSONDecodable"
+      ],
+      "title" : "Essentials"
+    },
+    {
+      "anchor" : "Implementing-keyed-decoding",
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/descendIntoObject()",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/advanceToNextKey()",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/matchKey(_:byteOffset:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/ignoreValue()"
+      ],
+      "title" : "Implementing keyed decoding"
+    },
+    {
+      "anchor" : "Decoding-individual-values",
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-3mt2a",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-6sm8t",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-3d0lz",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-833bn",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-4ejhc",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-51hfc",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-5ypwv"
+      ],
+      "title" : "Decoding individual values"
+    },
+    {
+      "anchor" : "Errors",
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/makeKeyNotFoundError(_:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/makeTypeMismatchError(_:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/makeGenericDataCorruptedError()"
+      ],
+      "title" : "Errors"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommon\/fastsymbolgraphjsondecoder"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommon/documentation/DocCCommon": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommon",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastJSONDecodable": {
+  "abstract" : [
+    {
+      "text" : "A protocol for types that can be decoded using a ",
+      "type" : "text"
+    },
+    {
+      "code" : "FastSymbolGraphJSONDecoder",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FastJSONDecodable"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastJSONDecodable",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FastJSONDecodable"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FastJSONDecodable",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastjsondecodable"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder": {
+  "abstract" : [
+    {
+      "text" : "A custom JSON decoder for symbol graph files that focuses on performance and memory usage.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FastSymbolGraphJSONDecoder"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FastSymbolGraphJSONDecoder"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FastSymbolGraphJSONDecoder",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/advanceToNextKey()": {
+  "abstract" : [
+    {
+      "text" : "Advances the decoder to just beyond the opening string delimiter of the next key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "advanceToNextKey"
+    },
+    {
+      "kind" : "text",
+      "text" : "() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/advanceToNextKey()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "advanceToNextKey()",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/advancetonextkey()"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:)-3d0lz": {
+  "abstract" : [
+    {
+      "text" : "Decodes a string and advances the decoder’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-3d0lz",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:)-3d0lz"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:)-3mt2a": {
+  "abstract" : [
+    {
+      "text" : "Decodes a Boolean value and advances the decoder’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-3mt2a",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:)-3mt2a"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:)-4ejhc": {
+  "abstract" : [
+    {
+      "text" : "Decodes an optional decodable values and advances the decoder’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxSgAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : "?.Type) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxSgAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-4ejhc",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:)-4ejhc"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:)-51hfc": {
+  "abstract" : [
+    {
+      "text" : "Decodes an array of decodable values and advances the decoder’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySayxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : "].Type) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySayxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-51hfc",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:)-51hfc"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:)-5ypwv": {
+  "abstract" : [
+    {
+      "text" : "Decodes a dictionary of decodable values and string keys and advances the decoder’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySDySSxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : "].Type) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySDySSxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-5ypwv",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:)-5ypwv"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:)-6sm8t": {
+  "abstract" : [
+    {
+      "text" : "Decodes an integer value and advances the decoder’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-6sm8t",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:)-6sm8t"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:)-833bn": {
+  "abstract" : [
+    {
+      "text" : "Decodes a decodable value and advances the decoder’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxxms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxxms13DecodingErrorOYKAA0C13JSONDecodableRzlF5ValueL_xmfp",
+      "text" : "Value"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:)-833bn",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:)-833bn"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/decode(_:from:)": {
+  "abstract" : [
+    {
+      "text" : "Decodes a value of the given type from the given JSON data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "decode"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Decodable"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_10Foundation4DataVntKAA0C13JSONDecodableRzlFZ9DecodableL_xmfp",
+      "text" : "Decodable"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "consuming"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_10Foundation4DataVntKAA0C13JSONDecodableRzlFZ9DecodableL_xmfp",
+      "text" : "Decodable"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/decode(_:from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "decode(_:from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:from:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/descendIntoObject()": {
+  "abstract" : [
+    {
+      "text" : "Advances the decoder past the opening curly brace (",
+      "type" : "text"
+    },
+    {
+      "code" : "{",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ") and prepares it to decode a series of values using ",
+      "type" : "text"
+    },
+    {
+      "code" : "advanceToNextKey()",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "descendIntoObject"
+    },
+    {
+      "kind" : "text",
+      "text" : "() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/descendIntoObject()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "descendIntoObject()",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/descendintoobject()"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/ignoreValue()": {
+  "abstract" : [
+    {
+      "text" : "Scans past the current value (regardless of its type) and advances the decoder’s state so that it can decode the next value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ignoreValue"
+    },
+    {
+      "kind" : "text",
+      "text" : "() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/ignoreValue()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ignoreValue()",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/ignorevalue()"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/makeGenericDataCorruptedError()": {
+  "abstract" : [
+    {
+      "text" : "Creates a generic data-corrupted error based on the decoder’s current state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "makeGenericDataCorruptedError"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/makeGenericDataCorruptedError()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "makeGenericDataCorruptedError()",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/makegenericdatacorruptederror()"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/makeKeyNotFoundError(_:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a key-not-found error for the given key and information derived from the decoder’s current state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "makeKeyNotFoundError"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/makeKeyNotFoundError(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "makeKeyNotFoundError(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/makekeynotfounderror(_:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/makeTypeMismatchError(_:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a type-mismatch (or value-not-found) error for the given type and information derived from the decoder’s current state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "makeTypeMismatchError"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "Any"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13DecodingErrorO",
+      "text" : "DecodingError"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/makeTypeMismatchError(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "makeTypeMismatchError(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/maketypemismatcherror(_:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/FastSymbolGraphJSONDecoder/matchKey(_:byteOffset:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if the decoder is currently pointing to a specific JSON key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "matchKey"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s12StaticStringV",
+      "text" : "StaticString"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "byteOffset"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/matchKey(_:byteOffset:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "matchKey(_:byteOffset:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/matchkey(_:byteoffset:)"
+}
+}
+}

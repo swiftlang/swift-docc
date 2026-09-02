@@ -159,7 +159,8 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init(from:source:for:problems:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init(from:source:for:featureFlags:diagnostics:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init(from:source:for:featureFlags:problems:)"
       ],
       "title" : "Initializers"
     },
@@ -191,14 +192,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -683,17 +676,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/step"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Step/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/step\/directiveconvertible-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Step/accept(_:)": {
   "abstract" : [
 
@@ -733,6 +715,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC4StepC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -741,6 +724,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC4StepC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -921,19 +905,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/step\/directivename"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Step/init(from:source:for:problems:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/Step/init(from:source:for:featureFlags:diagnostics:)": {
   "abstract" : [
 
   ],
   "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
     {
       "kind" : "identifier",
       "text" : "init"
@@ -986,8 +962,149 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "featureFlags"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
+      "text" : "FeatureFlags"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "diagnostics"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init(from:source:for:featureFlags:diagnostics:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:source:for:featureFlags:diagnostics:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/step\/init(from:source:for:featureflags:diagnostics:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Step/init(from:source:for:featureFlags:problems:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
+      "text" : "BlockDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "source"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
       "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "featureFlags"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
+      "text" : "FeatureFlags"
     },
     {
       "kind" : "text",
@@ -1019,12 +1136,12 @@
       "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init(from:source:for:problems:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init(from:source:for:featureFlags:problems:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(from:source:for:problems:)",
+  "title" : "init(from:source:for:featureFlags:problems:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/step\/init(from:source:for:problems:)"
+  "url" : "\/documentation\/swiftdocc\/step\/init(from:source:for:featureflags:problems:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Step/introducedVersion": {
   "abstract" : [
@@ -1090,7 +1207,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": (any "
+      "text" : ": ("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

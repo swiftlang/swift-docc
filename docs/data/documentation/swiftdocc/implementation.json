@@ -111,14 +111,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Implementation\/reference"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Implementation\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -192,17 +184,6 @@
   "title" : "Implementation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/implementation"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Implementation/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Implementation\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/implementation\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Implementation/fallbackName": {
   "abstract" : [

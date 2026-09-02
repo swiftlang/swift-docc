@@ -113,6 +113,7 @@
         "doc:\/\/SwiftDocC\/Sl",
         "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/Sk",
         "doc:\/\/SwiftDocC\/ST"
       ],
@@ -175,10 +176,7 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/BidirectionalCollection-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Collection-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/RandomAccessCollection-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Sequence-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/RandomAccessCollection-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -312,28 +310,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/BidirectionalCollection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/BidirectionalCollection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "BidirectionalCollection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/bidirectionalcollection-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/Collection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Collection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Collection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/collection-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/RandomAccessCollection-Implementations": {
   "abstract" : [
 
@@ -344,17 +320,6 @@
   "title" : "RandomAccessCollection Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/randomaccesscollection-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/Sequence-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Sequence-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Sequence Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/sequence-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/accept(_:)": {
   "abstract" : [
@@ -395,6 +360,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15MarkupContainerC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -403,6 +369,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15MarkupContainerC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -452,7 +419,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": [any "
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -488,14 +463,6 @@
   ],
   "fragments" : [
     {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
       "kind" : "identifier",
       "text" : "init"
     },
@@ -525,7 +492,15 @@
     },
     {
       "kind" : "text",
-      "text" : "(any "
+      "text" : "("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -575,7 +550,24 @@
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<"
+    },
+    {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-3bfhm",
@@ -616,7 +608,15 @@
     },
     {
       "kind" : "text",
-      "text" : "<any "
+      "text" : "<"
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -642,6 +642,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -792,6 +793,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

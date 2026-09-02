@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Abstract.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Abstract.swift#L26"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Abstract.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

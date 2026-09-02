@@ -1,0 +1,327 @@
+{
+  "abstract" : [
+    {
+      "text" : "Configures the formatter to omit quotes around attribute values that don’t need to be quoted according to the HTML specification.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options\/omitOptionalQuotesAroundAttributeValues"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML13HTMLFormatterV7OptionsV39omitOptionalQuotesAroundAttributeValuesAEvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "omitOptionalQuotesAroundAttributeValues"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV",
+        "text" : "HTMLFormatter"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV7OptionsV",
+        "text" : "Options"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "HTMLFormatter.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLFormatter.swift#L51"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "omitOptionalQuotesAroundAttributeValues"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "omitOptionalQuotesAroundAttributeValues"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV",
+              "text" : "HTMLFormatter"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV7OptionsV",
+              "text" : "Options"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "For example: ",
+              "type" : "text"
+            },
+            {
+              "code" : "<nav id=breadcrumbs>",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " or ",
+              "type" : "text"
+            },
+            {
+              "code" : "<ul id=availability>",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/htmlformatter\/options\/omitoptionalquotesaroundattributevalues"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLFormatter": {
+  "abstract" : [
+    {
+      "text" : "A type that formats an hierarchy of HTML nodes into serialized HTML 5 data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HTMLFormatter"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HTMLFormatter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLFormatter",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlformatter"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLFormatter/Options": {
+  "abstract" : [
+    {
+      "text" : "Options that customizes aspects of the formatter’s output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLFormatter.Options",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlformatter\/options"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLFormatter/Options/omitOptionalQuotesAroundAttributeValues": {
+  "abstract" : [
+    {
+      "text" : "Configures the formatter to omit quotes around attribute values that don’t need to be quoted according to the HTML specification.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "omitOptionalQuotesAroundAttributeValues"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV",
+      "text" : "HTMLFormatter"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV7OptionsV",
+      "text" : "Options"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options\/omitOptionalQuotesAroundAttributeValues",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "omitOptionalQuotesAroundAttributeValues",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlformatter\/options\/omitoptionalquotesaroundattributevalues"
+}
+}
+}

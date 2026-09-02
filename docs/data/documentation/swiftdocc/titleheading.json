@@ -226,14 +226,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleHeading\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleHeading\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -744,17 +736,6 @@
   "title" : "TitleHeading",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/titleheading"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TitleHeading/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleHeading\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/titleheading\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleHeading/heading": {
   "abstract" : [

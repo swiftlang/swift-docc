@@ -154,11 +154,12 @@
               "type" : "text"
             },
             {
-              "code" : "DocumentationContext\/init(bundle:dataProvider:diagnosticEngine:configuration:)",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(inputs:dataProvider:diagnosticEngine:configuration:)",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
-              "text" : " to create a context for a given bundle:",
+              "text" : " to create a context for a given collection of inputs:",
               "type" : "text"
             }
           ],
@@ -167,12 +168,12 @@
         {
           "code" : [
             "let inputsProvider = DocumentationContext.InputsProvider()",
-            "let (bundle, dataProvider) = try inputsProvider.inputsAndDataProvider(",
+            "let (inputs, dataProvider) = try inputsProvider.inputsAndDataProvider(",
             "    startingPoint: catalogURL, ",
             "    options: bundleDiscoveryOptions",
             ")",
             "",
-            "let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)"
+            "let context = try DocumentationContext(inputs: inputs, dataProvider: dataProvider)"
           ],
           "syntax" : "swift",
           "type" : "codeListing"
@@ -204,7 +205,7 @@
         {
           "code" : [
             "let reference = ResolvedTopicReference(",
-            "    bundleID: \"com.mybundle\",",
+            "    bundleID: \"com.example\",",
             "    path: \"\/documentation\/ValidationKit\/EmailValidator\",",
             "    fragment: nil,",
             "    sourceLanguage: .swift)",
@@ -478,15 +479,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC0D5ErrorO",
       "text" : "ContextError"
     },
@@ -506,6 +498,135 @@
   "title" : "entity(with:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/entity(with:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)": {
+  "abstract" : [
+    {
+      "text" : "Initializes a documentation context with a given ",
+      "type" : "text"
+    },
+    {
+      "code" : "bundle",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "dataProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12DataProviderP",
+      "text" : "DataProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "diagnosticEngine"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16DiagnosticEngineC",
+      "text" : "DiagnosticEngine"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "configuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC13ConfigurationV",
+      "text" : "Configuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(inputs:dataProvider:diagnosticEngine:configuration:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(inputs:dataProvider:diagnosticEngine:configuration:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/init(inputs:dataprovider:diagnosticengine:configuration:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode": {
   "abstract" : [

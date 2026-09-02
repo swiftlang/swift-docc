@@ -56,15 +56,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC23RenderHierarchyLandmarkV",
-        "text" : "RenderHierarchyLandmark"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC23RenderHierarchyLandmarkV4KindO",
         "text" : "Kind"
       },
@@ -131,16 +122,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC23RenderHierarchyLandmarkV",
-              "text" : "RenderHierarchyLandmark"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark\/Kind-swift.enum",
@@ -335,15 +316,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC23RenderHierarchyLandmarkV",
-      "text" : "RenderHierarchyLandmark"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

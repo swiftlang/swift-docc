@@ -274,14 +274,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyRoot\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyRoot\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -486,17 +478,6 @@
   "title" : "TechnologyRoot",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/technologyroot"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyRoot\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technologyroot\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot/introducedVersion": {
   "abstract" : [

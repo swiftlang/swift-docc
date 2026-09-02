@@ -139,7 +139,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContextConverter.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationContextConverter.swift#L59"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationContextConverter.swift#L57"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -416,7 +416,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.",
+              "text" : "The converter uses context to resolve references to other documentation and describe the documentation hierarchy.",
               "type" : "text"
             }
           ],

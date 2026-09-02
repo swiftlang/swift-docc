@@ -160,7 +160,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -277,17 +276,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/attributesrendersection\/codingkeys"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AttributesRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/attributesrendersection\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/AttributesRenderSection/TextIndexing-Implementations": {
   "abstract" : [
 
@@ -367,7 +355,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -409,7 +405,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

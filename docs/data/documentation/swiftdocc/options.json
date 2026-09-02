@@ -154,14 +154,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options\/Scope-swift.enum"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -390,17 +382,6 @@
   "title" : "Options",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/options"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Options/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/options\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Options/Scope-swift.enum": {
   "abstract" : [
@@ -666,15 +647,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7OptionsC",
-      "text" : "Options"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

@@ -56,15 +56,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC27PossibleValuesRenderSectionV",
-        "text" : "PossibleValuesRenderSection"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC27PossibleValuesRenderSectionV10NamedValueV",
         "text" : "NamedValue"
       },
@@ -130,16 +121,6 @@
             {
               "kind" : "text",
               "text" : ": ["
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC27PossibleValuesRenderSectionV",
-              "text" : "PossibleValuesRenderSection"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/NamedValue",
@@ -334,15 +315,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC27PossibleValuesRenderSectionV",
-      "text" : "PossibleValuesRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

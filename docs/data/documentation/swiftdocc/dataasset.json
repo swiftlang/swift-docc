@@ -109,7 +109,7 @@
               "type" : "reference"
             },
             {
-              "text" : " instance represents one bundle asset, which might be represented by multiple files. For example, a single image",
+              "text" : " instance represents one asset, which might be represented by multiple files. For example, a single image",
               "type" : "text"
             },
             {
@@ -236,14 +236,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Context-swift.enum"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -390,17 +382,6 @@
   "title" : "DataAsset.Context",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/dataasset\/context-swift.enum"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DataAsset/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/dataasset\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DataAsset/Metadata-swift.struct": {
   "abstract" : [
@@ -718,15 +699,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV",
-      "text" : "DataAsset"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

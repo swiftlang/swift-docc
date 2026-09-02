@@ -447,15 +447,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC12CallToActionC",
-      "text" : "CallToAction"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC12CallToActionC7PurposeO",
       "text" : "Purpose"
     },

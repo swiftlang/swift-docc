@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L478"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L490"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -160,6 +160,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/archiveURL",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/counter",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/diagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/groupByLanguage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/isCompleted",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/navigatorIndex",
@@ -173,9 +174,11 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/build()",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/build()-1h30n",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/build()-3hbp9",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/finalize(estimatedCount:emitJSONRepresentation:emitLMDBRepresentation:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/index(renderNode:ignoringLanguage:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/index(renderNode:ignoringLanguage:)-814rs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/index(renderNode:ignoringLanguage:)-9kybx",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/setup()"
       ],
       "title" : "Instance Methods"
@@ -358,13 +361,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/archiveurl"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/build()": {
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/build()-1h30n": {
   "abstract" : [
-    {
-      "text" : "Build the index using the render nodes files in the provided documentation archive.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -392,12 +393,53 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/build()",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/build()-1h30n",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "build()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/build()"
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/build()-1h30n"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/build()-3hbp9": {
+  "abstract" : [
+    {
+      "text" : "Build the index using the render nodes files in the provided documentation archive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "build"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/build()-3hbp9",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "build()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/build()-3hbp9"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/bundleIdentifier": {
   "abstract" : [
@@ -472,6 +514,47 @@
   "title" : "counter",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/counter"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/diagnostics": {
+  "abstract" : [
+    {
+      "text" : "An array holding all diagnostics encountered during the index build.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnostics"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/diagnostics",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/finalize(estimatedCount:emitJSONRepresentation:emitLMDBRepresentation:)": {
   "abstract" : [
@@ -593,7 +676,85 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/groupbylanguage"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/index(renderNode:ignoringLanguage:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/index(renderNode:ignoringLanguage:)-814rs": {
+  "abstract" : [
+    {
+      "text" : "Index a single render ",
+      "type" : "text"
+    },
+    {
+      "code" : "ExternalRenderNode",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "index"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "renderNode"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18ExternalRenderNodeV",
+      "text" : "ExternalRenderNode"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "ignoringLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/index(renderNode:ignoringLanguage:)-814rs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "index(renderNode:ignoringLanguage:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/index(rendernode:ignoringlanguage:)-814rs"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/index(renderNode:ignoringLanguage:)-9kybx": {
   "abstract" : [
     {
       "text" : "Index a single render ",
@@ -664,12 +825,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/index(renderNode:ignoringLanguage:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/index(renderNode:ignoringLanguage:)-9kybx",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "index(renderNode:ignoringLanguage:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/index(rendernode:ignoringlanguage:)"
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/index(rendernode:ignoringlanguage:)-9kybx"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)": {
   "abstract" : [
@@ -931,11 +1092,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/problems": {
   "abstract" : [
-    {
-      "text" : "An array holding all problems encountered during the index build.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeprecatedSection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DeprecatedSection.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DeprecatedSection.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

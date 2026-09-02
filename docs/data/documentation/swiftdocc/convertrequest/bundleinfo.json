@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC14ConvertRequestV10bundleInfoAA19DocumentationBundleV0F0Vvp",
+    "externalID" : "s:9SwiftDocC14ConvertRequestV10bundleInfoAA20DocumentationContextC6InputsV0F0Vvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -39,8 +39,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-        "text" : "DocumentationBundle"
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+        "text" : "DocumentationContext"
       },
       {
         "kind" : "text",
@@ -48,7 +48,16 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV4InfoV",
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+        "text" : "Inputs"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV4InfoV",
         "text" : "Info"
       }
     ],
@@ -94,19 +103,29 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-              "text" : "DocumentationBundle"
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+              "text" : "DocumentationContext"
             },
             {
               "kind" : "text",
               "text" : "."
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV4InfoV",
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+              "text" : "Inputs"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/Info-swift.struct",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV4InfoV",
               "text" : "Info"
             }
           ]
@@ -122,15 +141,6 @@
   },
   "sections" : [
 
-  ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Related-Documentation",
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct"
-      ],
-      "title" : "Related Documentation"
-    }
   ],
   "variants" : [
     {
@@ -220,8 +230,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
     },
     {
       "kind" : "text",
@@ -229,7 +239,16 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV4InfoV",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV4InfoV",
       "text" : "Info"
     }
   ],
@@ -240,7 +259,41 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertrequest\/bundleinfo"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
+  "abstract" : [
+    {
+      "text" : "The documentation context manages the in-memory model for the built documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs": {
   "abstract" : [
     {
       "text" : "A collection of the build inputs for a unit of documentation.",
@@ -258,26 +311,26 @@
     },
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "Inputs"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "Inputs"
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationBundle",
+  "title" : "DocumentationContext.Inputs",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Info-swift.struct": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/Info-swift.struct": {
   "abstract" : [
     {
-      "text" : "Information about a documentation bundle that’s unrelated to its documentation content.",
+      "text" : "Information about a collection of documentation inputs that’s unrelated to its documentation content.",
       "type" : "text"
     }
   ],
@@ -295,7 +348,7 @@
       "text" : "Info"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/Info-swift.struct",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -304,9 +357,9 @@
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationBundle.Info",
+  "title" : "DocumentationContext.Inputs.Info",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/info-swift.struct"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/info-swift.struct"
 }
 }
 }

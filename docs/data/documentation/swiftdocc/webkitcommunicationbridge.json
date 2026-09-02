@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "WebKitCommunicationBridge.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/WebKitCommunicationBridge.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/WebKitCommunicationBridge.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -591,7 +591,15 @@
     },
     {
       "kind" : "text",
-      "text" : "?, (any "
+      "text" : "?, ("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

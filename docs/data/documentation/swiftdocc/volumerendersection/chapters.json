@@ -39,15 +39,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19VolumeRenderSectionV",
-        "text" : "VolumeRenderSection"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC19VolumeRenderSectionV7ChapterV",
         "text" : "Chapter"
       },
@@ -96,16 +87,6 @@
             {
               "kind" : "text",
               "text" : ": ["
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19VolumeRenderSectionV",
-              "text" : "VolumeRenderSection"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection\/Chapter",
@@ -250,15 +231,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19VolumeRenderSectionV",
-      "text" : "VolumeRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

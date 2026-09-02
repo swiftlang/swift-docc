@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SRGBColor.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/SRGBColor.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/SRGBColor.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

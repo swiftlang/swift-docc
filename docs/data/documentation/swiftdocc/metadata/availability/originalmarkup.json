@@ -44,7 +44,11 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": Markdown"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -91,7 +95,11 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": Markdown"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
             },
             {
               "kind" : "typeIdentifier",
@@ -227,7 +235,11 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": Markdown"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

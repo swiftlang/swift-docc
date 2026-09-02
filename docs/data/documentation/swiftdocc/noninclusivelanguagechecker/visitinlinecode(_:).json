@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NonInclusiveLanguageChecker.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonInclusiveLanguageChecker.swift#L71"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonInclusiveLanguageChecker.swift#L62"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

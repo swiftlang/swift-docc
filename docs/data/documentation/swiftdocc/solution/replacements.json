@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The replacements necessary to fix a problem.",
+      "text" : "A list of replacements that make up this solution to resolve the original problem or issue.",
       "type" : "text"
     }
   ],
@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC8SolutionV12replacementsSayAA11ReplacementVGvp",
+    "externalID" : "s:9SwiftDocC8SolutionV12replacementsSayAC11ReplacementVGvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -39,7 +39,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+        "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
         "text" : "Replacement"
       },
       {
@@ -89,9 +89,9 @@
               "text" : ": ["
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Replacement",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+              "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
               "text" : "Replacement"
             },
             {
@@ -102,6 +102,32 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "mentions",
+      "mentions" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics"
+      ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This list may be empty if the solution cannot be described as a series of textual replacements.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -140,52 +166,24 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Replacement": {
+"doc://SwiftDocC/documentation/SwiftDocC/Adding-Diagnostics": {
   "abstract" : [
     {
-      "text" : "A textual replacement.",
+      "text" : "Display information to the developer about actionable issues with their documentation.",
       "type" : "text"
     }
   ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Replacement"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Replacement"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Replacement",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding user-facing diagnostics",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/replacement"
+  "url" : "\/documentation\/swiftdocc\/adding-diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Solution": {
   "abstract" : [
     {
-      "text" : "A solution to a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Problem",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
       "type" : "text"
     }
   ],
@@ -216,10 +214,44 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/solution"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Solution/Replacement": {
+  "abstract" : [
+    {
+      "text" : "A textual replacement that makes up part of a solution to resolve the specific problem or issue with the end-user’s documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Replacement"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Replacement",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Replacement"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Solution.Replacement",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/solution\/replacement"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Solution/replacements": {
   "abstract" : [
     {
-      "text" : "The replacements necessary to fix a problem.",
+      "text" : "A list of replacements that make up this solution to resolve the original problem or issue.",
       "type" : "text"
     }
   ],
@@ -242,7 +274,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+      "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
       "text" : "Replacement"
     },
     {

@@ -5,7 +5,7 @@
       "type" : "text"
     },
     {
-      "code" : "Collection.subscript(_:)",
+      "code" : "RandomAccessCollection.subscript(_:)",
       "type" : "codeVoice"
     },
     {
@@ -36,16 +36,15 @@
       },
       {
         "kind" : "text",
-        "text" : "("
+        "text" : "(["
       },
       {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:Sa",
-        "text" : "Array"
+        "kind" : "keyword",
+        "text" : "any"
       },
       {
         "kind" : "text",
-        "text" : "<any "
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -54,7 +53,7 @@
       },
       {
         "kind" : "text",
-        "text" : ">."
+        "text" : "]."
       },
       {
         "kind" : "typeIdentifier",
@@ -63,7 +62,15 @@
       },
       {
         "kind" : "text",
-        "text" : ") -> any "
+        "text" : ") -> "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -110,16 +117,15 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": ["
             },
             {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:Sa",
-              "text" : "Array"
+              "kind" : "keyword",
+              "text" : "any"
             },
             {
               "kind" : "text",
-              "text" : "<any "
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -128,7 +134,7 @@
             },
             {
               "kind" : "text",
-              "text" : ">."
+              "text" : "]."
             },
             {
               "kind" : "typeIdentifier",
@@ -137,7 +143,15 @@
             },
             {
               "kind" : "text",
-              "text" : ") -> any "
+              "text" : ") -> "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -251,16 +265,15 @@
     },
     {
       "kind" : "text",
-      "text" : "("
+      "text" : "(["
     },
     {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sa",
-      "text" : "Array"
+      "kind" : "keyword",
+      "text" : "any"
     },
     {
       "kind" : "text",
-      "text" : "<any "
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -269,7 +282,7 @@
     },
     {
       "kind" : "text",
-      "text" : ">."
+      "text" : "]."
     },
     {
       "kind" : "typeIdentifier",
@@ -278,7 +291,15 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> any "
+      "text" : ") -> "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

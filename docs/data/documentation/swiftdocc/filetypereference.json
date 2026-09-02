@@ -168,14 +168,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileTypeReference\/type"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileTypeReference\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -288,17 +280,6 @@
   "title" : "FileTypeReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/filetypereference"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/FileTypeReference/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileTypeReference\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/filetypereference\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FileTypeReference/displayName": {
   "abstract" : [

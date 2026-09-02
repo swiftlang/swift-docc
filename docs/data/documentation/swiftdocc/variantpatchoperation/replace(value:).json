@@ -47,6 +47,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC21VariantPatchOperationO5Valuexmfp",
         "text" : "Value"
       },
       {
@@ -105,6 +106,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC21VariantPatchOperationO5Valuexmfp",
               "text" : "Value"
             },
             {
@@ -240,6 +242,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC21VariantPatchOperationO5Valuexmfp",
       "text" : "Value"
     },
     {

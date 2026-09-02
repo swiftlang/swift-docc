@@ -129,14 +129,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation\/transform(renderNode:context:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation\/RenderNodeTransforming-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -200,17 +192,6 @@
   "title" : "RemoveUnusedReferencesTransformation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/removeunusedreferencestransformation"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RemoveUnusedReferencesTransformation/RenderNodeTransforming-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation\/RenderNodeTransforming-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RenderNodeTransforming Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/removeunusedreferencestransformation\/rendernodetransforming-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RemoveUnusedReferencesTransformation/init()": {
   "abstract" : [
@@ -293,15 +274,6 @@
     {
       "kind" : "text",
       "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC36RemoveUnusedReferencesTransformationV",
-      "text" : "RemoveUnusedReferencesTransformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

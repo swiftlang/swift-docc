@@ -134,6 +134,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalCodeBlockAnnotationsEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDeviceFrameSupportEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalLinkHierarchySerializationEnabled",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMarkdownOutputEnabled",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMarkdownOutputManifestEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalOverloadedSymbolPresentationEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isMentionedInEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isParametersAndReturnsValidationEnabled"
@@ -271,19 +273,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/current": {
   "abstract" : [
-    {
-      "text" : "The current feature flags that Swift-DocC uses to conditionally enable",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "(usually experimental) behavior in Swift-DocC.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -498,6 +490,80 @@
   "title" : "isExperimentalLinkHierarchySerializationEnabled",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentallinkhierarchyserializationenabled"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalMarkdownOutputEnabled": {
+  "abstract" : [
+    {
+      "text" : "Whether or not experimental markdown generation is enabled",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isExperimentalMarkdownOutputEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMarkdownOutputEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isExperimentalMarkdownOutputEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalmarkdownoutputenabled"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalMarkdownOutputManifestEnabled": {
+  "abstract" : [
+    {
+      "text" : "Whether or not experimental markdown manifest generation is enabled",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isExperimentalMarkdownOutputManifestEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMarkdownOutputManifestEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isExperimentalMarkdownOutputManifestEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalmarkdownoutputmanifestenabled"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalOverloadedSymbolPresentationEnabled": {
   "abstract" : [

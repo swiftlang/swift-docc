@@ -36,7 +36,6 @@
       "anchor" : "Operators",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/!=(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/==(_:_:)"
       ],
       "title" : "Operators"
@@ -117,68 +116,6 @@
   "title" : "VariantCollection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantcollection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/VariantCollection/!=(_:_:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "!="
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/!=(_:_:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "!=(_:_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/variantcollection\/!=(_:_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/VariantCollection/==(_:_:)": {
   "abstract" : [
@@ -272,6 +209,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
       "text" : "Value"
     },
     {
@@ -289,6 +227,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
       "text" : "Value"
     },
     {

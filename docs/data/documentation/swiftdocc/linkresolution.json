@@ -152,7 +152,7 @@
           "code" : [
             "doc:\/\/com.example\/path\/to\/documentation\/page#optional-heading",
             "    ╰─────┬─────╯╰────────────┬────────────╯╰───────┬───────╯",
-            "      bundle ID     path in docs hierarchy    heading name "
+            "      catalog ID     path in docs hierarchy    heading name "
           ],
           "syntax" : null,
           "type" : "codeListing"
@@ -330,7 +330,7 @@
               "type" : "reference"
             },
             {
-              "text" : ". Links to external documentation sources need to be written with a bundle ID in the URI to identify which external resolver should handle the request.",
+              "text" : ". Links to external documentation sources need to be written with an ID in the URI to identify which external resolver should handle the request.",
               "type" : "text"
             }
           ],

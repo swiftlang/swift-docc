@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContextConverter.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationContextConverter.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationContextConverter.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -149,7 +149,6 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextConverter\/init(bundle:context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextConverter\/init(context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)"
       ],
       "title" : "Initializers"
@@ -224,155 +223,6 @@
   "title" : "DocumentationContextConverter",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontextconverter"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextConverter/init(bundle:context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "bundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "context"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "renderContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13RenderContextV",
-      "text" : "RenderContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "emitSymbolSourceFileURIs"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "emitSymbolAccessLevels"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "sourceRepository"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16SourceRepositoryV",
-      "text" : "SourceRepository"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "symbolIdentifiersWithExpandedDocumentation"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?)"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextConverter\/init(bundle:context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(bundle:context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextconverter\/init(bundle:context:rendercontext:emitsymbolsourcefileuris:emitsymbolaccesslevels:sourcerepository:symbolidentifierswithexpandeddocumentation:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextConverter/init(context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)": {
   "abstract" : [

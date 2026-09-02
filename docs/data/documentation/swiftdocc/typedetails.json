@@ -135,14 +135,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TypeDetails\/baseType"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TypeDetails\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -467,17 +459,6 @@
   "title" : "TypeDetails",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/typedetails"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TypeDetails/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TypeDetails\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/typedetails\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TypeDetails/arrayMode": {
   "abstract" : [

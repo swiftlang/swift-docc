@@ -39,15 +39,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-        "text" : "DiffAvailability"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
         "text" : "Info"
       },
@@ -62,15 +53,6 @@
       {
         "kind" : "text",
         "text" : ": "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-        "text" : "DiffAvailability"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -91,15 +73,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-        "text" : "DiffAvailability"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
         "text" : "Info"
       },
@@ -114,15 +87,6 @@
       {
         "kind" : "text",
         "text" : ": "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-        "text" : "DiffAvailability"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -176,16 +140,6 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-              "text" : "DiffAvailability"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
@@ -202,16 +156,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-              "text" : "DiffAvailability"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info",
@@ -232,16 +176,6 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-              "text" : "DiffAvailability"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
@@ -258,16 +192,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-              "text" : "DiffAvailability"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info",
@@ -476,15 +400,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
       "text" : "Info"
     },
@@ -499,15 +414,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -528,15 +434,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
       "text" : "Info"
     },
@@ -551,15 +448,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

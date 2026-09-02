@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VideoReference.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/VideoReference.swift#L97"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/VideoReference.swift#L99"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

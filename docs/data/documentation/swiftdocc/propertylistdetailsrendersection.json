@@ -136,7 +136,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -253,17 +252,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/propertylistdetailsrendersection\/details-swift.struct"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/PropertyListDetailsRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/propertylistdetailsrendersection\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/PropertyListDetailsRenderSection/TextIndexing-Implementations": {
   "abstract" : [
 
@@ -298,15 +286,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC32PropertyListDetailsRenderSectionV",
-      "text" : "PropertyListDetailsRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -400,15 +379,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC32PropertyListDetailsRenderSectionV",
-      "text" : "PropertyListDetailsRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

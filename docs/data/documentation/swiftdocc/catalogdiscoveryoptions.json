@@ -1,0 +1,539 @@
+{
+  "abstract" : [
+    {
+      "text" : "Options to configure the discovery of documentation catalogs.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC23CatalogDiscoveryOptionsV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "CatalogDiscoveryOptions"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "CatalogDiscoveryOptions"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "CatalogDiscoveryOptions.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/CatalogDiscoveryOptions.swift#L14"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "CatalogDiscoveryOptions"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "CatalogDiscoveryOptions"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/init(fallbackInfo:additionalSymbolGraphFiles:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/init(infoPlistFallbacks:additionalSymbolGraphFiles:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/additionalSymbolGraphFiles",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/infoPlistFallbacks"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/catalogdiscoveryoptions"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CatalogDiscoveryOptions": {
+  "abstract" : [
+    {
+      "text" : "Options to configure the discovery of documentation catalogs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CatalogDiscoveryOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CatalogDiscoveryOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CatalogDiscoveryOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/catalogdiscoveryoptions"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CatalogDiscoveryOptions/additionalSymbolGraphFiles": {
+  "abstract" : [
+    {
+      "text" : "Additional symbol graph files that the provider should include in the discovered catalogs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "additionalSymbolGraphFiles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/additionalSymbolGraphFiles",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "additionalSymbolGraphFiles",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/catalogdiscoveryoptions\/additionalsymbolgraphfiles"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CatalogDiscoveryOptions/infoPlistFallbacks": {
+  "abstract" : [
+    {
+      "text" : "Fallback values for information that’s missing in the catalog’s Info.plist file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "infoPlistFallbacks"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "Any"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/infoPlistFallbacks",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "infoPlistFallbacks",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/catalogdiscoveryoptions\/infoplistfallbacks"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CatalogDiscoveryOptions/init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)": {
+  "abstract" : [
+    {
+      "text" : "Creates new catalog discovery options with the given information.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fallbackDisplayName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fallbackIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fallbackDefaultCodeListingLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fallbackDefaultModuleKind"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fallbackDefaultAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
+      "text" : "DefaultAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "additionalSymbolGraphFiles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/catalogdiscoveryoptions\/init(fallbackdisplayname:fallbackidentifier:fallbackdefaultcodelistinglanguage:fallbackdefaultmodulekind:fallbackdefaultavailability:additionalsymbolgraphfiles:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CatalogDiscoveryOptions/init(fallbackInfo:additionalSymbolGraphFiles:)": {
+  "abstract" : [
+    {
+      "text" : "Creates new catalog discovery options with the provided documentation input info as Info.plist fallback values.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fallbackInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV4InfoV",
+      "text" : "Info"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "additionalSymbolGraphFiles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/init(fallbackInfo:additionalSymbolGraphFiles:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(fallbackInfo:additionalSymbolGraphFiles:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/catalogdiscoveryoptions\/init(fallbackinfo:additionalsymbolgraphfiles:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CatalogDiscoveryOptions/init(infoPlistFallbacks:additionalSymbolGraphFiles:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new options value with the given configurations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "infoPlistFallbacks"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "Any"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "additionalSymbolGraphFiles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions\/init(infoPlistFallbacks:additionalSymbolGraphFiles:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(infoPlistFallbacks:additionalSymbolGraphFiles:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/catalogdiscoveryoptions\/init(infoplistfallbacks:additionalsymbolgraphfiles:)"
+}
+}
+}

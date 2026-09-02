@@ -1,0 +1,202 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode\/MarkdownOutputNodeDecodingError"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode\/MarkdownOutputNodeDecodingError\/metadataSectionNotFound"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC18MarkdownOutputNodeV0cdE13DecodingErrorO23metadataSectionNotFoundyA2EmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "metadataSectionNotFound"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "MarkdownOutputNode.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/SwiftDocCMarkdownOutput\/MarkdownOutputNode.swift#L169"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "MarkdownOutputNode.MarkdownOutputNodeDecodingError.metadataSectionNotFound"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "metadataSectionNotFound"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/markdownoutputnode\/markdownoutputnodedecodingerror\/metadatasectionnotfound"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkdownOutputNode": {
+  "abstract" : [
+    {
+      "text" : "A markdown version of a documentation node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MarkdownOutputNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MarkdownOutputNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MarkdownOutputNode",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markdownoutputnode"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkdownOutputNode/MarkdownOutputNodeDecodingError": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MarkdownOutputNodeDecodingError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode\/MarkdownOutputNodeDecodingError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MarkdownOutputNodeDecodingError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MarkdownOutputNode.MarkdownOutputNodeDecodingError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markdownoutputnode\/markdownoutputnodedecodingerror"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkdownOutputNode/MarkdownOutputNodeDecodingError/metadataSectionNotFound": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "metadataSectionNotFound"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode\/MarkdownOutputNodeDecodingError\/metadataSectionNotFound",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "MarkdownOutputNode.MarkdownOutputNodeDecodingError.metadataSectionNotFound",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markdownoutputnode\/markdownoutputnodedecodingerror\/metadatasectionnotfound"
+}
+}
+}

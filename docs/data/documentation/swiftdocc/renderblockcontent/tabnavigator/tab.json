@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L746"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L830"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -121,14 +121,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TabNavigator\/Tab\/title"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TabNavigator\/Tab\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -275,17 +267,6 @@
   "title" : "RenderBlockContent.TabNavigator.Tab",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tabnavigator\/tab"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TabNavigator/Tab/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TabNavigator\/Tab\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tabnavigator\/tab\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TabNavigator/Tab/content": {
   "abstract" : [

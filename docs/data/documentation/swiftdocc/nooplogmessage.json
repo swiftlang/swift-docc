@@ -1,0 +1,521 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC14NoOpLogMessageV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "NoOpLogMessage"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "NoOpLogMessage"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "NoOpSignposterShim.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FoundationExtensions\/NoOpSignposterShim.swift#L79"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "NoOpLogMessage"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "NoOpLogMessage"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s43ExpressibleByExtendedGraphemeClusterLiteralP",
+        "doc:\/\/SwiftDocC\/s32ExpressibleByStringInterpolationP",
+        "doc:\/\/SwiftDocC\/s26ExpressibleByStringLiteralP",
+        "doc:\/\/SwiftDocC\/s33ExpressibleByUnicodeScalarLiteralP",
+        "doc:\/\/SwiftDocC\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Structures",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/Interpolation-swift.struct",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogFloatFormatting",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogIntegerFormatting",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogStringAlignment"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/init(stringInterpolation:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/init(stringLiteral:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/interpolation-swift.property"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Enumerations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogBoolFormat"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/nooplogmessage"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/Interpolation-swift.struct": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Interpolation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/Interpolation-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Interpolation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.Interpolation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/interpolation-swift.struct"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogBoolFormat": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogBoolFormat"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogBoolFormat",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogBoolFormat"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogBoolFormat",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogboolformat"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogFloatFormatting": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogFloatFormatting"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogFloatFormatting",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogFloatFormatting"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogFloatFormatting",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogfloatformatting"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogIntegerFormatting": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogIntegerFormatting"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogIntegerFormatting",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogIntegerFormatting"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogIntegerFormatting",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogintegerformatting"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogPrivacy": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogPrivacy"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogPrivacy",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogPrivacy"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogPrivacy",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogprivacy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/NoOpLogStringAlignment": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogStringAlignment"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/NoOpLogStringAlignment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLogStringAlignment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLogMessage.NoOpLogStringAlignment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/nooplogstringalignment"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/init(stringInterpolation:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "stringInterpolation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV13InterpolationV",
+      "text" : "Interpolation"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/init(stringInterpolation:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(stringInterpolation:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/init(stringinterpolation:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/init(stringLiteral:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "stringLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/init(stringLiteral:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(stringLiteral:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/init(stringliteral:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLogMessage/interpolation-swift.property": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "interpolation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV13InterpolationV",
+      "text" : "Interpolation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLogMessage\/interpolation-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "interpolation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooplogmessage\/interpolation-swift.property"
+},
+"doc://SwiftDocC/s26ExpressibleByStringLiteralP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s26ExpressibleByStringLiteralP",
+  "title" : "Swift.ExpressibleByStringLiteral",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s32ExpressibleByStringInterpolationP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s32ExpressibleByStringInterpolationP",
+  "title" : "Swift.ExpressibleByStringInterpolation",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s33ExpressibleByUnicodeScalarLiteralP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s33ExpressibleByUnicodeScalarLiteralP",
+  "title" : "Swift.ExpressibleByUnicodeScalarLiteral",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s43ExpressibleByExtendedGraphemeClusterLiteralP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s43ExpressibleByExtendedGraphemeClusterLiteralP",
+  "title" : "Swift.ExpressibleByExtendedGraphemeClusterLiteral",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

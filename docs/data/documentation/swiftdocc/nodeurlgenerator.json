@@ -116,7 +116,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeReferencePath(_:lowercased:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/pathForSemantic(_:source:bundle:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/pathForSemantic(_:source:bundle:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/pathForSemantic(_:source:inputs:)"
       ],
       "title" : "Type Methods"
     },
@@ -421,11 +422,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/pathForSemantic(_:source:bundle:)": {
   "abstract" : [
-    {
-      "text" : "Returns a string path appropriate for the given semantic node.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -487,8 +486,17 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
     },
     {
       "kind" : "text",
@@ -506,6 +514,103 @@
   "title" : "pathForSemantic(_:source:bundle:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/pathforsemantic(_:source:bundle:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/pathForSemantic(_:source:inputs:)": {
+  "abstract" : [
+    {
+      "text" : "Returns a string path appropriate for the given semantic node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pathForSemantic"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
+      "text" : "Semantic"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "source"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/pathForSemantic(_:source:inputs:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pathForSemantic(_:source:inputs:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/pathforsemantic(_:source:inputs:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/urlForReference(_:fileSafePath:)": {
   "abstract" : [

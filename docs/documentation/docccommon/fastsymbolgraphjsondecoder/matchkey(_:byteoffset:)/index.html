@@ -1,0 +1,45 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>matchKey(_:byteOffset:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Checks if the decoder is currently pointing to a specific JSON key." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">DocCCommon</a>
+        </li>
+        <li>
+            <a href="../index.html">FastSymbolGraphJSONDecoder</a>
+        </li>
+        <li>matchKey(_:byteOffset:)</li>
+    </ul>
+    <p>Instance Method</p>
+    <h1>matchKey(_:byteOffset:)</h1>
+    <p>Checks if the decoder is currently pointing to a specific JSON key.</p>
+    <pre>
+        <code>mutating func matchKey(_ jsonKey: StaticString, byteOffset: Int = 0) -&gt; Bool</code>
+    </pre>
+</section>
+<h2>Parameters</h2>
+<dl>
+    <dt>jsonKey</dt>
+    <dd>
+        <p>The json key that the decoder checks for</p>
+    </dd>
+    <dt>byteOffset</dt>
+    <dd>
+        <p>The byte offset from the decoder’s current state where the decoder checks for the key.</p>
+    </dd>
+</dl>
+<h2>Return Value</h2>
+<p><code>true</code>
+     if the decoder matched this key, <code>false</code>
+     otherwise.</p>
+<h2>Discussion</h2>
+<p>If the decoder’s current state matches the given key, the decoder advances past the key and its value separator (<code>:</code>
+    ) so that the decoder is in a state where it can decode the value for that key.</p>
+<h2>Performance considerations</h2>
+<p>If the key you’re checking for is only 3 bytes or only 7 bytes, it’s faster to include the trailing string delimiter (<code>"</code>
+    ) in the key so that it fully fills a 4 byte value or 8 byte value.</p>
+<p>If the key you’re checking for is only 6 bytes, it’s faster to include both the leading and trailing string delimiters (<code>"</code>
+    ) in the key so that it fully fills a 8 byte value. To include the <i>leading</i>
+     string delimiter you’ll need to specify a <code>-1</code>
+     byte offset, because the decoder will have already advanced just past the leading string delimiter after calling <code>advanceToNextKey</code>
+    .</p>
+</article></noscript><div id="app"></div></body></html>

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsumer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -133,7 +133,8 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/flush()",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/receive(_:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/receive(_:)-3uvn1",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/receive(_:)-3vl0u"
       ],
       "title" : "Instance Methods"
     }
@@ -305,7 +306,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticconsumer\/flush()"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer/receive(_:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer/receive(_:)-3uvn1": {
   "abstract" : [
     {
       "text" : "Receive diagnostics encountered by a ",
@@ -321,6 +322,48 @@
       "type" : "text"
     }
   ],
+  "defaultImplementations" : 2,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "receive"
+    },
+    {
+      "kind" : "text",
+      "text" : "(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/receive(_:)-3uvn1",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "receive(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsumer\/receive(_:)-3uvn1"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer/receive(_:)-3vl0u": {
+  "abstract" : [
+
+  ],
+  "defaultImplementations" : 2,
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -348,13 +391,13 @@
       "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/receive(_:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/receive(_:)-3vl0u",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "receive(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticconsumer\/receive(_:)"
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsumer\/receive(_:)-3vl0u"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine": {
   "abstract" : [
@@ -468,15 +511,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote": {
   "abstract" : [
-    {
-      "text" : "A diagnostic note is a simple string message that should appear somewhere in a document.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -541,6 +582,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

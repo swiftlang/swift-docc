@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticSeverity.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -106,13 +106,14 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/SL",
-        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/SH",
-        "doc:\/\/SwiftDocC\/SY"
+        "doc:\/\/SwiftDocC\/SY",
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -174,9 +175,7 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Comparable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/RawRepresentable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Comparable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -343,15 +342,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote": {
   "abstract" : [
-    {
-      "text" : "A diagnostic note is a simple string message that should appear somewhere in a document.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -420,28 +417,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/comparable-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/rawrepresentable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/description": {
   "abstract" : [
 
@@ -506,11 +481,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/hint": {
   "abstract" : [
-    {
-      "text" : "A hint.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -663,6 +636,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -690,14 +664,19 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/problem"
 },
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
 "doc://SwiftDocC/s23CustomStringConvertibleP": {
   "identifier" : "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
   "title" : "Swift.CustomStringConvertible",
   "type" : "unresolvable"
 },
-"doc://SwiftDocC/s8CopyableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
-  "title" : "Swift.Copyable",
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
   "type" : "unresolvable"
 }
 }

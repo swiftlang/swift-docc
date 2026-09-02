@@ -157,7 +157,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -451,17 +450,6 @@
   "title" : "RenderProperty",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderproperty"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderProperty/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderproperty\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderProperty/TextIndexing-Implementations": {
   "abstract" : [

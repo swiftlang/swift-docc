@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Relationships.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Relationships.swift#L50"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Relationships.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -199,6 +199,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

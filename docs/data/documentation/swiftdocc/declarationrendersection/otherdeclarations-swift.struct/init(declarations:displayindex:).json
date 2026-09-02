@@ -40,24 +40,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
-        "text" : "DeclarationRenderSection"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV17OtherDeclarationsV",
-        "text" : "OtherDeclarations"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV17OtherDeclarationsV0C0V",
         "text" : "Declaration"
       },
@@ -90,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeclarationsRenderSection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L203"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L207"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -123,26 +105,6 @@
             {
               "kind" : "text",
               "text" : ": ["
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
-              "text" : "DeclarationRenderSection"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV17OtherDeclarationsV",
-              "text" : "OtherDeclarations"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration",
@@ -338,24 +300,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
-      "text" : "DeclarationRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV17OtherDeclarationsV",
-      "text" : "OtherDeclarations"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

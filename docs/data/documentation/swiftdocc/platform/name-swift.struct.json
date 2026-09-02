@@ -84,7 +84,9 @@
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
-        "doc:\/\/SwiftDocC\/SH"
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -162,14 +164,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Name-swift.struct\/from(string:)"
       ],
       "title" : "Type Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Name-swift.struct\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -363,17 +357,6 @@
   "title" : "==(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform\/name-swift.struct\/==(_:_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Platform/Name-swift.struct/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Name-swift.struct\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/platform\/name-swift.struct\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Platform/Name-swift.struct/ID": {
   "abstract" : [
@@ -1054,24 +1037,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8PlatformV",
-      "text" : "Platform"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8PlatformV4NameV",
-      "text" : "Name"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC8PlatformV4NameV2IDa",
       "text" : "ID"
     }
@@ -1375,9 +1340,19 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform\/name-swift.struct\/xcode"
 },
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
 "doc://SwiftDocC/s23CustomStringConvertibleP": {
   "identifier" : "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
   "title" : "Swift.CustomStringConvertible",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
   "type" : "unresolvable"
 }
 }

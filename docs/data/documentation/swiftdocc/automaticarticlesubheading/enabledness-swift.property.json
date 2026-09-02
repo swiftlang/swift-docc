@@ -39,15 +39,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC26AutomaticArticleSubheadingC",
-        "text" : "AutomaticArticleSubheading"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC26AutomaticArticleSubheadingC11EnablednessO",
         "text" : "Enabledness"
       }
@@ -106,16 +97,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticArticleSubheading",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC26AutomaticArticleSubheadingC",
-              "text" : "AutomaticArticleSubheading"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticArticleSubheading\/Enabledness-swift.enum",
@@ -284,15 +265,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC26AutomaticArticleSubheadingC",
-      "text" : "AutomaticArticleSubheading"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

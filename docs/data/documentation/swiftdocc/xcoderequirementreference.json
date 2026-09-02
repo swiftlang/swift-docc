@@ -123,14 +123,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/url"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -243,17 +235,6 @@
   "title" : "XcodeRequirementReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/xcoderequirementreference"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/XcodeRequirementReference/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/xcoderequirementreference\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/XcodeRequirementReference/identifier": {
   "abstract" : [

@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "A diagnostic note is a simple string message that should appear somewhere in a document.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'Diagnostic.Note' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -18,11 +23,11 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC14DiagnosticNoteV",
+    "externalID" : "s:9SwiftDocC14DiagnosticNotea",
     "fragments" : [
       {
         "kind" : "keyword",
-        "text" : "struct"
+        "text" : "typealias"
       },
       {
         "kind" : "text",
@@ -46,11 +51,11 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticNote.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticNote.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticNote.swift#L29"
     },
     "role" : "symbol",
-    "roleHeading" : "Structure",
-    "symbolKind" : "struct",
+    "roleHeading" : "Type Alias",
+    "symbolKind" : "typealias",
     "title" : "DiagnosticNote"
   },
   "primaryContentSections" : [
@@ -66,7 +71,7 @@
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "struct"
+              "text" : "typealias"
             },
             {
               "kind" : "text",
@@ -75,11 +80,37 @@
             {
               "kind" : "identifier",
               "text" : "DiagnosticNote"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+              "text" : "Diagnostic"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/Note",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV4NoteV",
+              "text" : "Note"
             }
           ]
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "mentions",
+      "mentions" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics"
+      ]
     }
   ],
   "schemaVersion" : {
@@ -102,18 +133,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer"
       ],
       "title" : "Diagnostics"
-    }
-  ],
-  "topicSections" : [
-    {
-      "anchor" : "Instance-Properties",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/message",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/range",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/source"
-      ],
-      "title" : "Instance Properties"
     }
   ],
   "variants" : [
@@ -143,6 +162,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Adding-Diagnostics": {
+  "abstract" : [
+    {
+      "text" : "Display information to the developer about actionable issues with their documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding user-facing diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/adding-diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic": {
   "abstract" : [
@@ -177,6 +210,40 @@
   "title" : "Diagnostic",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/Note": {
+  "abstract" : [
+    {
+      "text" : "A supplementary message, related to a diagnostic, to associate with a location in a certain file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Note"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/Note",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Note"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Diagnostic.Note",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/note"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer": {
   "abstract" : [
@@ -248,15 +315,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote": {
   "abstract" : [
-    {
-      "text" : "A diagnostic note is a simple string message that should appear somewhere in a document.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -279,133 +344,6 @@
   "title" : "DiagnosticNote",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticnote"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/message": {
-  "abstract" : [
-    {
-      "text" : "The message to attach to the document.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "message"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/message",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "message",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticnote\/message"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/range": {
-  "abstract" : [
-    {
-      "text" : "The range to which to attach the ",
-      "type" : "text"
-    },
-    {
-      "code" : "message",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "range"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown11SourceRangea",
-      "text" : "SourceRange"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/range",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "range",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticnote\/range"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/source": {
-  "abstract" : [
-    {
-      "text" : "The source file to which to attach the ",
-      "type" : "text"
-    },
-    {
-      "code" : "message",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "source"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/source",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "source",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticnote\/source"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity": {
   "abstract" : [
@@ -448,6 +386,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

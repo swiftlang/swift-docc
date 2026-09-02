@@ -1,4 +1,15 @@
 {
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'analyze(_:children:source:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -65,7 +76,15 @@
       },
       {
         "kind" : "text",
-        "text" : "<any "
+        "text" : "<"
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -120,6 +139,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC8SemanticC8AnalysesO16ExtractAllMarkupV5Childxmfp",
         "text" : "Child"
       },
       {
@@ -147,7 +167,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Extract.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/Extract.swift#L58"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/Extract.swift#L73"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -229,7 +249,15 @@
             },
             {
               "kind" : "text",
-              "text" : "<any "
+              "text" : "<"
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -263,6 +291,14 @@
             },
             {
               "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
               "text" : ": "
             },
             {
@@ -285,6 +321,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC8SemanticC8AnalysesO16ExtractAllMarkupV5Childxmfp",
               "text" : "Child"
             },
             {
@@ -396,6 +433,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -537,6 +575,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -586,7 +625,15 @@
     },
     {
       "kind" : "text",
-      "text" : "<any "
+      "text" : "<"
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -641,6 +688,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC8AnalysesO16ExtractAllMarkupV5Childxmfp",
       "text" : "Child"
     },
     {

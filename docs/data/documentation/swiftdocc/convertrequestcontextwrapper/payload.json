@@ -39,6 +39,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC28ConvertRequestContextWrapperV7Payloadxmfp",
         "text" : "Payload"
       }
     ],
@@ -49,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertRequestContextWrapper.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequestContextWrapper.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequestContextWrapper.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -85,6 +86,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC28ConvertRequestContextWrapperV7Payloadxmfp",
               "text" : "Payload"
             }
           ]
@@ -189,6 +191,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC28ConvertRequestContextWrapperV7Payloadxmfp",
       "text" : "Payload"
     }
   ],

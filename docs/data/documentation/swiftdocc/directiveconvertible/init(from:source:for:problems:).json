@@ -1,8 +1,22 @@
 {
-  "abstract" : [
+  "defaultImplementationsSections" : [
     {
-      "text" : "Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid.",
-      "type" : "text"
+      "anchor" : "DirectiveConvertible-Implementations",
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/init(from:source:for:problems:)-83l39"
+      ],
+      "title" : "DirectiveConvertible Implementations"
+    }
+  ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -19,7 +33,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC20DirectiveConvertibleP4from6source3for8problemsxSg8Markdown05BlockC0V_10Foundation3URLVSgAA19DocumentationBundleVSayAA7ProblemVGztcfc",
+    "externalID" : "s:9SwiftDocC20DirectiveConvertibleP4from6source3for8problemsxSg8Markdown05BlockC0V_10Foundation3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -73,7 +87,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
         "text" : "DocumentationBundle"
       },
       {
@@ -113,7 +127,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L46"
     },
     "required" : true,
     "role" : "symbol",
@@ -201,7 +215,7 @@
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
               "text" : "DocumentationBundle"
             },
             {
@@ -238,76 +252,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The parsed block directive to create a semantic object from.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "directive"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The location of the source file that contains the markup for the parsed block directive.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "source"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The documentation bundle that the source file belongs to.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "bundle"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "An inout array of ",
-                  "type" : "text"
-                },
-                {
-                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
-                  "isActive" : true,
-                  "type" : "reference"
-                },
-                {
-                  "text" : " to be collected for later diagnostic reporting.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "problems"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -382,11 +326,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible/init(from:source:for:problems:)": {
   "abstract" : [
-    {
-      "text" : "Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid.",
-      "type" : "text"
-    }
+
   ],
+  "defaultImplementations" : 1,
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -440,7 +383,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
       "text" : "DocumentationBundle"
     },
     {
@@ -481,17 +424,113 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:problems:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
+"doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible/init(from:source:for:problems:)-83l39": {
   "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
     {
-      "text" : "A collection of the build inputs for a unit of documentation.",
-      "type" : "text"
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
+      "text" : "BlockDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "source"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "problems"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+      "text" : "Problem"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
     }
   ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/init(from:source:for:problems:)-83l39",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:source:for:problems:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:problems:)-83l39"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -522,6 +561,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

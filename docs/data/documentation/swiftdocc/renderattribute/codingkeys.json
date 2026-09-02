@@ -127,15 +127,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/CodingKeys\/init(stringValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/CodingKeys\/CodingKey-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/CodingKeys\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -243,28 +234,6 @@
   "title" : "RenderAttribute.CodingKeys",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderattribute\/codingkeys"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/CodingKeys/CodingKey-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/CodingKeys\/CodingKey-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "CodingKey Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderattribute\/codingkeys\/codingkey-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/CodingKeys/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/CodingKeys\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderattribute\/codingkeys\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/CodingKeys/init(intValue:)": {
   "abstract" : [

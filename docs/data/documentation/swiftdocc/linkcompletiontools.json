@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkCompletionTools.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/LinkCompletionTools.swift#L24"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/LinkCompletionTools.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -552,15 +552,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO",
-      "text" : "LinkCompletionTools"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO20ParsedDisambiguationO",
       "text" : "ParsedDisambiguation"
     },
@@ -615,15 +606,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO",
-      "text" : "LinkCompletionTools"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

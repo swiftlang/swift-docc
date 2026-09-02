@@ -1,1 +1,28 @@
-<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>init(asideKind:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.54db7914.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"><meta content="Creates an aside type for the specified aside kind." name="description"/></head><body data-color-scheme="auto"><noscript><article><section><ul><li><a href="../../../index.html">SwiftDocC</a></li><li><a href="../../index.html">RenderBlockContent</a></li><li><a href="../index.html">RenderBlockContent.AsideStyle</a></li><li>init(asideKind:)</li></ul><p>Initializer</p><h1>init(asideKind:)</h1><p>Creates an aside type for the specified aside kind.</p><pre><code>init(asideKind: Aside.Kind)</code></pre></section><h2>Parameters</h2><dl><dt><code>asideKind</code></dt><dd><p>The aside kind that provides the display name.</p></dd></dl></article></noscript><div id="app"></div></body></html>
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>init(asideKind:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Creates an aside style from a Swift Markdown aside kind." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../../index.html">SwiftDocC</a>
+        </li>
+        <li>
+            <a href="../../index.html">RenderBlockContent</a>
+        </li>
+        <li>
+            <a href="../index.html">RenderBlockContent.AsideStyle</a>
+        </li>
+        <li>init(asideKind:)</li>
+    </ul>
+    <p>Initializer</p>
+    <h1>init(asideKind:)</h1>
+    <p>Creates an aside style from a Swift Markdown aside kind.</p>
+    <pre>
+        <code>init(asideKind: Markdown.Aside.Kind)</code>
+    </pre>
+</section>
+<h2>Discussion</h2>
+<p>The new aside style’s underlying raw string value will be the markdown aside kind’s raw value.</p>
+<blockquote class="aside note">
+    <p class="label">Note</p>
+    <p> If the lowercased raw value doesn’t match one of the aside styles supported by DocC Render (one of note, tip, experiment, important, or warning) the new aside style’s raw value will be set to note.</p>
+</blockquote>
+</article></noscript><div id="app"></div></body></html>

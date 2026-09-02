@@ -55,6 +55,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC7ArticleC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
         "text" : "V"
       },
       {
@@ -63,6 +64,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC7ArticleC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
         "text" : "V"
       },
       {
@@ -82,7 +84,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Article.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L248"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L258"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -158,6 +160,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC7ArticleC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
               "text" : "V"
             },
             {
@@ -166,6 +169,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC7ArticleC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
               "text" : "V"
             },
             {
@@ -361,6 +365,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ArticleC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -369,6 +374,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ArticleC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {

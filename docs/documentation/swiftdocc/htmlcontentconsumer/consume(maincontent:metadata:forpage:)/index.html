@@ -1,0 +1,36 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>consume(mainContent:metadata:forPage:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Consumes the HTML content and metadata for a given page." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">SwiftDocC</a>
+        </li>
+        <li>
+            <a href="../index.html">HTMLContentConsumer</a>
+        </li>
+        <li>consume(mainContent:metadata:forPage:)</li>
+    </ul>
+    <p>Instance Method</p>
+    <h1>consume(mainContent:metadata:forPage:)</h1>
+    <p>Consumes the HTML content and metadata for a given page.</p>
+    <pre>
+        <code>func consume(mainContent: HTMLNode, metadata: (title: String, description: String?), forPage reference: ResolvedTopicReference) throws</code>
+    </pre>
+</section>
+<h2>Parameters</h2>
+<dl>
+    <dt>mainContent</dt>
+    <dd>
+        <p>The contents for this page.</p>
+    </dd>
+    <dt>metadata</dt>
+    <dd>
+        <p>Metadata information (title and description) about this page.</p>
+    </dd>
+    <dt>reference</dt>
+    <dd>
+        <p>The resolved topic reference that identifies this page.</p>
+    </dd>
+</dl>
+<h2>Discussion</h2>
+<p>The content and metadata doesn’t make up a full valid HTML page. It’s the consumers responsibility to insert the information into a template or skeletal structure to produce a valid HTML file for each page.</p>
+</article></noscript><div id="app"></div></body></html>

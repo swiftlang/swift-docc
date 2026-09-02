@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Creates a new checker that detects documents with multiple “Topics” sections.",
+      "text" : "Creates a new checker that warns about multiple “Topics” sections.",
       "type" : "text"
     }
   ],
@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DuplicateTopicsSection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/DuplicateTopicsSection.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/DuplicateTopicsSection.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -110,7 +110,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The URL to the documentation file that the checker checks.",
+                  "text" : "The URL to the documentation file that the checker checks, for diagnostics purposes.",
                   "type" : "text"
                 }
               ],
@@ -161,15 +161,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections": {
   "abstract" : [
     {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "code" : "Document",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " may only have one level-2 “Topics” heading at the top level, since it serves as structured data for a documentation bundle’s hierarchy.",
+      "text" : "A checker that warns about multiple “Topics” sections.",
       "type" : "text"
     }
   ],
@@ -203,7 +195,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/init(sourceFile:)": {
   "abstract" : [
     {
-      "text" : "Creates a new checker that detects documents with multiple “Topics” sections.",
+      "text" : "Creates a new checker that warns about multiple “Topics” sections.",
       "type" : "text"
     }
   ],

@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticSeverity.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L50"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L43"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

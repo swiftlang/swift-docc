@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Creates an aside style for the specified raw value.",
+      "text" : "Creates an aside style.",
       "type" : "text"
     }
   ],
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L577"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L629"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -111,7 +111,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The heading text to use when rendering this style of aside.",
+                  "text" : "The underlying raw string value.",
                   "type" : "text"
                 }
               ],
@@ -121,6 +121,66 @@
           "name" : "rawValue"
         }
       ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The new aside style’s underlying raw string value will be lowercased.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If the lowercased raw value doesn’t match one of the aside styles supported",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "by DocC Render (one of note, tip, experiment, important, or warning) the",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "new aside style’s raw value will be set to note.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -230,7 +290,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(rawValue:)": {
   "abstract" : [
     {
-      "text" : "Creates an aside style for the specified raw value.",
+      "text" : "Creates an aside style.",
       "type" : "text"
     }
   ],

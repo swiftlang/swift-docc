@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Options for how problems should be formatted if written to output.",
+      "text" : "Options for how diagnostics should be formatted if written to output.",
       "type" : "text"
     }
   ],
@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsumer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L26"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L44"
     },
     "required" : true,
     "role" : "symbol",
@@ -198,7 +198,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingConsumer/formattingOptions": {
   "abstract" : [
     {
-      "text" : "Options for how problems should be formatted if written to output.",
+      "text" : "Options for how diagnostics should be formatted if written to output.",
       "type" : "text"
     }
   ],

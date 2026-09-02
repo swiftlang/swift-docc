@@ -57,9 +57,6 @@
         "text" : "PlatformAvailability"
       }
     ],
-    "platforms" : [
-
-    ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver+DeprecatedCommunication.swift",
       "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver+DeprecatedCommunication.swift#L172"

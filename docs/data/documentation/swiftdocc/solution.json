@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A solution to a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Problem",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
       "type" : "text"
     }
   ],
@@ -54,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Solution.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Solution.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Solution.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -88,6 +80,12 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "mentions",
+      "mentions" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics"
+      ]
     }
   ],
   "relationshipsSections" : [
@@ -121,6 +119,14 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Replacement"
+      ],
+      "title" : "Structures"
+    },
+    {
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
@@ -136,14 +142,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/summary"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -184,17 +182,29 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Replacement": {
+"doc://SwiftDocC/documentation/SwiftDocC/Adding-Diagnostics": {
   "abstract" : [
     {
-      "text" : "A textual replacement.",
+      "text" : "Display information to the developer about actionable issues with their documentation.",
       "type" : "text"
     }
   ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding user-facing diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/adding-diagnostics"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Replacement": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -221,15 +231,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Solution": {
   "abstract" : [
     {
-      "text" : "A solution to a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Problem",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
       "type" : "text"
     }
   ],
@@ -260,16 +262,39 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/solution"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Solution/Equatable-Implementations": {
+"doc://SwiftDocC/documentation/SwiftDocC/Solution/Replacement": {
   "abstract" : [
-
+    {
+      "text" : "A textual replacement that makes up part of a solution to resolve the specific problem or issue with the end-user’s documentation.",
+      "type" : "text"
+    }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Replacement"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution\/Replacement",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Replacement"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Solution.Replacement",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/solution\/equatable-implementations"
+  "url" : "\/documentation\/swiftdocc\/solution\/replacement"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Solution/init(summary:replacements:)": {
   "abstract" : [
@@ -322,7 +347,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+      "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
       "text" : "Replacement"
     },
     {
@@ -340,7 +365,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Solution/replacements": {
   "abstract" : [
     {
-      "text" : "The replacements necessary to fix a problem.",
+      "text" : "A list of replacements that make up this solution to resolve the original problem or issue.",
       "type" : "text"
     }
   ],
@@ -363,7 +388,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11ReplacementV",
+      "preciseIdentifier" : "s:9SwiftDocC8SolutionV11ReplacementV",
       "text" : "Replacement"
     },
     {
@@ -381,20 +406,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Solution/summary": {
   "abstract" : [
     {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "inlineContent" : [
-        {
-          "text" : "brief",
-          "type" : "text"
-        }
-      ],
-      "type" : "emphasis"
-    },
-    {
-      "text" : " description of what the solution is.",
+      "text" : "A brief summary that describes what the solution is to the end-user.",
       "type" : "text"
     }
   ],

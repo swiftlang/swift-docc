@@ -85,10 +85,13 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/SL",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
-        "doc:\/\/SwiftDocC\/SH"
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -119,7 +122,8 @@
       "anchor" : "Operators",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/==(_:_:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/==(_:_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/_(_:_:)"
       ],
       "title" : "Operators"
     },
@@ -146,7 +150,8 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/encode(to:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/encode(to:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/hash(into:)"
       ],
       "title" : "Instance Methods"
     },
@@ -171,14 +176,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/watchOSAppExtension"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -203,6 +200,11 @@
 "doc://SwiftDocC/SH": {
   "identifier" : "doc:\/\/SwiftDocC\/SH",
   "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SL": {
+  "identifier" : "doc:\/\/SwiftDocC\/SL",
+  "title" : "Swift.Comparable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/SQ": {
@@ -364,16 +366,89 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformname\/==(_:_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/Equatable-Implementations": {
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/_(_:_:)": {
   "abstract" : [
-
+    {
+      "text" : "Compares two platform names using the order defined in ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/sortedPlatforms",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Unknown platforms are lexicographically sorted after known platforms.",
+      "type" : "text"
+    }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "<"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/_(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "<(_:_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/platformname\/equatable-implementations"
+  "url" : "\/documentation\/swiftdocc\/platformname\/_(_:_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformName/aliases": {
   "abstract" : [
@@ -583,7 +658,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -605,6 +688,71 @@
   "title" : "encode(to:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformname\/encode(to:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/hash(into:)": {
+  "abstract" : [
+    {
+      "text" : "Hashes the entity using the raw value, consistent with the implementation of ",
+      "type" : "text"
+    },
+    {
+      "code" : "==",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hash"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "into"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s6HasherV",
+      "text" : "Hasher"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/hash(into:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hash(into:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platformname\/hash(into:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformName/iOS": {
   "abstract" : [
@@ -757,7 +905,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -1367,6 +1523,16 @@
   "title" : "Symbol",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol"
+},
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
 }
 }
 }

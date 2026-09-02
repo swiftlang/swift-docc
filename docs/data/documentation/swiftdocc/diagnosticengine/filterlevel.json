@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Determines which problems will be emitted to consumers.",
+      "text" : "Determines which diagnostics will be reported to consumers.",
       "type" : "text"
     }
   ],
@@ -214,7 +214,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/filterLevel": {
   "abstract" : [
     {
-      "text" : "Determines which problems will be emitted to consumers.",
+      "text" : "Determines which diagnostics will be reported to consumers.",
       "type" : "text"
     }
   ],

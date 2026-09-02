@@ -63,6 +63,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC5StepsC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
         "text" : "V"
       },
       {
@@ -71,6 +72,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC5StepsC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
         "text" : "V"
       },
       {
@@ -90,7 +92,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Steps.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Steps.swift#L58"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Steps.swift#L67"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -166,6 +168,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC5StepsC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
               "text" : "V"
             },
             {
@@ -174,6 +177,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC5StepsC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
               "text" : "V"
             },
             {
@@ -490,6 +494,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC5StepsC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -498,6 +503,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC5StepsC6accepty6ResultQzxzAA15SemanticVisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {

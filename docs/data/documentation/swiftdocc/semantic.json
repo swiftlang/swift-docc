@@ -307,14 +307,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -1197,6 +1189,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1783,17 +1776,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semantic\/analyses"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semantic\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Semantic/accept(_:)": {
   "abstract" : [
     {
@@ -1845,6 +1827,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC6accepty6ResultQzxzAA0C7VisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {
@@ -1853,6 +1836,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC6accepty6ResultQzxzAA0C7VisitorRzlF1VL_xmfp",
       "text" : "V"
     },
     {

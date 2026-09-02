@@ -28,6 +28,14 @@
       },
       {
         "kind" : "identifier",
+        "text" : "SymbolKit"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "identifier",
         "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
         "text" : "SymbolGraph"
       },
@@ -89,6 +97,14 @@
               "text" : " "
             },
             {
+              "kind" : "identifier",
+              "text" : "SymbolKit"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
               "text" : "SymbolGraph"
@@ -120,7 +136,6 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -247,6 +262,14 @@
     },
     {
       "kind" : "identifier",
+      "text" : "SymbolKit"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
       "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
       "text" : "SymbolGraph"
     },
@@ -308,6 +331,14 @@
     },
     {
       "kind" : "identifier",
+      "text" : "SymbolKit"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
       "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
       "text" : "SymbolGraph"
     },
@@ -351,11 +382,6 @@
   "title" : "SymbolGraph.Symbol.FunctionSignature.FunctionParameter",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter"
-},
-"doc://SwiftDocC/s8CopyableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
-  "title" : "Swift.Copyable",
-  "type" : "unresolvable"
 }
 }
 }

@@ -60,30 +60,12 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:Sq",
-        "text" : "Optional"
+        "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+        "text" : "VariantValue"
       },
       {
         "kind" : "text",
         "text" : "<"
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-        "text" : "OutOfProcessReferenceResolver"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-        "text" : "ResolvedInformation"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -99,9 +81,6 @@
       {
         "name" : "SwiftDocC"
       }
-    ],
-    "platforms" : [
-
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver+DeprecatedCommunication.swift",
@@ -140,33 +119,14 @@
               "text" : ": "
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/Variant\/VariantValue",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:Sq",
-              "text" : "Optional"
+              "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+              "text" : "VariantValue"
             },
             {
               "kind" : "text",
               "text" : "<"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-              "text" : "OutOfProcessReferenceResolver"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-              "text" : "ResolvedInformation"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/DeclarationFragments-swift.typealias",
@@ -396,6 +356,41 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolvedinformation\/variant"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/ResolvedInformation/Variant/VariantValue": {
+  "abstract" : [
+    {
+      "text" : "A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the resolved information.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantValue"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/Variant\/VariantValue",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantValue"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "OutOfProcessReferenceResolver.ResolvedInformation.Variant.VariantValue",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolvedinformation\/variant\/variantvalue"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/ResolvedInformation/Variant/declarationFragments": {
   "abstract" : [
     {
@@ -431,30 +426,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

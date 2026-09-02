@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VideoReference.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/VideoReference.swift#L93"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/VideoReference.swift#L95"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -128,14 +128,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/encode(to:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -249,17 +241,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/videoreference\/variantproxy"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/VideoReference/VariantProxy/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/videoreference\/variantproxy\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/VideoReference/VariantProxy/encode(to:)": {
   "abstract" : [
 
@@ -287,7 +268,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -329,7 +318,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

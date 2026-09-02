@@ -343,15 +343,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC",
-      "text" : "DocumentationServer"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC11MessageTypeV",
       "text" : "MessageType"
     }
@@ -617,6 +608,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC8register7serviceyx_tAA0C7ServiceRzlF1SL_xmfp",
       "text" : "S"
     },
     {
@@ -671,7 +663,15 @@
     },
     {
       "kind" : "text",
-      "text" : " : any "
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

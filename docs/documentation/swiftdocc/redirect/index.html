@@ -1,3 +1,87 @@
-<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>Redirect</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.54db7914.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"><meta content="A directive that specifies a previous URL for the page where the directive appears." name="description"/></head><body data-color-scheme="auto"><noscript><article><section><ul><li><a href="../index.html">SwiftDocC</a></li><li>Redirect</li></ul><p>Class</p><h1>Redirect</h1><p>A directive that specifies a previous URL for the page where the directive appears.</p><pre><code>final class Redirect</code></pre></section><h2>Discussion</h2><p>If the page has moved more than once you can add multiple  <code>Redirected</code> directives, each specifying one previous URL. For example:</p><pre class="md"><code>@Redirected(from: "old/path/to/this/page")
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>Redirect</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A directive that specifies a previous URL for the page where the directive appears." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">SwiftDocC</a>
+        </li>
+        <li>Redirect</li>
+    </ul>
+    <p>Class</p>
+    <h1>Redirect</h1>
+    <p>A directive that specifies a previous URL for the page where the directive appears.</p>
+    <pre>
+        <code>final class Redirect</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>If the page has moved more than once you can add multiple  <code>Redirected</code>
+     directives, each specifying one previous URL. For example:</p>
+<pre class="md">
+    <code>@Redirected(from: "old/path/to/this/page")
 @Redirected(from: "another/old/path/to/this/page")
-</code></pre><blockquote class="aside note"><p class="label">Note</p><p>Starting with version 6.0, the <code>Redirected</code> directive is supported both top-level and as a member of a <a href="../metadata/index.html"><code>Metadata</code></a> directive. In earlier versions, the <code>Redirected</code> directive is only supported as a top-level directive.</p></blockquote><h3>Setting up Redirects</h3><p>If you host your documentation on a web server, you can set a HTTP “301 Moved Permanently” redirect for each <code>Redirected</code> value to avoid breaking existing links to your content.</p><p>To find each page’s Redirected values, pass the <code>--emit-digest</code> flag to DocC. This flag configures DocC to write additional metadata files to the output directory. One of these files, <code>linkable-entities.json</code>, contains summarized information about all pages and on-page landmarks that you can link to from outside the DocC documentation. Each of these “entities” has a <code>"path"</code>—which represents the current relative path of that page—and an optional list of <code>"redirects"</code>—which represent all the <code>Redirected</code> values for page as they were authored in the markup. You can write either relative redirect values or absolute redirect values in the markup depending on what information you need when setting up HTTP “301 Moved Permanently” redirects on your web server.</p><h2>Topics</h2><h3>Instance Properties</h3><ul><li><a href="oldpath/index.html"><code>var oldPath: URL</code><p>The URL that redirects to the page associated with the directive.</p></a></li><li><a href="originalmarkup/index.html"><code>let originalMarkup: BlockDirective</code></a></li></ul><h3>Type Properties</h3><ul><li><a href="directivename/index.html"><code>static let directiveName: String</code></a></li><li><a href="introducedversion/index.html"><code>static let introducedVersion: String</code></a></li></ul></article></noscript><div id="app"></div></body></html>
+</code>
+</pre>
+<blockquote class="aside note">
+    <p class="label">Note</p>
+    <p>Starting with version 6.0, the <code>Redirected</code>
+         directive is supported both top-level and as a member of a <a href="../metadata/index.html">
+            <code>Metadata</code>
+        </a>
+         directive. In earlier versions, the <code>Redirected</code>
+         directive is only supported as a top-level directive.</p>
+</blockquote>
+<h3>Setting up Redirects</h3>
+<p>If you host your documentation on a web server, you can set a HTTP “301 Moved Permanently” redirect for each <code>Redirected</code>
+     value to avoid breaking existing links to your content.</p>
+<p>To find each page’s Redirected values, pass the <code>--emit-digest</code>
+     flag to DocC. This flag configures DocC to write additional metadata files to the output directory. One of these files, <code>linkable-entities.json</code>
+    , contains summarized information about all pages and on-page landmarks that you can link to from outside the DocC documentation. Each of these “entities” has a <code>"path"</code>
+    —which represents the current relative path of that page—and an optional list of <code>"redirects"</code>
+    —which represent all the <code>Redirected</code>
+     values for page as they were authored in the markup. You can write either relative redirect values or absolute redirect values in the markup depending on what information you need when setting up HTTP “301 Moved Permanently” redirects on your web server.</p>
+<h2>Topics</h2>
+<h3>Instance Properties</h3>
+<ul>
+    <li>
+        <a href="oldpath/index.html">
+            <code>var oldPath: URL</code>
+        </a>
+        <p>The URL that redirects to the page associated with the directive.</p>
+    </li>
+    <li>
+        <a href="originalmarkup/index.html">
+            <code>let originalMarkup: BlockDirective</code>
+        </a>
+    </li>
+</ul>
+<h3>Type Properties</h3>
+<ul>
+    <li>
+        <a href="directivename/index.html">
+            <code>static let directiveName: String</code>
+        </a>
+    </li>
+    <li>
+        <a href="introducedversion/index.html">
+            <code>static let introducedVersion: String</code>
+        </a>
+    </li>
+</ul>
+<h2>Relationships</h2>
+<h3>Conforms To</h3>
+<ul>
+    <li>
+        <a href="../directiveconvertible/index.html">
+            <code>DirectiveConvertible</code>
+        </a>
+    </li>
+</ul>
+<h3>Inherits From</h3>
+<ul>
+    <li>
+        <a href="../semantic/index.html">
+            <code>Semantic</code>
+        </a>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

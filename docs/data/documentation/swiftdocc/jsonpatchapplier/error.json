@@ -132,15 +132,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidObjectPointer(_:component:availableObjectKeys:)"
       ],
       "title" : "Type Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/Error-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/LocalizedError-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -277,28 +268,6 @@
   "title" : "JSONPatchApplier.Error",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/error-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/localizederror-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/errorDescription": {
   "abstract" : [

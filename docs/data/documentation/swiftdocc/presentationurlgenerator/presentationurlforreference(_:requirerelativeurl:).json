@@ -79,9 +79,6 @@
         "name" : "SwiftDocC"
       }
     ],
-    "platforms" : [
-
-    ],
     "remoteSource" : {
       "fileName" : "PresentationURLGenerator.swift",
       "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L34"

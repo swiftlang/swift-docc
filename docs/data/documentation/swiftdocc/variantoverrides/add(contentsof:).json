@@ -79,7 +79,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantOverrides.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantOverrides.swift#L44"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantOverrides.swift#L42"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

@@ -111,15 +111,6 @@
   "sections" : [
 
   ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Related-Documentation",
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/symbolGraphURLs"
-      ],
-      "title" : "Related Documentation"
-    }
-  ],
   "variants" : [
     {
       "paths" : [
@@ -222,47 +213,6 @@
   "title" : "symbolGraphs",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertrequest\/symbolgraphs"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/symbolGraphURLs": {
-  "abstract" : [
-    {
-      "text" : "Symbol graph JSON input files for the module that’s represented by this unit of documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "symbolGraphURLs"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/symbolGraphURLs",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "symbolGraphURLs",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/symbolgraphurls"
 }
 }
 }

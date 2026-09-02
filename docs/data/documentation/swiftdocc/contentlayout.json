@@ -89,7 +89,8 @@
         "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
-        "doc:\/\/SwiftDocC\/SQ"
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -140,8 +141,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Decodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Encodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Equatable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Encodable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -389,17 +389,6 @@
   "title" : "Encodable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/contentlayout\/encodable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ContentLayout/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/contentlayout\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ContentLayout/columns(content:)": {
   "abstract" : [
@@ -984,6 +973,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

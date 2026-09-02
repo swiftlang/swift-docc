@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTTPBodySection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPBodySection.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPBodySection.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

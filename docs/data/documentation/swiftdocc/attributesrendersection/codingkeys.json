@@ -128,16 +128,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/CodingKeys\/init(stringValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/CodingKeys\/CodingKey-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/CodingKeys\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/CodingKeys\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -250,39 +240,6 @@
   "title" : "AttributesRenderSection.CodingKeys",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/attributesrendersection\/codingkeys"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AttributesRenderSection/CodingKeys/CodingKey-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/CodingKeys\/CodingKey-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "CodingKey Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/attributesrendersection\/codingkeys\/codingkey-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AttributesRenderSection/CodingKeys/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/CodingKeys\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/attributesrendersection\/codingkeys\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AttributesRenderSection/CodingKeys/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection\/CodingKeys\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/attributesrendersection\/codingkeys\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AttributesRenderSection/CodingKeys/attributes": {
   "abstract" : [

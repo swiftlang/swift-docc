@@ -84,7 +84,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
-        "doc:\/\/SwiftDocC\/s8CopyableP"
+        "doc:\/\/SwiftDocC\/s8CopyableP",
+        "doc:\/\/SwiftDocC\/s9EscapableP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -323,6 +324,11 @@
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

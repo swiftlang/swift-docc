@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L517"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L602"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -117,7 +117,6 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/init(asideKind:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/init(displayName:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/init(rawValue:)"
       ],
@@ -127,7 +126,6 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/displayName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/rawValue"
       ],
       "title" : "Instance Properties"
@@ -139,14 +137,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/encode(to:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -298,30 +288,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO10AsideStyleV",
       "text" : "AsideStyle"
     },
     {
       "kind" : "text",
       "text" : ", "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -344,54 +316,6 @@
   "title" : "==(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/==(_:_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/displayName": {
-  "abstract" : [
-    {
-      "text" : "The heading text to use when rendering this style of aside.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "displayName"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/displayName",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "displayName",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/displayname"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/encode(to:)": {
   "abstract" : [
@@ -423,7 +347,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -449,7 +381,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(asideKind:)": {
   "abstract" : [
     {
-      "text" : "Creates an aside type for the specified aside kind.",
+      "text" : "Creates an aside style from a Swift Markdown aside kind.",
       "type" : "text"
     }
   ],
@@ -468,7 +400,11 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": Markdown"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -496,51 +432,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/init(asidekind:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(displayName:)": {
-  "abstract" : [
-    {
-      "text" : "Creates an aside style with the specified display name.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "displayName"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/init(displayName:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(displayName:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/init(displayname:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(from:)": {
   "abstract" : [
     {
-      "text" : "Creates an aside style by decoding the specified decoder.",
+      "text" : "Creates an aside style by decoding from the specified decoder.",
       "type" : "text"
     }
   ],
@@ -559,7 +454,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -585,7 +488,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(rawValue:)": {
   "abstract" : [
     {
-      "text" : "Creates an aside style for the specified raw value.",
+      "text" : "Creates an aside style.",
       "type" : "text"
     }
   ],

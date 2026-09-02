@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Dispatches a diagnostic to all subscribed consumers.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'emit(_:)' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -54,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticEngine.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticEngine.swift#L70"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticEngine.swift#L106"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -118,25 +123,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The diagnostic to dispatch to this engine’s currently subscribed consumers.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "problem"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -211,11 +197,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/emit(_:)-1xqdb": {
   "abstract" : [
-    {
-      "text" : "Dispatches a diagnostic to all subscribed consumers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -257,6 +241,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

@@ -57,9 +57,6 @@
         "text" : "Variant"
       }
     ],
-    "platforms" : [
-
-    ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver+DeprecatedCommunication.swift",
       "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver+DeprecatedCommunication.swift#L243"
@@ -406,8 +403,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -465,30 +462,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -612,8 +591,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -647,8 +626,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -673,8 +652,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -699,8 +678,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -725,8 +704,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -751,30 +730,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV",
-      "text" : "ResolvedInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -828,8 +789,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -896,8 +857,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -955,8 +916,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1074,8 +1035,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV7VariantV0J5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",

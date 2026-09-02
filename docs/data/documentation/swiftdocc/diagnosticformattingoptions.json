@@ -89,6 +89,8 @@
         "doc:\/\/SwiftDocC\/s25ExpressibleByArrayLiteralP",
         "doc:\/\/SwiftDocC\/s9OptionSetP",
         "doc:\/\/SwiftDocC\/SY",
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
         "doc:\/\/SwiftDocC\/s10SetAlgebraP"
       ],
       "kind" : "relationships",
@@ -129,16 +131,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/formatConsoleOutputForTools"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/OptionSet-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/SetAlgebra-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -212,39 +204,6 @@
   "title" : "DiagnosticFormattingOptions",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/OptionSet-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/OptionSet-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "OptionSet Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions\/optionset-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/SetAlgebra-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/SetAlgebra-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "SetAlgebra Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions\/setalgebra-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/all": {
   "abstract" : [
@@ -413,9 +372,19 @@
   "title" : "Swift.SetAlgebra",
   "type" : "unresolvable"
 },
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
 "doc://SwiftDocC/s25ExpressibleByArrayLiteralP": {
   "identifier" : "doc:\/\/SwiftDocC\/s25ExpressibleByArrayLiteralP",
   "title" : "Swift.ExpressibleByArrayLiteral",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/s9OptionSetP": {

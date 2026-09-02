@@ -1,8 +1,27 @@
 {
   "abstract" : [
     {
-      "text" : "Initializes a new article with a given markup and source for a given documentation bundle and documentation context.",
+      "text" : "Inherited from ",
       "type" : "text"
+    },
+    {
+      "code" : "MarkupConvertible.init(from:source:for:problems:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -19,16 +38,9 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC7ArticleC4from6source3for8problemsACSg8Markdown6Markup_p_10Foundation3URLVSgAA19DocumentationBundleVSayAA7ProblemVGztcfc",
+    "extendedModule" : "SwiftDocC",
+    "externalID" : "s:9SwiftDocC7ArticleC4from6source3for8problemsACSg8Markdown6Markup_p_10Foundation3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztcfc",
     "fragments" : [
-      {
-        "kind" : "keyword",
-        "text" : "convenience"
-      },
-      {
-        "kind" : "text",
-        "text" : " "
-      },
       {
         "kind" : "identifier",
         "text" : "init"
@@ -43,7 +55,15 @@
       },
       {
         "kind" : "text",
-        "text" : ": any "
+        "text" : ": "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -81,7 +101,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
         "text" : "DocumentationBundle"
       },
       {
@@ -121,7 +141,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Article.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L111"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L265"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -169,7 +189,15 @@
             },
             {
               "kind" : "text",
-              "text" : ": any "
+              "text" : ": "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -216,7 +244,7 @@
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
               "text" : "DocumentationBundle"
             },
             {
@@ -253,67 +281,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The markup that makes up this article’s content.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "markup"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The location of the file that this article’s content comes from.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "source"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The documentation bundle that the source file belongs to.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "bundle"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "A mutable collection of problems to update with any problem encountered while initializing the article.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "problems"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -388,20 +355,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Article/init(from:source:for:problems:)": {
   "abstract" : [
-    {
-      "text" : "Initializes a new article with a given markup and source for a given documentation bundle and documentation context.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
     {
       "kind" : "identifier",
       "text" : "init"
@@ -416,7 +373,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -454,7 +419,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
       "text" : "DocumentationBundle"
     },
     {
@@ -496,15 +461,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
-    {
-      "text" : "A collection of the build inputs for a unit of documentation.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -535,6 +498,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

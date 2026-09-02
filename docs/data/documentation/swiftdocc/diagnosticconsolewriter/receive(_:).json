@@ -27,7 +27,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC23DiagnosticConsoleWriterC7receiveyySayAA7ProblemVGF",
+    "externalID" : "s:9SwiftDocC23DiagnosticConsoleWriterC7receiveyySayAA0C0VGF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -47,8 +47,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-        "text" : "Problem"
+        "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+        "text" : "Diagnostic"
       },
       {
         "kind" : "text",
@@ -106,17 +106,17 @@
             },
             {
               "kind" : "internalParam",
-              "text" : "problems"
+              "text" : "diagnostics"
             },
             {
               "kind" : "text",
               "text" : ": ["
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-              "text" : "Problem"
+              "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+              "text" : "Diagnostic"
             },
             {
               "kind" : "text",
@@ -163,6 +163,40 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic": {
+  "abstract" : [
+    {
+      "text" : "A diagnostic explains a problem or issue that needs the end-user’s attention.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Diagnostic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Diagnostic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Diagnostic",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter": {
   "abstract" : [
@@ -221,8 +255,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
     },
     {
       "kind" : "text",
@@ -235,40 +269,6 @@
   "title" : "receive(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/receive(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Problem": {
-  "abstract" : [
-    {
-      "text" : "A problem with a document along with possible solutions to the problem.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Problem"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Problem"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Problem",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/problem"
 }
 }
 }

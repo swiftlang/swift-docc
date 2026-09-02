@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalDocumentationSource.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalDocumentationSource.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalDocumentationSource.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -111,7 +111,7 @@
                 {
                   "inlineContent" : [
                     {
-                      "text" : "Resolve references for the bundle identifier for which it’s registered.",
+                      "text" : "Resolve references for the source identifier for which it’s registered.",
                       "type" : "text"
                     }
                   ],
@@ -150,7 +150,7 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " for the bundle identifier of the unresolved reference. If there is, that source is asked to attempt to resolve the reference.",
+              "text" : " for the source identifier of the unresolved reference. If there is, that source is asked to attempt to resolve the reference.",
               "type" : "text"
             }
           ],
@@ -167,7 +167,7 @@
               "type" : "text"
             },
             {
-              "text" : "for the external entity with the documentation content for that reference. Because this content isn’t part of the compiled bundle, it won’t have its own page in the build output.",
+              "text" : "for the external entity with the documentation content for that reference. Because this content isn’t part of the compiled inputs, it won’t have its own page in the build output.",
               "type" : "text"
             }
           ],

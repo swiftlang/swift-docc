@@ -54,14 +54,15 @@
       },
       {
         "kind" : "attribute",
-        "text" : "@autoclosure "
+        "text" : "@autoclosure"
       },
       {
         "kind" : "text",
-        "text" : "() -> "
+        "text" : " () -> "
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC9benchmark3end0C3LogyxSgyXK_AA9BenchmarkCtAA0F11BlockMetricRzlF1EL_xmfp",
         "text" : "E"
       },
       {
@@ -93,7 +94,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Benchmark.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L124"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L126"
     },
     "role" : "symbol",
     "roleHeading" : "Function",
@@ -153,14 +154,15 @@
             },
             {
               "kind" : "attribute",
-              "text" : "@autoclosure "
+              "text" : "@autoclosure"
             },
             {
               "kind" : "text",
-              "text" : "() -> "
+              "text" : " () -> "
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC9benchmark3end0C3LogyxSgyXK_AA9BenchmarkCtAA0F11BlockMetricRzlF1EL_xmfp",
               "text" : "E"
             },
             {
@@ -412,14 +414,15 @@
     },
     {
       "kind" : "attribute",
-      "text" : "@autoclosure "
+      "text" : "@autoclosure"
     },
     {
       "kind" : "text",
-      "text" : "() -> "
+      "text" : " () -> "
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9benchmark3add0C3LogyxyXK_AA9BenchmarkCtAA0F6MetricRzlF1EL_xmfp",
       "text" : "E"
     },
     {
@@ -493,14 +496,15 @@
     },
     {
       "kind" : "attribute",
-      "text" : "@autoclosure "
+      "text" : "@autoclosure"
     },
     {
       "kind" : "text",
-      "text" : "() -> "
+      "text" : " () -> "
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9benchmark5begin0C3LogxSgxyXK_AA9BenchmarkCtAA0F11BlockMetricRzlF1EL_xmfp",
       "text" : "E"
     },
     {
@@ -526,6 +530,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9benchmark5begin0C3LogxSgxyXK_AA9BenchmarkCtAA0F11BlockMetricRzlF1EL_xmfp",
       "text" : "E"
     },
     {
@@ -582,14 +587,15 @@
     },
     {
       "kind" : "attribute",
-      "text" : "@autoclosure "
+      "text" : "@autoclosure"
     },
     {
       "kind" : "text",
-      "text" : "() -> "
+      "text" : " () -> "
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9benchmark3end0C3LogyxSgyXK_AA9BenchmarkCtAA0F11BlockMetricRzlF1EL_xmfp",
       "text" : "E"
     },
     {
@@ -668,14 +674,15 @@
     },
     {
       "kind" : "attribute",
-      "text" : "@autoclosure "
+      "text" : "@autoclosure"
     },
     {
       "kind" : "text",
-      "text" : "() -> "
+      "text" : " () -> "
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9benchmark4wrap0C3Log4bodyq_xyXK_AA9BenchmarkCq_yKXEtKAA0G11BlockMetricRzr0_lF1EL_xmfp",
       "text" : "E"
     },
     {
@@ -717,6 +724,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9benchmark4wrap0C3Log4bodyq_xyXK_AA9BenchmarkCq_yKXEtKAA0G11BlockMetricRzr0_lF6ResultL_q_mfp",
       "text" : "Result"
     },
     {
@@ -733,6 +741,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9benchmark4wrap0C3Log4bodyq_xyXK_AA9BenchmarkCq_yKXEtKAA0G11BlockMetricRzr0_lF6ResultL_q_mfp",
       "text" : "Result"
     }
   ],

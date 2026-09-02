@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalMetadata.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L69"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L67"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -353,7 +353,7 @@
       "type" : "codeVoice"
     },
     {
-      "text" : ", there is no source bundle on disk and the inputs were passed via command line parameters.",
+      "text" : ", there is no source catalog on disk and the inputs were passed via command line parameters.",
       "type" : "text"
     }
   ],

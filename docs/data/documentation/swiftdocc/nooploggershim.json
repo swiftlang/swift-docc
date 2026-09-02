@@ -1,0 +1,708 @@
+{
+  "abstract" : [
+    {
+      "text" : "A shim for ",
+      "type" : "text"
+    },
+    {
+      "code" : "os.Logger",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that does nothing.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC14NoOpLoggerShimV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "NoOpLoggerShim"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "NoOpLoggerShim"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "NoOpSignposterShim.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FoundationExtensions\/NoOpSignposterShim.swift#L14"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "NoOpLoggerShim"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "NoOpLoggerShim"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This type allows calling code to avoid using ",
+              "type" : "text"
+            },
+            {
+              "code" : "#if canImport(os)",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " throughout the implementation.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/init()"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/isEnabled"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/critical(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/debug(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/error(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/fault(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/info(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/log(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/log(level:_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/trace(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/warning(_:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "anchor" : "Enumerations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/Level"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/nooploggershim"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim": {
+  "abstract" : [
+    {
+      "text" : "A shim for ",
+      "type" : "text"
+    },
+    {
+      "code" : "os.Logger",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that does nothing.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLoggerShim"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpLoggerShim"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLoggerShim",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/Level": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Level"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/Level",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Level"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpLoggerShim.Level",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/level"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/critical(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "critical"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/critical(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "critical(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/critical(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/debug(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "debug"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/debug(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "debug(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/debug(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/error(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "error"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/error(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "error(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/error(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/fault(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fault"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/fault(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "fault(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/fault(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/info(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "info"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/info(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "info(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/info(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/init()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/init()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/init()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/isEnabled": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/isEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/isenabled"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/log(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "log"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/log(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "log(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/log(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/log(level:_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "log"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "level"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLoggerShimV5LevelO",
+      "text" : "Level"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/log(level:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "log(level:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/log(level:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/trace(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "trace"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/trace(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "trace(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/trace(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpLoggerShim/warning(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "warning"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14NoOpLogMessageV",
+      "text" : "NoOpLogMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpLoggerShim\/warning(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "warning(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nooploggershim\/warning(_:)"
+},
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

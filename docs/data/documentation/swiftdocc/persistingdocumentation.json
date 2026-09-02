@@ -73,7 +73,7 @@
         },
         {
           "code" : [
-            "let converter = DocumentationNodeConverter(bundle: myBundle, context: myContext)",
+            "let converter = DocumentationNodeConverter(context: myContext)",
             "let renderNode = converter.convert(documentationNode)"
           ],
           "syntax" : "swift",
@@ -222,7 +222,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [
     {
-      "text" : "A summary of an element that you can link to from outside the documentation bundle.",
+      "text" : "A summary of an element that you can link to from outside the local documentation.",
       "type" : "text"
     }
   ],

@@ -156,15 +156,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/init(rawValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -417,28 +408,6 @@
   "title" : "RenderSectionKind",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendersectionkind"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/articleBody": {
   "abstract" : [

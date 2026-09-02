@@ -149,14 +149,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/TopicImageType"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -240,17 +232,6 @@
   "title" : "TopicImage",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicimage"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicImage/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicimage\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicImage/TopicImageType": {
   "abstract" : [
@@ -455,15 +436,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10TopicImageV",
-      "text" : "TopicImage"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

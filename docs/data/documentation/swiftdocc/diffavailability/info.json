@@ -122,14 +122,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/versions"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -242,17 +234,6 @@
   "title" : "DiffAvailability.Info",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diffavailability\/info"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiffAvailability/Info/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diffavailability\/info\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiffAvailability/Info/change": {
   "abstract" : [

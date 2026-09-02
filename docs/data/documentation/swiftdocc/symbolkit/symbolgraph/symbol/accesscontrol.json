@@ -28,6 +28,14 @@
       },
       {
         "kind" : "identifier",
+        "text" : "SymbolKit"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "identifier",
         "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
         "text" : "SymbolGraph"
       },
@@ -89,6 +97,14 @@
               "text" : " "
             },
             {
+              "kind" : "identifier",
+              "text" : "SymbolKit"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
               "text" : "SymbolGraph"
@@ -121,7 +137,6 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/SL",
-        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -245,6 +260,14 @@
     },
     {
       "kind" : "identifier",
+      "text" : "SymbolKit"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
       "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
       "text" : "SymbolGraph"
     },
@@ -290,11 +313,6 @@
   "title" : "Comparable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/accesscontrol\/comparable-implementations"
-},
-"doc://SwiftDocC/s8CopyableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
-  "title" : "Swift.Copyable",
-  "type" : "unresolvable"
 }
 }
 }

@@ -97,6 +97,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV4from9transformACyxGSgAA25DocumentationDataVariantsVyqd__G_xAA0ghI5TraitV_qd__tXEtclufc11SymbolValueL_qd__mfp",
         "text" : "SymbolValue"
       },
       {
@@ -122,6 +123,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV4from9transformACyxGSgAA25DocumentationDataVariantsVyqd__G_xAA0ghI5TraitV_qd__tXEtclufc11SymbolValueL_qd__mfp",
         "text" : "SymbolValue"
       },
       {
@@ -130,6 +132,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
         "text" : "Value"
       },
       {
@@ -144,7 +147,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection+Symbol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Symbol.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Symbol.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -206,6 +209,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV4from9transformACyxGSgAA25DocumentationDataVariantsVyqd__G_xAA0ghI5TraitV_qd__tXEtclufc11SymbolValueL_qd__mfp",
               "text" : "SymbolValue"
             },
             {
@@ -232,6 +236,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV4from9transformACyxGSgAA25DocumentationDataVariantsVyqd__G_xAA0ghI5TraitV_qd__tXEtclufc11SymbolValueL_qd__mfp",
               "text" : "SymbolValue"
             },
             {
@@ -240,6 +245,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
               "text" : "Value"
             },
             {
@@ -527,6 +533,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV4from9transformACyxGSgAA25DocumentationDataVariantsVyqd__G_xAA0ghI5TraitV_qd__tXEtclufc11SymbolValueL_qd__mfp",
       "text" : "SymbolValue"
     },
     {
@@ -552,6 +559,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV4from9transformACyxGSgAA25DocumentationDataVariantsVyqd__G_xAA0ghI5TraitV_qd__tXEtclufc11SymbolValueL_qd__mfp",
       "text" : "SymbolValue"
     },
     {
@@ -560,6 +568,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV5Valuexmfp",
       "text" : "Value"
     },
     {
@@ -597,23 +606,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
-      "text" : "VariantCollection"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Value"
-    },
-    {
-      "kind" : "text",
-      "text" : ">."
     },
     {
       "kind" : "typeIdentifier",

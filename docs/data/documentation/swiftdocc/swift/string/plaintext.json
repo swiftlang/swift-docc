@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PlainTextShim.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FoundationExtensions\/PlainTextShim.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FoundationExtensions\/PlainTextShim.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

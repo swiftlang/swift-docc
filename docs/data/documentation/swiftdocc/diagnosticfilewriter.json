@@ -141,7 +141,8 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/init(outputPath:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/init(outputPath:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/init(outputPath:fileManager:)"
       ],
       "title" : "Initializers"
     },
@@ -149,7 +150,6 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/finalize()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/flush()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/receive(_:)"
       ],
@@ -252,40 +252,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticfilewriter"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFileWriter/finalize()": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "finalize"
-    },
-    {
-      "kind" : "text",
-      "text" : "() "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/finalize()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "finalize()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticfilewriter\/finalize()"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFileWriter/flush()": {
   "abstract" : [
 
@@ -360,6 +326,69 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticfilewriter\/init(outputpath:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFileWriter/init(outputPath:fileManager:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "outputPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/init(outputPath:fileManager:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(outputPath:fileManager:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticfilewriter\/init(outputpath:filemanager:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFileWriter/receive(_:)": {
   "abstract" : [
 
@@ -383,8 +412,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
     },
     {
       "kind" : "text",

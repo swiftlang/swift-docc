@@ -28,7 +28,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "Swift",
-    "externalID" : "s:e:s:SS9SwiftDocCE4dataSSSgSW_tcfc",
+    "externalID" : "s:e:s:SS9SwiftDocCE33replacingWhitespaceAndPunctuation4withS2S_tF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -97,7 +97,8 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData",
-        "doc:\/\/SwiftDocC\/s8CopyableP"
+        "doc:\/\/SwiftDocC\/s8CopyableP",
+        "doc:\/\/SwiftDocC\/s9EscapableP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -120,6 +121,14 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/plainText"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/replacingWhitespaceAndPunctuation(with:)"
+      ],
+      "title" : "Instance Methods"
     },
     {
       "anchor" : "Default-Implementations",
@@ -291,9 +300,68 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/string\/plaintext"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/replacingWhitespaceAndPunctuation(with:)": {
+  "abstract" : [
+    {
+      "text" : "Returns a copy of the string with all whitespace and punctuation replaced with a given separator.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "replacingWhitespaceAndPunctuation"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/replacingWhitespaceAndPunctuation(with:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "replacingWhitespaceAndPunctuation(with:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/string\/replacingwhitespaceandpunctuation(with:)"
+},
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
   "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

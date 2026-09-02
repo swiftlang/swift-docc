@@ -182,14 +182,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticArticleSubheading\/Enabledness-swift.enum"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticArticleSubheading\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -266,17 +258,6 @@
   "title" : "AutomaticArticleSubheading",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/automaticarticlesubheading"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AutomaticArticleSubheading/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticArticleSubheading\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/automaticarticlesubheading\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AutomaticArticleSubheading/Enabledness-swift.enum": {
   "abstract" : [
@@ -372,15 +353,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC26AutomaticArticleSubheadingC",
-      "text" : "AutomaticArticleSubheading"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

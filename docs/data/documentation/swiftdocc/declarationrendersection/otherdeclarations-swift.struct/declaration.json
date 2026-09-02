@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeclarationsRenderSection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L181"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L185"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -123,14 +123,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/tokens"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -278,17 +270,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Declaration/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Declaration/conformance": {
   "abstract" : [
 
@@ -432,15 +413,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
-      "text" : "DeclarationRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV5TokenV",
       "text" : "Token"
     },
@@ -513,15 +485,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
-      "text" : "DeclarationRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

@@ -1,0 +1,166 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHosting:includeContentInEachHTMLFile:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Initializes the action with the given validated options." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">DocCCommandLine</a>
+        </li>
+        <li>
+            <a href="../index.html">ConvertAction</a>
+        </li>
+        <li>init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHosting:includeContentInEachHTMLFile:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)</li>
+    </ul>
+    <p>Initializer</p>
+    <h1>init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHosting:includeContentInEachHTMLFile:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)</h1>
+    <p>Initializes the action with the given validated options.</p>
+    <pre>
+        <code>init(documentationBundleURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?, analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool, currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false, fileManager: any FileManagerProtocol = FileManager.default, temporaryDirectory: URL, outputFormat: Docc.Convert.OutputFormat = .json, documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage, catalogDiscoveryOptions: CatalogDiscoveryOptions = .init(), diagnosticLevel: String? = nil, diagnosticEngine: DiagnosticEngine? = nil, diagnosticFilePath: URL? = nil, formatConsoleOutputForTools: Bool = false, inheritDocs: Bool = false, treatWarningsAsErrors: Bool = false, diagnosticIDsWithWarningSeverity: Set&lt;String&gt; = [], diagnosticIDsWithErrorSeverity: Set&lt;String&gt; = [], experimentalEnableCustomTemplates: Bool = false, experimentalModifyCatalogWithGeneratedCuration: Bool = false, featureFlags: FeatureFlags = .init(), transformForStaticHosting: Bool = false, includeContentInEachHTMLFile: Bool = false, allowArbitraryCatalogDirectories: Bool = false, hostingBasePath: String? = nil, sourceRepository: SourceRepository? = nil, dependencies: [URL] = []) throws</code>
+    </pre>
+</section>
+<h2>Parameters</h2>
+<dl>
+    <dt>documentationBundleURL</dt>
+    <dd>
+        <p>The root of the documentation catalog to convert.</p>
+    </dd>
+    <dt>outOfProcessResolver</dt>
+    <dd>
+        <p>An out-of-process resolver that</p>
+    </dd>
+    <dt>analyze</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should override the provided <code>diagnosticLevel</code>
+             with <code>.information</code>
+            , otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>targetDirectory</dt>
+    <dd>
+        <p>The location where the convert action will write the built documentation output.</p>
+    </dd>
+    <dt>htmlTemplateDirectory</dt>
+    <dd>
+        <p>The location of the HTML template to use as a base for the built documentation output.</p>
+    </dd>
+    <dt>emitDigest</dt>
+    <dd>
+        <p>Whether the conversion should create metadata files, such as linkable entities information.</p>
+    </dd>
+    <dt>currentPlatforms</dt>
+    <dd>
+        <p>The current version and beta information for platforms that may be encountered while processing symbol graph files.</p>
+    </dd>
+    <dt>buildIndex</dt>
+    <dd>
+        <p>Whether or not the convert action should emit an LMDB representation of the navigator index.</p>
+        <p>A JSON representation is built and emitted regardless of this value.</p>
+    </dd>
+    <dt>fileManager</dt>
+    <dd>
+        <p>The file manager that the convert action uses to create directories and write data to files.</p>
+    </dd>
+    <dt>temporaryDirectory</dt>
+    <dd>
+        <p>The location where the convert action should write temporary files while converting the documentation.</p>
+    </dd>
+    <dt>outputFormat</dt>
+    <dd>
+        <p>The format that the convert action will output the documentation in when writing to the output location.</p>
+    </dd>
+    <dt>documentationCoverageOptions</dt>
+    <dd>
+        <p>Indicates whether or not to generate coverage output and at what level.</p>
+    </dd>
+    <dt>catalogDiscoveryOptions</dt>
+    <dd>
+        <p>Options to configure how the converter discovers documentation catalogs.</p>
+    </dd>
+    <dt>diagnosticLevel</dt>
+    <dd>
+        <p>The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of <code>DiagnosticSeverity.information</code>
+             is specified, diagnostics with a severity up to and including <code>.information</code>
+             will be printed.</p>
+    </dd>
+    <dt>diagnosticEngine</dt>
+    <dd>
+        <p>The engine that will collect and emit diagnostics during this action.</p>
+    </dd>
+    <dt>diagnosticFilePath</dt>
+    <dd>
+        <p>The path to a file where the convert action should write diagnostic information.</p>
+    </dd>
+    <dt>formatConsoleOutputForTools</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should write diagnostics to the console in a format suitable for parsing by an IDE or other tool, otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>inheritDocs</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should retain the original documentation content for inherited symbols, otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>treatWarningsAsErrors</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should treat warnings as errors, otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>diagnosticIDsWithWarningSeverity</dt>
+    <dd>
+        <p>A list of diagnostic identifiers that are explicitly lowered to a “warning” severity.</p>
+    </dd>
+    <dt>diagnosticIDsWithErrorSeverity</dt>
+    <dd>
+        <p>A list of diagnostic identifiers that are explicitly raised to an “error” severity.</p>
+    </dd>
+    <dt>experimentalEnableCustomTemplates</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should enable support for custom “header.html” and “footer.html” template files, otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>experimentalModifyCatalogWithGeneratedCuration</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should write documentation extension files containing markdown representations of DocC’s automatic curation into the <code>documentationBundleURL</code>
+            , otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>featureFlags</dt>
+    <dd>
+        <p>A collection of feature flags that the convert action uses to enable or disable certain optional behaviors.</p>
+    </dd>
+    <dt>transformForStaticHosting</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>includeContentInEachHTMLFile</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should process each static hosting HTML file so that it includes documentation content for environments without JavaScript enabled, otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>allowArbitraryCatalogDirectories</dt>
+    <dd>
+        <p><code>true</code>
+             if the convert action should consider the root location as a documentation catalog if it doesn’t discover another catalog, otherwise <code>false</code>
+            .</p>
+    </dd>
+    <dt>hostingBasePath</dt>
+    <dd>
+        <p>The base path where the built documentation archive will be hosted at.</p>
+    </dd>
+    <dt>sourceRepository</dt>
+    <dd>
+        <p>The source repository where the documentation’s sources are hosted.</p>
+    </dd>
+    <dt>dependencies</dt>
+    <dd>
+        <p>A list of URLs to already built documentation archives that this documentation depends on.</p>
+    </dd>
+</dl>
+</article></noscript><div id="app"></div></body></html>

@@ -229,15 +229,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC33PropertyListPossibleValuesSectionV",
-      "text" : "PropertyListPossibleValuesSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC33PropertyListPossibleValuesSectionV0E5ValueV",
       "text" : "PossibleValue"
     },
@@ -268,7 +259,7 @@
     },
     {
       "kind" : "keyword",
-      "text" : "var"
+      "text" : "let"
     },
     {
       "kind" : "text",

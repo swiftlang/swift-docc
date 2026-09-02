@@ -301,7 +301,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -452,17 +451,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restendpointrendersection"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RESTEndpointRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/restendpointrendersection\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RESTEndpointRenderSection/TextIndexing-Implementations": {
   "abstract" : [
 
@@ -593,15 +581,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25RESTEndpointRenderSectionV",
-      "text" : "RESTEndpointRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC25RESTEndpointRenderSectionV5TokenV",
       "text" : "Token"
     },
@@ -711,15 +690,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25RESTEndpointRenderSectionV",
-      "text" : "RESTEndpointRenderSection"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

@@ -128,7 +128,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -210,17 +209,6 @@
   "title" : "RESTResponseRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restresponserendersection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RESTResponseRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/restresponserendersection\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RESTResponseRenderSection/TextIndexing-Implementations": {
   "abstract" : [

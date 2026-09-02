@@ -50,15 +50,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC27NonInclusiveLanguageCheckerV",
-        "text" : "NonInclusiveLanguageChecker"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC27NonInclusiveLanguageCheckerV4TermV",
         "text" : "Term"
       },
@@ -124,16 +115,6 @@
             {
               "kind" : "text",
               "text" : ": ["
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC27NonInclusiveLanguageCheckerV",
-              "text" : "NonInclusiveLanguageChecker"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/Term",
@@ -292,15 +273,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC27NonInclusiveLanguageCheckerV",
-      "text" : "NonInclusiveLanguageChecker"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

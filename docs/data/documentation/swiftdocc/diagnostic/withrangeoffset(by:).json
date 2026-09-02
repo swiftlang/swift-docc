@@ -86,7 +86,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Diagnostic.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Diagnostic.swift#L75"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Diagnostic.swift#L87"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

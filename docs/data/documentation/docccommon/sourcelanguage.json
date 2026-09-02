@@ -1,0 +1,997 @@
+{
+  "abstract" : [
+    {
+      "text" : "A programming language, for example “Swift” or “Objective-C”.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10DocCCommon14SourceLanguageV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "SourceLanguage"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommon"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "SourceLanguage"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "SourceLanguage.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommon\/SourceLanguage.swift#L18"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "SourceLanguage"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "SourceLanguage"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/SL",
+        "doc:\/\/DocCCommon\/s28CustomDebugStringConvertibleP",
+        "doc:\/\/DocCCommon\/Se",
+        "doc:\/\/DocCCommon\/SE",
+        "doc:\/\/DocCCommon\/SQ",
+        "doc:\/\/DocCCommon\/SH",
+        "doc:\/\/DocCCommon\/s8SendableP",
+        "doc:\/\/DocCCommon\/s16SendableMetatypeP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(id:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(knownLanguageIdentifier:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(knownLanguageName:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(name:)",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(name:id:idAliases:linkDisambiguationID:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/id",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/idAliases",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/linkDisambiguationID",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/name"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Type-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/data",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/javaScript",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/knownLanguages",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/metal",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/objectiveC",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/swift"
+      ],
+      "title" : "Type Properties"
+    },
+    {
+      "anchor" : "Default-Implementations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Comparable-Implementations",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/CustomDebugStringConvertible-Implementations",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Decodable-Implementations",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Encodable-Implementations",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommon\/sourcelanguage"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommon/SE": {
+  "identifier" : "doc:\/\/DocCCommon\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommon/SH": {
+  "identifier" : "doc:\/\/DocCCommon\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommon/SL": {
+  "identifier" : "doc:\/\/DocCCommon\/SL",
+  "title" : "Swift.Comparable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommon/SQ": {
+  "identifier" : "doc:\/\/DocCCommon\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommon/Se": {
+  "identifier" : "doc:\/\/DocCCommon\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommon/documentation/DocCCommon": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommon",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage": {
+  "abstract" : [
+    {
+      "text" : "A programming language, for example “Swift” or “Objective-C”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SourceLanguage",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/Comparable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Comparable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Comparable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/comparable-implementations"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/CustomDebugStringConvertible-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/CustomDebugStringConvertible-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "CustomDebugStringConvertible Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/customdebugstringconvertible-implementations"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/Decodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Decodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Decodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/decodable-implementations"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/Encodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Encodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Encodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/encodable-implementations"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/equatable-implementations"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/data": {
+  "abstract" : [
+    {
+      "text" : "Miscellaneous data, that’s not a programming language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "data"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/data",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "data",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/data"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/id": {
+  "abstract" : [
+    {
+      "text" : "A globally unique identifier for the language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/id",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "id",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/id"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/idAliases": {
+  "abstract" : [
+    {
+      "text" : "Aliases for the language’s identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "idAliases"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/idAliases",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "idAliases",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/idaliases"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/init(id:)": {
+  "abstract" : [
+    {
+      "text" : "Finds the programming language that matches a given identifier, or creates a new one if it finds no existing language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(id:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(id:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/init(id:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/init(knownLanguageIdentifier:)": {
+  "abstract" : [
+    {
+      "text" : "Finds the programming language that matches a given identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "knownLanguageIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(knownLanguageIdentifier:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(knownLanguageIdentifier:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/init(knownlanguageidentifier:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/init(knownLanguageName:)": {
+  "abstract" : [
+    {
+      "text" : "Finds the programming language that matches a given display name.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "knownLanguageName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(knownLanguageName:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(knownLanguageName:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/init(knownlanguagename:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/init(name:)": {
+  "abstract" : [
+    {
+      "text" : "Finds the programming language that matches a given display name, or creates a new one if it finds no existing language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(name:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(name:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/init(name:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/init(name:id:idAliases:linkDisambiguationID:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new language with a given name and identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "idAliases"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "linkDisambiguationID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/init(name:id:idAliases:linkDisambiguationID:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(name:id:idAliases:linkDisambiguationID:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/init(name:id:idaliases:linkdisambiguationid:)"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/javaScript": {
+  "abstract" : [
+    {
+      "text" : "The JavaScript programming language or another language that conforms to the ECMAScript specification.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "javaScript"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/javaScript",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "javaScript",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/javascript"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/knownLanguages": {
+  "abstract" : [
+    {
+      "text" : "The list of programming languages that are known to DocC.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "knownLanguages"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
+      "text" : "SourceLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/knownLanguages",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "knownLanguages",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/knownlanguages"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/linkDisambiguationID": {
+  "abstract" : [
+    {
+      "text" : "The identifier to use for link disambiguation purposes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "linkDisambiguationID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/linkDisambiguationID",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "linkDisambiguationID",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/linkdisambiguationid"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/metal": {
+  "abstract" : [
+    {
+      "text" : "The Metal programming language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "metal"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/metal",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "metal",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/metal"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/name": {
+  "abstract" : [
+    {
+      "text" : "The display name of the programming language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/name",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "name",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/name"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/objectiveC": {
+  "abstract" : [
+    {
+      "text" : "The Objective-C programming language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "objectiveC"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/objectiveC",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "objectiveC",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/objectivec"
+},
+"doc://DocCCommon/documentation/DocCCommon/SourceLanguage/swift": {
+  "abstract" : [
+    {
+      "text" : "The Swift programming language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "swift"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SourceLanguage\/swift",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "swift",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/sourcelanguage\/swift"
+},
+"doc://DocCCommon/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/DocCCommon\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
+"doc://DocCCommon/s28CustomDebugStringConvertibleP": {
+  "identifier" : "doc:\/\/DocCCommon\/s28CustomDebugStringConvertibleP",
+  "title" : "Swift.CustomDebugStringConvertible",
+  "type" : "unresolvable"
+},
+"doc://DocCCommon/s8SendableP": {
+  "identifier" : "doc:\/\/DocCCommon\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

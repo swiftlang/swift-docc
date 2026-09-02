@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The engine that collects problems encountered while registering and processing the documentation bundles in this context.",
+      "text" : "The engine that collects diagnostics encountered while registering and processing the documentation bundles in this context.",
       "type" : "text"
     }
   ],
@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L159"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L169"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -203,7 +203,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/diagnosticEngine": {
   "abstract" : [
     {
-      "text" : "The engine that collects problems encountered while registering and processing the documentation bundles in this context.",
+      "text" : "The engine that collects diagnostics encountered while registering and processing the documentation bundles in this context.",
       "type" : "text"
     }
   ],

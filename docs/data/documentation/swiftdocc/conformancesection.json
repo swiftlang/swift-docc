@@ -193,14 +193,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConformanceSection\/init(from:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConformanceSection\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -279,17 +271,6 @@
   "title" : "ConformanceSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/conformancesection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConformanceSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConformanceSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/conformancesection\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConformanceSection/init(from:)": {
   "abstract" : [

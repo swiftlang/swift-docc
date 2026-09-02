@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MessageType.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/MessageType.swift#L37"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/MessageType.swift#L35"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

@@ -1,4 +1,10 @@
 {
+  "abstract" : [
+    {
+      "text" : "Creates a memory file server provider with the default file manager.",
+      "type" : "text"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -31,7 +37,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L205"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L214"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -49,6 +55,14 @@
             "macOS"
           ],
           "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "convenience"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
             {
               "kind" : "keyword",
               "text" : "init"
@@ -132,7 +146,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/init()": {
   "abstract" : [
-
+    {
+      "text" : "Creates a memory file server provider with the default file manager.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {

@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L139"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L218"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -112,7 +112,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/init(copyToClipboard:showLineNumbers:wrap:highlight:strikeout:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/init(copyToClipboard:showLineNumbers:wrap:lineAnnotations:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/init(parsingLanguageString:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/init(parsingLanguageString:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/init(showLineNumbers:wrap:highlight:strikeout:)"
       ],
       "title" : "Initializers"
     },
@@ -143,14 +144,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/OptionName"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -250,17 +243,6 @@
   "title" : "RenderBlockContent.CodeBlockOptions",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codeblockoptions"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeBlockOptions/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codeblockoptions\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeBlockOptions/LineAnnotation": {
   "abstract" : [
@@ -393,6 +375,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -590,24 +573,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO04CodeD7OptionsV",
-      "text" : "CodeBlockOptions"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO04CodeD7OptionsV14LineAnnotationV",
       "text" : "LineAnnotation"
     },
@@ -660,6 +625,96 @@
   "title" : "init(parsingLanguageString:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codeblockoptions\/init(parsinglanguagestring:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeBlockOptions/init(showLineNumbers:wrap:highlight:strikeout:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showLineNumbers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "wrap"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "highlight"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "strikeout"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeBlockOptions\/init(showLineNumbers:wrap:highlight:strikeout:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(showLineNumbers:wrap:highlight:strikeout:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codeblockoptions\/init(showlinenumbers:wrap:highlight:strikeout:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeBlockOptions/knownOptions": {
   "abstract" : [
@@ -774,24 +829,6 @@
     {
       "kind" : "text",
       "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO04CodeD7OptionsV",
-      "text" : "CodeBlockOptions"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

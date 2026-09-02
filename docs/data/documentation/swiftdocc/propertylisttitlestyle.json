@@ -121,15 +121,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/init(rawValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -218,28 +209,6 @@
   "title" : "PropertyListTitleStyle",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/init(rawValue:)": {
   "abstract" : [

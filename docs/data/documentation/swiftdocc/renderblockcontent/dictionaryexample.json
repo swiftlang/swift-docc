@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L441"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L526"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -118,14 +118,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/DictionaryExample\/summary"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/DictionaryExample\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -228,17 +220,6 @@
   "title" : "RenderBlockContent.DictionaryExample",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/dictionaryexample"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/DictionaryExample/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/DictionaryExample\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/dictionaryexample\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/DictionaryExample/example": {
   "abstract" : [

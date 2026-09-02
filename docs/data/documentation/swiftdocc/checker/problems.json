@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Problems found while walking.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'diagnostics' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -19,7 +24,8 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC7CheckerP8problemsSayAA7ProblemVGvp",
+    "extendedModule" : "SwiftDocC",
+    "externalID" : "s:9SwiftDocC7CheckerPAAE8problemsSayAA7ProblemVGvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -54,9 +60,8 @@
     ],
     "remoteSource" : {
       "fileName" : "Checker.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L26"
     },
-    "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -185,11 +190,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Checker/problems": {
   "abstract" : [
-    {
-      "text" : "Problems found while walking.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -219,7 +222,6 @@
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checker\/problems",
   "kind" : "symbol",
-  "required" : true,
   "role" : "symbol",
   "title" : "problems",
   "type" : "topic",
@@ -232,6 +234,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

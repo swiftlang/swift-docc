@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PatchOperation.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/PatchOperation.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/PatchOperation.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -175,15 +175,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/init(rawValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -272,28 +263,6 @@
   "title" : "PatchOperation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/patchoperation"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PatchOperation/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/patchoperation\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PatchOperation/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/patchoperation\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PatchOperation/add": {
   "abstract" : [

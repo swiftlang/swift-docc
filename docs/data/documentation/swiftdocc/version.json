@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Version.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Version.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Version.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -154,18 +154,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)"
       ],
       "title" : "Subscripts"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/BidirectionalCollection-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/Collection-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/RandomAccessCollection-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/Sequence-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -265,61 +253,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Version/BidirectionalCollection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/BidirectionalCollection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "BidirectionalCollection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/bidirectionalcollection-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Version/Collection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/Collection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Collection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/collection-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Version/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Version/RandomAccessCollection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/RandomAccessCollection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RandomAccessCollection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/randomaccesscollection-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Version/Sequence-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/Sequence-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Sequence Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/sequence-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Version/description": {
   "abstract" : [
     {
@@ -384,7 +317,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -504,7 +445,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

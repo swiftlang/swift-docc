@@ -1,0 +1,23 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>groupedSection(named:groups:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Creates a grouped section with a given name, for example “topics” or “see also” that describes and organizes groups of related API." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">DocCHTML</a>
+        </li>
+        <li>
+            <a href="../index.html">MarkdownRenderer</a>
+        </li>
+        <li>groupedSection(named:groups:)</li>
+    </ul>
+    <p>Instance Method</p>
+    <h1>groupedSection(named:groups:)</h1>
+    <p>Creates a grouped section with a given name, for example “topics” or “see also” that describes and organizes groups of related API.</p>
+    <pre>
+        <code>func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage : [TaskGroupInfo]]) -&gt; [HTMLNode]</code>
+    </pre>
+</section>
+<h2>Discussion</h2>
+<p>If each language representation of the API has its own task groups, pass the task groups for each language representation.</p>
+<p>If the API has the <i>same</i>
+     task groups in all language representations, only pass the task groups for one language. This produces a named section that doesn’t hide any task groups for any of the languages (the same as if the symbol only had one language representation).</p>
+</article></noscript><div id="app"></div></body></html>

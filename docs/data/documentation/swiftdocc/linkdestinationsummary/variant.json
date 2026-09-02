@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L187"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L159"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -152,8 +152,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:declarationFragments:navigatorDeclarationFragments:topicImages:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)"
       ],
       "title" : "Initializers"
     },
@@ -162,16 +161,13 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/abstract",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/declarationFragments",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/kind",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/language",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/navigatorDeclarationFragments",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/plainTextDeclaration",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/relativePresentationURL",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/subheadingDeclarationFragments",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/taskGroups",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/title",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/topicImages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/traits",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/usr"
       ],
@@ -190,8 +186,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/Decodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/Encodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/Equatable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/Encodable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -242,7 +237,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [
     {
-      "text" : "A summary of an element that you can link to from outside the documentation bundle.",
+      "text" : "A summary of an element that you can link to from outside the local documentation.",
       "type" : "text"
     }
   ],
@@ -329,17 +324,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/encodable-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/VariantValue": {
   "abstract" : [
     {
@@ -408,21 +392,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -441,452 +416,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/abstract"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/declarationFragments": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "declarationFragments"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
-      "text" : "DeclarationFragments"
-    },
-    {
-      "kind" : "text",
-      "text" : "?>"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/declarationFragments",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "declarationFragments",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/declarationfragments"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:declarationFragments:navigatorDeclarationFragments:topicImages:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "traits"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV",
-      "text" : "RenderNode"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV7VariantV",
-      "text" : "Variant"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV7VariantV5TraitO",
-      "text" : "Trait"
-    },
-    {
-      "kind" : "text",
-      "text" : "], "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "kind"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
-      "text" : "DocumentationNode"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
-      "text" : "Kind"
-    },
-    {
-      "kind" : "text",
-      "text" : ">, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "language"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
-      "text" : "SourceLanguage"
-    },
-    {
-      "kind" : "text",
-      "text" : ">, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "relativePresentationURL"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ">, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "title"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ">, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "abstract"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV8Abstracta",
-      "text" : "Abstract"
-    },
-    {
-      "kind" : "text",
-      "text" : "?>, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "taskGroups"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV9TaskGroupV",
-      "text" : "TaskGroup"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?>, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "usr"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?>, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "plainTextDeclaration"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?>, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "declarationFragments"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
-      "text" : "DeclarationFragments"
-    },
-    {
-      "kind" : "text",
-      "text" : "?>, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "navigatorDeclarationFragments"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
-      "text" : "DeclarationFragments"
-    },
-    {
-      "kind" : "text",
-      "text" : "?>, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "topicImages"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10TopicImageV",
-      "text" : "TopicImage"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?>)"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:declarationFragments:navigatorDeclarationFragments:topicImages:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:declarationFragments:navigatorDeclarationFragments:topicImages:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/init(traits:kind:language:relativepresentationurl:title:abstract:taskgroups:usr:plaintextdeclaration:declarationfragments:navigatordeclarationfragments:topicimages:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)": {
   "abstract" : [
     {
       "text" : "Creates a new summary variant with the values that are different from the main summarized values.",
@@ -947,8 +477,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -982,8 +512,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1008,8 +538,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1034,8 +564,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1060,8 +590,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1087,41 +617,6 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "taskGroups"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV9TaskGroupV",
-      "text" : "TaskGroup"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?>, "
-    },
-    {
-      "kind" : "externalParam",
       "text" : "usr"
     },
     {
@@ -1130,8 +625,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1156,8 +651,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1182,8 +677,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1217,8 +712,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1243,12 +738,12 @@
       "text" : "?>)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)",
+  "title" : "init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/init(traits:kind:language:relativepresentationurl:title:abstract:taskgroups:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:)"
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/init(traits:kind:language:relativepresentationurl:title:abstract:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/kind": {
   "abstract" : [
@@ -1284,8 +779,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1351,8 +846,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1409,21 +904,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -1476,8 +962,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1534,8 +1020,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1592,21 +1078,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -1624,73 +1101,6 @@
   "title" : "subheadingDeclarationFragments",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/subheadingdeclarationfragments"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/taskGroups": {
-  "abstract" : [
-    {
-      "text" : "The taskGroups of the variant or ",
-      "type" : "text"
-    },
-    {
-      "code" : "nil",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if the taskGroups is the same as the summarized element.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "taskGroups"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV9TaskGroupV",
-      "text" : "TaskGroup"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?>"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/taskGroups",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "taskGroups",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/taskgroups"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/title": {
   "abstract" : [
@@ -1726,8 +1136,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
@@ -1749,65 +1159,6 @@
   "title" : "title",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/title"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/topicImages": {
-  "abstract" : [
-    {
-      "text" : "Images that are used to represent the summarized element or ",
-      "type" : "text"
-    },
-    {
-      "code" : "nil",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if the images are the same as the summarized element.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "topicImages"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
-    },
-    {
-      "kind" : "text",
-      "text" : "<["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10TopicImageV",
-      "text" : "TopicImage"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?>"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/topicImages",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "topicImages",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/topicimages"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/traits": {
   "abstract" : [
@@ -1902,8 +1253,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",

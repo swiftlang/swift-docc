@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Creates a new checker that detects documents with multiple titles.",
+      "text" : "Creates a new checker that warns about multiple first-level headings.",
       "type" : "text"
     }
   ],
@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "InvalidAdditionalTitle.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L26"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -110,7 +110,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The URL to the documentation file that the checker checks.",
+                  "text" : "The URL to the documentation file that the checker checks, for diagnostics purposes.",
                   "type" : "text"
                 }
               ],
@@ -161,7 +161,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle": {
   "abstract" : [
     {
-      "text" : "A document should have a single title, i.e. a single first-level heading.",
+      "text" : "A checker that warns about additional first-level headings.",
       "type" : "text"
     }
   ],
@@ -195,7 +195,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/init(sourceFile:)": {
   "abstract" : [
     {
-      "text" : "Creates a new checker that detects documents with multiple titles.",
+      "text" : "Creates a new checker that warns about multiple first-level headings.",
       "type" : "text"
     }
   ],

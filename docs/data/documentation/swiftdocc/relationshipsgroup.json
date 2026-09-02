@@ -537,15 +537,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RelationshipsGroupV",
-      "text" : "RelationshipsGroup"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RelationshipsGroupV4KindO",
       "text" : "Kind"
     },

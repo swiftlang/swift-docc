@@ -144,7 +144,6 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -397,17 +396,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/relationshipsrendersection"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RelationshipsRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/relationshipsrendersection\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RelationshipsRenderSection/TextIndexing-Implementations": {
   "abstract" : [
 
@@ -479,7 +467,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

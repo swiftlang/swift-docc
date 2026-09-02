@@ -1,0 +1,723 @@
+{
+  "abstract" : [
+    {
+      "text" : "A collection of functions to check if a file is one of the documentation catalog files types.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC29DocumentationCatalogFileTypesO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "DocumentationCatalogFileTypes"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DocumentationCatalogFileTypes"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "DocumentationCatalogFileTypes.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationCatalogFileTypes.swift#L14"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "DocumentationCatalogFileTypes"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "DocumentationCatalogFileTypes"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Type-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFavicon(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFooter(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomHeader(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isDocumentationCatalog(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isInfoPlistFile(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isMarkupFile(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isReferenceDocumentationFile(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isSymbolGraphFile(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isThemeSettingsFile(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isTutorialFile(_:)"
+      ],
+      "title" : "Type Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/documentationcatalogfiletypes"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes": {
+  "abstract" : [
+    {
+      "text" : "A collection of functions to check if a file is one of the documentation catalog files types.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCatalogFileTypes"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCatalogFileTypes"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCatalogFileTypes",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isCustomFavicon(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a custom favicon.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isCustomFavicon"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFavicon(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isCustomFavicon(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfavicon(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isCustomFooter(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a custom footer.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isCustomFooter"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFooter(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isCustomFooter(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfooter(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isCustomHeader(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a custom header.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isCustomHeader"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomHeader(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isCustomHeader(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomheader(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isDocumentationCatalog(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a folder is a documentation catalog.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isDocumentationCatalog"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isDocumentationCatalog(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isDocumentationCatalog(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isdocumentationcatalog(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isInfoPlistFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is an Info.plist file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isInfoPlistFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isInfoPlistFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isInfoPlistFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isinfoplistfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isMarkupFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a markup file; that is, either a reference documentation file or a tutorial file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isMarkupFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isMarkupFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isMarkupFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/ismarkupfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isReferenceDocumentationFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a reference documentation file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isReferenceDocumentationFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isReferenceDocumentationFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isReferenceDocumentationFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isreferencedocumentationfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isSymbolGraphFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a symbol graph file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isSymbolGraphFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isSymbolGraphFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isSymbolGraphFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/issymbolgraphfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isThemeSettingsFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is ",
+      "type" : "text"
+    },
+    {
+      "code" : "theme-settings.json",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isThemeSettingsFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isThemeSettingsFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isThemeSettingsFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isthemesettingsfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isTutorialFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a tutorial file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isTutorialFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isTutorialFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isTutorialFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/istutorialfile(_:)"
+}
+}
+}

@@ -39,15 +39,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC17TopicsVisualStyleC",
-        "text" : "TopicsVisualStyle"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC17TopicsVisualStyleC0E0O",
         "text" : "Style"
       }
@@ -106,16 +97,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC17TopicsVisualStyleC",
-              "text" : "TopicsVisualStyle"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum",
@@ -318,15 +299,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17TopicsVisualStyleC",
-      "text" : "TopicsVisualStyle"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

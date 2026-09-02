@@ -130,14 +130,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -250,17 +242,6 @@
   "title" : "BenchmarkResults.Metric",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/benchmarkresults\/metric"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BenchmarkResults/Metric/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/benchmarkresults\/metric\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/BenchmarkResults/Metric/Value-swift.enum": {
   "abstract" : [
@@ -528,24 +509,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV",
-      "text" : "BenchmarkResults"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV6MetricV",
-      "text" : "Metric"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

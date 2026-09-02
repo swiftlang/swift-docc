@@ -40,24 +40,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV",
-        "text" : "BenchmarkResults"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV6MetricV",
-        "text" : "Metric"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV6MetricV5ValueO",
         "text" : "Value"
       }
@@ -102,26 +84,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV",
-              "text" : "BenchmarkResults"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV6MetricV",
-              "text" : "Metric"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum",
@@ -296,24 +258,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV",
-      "text" : "BenchmarkResults"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV6MetricV",
-      "text" : "Metric"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

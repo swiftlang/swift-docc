@@ -48,15 +48,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
-        "text" : "DefaultAvailability"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV06ModuleD0V",
         "text" : "ModuleAvailability"
       },
@@ -122,16 +113,6 @@
             {
               "kind" : "text",
               "text" : " : ["
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
-              "text" : "DefaultAvailability"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability",
@@ -304,15 +285,6 @@
     {
       "kind" : "text",
       "text" : " : ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
-      "text" : "DefaultAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

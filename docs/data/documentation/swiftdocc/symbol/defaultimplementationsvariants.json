@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L198"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L213"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -137,6 +137,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/titleVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/proseVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/subHeadingVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/navigatorVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/roleHeadingVariants",
@@ -149,8 +150,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevelVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/deprecatedSummaryVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/declarationVariants",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/attributesVariants",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/locationVariants"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/attributesVariants"
       ],
       "title" : "Properties"
     }
@@ -797,71 +797,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol\/kindvariants"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Symbol/locationVariants": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "locationVariants"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
-      "text" : "DocumentationDataVariants"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-      "text" : "SymbolGraph"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-      "text" : "Symbol"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V8LocationV",
-      "text" : "Location"
-    },
-    {
-      "kind" : "text",
-      "text" : ">"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/locationVariants",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "locationVariants",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbol\/locationvariants"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/moduleReference": {
   "abstract" : [
     {
@@ -1025,6 +960,56 @@
   "title" : "platformNameVariants",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol\/platformnamevariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/proseVariants": {
+  "abstract" : [
+    {
+      "text" : "The prose form of the symbol’s title for use in inline links and documentation prose, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "proseVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/proseVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "proseVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/prosevariants"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/roleHeadingVariants": {
   "abstract" : [

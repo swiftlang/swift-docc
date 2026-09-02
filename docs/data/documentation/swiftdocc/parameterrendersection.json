@@ -144,14 +144,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParameterRenderSection\/rawIndexableTextContent(references:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParameterRenderSection\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -264,17 +256,6 @@
   "title" : "ParameterRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/parameterrendersection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ParameterRenderSection/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParameterRenderSection\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/parameterrendersection\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ParameterRenderSection/content": {
   "abstract" : [
@@ -470,7 +451,15 @@
     },
     {
       "kind" : "text",
-      "text" : " : any "
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

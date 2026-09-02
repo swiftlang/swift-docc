@@ -117,6 +117,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
         "text" : "Value"
       },
       {
@@ -134,6 +135,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
         "text" : "Value"
       },
       {
@@ -153,7 +155,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L109"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L107"
     },
     "role" : "symbol",
     "roleHeading" : "Operator",
@@ -219,6 +221,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
               "text" : "Value"
             },
             {
@@ -245,6 +248,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
               "text" : "Value"
             },
             {
@@ -424,6 +428,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
       "text" : "Value"
     },
     {
@@ -441,6 +446,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionVAASQRzrlE5Valuexmfp",
       "text" : "Value"
     },
     {

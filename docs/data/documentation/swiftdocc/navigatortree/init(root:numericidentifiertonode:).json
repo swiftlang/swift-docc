@@ -39,15 +39,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-        "text" : "NavigatorTree"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
         "text" : "Node"
       },
@@ -71,15 +62,6 @@
       {
         "kind" : "text",
         "text" : " : "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-        "text" : "NavigatorTree"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -133,16 +115,6 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-              "text" : "NavigatorTree"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
@@ -168,16 +140,6 @@
             {
               "kind" : "text",
               "text" : " : "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-              "text" : "NavigatorTree"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node",
@@ -382,15 +344,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
       "text" : "Node"
     },
@@ -414,15 +367,6 @@
     {
       "kind" : "text",
       "text" : " : "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

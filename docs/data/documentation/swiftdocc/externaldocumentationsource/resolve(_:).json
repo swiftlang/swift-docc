@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalDocumentationSource.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalDocumentationSource.swift#L41"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalDocumentationSource.swift#L39"
     },
     "required" : true,
     "role" : "symbol",

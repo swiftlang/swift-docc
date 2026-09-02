@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MessageType.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/MessageType.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/MessageType.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

@@ -140,14 +140,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/sdk"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -261,17 +253,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diffavailability"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiffAvailability/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diffavailability\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DiffAvailability/Info": {
   "abstract" : [
     {
@@ -332,15 +313,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
       "text" : "Info"
     },
@@ -382,15 +354,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
       "text" : "Info"
     },
@@ -405,15 +368,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -434,15 +388,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
       "text" : "Info"
     },
@@ -457,15 +402,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -552,15 +488,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
       "text" : "Info"
     },
@@ -602,15 +529,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV4InfoV",
       "text" : "Info"
     },
@@ -649,15 +567,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiffAvailabilityV",
-      "text" : "DiffAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

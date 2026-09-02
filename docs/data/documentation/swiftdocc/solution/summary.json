@@ -1,20 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "inlineContent" : [
-        {
-          "text" : "brief",
-          "type" : "text"
-        }
-      ],
-      "type" : "emphasis"
-    },
-    {
-      "text" : " description of what the solution is.",
+      "text" : "A brief summary that describes what the solution is to the end-user.",
       "type" : "text"
     }
   ],
@@ -63,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Solution.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Solution.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Solution.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -106,6 +93,12 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "mentions",
+      "mentions" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics"
+      ]
     }
   ],
   "schemaVersion" : {
@@ -144,18 +137,24 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Adding-Diagnostics": {
+  "abstract" : [
+    {
+      "text" : "Display information to the developer about actionable issues with their documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding user-facing diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/adding-diagnostics"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Solution": {
   "abstract" : [
     {
-      "text" : "A solution to a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Problem",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
       "type" : "text"
     }
   ],
@@ -189,20 +188,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Solution/summary": {
   "abstract" : [
     {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "inlineContent" : [
-        {
-          "text" : "brief",
-          "type" : "text"
-        }
-      ],
-      "type" : "emphasis"
-    },
-    {
-      "text" : " description of what the solution is.",
+      "text" : "A brief summary that describes what the solution is to the end-user.",
       "type" : "text"
     }
   ],

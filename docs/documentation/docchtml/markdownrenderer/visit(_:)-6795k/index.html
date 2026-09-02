@@ -1,0 +1,43 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>visit(_:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Transforms a markdown heading into a`&lt;h[1...6]&gt;` HTML element whose content is wrapped in an `&lt;a&gt;` HTML element that references the heading itself." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">DocCHTML</a>
+        </li>
+        <li>
+            <a href="../index.html">MarkdownRenderer</a>
+        </li>
+        <li>visit(_:)</li>
+    </ul>
+    <p>Instance Method</p>
+    <h1>visit(_:)</h1>
+    <p>Transforms a markdown heading into a<code>&lt;h[1...6]&gt;</code>
+         HTML element whose content is wrapped in an <code>&lt;a&gt;</code>
+         HTML element that references the heading itself.</p>
+    <pre>
+        <code>func visit(_ heading: Heading) -&gt; HTMLNode</code>
+    </pre>
+</section>
+<h2>Discussion</h2>
+<p>As part of transforming the heading, the renderer also transforms all of the its content recursively. For example, the renderer transforms this markdown</p>
+<pre class="md">
+    <code># Some _Formatted_ text
+</code>
+</pre>
+<p>into XML nodes representing this HTML structure</p>
+<pre>
+    <code>&lt;h1 id="some-formatted-text"&gt;
+  &lt;a href="#some-formatted-text"&gt;
+    Some &lt;i&gt;formatted&lt;/i&gt;text
+  &lt;/a&gt;
+&lt;/h1&gt;
+</code>
+</pre>
+<blockquote class="aside note">
+    <p class="label">Note</p>
+    <p>When the renderer has a <a href="../../rendergoal/conciseness/index.html">
+            <code>RenderGoal.conciseness</code>
+        </a>
+         goal, it doesn’t wrap the heading’s content in an anchor.</p>
+</blockquote>
+</article></noscript><div id="app"></div></body></html>

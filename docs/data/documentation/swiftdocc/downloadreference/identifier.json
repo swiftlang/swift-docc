@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DownloadReference.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/DownloadReference.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/DownloadReference.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

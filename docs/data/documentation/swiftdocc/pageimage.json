@@ -308,14 +308,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageImage\/Purpose-swift.enum"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageImage\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -715,17 +707,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/pageimage"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/PageImage/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageImage\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/pageimage\/directiveconvertible-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/PageImage/Purpose-swift.enum": {
   "abstract" : [
     {
@@ -900,15 +881,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC9PageImageC",
-      "text" : "PageImage"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

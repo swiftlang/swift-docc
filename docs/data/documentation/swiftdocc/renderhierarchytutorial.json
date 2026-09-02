@@ -132,14 +132,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyTutorial\/reference"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyTutorial\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -286,17 +278,6 @@
   "title" : "RenderHierarchyTutorial",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderhierarchytutorial"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderHierarchyTutorial/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyTutorial\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderhierarchytutorial\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderHierarchyTutorial/init(from:)": {
   "abstract" : [

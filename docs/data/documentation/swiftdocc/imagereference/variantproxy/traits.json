@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ImageReference.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/ImageReference.swift#L89"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/ImageReference.swift#L90"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

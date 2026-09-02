@@ -1,0 +1,161 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>DocumentationContext.Inputs</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A collection of the build inputs for a unit of documentation." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">SwiftDocC</a>
+        </li>
+        <li>
+            <a href="../index.html">DocumentationContext</a>
+        </li>
+        <li>DocumentationContext.Inputs</li>
+    </ul>
+    <p>Structure</p>
+    <h1>DocumentationContext.Inputs</h1>
+    <p>A collection of the build inputs for a unit of documentation.</p>
+    <pre>
+        <code>struct Inputs</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>A unit of documentation may for example cover a framework, library, or tool. Projects or packages may have multiple units of documentation to represent the different consumable products in that project or package.</p>
+<h2>Topics</h2>
+<h3>Input files</h3>
+<ul>
+    <li>
+        <a href="markupurls/index.html">
+            <code>let markupURLs: [URL]</code>
+        </a>
+        <p>Documentation markup input files for this unit of documentation.</p>
+    </li>
+    <li>
+        <a href="symbolgraphurls/index.html">
+            <code>let symbolGraphURLs: [URL]</code>
+        </a>
+        <p>Symbol graph JSON input files for the module that’s represented by this unit of documentation.</p>
+    </li>
+    <li>
+        <a href="miscresourceurls/index.html">
+            <code>let miscResourceURLs: [URL]</code>
+        </a>
+        <p>Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.</p>
+    </li>
+</ul>
+<h3>Render customization</h3>
+<ul>
+    <li>
+        <a href="customheader/index.html">
+            <code>let customHeader: URL?</code>
+        </a>
+        <p>A custom HTML file to use as the header for rendered output.</p>
+    </li>
+    <li>
+        <a href="customfooter/index.html">
+            <code>let customFooter: URL?</code>
+        </a>
+        <p>A custom HTML file to use as the footer for rendered output.</p>
+    </li>
+    <li>
+        <a href="themesettings/index.html">
+            <code>let themeSettings: URL?</code>
+        </a>
+        <p>A custom JSON settings file used to theme renderer output.</p>
+    </li>
+</ul>
+<h3>Metadata</h3>
+<ul>
+    <li>
+        <a href="info-swift.property/index.html">
+            <code>let info: Info</code>
+        </a>
+        <p>Non-content information or metadata about this unit of documentation.</p>
+    </li>
+    <li>
+        <a href="displayname/index.html">
+            <code>var displayName: String</code>
+        </a>
+        <p>A human-readable display name for this unit of documentation.</p>
+    </li>
+</ul>
+<h3>Structures</h3>
+<ul>
+    <li>
+        <a href="identifier/index.html">
+            <code>struct Identifier</code>
+        </a>
+        <p>A stable and locally unique identifier for a collection of documentation inputs.</p>
+    </li>
+    <li>
+        <a href="info-swift.struct/index.html">
+            <code>struct Info</code>
+        </a>
+        <p>Information about a collection of documentation inputs that’s unrelated to its documentation content.</p>
+    </li>
+</ul>
+<h3>Initializers</h3>
+<ul>
+    <li>
+        <a href="init(info:baseurl:symbolgraphurls:markupurls:miscresourceurls:customheader:customfooter:themesettings:customfavicon:)/index.html">
+            <code>init(info: Info, baseURL: URL, symbolGraphURLs: [URL], markupURLs: [URL], miscResourceURLs: [URL], customHeader: URL?, customFooter: URL?, themeSettings: URL?, customFavicon: URL?)</code>
+        </a>
+        <p>Creates a new collection of build inputs for a unit of documentation.</p>
+    </li>
+</ul>
+<h3>Instance Properties</h3>
+<ul>
+    <li>
+        <a href="articlesdocumentationrootreference/index.html">
+            <code>var articlesDocumentationRootReference: ResolvedTopicReference</code>
+        </a>
+        <p>Default path to resolve articles.</p>
+    </li>
+    <li>
+        <a href="baseurl/index.html">
+            <code>let baseURL: URL</code>
+        </a>
+        <p>A URL prefix to be appended to the relative presentation URL.</p>
+    </li>
+    <li>
+        <a href="customfavicon/index.html">
+            <code>let customFavicon: URL?</code>
+        </a>
+        <p>A custom favicon file to use for rendered output.</p>
+    </li>
+    <li>
+        <a href="documentationrootreference/index.html">
+            <code>var documentationRootReference: ResolvedTopicReference</code>
+        </a>
+        <p>Default path to resolve symbol links.</p>
+    </li>
+    <li>
+        <a href="id/index.html">
+            <code>var id: DocumentationContext.Inputs.Identifier</code>
+        </a>
+        <p>A stable and locally unique identifier for this collection of build inputs.</p>
+    </li>
+    <li>
+        <a href="rootreference/index.html">
+            <code>var rootReference: ResolvedTopicReference</code>
+        </a>
+    </li>
+    <li>
+        <a href="tutorialtableofcontentscontainer/index.html">
+            <code>var tutorialTableOfContentsContainer: ResolvedTopicReference</code>
+        </a>
+        <p>Default path to resolve tutorial table-of-contents links.</p>
+    </li>
+    <li>
+        <a href="tutorialscontainerreference/index.html">
+            <code>var tutorialsContainerReference: ResolvedTopicReference</code>
+        </a>
+        <p>Default path to resolve tutorial links.</p>
+    </li>
+</ul>
+<h3>Enumerations</h3>
+<ul>
+    <li>
+        <a href="propertylisterror/index.html">
+            <code>enum PropertyListError</code>
+        </a>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

@@ -176,15 +176,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/encode(to:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/VariantContainer-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -502,17 +493,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicrenderreference"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/equatable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/PropertyListKeyNames-swift.struct": {
   "abstract" : [
     {
@@ -546,17 +526,6 @@
   "title" : "TopicRenderReference.PropertyListKeyNames",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicrenderreference\/propertylistkeynames-swift.struct"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/VariantContainer-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/VariantContainer-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "VariantContainer Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/variantcontainer-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/abstract": {
   "abstract" : [
@@ -755,7 +724,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -1022,7 +999,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -1333,15 +1318,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
-      "text" : "TopicRenderReference"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
@@ -1730,15 +1706,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
-      "text" : "TopicRenderReference"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV20PropertyListKeyNamesV",
       "text" : "PropertyListKeyNames"
     },
@@ -2046,15 +2013,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
-      "text" : "TopicRenderReference"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

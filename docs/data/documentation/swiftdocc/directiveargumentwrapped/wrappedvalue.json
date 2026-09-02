@@ -33,6 +33,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC24DirectiveArgumentWrappedV5Valuexmfp",
         "text" : "Value"
       }
     ],
@@ -79,6 +80,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC24DirectiveArgumentWrappedV5Valuexmfp",
               "text" : "Value"
             },
             {
@@ -200,6 +202,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DirectiveArgumentWrappedV5Valuexmfp",
       "text" : "Value"
     }
   ],

@@ -313,15 +313,6 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
-      "text" : "LogHandle"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC9LogHandleO0C7StorageC",
       "text" : "LogStorage"
     },

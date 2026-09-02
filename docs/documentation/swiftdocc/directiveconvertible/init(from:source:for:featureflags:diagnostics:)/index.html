@@ -1,0 +1,42 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>init(from:source:for:featureFlags:diagnostics:)</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../index.html">SwiftDocC</a>
+        </li>
+        <li>
+            <a href="../index.html">DirectiveConvertible</a>
+        </li>
+        <li>init(from:source:for:featureFlags:diagnostics:)</li>
+    </ul>
+    <p>Initializer</p>
+    <h1>init(from:source:for:featureFlags:diagnostics:)</h1>
+    <p>Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid.</p>
+    <pre>
+        <code>init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic])</code>
+    </pre>
+</section>
+<h2>Parameters</h2>
+<dl>
+    <dt>directive</dt>
+    <dd>
+        <p>The parsed block directive to create a semantic object from.</p>
+    </dd>
+    <dt>source</dt>
+    <dd>
+        <p>The location of the source file that contains the markup for the parsed block directive.</p>
+    </dd>
+    <dt>inputs</dt>
+    <dd>
+        <p>The collection of build inputs that the source file belongs to.</p>
+    </dd>
+    <dt>featureFlags</dt>
+    <dd>
+        <p>A collection of feature flags.</p>
+    </dd>
+    <dt>diagnostics</dt>
+    <dd>
+        <p>A mutable collection of diagnostics to update with any additional issues encountered while initializing the directive.</p>
+    </dd>
+</dl>
+</article></noscript><div id="app"></div></body></html>

@@ -40,7 +40,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L200"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L206"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -111,7 +111,8 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider\/init()"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider\/init()",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider\/init(fileManager:)"
       ],
       "title" : "Initializers"
     },
@@ -568,7 +569,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/init()": {
   "abstract" : [
-
+    {
+      "text" : "Creates a memory file server provider with the default file manager.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {
@@ -586,6 +590,55 @@
   "title" : "init()",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/memoryfileserverprovider\/init()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/init(fileManager:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a memory file server provider with the given file manager.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider\/init(fileManager:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(fileManager:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/memoryfileserverprovider\/init(filemanager:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/removeAllFiles()": {
   "abstract" : [

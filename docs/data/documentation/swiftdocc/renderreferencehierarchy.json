@@ -128,14 +128,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy\/paths"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -214,17 +206,6 @@
   "title" : "RenderReferenceHierarchy",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferencehierarchy"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceHierarchy/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderreferencehierarchy\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceHierarchy/init(from:)": {
   "abstract" : [

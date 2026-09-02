@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L305"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L315"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -196,9 +196,9 @@
         },
         {
           "code" : [
-            "doc:\/\/your.bundle.identifier\/path\/to\/page#element-in-page",
-            "                                          ╰──────┬──────╯",
-            "                                              fragment"
+            "doc:\/\/your..identifier\/path\/to\/page#element-in-page",
+            "                                    ╰──────┬──────╯",
+            "                                        fragment"
           ],
           "syntax" : null,
           "type" : "codeListing"

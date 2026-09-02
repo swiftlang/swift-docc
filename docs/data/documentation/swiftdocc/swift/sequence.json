@@ -14,7 +14,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "Swift",
-    "externalID" : "s:e:s:ST9SwiftDocCAA19RenderInlineContentO7ElementRtzrlE9plainTextSSvp",
+    "externalID" : "s:e:s:ST9SwiftDocCAA10DiagnosticV7ElementRtzrlE16containsAnyErrorSbvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -28,6 +28,19 @@
         "kind" : "identifier",
         "preciseIdentifier" : "s:ST",
         "text" : "Sequence"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+        "text" : "Diagnostic"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
       }
     ],
     "modules" : [
@@ -92,6 +105,7 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence\/containsAnyError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence\/containsErrors",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence\/plainText"
       ],
@@ -154,6 +168,19 @@
       "kind" : "identifier",
       "preciseIdentifier" : "s:ST",
       "text" : "Sequence"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence",
@@ -168,6 +195,83 @@
   "title" : "Sequence",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/sequence"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Sequence/containsAnyError": {
+  "abstract" : [
+    {
+      "text" : "A Boolean value that indicates if any of the diagnostics has an",
+      "type" : "text"
+    },
+    {
+      "code" : "error",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " severity.",
+      "type" : "text"
+    }
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Element",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " is ",
+        "type" : "text"
+      },
+      {
+        "code" : "Diagnostic",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "containsAnyError"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence\/containsAnyError",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "containsAnyError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/sequence\/containsanyerror"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Sequence/containsErrors": {
   "abstract" : [
@@ -224,6 +328,7 @@
       }
     ]
   },
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

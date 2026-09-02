@@ -141,7 +141,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:isDeprecated:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(rawValue:)"
       ],
       "title" : "Initializers"
@@ -159,16 +159,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/title"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/LMDBData-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -366,39 +356,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatoritem"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatoritem\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatoritem\/lmdbdata-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatoritem\/rawrepresentable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/availabilityID": {
   "abstract" : [
     {
@@ -512,7 +469,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatoritem\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:isDeprecated:)": {
   "abstract" : [
     {
       "text" : "Initialize a ",
@@ -670,15 +627,32 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isDeprecated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:isDeprecated:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:)",
+  "title" : "init(pageType:languageID:title:platformMask:availabilityID:icon:isExternal:isBeta:isDeprecated:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatoritem\/init(pagetype:languageid:title:platformmask:availabilityid:icon:isexternal:isbeta:)"
+  "url" : "\/documentation\/swiftdocc\/navigatoritem\/init(pagetype:languageid:title:platformmask:availabilityid:icon:isexternal:isbeta:isdeprecated:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/init(rawValue:)": {
   "abstract" : [

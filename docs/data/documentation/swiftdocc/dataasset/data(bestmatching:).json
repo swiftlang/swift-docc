@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L200"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L201"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -149,7 +149,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "If no variant with the exact given trait collection is found, the variant that has the largest trait collection overlap with the",
+              "text" : "If no variant matches the given trait collection exactly, the closest variant is returned.",
               "type" : "text"
             },
             {
@@ -157,7 +157,15 @@
               "type" : "text"
             },
             {
-              "text" : "provided one is returned.",
+              "text" : "A matching user interface style is preferred over a matching display scale.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If there are multiple matches, the one with the lexicographically smallest URL path is used.",
               "type" : "text"
             }
           ],

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L293"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L309"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -132,15 +132,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/init(rawValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -263,28 +254,6 @@
   "title" : "UserInterfaceStyle",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/userinterfacestyle"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/UserInterfaceStyle/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/userinterfacestyle\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/UserInterfaceStyle/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/userinterfacestyle\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/UserInterfaceStyle/dark": {
   "abstract" : [

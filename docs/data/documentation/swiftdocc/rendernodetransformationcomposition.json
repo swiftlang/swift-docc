@@ -138,14 +138,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/transform(renderNode:context:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/RenderNodeTransforming-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -244,17 +236,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernodetransformationcomposition"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationComposition/RenderNodeTransforming-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/RenderNodeTransforming-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RenderNodeTransforming Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernodetransformationcomposition\/rendernodetransforming-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationComposition/first": {
   "abstract" : [
     {
@@ -277,7 +258,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -314,7 +303,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -331,7 +328,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -372,7 +377,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -444,15 +457,6 @@
     {
       "kind" : "text",
       "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC35RenderNodeTransformationCompositionV",
-      "text" : "RenderNodeTransformationComposition"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

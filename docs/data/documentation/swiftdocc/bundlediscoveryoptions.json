@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Options to configure the discovery of documentation bundles",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'CatalogDiscoveryOptions' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -18,11 +23,11 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC22BundleDiscoveryOptionsV",
+    "externalID" : "s:9SwiftDocC22BundleDiscoveryOptionsa",
     "fragments" : [
       {
         "kind" : "keyword",
-        "text" : "struct"
+        "text" : "typealias"
       },
       {
         "kind" : "text",
@@ -45,12 +50,12 @@
       }
     ],
     "remoteSource" : {
-      "fileName" : "DocumentationWorkspaceDataProvider.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspaceDataProvider.swift#L15"
+      "fileName" : "CatalogDiscoveryOptions.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/CatalogDiscoveryOptions.swift#L66"
     },
     "role" : "symbol",
-    "roleHeading" : "Structure",
-    "symbolKind" : "struct",
+    "roleHeading" : "Type Alias",
+    "symbolKind" : "typealias",
     "title" : "BundleDiscoveryOptions"
   },
   "primaryContentSections" : [
@@ -66,7 +71,7 @@
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "struct"
+              "text" : "typealias"
             },
             {
               "kind" : "text",
@@ -75,6 +80,16 @@
             {
               "kind" : "identifier",
               "text" : "BundleDiscoveryOptions"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC23CatalogDiscoveryOptionsV",
+              "text" : "CatalogDiscoveryOptions"
             }
           ]
         }
@@ -89,27 +104,6 @@
   },
   "sections" : [
 
-  ],
-  "topicSections" : [
-    {
-      "anchor" : "Initializers",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/init(fallbackInfo:additionalSymbolGraphFiles:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/init(infoPlistFallbacks:additionalSymbolGraphFiles:)"
-      ],
-      "title" : "Initializers"
-    },
-    {
-      "anchor" : "Instance-Properties",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/additionalSymbolGraphFiles",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/infoPlistFallbacks"
-      ],
-      "title" : "Instance Properties"
-    }
   ],
   "variants" : [
     {
@@ -141,15 +135,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/BundleDiscoveryOptions": {
   "abstract" : [
-    {
-      "text" : "Options to configure the discovery of documentation bundles",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -173,17 +165,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/bundlediscoveryoptions"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/BundleDiscoveryOptions/additionalSymbolGraphFiles": {
+"doc://SwiftDocC/documentation/SwiftDocC/CatalogDiscoveryOptions": {
   "abstract" : [
     {
-      "text" : "Additional symbol graph files that the provider should include in the discovered bundles.",
+      "text" : "Options to configure the discovery of documentation catalogs.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "struct"
     },
     {
       "kind" : "text",
@@ -191,348 +183,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "additionalSymbolGraphFiles"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
+      "text" : "CatalogDiscoveryOptions"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/additionalSymbolGraphFiles",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CatalogDiscoveryOptions",
   "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "additionalSymbolGraphFiles",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/bundlediscoveryoptions\/additionalsymbolgraphfiles"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BundleDiscoveryOptions/infoPlistFallbacks": {
-  "abstract" : [
-    {
-      "text" : "Fallback values for information that’s missing in the bundle’s Info.plist file.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
+  "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "infoPlistFallbacks"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : " : "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "Any"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
+      "text" : "CatalogDiscoveryOptions"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/infoPlistFallbacks",
-  "kind" : "symbol",
   "role" : "symbol",
-  "title" : "infoPlistFallbacks",
+  "title" : "CatalogDiscoveryOptions",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/bundlediscoveryoptions\/infoplistfallbacks"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BundleDiscoveryOptions/init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)": {
-  "abstract" : [
-    {
-      "text" : "Creates new bundle discovery options with the given information.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "fallbackDisplayName"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "fallbackIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "fallbackDefaultCodeListingLanguage"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "fallbackDefaultModuleKind"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "fallbackDefaultAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
-      "text" : "DefaultAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "additionalSymbolGraphFiles"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/bundlediscoveryoptions\/init(fallbackdisplayname:fallbackidentifier:fallbackdefaultcodelistinglanguage:fallbackdefaultmodulekind:fallbackdefaultavailability:additionalsymbolgraphfiles:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BundleDiscoveryOptions/init(fallbackInfo:additionalSymbolGraphFiles:)": {
-  "abstract" : [
-    {
-      "text" : "Creates new bundle discovery options with the provided documentation bundle info",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "as Info.plist fallback values.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "fallbackInfo"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV4InfoV",
-      "text" : "Info"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "additionalSymbolGraphFiles"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "]) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/init(fallbackInfo:additionalSymbolGraphFiles:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(fallbackInfo:additionalSymbolGraphFiles:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/bundlediscoveryoptions\/init(fallbackinfo:additionalsymbolgraphfiles:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BundleDiscoveryOptions/init(infoPlistFallbacks:additionalSymbolGraphFiles:)": {
-  "abstract" : [
-    {
-      "text" : "Creates a new options value with the given configurations.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "infoPlistFallbacks"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : " : "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "Any"
-    },
-    {
-      "kind" : "text",
-      "text" : "], "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "additionalSymbolGraphFiles"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions\/init(infoPlistFallbacks:additionalSymbolGraphFiles:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(infoPlistFallbacks:additionalSymbolGraphFiles:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/bundlediscoveryoptions\/init(infoplistfallbacks:additionalsymbolgraphfiles:)"
+  "url" : "\/documentation\/swiftdocc\/catalogdiscoveryoptions"
 }
 }
 }

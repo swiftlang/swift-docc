@@ -39,7 +39,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "Make new features in Swift-DocC optional during active development by creating a command-line flag that",
+              "text" : "Make new features in Swift-DocC optional during active development by creating a command-line flag that enables the new behavior.",
               "type" : "text"
             },
             {
@@ -47,7 +47,7 @@
               "type" : "text"
             },
             {
-              "text" : "enables the new behavior. Then set the new flag in the ",
+              "text" : "Then pass a ",
               "type" : "text"
             },
             {
@@ -56,24 +56,7 @@
               "type" : "reference"
             },
             {
-              "text" : "’ ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/current",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : " instance,",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "making it available for the rest of the compilation process.",
+              "text" : " value, or just one of its properties, to the code that needs to check that feature flag.",
               "type" : "text"
             }
           ],
@@ -97,7 +80,7 @@
               "type" : "reference"
             },
             {
-              "text" : " structure. This type has a static",
+              "text" : " structure.",
               "type" : "text"
             },
             {
@@ -105,12 +88,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/current",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : " property that contains a global instance of the flags that can be accessed",
+              "text" : "When adding a flag property to this structure, specify a default value on the property instead of adding a parameters to the only (parameterless) initializer.",
               "type" : "text"
             },
             {
@@ -118,15 +96,15 @@
               "type" : "text"
             },
             {
-              "text" : "throughout the compiler. When adding a flag property to this struct, give it a reasonable default",
+              "text" : "This way, a feature flag value created using ",
               "type" : "text"
             },
             {
-              "text" : " ",
-              "type" : "text"
+              "code" : "FeatureFlags()",
+              "type" : "codeVoice"
             },
             {
-              "text" : "value so that the default initializer can be used.",
+              "text" : " has all flags set to their default values.",
               "type" : "text"
             }
           ],
@@ -153,7 +131,7 @@
               "type" : "text"
             },
             {
-              "code" : "SwiftDocCUtilities",
+              "code" : "DocCCommandLine",
               "type" : "codeVoice"
             },
             {
@@ -206,15 +184,27 @@
         {
           "inlineContent" : [
             {
-              "text" : "These options are then handled in ",
-              "type" : "text"
-            },
-            {
               "code" : "ConvertAction.init(fromConvertCommand:)",
               "type" : "codeVoice"
             },
             {
-              "text" : ", still in",
+              "text" : ", still in ",
+              "type" : "text"
+            },
+            {
+              "code" : "DocCCommandLine",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", then transforms these parsed flags into a ",
+              "type" : "text"
+            },
+            {
+              "code" : "FeatureFlags",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " value.",
               "type" : "text"
             },
             {
@@ -222,24 +212,57 @@
               "type" : "text"
             },
             {
-              "code" : "SwiftDocCUtilities",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ", where they are written into the global feature flags ",
+              "text" : "The ",
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/current",
+              "code" : "ConvertAction",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " stores the newly created feature flags in the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct\/featureFlags",
               "isActive" : true,
               "type" : "reference"
             },
             {
+              "text" : " property of its ",
+              "type" : "text"
+            },
+            {
+              "code" : "configuration",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
               "text" : " ",
               "type" : "text"
             },
             {
-              "text" : "instance, which can then be used during the compilation process.",
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "code" : "ConvertAction",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " uses this configuration, and its feature flag information, to create the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " which passes the feature flags to all the places that need to check them.",
               "type" : "text"
             }
           ],
@@ -254,7 +277,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "A subset of feature flags can affect how a documentation bundle is authored. For example, the",
+              "text" : "Some documentation is authored with the expectation that it’s always built with certain feature flags enabled and may not look or behave as intended without those flags.",
               "type" : "text"
             },
             {
@@ -262,7 +285,7 @@
               "type" : "text"
             },
             {
-              "text" : "experimental overloaded symbol presentation can affect how a bundle curates its symbols due to the",
+              "text" : "For example, documentation that’s organized based on the experimental overloaded symbol presentation flag can have a rather different organization without that flag,",
               "type" : "text"
             },
             {
@@ -270,27 +293,7 @@
               "type" : "text"
             },
             {
-              "text" : "creation of overload group pages. These flags should also be added to the",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "code" : "DocumentationBundle\/Info\/BundleFeatureFlags",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " type, so that they can be parsed out of a bundle’s",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "Info.plist.",
+              "text" : "making it harder for readers to navigate the documentation and find related API.",
               "type" : "text"
             }
           ],
@@ -299,7 +302,15 @@
         {
           "inlineContent" : [
             {
-              "text" : "Feature flags that are loaded from an Info.plist file are saved into the global feature flags while",
+              "text" : "If you add a feature flag like this, you should also add a corresponding flag to the ",
+              "type" : "text"
+            },
+            {
+              "code" : "DocumentationBundle\/Info\/BundleFeatureFlags",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " type,",
               "type" : "text"
             },
             {
@@ -307,11 +318,33 @@
               "type" : "text"
             },
             {
-              "text" : "the bundle is being registered. To ensure that your new feature flag is properly loaded, update the",
+              "text" : "so that flag can be specified from a documentation catalog’s Info.plist.",
               "type" : "text"
             },
             {
               "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "The value from the catalog’s Info.plist overrides any value that the developer may specify using a command line flag.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " calls the ",
               "type" : "text"
             },
             {
@@ -319,7 +352,15 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " method to load your new field into the global flags.",
+              "text" : " method to override the feature flags it got from the convert action with those decoded from the Info.plist.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Update this method to ensure that your new flag properly overrides the values from the convert action.",
               "type" : "text"
             }
           ],
@@ -375,6 +416,77 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
+  "abstract" : [
+    {
+      "text" : "The documentation context manages the in-memory model for the built documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Configuration-swift.struct/featureFlags": {
+  "abstract" : [
+    {
+      "text" : "A collection of feature flags.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "featureFlags"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
+      "text" : "FeatureFlags"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct\/featureFlags",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "featureFlags",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/configuration-swift.struct\/featureflags"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags": {
   "abstract" : [
     {
@@ -408,59 +520,6 @@
   "title" : "FeatureFlags",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/current": {
-  "abstract" : [
-    {
-      "text" : "The current feature flags that Swift-DocC uses to conditionally enable",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "(usually experimental) behavior in Swift-DocC.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "current"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
-      "text" : "FeatureFlags"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/current",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "current",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/featureflags\/current"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Features": {
   "abstract" : [

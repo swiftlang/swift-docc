@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Coding.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L148"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L146"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -123,15 +123,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError\/errorDescription"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError\/Error-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError\/LocalizedError-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -268,28 +259,6 @@
   "title" : "RenderNode.CodingError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/codingerror"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/CodingError/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernode\/codingerror\/error-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/CodingError/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernode\/codingerror\/localizederror-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/CodingError/decoding(description:context:)": {
   "abstract" : [

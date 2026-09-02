@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SupportedLanguage.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/SupportedLanguage.swift#L33"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/SupportedLanguage.swift#L34"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -303,14 +303,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SupportedLanguage\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SupportedLanguage\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -753,17 +745,6 @@
   "title" : "SupportedLanguage",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/supportedlanguage"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SupportedLanguage/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SupportedLanguage\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/supportedlanguage\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SupportedLanguage/introducedVersion": {
   "abstract" : [

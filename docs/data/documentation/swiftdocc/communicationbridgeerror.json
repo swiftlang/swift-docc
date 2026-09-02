@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CommunicationBridge.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -126,14 +126,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError\/unableToEncodeMessage(_:underlyingError:)"
       ],
       "title" : "Enumeration Cases"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError\/Error-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -300,17 +292,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/communicationbridgeerror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridgeError/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/communicationbridgeerror\/error-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridgeError/unableToEncodeMessage(_:underlyingError:)": {
   "abstract" : [
     {
@@ -350,7 +331,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": any "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

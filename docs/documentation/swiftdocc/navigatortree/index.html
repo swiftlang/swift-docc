@@ -1,6 +1,119 @@
-<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>NavigatorTree</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.54db7914.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"><meta content="A `NavigatorTree` is a class holding information about a tree of data that can be navigated using a tree navigator." name="description"/></head><body data-color-scheme="auto"><noscript><article><section><ul><li><a href="../index.html">SwiftDocC</a></li><li>NavigatorTree</li></ul><p>Class</p><h1>NavigatorTree</h1><p>A <code>NavigatorTree</code> is a class holding information about a tree of data that can be navigated using a tree navigator.</p><pre><code>class NavigatorTree</code></pre></section><h2>Discussion</h2><p>A tree is a data structure containing a number of nodes equal or greater than 1. Each node can have multiple children, but only one parent and assigning the same node as children of multiple nodes results in a broken data structure. There’s no validation when adding a node as children to another node.</p><p>A tree can get serialized to the disk using the following structure:</p><pre><code>┌──────────────┬──────────────┬──────────────────────┐
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>NavigatorTree</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A `NavigatorTree` is a class holding information about a tree of data that can be navigated using a tree navigator." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">SwiftDocC</a>
+        </li>
+        <li>NavigatorTree</li>
+    </ul>
+    <p>Class</p>
+    <h1>NavigatorTree</h1>
+    <p>A <code>NavigatorTree</code>
+         is a class holding information about a tree of data that can be navigated using a tree navigator.</p>
+    <pre>
+        <code>class NavigatorTree</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>A tree is a data structure containing a number of nodes equal or greater than 1. Each node can have multiple children, but only one parent and assigning the same node as children of multiple nodes results in a broken data structure. There’s no validation when adding a node as children to another node.</p>
+<p>A tree can get serialized to the disk using the following structure:</p>
+<pre>
+    <code>┌──────────────┬──────────────┬──────────────────────┐
 │   parentID   │ objectLength │        object        │
 │    UInt32    │    UInt32    │         Data         │
 │  (4 bytes)   │  (4 bytes)   │   (variable size)    │
 └──────────────┴──────────────┴──────────────────────┘
-</code></pre><p>The object needs to be conforming to <code>Serializable</code> so it can be transformed to raw data and reconstructed back using the same one.</p><blockquote class="aside note"><p class="label">Note</p><p>The <code>parentID</code> might be missing if the object is the root, but to avoid creating an exception on the object structure, its id is set to 0.</p></blockquote><h2>Topics</h2><h3>Classes</h3><ul><li><a href="node/index.html"><code>class Node</code><p>A representation of a node in the tree wrapping a <code>NavigatorItem</code>. The node holds the reference to children and parent for fast navigation.</p></a></li></ul><h3>Initializers</h3><ul><li><a href="init()/index.html"><code>init()</code><p>Initialize an empty NavigatorTree with a placeholder root.</p></a></li><li><a href="init(root:numericidentifiertonode:)/index.html"><code>init(root: NavigatorTree.Node, numericIdentifierToNode: [UInt32 : NavigatorTree.Node])</code><p>Initialize a navigator tree with a given root node.</p></a></li></ul><h3>Instance Properties</h3><ul><li><a href="numericidentifiertonode/index.html"><code>var numericIdentifierToNode: [UInt32 : NavigatorTree.Node]</code><p>A map holding the mapping from  the numeric identifier to the node.</p></a></li><li><a href="root/index.html"><code>var root: NavigatorTree.Node</code><p>The root node of the tree.</p></a></li></ul><h3>Instance Methods</h3><ul><li><a href="read(from:bundleidentifier:timeout:delay:queue:presentationidentifier:broadcast:)/index.html"><code>func read(from: URL, bundleIdentifier: String?, timeout: TimeInterval, delay: TimeInterval, queue: DispatchQueue, presentationIdentifier: String?, broadcast: NavigatorTree.BroadcastCallback?) throws</code><p>Read a tree from disk from a given path. The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.</p></a></li><li><a href="write(to:writepaths:callback:)/index.html"><code>func write(to: URL, writePaths: Bool, callback: ((NavigatorTree.Node) -&gt; ())?) throws</code><p>Serialize the node and descendants to the disk. Every node is written in order using a breath first approach, assigning to each node a virtual identifier in <code>UInt32</code> which is then used to identify the parent. The initial index is 0 and the root gets id 0 and parent id 0, so it can be easily recognized inside the serialized data and it’s expected to be the first element.</p></a></li></ul><h3>Type Aliases</h3><ul><li><a href="broadcastcallback/index.html"><code>typealias BroadcastCallback</code><p>The broadcast callback notifies a listener about the latest items loaded from the disk.</p></a></li></ul><h3>Type Methods</h3><ul><li><a href="rootnode(bundleidentifier:)/index.html"><code>static func rootNode(bundleIdentifier: String) -&gt; NavigatorTree.Node</code><p>Returns an instance of <code>NavigatorTree.Node</code> that can be used as root.</p></a></li></ul><h3>Enumerations</h3><ul><li><a href="error/index.html"><code>enum Error</code></a></li></ul></article></noscript><div id="app"></div></body></html>
+</code>
+</pre>
+<p>The object needs to be conforming to <code>Serializable</code>
+     so it can be transformed to raw data and reconstructed back using the same one.</p>
+<blockquote class="aside note">
+    <p class="label">Note</p>
+    <p>The <code>parentID</code>
+         might be missing if the object is the root, but to avoid creating an exception on the object structure, its id is set to 0.</p>
+</blockquote>
+<h2>Topics</h2>
+<h3>Classes</h3>
+<ul>
+    <li>
+        <a href="node/index.html">
+            <code>class Node</code>
+        </a>
+        <p>A representation of a node in the tree wrapping a <code>NavigatorItem</code>
+            . The node holds the reference to children and parent for fast navigation.</p>
+    </li>
+</ul>
+<h3>Initializers</h3>
+<ul>
+    <li>
+        <a href="init()/index.html">
+            <code>init()</code>
+        </a>
+        <p>Initialize an empty NavigatorTree with a placeholder root.</p>
+    </li>
+    <li>
+        <a href="init(root:numericidentifiertonode:)/index.html">
+            <code>init(root: Node, numericIdentifierToNode: [UInt32 : Node])</code>
+        </a>
+        <p>Initialize a navigator tree with a given root node.</p>
+    </li>
+</ul>
+<h3>Instance Properties</h3>
+<ul>
+    <li>
+        <a href="numericidentifiertonode/index.html">
+            <code>var numericIdentifierToNode: [UInt32 : Node]</code>
+        </a>
+        <p>A map holding the mapping from  the numeric identifier to the node.</p>
+    </li>
+    <li>
+        <a href="root/index.html">
+            <code>var root: Node</code>
+        </a>
+        <p>The root node of the tree.</p>
+    </li>
+</ul>
+<h3>Instance Methods</h3>
+<ul>
+    <li>
+        <a href="read(from:bundleidentifier:timeout:delay:queue:presentationidentifier:broadcast:)/index.html">
+            <code>func read(from: URL, bundleIdentifier: String?, timeout: TimeInterval, delay: TimeInterval, queue: DispatchQueue, presentationIdentifier: String?, broadcast: BroadcastCallback?) throws</code>
+        </a>
+        <p>Read a tree from disk from a given path. The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.</p>
+    </li>
+    <li>
+        <a href="write(to:writepaths:callback:)/index.html">
+            <code>func write(to: URL, writePaths: Bool, callback: ((Node) -&gt; ())?) throws</code>
+        </a>
+        <p>Serialize the node and descendants to the disk. Every node is written in order using a breath first approach, assigning to each node a virtual identifier in <code>UInt32</code>
+             which is then used to identify the parent. The initial index is 0 and the root gets id 0 and parent id 0, so it can be easily recognized inside the serialized data and it’s expected to be the first element.</p>
+    </li>
+</ul>
+<h3>Type Aliases</h3>
+<ul>
+    <li>
+        <a href="broadcastcallback/index.html">
+            <code>typealias BroadcastCallback</code>
+        </a>
+        <p>The broadcast callback notifies a listener about the latest items loaded from the disk.</p>
+    </li>
+</ul>
+<h3>Type Methods</h3>
+<ul>
+    <li>
+        <a href="rootnode(bundleidentifier:)/index.html">
+            <code>static func rootNode(bundleIdentifier: String) -&gt; NavigatorTree.Node</code>
+        </a>
+        <p>Returns an instance of <code>NavigatorTree.Node</code>
+             that can be used as root.</p>
+    </li>
+</ul>
+<h3>Enumerations</h3>
+<ul>
+    <li>
+        <a href="error/index.html">
+            <code>enum Error</code>
+        </a>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

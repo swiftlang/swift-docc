@@ -93,9 +93,6 @@
         "text" : "Request"
       }
     ],
-    "platforms" : [
-
-    ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver+DeprecatedCommunication.swift",
       "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver+DeprecatedCommunication.swift#L28"
@@ -133,23 +130,34 @@
               "text" : " = "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-              "text" : "OutOfProcessReferenceResolver"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC20_DeprecatedRequestV1O",
               "text" : "_DeprecatedRequestV1"
             }
           ]
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This can either be a request to resolve a topic URL or to resolve a symbol based on its precise identifier.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {

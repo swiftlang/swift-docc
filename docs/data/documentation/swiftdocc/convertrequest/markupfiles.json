@@ -111,15 +111,6 @@
   "sections" : [
 
   ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Related-Documentation",
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/markupURLs"
-      ],
-      "title" : "Related Documentation"
-    }
-  ],
   "variants" : [
     {
       "paths" : [
@@ -222,47 +213,6 @@
   "title" : "markupFiles",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertrequest\/markupfiles"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/markupURLs": {
-  "abstract" : [
-    {
-      "text" : "Documentation markup input files for this unit of documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "markupURLs"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/markupURLs",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "markupURLs",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/markupurls"
 }
 }
 }

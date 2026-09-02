@@ -1,0 +1,84 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>HTMLNode.Attribute.ReferrerPolicy</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A value for the ``doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/referrerPolicy(_:)`` attribute." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../../../index.html">DocCHTML</a>
+        </li>
+        <li>
+            <a href="../../index.html">HTMLNode</a>
+        </li>
+        <li>
+            <a href="../index.html">HTMLNode.Attribute</a>
+        </li>
+        <li>HTMLNode.Attribute.ReferrerPolicy</li>
+    </ul>
+    <p>Enumeration</p>
+    <h1>HTMLNode.Attribute.ReferrerPolicy</h1>
+    <p>A value for the <a href="../referrerpolicy(_:)/index.html">
+            <code>referrerPolicy(_:)</code>
+        </a>
+         attribute.</p>
+    <pre>
+        <code>enum ReferrerPolicy</code>
+    </pre>
+</section>
+<h2>Topics</h2>
+<h3>Enumeration Cases</h3>
+<ul>
+    <li>
+        <a href="noreferrer/index.html">
+            <code>case noReferrer</code>
+        </a>
+        <p>The browser should not send a referrer header.</p>
+    </li>
+    <li>
+        <a href="noreferrerwhendowngrade/index.html">
+            <code>case noReferrerWhenDowngrade</code>
+        </a>
+        <p>The browser should not send a referrer header. to origins without TLS (HTTPS).</p>
+    </li>
+    <li>
+        <a href="origin/index.html">
+            <code>case origin</code>
+        </a>
+        <p>The browser should limit the referrer information to the origin of the referring page: its scheme, host, and port.</p>
+    </li>
+    <li>
+        <a href="originwhencrossorigin/index.html">
+            <code>case originWhenCrossOrigin</code>
+        </a>
+        <p>The browser should limit the referrer information to the origin of the referring page: its scheme, host, and port. Navigations on the same origin should still include the path.</p>
+    </li>
+    <li>
+        <a href="sameorigin/index.html">
+            <code>case sameOrigin</code>
+        </a>
+        <p>The browser should send referred information for the same origin, but cross-origin requests should contain no referrer information.</p>
+    </li>
+    <li>
+        <a href="strictorigin/index.html">
+            <code>case strictOrigin</code>
+        </a>
+        <p>Only send the origin of the document as the referrer when the protocol security level stays the same (HTTPS→HTTPS), but don’t send it to a less secure destination (HTTPS→HTTP).</p>
+    </li>
+    <li>
+        <a href="strictoriginwhencrossorigin/index.html">
+            <code>case strictOriginWhenCrossOrigin</code>
+        </a>
+        <p>Send a full URL when performing a same-origin request, only send the origin when the protocol security level stays the same (HTTPS→HTTPS), and send no header to a less secure destination (HTTPS→HTTP).</p>
+    </li>
+    <li>
+        <a href="unsafeurl/index.html">
+            <code>case unsafeURL</code>
+        </a>
+    </li>
+</ul>
+<h3>Initializers</h3>
+<ul>
+    <li>
+        <a href="init(rawvalue:)/index.html">
+            <code>init?(rawValue: String)</code>
+        </a>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

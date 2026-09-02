@@ -1,0 +1,152 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>FileManagerProtocol</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A read-write file manager." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">SwiftDocC</a>
+        </li>
+        <li>FileManagerProtocol</li>
+    </ul>
+    <p>Protocol</p>
+    <h1>FileManagerProtocol</h1>
+    <p>A read-write file manager.</p>
+    <pre>
+        <code>protocol FileManagerProtocol : DataProvider</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>A file-system manager is a type that’s central to <i>managing</i>
+     files on a file-system, it performs actions like creating new files, copying, renaming and deleting files, and organizing them in directories.</p>
+<p>The Cocoa <code>FileManager</code>
+     type is the default implementation of that protocol that manages files stored on disk.</p>
+<p>Should you need a file system with a different storage, create your own protocol implementations to manage files in memory, on a network, in a database, or elsewhere.</p>
+<h2>Topics</h2>
+<h3>Instance Properties</h3>
+<ul>
+    <li>
+        <a href="currentdirectorypath/index.html">
+            <code>var currentDirectoryPath: String</code>
+        </a>
+        <p>The <i>current</i>
+             directory path.</p>
+    </li>
+</ul>
+<h3>Instance Methods</h3>
+<ul>
+    <li>
+        <a href="contents(atpath:)/index.html">
+            <code>func contents(atPath: String) -&gt; Data?</code>
+        </a>
+        <p>Returns the data content of a file at the given path, if it exists.</p>
+    </li>
+    <li>
+        <a href="contents(of:)/index.html">
+            <code>func contents(of: URL) throws -&gt; Data</code>
+        </a>
+        <p>Returns the data content of a file at the given URL.</p>
+    </li>
+    <li>
+        <a href="contentsequal(atpath:andpath:)/index.html">
+            <code>func contentsEqual(atPath: String, andPath: String) -&gt; Bool</code>
+        </a>
+        <p>Compares the contents of two files at the given paths.</p>
+    </li>
+    <li>
+        <a href="contentsofdirectory(at:includingpropertiesforkeys:options:)/index.html">
+            <code>func contentsOfDirectory(at: URL, includingPropertiesForKeys: [URLResourceKey]?, options: FileManager.DirectoryEnumerationOptions) throws -&gt; [URL]</code>
+        </a>
+    </li>
+    <li>
+        <a href="contentsofdirectory(at:options:)/index.html">
+            <code>func contentsOfDirectory(at: URL, options: FileManager.DirectoryEnumerationOptions) throws -&gt; (files: [URL], directories: [URL])</code>
+        </a>
+        <p>Performs a shallow search of the specified directory and returns the file and directory URLs for the contained items.</p>
+    </li>
+    <li>
+        <a href="contentsofdirectory(atpath:)/index.html">
+            <code>func contentsOfDirectory(atPath: String) throws -&gt; [String]</code>
+        </a>
+        <p>Returns a list of items in a directory</p>
+    </li>
+    <li>
+        <a href="createdirectory(at:withintermediatedirectories:attributes:)/index.html">
+            <code>func createDirectory(at: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]?) throws</code>
+        </a>
+        <p>Creates a new file folder at the given location.</p>
+    </li>
+    <li>
+        <a href="createfile(at:contents:)/index.html">
+            <code>func createFile(at: URL, contents: Data) throws</code>
+        </a>
+        <p>Creates a file with the specified <code>contents</code>
+             at the specified location.</p>
+    </li>
+    <li>
+        <a href="createfile(at:contents:options:)/index.html">
+            <code>func createFile(at: URL, contents: Data, options: NSData.WritingOptions?) throws</code>
+        </a>
+        <p>Creates a file with the given contents at the given url with the specified writing options.</p>
+    </li>
+    <li>
+        <a href="directoryexists(atpath:)/index.html">
+            <code>func directoryExists(atPath: String) -&gt; Bool</code>
+        </a>
+        <p>Returns <code>true</code>
+             if a directory exists at the given path.</p>
+    </li>
+    <li>
+        <a href="fileexists(atpath:)/index.html">
+            <code>func fileExists(atPath: String) -&gt; Bool</code>
+        </a>
+        <p>Returns <code>true</code>
+             if a file exists at the given path.</p>
+    </li>
+    <li>
+        <a href="fileexists(atpath:isdirectory:)/index.html">
+            <code>func fileExists(atPath: String, isDirectory: UnsafeMutablePointer&lt;ObjCBool&gt;?) -&gt; Bool</code>
+        </a>
+        <p>Returns <code>true</code>
+             if a file or a directory exists at the given path.</p>
+    </li>
+    <li>
+        <a href="moveitem(at:to:)/index.html">
+            <code>func moveItem(at: URL, to: URL) throws</code>
+        </a>
+        <p>Moves a file from one location on the file-system to another.</p>
+    </li>
+    <li>
+        <a href="recursivefiles(startingpoint:options:)/index.html">
+            <code>func recursiveFiles(startingPoint: URL, options: FileManager.DirectoryEnumerationOptions) -&gt; IteratorSequence&lt;_FilesIterator&gt;</code>
+        </a>
+        <p>Returns a sequence of all the files in the directory structure from the starting point.</p>
+    </li>
+    <li>
+        <a href="removeitem(at:)/index.html">
+            <code>func removeItem(at: URL) throws</code>
+        </a>
+        <p>Removes a file from the given location.</p>
+    </li>
+    <li>
+        <a href="uniquetemporarydirectory()/index.html">
+            <code>func uniqueTemporaryDirectory() -&gt; URL</code>
+        </a>
+        <p>Returns a unique temporary directory.</p>
+    </li>
+</ul>
+<h2>Relationships</h2>
+<h3>Inherits From</h3>
+<ul>
+    <li>
+        <a href="../dataprovider/index.html">
+            <code>DataProvider</code>
+        </a>
+    </li>
+</ul>
+<h3>Conforming Types</h3>
+<ul>
+    <li>
+        <a href="../foundation/filemanager/index.html">
+            <code>FileManager</code>
+        </a>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

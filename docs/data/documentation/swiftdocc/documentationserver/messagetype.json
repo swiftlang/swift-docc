@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationServer+MessageType.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServer+MessageType.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServer+MessageType.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -115,7 +115,9 @@
         "doc:\/\/SwiftDocC\/s26ExpressibleByStringLiteralP",
         "doc:\/\/SwiftDocC\/s33ExpressibleByUnicodeScalarLiteralP",
         "doc:\/\/SwiftDocC\/SH",
-        "doc:\/\/SwiftDocC\/SY"
+        "doc:\/\/SwiftDocC\/SY",
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -156,17 +158,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/error"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByStringLiteral-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -289,50 +280,6 @@
   "title" : "DocumentationServer.MessageType",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/ExpressibleByExtendedGraphemeClusterLiteral-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExpressibleByExtendedGraphemeClusterLiteral Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/expressiblebyextendedgraphemeclusterliteral-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/ExpressibleByStringLiteral-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByStringLiteral-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExpressibleByStringLiteral Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/expressiblebystringliteral-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/debugDescription": {
   "abstract" : [
@@ -538,6 +485,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/rawvalue"
 },
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
+},
 "doc://SwiftDocC/s26ExpressibleByStringLiteralP": {
   "identifier" : "doc:\/\/SwiftDocC\/s26ExpressibleByStringLiteralP",
   "title" : "Swift.ExpressibleByStringLiteral",
@@ -556,6 +508,11 @@
 "doc://SwiftDocC/s43ExpressibleByExtendedGraphemeClusterLiteralP": {
   "identifier" : "doc:\/\/SwiftDocC\/s43ExpressibleByExtendedGraphemeClusterLiteralP",
   "title" : "Swift.ExpressibleByExtendedGraphemeClusterLiteral",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
   "type" : "unresolvable"
 }
 }

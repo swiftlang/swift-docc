@@ -135,14 +135,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/isIntroduced(on:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -276,17 +268,6 @@
   "title" : "AvailabilityIndex.Info",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/availabilityindex\/info"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AvailabilityIndex/Info/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/availabilityindex\/info\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AvailabilityIndex/Info/belongs(to:)": {
   "abstract" : [

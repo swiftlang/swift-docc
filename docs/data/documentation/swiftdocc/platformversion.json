@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalMetadata.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L50"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -136,14 +136,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion\/version"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion\/Equatable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -280,17 +272,6 @@
   "title" : "PlatformVersion",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformversion"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PlatformVersion/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/platformversion\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformVersion/beta": {
   "abstract" : [

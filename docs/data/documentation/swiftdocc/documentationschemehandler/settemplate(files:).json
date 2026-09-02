@@ -71,7 +71,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationSchemeHandler.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/DocumentationSchemeHandler.swift#L59"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/DocumentationSchemeHandler.swift#L63"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

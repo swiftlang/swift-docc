@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "A hint.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use either 'DiagnosticNote' or 'Solution' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -41,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticSeverity.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L41"
     },
     "role" : "symbol",
     "roleHeading" : "Case",
@@ -75,26 +80,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "A hint may be used to provide recommendations to resolve errors or warnings or may provide recommendations to the user proactively.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -169,11 +154,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/hint": {
   "abstract" : [
-    {
-      "text" : "A hint.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

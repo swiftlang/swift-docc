@@ -397,14 +397,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AlternateRepresentation\/introducedVersion"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AlternateRepresentation\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -474,17 +466,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/alternaterepresentation"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AlternateRepresentation/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AlternateRepresentation\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/alternaterepresentation\/directiveconvertible-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/AlternateRepresentation/introducedVersion": {
   "abstract" : [
 
@@ -546,7 +527,11 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": Markdown"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

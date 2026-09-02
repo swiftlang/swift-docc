@@ -1,4 +1,15 @@
 {
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'analyze(_:children:source:for:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -15,7 +26,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC8SemanticC8AnalysesO18HasExactlyOneMediaV7analyze_8children6source3for8problemsAA0H0_pSg_AA15MarkupContainerC9remaindert8Markdown14BlockDirectiveV_qd__10Foundation3URLVSgAA19DocumentationBundleVSayAA7ProblemVGztSTRd__AR0N0_p7ElementRtd__lF",
+    "externalID" : "s:9SwiftDocC8SemanticC8AnalysesO18HasExactlyOneMediaV7analyze_8children6source3for8problemsAA0H0_pSg_AA15MarkupContainerC9remaindert8Markdown14BlockDirectiveV_qd__10Foundation3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztSTRd__AR0N0_p7ElementRtd__lF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -65,7 +76,15 @@
       },
       {
         "kind" : "text",
-        "text" : "<any "
+        "text" : "<"
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -103,7 +122,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
         "text" : "DocumentationBundle"
       },
       {
@@ -133,7 +152,15 @@
       },
       {
         "kind" : "text",
-        "text" : "]) -> ((any "
+        "text" : "]) -> (("
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -165,7 +192,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HasExactlyOne.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L165"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L202"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -247,7 +274,15 @@
             },
             {
               "kind" : "text",
-              "text" : "<any "
+              "text" : "<"
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -294,7 +329,7 @@
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
               "text" : "DocumentationBundle"
             },
             {
@@ -325,7 +360,15 @@
             },
             {
               "kind" : "text",
-              "text" : "]) -> ((any "
+              "text" : "]) -> (("
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media",
@@ -395,15 +438,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
-    {
-      "text" : "A collection of the build inputs for a unit of documentation.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -510,6 +551,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -640,6 +682,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -689,7 +732,15 @@
     },
     {
       "kind" : "text",
-      "text" : "<any "
+      "text" : "<"
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -727,7 +778,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundlea",
       "text" : "DocumentationBundle"
     },
     {
@@ -757,7 +808,15 @@
     },
     {
       "kind" : "text",
-      "text" : "]) -> ((any "
+      "text" : "]) -> (("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",

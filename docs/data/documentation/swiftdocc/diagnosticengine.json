@@ -117,7 +117,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:treatWarningsAsErrors:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:)"
       ],
       "title" : "Initializers"
     },
@@ -125,6 +125,9 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/diagnosticIDsWithErrorSeverity",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/diagnosticIDsWithWarningSeverity",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/diagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/filterLevel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/problems"
       ],
@@ -137,10 +140,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/add(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/clearDiagnostics()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-1xqdb",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-538ml",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-5rcke",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-98j6z",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/flush()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/hasConsumer(matching:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/remove(_:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/remove(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/willEmitDiagnostic(id:defaultSeverity:)"
       ],
       "title" : "Instance Methods"
     }
@@ -297,7 +303,15 @@
     },
     {
       "kind" : "text",
-      "text" : "(any "
+      "text" : "("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -348,13 +362,152 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticengine\/cleardiagnostics()"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/emit(_:)-1xqdb": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/diagnosticIDsWithErrorSeverity": {
   "abstract" : [
     {
-      "text" : "Dispatches a diagnostic to all subscribed consumers.",
+      "text" : "A list of diagnostic identifiers that are explicitly raised to an “error” severity.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnosticIDsWithErrorSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/diagnosticIDsWithErrorSeverity",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnosticIDsWithErrorSeverity",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/diagnosticidswitherrorseverity"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/diagnosticIDsWithWarningSeverity": {
+  "abstract" : [
+    {
+      "text" : "A list of diagnostic identifiers that are explicitly lowered to a “warning” severity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnosticIDsWithWarningSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/diagnosticIDsWithWarningSeverity",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnosticIDsWithWarningSeverity",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/diagnosticidswithwarningseverity"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/diagnostics": {
+  "abstract" : [
+    {
+      "text" : "A convenience accessor for retrieving all of the diagnostics this engine currently holds.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnostics"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/diagnostics",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/diagnostics"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/emit(_:)-1xqdb": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -389,13 +542,69 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticengine\/emit(_:)-1xqdb"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/emit(_:)-5rcke": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/emit(_:)-538ml": {
   "abstract" : [
     {
       "text" : "Dispatches multiple diagnostics to consumers.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "emit"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-538ml",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "emit(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/emit(_:)-538ml"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/emit(_:)-5rcke": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -430,10 +639,51 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticengine\/emit(_:)-5rcke"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/emit(_:)-98j6z": {
+  "abstract" : [
+    {
+      "text" : "Dispatches a diagnostic to all subscribed consumers.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "emit"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-98j6z",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "emit(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/emit(_:)-98j6z"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/filterLevel": {
   "abstract" : [
     {
-      "text" : "Determines which problems will be emitted to consumers.",
+      "text" : "Determines which diagnostics will be reported to consumers.",
       "type" : "text"
     }
   ],
@@ -526,7 +776,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": (any "
+      "text" : ": ("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -575,7 +833,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticengine\/hasconsumer(matching:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/init(filterLevel:treatWarningsAsErrors:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/init(filterLevel:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:)": {
   "abstract" : [
     {
       "text" : "Creates a new diagnostic engine instance with no consumers.",
@@ -623,23 +881,73 @@
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "diagnosticIDsWithWarningSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "diagnosticIDsWithErrorSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:treatWarningsAsErrors:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(filterLevel:treatWarningsAsErrors:)",
+  "title" : "init(filterLevel:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/init(filterlevel:treatwarningsaserrors:)"
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/init(filterlevel:treatwarningsaserrors:diagnosticidswithwarningseverity:diagnosticidswitherrorseverity:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/problems": {
   "abstract" : [
-    {
-      "text" : "A convenience accessor for retrieving all of the diagnostics this engine currently holds.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -696,7 +1004,15 @@
     },
     {
       "kind" : "text",
-      "text" : "(any "
+      "text" : "("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -715,17 +1031,86 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticengine\/remove(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/willEmitDiagnostic(id:defaultSeverity:)": {
   "abstract" : [
     {
-      "text" : "A diagnostic note is a simple string message that should appear somewhere in a document.",
+      "text" : "Determines whether or not the diagnostics engine will emit a diagnostic with the given ID or group ID.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "willEmitDiagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "defaultSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
+      "text" : "DiagnosticSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/willEmitDiagnostic(id:defaultSeverity:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "willEmitDiagnostic(id:defaultSeverity:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/willemitdiagnostic(id:defaultseverity:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -790,6 +1175,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

@@ -37,7 +37,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FeatureFlags.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L41"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

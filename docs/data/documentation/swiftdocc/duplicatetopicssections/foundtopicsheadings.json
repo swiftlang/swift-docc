@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The list of level-2 headings with the text “Topics” found in the document.",
+      "text" : "The list of second-level headings named “Topics” that the checker encountered while walking the the document.",
       "type" : "text"
     }
   ],
@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DuplicateTopicsSection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/DuplicateTopicsSection.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/DuplicateTopicsSection.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -142,15 +142,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections": {
   "abstract" : [
     {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "code" : "Document",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " may only have one level-2 “Topics” heading at the top level, since it serves as structured data for a documentation bundle’s hierarchy.",
+      "text" : "A checker that warns about multiple “Topics” sections.",
       "type" : "text"
     }
   ],
@@ -184,7 +176,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/foundTopicsHeadings": {
   "abstract" : [
     {
-      "text" : "The list of level-2 headings with the text “Topics” found in the document.",
+      "text" : "The list of second-level headings named “Topics” that the checker encountered while walking the the document.",
       "type" : "text"
     }
   ],

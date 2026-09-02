@@ -1,0 +1,401 @@
+{
+  "abstract" : [
+    {
+      "text" : "Configures the formatter to omit end tags for elements and situations where the end of the tag can be inferred from what comes after, according to the HTML specification.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options\/omitOptionalEndTags"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML13HTMLFormatterV7OptionsV19omitOptionalEndTagsAEvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "omitOptionalEndTags"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV",
+        "text" : "HTMLFormatter"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV7OptionsV",
+        "text" : "Options"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "HTMLFormatter.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLFormatter.swift#L67"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "omitOptionalEndTags"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "omitOptionalEndTags"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV",
+              "text" : "HTMLFormatter"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV7OptionsV",
+              "text" : "Options"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "<dl><dt>range<dd><p>The range in which to create a random value.<\/dl>"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "or combined with the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options\/prettyPrint",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " option:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "<dl>",
+            "  <dt>range",
+            "  <dd>",
+            "    <p>The range in which to create a random value.",
+            "<\/dl>"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/htmlformatter\/options\/omitoptionalendtags"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLFormatter": {
+  "abstract" : [
+    {
+      "text" : "A type that formats an hierarchy of HTML nodes into serialized HTML 5 data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HTMLFormatter"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HTMLFormatter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLFormatter",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlformatter"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLFormatter/Options": {
+  "abstract" : [
+    {
+      "text" : "Options that customizes aspects of the formatter’s output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HTMLFormatter.Options",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlformatter\/options"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLFormatter/Options/omitOptionalEndTags": {
+  "abstract" : [
+    {
+      "text" : "Configures the formatter to omit end tags for elements and situations where the end of the tag can be inferred from what comes after, according to the HTML specification.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "omitOptionalEndTags"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV",
+      "text" : "HTMLFormatter"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV7OptionsV",
+      "text" : "Options"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options\/omitOptionalEndTags",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "omitOptionalEndTags",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlformatter\/options\/omitoptionalendtags"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLFormatter/Options/prettyPrint": {
+  "abstract" : [
+    {
+      "text" : "Configures the formatter to “pretty print” the HTML hierarchy.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "prettyPrint"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV",
+      "text" : "HTMLFormatter"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13HTMLFormatterV7OptionsV",
+      "text" : "Options"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLFormatter\/Options\/prettyPrint",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "prettyPrint",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlformatter\/options\/prettyprint"
+}
+}
+}

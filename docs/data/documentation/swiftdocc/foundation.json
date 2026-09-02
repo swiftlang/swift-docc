@@ -33,12 +33,18 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Extended-Classes",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/FileManager"
+      ],
+      "title" : "Extended Classes"
+    },
+    {
       "anchor" : "Extended-Structures",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/URL"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data"
       ],
       "title" : "Extended Structures"
     }
@@ -114,9 +120,36 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/foundation\/data"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/Date": {
+"doc://SwiftDocC/documentation/SwiftDocC/Foundation/FileManager": {
   "abstract" : [
-
+    {
+      "text" : "Add compliance to ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManagerProtocol",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManager",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ",",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "most of the methods are already implemented in Foundation.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {
@@ -129,54 +162,22 @@
     },
     {
       "kind" : "identifier",
-      "preciseIdentifier" : "s:10Foundation4DateV",
-      "text" : "Date"
+      "preciseIdentifier" : "c:objc(cs)NSFileManager",
+      "text" : "FileManager"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/FileManager",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "Date"
+      "text" : "FileManager"
     }
   ],
   "role" : "symbol",
-  "title" : "Date",
+  "title" : "FileManager",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/date"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/URL": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/URL",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "URL"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "URL",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/url"
+  "url" : "\/documentation\/swiftdocc\/foundation\/filemanager"
 }
 }
 }

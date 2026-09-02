@@ -79,7 +79,23 @@
             },
             {
               "kind" : "text",
-              "text" : " = (["
+              "text" : " = ("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "items"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
@@ -102,6 +118,22 @@
               "text" : "], "
             },
             {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "isCompleted"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:Sb",
               "text" : "Bool"
@@ -111,14 +143,20 @@
               "text" : ", "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-              "text" : "NavigatorTree"
+              "kind" : "externalParam",
+              "text" : "_"
             },
             {
               "kind" : "text",
-              "text" : "."
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "error"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error",

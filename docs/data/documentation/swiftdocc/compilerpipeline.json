@@ -67,8 +67,9 @@
               "type" : "text"
             },
             {
-              "code" : "DocumentationContext\/InputsProvider",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " to discover the inputs from the user-provided command line arguments. These inputs are:",
@@ -217,7 +218,7 @@
             "├ Essentials",
             "│ ├ ActionManager.md",
             "│ ├ Action.md",
-            "│ ╰ Getting Started with SwiftDocCUtilities.md",
+            "│ ╰ Getting Started with SwiftDocC.md",
             "├ Migration to DocC",
             "│ ├ DocumentationContext.md",
             "│ ╰ ...",
@@ -578,6 +579,40 @@
   "title" : "DocumentationContext",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/InputsProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides inputs for a unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InputsProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/InputsProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InputsProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.InputsProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputsprovider"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode": {
   "abstract" : [

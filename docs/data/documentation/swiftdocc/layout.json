@@ -146,15 +146,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Layout\/description"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Layout\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Layout\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -345,28 +336,6 @@
   "title" : "Layout",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/layout"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Layout/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Layout\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/layout\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Layout/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Layout\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/layout\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Layout/description": {
   "abstract" : [

@@ -59,57 +59,11 @@
       },
       {
         "kind" : "text",
-        "text" : "("
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-        "text" : "SymbolGraph"
+        "text" : "(`Self`"
       },
       {
         "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-        "text" : "Symbol"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV",
-        "text" : "FunctionSignature"
-      },
-      {
-        "kind" : "text",
-        "text" : ", "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-        "text" : "SymbolGraph"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-        "text" : "Symbol"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV",
-        "text" : "FunctionSignature"
+        "text" : ", `Self`"
       },
       {
         "kind" : "text",
@@ -131,7 +85,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L747"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L764"
     },
     "role" : "symbol",
     "roleHeading" : "Operator",
@@ -183,30 +137,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-              "text" : "SymbolGraph"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-              "text" : "Symbol"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV",
-              "text" : "FunctionSignature"
+              "text" : ": `Self`"
             },
             {
               "kind" : "text",
@@ -218,30 +149,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-              "text" : "SymbolGraph"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-              "text" : "Symbol"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV",
-              "text" : "FunctionSignature"
+              "text" : ": `Self`"
             },
             {
               "kind" : "text",
@@ -354,6 +262,14 @@
     },
     {
       "kind" : "identifier",
+      "text" : "SymbolKit"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
       "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
       "text" : "SymbolGraph"
     },
@@ -420,57 +336,11 @@
     },
     {
       "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-      "text" : "SymbolGraph"
+      "text" : "(`Self`"
     },
     {
       "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-      "text" : "Symbol"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV",
-      "text" : "FunctionSignature"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-      "text" : "SymbolGraph"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-      "text" : "Symbol"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV",
-      "text" : "FunctionSignature"
+      "text" : ", `Self`"
     },
     {
       "kind" : "text",

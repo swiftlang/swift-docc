@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SupportedLanguage.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/SupportedLanguage.swift#L47"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/SupportedLanguage.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

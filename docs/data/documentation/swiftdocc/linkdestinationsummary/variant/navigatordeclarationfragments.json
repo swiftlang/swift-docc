@@ -48,21 +48,12 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:Sq",
-        "text" : "Optional"
+        "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+        "text" : "VariantValue"
       },
       {
         "kind" : "text",
         "text" : "<"
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-        "text" : "LinkDestinationSummary"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -81,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L245"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L207"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -116,26 +107,17 @@
               "text" : ": "
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/VariantValue",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:Sq",
-              "text" : "Optional"
+              "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+              "text" : "VariantValue"
             },
             {
               "kind" : "text",
               "text" : "<"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-              "text" : "LinkDestinationSummary"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments-swift.typealias",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
               "text" : "DeclarationFragments"
@@ -226,7 +208,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [
     {
-      "text" : "A summary of an element that you can link to from outside the documentation bundle.",
+      "text" : "A summary of an element that you can link to from outside the local documentation.",
       "type" : "text"
     }
   ],
@@ -257,7 +239,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/DeclarationFragments-swift.typealias": {
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/DeclarationFragments": {
   "abstract" : [
     {
       "text" : "The rendered fragments of a symbol’s declaration.",
@@ -278,7 +260,7 @@
       "text" : "DeclarationFragments"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments-swift.typealias",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -289,7 +271,7 @@
   "role" : "symbol",
   "title" : "LinkDestinationSummary.DeclarationFragments",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/declarationfragments-swift.typealias"
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/declarationfragments"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant": {
   "abstract" : [
@@ -325,6 +307,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/VariantValue": {
+  "abstract" : [
+    {
+      "text" : "A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the summarized element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantValue"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/VariantValue",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantValue"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkDestinationSummary.Variant.VariantValue",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/variantvalue"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/navigatorDeclarationFragments": {
   "abstract" : [
     {
@@ -359,21 +375,12 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sq",
-      "text" : "Optional"
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV0F5Valuea",
+      "text" : "VariantValue"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

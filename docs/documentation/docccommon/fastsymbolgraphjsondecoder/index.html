@@ -1,0 +1,138 @@
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>FastSymbolGraphJSONDecoder</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.88e02fc3.js"></script><script defer="defer" src="/swift-docc/js/index.df170685.js"></script><link href="/swift-docc/css/index.63be42cf.css" rel="stylesheet"><meta content="A custom JSON decoder for symbol graph files that focuses on performance and memory usage." name="description"/></head><body data-color-scheme="auto"><noscript><article>
+<section>
+    <ul>
+        <li>
+            <a href="../index.html">DocCCommon</a>
+        </li>
+        <li>FastSymbolGraphJSONDecoder</li>
+    </ul>
+    <p>Structure</p>
+    <h1>FastSymbolGraphJSONDecoder</h1>
+    <p>A custom JSON decoder for symbol graph files that focuses on performance and memory usage.</p>
+    <pre>
+        <code>struct FastSymbolGraphJSONDecoder</code>
+    </pre>
+</section>
+<h2>Overview</h2>
+<p>The decoder is designed around a single linear scan through the bytes of the JSON data in order to minimize unnecessary work. This means that elements needs to be decoded in the order the they appear in the JSON data and that to ignore unknown elements in the JSON data, the decoder still needs to parse them to know where that ignored element ends.</p>
+<p>The decoder also requires that all keys are static strings known at compile time, and compares their underlying raw bytes. This makes it unsuitable as a general purpose JSON decoder for arbitrary that needs to decode arbitrary structures, but it’s not an issue for decoding symbol graph data (or even other known structured that are known to use all ASCII keys that don’t require normalization).</p>
+<h2>Topics</h2>
+<h3>Essentials</h3>
+<p>Call the static <a href="decode(_:from:)/index.html">
+        <code>decode(_:from:)</code>
+    </a>
+     method to decode a <a href="../fastjsondecodable/index.html">
+        <code>FastJSONDecodable</code>
+    </a>
+     value.</p>
+<ul>
+    <li>
+        <a href="decode(_:from:)/index.html">
+            <code>static func decode&lt;Decodable&gt;(Decodable.Type, from: consuming Data) throws -&gt; Decodable</code>
+        </a>
+        <p>Decodes a value of the given type from the given JSON data.</p>
+    </li>
+    <li>
+        <a href="../fastjsondecodable/index.html">
+            <code>protocol FastJSONDecodable</code>
+        </a>
+        <p>A protocol for types that can be decoded using a <code>FastSymbolGraphJSONDecoder</code>
+            .</p>
+    </li>
+</ul>
+<h3>Implementing keyed decoding</h3>
+<ul>
+    <li>
+        <a href="descendintoobject()/index.html">
+            <code>func descendIntoObject() throws(DecodingError)</code>
+        </a>
+        <p>Advances the decoder past the opening curly brace (<code>{</code>
+            ) and prepares it to decode a series of values using <code>advanceToNextKey()</code>
+            .</p>
+    </li>
+    <li>
+        <a href="advancetonextkey()/index.html">
+            <code>func advanceToNextKey() throws(DecodingError) -&gt; Bool</code>
+        </a>
+        <p>Advances the decoder to just beyond the opening string delimiter of the next key.</p>
+    </li>
+    <li>
+        <a href="matchkey(_:byteoffset:)/index.html">
+            <code>func matchKey(StaticString, byteOffset: Int) -&gt; Bool</code>
+        </a>
+        <p>Checks if the decoder is currently pointing to a specific JSON key.</p>
+    </li>
+    <li>
+        <a href="ignorevalue()/index.html">
+            <code>func ignoreValue() throws(DecodingError)</code>
+        </a>
+        <p>Scans past the current value (regardless of its type) and advances the decoder’s state so that it can decode the next value.</p>
+    </li>
+</ul>
+<h3>Decoding individual values</h3>
+<ul>
+    <li>
+        <a href="decode(_:)-3mt2a/index.html">
+            <code>func decode(Bool.Type) throws(DecodingError) -&gt; Bool</code>
+        </a>
+        <p>Decodes a Boolean value and advances the decoder’s state.</p>
+    </li>
+    <li>
+        <a href="decode(_:)-6sm8t/index.html">
+            <code>func decode(Int.Type) throws(DecodingError) -&gt; Int</code>
+        </a>
+        <p>Decodes an integer value and advances the decoder’s state.</p>
+    </li>
+    <li>
+        <a href="decode(_:)-3d0lz/index.html">
+            <code>func decode(String.Type) throws(DecodingError) -&gt; String</code>
+        </a>
+        <p>Decodes a string and advances the decoder’s state.</p>
+    </li>
+    <li>
+        <a href="decode(_:)-833bn/index.html">
+            <code>func decode&lt;Value&gt;(Value.Type) throws(DecodingError) -&gt; Value</code>
+        </a>
+        <p>Decodes a decodable value and advances the decoder’s state.</p>
+    </li>
+    <li>
+        <a href="decode(_:)-4ejhc/index.html">
+            <code>func decode&lt;Value&gt;(Value?.Type) throws(DecodingError) -&gt; Value?</code>
+        </a>
+        <p>Decodes an optional decodable values and advances the decoder’s state.</p>
+    </li>
+    <li>
+        <a href="decode(_:)-51hfc/index.html">
+            <code>func decode&lt;Value&gt;([Value].Type) throws(DecodingError) -&gt; [Value]</code>
+        </a>
+        <p>Decodes an array of decodable values and advances the decoder’s state.</p>
+    </li>
+    <li>
+        <a href="decode(_:)-5ypwv/index.html">
+            <code>func decode&lt;Value&gt;([String : Value].Type) throws(DecodingError) -&gt; [String : Value]</code>
+        </a>
+        <p>Decodes a dictionary of decodable values and string keys and advances the decoder’s state.</p>
+    </li>
+</ul>
+<h3>Errors</h3>
+<ul>
+    <li>
+        <a href="makekeynotfounderror(_:)/index.html">
+            <code>func makeKeyNotFoundError(String) -&gt; DecodingError</code>
+        </a>
+        <p>Creates a key-not-found error for the given key and information derived from the decoder’s current state.</p>
+    </li>
+    <li>
+        <a href="maketypemismatcherror(_:)/index.html">
+            <code>func makeTypeMismatchError(Any.Type) -&gt; DecodingError</code>
+        </a>
+        <p>Creates a type-mismatch (or value-not-found) error for the given type and information derived from the decoder’s current state.</p>
+    </li>
+    <li>
+        <a href="makegenericdatacorruptederror()/index.html">
+            <code>func makeGenericDataCorruptedError() -&gt; DecodingError</code>
+        </a>
+        <p>Creates a generic data-corrupted error based on the decoder’s current state.</p>
+    </li>
+</ul>
+</article></noscript><div id="app"></div></body></html>

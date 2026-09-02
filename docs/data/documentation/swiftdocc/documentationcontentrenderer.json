@@ -103,8 +103,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/init(context:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/init(documentationContext:bundle:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/init(context:)"
       ],
       "title" : "Initializers"
     }
@@ -245,70 +244,6 @@
   "title" : "init(context:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontentrenderer\/init(context:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContentRenderer/init(documentationContext:bundle:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "documentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "bundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/init(documentationContext:bundle:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(documentationContext:bundle:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontentrenderer\/init(documentationcontext:bundle:)"
 }
 }
 }

@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The absolute path from the bundle to this topic, delimited by ",
+      "text" : "The absolute path to this topic, delimited by ",
       "type" : "text"
     },
     {
@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L185"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L186"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -188,7 +188,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/ResolvedTopicReference/path": {
   "abstract" : [
     {
-      "text" : "The absolute path from the bundle to this topic, delimited by ",
+      "text" : "The absolute path to this topic, delimited by ",
       "type" : "text"
     },
     {

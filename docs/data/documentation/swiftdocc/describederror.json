@@ -107,13 +107,14 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertServiceError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/PropertyListError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode\/MarkdownOutputNodeDecodingError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Error",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError",
@@ -140,14 +141,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/errorDescription"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/LocalizedError-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -282,17 +275,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/describederror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DescribedError/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/describederror\/localizederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DescribedError/errorDescription": {
   "abstract" : [
     {
@@ -331,37 +313,6 @@
   "title" : "errorDescription",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/describederror\/errordescription"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "enum"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "PropertyListError"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "PropertyListError"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationBundle.PropertyListError",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/propertylisterror"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
   "abstract" : [
@@ -439,6 +390,37 @@
   "title" : "DocumentationContext.ContextError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/PropertyListError": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/PropertyListError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.Inputs.PropertyListError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/propertylisterror"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error": {
   "abstract" : [
@@ -543,6 +525,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -603,6 +586,37 @@
   "title" : "JSONPatchApplier.Error",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkdownOutputNode/MarkdownOutputNodeDecodingError": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MarkdownOutputNodeDecodingError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkdownOutputNode\/MarkdownOutputNodeDecodingError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MarkdownOutputNodeDecodingError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MarkdownOutputNode.MarkdownOutputNodeDecodingError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markdownoutputnode\/markdownoutputnodedecodingerror"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Error": {
   "abstract" : [

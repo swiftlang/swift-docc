@@ -1,4 +1,15 @@
 {
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'analyze(_:children:source:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -65,7 +76,15 @@
       },
       {
         "kind" : "text",
-        "text" : "<any "
+        "text" : "<"
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
@@ -125,7 +144,11 @@
       },
       {
         "kind" : "text",
-        "text" : " : "
+        "text" : " : Markdown"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
       },
       {
         "kind" : "typeIdentifier",
@@ -144,7 +167,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HasOnlyKnownArguments.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasOnlyKnownArguments.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasOnlyKnownArguments.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -226,7 +249,15 @@
             },
             {
               "kind" : "text",
-              "text" : "<any "
+              "text" : "<"
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
@@ -287,7 +318,11 @@
             },
             {
               "kind" : "text",
-              "text" : " : "
+              "text" : " : Markdown"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
             },
             {
               "kind" : "typeIdentifier",
@@ -347,6 +382,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -477,6 +513,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -526,7 +563,15 @@
     },
     {
       "kind" : "text",
-      "text" : "<any "
+      "text" : "<"
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -586,7 +631,11 @@
     },
     {
       "kind" : "text",
-      "text" : " : "
+      "text" : " : Markdown"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

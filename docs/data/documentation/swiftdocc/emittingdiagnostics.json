@@ -60,7 +60,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/problems",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/diagnostics",
               "isActive" : true,
               "type" : "reference"
             },
@@ -70,31 +70,6 @@
             }
           ],
           "type" : "paragraph"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "Returning a diagnostic when a callback or a method expects it is straight-forward:",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "code" : [
-            "let explanation = \"Level-1 headings are reserved for titles.\"",
-            "let diagnostic = Diagnostic(",
-            "    source: sourceURL, ",
-            "    severity: .warning, ",
-            "    range: heading.range, ",
-            "    identifier: \"org.swift.docc.InvalidAdditionalTitle\", ",
-            "    summary: \"Invalid use of level-1 heading.\", ",
-            "    explanation: explanation)",
-            "",
-            "return Problem(diagnostic: diagnostic, possibleSolutions: [])"
-          ],
-          "syntax" : "swift",
-          "type" : "codeListing"
         }
       ],
       "kind" : "content"
@@ -113,6 +88,7 @@
       "anchor" : "Diagnostics-and-Analysis",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmarking"
       ],
@@ -120,6 +96,13 @@
     }
   ],
   "topicSections" : [
+    {
+      "anchor" : "Essentials",
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics"
+      ],
+      "title" : "Essentials"
+    },
     {
       "anchor" : "Diagnostics",
       "identifiers" : [
@@ -168,6 +151,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Adding-Diagnostics": {
+  "abstract" : [
+    {
+      "text" : "Display information to the developer about actionable issues with their documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Adding-Diagnostics",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding user-facing diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/adding-diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmarking": {
   "abstract" : [
@@ -287,15 +284,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote": {
   "abstract" : [
-    {
-      "text" : "A diagnostic note is a simple string message that should appear somewhere in a document.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -353,10 +348,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticseverity"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/problems": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/diagnostics": {
   "abstract" : [
     {
-      "text" : "A list of all the problems that was encountered while registering and processing the documentation bundles in this context.",
+      "text" : "A convenient accessor for the diagnostic engine’s list of diagnostics.",
       "type" : "text"
     }
   ],
@@ -371,7 +366,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "problems"
+      "text" : "diagnostics"
     },
     {
       "kind" : "text",
@@ -379,20 +374,20 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
     },
     {
       "kind" : "text",
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/problems",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/diagnostics",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "problems",
+  "title" : "diagnostics",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/problems"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/diagnostics"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Problem": {
   "abstract" : [
@@ -401,6 +396,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -430,15 +426,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Replacement": {
   "abstract" : [
-    {
-      "text" : "A textual replacement.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -465,15 +459,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Solution": {
   "abstract" : [
     {
-      "text" : "A solution to a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Problem",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "A possible solution to a problem or issue that’s reported about in a diagnostic.",
       "type" : "text"
     }
   ],

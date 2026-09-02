@@ -159,7 +159,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The base URL for in-bundle references.",
+                  "text" : "The base URL for local references.",
                   "type" : "text"
                 }
               ],

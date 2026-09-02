@@ -36,8 +36,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)-82m48"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)"
       ],
       "title" : "Initializers"
     },
@@ -45,8 +44,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)-7w4jp"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)"
       ],
       "title" : "Instance Methods"
     }
@@ -192,44 +190,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/array\/init(data:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/init(data:)-82m48": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "data"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SW",
-      "text" : "UnsafeRawBufferPointer"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)-82m48",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(data:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/array\/init(data:)-82m48"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/read(_:)": {
   "abstract" : [
 
@@ -310,6 +270,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sa9SwiftDocCs17FixedWidthIntegerRzlE4readyqd__qd__SWKXEKlF1RL_qd__mfp",
       "text" : "R"
     },
     {
@@ -326,6 +287,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sa9SwiftDocCs17FixedWidthIntegerRzlE4readyqd__qd__SWKXEKlF1RL_qd__mfp",
       "text" : "R"
     }
   ],
@@ -335,80 +297,6 @@
   "title" : "read(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/array\/read(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/read(_:)-7w4jp": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "read"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ">(("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SW",
-      "text" : "UnsafeRawBufferPointer"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "rethrows"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "R"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)-7w4jp",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "read(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/array\/read(_:)-7w4jp"
 }
 }
 }

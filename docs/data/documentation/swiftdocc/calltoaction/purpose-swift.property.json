@@ -39,15 +39,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC12CallToActionC",
-        "text" : "CallToAction"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC12CallToActionC7PurposeO",
         "text" : "Purpose"
       },
@@ -110,16 +101,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC12CallToActionC",
-              "text" : "CallToAction"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction\/Purpose-swift.enum",
@@ -280,15 +261,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC12CallToActionC",
-      "text" : "CallToAction"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

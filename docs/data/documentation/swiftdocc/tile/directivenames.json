@@ -124,15 +124,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames\/init(rawValue:)"
       ],
       "title" : "Initializers"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames\/Equatable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames\/RawRepresentable-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -245,28 +236,6 @@
   "title" : "Tile.DirectiveNames",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tile\/directivenames"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Tile/DirectiveNames/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/tile\/directivenames\/equatable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Tile/DirectiveNames/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/tile\/directivenames\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Tile/DirectiveNames/documentation": {
   "abstract" : [

@@ -39,15 +39,6 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@M@SwiftDocC@objc(cs)DocumentationSchemeHandler",
-        "text" : "DocumentationSchemeHandler"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC26DocumentationSchemeHandlerC016FallbackResponseE0a",
         "text" : "FallbackResponseHandler"
       },
@@ -63,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationSchemeHandler.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/DocumentationSchemeHandler.swift#L26"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/DocumentationSchemeHandler.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -96,16 +87,6 @@
             {
               "kind" : "text",
               "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationSchemeHandler",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@M@SwiftDocC@objc(cs)DocumentationSchemeHandler",
-              "text" : "DocumentationSchemeHandler"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationSchemeHandler\/FallbackResponseHandler",
@@ -244,15 +225,6 @@
     {
       "kind" : "text",
       "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@M@SwiftDocC@objc(cs)DocumentationSchemeHandler",
-      "text" : "DocumentationSchemeHandler"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
     },
     {
       "kind" : "typeIdentifier",

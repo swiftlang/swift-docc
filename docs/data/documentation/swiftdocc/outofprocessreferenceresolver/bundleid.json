@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The bundle identifier for the reference resolver in the other process.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'id' instead. This deprecated API will be removed after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -19,7 +24,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC29OutOfProcessReferenceResolverC8bundleIDAA19DocumentationBundleV10IdentifierVvp",
+    "externalID" : "s:9SwiftDocC29OutOfProcessReferenceResolverC8bundleIDAA20DocumentationContextC6InputsV10IdentifierVvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -39,8 +44,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-        "text" : "DocumentationBundle"
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+        "text" : "DocumentationContext"
       },
       {
         "kind" : "text",
@@ -48,7 +53,16 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+        "text" : "Inputs"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV10IdentifierV",
         "text" : "Identifier"
       }
     ],
@@ -59,7 +73,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L89"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L94"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -94,19 +108,29 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-              "text" : "DocumentationBundle"
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+              "text" : "DocumentationContext"
             },
             {
               "kind" : "text",
               "text" : "."
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+              "text" : "Inputs"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/Identifier",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV10IdentifierV",
               "text" : "Identifier"
             },
             {
@@ -163,7 +187,41 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
+  "abstract" : [
+    {
+      "text" : "The documentation context manages the in-memory model for the built documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs": {
   "abstract" : [
     {
       "text" : "A collection of the build inputs for a unit of documentation.",
@@ -181,23 +239,23 @@
     },
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "Inputs"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "Inputs"
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationBundle",
+  "title" : "DocumentationContext.Inputs",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/Identifier": {
   "abstract" : [
     {
       "text" : "A stable and locally unique identifier for a collection of documentation inputs.",
@@ -218,7 +276,7 @@
       "text" : "Identifier"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/Identifier",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -227,9 +285,9 @@
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationBundle.Identifier",
+  "title" : "DocumentationContext.Inputs.Identifier",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver": {
   "abstract" : [
@@ -267,11 +325,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/bundleID": {
   "abstract" : [
-    {
-      "text" : "The bundle identifier for the reference resolver in the other process.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -291,8 +347,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
     },
     {
       "kind" : "text",
@@ -300,7 +356,16 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
+      "text" : "Inputs"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV10IdentifierV",
       "text" : "Identifier"
     }
   ],

@@ -30,14 +30,6 @@
     "externalID" : "s:9SwiftDocC15MarkupContainerCACycfc",
     "fragments" : [
       {
-        "kind" : "keyword",
-        "text" : "convenience"
-      },
-      {
-        "kind" : "text",
-        "text" : " "
-      },
-      {
         "kind" : "identifier",
         "text" : "init"
       },
@@ -73,7 +65,7 @@
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "override"
+              "text" : "convenience"
             },
             {
               "kind" : "text",
@@ -81,7 +73,7 @@
             },
             {
               "kind" : "keyword",
-              "text" : "convenience"
+              "text" : "override"
             },
             {
               "kind" : "text",
@@ -195,14 +187,6 @@
     }
   ],
   "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
     {
       "kind" : "identifier",
       "text" : "init"
