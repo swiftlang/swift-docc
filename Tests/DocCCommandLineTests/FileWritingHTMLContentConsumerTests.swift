@@ -599,7 +599,7 @@ struct FileWritingHTMLContentConsumerTests {
 
 // MARK: Helpers
 
-private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
+private class TestOutputConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer {
     func consume(renderNode: RenderNode) throws { }
     func consume(assetsInInputs _: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }

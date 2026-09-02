@@ -12,7 +12,7 @@ import Foundation
 import SwiftDocC
 private import Markdown
 
-struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer {
+struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer {
     var targetFolder: URL
     var bundleRootFolder: URL?
     var fileManager: any FileManagerProtocol

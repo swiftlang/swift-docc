@@ -12,7 +12,7 @@ import Foundation
 @testable import SwiftDocC
 import XCTest
 
-class TestRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
+class TestRenderNodeOutputConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer {
     var renderNodes = Synchronized<[RenderNode]>([])
     
     func consume(renderNode: RenderNode) throws {

@@ -34,7 +34,7 @@ package enum ConvertActionConverter {
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
     package static func convert(
         context: DocumentationContext,
-        outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
+        outputConsumer: some _WillBeMadeNonPublicConvertOutputConsumer & ExternalNodeConsumer,
         htmlContentConsumer: (any HTMLContentConsumer)?,
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
