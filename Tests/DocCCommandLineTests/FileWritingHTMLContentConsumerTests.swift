@@ -598,7 +598,9 @@ struct FileWritingHTMLContentConsumerTests {
     
     @Test
     func preservesNoScriptTagForTutorials() async throws {
-        // Note: we need to change this test once we add support for emitting a static HTML representation of tutorials.
+        // Once we add support for emitting a static HTML representation of tutorials, this test will fail.
+        // That is expected, and the `<noscript>`-preserving behavior for tutorials is no longer necessary at that point. 
+        // When this happens we should update/rewrite this test to reflect the expected static HTML tutorial content instead. 
         
         let catalog = Folder(name: "Something.docc") {
             DataFile(name: "intro.png", data: Data())
