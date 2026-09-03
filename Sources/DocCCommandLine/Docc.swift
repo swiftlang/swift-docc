@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,7 +19,7 @@ private var subcommands: [any AsyncParsableCommand.Type] {
         Docc.Init.self,
         Docc.Merge.self,
     ]
-#if canImport(NIOHTTP1)
+#if PREVIEW_SERVER
     subcommands.insert(Docc.Preview.self, at: 1)
 #endif
     return subcommands
@@ -27,7 +27,7 @@ private var subcommands: [any AsyncParsableCommand.Type] {
 
 private var usage: String {
     var usage = "docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>] [<other-options>]"
-#if canImport(NIOHTTP1)
+#if PREVIEW_SERVER
     usage.append("\ndocc preview [<catalog-path>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>] [<other-options>]")
 #endif
     return usage

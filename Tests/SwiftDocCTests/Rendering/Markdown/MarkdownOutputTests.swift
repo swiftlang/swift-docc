@@ -54,6 +54,119 @@ struct MarkdownOutputTests {
     // MARK: Directive special processing
     
     @Test
+    func alternateDeclarationsAreIncluded() async throws {
+        
+        func platformDeclaration(name: String, type: String) -> SymbolGraph.Symbol.DeclarationFragments {
+            .init(declarationFragments: [
+                .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+                .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                .init(kind: .identifier, spelling: name, preciseIdentifier: nil),
+                .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "value", preciseIdentifier: nil),
+                .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier, spelling: type, preciseIdentifier: nil),
+                .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+            ])
+        }
+        
+        func functionDeclaration(alternate: Bool) -> SymbolGraph.Symbol.DeclarationFragments {
+            var fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+                .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+                .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                .init(kind: .identifier, spelling: "doSomething", preciseIdentifier: nil),
+                .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            ]
+            
+            if alternate {
+                fragments.append(contentsOf: [
+                    .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+                    .init(kind: .keyword, spelling: "async", preciseIdentifier: nil),
+                ])
+            } else {
+                fragments.append(contentsOf: [
+                    .init(kind: .externalParameter, spelling: "completionHandler", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                    .init(kind: .internalParameter, spelling: "handler", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                    .init(kind: .attribute, spelling: "@escaping ", preciseIdentifier: nil),
+                    .init(kind: .attribute, spelling: "@Sendable", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: " () -> ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+                ])
+            }
+            
+            return .init(declarationFragments: fragments)
+        }
+                        
+        func graph(platform: String, type: String) -> SymbolGraph {
+            makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                platform: .init(operatingSystem: .init(name: platform)),
+                symbols: [
+                    makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"]),
+                    makeSymbol(id: "markdown-symbol-variants-id", kind: .func, pathComponents: ["MarkdownSymbol", "varies(_:)"], otherMixins: [platformDeclaration(name: "varies", type: type)]),
+                    makeSymbol(id: "markdown-symbol-no-variants-id", kind: .func, pathComponents: ["MarkdownSymbol", "notVaries(_:)"], otherMixins: [platformDeclaration(name: "notVaries", type: "Int")]),
+                    makeSymbol(id: "markdown-symbol-alternates-id", kind: .func, pathComponents: ["MarkdownSymbol", "doSomething(completionHandler:)"], otherMixins: [
+                        functionDeclaration(alternate: false),
+                        SymbolGraph.Symbol.AlternateSymbols(alternateSymbols: [.init(declarationFragments: functionDeclaration(alternate: true))])
+                    ])
+                ],
+                relationships: [
+                    SymbolGraph.Relationship(source: "markdown-symbol-variants-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil),
+                    SymbolGraph.Relationship(source: "markdown-symbol-no-variants-id", target: "markdown-symbol-id", kind: .memberOf, targetFallback: nil)
+                ]
+            )
+        }
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "visionos-MarkdownOutput.symbols.json", content: graph(platform: "visionos", type: "UIColor")),
+            JSONFile(name: "macos-MarkdownOutput.symbols.json", content: graph(platform: "macos", type: "NSColor")),
+            JSONFile(name: "ios-MarkdownOutput.symbols.json", content: graph(platform: "ios", type: "UIColor")),
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/varies(_:)")
+        
+        let expectedDeclaration = """
+        iOS, iPadOS, Mac Catalyst, visionOS:
+        
+        ```
+        func varies(value: UIColor)
+        ```
+        
+        macOS:
+        
+        ```
+        func varies(value: NSColor)
+        ```
+        """
+        #expect(node.markdown.contains(expectedDeclaration))
+        
+        let (nonVariantNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/notVaries(_:)")
+        let expectedNonVariant = """
+        # notVaries(_:)
+        
+        ```
+        func notVaries(value: Int)
+        ```
+        """
+        #expect(nonVariantNode.markdown.contains(expectedNonVariant))
+        
+        let (alternateNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/doSomething(completionHandler:)")
+        
+        let expectedVariantDeclarations = """
+        ```
+        func doSomething(completionHandler handler: @escaping @Sendable () -> Void)
+        ```
+
+        ```
+        func doSomething() async
+        ```
+        """
+        #expect(alternateNode.markdown.contains(expectedVariantDeclarations))
+    }
+    
+    @Test
     func rowsAndColumnsAreRenderedAsParagraphs() async throws {
         
         let catalog = catalog(files: [
@@ -1737,16 +1850,22 @@ struct MarkdownOutputTests {
         
         
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalSubclass")
-        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(related.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == .inheritsFrom
-        }))
+        let inheritsFrom = MarkdownOutputManifest.Relationship(
+            sourceIdentifier: "/documentation/MarkdownOutput/LocalSubclass",
+            relationshipType: .relatedSymbol,
+            subtype: .inheritsFrom,
+            targetIdentifier: "/documentation/MarkdownOutput/LocalSuperclass"
+        )
+        #expect(manifest.relationships.contains(inheritsFrom))
         
         let (_, parentManifest) = try await markdownOutput(catalog: catalog, path: "LocalSuperclass")
-        let parentRelated = parentManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(parentRelated.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == .inheritedBy
-        }))
+        let inheritedBy = MarkdownOutputManifest.Relationship(
+            sourceIdentifier: "/documentation/MarkdownOutput/LocalSuperclass",
+            relationshipType: .relatedSymbol,
+            subtype: .inheritedBy,
+            targetIdentifier: "/documentation/MarkdownOutput/LocalSubclass"
+        )
+        #expect(parentManifest.relationships.contains(inheritedBy))
     }
         
     @Test
@@ -1769,23 +1888,32 @@ struct MarkdownOutputTests {
         ])
         
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
-        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(related.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == .conformsTo
-        }))
+        let conformsTo = MarkdownOutputManifest.Relationship(
+            sourceIdentifier: "/documentation/MarkdownOutput/LocalConformer",
+            relationshipType: .relatedSymbol,
+            subtype: .conformsTo,
+            targetIdentifier: "/documentation/MarkdownOutput/LocalProtocol"
+        )
+        #expect(manifest.relationships.contains(conformsTo))
         
         let (_, protocolManifest) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
-        let protocolRelated = protocolManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        #expect(protocolRelated.contains(where: {
-            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == .conformingTypes
-        }))
+        let conformingTypes = MarkdownOutputManifest.Relationship(
+            sourceIdentifier: "/documentation/MarkdownOutput/LocalProtocol",
+            relationshipType: .relatedSymbol,
+            subtype: .conformingTypes,
+            targetIdentifier: "/documentation/MarkdownOutput/LocalConformer"
+        )
+        #expect(protocolManifest.relationships.contains(conformingTypes))
         
         let (_, externalManifest) = try await markdownOutput(catalog: catalog, path: "ExternalConformer")
-        let externalRelated = externalManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         // Unresolved symbol should use the fallback identifier
-        #expect(externalRelated.contains(where: {
-            $0.targetIdentifier == "Swift.Hashable" && $0.subtype == .conformsTo
-        }))
+        let externalConformsTo = MarkdownOutputManifest.Relationship(
+            sourceIdentifier: "/documentation/MarkdownOutput/ExternalConformer",
+            relationshipType: .relatedSymbol,
+            subtype: .conformsTo,
+            targetIdentifier: "Swift.Hashable"
+        )
+        #expect(externalManifest.relationships.contains(externalConformsTo))
     }
 }
 

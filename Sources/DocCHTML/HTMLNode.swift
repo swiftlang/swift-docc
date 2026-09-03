@@ -57,6 +57,17 @@ package struct HTMLNode: Sendable {
             case .element, .voidElement: false
         }
     }
+    
+    mutating func _addAttributes(_ newAttributes: [Attribute]) {
+        switch _storage {
+        case .text:
+            return
+        case .element(let tag, let attributes, let contents):
+            _storage = .element(tag, attributes: attributes + newAttributes, contents: contents)
+        case .voidElement(let tag, let attributes):
+            _storage = .voidElement(tag, attributes: attributes + newAttributes)
+        }
+    }
 }
 
 extension HTMLNode._Tag {

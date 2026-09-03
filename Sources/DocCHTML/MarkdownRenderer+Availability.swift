@@ -1,19 +1,12 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
-
-#if canImport(FoundationXML)
-// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
-package import FoundationXML
-#else
-package import Foundation
-#endif
 
 package extension MarkdownRenderer {
     /// Information about the versions that a piece of API is available for a given platform.
@@ -36,8 +29,8 @@ package extension MarkdownRenderer {
     }
     
     /// Creates an HTML element that describes the versions that a piece of API is available for the platforms described in the given availability information.
-    func availability(_ info: [AvailabilityInfo]) -> XMLNode {
-        let items: [XMLNode] = info.map {
+    func availability(_ info: [AvailabilityInfo]) -> HTMLNode {
+        let items: [HTMLNode] = info.map {
             var text = $0.name
             
             let description: String
@@ -53,23 +46,22 @@ package extension MarkdownRenderer {
                 description = "Available on \($0.name)"
             }
             
-            var attributes = [
-                "aria-label": "\(text), \(description)",
-                "title": description
+            var attributes: [HTMLNode.Attribute] = [
+                .init(name: "aria-label", value: "\(text), \(description)"),
+                .title(description),
             ]
             if $0.isBeta {
-                attributes["class"] = "beta"
+                attributes.insert(.class("beta"),       at: 1)
             } else if $0.deprecated != nil {
-                attributes["class"] = "deprecated"
+                attributes.insert(.class("deprecated"), at: 1)
             }
             
-            return .element(named: "li", children: [.text(text)], attributes: goal == .richness ? attributes : [:])
+            return li(
+                attributes: goal == .richness ? attributes : [],
+                contents: [.text(text)]
+            )
         }
         
-        return .element(
-            named: "ul",
-            children: items,
-            attributes: ["id": "availability"]
-        )
+        return ul(attributes: [.id("availability")], contents: items)
     }
 }

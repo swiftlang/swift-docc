@@ -595,11 +595,157 @@ struct FileWritingHTMLContentConsumerTests {
         </html>
         """)
     }
+    
+    @Test
+    func preservesNoScriptTagForTutorials() async throws {
+        // Once we add support for emitting a static HTML representation of tutorials, this test will fail.
+        // That is expected, and the `<noscript>`-preserving behavior for tutorials is no longer necessary at that point. 
+        // When this happens we should update/rewrite this test to reflect the expected static HTML tutorial content instead. 
+        
+        let catalog = Folder(name: "Something.docc") {
+            DataFile(name: "intro.png", data: Data())
+            DataFile(name: "project.zip", data: Data())
+            
+            TextFile(name: "TableOfContents.tutorial", utf8Content: """
+            @Tutorials(name: "Some subject for these tutorials") {
+                @Intro(title: "Title of the table of contents page") {
+                    One or more paragraphs that introduce this collection of tutorials.
+                }
+                @Chapter(name: "Chapter Name") {
+                    @Image(source: "intro.png", alt: "Some accessible description of the image")
+
+                    @TutorialReference(tutorial: "doc:First")
+                }
+            }
+            """)
+            
+            TextFile(name: "First.tutorial", utf8Content: """
+            @Tutorial(time: 20, projectFiles: project.zip) {
+                @Intro(title: "Title of the first tutorial") {
+                    One or more paragraphs that introduce this specific tutorial.
+                }
+                @Section(title: "First section") {
+                    @ContentAndMedia {
+                        Some tutorial content
+                    }
+                    @Steps {}
+                }
+                @Assessments {
+                    @MultipleChoice {
+                        Some question.
+                                          
+                        @Choice(isCorrect: true) {
+                            The correct answer.
+
+                            @Justification {
+                                An explanation of why this is the correct answer.
+                            }
+                        }
+                        @Choice(isCorrect: false) {
+                            An incorrect answer.
+
+                            @Justification {
+                                An explanation of why this is not the correct answer.
+                            }
+                        }
+                    }
+                }
+            }
+            """)
+        }
+        
+        let htmlTemplate = TextFile(name: "index.html", utf8Content: """
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <link rel="icon" href="/favicon.ico" />
+            <title>Documentation</title>
+            <script>var baseUrl = "/"</script>
+          </head>
+          <body>
+            <noscript>
+              <p>Some existing information inside the no script tag</p>
+            </noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """)
+        
+        let fileSystem = try TestFileSystem {
+            Folder(name: "path") {
+                Folder(name: "to") {
+                    catalog
+                }
+            }
+            Folder(name: "template") {
+                htmlTemplate
+            }
+            Folder(name: "output-dir") {}
+        }
+        
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
+        
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: .init())
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let htmlConsumer = try FileWritingHTMLContentConsumer(
+            targetFolder: URL(fileURLWithPath: "/output-dir"),
+            fileManager: fileSystem,
+            htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
+            customHeader: nil,
+            customFooter: nil,
+            prettyPrintOutput: true
+        )
+        
+        try await ConvertActionConverter.convert(
+            context: context,
+            outputConsumer: TestOutputConsumer(),
+            htmlContentConsumer: htmlConsumer,
+            sourceRepository: nil,
+            emitDigest: false,
+            documentationCoverageOptions: .noCoverage
+        )
+        
+        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/tutorials/tableofcontents/index.html")), matches: """
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <link rel="icon" href="/favicon.ico" />
+            <title>Title of the table of contents page</title>
+            <script>var baseUrl = "/"</script>
+          <meta content="One or more paragraphs that introduce this collection of tutorials." name="description"></head>
+          <body>
+            <noscript>
+              <p>Some existing information inside the no script tag</p>
+            </noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """)
+        
+        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/tutorials/something/first/index.html")), matches: """
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <link rel="icon" href="/favicon.ico" />
+            <title>Title of the first tutorial</title>
+            <script>var baseUrl = "/"</script>
+          <meta content="One or more paragraphs that introduce this specific tutorial." name="description"></head>
+          <body>
+            <noscript>
+              <p>Some existing information inside the no script tag</p>
+            </noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """)
+    }
 }
 
 // MARK: Helpers
 
-private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
+private class TestOutputConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer {
     func consume(renderNode: RenderNode) throws { }
     func consume(assetsInInputs _: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }

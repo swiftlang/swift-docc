@@ -368,7 +368,7 @@ package func li(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<main>` element.
-func main(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func main(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     ._element(.main, attributes: attributes, contents: contents)
 }
 
@@ -1119,7 +1119,7 @@ func dataList(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<fieldset>` element.
-func fieldSet(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func fieldSet(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     ._element(.fieldset, attributes: attributes, contents: contents)
 }
 
@@ -1145,7 +1145,7 @@ func form(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<input>` element.
-func input(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
+package func input(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.input, attributes: attributes)
 }
 
@@ -1157,7 +1157,7 @@ func input(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<label>` element.
-func label(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func label(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     ._element(.label, attributes: attributes, contents: contents)
 }
 
@@ -1170,7 +1170,7 @@ func label(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<legend>` element.
-func legend(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func legend(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     ._element(.legend, attributes: attributes, contents: contents)
 }
 

@@ -26,8 +26,28 @@ extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
     }
 }
 
+extension Dictionary where Key == [PlatformName?] {
+    /// Adds any fallback platforms to the platforms in the key and sorts them by priority.
+    /// - Returns: A sorted array of platforms / `Value` tuples.
+    func expandingPlatformsAndSorting() -> [(Key, Value)] {
+        map { platforms, value in
+            (PlatformName.addingFallbacks(platforms)
+                .sorted { PlatformName.areInIncreasingOrder($0?.rawValue, $1?.rawValue) },
+            value)
+        }
+        .sorted { PlatformName.areInIncreasingOrder($0.0.first??.rawValue, $1.0.first??.rawValue) }
+    }
+}
+
 extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
     func renderDeclarationTokens() -> [DeclarationRenderSection.Token] {
         map { .init(fragment: $0, identifier: nil) }
+    }
+}
+
+extension SymbolGraph.Symbol.DeclarationFragments {
+    /// The declaration fragments represented as text
+    func spelling() -> String {
+        declarationFragments.map { $0.spelling }.joined()
     }
 }

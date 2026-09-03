@@ -8,6 +8,12 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if os(macOS) || os(iOS)
+// When we can require macOS 15.0 we can remove a custom type and use 'Synchronization.Mutex' directly (see Mutex.swift)
+#else
+private import Synchronization
+#endif
+
 /// A programming language, for example "Swift" or "Objective-C".
 public struct SourceLanguage: Hashable, Codable, Comparable, Sendable, CustomDebugStringConvertible {
     /// Using only an 8-bit value as an identifier technically limits a single DocC execution to 256 different languages.

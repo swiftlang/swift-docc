@@ -13,7 +13,6 @@ import Testing
 @testable import DocCHTML
 import DocCCommon
 
-extension DocCHTMLTestSuites {
 struct HTMLFormatterTests {
     
     @Test
@@ -441,7 +440,6 @@ struct HTMLFormatterTests {
         </ul>
         """)
     }
-}
 }
 
 private func htmlString(for element: HTMLNode, options: HTMLFormatter.Options = []) -> String {

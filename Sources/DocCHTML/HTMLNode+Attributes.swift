@@ -334,7 +334,7 @@ extension HTMLNode {
         package static func referrerPolicy(_ value: ReferrerPolicy) -> Attribute { .init(name: "referrerpolicy", value: value.rawValue) }
 
         /// A list of relationships between the current document and the `<a>` element's linked destination resource.
-        package static func rel(_ relationships: [Rel]) -> Attribute { .init(name: "rel", value: relationships.map(\.rawValue).joined(separator: " ")) }
+        package static func rel(_ relationships: Rel...) -> Attribute { .init(name: "rel", value: relationships.map(\.rawValue).joined(separator: " ")) }
 
         /// An indication whether or not the`<input>`, `<select>`, or `<textarea>` element is required to be filled out.
         package static let required = Attribute(name: "required", value: "") // A "boolean" attribute
@@ -397,7 +397,7 @@ extension HTMLNode {
         package static func srcLang(_ value: String) -> Attribute { .init(name: "srclang", value: value) } 
 
         /// A list of one or more resource URLs and their descriptors for the `<img>` or `<source>` element.
-        package static func srcSet(_ urlStrings: [String]) -> Attribute { .init(name: "srcset", value: urlStrings.joined(separator: " ")) }
+        package static func srcSet(_ urlStrings: [String]) -> Attribute { .init(name: "srcset", value: urlStrings.joined(separator: ", ")) }
 
         /// The number of the `<ol>` element's first list item.
         package static func start(_ number: Int) -> Attribute { .init(name: "start", value: number.description) }

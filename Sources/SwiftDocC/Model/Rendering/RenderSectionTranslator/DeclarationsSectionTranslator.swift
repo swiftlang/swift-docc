@@ -188,26 +188,6 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return declarations
             }
 
-            /// Returns the given platforms with any missing fallback platforms added.
-            ///
-            /// This function uses the centralized `DefaultAvailability.fallbackPlatforms` mapping to ensure
-            /// consistency with platform expansion logic used throughout the codebase.
-            ///
-            /// For example, when iOS is present in the platforms array, this function adds iPadOS and Mac Catalyst
-            /// if they are not already included.
-            ///
-            /// - Parameter platforms: The original platforms array.
-            /// - Returns: The platforms array with fallback platforms added where applicable.
-            func expandPlatformsWithFallbacks(_ platforms: [PlatformName?]) -> [PlatformName?] {
-                guard !platforms.isEmpty else { return platforms }
-
-                // Add fallback platforms if the platform is missing but the fallback is present
-                let fallbacks = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback in
-                    platforms.contains(fallback) && !platforms.contains(platform) ? platform : nil
-                }
-                return platforms + fallbacks
-            }
-
             var declarations: [DeclarationRenderSection] = []
             let renderLanguageIDs = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
@@ -219,7 +199,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 .declarationFragments.flatMap(preProcessFragment(_:))
             for pair in declaration {
                 let (platforms, declaration) = pair
-                let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
+                let expandedPlatforms = PlatformName.addingFallbacks(platforms)
                 let platformNames = expandedPlatforms.sorted { PlatformName.areInIncreasingOrder($0?.rawValue, $1?.rawValue) }
 
                 let renderedTokens: [DeclarationRenderSection.Token]
@@ -268,7 +248,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             if let alternateDeclarations = symbol.alternateDeclarationVariants[trait] {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
-                    let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
+                    let expandedPlatforms = PlatformName.addingFallbacks(platforms)
                     let platformNames = expandedPlatforms.sorted { PlatformName.areInIncreasingOrder($0?.rawValue, $1?.rawValue) }
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
