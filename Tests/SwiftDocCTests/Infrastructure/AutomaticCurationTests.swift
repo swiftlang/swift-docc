@@ -10,6 +10,7 @@
 
 import Foundation
 import XCTest
+import Testing
 @testable import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
@@ -1371,5 +1372,52 @@ class AutomaticCurationTests: XCTestCase {
         // Verify that the articles are sorted by title, not by file name
         XCTAssertEqual(titles, ["A Article", "a Article2", "B Article", "b Article2", "C Article", "c Article2", "k Article", "Z Article"], 
                       "Articles should be sorted by title, not by file name")
+    }
+}
+
+@Suite
+struct AutomaticCurationTests_new {
+    // This verifies determinism in a previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // If you suspect that your changes might affect this test,
+    // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
+    @Test
+    func memberIsNotAutoCuratedWhenCanonicalContainerIsAmongMultipleNearestContainers() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(id: "s:Foo", kind: .class, pathComponents: ["Foo"]),
+                    makeSymbol(id: "s:Bar", kind: .class, pathComponents: ["Bar"]),
+                    makeSymbol(id: "s:Bar:someMethod", kind: .method, pathComponents: ["Bar", "someMethod()"]),
+                ],
+                relationships: [
+                    .init(source: "s:Bar:someMethod", target: "s:Bar", kind: .memberOf, targetFallback: nil),
+                ]
+            )),
+            TextFile(name: "APICollection.md", utf8Content: """
+            # Some API collection
+
+            ## Topics
+            - ``Bar/someMethod()``
+            """),
+            TextFile(name: "Foo.md", utf8Content: """
+            # ``Foo``
+
+            ## Topics
+            - <doc:APICollection>
+            """),
+            TextFile(name: "Bar.md", utf8Content: """
+            # ``Bar``
+
+            ## Topics
+            - <doc:APICollection>
+            """),
+        ])
+
+        let context = try await load(catalog: catalog)
+
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let memberNode = try #require(context.topicGraph.nodes[moduleReference.appendingPath("Bar/someMethod()")])
+        #expect(!memberNode.shouldAutoCurateInCanonicalLocation, "someMethod() is already curated under its canonical container Bar via the API collection, so it must not also be auto-curated under Bar")
     }
 }

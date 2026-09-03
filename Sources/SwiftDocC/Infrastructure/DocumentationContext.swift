@@ -2463,109 +2463,140 @@ public class DocumentationContext {
         
         var crawler = DocumentationCurator(in: self, initial: initial)
 
-        for reference in references {
+        // First, crawl the hierarchy to add all the curation edges to the topic graph.
+        var curationRelationships: [(container: ResolvedTopicReference, descendant: ResolvedTopicReference)] = []
+        for reference in references.sorted(by: { $0.absoluteString < $1.absoluteString }) {
             try crawler.crawlChildren(
                 of: reference,
                 relateNodes: { container, descendant in
                     topicGraph.unsafelyAddEdge(source: container, target: descendant)
-                    
-                    guard topicGraph.nodes[descendant]?.shouldAutoCurateInCanonicalLocation == true else {
-                        // Descendant is already marked to be removed from automatic curation.
-                        return
-                    }
-                    
-                    // An inner function called below
-                    func stopAutoCuratingDescendant() {
-                        topicGraph.nodes[descendant]?.shouldAutoCurateInCanonicalLocation = false
-                    }
-                    
-                    guard let (canonicalContainer, counterpartContainer) = linkResolver.localResolver.nearestContainers(ofSymbol: descendant) else {
-                        // Any curation of a non-symbol removes it from automatic curation
-                        stopAutoCuratingDescendant()
-                        return
-                    }
-                    
-                    // For symbols we only stop automatic curation if they are curated within their canonical container's sub-hierarchy
-                    // or if a top-level symbol is curated under another top-level symbol (more on that below).
-                    //
-                    // For example, curating a member under an API collection within the container removes the member from automatic curation:
-                    //  ┆
-                    //  ├─SomeClass
-                    //  │ └─API Collection
-                    //  │   └─SomeClass/someMethod()  ◀︎━━ won't auto curate
-                    //
-                    // However, curating a member outside under another container _doesn't_ remove it from automatic curation:
-                    //  ┆
-                    //  ├─Other Container
-                    //  │ └─SomeClass/someMethod()  ◀︎━━  will still auto curate under `SomeClass`
-                    //  ├─SomeClass
-                    //
-                    // The same applies if the authored curation location is a another member of the canonical container:
-                    //  ┆
-                    //  ├─SomeClass
-                    //  │ └─SomeClass/SomeInnerClass
-                    //  │   └─SomeClass/someMethod()  ◀︎━━ will still auto curate under `SomeClass`
-                    //
-                    // Top-level symbols curated under other top-level is an exception to this rule.
-                    //  ┆
-                    //  ├─SomeClass
-                    //  │ └─OtherTopLevelClass  ◀︎━━ won't auto curate because it's top-level.
-                    //
-                    // The reason for this exception is to allow developers to group top-level types under one-another without requiring an API collection.
-                    // For example, in DocC one could curate `DiagnosticConsumer`, `DiagnosticFormattingOptions`, and `Diagnostic` under `DiagnosticEngine`,
-                    // treating the `DiagnosticEngine` as the top-level topic for all diagnostic related types.
-                    
-                    
-                    // To determine if `container` exists in the curated symbol's canonical container's sub-hierarchy,
-                    // first find its nearest container symbol (in case `container` is a series of API collections).
-                    //
-                    // If the `container` is a symbol, this returns the container.
-                    guard let nearestSymbolContainer = topicGraph.reverseEdgesGraph
-                        .breadthFirstSearch(from: container)
-                        .first(where: { topicGraph.nodes[$0]?.kind.isSymbol == true })
-                    else {
-                        // The container doesn't exist in the same module as the curated symbol.
-                        // Continue to automatically curate the descendant under its canonical container.
-                        return
-                    }
-                    
-                    if nearestSymbolContainer == canonicalContainer || nearestSymbolContainer == counterpartContainer {
-                        // The descendant is curated in its canonical container (in either language representation)
-                        stopAutoCuratingDescendant()
-                        return
-                    }
-                    
-                    // An inner function called below
-                    func isModule(_ reference: ResolvedTopicReference) -> Bool {
-                        topicGraph.nodes[reference]?.kind == .module
-                    }
-                    
-                    if isModule(canonicalContainer) || counterpartContainer.map(isModule) == true {
-                        guard let curationLocationContainers = linkResolver.localResolver.nearestContainers(ofSymbol: nearestSymbolContainer) else {
-                            assertionFailure("""
-                                Unexpectedly didn't find any canonical containers for symbol \(nearestSymbolContainer.absoluteString.singleQuoted).
-                                Every non-module symbol should have a canonical container.
-                                """)
-                            return
-                        }
-                        
-                        if canonicalContainer   == curationLocationContainers.main        ||
-                           canonicalContainer   == curationLocationContainers.counterpart ||
-                           counterpartContainer == curationLocationContainers.main        ||
-                           counterpartContainer == curationLocationContainers.counterpart && counterpartContainer != nil
-                        {
-                            // The descendant is a top-level symbol, curated under another top-level symbol in the same module
-                            stopAutoCuratingDescendant()
-                            return
-                        }
-                    }
+                    curationRelationships.append((container, descendant))
                 }
             )
         }
-        
+
+        // Then, decide which curated descendants should stop being automatically curated in their canonical location.
+        // Doing this _after_ the topic graph is fully built ensures that the decision does not depend on the traversal order of the containers.
+        for (container, descendant) in curationRelationships {
+            skipAutomaticCurationIfRedundant(of: descendant, under: container)
+        }
+
         diagnosticEngine.emit(crawler.diagnostics)
         
         return crawler.curatedNodes
+    }
+
+    /// Stops automatic curation of the given descendant under its canonical container if it is already curated within the canonical container's sub-hierarchy.
+    ///
+    /// - Parameters:
+    ///   - descendant: A reference that was found curated under `container`.
+    ///   - container: The location where `descendant` was curated.
+    private func skipAutomaticCurationIfRedundant(of descendant: ResolvedTopicReference, under container: ResolvedTopicReference) {
+        guard topicGraph.nodes[descendant]?.shouldAutoCurateInCanonicalLocation == true else {
+            // Descendant is already marked to be removed from automatic curation.
+            return
+        }
+
+        // An inner function called below
+        func stopAutoCuratingDescendant() {
+            topicGraph.nodes[descendant]?.shouldAutoCurateInCanonicalLocation = false
+        }
+
+        guard let (canonicalContainer, counterpartContainer) = linkResolver.localResolver.nearestContainers(ofSymbol: descendant) else {
+            // Any curation of a non-symbol removes it from automatic curation
+            stopAutoCuratingDescendant()
+            return
+        }
+
+        // For symbols, we only stop automatic curation if they are curated within their canonical container's sub-hierarchy
+        // or if a top-level symbol is curated under another top-level symbol (more on that below).
+        //
+        // For example, curating a member under an API collection within the container removes the member from automatic curation:
+        //  ┆
+        //  ├─SomeClass
+        //  │ └─API Collection
+        //  │   └─SomeClass/someMethod()  ◀︎━━ won't auto curate
+        //
+        // However, curating a member outside under another container _doesn't_ remove it from automatic curation:
+        //  ┆
+        //  ├─Other Container
+        //  │ └─SomeClass/someMethod()  ◀︎━━  will still auto curate under `SomeClass`
+        //  ├─SomeClass
+        //
+        // The same applies if the authored curation location is another member of the canonical container:
+        //  ┆
+        //  ├─SomeClass
+        //  │ └─SomeClass/SomeInnerClass
+        //  │   └─SomeClass/someMethod()  ◀︎━━ will still auto curate under `SomeClass`
+        //
+        // Top-level symbols curated under other top-level symbols are an exception to this rule.
+        //  ┆
+        //  ├─SomeClass
+        //  │ └─OtherTopLevelClass  ◀︎━━ won't auto curate because it's top-level.
+        //
+        // The reason for this exception is to allow developers to group top-level types under one-another without requiring an API collection.
+        // For example, in DocC one could curate `DiagnosticConsumer`, `DiagnosticFormattingOptions`, and `Diagnostic` under `DiagnosticEngine`,
+        // treating the `DiagnosticEngine` as the top-level topic for all diagnostic related types.
+
+        // To determine if `container` exists in the curated symbol's canonical container's sub-hierarchy,
+        // first find the nearest container symbols (in case `container` is a series of API collections).
+        // If the canonical container is one of the nearest symbols, then the current container is in the sub-hierarchy.
+        //
+        // There can be more than one nearest container symbol at the same distance in the topic graph.
+        // In such cases, we check if any of the nearest symbols are the canonical container.
+        // For example, consider the below topic graph:
+        //
+        // Foo (symbol) ──────────────┐
+        //                            ▼
+        // Bar (symbol) ──────▶ API collection ──────▶ Bar/someMethod()
+        //                                             ~~~~~~~~~~~~~~~~
+        //
+        // In this case, if we would like to check whether `someMethod()` must be auto-curated,
+        // we check the nearest container symbols for its container that curates it (API collection).
+        // Both `Foo` and `Bar` are one edge away, and `Bar` is the canonical container of `someMethod()`.
+        // Hence, it is transitively curated under its canonical container, and we do not auto-curate it.
+        let nearestSymbolContainers = topicGraph.reverseEdgesGraph
+            .nearestNodes(from: container, matching: { topicGraph.nodes[$0]?.kind.isSymbol == true })
+
+        guard !nearestSymbolContainers.isEmpty else {
+            // The container doesn't exist in the same module as the curated symbol.
+            // Continue to automatically curate the descendant under its canonical container.
+            return
+        }
+
+        if nearestSymbolContainers.contains(canonicalContainer)
+            || counterpartContainer.map(nearestSymbolContainers.contains) == true {
+            // The descendant is transitively curated in its canonical container (in either language representation)
+            stopAutoCuratingDescendant()
+            return
+        }
+
+        // An inner function called below
+        func isModule(_ reference: ResolvedTopicReference) -> Bool {
+            topicGraph.nodes[reference]?.kind == .module
+        }
+
+        if isModule(canonicalContainer) || counterpartContainer.map(isModule) == true {
+            for nearestSymbolContainer in nearestSymbolContainers {
+                guard let curationLocationContainers = linkResolver.localResolver.nearestContainers(ofSymbol: nearestSymbolContainer) else {
+                    assertionFailure("""
+                        Unexpectedly didn't find any canonical containers for symbol \(nearestSymbolContainer.absoluteString.singleQuoted).
+                        Every non-module symbol should have a canonical container.
+                        """)
+                    continue
+                }
+
+                if canonicalContainer   == curationLocationContainers.main        ||
+                   canonicalContainer   == curationLocationContainers.counterpart ||
+                   counterpartContainer == curationLocationContainers.main        ||
+                   counterpartContainer == curationLocationContainers.counterpart && counterpartContainer != nil
+                {
+                    // The descendant is a top-level symbol, curated under another top-level symbol in the same module
+                    stopAutoCuratingDescendant()
+                    return
+                }
+            }
+        }
     }
 
     /// Emits warnings for symbols that are matched by multiple documentation extensions.
@@ -3268,5 +3299,24 @@ extension DataAsset {
         return variants.values.map(\.pathExtension).contains { pathExtension in
             return DocumentationContext.isFileExtension(pathExtension, supported: assetType)
         }
+    }
+}
+
+private extension DirectedGraph {
+    /// Returns every node that matches the given predicate at the shortest distance from a given element.
+    ///
+    /// NOTE: This is only called with the reverse edges in the topic graph, where the number of matches is usually just one.
+    /// Calling this with regular edges might lead to fetching and processing all members of all top-level types.
+    func nearestNodes(from startingPoint: Node, matching predicate: (Node) -> Bool) -> Set<Node> {
+        var nodes = [startingPoint]
+        var seen: Set<Node> = [startingPoint]
+        while !nodes.isEmpty {
+            let matches = nodes.filter(predicate)
+            if !matches.isEmpty {
+                return Set(matches)
+            }
+            nodes = nodes.flatMap { neighbors(of: $0) }.filter { seen.insert($0).inserted }
+        }
+        return []
     }
 }
