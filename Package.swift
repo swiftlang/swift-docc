@@ -51,6 +51,11 @@ let previewServerSettings: [SwiftSetting] = [
     .define("PREVIEW_SERVER", .when(platforms: NIOPlatforms, traits: [previewServerTrait]))
 ]
 
+// Disable the preview server trait by default on hosts where SwiftNIO does not build.
+// This allows dependency resolution to exclude SwiftNIO.
+//
+// Note: This will also disable the trait when cross-compiling for targets where SwiftNIO *does* build.
+// In such cases, manually enable the trait with `--traits PreviewServer`.
 #if os(macOS) || os(iOS) || os(Linux) || os(Android)
 let previewServerEnabledByDefault = true
 #else
