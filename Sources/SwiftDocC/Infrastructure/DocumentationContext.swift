@@ -733,8 +733,34 @@ public class DocumentationContext {
 
         let decodeError = Synchronized<(any Error)?>(nil)
         
-        // Load and analyze documents concurrently
-        let analyzedDocuments: [(URL, Semantic)] = inputs.markupURLs.concurrentPerform { url, results in
+        // Below we sort the documents, both to ensure a deterministic behavior and to prefers shallower paths when two documents have colliding semantics.
+        // However, because the number of documents _can_ grow quite large it can become rather slow and expensive to recompute `url.pathComponents.count`---
+        // which involves allocations for both the array of components and for each component string value---for each individual call to the sort comparison closure.
+        // Instead, we precompute the "depth" (`url.pathComponents.count`) and the "path" once for every document and use these precomputed values when sorting the documents.
+        // This leads to significant improvement to both performance and peak memory usage when there are several hundred or even several thousands documents to sort.
+        struct PrecomputedValuesForSorting: Comparable {
+            init(_ url: URL) {
+                let components = url.pathComponents
+                depth = components.count
+                path  = components.joined(separator: "/")
+            }
+            
+            private var depth: Int
+            private var path: String
+            
+            static func < (lhs: borrowing PrecomputedValuesForSorting, rhs: borrowing PrecomputedValuesForSorting) -> Bool {
+                guard lhs.depth == rhs.depth else {
+                    // Prefer shallow matches
+                    return lhs.depth < rhs.depth
+                }
+                // Otherwise, sort alphabetically for documents at the same depth (for example in different subdirectories)
+                return lhs.path < rhs.path
+            }
+        }
+        
+        // Load and analyze documents concurrently.
+        // (Use a mutable variable for the array so that we can sort it in-place below.)
+        var analyzedDocuments: [(precomputedValuesForSorting: PrecomputedValuesForSorting, URL, Semantic)] = inputs.markupURLs.concurrentPerform { url, results in
             guard decodeError.sync({ $0 == nil }) else { return }
             
             do {
@@ -758,7 +784,7 @@ public class DocumentationContext {
                     check(document, at: url)
                 }
                 
-                results.append((url, analyzed))
+                results.append((PrecomputedValuesForSorting(url), url, analyzed))
             } catch {
                 decodeError.sync({ $0 = error })
             }
@@ -770,19 +796,10 @@ public class DocumentationContext {
         }
         
         // Order the documents by depth and then alphabetically. This both ensures a deterministic behavior and prefers shallower paths when two files have the same output path.
-        let analyzedDocumentsSorted = analyzedDocuments.sorted(by: { lhs, rhs in
-            let lhsDepth = lhs.0.pathComponents.count
-            let rhsDepth = rhs.0.pathComponents.count
-            
-            guard lhsDepth == rhsDepth else {
-                return lhsDepth < rhsDepth
-            }
-            return lhs.0.absoluteString < rhs.0.absoluteString
-        })
-
-        for analyzedDocument in analyzedDocumentsSorted {
+        analyzedDocuments.sort(by: \.precomputedValuesForSorting)
+        
+        for (_, url, analyzed) in analyzedDocuments {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.
-            let (url, analyzed) = analyzedDocument
 
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, inputs: inputs)
             var reference = ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguage: .swift)
