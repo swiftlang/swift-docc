@@ -51,6 +51,12 @@ let previewServerSettings: [SwiftSetting] = [
     .define("PREVIEW_SERVER", .when(platforms: NIOPlatforms, traits: [previewServerTrait]))
 ]
 
+#if os(macOS) || os(iOS) || os(Linux) || os(Android)
+let previewServerEnabledByDefault = true
+#else
+let previewServerEnabledByDefault = false
+#endif
+
 let package = Package(
     name: "SwiftDocC",
     platforms: [
@@ -72,7 +78,7 @@ let package = Package(
             name: previewServerTrait,
             description: "Build the DocC preview server, which depends on SwiftNIO."
         ),
-        .default(enabledTraits: [previewServerTrait])
+        .default(enabledTraits: previewServerEnabledByDefault ? [previewServerTrait] : [])
     ],
     targets: [
         // SwiftDocC library
