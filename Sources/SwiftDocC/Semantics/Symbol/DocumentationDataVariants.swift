@@ -33,7 +33,13 @@ public struct DocumentationDataVariants<Variant> {
     }
     
     /// Whether there are any variants for this piece of information about the documentation node
+    @available(*, deprecated, renamed: "hasAnyVariants", message: "Use 'hasAnyVariants' instead. This deprecated API will be removed after Swift 6.6 is released.")
     public var isEmpty: Bool {
+        self.hasAnyVariants
+    }
+
+    /// Whether there are any variants for this piece of information about the documentation node
+    public var hasAnyVariants: Bool {
         values.isEmpty
     }
 
