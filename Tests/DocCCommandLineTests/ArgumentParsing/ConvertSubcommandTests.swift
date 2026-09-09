@@ -354,19 +354,39 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled)
     }
     
-    func testExperimentalEnableExternalLinkSupportFlag() throws {
+    func testEnableExternalLinkSupportFlag() throws {
+        // Default
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
         let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
+        XCTAssertFalse(commandWithoutFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
 
-        let commandWithFlag = try Docc.Convert.parse([
+        // Explicit enable
+        let commandWithEnableFlag = try Docc.Convert.parse([
+            "--enable-external-link-support",
+            testBundleURL.path
+        ])
+        let actionWithEnableFlag  = try ConvertAction(fromConvertCommand: commandWithEnableFlag)
+        XCTAssertTrue(commandWithEnableFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertTrue(actionWithEnableFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
+
+        // Deprecated "experimental" enable
+        let commandWithExperimentalEnableFlag = try Docc.Convert.parse([
             "--enable-experimental-external-link-support",
+            testBundleURL.path
+        ])
+        let actionWithExperimentalEnableFlag  = try ConvertAction(fromConvertCommand: commandWithExperimentalEnableFlag)
+        XCTAssertTrue(commandWithExperimentalEnableFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertTrue(actionWithExperimentalEnableFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
+        
+        // Redundant disable
+        let commandWithDisableFlag = try Docc.Convert.parse([
+            "--disable-external-link-support",
             testBundleURL.path,
         ])
-        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
+        let actionWithDisableFlag = try ConvertAction(fromConvertCommand: commandWithDisableFlag)
+        XCTAssertFalse(commandWithDisableFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertFalse(actionWithDisableFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
     }
     
     func testExperimentalEnableOverloadedSymbolPresentation() throws {
@@ -638,6 +658,25 @@ class ConvertSubcommandFlagParsingTests {
         #expect(throws: (any Error).self) {
             try Docc.Convert.parse(["--output-format", "html"])
         }
+    }
+    
+    @Test
+    func parsingExternalLinkSupportFlag() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.featureFlags.enableLinkHierarchySerialization == false)
+        
+        // It's allowed to pass the previous "--enable-experimental-..." flag.
+        let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-external-link-support"])
+        #expect(oldFlagConvert.featureFlags.enableLinkHierarchySerialization == true)
+        
+        // It's allowed to pass the redundant "--enable-..." flag.
+        let enabledFlagConvert = try Docc.Convert.parse(["--enable-external-link-support"])
+        #expect(enabledFlagConvert.featureFlags.enableLinkHierarchySerialization == true)
+        
+        // Passing the "--disable-..." flag turns of the feature.
+        let disabledFlagConvert = try Docc.Convert.parse(["--disable-external-link-support"])
+        #expect(disabledFlagConvert.featureFlags.enableLinkHierarchySerialization == false)
     }
     
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.

@@ -386,7 +386,7 @@ extension Docc {
         
         // MARK: - Link resolution options
         
-        @OptionGroup(title: "Link resolution options (Experimental)")
+        @OptionGroup(title: "Link resolution options")
         var linkResolutionOptions: LinkResolutionOptions
         
         struct LinkResolutionOptions: ParsableArguments {
@@ -395,7 +395,7 @@ extension Docc {
                 name: [.customLong("dependency")],
                 parsing: ArrayParsingStrategy.singleValue,
                 help: ArgumentHelp("A path to a documentation archive to resolve external links against.", discussion: """
-                Only documentation archives built with '--enable-experimental-external-link-support' are supported as dependencies.
+                Only documentation archives built with '--enable-external-link-support' are supported as dependencies.
                 """),
                 transform: URL.init(fileURLWithPath:)
             )
@@ -480,13 +480,19 @@ extension Docc {
             @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
             var allowArbitraryCatalogDirectories = false
             
-            /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
+            /// A user-provided value that is true if the user enables serialization of the local link resolution information.
             @Flag(
-                name: .customLong("enable-experimental-external-link-support"),
+                name: .customLong("external-link-support"),
+                inversion: .prefixedEnableDisable,
                 help: ArgumentHelp("Support external links to this documentation output.", discussion: """
                 Write additional link metadata files to the output directory to support resolving documentation links to the documentation in that output directory.
                 """)
             )
+            var enableLinkHierarchySerialization = false
+            
+            // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
+            @Flag(name: .customLong("enable-experimental-external-link-support"), help: .hidden)
+            @available(*, deprecated, renamed: "enableLinkHierarchySerialization", message: "Use 'enableLinkHierarchySerialization' instead. This deprecated API will be removed after 6.5 is released")
             var enableExperimentalLinkHierarchySerialization = false
 
             /// A user-provided value that is true if the user wants to in-place modify the provided documentation catalog to write generated curation to documentation extension files.
@@ -556,8 +562,11 @@ extension Docc {
                 Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "This flag has no effect. Parameter and return value validation is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-mentioned-in", message: "This flag has no effect. Automatic mentioned in sections is enabled by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-external-link-support", message: "Use `--enable-external-link-support` instead.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
-                emitLMDBIndex = emitLMDBIndex
+                if enableExperimentalLinkHierarchySerialization {
+                    enableLinkHierarchySerialization = true
+                }
             }
         }
 

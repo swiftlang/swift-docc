@@ -47,7 +47,11 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         _ = try await action.perform(logHandle: .none)
         
         // Test the content of the output folder.
-        var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json" ,"videos", "index.html", "index"]
+        var expectedContent = [
+            "data", "documentation", "tutorials", "downloads", "images", "videos",
+            "index.html", "index",
+            "metadata.json", "link-hierarchy.json", "linkable-entities.json"
+        ]
         expectedContent += templateFolder.content.filter { $0 is Folder }.map{ $0.name }
         
         let output = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
