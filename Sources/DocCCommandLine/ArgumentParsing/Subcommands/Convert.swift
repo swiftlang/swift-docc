@@ -169,7 +169,7 @@ extension Docc {
             @Flag(
                 inversion: .prefixedNo,
                 exclusivity: .exclusive,
-                help: "Produce a DocC archive that include documentation content in each HTML file for static hosting environments."
+                help: "Produce a DocC archive that includes documentation content in each HTML file for static hosting environments."
             )
             var transformForStaticHosting = true
             
