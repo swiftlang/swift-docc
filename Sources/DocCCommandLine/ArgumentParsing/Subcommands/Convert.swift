@@ -182,6 +182,15 @@ extension Docc {
             )
             var omitContentFromStaticHostingOutput = false
             
+            func validate() throws {
+                if omitContentFromStaticHostingOutput, !transformForStaticHosting {
+                    warnAboutDiagnostic(.init(
+                        severity: .warning,
+                        identifier: "org.swift.docc.IgnoredTransformForStaticHostingWithoutContent",
+                        summary: "Passing '--transform-for-static-hosting-without-content' has no effect when combined with '--no-transform-for-static-hosting'."
+                    ))
+                }
+            }
             // Preserve the experimental flag name so that it can be passed redundantly.
             @Flag(name: [.customLong("experimental-transform-for-static-hosting-with-content")], help: .private)
             @available(*, deprecated, message: "This flag isn't used for anything. Check 'transformForStaticHosting' or 'omitContentFromStaticHostingOutput' instead.")

@@ -611,6 +611,31 @@ class ConvertSubcommandFlagParsingTests {
     }
     
     @Test
+    func warnsAboutUnsupportedCombinationOfStaticHostingFlags() throws {
+        let originalErrorLogHandle = Docc.Convert._errorLogHandle
+        let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
+        defer {
+            Docc.Convert._errorLogHandle = originalErrorLogHandle
+            Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
+        }
+        let logStorage = LogHandle.LogStorage()
+        Docc.Convert._errorLogHandle = .memory(logStorage)
+        Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
+        
+        // The feature is enabled when no flag is passed.
+        let convert = try Docc.Convert.parse([
+            "--transform-for-static-hosting-without-content",
+            "--no-transform-for-static-hosting",
+        ])
+        #expect(convert.hostingOptions.transformForStaticHostingOptions == .noTransform)
+        
+        #expect(logStorage.text == """
+        warning: Passing '--transform-for-static-hosting-without-content' has no effect when combined with '--no-transform-for-static-hosting'.
+        
+        """)
+    }
+    
+    @Test
     func parsingExplicitDiagnosticSeverities() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
