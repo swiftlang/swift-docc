@@ -66,13 +66,13 @@ public extension _WillBeMadeNonPublicConvertOutputConsumer {
 }
 
 // Default implementations to avoid a source breaking change from introducing new protocol requirements
-public extension ConvertOutputConsumer {
+public extension _WillBeMadeNonPublicConvertOutputConsumer {
     func consumeIncremental(linkableElementSummary: LinkDestinationSummary) throws {}
     func finishConsumingLinkableElementSummaries() throws {}
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.
-public extension ConvertOutputConsumer {
+public extension _WillBeMadeNonPublicConvertOutputConsumer {
     @available(*, deprecated, renamed: "consumeIncremental(linkableElementSummary:)", message: "Implement 'consumeIncremental(linkableElementSummary:)' and 'finishConsumingLinkableElementSummaries()' instead. This deprecated API will be removed after 6.5 is released")
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {
         for summary in linkableElementSummaries {
