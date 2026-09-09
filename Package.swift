@@ -20,6 +20,7 @@ func swiftSettings(_ languageMode: SwiftLanguageMode) -> [SwiftSetting] {
         
         .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
         .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
+        .enableUpcomingFeature("MemberImportVisibility"), // SE-0444: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0444-member-import-visibility.md
     ]
     
     // Some upcoming language features are enabled by default in the Swift 6 language mode and warn if they're redundantly explicitly enabled.
@@ -42,9 +43,24 @@ let NIOPlatforms: [Platform] = [.macOS, .iOS, .linux, .android]
 // Gate it behind a trait so it can be excluded from builds.
 let previewServerTrait = "PreviewServer"
 
+// This variable is set in Swift.org CI, and is used to point to local checkouts of dependencies,
+// and skip gating SwiftNIO behind package traits so it can resolve with SwiftPM's `--multiroot-data-file`.
+let useLocalDependencies = ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] != nil
+
 let previewServerSettings: [SwiftSetting] = [
     .define("PREVIEW_SERVER", .when(platforms: NIOPlatforms, traits: [previewServerTrait]))
 ]
+
+// Disable the preview server trait by default on hosts where SwiftNIO does not build.
+// This allows dependency resolution to exclude SwiftNIO.
+//
+// Note: This will also disable the trait when cross-compiling for targets where SwiftNIO *does* build.
+// In such cases, manually enable the trait with `--traits PreviewServer`.
+#if os(macOS) || os(iOS) || os(Linux) || os(Android)
+let previewServerEnabledByDefault = true
+#else
+let previewServerEnabledByDefault = false
+#endif
 
 let package = Package(
     name: "SwiftDocC",
@@ -67,7 +83,7 @@ let package = Package(
             name: previewServerTrait,
             description: "Build the DocC preview server, which depends on SwiftNIO."
         ),
-        .default(enabledTraits: [previewServerTrait])
+        .default(enabledTraits: previewServerEnabledByDefault ? [previewServerTrait] : [])
     ],
     targets: [
         // SwiftDocC library
@@ -105,7 +121,9 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: NIOPlatforms, traits: [previewServerTrait])),
+                // build-script-helper.py uses a multiroot workspace, which does not work with trait-conditional dependencies.
+                // When building in Swift.org CI, do not use a package trait gate for SwiftNIO.
+                .product(name: "NIOHTTP1", package: "swift-nio", condition: useLocalDependencies ? .when(platforms: NIOPlatforms) : .when(platforms: NIOPlatforms, traits: [previewServerTrait])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
             exclude: ["CMakeLists.txt"],
@@ -210,10 +228,17 @@ let package = Package(
     ]
 )
 
-// If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
-// we're building in the Swift.org CI system alongside other projects in the Swift toolchain and
-// we can depend on local versions of our dependencies instead of fetching them remotely.
-if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
+if useLocalDependencies {
+    // Building in the Swift.org CI system, so rely on local versions of dependencies.
+    package.dependencies += [
+        .package(path: "../swift-nio"),
+        .package(path: "../swift-markdown"),
+        .package(path: "../swift-lmdb"),
+        .package(path: "../swift-argument-parser"),
+        .package(path: "../swift-docc-symbolkit"),
+        .package(path: "../swift-crypto"),
+    ]
+} else {
     // Building standalone, so fetch all dependencies remotely.
     package.dependencies += [
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.92.2"),
@@ -223,15 +248,5 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.2.0"),
-    ]
-} else {
-    // Building in the Swift.org CI system, so rely on local versions of dependencies.
-    package.dependencies += [
-        .package(path: "../swift-nio"),
-        .package(path: "../swift-markdown"),
-        .package(path: "../swift-lmdb"),
-        .package(path: "../swift-argument-parser"),
-        .package(path: "../swift-docc-symbolkit"),
-        .package(path: "../swift-crypto"),
     ]
 }

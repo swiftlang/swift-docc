@@ -135,7 +135,7 @@ package extension MarkdownRenderer {
     /// When the renderer has a ``RenderGoal/richness`` goal, it creates one `<span>` HTML element per fragment that could be styled differently through CSS:
     /// ```
     /// <code class="swift-only">
-    ///   <span class="decorator">class </span>
+    ///   class 
     ///   <span class="identifier">Some<wbr>Class</span>
     /// </code>
     /// ```
@@ -148,8 +148,13 @@ package extension MarkdownRenderer {
         let attributes = languageFilter.map { [$0.filterAttribute] } ?? []
         return switch goal {
         case .richness:
-            code(attributes: attributes, contents: fragments.map {
-                span(attributes: [.class($0.kind.rawValue)], contents: wordBreak(symbolName: $0.text))
+            code(attributes: attributes, contents: fragments.flatMap {
+                switch $0.kind {
+                case .decorator:
+                    wordBreak(symbolName: $0.text)
+                case .identifier:
+                    [ span(attributes: [.class($0.kind.rawValue)], contents: wordBreak(symbolName: $0.text)) ]
+                }
             })
         case .conciseness:
             code(attributes: attributes, contents: [.text(fragments.map(\.text).joined())])

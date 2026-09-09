@@ -13,6 +13,7 @@ import SymbolKit
 import DocCHTML
 import DocCTestUtilities
 @testable import SwiftDocC
+import DocCCommon
 
 struct ProseSymbolNameTests {
     // The symbol has the same precise identifier in both languages so that the
@@ -143,7 +144,9 @@ struct ProseSymbolNameTests {
         // text uses the symbol's title or its prose name.
         let symbol = try #require(node.semantic as? Symbol)
         var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: .init())
-        let html = String(decoding: HTMLFormatter.format(renderer.renderSymbol(symbol).content), as: UTF8.self)
+        let html = try #require(renderer.renderSymbol(symbol).content.map {
+            String(decoding: HTMLFormatter.format($0), as: UTF8.self)
+        })
         if let expectedObjC {
             #expect(html.contains(#"<code class="swift-only">\#(expectedSwift.html)</code>"#),
                     "Swift-only HTML missing expected code \(expectedSwift.html); got: \(html)")

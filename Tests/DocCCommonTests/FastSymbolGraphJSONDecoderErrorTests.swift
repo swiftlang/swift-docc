@@ -234,7 +234,6 @@ private struct Recursive: FastJSONDecodable, Decodable {
     }
 }
 
-// Some of Swift Testing's #expect macros for errors require Swift 6.1, so we use a custom helper instead.
 private func expectMatchingErrors<Value: Decodable & FastJSONDecodable>(
     decoding type: Value.Type,
     fromJSON json: String,
@@ -242,23 +241,12 @@ private func expectMatchingErrors<Value: Decodable & FastJSONDecodable>(
     sourceLocation: SourceLocation = #_sourceLocation
 ) throws {
     let data = Data(json.utf8)
-    func catchDecodingError(performing work: () throws -> Void) throws -> DecodingError? {
-        do {
-            try work()
-        } catch let error as DecodingError {
-            return error
-        }
-        return nil
-    }
     
-    let lhs = try catchDecodingError {
-        let v = try JSONDecoder().decode(type, from: data)
-        dump(v)
-        Issue.record("JSONDecoder didn't raise an error", sourceLocation: sourceLocation)
+    let lhs = #expect(throws: DecodingError.self) {
+        _ = try JSONDecoder().decode(type, from: data)
     }
-    let rhs = try catchDecodingError {
+    let rhs = #expect(throws: DecodingError.self) {
         _ = try FastSymbolGraphJSONDecoder.decode(type, from: data)
-        Issue.record("The custom decoder didn't raise an error", sourceLocation: sourceLocation)
     }
     guard let lhs, let rhs else {
         return

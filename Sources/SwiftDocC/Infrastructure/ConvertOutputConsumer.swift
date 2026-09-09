@@ -12,7 +12,7 @@
 ///
 /// Types that conform to this protocol manage what to do with documentation conversion products, for example persist them to disk
 /// or store them in memory.
-public protocol ConvertOutputConsumer {
+public protocol _WillBeMadeNonPublicConvertOutputConsumer {
     /// Consumes a render node that was generated during a conversion.
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
@@ -56,7 +56,7 @@ package protocol ConvertOutputMarkdownConsumer {
 
 // Default implementations that discard the documentation conversion products, for consumers that don't need these
 // values.
-public extension ConvertOutputConsumer {
+public extension _WillBeMadeNonPublicConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
@@ -71,7 +71,7 @@ package protocol ExternalNodeConsumer {
     func consume(externalRenderNode: ExternalRenderNode) throws
 }
 
-extension ConvertOutputConsumer {
+extension _WillBeMadeNonPublicConvertOutputConsumer {
     @available(*, deprecated, renamed: "consume(assetsInInputs:)", message: "Use 'consume(assetsInInputs:)' instead. This deprecated API will be removed after 6.5 is released.")
     func consume(assetsInBundle inputs: DocumentationContext.Inputs) throws {
         try consume(assetsInInputs: inputs)
@@ -79,7 +79,7 @@ extension ConvertOutputConsumer {
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.
-public extension ConvertOutputConsumer {
+public extension _WillBeMadeNonPublicConvertOutputConsumer {
     @available(*, deprecated)
     func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws {
         // Despite this protocol being public, it's not possible to configure an output consumer from outside this package.
@@ -87,3 +87,6 @@ public extension ConvertOutputConsumer {
         // This default implementation only exist for the unlikely case that an out-of-package client conforms to this protocol.
     }
 }
+
+@available(*, deprecated, message: "The output consumer is not publicly configurable. This protocol will be made non-public after 6.5 is released.")
+public typealias ConvertOutputConsumer = _WillBeMadeNonPublicConvertOutputConsumer

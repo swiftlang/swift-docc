@@ -115,12 +115,13 @@ class PreviewActionIntegrationTests: XCTestCase {
             let didStartServerExpectation = asyncLogExpectation(log: logStorage, description: "Did start the preview server", expectedText: "=======")
             
             // Start the preview and keep it running for the asserts that follow inside this test.
-            Task {
-                var logHandle = LogHandle.memory(logStorage)
-                let result = try await preview.perform(logHandle: &logHandle)
-                
-                guard !result.diagnostics.containsAnyError else {
-                    throw ErrorsEncountered()
+            Task<Void, Never> {
+                do {
+                    var logHandle = LogHandle.memory(logStorage)
+                    let result = try await preview.perform(logHandle: &logHandle)
+                    XCTAssert(!result.diagnostics.containsAnyError, "Encountered unexpected error-severity diagnostics during preview.")
+                } catch {
+                    XCTFail("Unexpectedly failed to build documentation and start preview server")
                 }
             }
             
@@ -235,20 +236,24 @@ class PreviewActionIntegrationTests: XCTestCase {
             let didEncounterErrorExpectation = expectation(description: "preview command failed with error")
 
             // Start the preview and keep it running for the asserts that follow inside this test.
-            Task {
-                var logHandle = LogHandle.file(fileHandle)
-                let result = try await preview.perform(logHandle: &logHandle)
+            Task<Void, Never> {
+                do {
+                    var logHandle = LogHandle.file(fileHandle)
+                    let result = try await preview.perform(logHandle: &logHandle)
 
-                XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
-                XCTAssertNotNil(preview.convertAction.diagnosticEngine.diagnostics.first(where: { diagnostics -> Bool in
-                    DiagnosticConsoleWriter.formattedDescription(for: diagnostics).contains(expectedErrorMessage)
-                }), "Didn't find expected error message '\(expectedErrorMessage)'", file: file, line: line)
+                    XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
+                    XCTAssertNotNil(preview.convertAction.diagnosticEngine.diagnostics.first(where: { diagnostics -> Bool in
+                        DiagnosticConsoleWriter.formattedDescription(for: diagnostics).contains(expectedErrorMessage)
+                    }), "Didn't find expected error message '\(expectedErrorMessage)'", file: file, line: line)
 
-                // Verify that the failed server is not added to the server list
-                XCTAssertNil(servers[preview.serverIdentifier])
+                    // Verify that the failed server is not added to the server list
+                    XCTAssertNil(servers[preview.serverIdentifier])
 
-                // Verify that we've checked the error thrown.
-                didEncounterErrorExpectation.fulfill()
+                    // Verify that we've checked the error thrown.
+                    didEncounterErrorExpectation.fulfill()
+                } catch {
+                    XCTFail("Unexpectedly failed to build documentation and start preview server", file: file, line: line)
+                }
             }
 
             // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
@@ -291,9 +296,13 @@ class PreviewActionIntegrationTests: XCTestCase {
             let didStartServerExpectation = asyncLogExpectation(log: logStorage, description: "Did start the preview server", expectedText: "=======")
             
             // Start the preview and keep it running for the asserts that follow inside this test.
-            Task {
-                var logHandle = LogHandle.memory(logStorage)
-                _ = try await preview.perform(logHandle: &logHandle)
+            Task<Void, Never> {
+                do {
+                    var logHandle = LogHandle.memory(logStorage)
+                    _ = try await preview.perform(logHandle: &logHandle)
+                } catch {
+                    XCTFail("Unexpectedly failed to build documentation and start preview server")
+                }
             }
             
             // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
@@ -366,12 +375,13 @@ class PreviewActionIntegrationTests: XCTestCase {
             let didStartServerExpectation = asyncLogExpectation(log: logStorage, description: "Did start the preview server", expectedText: "=======")
             
             // Start the preview and keep it running for the asserts that follow inside this test.
-            Task {
-                var logHandle = LogHandle.memory(logStorage)
-                let result = try await preview.perform(logHandle: &logHandle)
-                
-                guard !result.diagnostics.containsAnyError else {
-                    throw ErrorsEncountered()
+            Task<Void, Never> {
+                do {
+                    var logHandle = LogHandle.memory(logStorage)
+                    let result = try await preview.perform(logHandle: &logHandle)
+                    XCTAssert(!result.diagnostics.containsAnyError, "Encountered unexpected error-severity diagnostics during preview.")
+                } catch {
+                    XCTFail("Unexpectedly failed to build documentation and start preview server")
                 }
             }
             

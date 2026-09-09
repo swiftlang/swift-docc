@@ -280,11 +280,8 @@ struct TestFileSystemTests {
         """)
 
         // Test it throws when parent folder is missing
-        do {
+        #expect(throws: (any Error).self) {
             try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/missing/inner4"), withIntermediateDirectories: false)
-            Issue.record("Did not raise error ")
-        } catch {
-            //
         }
         
         // Test it creates missing parent folders

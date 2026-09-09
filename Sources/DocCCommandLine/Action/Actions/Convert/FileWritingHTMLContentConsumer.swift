@@ -74,14 +74,18 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         }
         
         func makeContent(
-            content: HTMLNode,
+            content: HTMLNode?,
             title: String,
             plainDescription: String?,
             prettyPrint: Bool
         ) -> String {
             var copy = original
             // Replace the content in reverse order so that the earlier ranges remain valid.
-            copy.replaceSubrange(contentReplacementRange, with: content.rendered(prettyPrinted: prettyPrint))
+            
+            // Keep the "JavaScript required" information in the <noscript> tag unless we have a static HTML representation of the page's content.
+            if let content {
+                copy.replaceSubrange(contentReplacementRange, with: content.rendered(prettyPrinted: prettyPrint))
+            }
             if let plainDescription {
                 let metaDescription = meta(.content(plainDescription), .name("description"))
                 copy.replaceSubrange(descriptionReplacementRange, with: metaDescription.rendered(prettyPrinted: prettyPrint))
@@ -129,7 +133,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     }
     
     func consume(
-        mainContent: HTMLNode,
+        mainContent: HTMLNode?,
         metadata: (title: String, description: String?),
         forPage reference: ResolvedTopicReference
     ) throws {

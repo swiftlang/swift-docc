@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
+import SymbolKit
 
 class RenderContextTests: XCTestCase {
     func testCreatesRenderReferences() async throws {

@@ -12,6 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import DocCCommon
 import DocCTestUtilities
+import SymbolKit
 
 class TopicGraphHashTests: XCTestCase {
     /// A catalog with two pages so the topic graph hash has multiple nodes to

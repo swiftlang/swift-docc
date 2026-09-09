@@ -12,6 +12,7 @@ import XCTest
 import DocCTestUtilities
 
 @testable import SwiftDocC
+import SymbolKit
 
 final class RenderIndexTests: XCTestCase {
     func testTestBundleRenderIndexGeneration() async throws {

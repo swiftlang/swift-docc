@@ -579,11 +579,8 @@ dl {
         &> code {
           font-size: 17px;
           line-height: 24px;
+          color: rgb(102, 102, 102);
           
-          
-          &>.decorator {
-            color: rgb(102, 102, 102);
-          }
           &>.identifier {
             color: var(--color-figure-blue);
           }

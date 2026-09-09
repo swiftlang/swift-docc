@@ -217,6 +217,97 @@ struct PathHierarchyTests_new {
         // The symbol from the symbol graph whose path is lexicographically sorted first should be used.
         #expect(paths[symbolID] == "/ModuleName/FirstName")
     }
+    
+    @Test
+    func minimalTypeDisambiguationDoesNotIncludeResultBuilderMacro() async throws {
+        func makeSymbolOverload(parameter: SymbolGraph.Symbol.FunctionSignature.FunctionParameter) -> SymbolGraph.Symbol {
+            makeSymbol(
+                id: "some-function-overload-\(parameter.declarationFragments.map(\.spelling).joined().lowercased())",
+                kind: .method,
+                pathComponents: ["makeSomething(_:)"],
+                signature: .init(
+                    parameters: [parameter],
+                    returns: [.init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")]
+                )
+            )
+        }
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                // One overload that's passed the values directly
+                makeSymbolOverload(parameter: .init(
+                    name: "value",
+                    externalName: nil,
+                    declarationFragments: [
+                        .init(kind: .identifier,     spelling: "content",   preciseIdentifier: nil),
+                        .init(kind: .text,           spelling: ": ",        preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "SomeValue", preciseIdentifier: "s:10ModuleName9SomeValueV"),
+                        .init(kind: .text,           spelling: "<",         preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Source",    preciseIdentifier: "s:10ModuleName12SomeProtocolP10AssociatedQa"),
+                        .init(kind: .text,           spelling: ">",         preciseIdentifier: nil),
+                    ],
+                    children: []
+                )),
+                
+                // One overload that uses an inner result builder of the generic value
+                makeSymbolOverload(parameter: .init(
+                    name: "body",
+                    externalName: nil,
+                    declarationFragments: [
+                        .init(kind: .attribute,      spelling: "@",         preciseIdentifier: nil),
+                        .init(kind: .attribute,      spelling: "SomeValue", preciseIdentifier: "s:10ModuleName9SomeValueV"),
+                        .init(kind: .text,           spelling: "<",         preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Self",      preciseIdentifier: nil),
+                        .init(kind: .text,           spelling: ".",         preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Source",    preciseIdentifier: "s:10ModuleName12SomeProtocolP10AssociatedQa"),
+                        .init(kind: .text,           spelling: ">.",        preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Builder",   preciseIdentifier: "s:10ModuleName9SomeValueV7BuilderO"),
+                        .init(kind: .text,           spelling: " ",         preciseIdentifier: nil),
+                        .init(kind: .identifier,     spelling: "body",      preciseIdentifier: nil),
+                        .init(kind: .text,           spelling: ": () -> ",  preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "SomeValue", preciseIdentifier: "s:10ModuleName9SomeValueV"),
+                        .init(kind: .text,           spelling: "<",         preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Source",    preciseIdentifier: "s:10ModuleName12SomeProtocolP10AssociatedQa"),
+                        .init(kind: .text,           spelling: ">",         preciseIdentifier: nil),
+                    ],
+                    children: []
+                ))
+            ]))
+        }
+        
+        let context = try await load(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let link = "/ModuleName/makeSomething(_:)"
+        try assertPathRaisesErrorMessage(link, in: tree, context: context, expectedErrorMessage: "'makeSomething(_:)' is ambiguous at '/ModuleName'") { errorInfo in
+            XCTAssertEqual(errorInfo.solutions.count, 2, "There should be one suggestion per overload")
+            for solution in errorInfo.solutions {
+                // Apply the suggested replacements for each solution and verify that _that_ link resolves to a single symbol.
+                var linkWithSuggestion = link
+                #expect(solution.replacements.isEmpty == false, "Diagnostics about ambiguous links should have some replacements for each solution.")
+                for (replacementText, start, end) in solution.replacements {
+                    let range = linkWithSuggestion.index(linkWithSuggestion.startIndex, offsetBy: start) ..< linkWithSuggestion.index(linkWithSuggestion.startIndex, offsetBy: end)
+                    linkWithSuggestion.replaceSubrange(range, with: replacementText)
+                }
+                
+                #expect((try? tree.findSymbol(path: linkWithSuggestion)) != nil, """
+                Failed to resolve \(linkWithSuggestion) after applying replacements \(solution.replacements.map { "'\($0.0)'@\($0.start)-\($0.end)" }.joined(separator: ",")) to '\(link)'.
+                
+                The replacement that DocC suggests in its warnings should unambiguously refer to a single symbol match.
+                """)
+            }
+        }
+    }
+    
+    private func assertPathRaisesErrorMessage(_ path: String, in tree: PathHierarchy, context: DocumentationContext, expectedErrorMessage: String, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ additionalAssertion: (TopicReferenceResolutionErrorInfo) -> Void = { _ in }) throws {
+        let error = #expect(throws: PathHierarchy.Error.self, "Finding path \(path) didn't raise an error.", sourceLocation: sourceLocation) {
+            try tree.findSymbol(path: path)
+        }! // The find method only throws PathHierarchy.Error
+        
+        let referenceError = error.makeTopicReferenceResolutionErrorInfo() { context.linkResolver.localResolver.fullName(of: $0, in: context) }
+        #expect(referenceError.message == expectedErrorMessage, sourceLocation: sourceLocation)
+        additionalAssertion(referenceError)
+    }
 }
 
 class PathHierarchyTests: XCTestCase {
@@ -4073,7 +4164,7 @@ class PathHierarchyTests: XCTestCase {
     func testMinimalTypeDisambiguation() async throws {
         enum DeclToken: ExpressibleByStringLiteral {
             case text(String)
-            case internalParameter(String)
+            case identifier(String)
             case typeIdentifier(String, precise: String)
             
             init(stringLiteral value: String) {
@@ -4084,9 +4175,9 @@ class PathHierarchyTests: XCTestCase {
         func makeFragments(_ tokens: [DeclToken]) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
             tokens.map {
                 switch $0 {
-                case .text(let spelling):                        return .init(kind: .text,              spelling: spelling, preciseIdentifier: nil)
-                case .typeIdentifier(let spelling, let precise): return .init(kind: .typeIdentifier,    spelling: spelling, preciseIdentifier: precise)
-                case .internalParameter(let spelling):           return .init(kind: .internalParameter, spelling: spelling, preciseIdentifier: nil)
+                case .text(let spelling):                        .init(kind: .text,           spelling: spelling, preciseIdentifier: nil)
+                case .typeIdentifier(let spelling, let precise): .init(kind: .typeIdentifier, spelling: spelling, preciseIdentifier: precise)
+                case .identifier(let spelling):                  .init(kind: .identifier,     spelling: spelling, preciseIdentifier: nil)
                 }
             }
         }
@@ -4104,7 +4195,7 @@ class PathHierarchyTests: XCTestCase {
         let voidType       = DeclToken.typeIdentifier("Void",   precise: "s:s4Voida")
         
         func makeParameter(_ name: String, decl: [DeclToken]) -> SymbolGraph.Symbol.FunctionSignature.FunctionParameter {
-            .init(name: name,  externalName: nil, declarationFragments: makeFragments([.internalParameter(name), .text(" ")] + decl), children: [])
+            .init(name: name,  externalName: nil, declarationFragments: makeFragments([.identifier(name), .text(" ")] + decl), children: [])
         }
         
         func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
@@ -4216,8 +4307,8 @@ class PathHierarchyTests: XCTestCase {
             func makeSignature(first: DeclToken..., second: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
                 .init(
                     parameters: [
-                        .init(name: "first",  externalName: nil, declarationFragments: makeFragments(first),  children: []),
-                        .init(name: "second", externalName: nil, declarationFragments: makeFragments(second), children: [])
+                        .init(name: "first",  externalName: nil, declarationFragments: makeFragments([.identifier("first"),  .text(" :")] + first),  children: []),
+                        .init(name: "second", externalName: nil, declarationFragments: makeFragments([.identifier("second"), .text(" :")] + second), children: [])
                     ],
                     returns: makeFragments([voidType])
                 )
@@ -4265,7 +4356,7 @@ class PathHierarchyTests: XCTestCase {
         do {
             func makeSignature(first: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
                 .init(
-                    parameters: [.init(name: "first",  externalName: "with", declarationFragments: makeFragments(first),  children: []),],
+                    parameters: [.init(name: "first",  externalName: "with", declarationFragments: makeFragments([.identifier("first"), .text(" :")] + first),  children: []),],
                     returns: makeFragments([voidType])
                 )
             }
@@ -4947,6 +5038,7 @@ class PathHierarchyTests: XCTestCase {
 }
 
 extension PathHierarchy {
+    // These only throw `PathHierarchy.Error` but the compiler crashes in the lifetime checker if either of these helpers use typed throws.
     func findNode(path rawPath: String, onlyFindSymbols: Bool, parent: ResolvedIdentifier? = nil) throws -> PathHierarchy.Node {
         let id = try find(path: rawPath, parent: parent, onlyFindSymbols: onlyFindSymbols)
         return lookup[id]!
