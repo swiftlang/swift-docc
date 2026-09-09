@@ -44,11 +44,11 @@ class DocumentationDataVariantsTests: XCTestCase {
     }
     
     func testHasAnyVariants() throws {
-        XCTAssert(DocumentationDataVariants<String>().hasAnyVariants)
-        XCTAssertFalse(DocumentationDataVariants<String>(values: [.swift : "Swift"]).hasAnyVariants)
+        XCTAssertFalse(DocumentationDataVariants<String>().hasAnyVariants)
+        XCTAssert(DocumentationDataVariants<String>(values: [.swift : "Swift"]).hasAnyVariants)
 
-        // isEmpty only checks the variant values, not the default value
-        XCTAssert(DocumentationDataVariants<String>(defaultVariantValue: "Default value").hasAnyVariants)
+        // 'hasAnyVariants' does not check the default value
+        XCTAssertFalse(DocumentationDataVariants<String>(defaultVariantValue: "Default value").hasAnyVariants)
     }
     
     func testHasVariant() throws {

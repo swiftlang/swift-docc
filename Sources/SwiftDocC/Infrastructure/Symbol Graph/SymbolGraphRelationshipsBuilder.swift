@@ -350,7 +350,7 @@ struct SymbolGraphRelationshipsBuilder {
         // for the same symbol, let the optional relationship take precedence.
         // Optional protocol requirements sometimes appear with both relationships,
         // but non-optional requirements do not.
-        if !required || requiredSymbol.isRequiredVariants.hasAnyVariants {
+        if !required || !requiredSymbol.isRequiredVariants.hasAnyVariants {
             requiredSymbol.isRequired = required
         }
     }

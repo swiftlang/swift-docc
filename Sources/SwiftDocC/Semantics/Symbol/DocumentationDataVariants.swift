@@ -40,7 +40,7 @@ public struct DocumentationDataVariants<Variant> {
 
     /// Whether there are any variants for this piece of information about the documentation node
     public var hasAnyVariants: Bool {
-        values.isEmpty
+        !values.isEmpty
     }
 
     /// Whether this variant collection has a default value or any variant set.
