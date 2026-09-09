@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
+import Testing
 
 class DocumentationDataVariantsTests: XCTestCase {
     func testAccessesVariantWithTrait() throws {
@@ -100,18 +101,21 @@ class DocumentationDataVariantsTests: XCTestCase {
             "MyLanguage"
         )
     }
+}
 
+class DocumentationDataVariantsTests_new {
+    @Test("Desired behavior for hasAnyValue property")
     func testHasAnyValue() {
         // hasAnyValue returns true only if a value is set in either the default or in a variant
-        XCTAssertFalse(DocumentationDataVariants<String>().hasAnyValue)
-        XCTAssert(DocumentationDataVariants<String>(defaultVariantValue: "Default value").hasAnyValue)
-        XCTAssert(DocumentationDataVariants<String>(values: [.swift: "Swift"]).hasAnyValue)
+        #expect(!DocumentationDataVariants<String>().hasAnyValue)
+        #expect(DocumentationDataVariants<String>(defaultVariantValue: "Default value").hasAnyValue)
+        #expect(DocumentationDataVariants<String>(values: [.swift: "Swift"]).hasAnyValue)
 
         // When the variant type is a collection, hasAnyValue will return false if the only available
         // collections are empty
-        XCTAssertFalse(DocumentationDataVariants<[String]>(defaultVariantValue: []).hasAnyValue)
-        XCTAssertFalse(DocumentationDataVariants<[String]>(values: [.swift: []]).hasAnyValue)
-        XCTAssert(DocumentationDataVariants<[String]>(defaultVariantValue: ["DefaultValue"]).hasAnyValue)
-        XCTAssert(DocumentationDataVariants<[String]>(values: [.swift: ["Swift"]]).hasAnyValue)
+        #expect(!DocumentationDataVariants<[String]>(defaultVariantValue: []).hasAnyValue)
+        #expect(!DocumentationDataVariants<[String]>(values: [.swift: []]).hasAnyValue)
+        #expect(DocumentationDataVariants<[String]>(defaultVariantValue: ["DefaultValue"]).hasAnyValue)
+        #expect(DocumentationDataVariants<[String]>(values: [.swift: ["Swift"]]).hasAnyValue)
     }
 }
