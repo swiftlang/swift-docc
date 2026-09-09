@@ -13,6 +13,8 @@ import Testing
 @testable import SwiftDocC
 import DocCTestUtilities
 import SymbolKit
+import Markdown
+import DocCCommon
 
 struct DeprecationSummaryTests {
     @Test(arguments: [
@@ -282,7 +284,7 @@ struct DeprecationSummaryTests {
     }
     
     @Test(arguments: DirectiveLocation.allCases, [SourceLanguage.swift, .objectiveC, .javaScript])
-    func warningIncludesInformationFromBothAvailableDirectiveAndSourceAttributes(_ directiveLocation: DirectiveLocation, _ sourceLanguage: SourceLanguage) async throws {
+    func warningIncludesInformationFromBothAvailableDirectiveAndSourceAttributes(_ directiveLocation: DirectiveLocation, _ sourceLanguage: DocCCommon.SourceLanguage) async throws {
         let directives = """
         \(Self.deprecationSummaryDirective)
         @Metadata {

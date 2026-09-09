@@ -12,6 +12,7 @@ import Testing
 import DocCHTML
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 struct HTMLRenderFullPageTests {
     private let reference = ResolvedTopicReference(bundleID: "com.example", path: "/documentation/ModuleName/SomePage/someMethod(with:and:)", fragment: nil, sourceLanguage: .swift)

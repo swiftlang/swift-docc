@@ -13,6 +13,7 @@ import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
 import DocCCommon
+import SymbolKit
 
 class AutomaticSeeAlsoTests: XCTestCase {
     
