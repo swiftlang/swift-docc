@@ -14,6 +14,7 @@ import DocCTestUtilities
 import Foundation
 import SymbolKit
 import Testing
+import DocCCommon
 
 struct VariantOverridesEndToEndTests {
     @Test("Renders correct JSON Patches when building variant overrides for plist symbols")
