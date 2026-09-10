@@ -771,7 +771,6 @@ class ConvertActionTests: XCTestCase {
                         abstract: "TestBed abstract.",
                         usr: "TestBed",
                         availableLanguages: [.swift],
-                        platforms: nil,
                         topicImages: nil,
                         references: nil,
                         redirects: nil
@@ -788,7 +787,6 @@ class ConvertActionTests: XCTestCase {
                         abstract: "An abstract.",
                         usr: "s:7TestBed1AV",
                         availableLanguages: [.swift],
-                        platforms: nil,
                         topicImages: nil,
                         references: nil,
                         redirects: nil
@@ -804,7 +802,6 @@ class ConvertActionTests: XCTestCase {
                         language: .swift,
                         abstract: "Article abstract.",
                         availableLanguages: [.swift],
-                        platforms: nil,
                         topicImages: nil,
                         references: nil,
                         redirects: nil
@@ -820,7 +817,6 @@ class ConvertActionTests: XCTestCase {
                         language: .swift,
                         abstract: "Sample abstract.",
                         availableLanguages: [.swift],
-                        platforms: nil,
                         topicImages: nil,
                         references: nil,
                         redirects: nil
@@ -1162,7 +1158,6 @@ class ConvertActionTests: XCTestCase {
                         language: .swift,
                         abstract: "This is an abstract for the intro.",
                         availableLanguages: [.swift],
-                        platforms: nil,
                         topicImages: nil,
                         references: nil,
                         redirects: nil
@@ -1175,7 +1170,6 @@ class ConvertActionTests: XCTestCase {
                         language: .swift,
                         abstract: nil,
                         availableLanguages: [.swift],
-                        platforms: nil,
                         topicImages: nil,
                         references: nil,
                         redirects: nil
@@ -1191,7 +1185,6 @@ class ConvertActionTests: XCTestCase {
                         language: .swift,
                         abstract: "Learn about some stuff in Technology X.",
                         availableLanguages: [.swift],
-                        platforms: nil,
                         topicImages: nil,
                         references: nil,
                         redirects: nil
@@ -2934,7 +2927,6 @@ private extension LinkDestinationSummary {
         abstract: String?,
         usr: String? = nil,
         availableLanguages: Set<SourceLanguage>,
-        platforms: [PlatformAvailability]?,
         topicImages: [TopicImage]?,
         references: [any RenderReference]?,
         redirects: [URL]?
@@ -2947,7 +2939,8 @@ private extension LinkDestinationSummary {
             title: title,
             abstract: abstract.map { [.text($0)] },
             availableLanguages: availableLanguages,
-            platforms: platforms,
+            isDeprecated: false,
+            isBeta: false,
             usr: usr,
             subheadingDeclarationFragments: nil,
             redirects: redirects,
