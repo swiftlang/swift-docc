@@ -354,19 +354,39 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled)
     }
     
-    func testExperimentalEnableExternalLinkSupportFlag() throws {
+    func testEnableExternalLinkSupportFlag() throws {
+        // Default
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
         let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
+        XCTAssertFalse(commandWithoutFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
 
-        let commandWithFlag = try Docc.Convert.parse([
+        // Explicit enable
+        let commandWithEnableFlag = try Docc.Convert.parse([
+            "--enable-external-link-support",
+            testBundleURL.path
+        ])
+        let actionWithEnableFlag  = try ConvertAction(fromConvertCommand: commandWithEnableFlag)
+        XCTAssertTrue(commandWithEnableFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertTrue(actionWithEnableFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
+
+        // Deprecated "experimental" enable
+        let commandWithExperimentalEnableFlag = try Docc.Convert.parse([
             "--enable-experimental-external-link-support",
+            testBundleURL.path
+        ])
+        let actionWithExperimentalEnableFlag  = try ConvertAction(fromConvertCommand: commandWithExperimentalEnableFlag)
+        XCTAssertTrue(commandWithExperimentalEnableFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertTrue(actionWithExperimentalEnableFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
+        
+        // Redundant disable
+        let commandWithDisableFlag = try Docc.Convert.parse([
+            "--disable-external-link-support",
             testBundleURL.path,
         ])
-        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
+        let actionWithDisableFlag = try ConvertAction(fromConvertCommand: commandWithDisableFlag)
+        XCTAssertFalse(commandWithDisableFlag.featureFlags.enableLinkHierarchySerialization)
+        XCTAssertFalse(actionWithDisableFlag.configuration.featureFlags.isLinkHierarchySerializationEnabled)
     }
     
     func testExperimentalEnableOverloadedSymbolPresentation() throws {
@@ -568,27 +588,51 @@ class ConvertSubcommandFlagParsingTests {
     
     @Test
     func parsingStaticHostingWithContentFlag() throws {
-        // The feature is disabled when no flag is passed.
+        // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        #expect(noFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent == false)
+        #expect(noFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(noFlagConvert.hostingOptions.omitContentFromStaticHostingOutput == false)
+        #expect(noFlagConvert.hostingOptions.transformForStaticHostingOptions == .withContent)
         
-        let enabledFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
-        #expect(enabledFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent)
+        let disabledFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting-without-content"])
+        #expect(disabledFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(disabledFlagConvert.hostingOptions.omitContentFromStaticHostingOutput)
+        #expect(disabledFlagConvert.hostingOptions.transformForStaticHostingOptions == .withoutContent)
         
-        // The '...-transform...-with-content' flag also implies the base '--transform-...' flag.
-        do {
-            let logStorage = LogHandle.LogStorage()
-            Docc.Convert._errorLogHandle = .memory(logStorage)
-            Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
-            
-            let conflictingFlagsConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content", "--no-transform-for-static-hosting"])
-            #expect(conflictingFlagsConvert.hostingOptions.experimentalTransformForStaticHostingWithContent)
-            #expect(conflictingFlagsConvert.hostingOptions.transformForStaticHosting)
-            
-            #expect(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines) == """
-            warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
-            """)
+        let redundantTransformFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting"])
+        #expect(redundantTransformFlagConvert.hostingOptions.transformForStaticHosting          == noFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(redundantTransformFlagConvert.hostingOptions.omitContentFromStaticHostingOutput == noFlagConvert.hostingOptions.omitContentFromStaticHostingOutput)
+        #expect(redundantTransformFlagConvert.hostingOptions.transformForStaticHostingOptions   == noFlagConvert.hostingOptions.transformForStaticHostingOptions)
+        
+        let redundantExperimentalFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
+        #expect(redundantExperimentalFlagConvert.hostingOptions.transformForStaticHosting          == noFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(redundantExperimentalFlagConvert.hostingOptions.omitContentFromStaticHostingOutput == noFlagConvert.hostingOptions.omitContentFromStaticHostingOutput)
+        #expect(redundantExperimentalFlagConvert.hostingOptions.transformForStaticHostingOptions   == noFlagConvert.hostingOptions.transformForStaticHostingOptions)
+    }
+    
+    @Test
+    func warnsAboutUnsupportedCombinationOfStaticHostingFlags() throws {
+        let originalErrorLogHandle = Docc.Convert._errorLogHandle
+        let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
+        defer {
+            Docc.Convert._errorLogHandle = originalErrorLogHandle
+            Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
         }
+        let logStorage = LogHandle.LogStorage()
+        Docc.Convert._errorLogHandle = .memory(logStorage)
+        Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
+        
+        // The feature is enabled when no flag is passed.
+        let convert = try Docc.Convert.parse([
+            "--transform-for-static-hosting-without-content",
+            "--no-transform-for-static-hosting",
+        ])
+        #expect(convert.hostingOptions.transformForStaticHostingOptions == .noTransform)
+        
+        #expect(logStorage.text == """
+        warning: Passing '--transform-for-static-hosting-without-content' has no effect when combined with '--no-transform-for-static-hosting'.
+        
+        """)
     }
     
     @Test
@@ -639,6 +683,25 @@ class ConvertSubcommandFlagParsingTests {
         #expect(throws: (any Error).self) {
             try Docc.Convert.parse(["--output-format", "html"])
         }
+    }
+    
+    @Test
+    func parsingExternalLinkSupportFlag() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.featureFlags.enableLinkHierarchySerialization == false)
+        
+        // It's allowed to pass the previous "--enable-experimental-..." flag.
+        let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-external-link-support"])
+        #expect(oldFlagConvert.featureFlags.enableLinkHierarchySerialization == true)
+        
+        // It's allowed to pass the redundant "--enable-..." flag.
+        let enabledFlagConvert = try Docc.Convert.parse(["--enable-external-link-support"])
+        #expect(enabledFlagConvert.featureFlags.enableLinkHierarchySerialization == true)
+        
+        // Passing the "--disable-..." flag turns of the feature.
+        let disabledFlagConvert = try Docc.Convert.parse(["--disable-external-link-support"])
+        #expect(disabledFlagConvert.featureFlags.enableLinkHierarchySerialization == false)
     }
     
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.

@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
+import Testing
 
 class DocumentationDataVariantsTests: XCTestCase {
     func testAccessesVariantWithTrait() throws {
@@ -42,9 +43,12 @@ class DocumentationDataVariantsTests: XCTestCase {
         XCTAssertEqual(first.variant, "Default value")
     }
     
-    func testIsEmpty() throws {
-        XCTAssert(DocumentationDataVariants<String>().isEmpty)
-        XCTAssertFalse(DocumentationDataVariants<String>(values: [.swift : "Swift"]).isEmpty)
+    func testHasAnyVariants() throws {
+        XCTAssertFalse(DocumentationDataVariants<String>().hasAnyVariants)
+        XCTAssert(DocumentationDataVariants<String>(values: [.swift : "Swift"]).hasAnyVariants)
+
+        // 'hasAnyVariants' does not check the default value
+        XCTAssertFalse(DocumentationDataVariants<String>(defaultVariantValue: "Default value").hasAnyVariants)
     }
     
     func testHasVariant() throws {
@@ -96,5 +100,22 @@ class DocumentationDataVariantsTests: XCTestCase {
             ).interfaceLanguage,
             "MyLanguage"
         )
+    }
+}
+
+class DocumentationDataVariantsTests_new {
+    @Test("Desired behavior for hasAnyValue property")
+    func testHasAnyValue() {
+        // hasAnyValue returns true only if a value is set in either the default or in a variant
+        #expect(!DocumentationDataVariants<String>().hasAnyValue)
+        #expect(DocumentationDataVariants<String>(defaultVariantValue: "Default value").hasAnyValue)
+        #expect(DocumentationDataVariants<String>(values: [.swift: "Swift"]).hasAnyValue)
+
+        // When the variant type is a collection, hasAnyValue will return false if the only available
+        // collections are empty
+        #expect(!DocumentationDataVariants<[String]>(defaultVariantValue: []).hasAnyValue)
+        #expect(!DocumentationDataVariants<[String]>(values: [.swift: []]).hasAnyValue)
+        #expect(DocumentationDataVariants<[String]>(defaultVariantValue: ["DefaultValue"]).hasAnyValue)
+        #expect(DocumentationDataVariants<[String]>(values: [.swift: ["Swift"]]).hasAnyValue)
     }
 }

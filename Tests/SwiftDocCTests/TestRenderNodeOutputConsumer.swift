@@ -23,6 +23,8 @@ class TestRenderNodeOutputConsumer: _WillBeMadeNonPublicConvertOutputConsumer, E
     
     func consume(assetsInInputs _: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
+    func consumeIncremental(linkableElementSummary: LinkDestinationSummary) throws { }
+    func finishConsumingLinkableElementSummaries() throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }
     func consume(benchmarks: Benchmark) throws { }

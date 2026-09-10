@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -41,13 +41,17 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             emitDigest: false,
             currentPlatforms: nil,
             temporaryDirectory: try createTemporaryDirectory(),
-            transformForStaticHosting: true,
+            transformForStaticHostingOptions: .withoutContent,
             hostingBasePath: basePath
         )
         _ = try await action.perform(logHandle: .none)
         
         // Test the content of the output folder.
-        var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json" ,"videos", "index.html", "index"]
+        var expectedContent = [
+            "data", "documentation", "tutorials", "downloads", "images", "videos",
+            "index.html", "index",
+            "metadata.json", "link-hierarchy.json", "linkable-entities.json"
+        ]
         expectedContent += templateFolder.content.filter { $0 is Folder }.map{ $0.name }
         
         let output = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
