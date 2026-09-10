@@ -157,13 +157,15 @@ public struct RenderMetadata: VariantContainer {
     /// The variants for the source file URI of a page.
     public var sourceFileURIVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
-    /// The remote location where the source declaration of the topic can be viewed.
+    /// The remote location where the page's source content can be viewed, hosted by a source code service.
+    ///
+    /// For symbols, this points at the symbol's declaration. For articles and tutorial content, this points at the page's source file.
     public var remoteSource: RemoteSource? {
         get { getVariantDefaultValue(keyPath: \.remoteSourceVariants) }
         set { setVariantDefaultValue(newValue, keyPath: \.remoteSourceVariants) }
     }
-    
-    /// The variants for the topic's remote source.
+
+    /// The variants for the page's remote source.
     public var remoteSourceVariants: VariantCollection<RemoteSource?> = .init(defaultValue: nil)
     
     /// Any tags assigned to the node.
@@ -195,15 +197,15 @@ extension RenderMetadata: Codable {
         public let relatedModules: [String]?
     }
     
-    /// Describes the location of the topic's source code, hosted remotely by a source service.
+    /// Describes the location of a page's source content, hosted remotely by a source service.
     public struct RemoteSource: Codable, Equatable {
-        /// The name of the file where the topic is declared.
+        /// The name of the source file.
         public var fileName: String
-        
-        /// The location of the topic's source code, hosted by a source service.
+
+        /// The location of the source content, hosted by a source service.
         public var url: URL
-        
-        /// Creates a topic's source given its source code's file name and URL.
+
+        /// Creates a page's remote source given its source file's name and URL.
         public init(fileName: String, url: URL) {
             self.fileName = fileName
             self.url = url
