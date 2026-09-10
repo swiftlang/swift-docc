@@ -74,8 +74,7 @@ struct StaticHostingWithContentTests {
             fileManager: fileSystem,
             temporaryDirectory: URL(fileURLWithPath: "/tmp"),
             experimentalEnableCustomTemplates: true,
-            transformForStaticHosting: true,
-            includeContentInEachHTMLFile: includeHTMLContent,
+            transformForStaticHostingOptions: includeHTMLContent ? .withContent : .withoutContent,
             hostingBasePath: basePath
         )
         // The old `Indexer` type doesn't work with virtual file systems.

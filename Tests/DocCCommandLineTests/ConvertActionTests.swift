@@ -2214,7 +2214,24 @@ class ConvertActionTests: XCTestCase {
         let temporaryDirectory = try createTemporaryDirectory()
         let outputDirectory = temporaryDirectory.appendingPathComponent("output", isDirectory: true)
         let doccCatalogDirectory = try emptyCatalog.write(inside: temporaryDirectory)
-        let htmlTemplateDirectory = try Folder.emptyHTMLTemplateDirectory.write(inside: temporaryDirectory)
+        let template = Folder(name: "template") {
+            TextFile(name: "index.html", utf8Content: """
+            <html>
+              <head>
+                <meta charset="utf-8" />
+                <script>var baseUrl = "/"</script>
+                <title>Documentation</title>
+              </head>
+              <body>
+                <noscript>
+                  <p>Some existing information inside the no script tag</p>
+                </noscript>
+                <div id="app"></div>
+              </body>
+            </html>
+            """)
+        }
+        let htmlTemplateDirectory = try template.write(inside: temporaryDirectory)
         
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, htmlTemplateDirectory.path)
         defer {
@@ -2293,7 +2310,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
-            transformForStaticHosting: true
+            transformForStaticHostingOptions: .withoutContent
         )
         
         try await action.performAndHandleResult(logHandle: .none)
@@ -2423,7 +2440,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true,
-            transformForStaticHosting: true
+            transformForStaticHostingOptions: .withoutContent
         )
         let result = try await action.perform(logHandle: .none)
 

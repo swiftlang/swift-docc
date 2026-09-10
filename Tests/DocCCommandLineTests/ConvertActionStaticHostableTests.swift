@@ -41,7 +41,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             emitDigest: false,
             currentPlatforms: nil,
             temporaryDirectory: try createTemporaryDirectory(),
-            transformForStaticHosting: true,
+            transformForStaticHostingOptions: .withoutContent,
             hostingBasePath: basePath
         )
         _ = try await action.perform(logHandle: .none)

@@ -84,13 +84,24 @@ extension ConvertAction {
             experimentalEnableCustomTemplates: convert.featureFlags.experimentalEnableCustomTemplates,
             experimentalModifyCatalogWithGeneratedCuration: convert.featureFlags.experimentalModifyCatalogWithGeneratedCuration,
             featureFlags: featureFlags,
-            transformForStaticHosting: convert.hostingOptions.transformForStaticHosting,
-            includeContentInEachHTMLFile: convert.hostingOptions.experimentalTransformForStaticHostingWithContent,
+            transformForStaticHostingOptions: convert.hostingOptions.transformForStaticHostingOptions,
             allowArbitraryCatalogDirectories: convert.featureFlags.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingOptions.hostingBasePath,
             sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
             dependencies: convert.linkResolutionOptions.dependencies
         )
+    }
+}
+
+extension Docc.Convert.HostingOptions {
+    var transformForStaticHostingOptions: ConvertAction.TransformForStaticHostingOptions {
+        if !transformForStaticHosting {
+            return .noTransform
+        }
+        if omitContentFromStaticHostingOutput {
+            return .withoutContent
+        }
+        return .withContent
     }
 }
 

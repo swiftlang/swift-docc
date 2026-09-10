@@ -588,27 +588,51 @@ class ConvertSubcommandFlagParsingTests {
     
     @Test
     func parsingStaticHostingWithContentFlag() throws {
-        // The feature is disabled when no flag is passed.
+        // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        #expect(noFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent == false)
+        #expect(noFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(noFlagConvert.hostingOptions.omitContentFromStaticHostingOutput == false)
+        #expect(noFlagConvert.hostingOptions.transformForStaticHostingOptions == .withContent)
         
-        let enabledFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
-        #expect(enabledFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent)
+        let disabledFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting-without-content"])
+        #expect(disabledFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(disabledFlagConvert.hostingOptions.omitContentFromStaticHostingOutput)
+        #expect(disabledFlagConvert.hostingOptions.transformForStaticHostingOptions == .withoutContent)
         
-        // The '...-transform...-with-content' flag also implies the base '--transform-...' flag.
-        do {
-            let logStorage = LogHandle.LogStorage()
-            Docc.Convert._errorLogHandle = .memory(logStorage)
-            Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
-            
-            let conflictingFlagsConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content", "--no-transform-for-static-hosting"])
-            #expect(conflictingFlagsConvert.hostingOptions.experimentalTransformForStaticHostingWithContent)
-            #expect(conflictingFlagsConvert.hostingOptions.transformForStaticHosting)
-            
-            #expect(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines) == """
-            warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
-            """)
+        let redundantTransformFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting"])
+        #expect(redundantTransformFlagConvert.hostingOptions.transformForStaticHosting          == noFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(redundantTransformFlagConvert.hostingOptions.omitContentFromStaticHostingOutput == noFlagConvert.hostingOptions.omitContentFromStaticHostingOutput)
+        #expect(redundantTransformFlagConvert.hostingOptions.transformForStaticHostingOptions   == noFlagConvert.hostingOptions.transformForStaticHostingOptions)
+        
+        let redundantExperimentalFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
+        #expect(redundantExperimentalFlagConvert.hostingOptions.transformForStaticHosting          == noFlagConvert.hostingOptions.transformForStaticHosting)
+        #expect(redundantExperimentalFlagConvert.hostingOptions.omitContentFromStaticHostingOutput == noFlagConvert.hostingOptions.omitContentFromStaticHostingOutput)
+        #expect(redundantExperimentalFlagConvert.hostingOptions.transformForStaticHostingOptions   == noFlagConvert.hostingOptions.transformForStaticHostingOptions)
+    }
+    
+    @Test
+    func warnsAboutUnsupportedCombinationOfStaticHostingFlags() throws {
+        let originalErrorLogHandle = Docc.Convert._errorLogHandle
+        let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
+        defer {
+            Docc.Convert._errorLogHandle = originalErrorLogHandle
+            Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
         }
+        let logStorage = LogHandle.LogStorage()
+        Docc.Convert._errorLogHandle = .memory(logStorage)
+        Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
+        
+        // The feature is enabled when no flag is passed.
+        let convert = try Docc.Convert.parse([
+            "--transform-for-static-hosting-without-content",
+            "--no-transform-for-static-hosting",
+        ])
+        #expect(convert.hostingOptions.transformForStaticHostingOptions == .noTransform)
+        
+        #expect(logStorage.text == """
+        warning: Passing '--transform-for-static-hosting-without-content' has no effect when combined with '--no-transform-for-static-hosting'.
+        
+        """)
     }
     
     @Test
