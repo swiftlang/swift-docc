@@ -153,6 +153,7 @@ add_library(SwiftDocC
   Infrastructure/Workspace/DocumentationContext+Inputs+Info.swift
   Infrastructure/Workspace/FeatureFlags+Info.swift
   LinkTargets/LinkDestinationSummary.swift
+  LinkTargets/LinkDestinationSummary+FastJSONDecodable.swift
   Model/AnchorSection.swift
   Model/AvailabilityParser.swift
   Model/BuildMetadata.swift

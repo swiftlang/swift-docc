@@ -391,6 +391,16 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     /// - Returns: The decoded values.
     @inlinable
     package mutating func decode<Value: FastJSONDecodable>(_ type: [Value].Type) throws(DecodingError) -> [Value] {
+        try _decodeArray { decoder throws(DecodingError) -> Value in
+            try decoder.decode(Value.self)
+        }
+    }
+    
+    /// Dynamically decodes an array of values and advances the decoder's state.
+    ///
+    /// It is recommended to call `decode([Value].self)` instead of calling this method whenever possible. Doing so is both easier and safer (less risk to get the decoder in an invalid state).
+    /// However, sometimes---for example when decoding "existential types" (`any Value`)---it's not possible to conform to `FastJSONDecodable` but it is possible to manually decode a value.
+    package mutating func _decodeArray<Value>(_ body: (inout Self) throws(DecodingError) -> Value) throws(DecodingError) -> [Value] {
         do {
             try _descendIntoArray()
             
@@ -401,7 +411,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
             _skipWhitespace()
             
             while pointer.nextByte != .init(ascii: "]") {
-                values.append(try decode(Value.self))
+                values.append(try body(&self))
                 path.incrementCurrentIndex()
                 
                 _skipWhitespace()
@@ -527,7 +537,13 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     /// Creates a generic data-corrupted error based on the decoder's current state.
     @inlinable
     package func makeGenericDataCorruptedError() -> DecodingError {
-        .dataCorrupted(.init(codingPath: path.makeCodingPath(), debugDescription: "The given data was not valid JSON."))
+        makeDataCorruptedError(message: "The given data was not valid JSON.")
+    }
+    
+    /// Creates a data-corrupted error based on the decoder's current state with the given message.
+    @inlinable
+    package func makeDataCorruptedError(message: String) -> DecodingError {
+        .dataCorrupted(.init(codingPath: path.makeCodingPath(), debugDescription: message))
     }
     
     // MARK: Scanning

@@ -11,7 +11,9 @@
 import Foundation
 import XCTest
 import Testing
+import DocCCommon
 
+@_disfavoredOverload
 func assertRoundTripCoding<Value: Equatable & Codable>(_ value: Value, sourceLocation: SourceLocation = #_sourceLocation) throws {
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
@@ -24,6 +26,26 @@ func assertRoundTripCoding<Value: Equatable & Codable>(_ value: Value, sourceLoc
     let reEncoded = try encoder.encode(decoded)
     let reDecoded = try decoder.decode(Value.self, from: reEncoded)
     #expect(decoded == reDecoded, sourceLocation: sourceLocation)
+}
+
+func assertRoundTripCoding<Value: Equatable & Codable & FastJSONDecodable>(_ value: Value, sourceLocation: SourceLocation = #_sourceLocation) throws {
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    let encoded = try encoder.encode(value)
+    let decoded = try decoder.decode(Value.self, from: encoded)
+    #expect(value == decoded, sourceLocation: sourceLocation)
+    
+    // Decode a second time to ensure no data is lost during the round-trip
+    let reEncoded = try encoder.encode(decoded)
+    let reDecoded = try decoder.decode(Value.self, from: reEncoded)
+    #expect(decoded == reDecoded, sourceLocation: sourceLocation)
+    
+    let fastDecoded = try FastSymbolGraphJSONDecoder.decode(Value.self, from: encoded)
+    #expect(decoded == fastDecoded, sourceLocation: sourceLocation)
+    
+    let reFastDecoded = try FastSymbolGraphJSONDecoder.decode(Value.self, from: reEncoded)
+    #expect(decoded == reFastDecoded, sourceLocation: sourceLocation)
 }
 
 extension XCTestCase {

@@ -604,7 +604,7 @@ extension LinkDestinationSummary {
             kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         }
         let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
-        (relativePresentationURL, absolutePresentationURL) = Self.checkIfDecodedURLWasAbsolute(decodedURL)
+        (relativePresentationURL, absolutePresentationURL) = Self._checkIfDecodedURLWasAbsolute(decodedURL)
         
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
@@ -650,7 +650,7 @@ extension LinkDestinationSummary {
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
     }
     
-    private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
+    static func _checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
         guard decodedURL.isAbsoluteWebURL,
               var components = URLComponents(url: decodedURL, resolvingAgainstBaseURL: false)
         else {

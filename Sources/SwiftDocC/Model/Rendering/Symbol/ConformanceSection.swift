@@ -51,6 +51,10 @@ public struct ConformanceSection: Codable, Equatable {
         let selfName: String
     }
     
+    init(constraints: [RenderInlineContent]) {
+        self.constraints = constraints
+    }
+    
     /// Creates a new conformance section.
     /// - Parameter constraints: The list of constraints to render.
     /// - Parameter options: The list of options to apply while rendering.
