@@ -10,12 +10,11 @@
 
 import Testing
 import Foundation
-@testable import SwiftDocC
+import SwiftDocC
 @testable import DocCCommandLine
 import DocCTestUtilities
 
 struct StaticHostingWithContentTests {
-
     @Test(arguments: [true, false])
     func includesBasePathInPerPageIndexHTMLFile(includeHTMLContent: Bool) async throws {
         let catalog = Folder(name: "Something.docc") {
@@ -75,8 +74,7 @@ struct StaticHostingWithContentTests {
             fileManager: fileSystem,
             temporaryDirectory: URL(fileURLWithPath: "/tmp"),
             experimentalEnableCustomTemplates: true,
-            transformForStaticHosting: true,
-            includeContentInEachHTMLFile: includeHTMLContent,
+            transformForStaticHostingOptions: includeHTMLContent ? .withContent : .withoutContent,
             hostingBasePath: basePath
         )
         // The old `Indexer` type doesn't work with virtual file systems.
@@ -98,6 +96,8 @@ struct StaticHostingWithContentTests {
         ├─ images/
         │  ╰─ Something/
         ├─ index.html
+        ├─ link-hierarchy.json
+        ├─ linkable-entities.json
         ├─ metadata.json
         ╰─ videos/
            ╰─ Something/

@@ -22,7 +22,7 @@ extension ConvertAction {
         var featureFlags = FeatureFlags()
         featureFlags.isExperimentalCodeBlockAnnotationsEnabled = convert.featureFlags.enableExperimentalCodeBlockAnnotations
         featureFlags.isExperimentalDeviceFrameSupportEnabled = convert.featureFlags.enableExperimentalDeviceFrameSupport
-        featureFlags.isExperimentalLinkHierarchySerializationEnabled = convert.featureFlags.enableExperimentalLinkHierarchySerialization
+        featureFlags.isLinkHierarchySerializationEnabled = convert.featureFlags.enableLinkHierarchySerialization
         featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = convert.featureFlags.enableExperimentalOverloadedSymbolPresentation
         featureFlags.isMentionedInEnabled = convert.featureFlags.enableMentionedIn
         featureFlags.isParametersAndReturnsValidationEnabled = convert.featureFlags.enableParametersAndReturnsValidation
@@ -84,13 +84,24 @@ extension ConvertAction {
             experimentalEnableCustomTemplates: convert.featureFlags.experimentalEnableCustomTemplates,
             experimentalModifyCatalogWithGeneratedCuration: convert.featureFlags.experimentalModifyCatalogWithGeneratedCuration,
             featureFlags: featureFlags,
-            transformForStaticHosting: convert.hostingOptions.transformForStaticHosting,
-            includeContentInEachHTMLFile: convert.hostingOptions.experimentalTransformForStaticHostingWithContent,
+            transformForStaticHostingOptions: convert.hostingOptions.transformForStaticHostingOptions,
             allowArbitraryCatalogDirectories: convert.featureFlags.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingOptions.hostingBasePath,
             sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
             dependencies: convert.linkResolutionOptions.dependencies
         )
+    }
+}
+
+extension Docc.Convert.HostingOptions {
+    var transformForStaticHostingOptions: ConvertAction.TransformForStaticHostingOptions {
+        if !transformForStaticHosting {
+            return .noTransform
+        }
+        if omitContentFromStaticHostingOutput {
+            return .withoutContent
+        }
+        return .withContent
     }
 }
 

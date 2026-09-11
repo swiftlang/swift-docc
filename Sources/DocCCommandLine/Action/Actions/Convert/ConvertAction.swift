@@ -36,8 +36,17 @@ public struct ConvertAction: AsyncAction {
     private let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticEngine: DiagnosticEngine
 
-    private let transformForStaticHosting: Bool
-    private let includeContentInEachHTMLFile: Bool
+    /// A configuration for how the action should transform the output for static hosting environments
+    package enum TransformForStaticHostingOptions: Equatable {
+        /// Transform the archive to support static hosting environments and minimal browsing without JavaScript enabled.
+        case withContent
+        /// Transform the archive to support static hosting environments but requiring JavaScript to render pages.
+        case withoutContent
+        /// Don't transform the archive to support static hosting environments.
+        case noTransform
+    }
+    
+    private let transformForStaticHostingOptions: TransformForStaticHostingOptions
     private let hostingBasePath: String?
     
     let sourceRepository: SourceRepository?
@@ -75,8 +84,7 @@ public struct ConvertAction: AsyncAction {
     ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
     ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
     ///   - featureFlags: A collection of feature flags that the convert action uses to enable or disable certain optional behaviors.
-    ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
-    ///   - includeContentInEachHTMLFile: `true` if the convert action should process each static hosting HTML file so that it includes documentation content for environments without JavaScript enabled, otherwise `false`.
+    ///   - transformForStaticHostingOptions: Options to configure how the convert action transforms the built documentation archive so that it supports a static hosting environment.
     ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation catalog if it doesn't discover another catalog, otherwise `false`.
     ///   - hostingBasePath: The base path where the built documentation archive will be hosted at.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
@@ -107,8 +115,7 @@ public struct ConvertAction: AsyncAction {
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         featureFlags: FeatureFlags = .init(),
-        transformForStaticHosting: Bool = false,
-        includeContentInEachHTMLFile: Bool = false,
+        transformForStaticHostingOptions: TransformForStaticHostingOptions = .noTransform,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
         sourceRepository: SourceRepository? = nil,
@@ -123,8 +130,7 @@ public struct ConvertAction: AsyncAction {
         self.fileManager = fileManager
         self.temporaryDirectory = temporaryDirectory
         self.documentationCoverageOptions = documentationCoverageOptions
-        self.transformForStaticHosting = transformForStaticHosting
-        self.includeContentInEachHTMLFile = includeContentInEachHTMLFile
+        self.transformForStaticHostingOptions = transformForStaticHostingOptions
         self.hostingBasePath = hostingBasePath
         self.sourceRepository = sourceRepository
         
@@ -339,7 +345,7 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             // Don't transform for static hosting if the `FileWritingHTMLContentConsumer` will create per-page index.html files
-            transformForStaticHostingIndexHTML: transformForStaticHosting && !includeContentInEachHTMLFile ? indexHTML : nil,
+            transformForStaticHostingIndexHTML: transformForStaticHostingOptions == .withoutContent ? indexHTML : nil,
             inputsID: inputs.id
         )
         
@@ -352,7 +358,7 @@ public struct ConvertAction: AsyncAction {
                 customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
                 customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
             )
-        } else if includeContentInEachHTMLFile, let indexHTML {
+        } else if transformForStaticHostingOptions == .withContent, let indexHTML {
             htmlConsumer = try FileWritingHTMLContentConsumer(
                 targetFolder: temporaryFolder,
                 fileManager: fileManager,

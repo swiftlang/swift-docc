@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -80,6 +80,8 @@ struct MergeAction: AsyncAction {
                 throw CocoaError.error(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: archive.appendingPathComponent("index/index.json").path])
             }
             let renderIndex = try JSONDecoder().decode(RenderIndex.self, from: jsonIndexData)
+            
+            // TODO: Combine link-hierarchy.json, linkable-entities.json, and metadata.json
             
             try combinedJSONIndex.merge(renderIndex)
         }

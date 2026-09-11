@@ -33,10 +33,37 @@ public struct DocumentationDataVariants<Variant> {
     }
     
     /// Whether there are any variants for this piece of information about the documentation node
+    @available(*, deprecated, renamed: "hasAnyVariants", message: "Use 'hasAnyVariants' instead. This deprecated API will be removed after Swift 6.6 is released.")
     public var isEmpty: Bool {
-        values.isEmpty
+        !self.hasAnyVariants
     }
-    
+
+    /// Whether there are any variants for this piece of information about the documentation node
+    public var hasAnyVariants: Bool {
+        !values.isEmpty
+    }
+
+    /// Whether this variant collection has a default value or any variant set.
+    ///
+    /// If the variant type is a collection type, this property will also make sure that
+    /// any collection value, whether in the default value or any variant value, is non-empty.
+    /// In other words, if a `DocumentationDataVariants<[String]>` has a
+    /// default value of `[]` and no variants, this property will still return false.
+    public var hasAnyValue: Bool {
+        func hasValue(_ value: Variant?) -> Bool {
+            if let collectionValue = value as? (any Collection) {
+                // If the variant type is a collection type, also check whether or not it's
+                // empty
+                return !collectionValue.isEmpty
+            } else {
+                // Otherwise, just return whether or not the value is nil
+                return value != nil
+            }
+        }
+
+        return hasValue(defaultVariantValue) || values.values.contains(where: hasValue(_:))
+    }
+
     /// Creates a variants value.
     ///
     /// - Parameters:

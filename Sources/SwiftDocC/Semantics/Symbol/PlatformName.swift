@@ -164,4 +164,24 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         case (let lhs?, let rhs?):  areInIncreasingOrder(lhs, rhs)
         }
     }
+    
+    /// Returns the given platforms with any missing fallback platforms added.
+    ///
+    /// This function uses the centralized `DefaultAvailability.fallbackPlatforms` mapping to ensure
+    /// consistency with platform expansion logic used throughout the codebase.
+    ///
+    /// For example, when iOS is present in the platforms array, this function adds iPadOS and Mac Catalyst
+    /// if they are not already included.
+    ///
+    /// - Parameter platforms: The original platforms array.
+    /// - Returns: The platforms array with fallback platforms added where applicable.
+    package static func addingFallbacks(_ platforms: [PlatformName?]) -> [PlatformName?] {
+        guard !platforms.isEmpty else { return platforms }
+
+        // Add fallback platforms if the platform is missing but the fallback is present
+        let fallbacks = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback in
+            platforms.contains(fallback) && !platforms.contains(platform) ? platform : nil
+        }
+        return platforms + fallbacks
+    }
 }

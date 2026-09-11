@@ -249,14 +249,42 @@ extension MarkdownOutputSemanticVisitor {
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
         markdownWalker.visit(symbol.abstract)
-        // TODO: rdar://166606746 include alternate declarations
-        if let declarationFragments = symbol.declaration.first?.value.declarationFragments {
-            let declaration = declarationFragments
-                .map { $0.spelling }
-                .joined()
-            let code = CodeBlock(declaration)
-            markdownWalker.visit(code)
+        
+        // Declarations
+        
+        // The main declaration is [[Platform] : Declaration]
+        // Alternate declarations are [[Platform] : [Declaration]]
+        let declarations = symbol.declaration.expandingPlatformsAndSorting()
+            
+        // Obtain the alternate declarations
+        let alternates = symbol.alternateDeclarationVariants[.swift]?.expandingPlatformsAndSorting()
+           
+        func addAlternates(for platforms: [PlatformName?]) {
+            if let (_, alternateDeclarations) = alternates?.first(where: { $0.0 == platforms }) {
+                for alt in alternateDeclarations {
+                    let code = CodeBlock(alt.spelling())
+                    markdownWalker.visit(code)
+                }
+            }
         }
+        
+        if declarations.count == 1 {
+            let (platforms, declaration) = declarations[0]
+            let code = CodeBlock(declaration.spelling())
+            markdownWalker.visit(code)
+            addAlternates(for: platforms)
+        } else {
+            for (platforms, declaration) in declarations {
+                let platformNames = platforms
+                    .compactMap { $0?.displayName }
+                    .joined(separator: ", ")
+                markdownWalker.visitParagraph(Paragraph(Text("\(platformNames):")))
+                markdownWalker.visit(CodeBlock(declaration.spelling()))
+                addAlternates(for: platforms)
+            }
+        }
+        
+        // Parameters
         
         if let parametersSection = symbol.parametersSection, parametersSection.parameters.isEmpty == false {
             markdownWalker.visit(Heading(level: 2, Text(ParametersSection.title ?? "Parameters")))
