@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -558,7 +558,7 @@ extension Symbol {
     }
 
     func mergeDeclarations(unifiedSymbol: UnifiedSymbolGraph.Symbol) throws {
-        for (selector, mixins) in unifiedSymbol.mixins {
+        for (selector, mixins) in unifiedSymbol.mixins.sortedBySelector() {
             if let mergingDeclaration = mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments {
                 let availability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
                 let alternateSymbols = mixins[SymbolGraph.Symbol.AlternateSymbols.mixinKey] as? SymbolGraph.Symbol.AlternateSymbols
@@ -571,7 +571,7 @@ extension Symbol {
     /// Merge the different availability variants defined in the unified symbol,
     /// and update the availability of the canonical symbol to consider all the different availability mixins instead of only the first one.
     func mergeAvailabilities(unifiedSymbol: UnifiedSymbolGraph.Symbol) {
-        for (selector, mixins) in unifiedSymbol.mixins {
+        for (selector, mixins) in unifiedSymbol.mixins.sortedBySelector() {
             let trait = DocumentationDataVariantsTrait(for: selector)
             if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
                 for availabilityItem in unifiedSymbolAvailability.availability {

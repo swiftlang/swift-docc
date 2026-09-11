@@ -326,6 +326,44 @@ struct AvailabilityTests {
         }
     }
     
+    // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // If you suspect that your changes might affect this test,
+    // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
+    @Test
+    func mergedAvailabilityResolvesConflictDeterministically() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            for (osName, iOSIntroducedVersion) in [
+                ("ios",      SymbolGraph.SemanticVersion(major: 17, minor: 0, patch: 0)),
+                ("visionos", SymbolGraph.SemanticVersion(major: 13, minor: 0, patch: 0)),
+            ] {
+                JSONFile(name: "ModuleName-\(osName).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: osName), environment: nil),
+                    symbols: [
+                        makeSymbol(
+                            id: "some-symbol-id",
+                            kind: .class,
+                            pathComponents: ["SomeClass"],
+                            availability: [
+                                makeAvailabilityItem(domainName: "iOS", introduced: iOSIntroducedVersion)
+                            ]
+                        )
+                    ]
+                ))
+            }
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let symbol = try #require(node.semantic as? Symbol)
+
+        let iOSAvailability = try #require(
+            symbol.availabilityVariants[.swift]?.availability
+                .first { $0.domain?.rawValue == "iOS" }
+        )
+        #expect(iOSAvailability.introducedVersion == .init(major: 17, minor: 0, patch: 0))
+    }
+
     @Test
     func fallbackAvailabilityDoesNotOverrideInSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {

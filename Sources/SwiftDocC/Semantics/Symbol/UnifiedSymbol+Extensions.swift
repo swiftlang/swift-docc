@@ -20,32 +20,7 @@ extension UnifiedSymbolGraph.Symbol {
     private func defaultSelector(
         in selectors: some Sequence<UnifiedSymbolGraph.Selector>
     ) -> UnifiedSymbolGraph.Selector? {
-        // Return the default selector based on the ordering defined below.
-        return selectors.sorted { lhsSelector, rhsSelector in
-            switch (lhsSelector.interfaceLanguage, rhsSelector.interfaceLanguage) {
-                
-            // If both selectors are Swift, pick the one that has the most matching platforms with the other selectors.
-            case ("swift", "swift"):
-                let nonSwiftSelectors = selectors.filter { $0.interfaceLanguage != "swift" }
-                
-                let lhsMatchingPlatformsCount = nonSwiftSelectors.filter { $0.platform == lhsSelector.platform }.count
-                let rhsMatchingPlatformsCount = nonSwiftSelectors.filter { $0.platform == rhsSelector.platform }.count
-                
-                if lhsMatchingPlatformsCount == rhsMatchingPlatformsCount {
-                    // If they have the same number of matching platforms, use the hierarchical platform order.
-                    return PlatformName.areInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
-                }
-                
-                return lhsMatchingPlatformsCount > rhsMatchingPlatformsCount
-            case ("swift", _):
-                return true
-            case (_, "swift"):
-                return false
-            default:
-                // Use the hierarchical platform order
-                return PlatformName.areInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
-            }
-        }.first
+        return selectors.min(by: UnifiedSymbolGraph.Selector.Ordering(among: selectors).areInIncreasingOrder)
     }
 
     func symbol(forSelector selector: UnifiedSymbolGraph.Selector?) -> SymbolGraph.Symbol? {
@@ -122,6 +97,59 @@ extension UnifiedSymbolGraph.Symbol {
         } else {
             return identifier(forLanguage: "swift")
         }
+    }
+}
+
+extension UnifiedSymbolGraph.Selector {
+    /// An ordering that wraps the comparator to sort a list of selectors.
+    /// This wrapper computes the number of non-Swift selectors per platform once,
+    /// and allows the comparator to reuse it for each comparison.
+    struct Ordering {
+        private let nonSwiftSelectorsPerPlatform: [String?: Int]
+
+        init(among selectors: some Sequence<UnifiedSymbolGraph.Selector>) {
+            var nonSwiftSelectorsPerPlatform: [String?: Int] = [:]
+            for selector in selectors where selector.interfaceLanguage != "swift" {
+                nonSwiftSelectorsPerPlatform[selector.platform, default: 0] += 1
+            }
+            self.nonSwiftSelectorsPerPlatform = nonSwiftSelectorsPerPlatform
+        }
+
+        /// A comparator that performs a cascading sort on a list of selectors:
+        ///
+        /// - A Swift selector is preferred over a non-Swift one.
+        /// - If both selectors are for Swift, the value with the most non-Swift selectors for its platform is chosen.
+        /// - If it is still a tie, the hierarchical platform order is used.
+        func areInIncreasingOrder(
+            _ lhs: UnifiedSymbolGraph.Selector,
+            _ rhs: UnifiedSymbolGraph.Selector
+        ) -> Bool {
+            switch (lhs.interfaceLanguage, rhs.interfaceLanguage) {
+            // If both selectors are Swift, choose the one with the highest number of non-Swift selectors for its platform
+            case ("swift", "swift"):
+                let lhsMatchingPlatformsCount = nonSwiftSelectorsPerPlatform[lhs.platform, default: 0]
+                let rhsMatchingPlatformsCount = nonSwiftSelectorsPerPlatform[rhs.platform, default: 0]
+                if lhsMatchingPlatformsCount != rhsMatchingPlatformsCount {
+                    return lhsMatchingPlatformsCount > rhsMatchingPlatformsCount
+                }
+                // Use the hierarchical platform order
+                return PlatformName.areInIncreasingOrder(lhs.platform, rhs.platform)
+            case ("swift", _):
+                return true
+            case (_, "swift"):
+                return false
+            default:
+                // Use the hierarchical platform order
+                return PlatformName.areInIncreasingOrder(lhs.platform, rhs.platform)
+            }
+        }
+    }
+}
+
+extension Dictionary where Key == UnifiedSymbolGraph.Selector {
+    func sortedBySelector() -> [(key: Key, value: Value)] {
+        let ordering = UnifiedSymbolGraph.Selector.Ordering(among: keys)
+        return sorted { ordering.areInIncreasingOrder($0.key, $1.key) }
     }
 }
 
