@@ -14,6 +14,7 @@ import XCTest
 import DocCCommon
 
 class PlatformAvailabilityTests: XCTestCase {
+    @available(*, deprecated, message: "This test calls deprecated API")
     func testDecodePlatformAvailability() throws {
         let platformAvailabilityURL = Bundle.module.url(
             forResource: "platform-availability", withExtension: "json", subdirectory: "Rendering Fixtures")!

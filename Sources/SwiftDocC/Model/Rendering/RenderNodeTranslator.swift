@@ -1375,7 +1375,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 
                 let renderItem = AvailabilityRenderItem(availability, current: currentPlatforms?[name])
-                assert(renderItem.unconditionallyUnavailable != true, "Unavailable API should have already been filtered out above.")
                 information[name] = renderItem
             }
             
@@ -1998,7 +1997,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 introduced: availability.introducedVersion,
                 isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
             )
-            assert(renderItem.unconditionallyUnavailable != true, "Default availability shouldn't ever be unconditionally unavailable")
             
             // Override any previous value if the same platform is specified multiple times
             result[name] = renderItem

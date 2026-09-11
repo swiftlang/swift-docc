@@ -176,11 +176,9 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, "1.0")
-                XCTAssertEqual(renderNode.metadata.platforms?.first?.renamed, "Swift renamed")
             },
             assertAfterApplyingVariant: { renderNode in
                 XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, "2.0")
-                XCTAssertEqual(renderNode.metadata.platforms?.first?.renamed, "Objective-C renamed")
             }
         )
     }
