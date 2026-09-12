@@ -348,7 +348,7 @@ struct PathHierarchy {
                 acc[uniqueID] = Node(symbol: symbol, name: symbol.pathComponents.last!)
             }
 
-            for relationship in unifiedGraph.relationshipsByLanguage.flatMap(\.value) where relationship.kind == .overloadOf {
+            for relationship in unifiedGraph.relationshipsByLanguage.lazy.flatMap(\.value) where relationship.kind == .overloadOf {
                 guard let groupNode = overloadGroupNodes[relationship.target], let overloadedSymbolNodes = allNodes[relationship.source] else {
                     continue
                 }

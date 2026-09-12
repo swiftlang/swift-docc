@@ -1147,8 +1147,8 @@ public class DocumentationContext {
                     }
 
                     let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
-                        $0.filter { $0.kind == .overloadOf }
+                    unifiedSymbolGraph.relationshipsByLanguage.values.lazy.flatMap({
+                        $0.lazy.filter { $0.kind == .overloadOf }
                     }).reduce(into: [:], { acc, relationship in
                         acc[relationship.target, default: []].insert(relationship.source)
                     })
