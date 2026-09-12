@@ -17,7 +17,7 @@ extension RenderNode {
     }
 
     var rawIndexableTextContent: String {
-        return contentSections
+        return contentSections.lazy
             // Exclude text from call-to-action sections, since they always link to standalone (indexed) pages.
             .filter { $0.kind != .callToAction }
             .map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")

@@ -635,7 +635,7 @@ extension NavigatorIndex {
                 return
             }
             // Check if the render node has an Objective-C representation
-            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+            guard let objCVariantTrait = renderNode.variants?.lazy.flatMap(\.traits).first(where: { trait in
                 switch trait {
                 case .interfaceLanguage(let language):
                     return InterfaceLanguage.from(string: language) == .objc
@@ -661,7 +661,7 @@ extension NavigatorIndex {
             }
             
             // Check if the render node has an Objective-C representation
-            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+            guard let objCVariantTrait = renderNode.variants?.lazy.flatMap(\.traits).first(where: { trait in
                 switch trait {
                 case .interfaceLanguage(let language):
                     return InterfaceLanguage.from(string: language) == .objc
