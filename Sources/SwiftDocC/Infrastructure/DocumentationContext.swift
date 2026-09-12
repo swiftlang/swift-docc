@@ -3311,11 +3311,17 @@ private extension DirectedGraph {
         var nodes = [startingPoint]
         var seen: Set<Node> = [startingPoint]
         while !nodes.isEmpty {
-            let matches = nodes.filter(predicate)
+            let matches = Set(nodes.lazy.filter(predicate))
             if !matches.isEmpty {
-                return Set(matches)
+                return matches
             }
-            nodes = nodes.flatMap { neighbors(of: $0) }.filter { seen.insert($0).inserted }
+            var next: [Node] = []
+            for node in nodes {
+                for neighbor in neighbors(of: node) where seen.insert(neighbor).inserted {
+                    next.append(neighbor)
+                }
+            }
+            nodes = next
         }
         return []
     }
