@@ -1407,7 +1407,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         ])
         
         // Only decoded link summaries support absolute presentation URLs.
-        let externalEntity = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data("""
+        let externalEntity = try FastSymbolGraphJSONDecoder.decode(LinkDestinationSummary.self, from: Data("""
             {
               "path": "https://com.example/path/to/something",
               "title": "Something",

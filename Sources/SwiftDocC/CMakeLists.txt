@@ -117,6 +117,7 @@ add_library(SwiftDocC
   "Infrastructure/External Data/GlobalExternalSymbolResolver.swift"
   "Infrastructure/External Data/OutOfProcessReferenceResolver+Communication.swift"
   "Infrastructure/External Data/OutOfProcessReferenceResolver+DeprecatedCommunication.swift"
+  "Infrastructure/External Data/OutOfProcessReferenceResolver+FastJSONDecodable.swift"
   "Infrastructure/External Data/OutOfProcessReferenceResolver.swift"
   "Infrastructure/Input Discovery/DataProvider.swift"
   "Infrastructure/Input Discovery/DocumentationInputsProvider.swift"

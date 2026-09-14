@@ -609,7 +609,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             let request = OutOfProcessReferenceResolver.ResponseV2.identifierAndCapabilities("com.example.test", [])
             
             let data = try JSONEncoder().encode(request)
-            if case .identifierAndCapabilities(let identifier, let capabilities) = try JSONDecoder().decode(OutOfProcessReferenceResolver.ResponseV2.self, from: data) {
+            if case .identifierAndCapabilities(let identifier, let capabilities) = try FastSymbolGraphJSONDecoder.decode(OutOfProcessReferenceResolver.ResponseV2.self, from: data) {
                 XCTAssertEqual(identifier.rawValue, "com.example.test")
                 XCTAssertEqual(capabilities.rawValue, 0)
             } else {
@@ -628,7 +628,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                
             let request = OutOfProcessReferenceResolver.ResponseV2.failure(originalInfo)
             let data = try JSONEncoder().encode(request)
-            if case .failure(let info) = try JSONDecoder().decode(OutOfProcessReferenceResolver.ResponseV2.self, from: data) {
+            if case .failure(let info) = try FastSymbolGraphJSONDecoder.decode(OutOfProcessReferenceResolver.ResponseV2.self, from: data) {
                 XCTAssertEqual(info.summary, originalInfo.summary)
                 XCTAssertEqual(info.solutions?.count, originalInfo.solutions?.count)
                 for (solution, originalSolution) in zip(info.solutions ?? [], originalInfo.solutions ?? []) {
@@ -646,7 +646,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             let message = OutOfProcessReferenceResolver.ResponseV2.resolved(originalSummary)
             
             let data = try JSONEncoder().encode(message)
-            if case .resolved(let summary) = try JSONDecoder().decode(OutOfProcessReferenceResolver.ResponseV2.self, from: data) {
+            if case .resolved(let summary) = try FastSymbolGraphJSONDecoder.decode(OutOfProcessReferenceResolver.ResponseV2.self, from: data) {
                 XCTAssertEqual(summary, originalSummary)
             } else {
                 XCTFail("Decoded the wrong type of message")
