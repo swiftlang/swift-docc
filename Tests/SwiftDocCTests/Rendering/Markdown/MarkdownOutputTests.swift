@@ -1422,7 +1422,58 @@ struct MarkdownOutputTests {
         #expect(node.metadata.identifier == "/documentation/MarkdownOutput/ArticleRole")
         #expect(node.metadata.framework == "MarkdownOutput")
     }
-    
+
+    @Test
+    func technologyRootFrameworkNameIsIncorrectForSymbolsAndCuratedArticles() async throws {
+        // RootKit is a technology root article that "owns" two real frameworks, Roots and RootsUI.
+        // The catalog's display name ("RootKit") should only apply to pages that don't belong to a
+        // more specific framework — not to Roots's own symbols or to API collections curated under them.
+        let catalog = Folder(name: "RootKit.docc", content: [
+            TextFile(name: "RootKit.md", utf8Content: """
+                # RootKit
+
+                @Metadata {
+                    @TechnologyRoot
+                }
+
+                An umbrella technology that owns the Roots and RootsUI frameworks.
+
+                ## Topics
+
+                - ``Roots``
+                - ``RootsUI``
+                """),
+            JSONFile(name: "Roots.symbols.json", content: makeSymbolGraph(moduleName: "Roots", symbols: [
+                makeSymbol(id: "roots-type-id", kind: .struct, pathComponents: ["RootsType"])
+            ])),
+            JSONFile(name: "RootsUI.symbols.json", content: makeSymbolGraph(moduleName: "RootsUI")),
+            TextFile(name: "RootsType.md", utf8Content: """
+                # ``Roots/RootsType``
+
+                ## Topics
+
+                - <doc:RootsCollection>
+                """),
+            TextFile(name: "RootsCollection.md", utf8Content: """
+                # Roots Collection
+
+                An API collection curated under a Roots symbol.
+                """),
+        ])
+
+        func framework(at path: String) async throws -> String? {
+            let context = try await load(catalog: catalog)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
+            return visitor.createOutput()?.metadata.framework
+        }
+
+        #expect(try await framework(at: "/documentation/Roots/RootsType") == "Roots")
+        #expect(try await framework(at: "/documentation/RootKit") == "RootKit")
+        #expect(try await framework(at: "/documentation/RootKit/RootsCollection") == "Roots")
+    }
+
     @Test
     func apiCollectionHasCollectionGroupRole() async throws {
         let catalog = catalog(files: [
