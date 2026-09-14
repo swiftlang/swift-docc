@@ -71,9 +71,8 @@ extension RenderBlockContent: TextIndexing {
         case .links(let links):
             // Matches the behavior in `RenderInlineContent+TextIndexing` for a
             // `RenderInlineContent.reference`
-            return links.items.lazy
-                .compactMap { references[$0] as? TopicRenderReference }
-                .map(\.title)
+            return links.items
+                .compactMap { (references[$0] as? TopicRenderReference)?.title }
                 .joined(separator: " ")
         case .video(let video):
             return video.metadata?.rawIndexableTextContent(references: references) ?? ""
