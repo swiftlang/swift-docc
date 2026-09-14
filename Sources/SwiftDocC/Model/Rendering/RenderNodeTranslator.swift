@@ -443,7 +443,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     private mutating func createTopicRenderReferences() -> [String: any RenderReference] {
         var renderReferences: [String: any RenderReference] = [:]
-        let renderer = DocumentationContentRenderer(context: context)
+        let renderer = contentRenderer
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
@@ -1497,7 +1497,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         collectedTopicReferences.append(identifier)
         
-        let contentRenderer = DocumentationContentRenderer(context: context)
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
