@@ -325,6 +325,7 @@ extension XCTestCase {
         return (renderedContent, try problemIDs(), directive, collectedReferences)
     }
     
+    @available(*, deprecated)
     func renderNodeApplying(variant: String, to renderNode: RenderNode) throws -> RenderNode {
         try renderNode.applying(variant: variant)
     }

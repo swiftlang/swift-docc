@@ -222,6 +222,7 @@ public struct RenderNode: VariantContainer {
     /// process the Objective-C version of documentation should apply the overrides associated with the `interfaceLanguage: objc` trait.
     ///
     /// The overrides are emitted in the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public var variantOverrides: VariantOverrides?
     
     /// Information about what API diffs are available for this symbol.

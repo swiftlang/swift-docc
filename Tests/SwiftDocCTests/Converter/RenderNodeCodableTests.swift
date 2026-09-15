@@ -111,29 +111,81 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertTrue(encoderNotPretty.outputFormatting.contains(.sortedKeys))
     }
 
-    func testEncodesVariantOverridesSetAsProperty() throws {
-        var renderNode = bareRenderNode
-        renderNode.variantOverrides = VariantOverrides(values: [testVariantOverride])
+    func testDecodingVariantOverrides() async throws {
+        let (_, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
         
-        let decodedNode = try encodeAndDecode(renderNode)
-        try assertVariantOverrides(XCTUnwrap(decodedNode.variantOverrides))
-    }
-    
-    func testEncodesVariantOverridesAccumulatedInEncoder() throws {
-        let encoder = RenderJSONEncoder.makeEncoder()
-        (encoder.userInfo[.variantOverrides] as! VariantOverrides).add(testVariantOverride)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/GeometricalShapes/Circle/isEmpty", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
         
-        let decodedNode = try encodeAndDecode(bareRenderNode, encoder: encoder)
-        try assertVariantOverrides(XCTUnwrap(decodedNode.variantOverrides))
-    }
-    
-    func testDoesNotEncodeVariantOverridesIfEmpty() throws {
-        let encoder = RenderJSONEncoder.makeEncoder()
+        let converter = DocumentationNodeConverter(context: context)
+        let renderNode = converter.convert(node)
         
-        // Don't record any overrides.
+        let encoder = RenderJSONEncoder.makeEncoder(prettyPrint: true)
+        let encoded = try encoder.encode(renderNode)
         
-        let decodedNode = try encodeAndDecode(bareRenderNode, encoder: encoder)
-        XCTAssertNil(decodedNode.variantOverrides)
+        if let overrides = encoder.userInfoVariantOverrides {
+            print(try String(data: encoder.encode(overrides), encoding: .utf8) ?? "<non UTF8 data>")
+        }
+        let decoded = try RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: encoded)
+        
+        // Because of the odd way that `RenderNodeTranslator` creates variant collections with empty sections and
+        // how `KeyedEncodingContainer.encodeVariantCollectionIfNotEmpty(_:forKey:encoder:)` replaces empty 'replace' with an empty 'add',
+        // The 'topicSectionsVariants', 'relationshipSectionsVariants', and 'seeAlsoSectionsVariants' don't decode the same as the original value.
+        // FIXME: (rdar://128393653)
+        func assertSimilarVariants<Value: Equatable>(original: VariantCollection<[Value]>, decoded: VariantCollection<[Value]>, file: StaticString = #filePath, line: UInt = #line) {
+            XCTAssertEqual(original.defaultValue, decoded.defaultValue, "Same default value", file: file, line: line)
+            XCTAssertEqual(original.variants.count, decoded.variants.count, "Same number of variants", file: file, line: line)
+            for (lhs, rhs) in zip(original.variants, decoded.variants) {
+                XCTAssertEqual(lhs.traits, rhs.traits, file: file, line: line)
+                XCTAssertEqual(lhs.patch.count, rhs.patch.count, file: file, line: line)
+                for (lhs, rhs) in zip(lhs.patch, rhs.patch) {
+                    switch (lhs, rhs) {
+                    case (.replace(value: []), .add(value: [])):
+                        
+                        break // This looks
+                        
+                    case (.replace(value: let lhs), .replace(value: let rhs)):
+                        XCTAssertEqual(rhs, lhs, file: file, line: line)
+                    case (.add(value: let lhs), .add(value: let rhs)):
+                        XCTAssertEqual(rhs, lhs, file: file, line: line)
+                    case (.remove, .remove):
+                        break // Equal
+                    case (let lhs, let rhs):
+                        XCTFail("\(lhs) is not the same as \(rhs)", file: file, line: line)
+                    }
+                }
+            }
+        }
+        
+        assertSimilarVariants(original: renderNode.topicSectionsVariants, decoded: decoded.topicSectionsVariants)
+        assertSimilarVariants(original: renderNode.relationshipSectionsVariants, decoded: decoded.relationshipSectionsVariants)
+        assertSimilarVariants(original: renderNode.seeAlsoSectionsVariants, decoded: decoded.seeAlsoSectionsVariants)
+        
+        // All other variants decode to the original value
+        XCTAssertEqual(renderNode.defaultImplementationsSectionsVariants, decoded.defaultImplementationsSectionsVariants)
+        XCTAssertEqual(renderNode.deprecationSummaryVariants, decoded.deprecationSummaryVariants)
+        XCTAssertEqual(renderNode.abstractVariants, decoded.abstractVariants)
+        XCTAssertEqual(renderNode.primaryContentSectionsVariants, decoded.primaryContentSectionsVariants)
+        
+        XCTAssertEqual(renderNode.metadata.modulesVariants, decoded.metadata.modulesVariants)
+        XCTAssertEqual(renderNode.metadata.extendedModuleVariants, decoded.metadata.extendedModuleVariants)
+        XCTAssertEqual(renderNode.metadata.requiredVariants, decoded.metadata.requiredVariants)
+        XCTAssertEqual(renderNode.metadata.roleHeadingVariants, decoded.metadata.roleHeadingVariants)
+        XCTAssertEqual(renderNode.metadata.titleVariants, decoded.metadata.titleVariants)
+        XCTAssertEqual(renderNode.metadata.externalIDVariants, decoded.metadata.externalIDVariants)
+        XCTAssertEqual(renderNode.metadata.symbolKindVariants, decoded.metadata.symbolKindVariants)
+        XCTAssertEqual(renderNode.metadata.symbolAccessLevelVariants, decoded.metadata.symbolAccessLevelVariants)
+        XCTAssertEqual(renderNode.metadata.sourceFileURIVariants, decoded.metadata.sourceFileURIVariants)
+        XCTAssertEqual(renderNode.metadata.remoteSourceVariants, decoded.metadata.remoteSourceVariants)
+        
+        for case let originalTopic as TopicRenderReference in renderNode.references.values {
+            let decodedTopic = try XCTUnwrap(decoded.references[originalTopic.identifier.identifier] as? TopicRenderReference)
+            
+            XCTAssertEqual(originalTopic.titleVariants, decodedTopic.titleVariants)
+            XCTAssertEqual(originalTopic.abstractVariants, decodedTopic.abstractVariants)
+            XCTAssertEqual(originalTopic.fragmentsVariants, decodedTopic.fragmentsVariants)
+            XCTAssertEqual(originalTopic.navigatorTitleVariants, decodedTopic.navigatorTitleVariants)
+        }
     }
     
     func testDecodingRenderNodeDoesNotCacheReferences() throws {
