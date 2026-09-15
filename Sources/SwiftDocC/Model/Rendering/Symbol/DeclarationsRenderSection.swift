@@ -134,6 +134,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         ///   - kind: The kind of the token.
         ///   - identifier: If the token refers to a known symbol, its identifier.
         ///   - preciseIdentifier: If the refers to a symbol, its precise identifier.
+        ///   - highlight: The kind of highlight the token should be rendered with.
         public init(
             text: String,
             kind: Kind,
