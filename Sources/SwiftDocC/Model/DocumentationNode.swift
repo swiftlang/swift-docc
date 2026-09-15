@@ -329,7 +329,7 @@ public struct DocumentationNode {
     /// Given an optional documentation extension, initializes the node's documentation content.
     ///
     /// - Parameters:
-    ///   - article: An optional documentation extension article.
+    ///   - documentationExtension: An optional documentation extension article.
     ///   - engine: A diagnostics engine.
     ///   - inputs: A collection of build inputs.
     ///   - featureFlags: Feature flags that conditionally enable behaviors in Swift-DocC.
@@ -694,7 +694,7 @@ public struct DocumentationNode {
     }
     
     /// Returns a symbol kind for the given documentation node.
-    /// - Parameter symbol: A documentation node kind.
+    /// - Parameter kind: A documentation node kind.
     /// - Returns: A symbol graph symbol.
     static func symbolKind(for kind: Kind) -> SymbolGraph.Symbol.KindIdentifier? {
         switch kind {

@@ -642,7 +642,7 @@ public enum RenderBlockContent: Equatable {
         /// markdown aside kind's raw value.
         ///
         /// - Parameters:
-        ///   - rawValue: The Swift Markdown aside kind
+        ///   - asideKind: The Swift Markdown aside kind
         ///
         /// > Note:
         /// > If the lowercased raw value doesn't match one of the aside styles supported
