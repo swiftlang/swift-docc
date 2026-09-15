@@ -45,7 +45,6 @@ package func head(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<base>` element.
 func base(attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.base, attributes: attributes)
@@ -57,7 +56,6 @@ func base(attributes: HTMLNode.Attribute...) -> HTMLNode {
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<link>` element.
 package func link(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.link, attributes: attributes)
@@ -69,7 +67,6 @@ package func link(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<meta>` element.
 package func meta(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.meta, attributes: attributes)
@@ -81,7 +78,7 @@ package func meta(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
+///   - text: The textual contents for the new element.
 /// - Returns: A new `<title>` element.
 package func title(attributes: [HTMLNode.Attribute] = [], text: String) -> HTMLNode {
     ._element(.title, attributes: attributes, contents: [.text(text)])
@@ -176,6 +173,7 @@ package func h2(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 /// Creates a new heading element of a given level with the given attributes and contents.
 ///
 /// - Parameters:
+///   - level: The numeric level of the heading new heading element.
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<h1>`-`<h6>` element.
@@ -658,7 +656,7 @@ func rt(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
+///   - text: The textual contents for the new element.
 /// - Returns: A new `<rp>` element.
 func rp(attributes: [HTMLNode.Attribute] = [], text: String) -> HTMLNode {
     ._element(.rp, attributes: attributes, contents: [.text(text)])
@@ -810,7 +808,6 @@ package let wbr = HTMLNode._voidElement(.wbr)
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<area>` element.
 func area(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
     ._voidElement(.area, attributes: attributes)
@@ -835,7 +832,6 @@ func audio(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<embed>` element.
 func embed(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
     ._element(.embed, attributes: consume attributes, contents: [])
@@ -848,7 +844,6 @@ func embed(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<iframe>` element.
 func iframe(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
     ._element(.iframe, attributes: consume attributes, contents: [])
@@ -860,7 +855,6 @@ func iframe(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<img>` element.
 func img(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
     ._voidElement(.img, attributes: consume attributes)
@@ -913,7 +907,6 @@ func picture(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTM
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<source>` element.
 func source(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
     ._voidElement(.source, attributes: consume attributes)
@@ -926,7 +919,6 @@ func source(attributes: consuming [HTMLNode.Attribute]) -> HTMLNode {
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<track>` element.
 func track(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
     ._voidElement(.track, attributes: attributes)
@@ -966,7 +958,6 @@ func caption(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTM
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<col>` element.
 func col(attributes: [HTMLNode.Attribute] = []) -> HTMLNode {
     ._voidElement(.col, attributes: attributes)
@@ -1080,9 +1071,9 @@ func thead(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLN
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<tr>` element.
-func tr(contents: [HTMLNode]) -> HTMLNode {
+func tr(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     assert(contents.allSatisfy { $0._tag == .td || $0._tag == .th }, "<tr> tags can only contain <td> and <th> tags")
-    return ._element(.tr, contents: contents)
+    return ._element(.tr, attributes: attributes, contents: contents)
 }
 
 // MARK: - Forms
@@ -1143,7 +1134,6 @@ func form(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNo
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
 /// - Returns: A new `<input>` element.
 package func input(_ attributes: HTMLNode.Attribute...) -> HTMLNode {
     ._voidElement(.input, attributes: attributes)
@@ -1282,7 +1272,7 @@ func selectedContent(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]
 ///
 /// - Parameters:
 ///   - attributes: The list of attributes for the new element.
-///   - contents: The inner contents for the new element.
+///   - text: The textual contents for the new element.
 /// - Returns: A new `<textarea>` element.
 func textarea(attributes: [HTMLNode.Attribute] = [], text: String) -> HTMLNode {
     ._element(.textarea, attributes: attributes, contents: [.text(text)])
