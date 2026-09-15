@@ -49,7 +49,13 @@ struct MarkupReferenceResolver: MarkupRewriter {
     // This property offers a customization point for when we need to try resolving links in other contexts than the current one to provide more precise diagnostics.
     var diagnosticForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Diagnostic?)? = nil
 
-    private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false) -> ResolvedTopicReference? {
+    private mutating func resolve(
+        reference: TopicReference,
+        link: any AnyLink,
+        severity: DiagnosticSeverity,
+        fromSymbolLink: Bool = false
+    ) -> ResolvedTopicReference? {
+        let range = link.range
         switch context.resolve(reference, in: rootReference, fromSymbolLink: fromSymbolLink) {
         case .success(let resolved):
             // If the linked node is part of the topic graph,
@@ -74,7 +80,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)] {
                 diagnostics.append(makeUnfindableArticleDiagnostic(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
             } else {
-                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: fromSymbolLink))
+                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, link: link, severity: severity, errorInfo: error))
             }
             return nil
         }
@@ -113,7 +119,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link // Create a non-topic link
         }
         let unresolved = TopicReference.unresolved(.init(topicURL: url))
-        guard let resolvedURL = resolve(reference: unresolved, range: link.range, severity: .warning) else {
+        guard let resolvedURL = resolve(reference: unresolved, link: link, severity: .warning) else {
             return link
         }
         var link = link
@@ -126,27 +132,24 @@ struct MarkupReferenceResolver: MarkupRewriter {
         return link
     }
 
-    mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> ResolvedTopicReference? {
-        if let cached = context.referenceIndex[unresolvedDestination] {
-            guard context.topicGraph.isLinkable(cached) == true else {
-                diagnostics.append(disabledLinkDestinationDiagnostic(reference: cached, range: range, severity: .warning))
-                return nil
-            }
-            return cached
-        }
-
-        // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``.
-        let url = ValidatedURL(parsingExact: unresolvedDestination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: unresolvedDestination)
-        return resolve(reference: .unresolved(.init(topicURL: url)), range: range, severity: .warning, fromSymbolLink: true)
-    }
-    
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> (any Markup)? {
         guard let destination = symbolLink.destination else {
             return symbolLink
         }
         
         var symbolLink = symbolLink
-        if let resolved = resolveAbsoluteSymbolLink(unresolvedDestination: destination, elementRange: symbolLink.range) {
+        if let cached = context.referenceIndex[destination] {
+            guard context.topicGraph.isLinkable(cached) == true else {
+                diagnostics.append(disabledLinkDestinationDiagnostic(reference: cached, range: symbolLink.range, severity: .warning))
+                return symbolLink
+            }
+            symbolLink.destination = cached.absoluteString
+            return symbolLink
+        }
+
+        // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``.
+        let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
+        if let resolved = resolve(reference: .unresolved(.init(topicURL: url)), link: symbolLink, severity: .warning, fromSymbolLink: true) {
             symbolLink.destination = resolved.absoluteString
         }
         
