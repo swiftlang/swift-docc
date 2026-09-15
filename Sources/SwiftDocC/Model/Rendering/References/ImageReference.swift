@@ -96,7 +96,6 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         /// Creates a new proxy value with the given information about an image variant.
         /// 
         /// - Parameters:
-        ///   - size: The size of the image variant.
         ///   - url: The URL to the file for this image variant.
         ///   - traits: The traits of this image reference.
         init(url: URL, traits: DataTraitCollection, svgID: String?) {
@@ -106,7 +105,6 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         }
         
         enum CodingKeys: String, CodingKey {
-            case size
             case url
             case traits
             case svgID

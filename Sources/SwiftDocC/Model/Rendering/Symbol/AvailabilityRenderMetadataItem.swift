@@ -173,7 +173,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     }
     
     init(
-        name: String,
+        name: String?,
         introduced: String?,
         deprecated: String? = nil,
         obsoleted: String? = nil,
@@ -181,7 +181,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         renamed: String? = nil,
         unconditionallyDeprecated: Bool? = nil,
         unconditionallyUnavailable: Bool? = nil,
-        isBeta: Bool
+        isBeta: Bool?
     ) {
         self.name = name
         self.introduced = introduced
