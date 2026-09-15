@@ -157,7 +157,7 @@ struct FastSymbolGraphJSONDecoderErrorTests {
 private struct Outer: FastJSONDecodable, Decodable {
     var inner: [Inner]
     
-    init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         var inner: [Inner] = []
         
         try decoder.descendIntoObject()
@@ -177,7 +177,7 @@ private struct Outer: FastJSONDecodable, Decodable {
         var name: String?
         var condition: Bool = false
         
-        init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+        init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
             var id: Int? // needs to be unwrapped
             
             var name: String?
@@ -209,7 +209,7 @@ private struct Outer: FastJSONDecodable, Decodable {
 private struct Recursive: FastJSONDecodable, Decodable {
     var nested: [Recursive]
     
-    init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         var nested: [Recursive] = []
         
         try decoder.descendIntoObject()

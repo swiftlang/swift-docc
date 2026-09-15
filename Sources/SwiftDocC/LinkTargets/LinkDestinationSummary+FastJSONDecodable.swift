@@ -485,14 +485,14 @@ extension RenderInlineContent: FastJSONDecodable {
 }
 
 extension RenderReferenceIdentifier: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         let rawValue = try decoder.decode(String.self)
         self = .init(consume rawValue)
     }
 }
 
 extension RenderContentMetadata: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("\"anchor\"", byteOffset: -1) {
                 anchor = try decoder.decode(String.self)
@@ -515,7 +515,7 @@ extension RenderContentMetadata: FastJSONDecodable {
 }
 
 extension LinkDestinationSummary.PlatformAvailability: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 9 properties with default values
         var name:         String? = nil
         var introducedAt: String? = nil
@@ -577,7 +577,7 @@ extension LinkDestinationSummary.PlatformAvailability: FastJSONDecodable {
 }
 
 extension DeclarationRenderSection.Token: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
         // 2 required properties
@@ -651,7 +651,7 @@ extension DeclarationRenderSection.Token.Highlight: FastJSONDecodable {
 }
 
 extension TopicImage: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
         // 2 required properties
@@ -1018,7 +1018,7 @@ extension RenderReferenceType: FastJSONDecodable {
 }
 
 extension ConformanceSection: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
         // 1 required property
@@ -1044,7 +1044,7 @@ extension ConformanceSection: FastJSONDecodable {
 }
 
 extension LineHighlighter.Highlight: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
         // 1 required property
@@ -1112,7 +1112,7 @@ extension PropertyListTitleStyle: FastJSONDecodable {
 }
 
 extension RenderNode.Tag: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
         // 2 required property
@@ -1149,7 +1149,7 @@ extension RenderNode.Tag: FastJSONDecodable {
 
 
 extension RenderNode.Variant.Trait: FastJSONDecodable {
-    package init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         typealias _MaybeDecodedValue = Optional
 
         // 1 required property
