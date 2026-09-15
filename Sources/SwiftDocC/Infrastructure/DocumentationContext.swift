@@ -1147,8 +1147,8 @@ public class DocumentationContext {
                     }
 
                     let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
-                        $0.filter { $0.kind == .overloadOf }
+                    unifiedSymbolGraph.relationshipsByLanguage.values.lazy.flatMap({
+                        $0.lazy.filter { $0.kind == .overloadOf }
                     }).reduce(into: [:], { acc, relationship in
                         acc[relationship.target, default: []].insert(relationship.source)
                     })
@@ -3311,11 +3311,17 @@ private extension DirectedGraph {
         var nodes = [startingPoint]
         var seen: Set<Node> = [startingPoint]
         while !nodes.isEmpty {
-            let matches = nodes.filter(predicate)
+            let matches = Set(nodes.lazy.filter(predicate))
             if !matches.isEmpty {
-                return Set(matches)
+                return matches
             }
-            nodes = nodes.flatMap { neighbors(of: $0) }.filter { seen.insert($0).inserted }
+            var next: [Node] = []
+            for node in nodes {
+                for neighbor in neighbors(of: node) where seen.insert(neighbor).inserted {
+                    next.append(neighbor)
+                }
+            }
+            nodes = next
         }
         return []
     }
