@@ -9,7 +9,8 @@
 */
 
 import Foundation
-    
+private import DocCCommon
+
 extension RenderNode: Codable {
     enum CodingKeys: CodingKey {
         case schemaVersion, identifier, sections, references, metadata, kind, hierarchy

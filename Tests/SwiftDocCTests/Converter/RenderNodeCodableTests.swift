@@ -111,14 +111,14 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertTrue(encoderNotPretty.outputFormatting.contains(.sortedKeys))
     }
 
-    func testDecodingVariantOverrides() throws {
-        let (_, bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+    func testDecodingVariantOverrides() async throws {
+        let (_, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/GeometricalShapes/Circle/isEmpty", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/GeometricalShapes/Circle/isEmpty", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(node, at: nil)
+        let converter = DocumentationNodeConverter(context: context)
+        let renderNode = converter.convert(node)
         
         let encoder = RenderJSONEncoder.makeEncoder(prettyPrint: true)
         let encoded = try encoder.encode(renderNode)
@@ -132,7 +132,7 @@ class RenderNodeCodableTests: XCTestCase {
         // how `KeyedEncodingContainer.encodeVariantCollectionIfNotEmpty(_:forKey:encoder:)` replaces empty 'replace' with an empty 'add',
         // The 'topicSectionsVariants', 'relationshipSectionsVariants', and 'seeAlsoSectionsVariants' don't decode the same as the original value.
         // FIXME: (rdar://128393653)
-        func assertSimilarVariants<Value: Equatable>(original: VariantCollection<[Value]>, decoded: VariantCollection<[Value]>, file: StaticString = #file, line: UInt = #line) {
+        func assertSimilarVariants<Value: Equatable>(original: VariantCollection<[Value]>, decoded: VariantCollection<[Value]>, file: StaticString = #filePath, line: UInt = #line) {
             XCTAssertEqual(original.defaultValue, decoded.defaultValue, "Same default value", file: file, line: line)
             XCTAssertEqual(original.variants.count, decoded.variants.count, "Same number of variants", file: file, line: line)
             for (lhs, rhs) in zip(original.variants, decoded.variants) {
