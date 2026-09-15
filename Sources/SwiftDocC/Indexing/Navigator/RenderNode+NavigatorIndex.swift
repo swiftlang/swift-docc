@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import DocCCommon
 
 /// A language specific representation of a render node value for building a navigator index.
 protocol NavigatorIndexableRenderNodeRepresentation<Metadata> {
@@ -16,14 +16,15 @@ protocol NavigatorIndexableRenderNodeRepresentation<Metadata> {
     
     // Information that's the same for all language variants
     var identifier: ResolvedTopicReference { get }
-    var references: [String: RenderReference] { get }
+    var references: [String: any RenderReference] { get }
     var kind: RenderNode.Kind { get }
-    var sections: [RenderSection] { get }
+    var sections: [any RenderSection] { get }
     
     // Information that's different for each language variant
     var metadata: Metadata { get }
     var topicSections: [TaskGroupRenderSection] { get }
     var defaultImplementationsSections: [TaskGroupRenderSection] { get }
+    var isDeprecated: Bool { get }
 }
 
 /// A language specific representation of a render metadata value for building a navigator index.
@@ -40,6 +41,7 @@ protocol NavigatorIndexableRenderMetadataRepresentation {
     var roleHeading: String? { get }
     var symbolKind: String? { get }
     var platforms: [AvailabilityRenderItem]? { get }
+    var isBeta: Bool { get }
 }
 
 extension NavigatorIndexableRenderNodeRepresentation {
@@ -50,6 +52,12 @@ extension NavigatorIndexableRenderNodeRepresentation {
 
 extension RenderNode: NavigatorIndexableRenderNodeRepresentation {}
 extension RenderMetadata: NavigatorIndexableRenderMetadataRepresentation {}
+
+extension RenderNode {
+    var isDeprecated: Bool {
+        deprecationSummary != nil || isPlatformDeprecated
+    }
+}
 
 struct RenderMetadataVariantView: NavigatorIndexableRenderMetadataRepresentation {
     var wrapped: RenderMetadata
@@ -119,6 +127,35 @@ struct RenderNodeVariantView: NavigatorIndexableRenderNodeRepresentation {
     }
     var defaultImplementationsSections: [TaskGroupRenderSection] {
         wrapped.defaultImplementationsSectionsVariants.value(for: traits)
+    }
+    var isDeprecated: Bool {
+        wrapped.deprecationSummaryVariants.value(for: traits) != nil
+            || isPlatformDeprecated
+    }
+}
+
+extension NavigatorIndexableRenderMetadataRepresentation {
+    var isBeta: Bool {
+        guard let platforms, !platforms.isEmpty else {
+            return false
+        }
+        
+        return platforms.allSatisfy { $0.isBeta == true }
+    }
+}
+
+extension NavigatorIndexableRenderNodeRepresentation {
+    var isPlatformDeprecated: Bool {
+        metadata.platforms?.contains {
+            // @available(*, deprecated: "1.2.3)
+            $0.deprecated != nil ||
+                // or without a specific version/string for "deprecated:", like so:
+                // @available(*, deprecated, renamed: "Sendable")
+                $0.unconditionallyDeprecated == true
+        } == true
+    }
+    var isDeprecated: Bool {
+        isPlatformDeprecated
     }
 }
 

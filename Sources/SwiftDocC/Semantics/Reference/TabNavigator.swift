@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A container directive that arranges content into a tab-based layout.
 ///
@@ -47,7 +47,7 @@ public final class TabNavigator: Semantic, AutomaticDirectiveConvertible, Markup
         "tabs" : \TabNavigator._tabs,
     ]
     
-    var childMarkup: [Markup] {
+    var childMarkup: [any Markup] {
         return tabs.flatMap(\.childMarkup)
     }
     
@@ -81,7 +81,7 @@ extension TabNavigator {
             "content"   : \Tab._content,
         ]
         
-        var childMarkup: [Markup] {
+        var childMarkup: [any Markup] {
             return content.elements
         }
         
@@ -95,7 +95,7 @@ extension TabNavigator {
 }
 
 extension TabNavigator: RenderableDirectiveConvertible {
-     func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
          let renderedTabs = tabs.map { tab in
              return RenderBlockContent.TabNavigator.Tab(
                 title: tab.title,

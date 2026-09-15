@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,12 +9,12 @@
 */
 
 import Foundation
-import Markdown
+private import Markdown
 
 struct DirectiveMirror {
     let reflectedDirective: ReflectedDirective
     
-    init(reflecting directive: AutomaticDirectiveConvertible.Type) {
+    init(reflecting directive: any AutomaticDirectiveConvertible.Type) {
         let mirror = Mirror(
             reflecting: directive.init(
                 originalMarkup: BlockDirective(
@@ -25,7 +25,7 @@ struct DirectiveMirror {
         )
         
         let reflectedArguments = mirror.children.compactMap { child -> ReflectedArgument? in
-            guard let argument = child.value as? _DirectiveArgumentProtocol else {
+            guard let argument = child.value as? (any _DirectiveArgumentProtocol) else {
                 return nil
             }
             
@@ -67,7 +67,7 @@ struct DirectiveMirror {
         }
         
         let reflectedChildDirectives = mirror.children.compactMap { child -> ReflectedChildDirective? in
-            guard let childDirective = child.value as? _ChildDirectiveProtocol else {
+            guard let childDirective = child.value as? (any _ChildDirectiveProtocol) else {
                 return nil
             }
             
@@ -105,7 +105,7 @@ struct DirectiveMirror {
         
         
         let reflectedMarkupContainerRequirements = mirror.children.compactMap { child -> ReflectedChildMarkup? in
-            guard let childMarkup = child.value as? _ChildMarkupProtocol else {
+            guard let childMarkup = child.value as? (any _ChildMarkupProtocol) else {
                 return nil
             }
             
@@ -170,9 +170,9 @@ extension DirectiveMirror {
         let expectedFormat: String?
         
         let propertyLabel: String
-        let argument: _DirectiveArgumentProtocol
+        let argument: any _DirectiveArgumentProtocol
         
-        let parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?)
+        let parseArgument: (_ inputs: DocumentationContext.Inputs, _ argumentValue: String) -> (Any?)
         
         func setValue(
             on containingDirective: some AutomaticDirectiveConvertible,
@@ -195,7 +195,7 @@ extension DirectiveMirror {
             case oneOrMore
         }
         
-        let type: DirectiveConvertible.Type
+        let type: any DirectiveConvertible.Type
         
         let requirements: Requirements
         
@@ -211,7 +211,7 @@ extension DirectiveMirror {
         }
         
         let propertyLabel: String
-        let childDirective: _ChildDirectiveProtocol
+        let childDirective: any _ChildDirectiveProtocol
         
         func setValue(
             on containingDirective: some AutomaticDirectiveConvertible,
@@ -272,10 +272,10 @@ extension DirectiveMirror {
         }
         
         var hiddenFromDocumentation: Bool {
-            (type as? AutomaticDirectiveConvertible.Type)?.hiddenFromDocumentation ?? false
+            (type as? (any AutomaticDirectiveConvertible.Type))?.hiddenFromDocumentation ?? false
         }
         
-        let type: DirectiveConvertible.Type
+        let type: any DirectiveConvertible.Type
     }
     
     struct ReflectedChildMarkup {
@@ -293,7 +293,7 @@ extension DirectiveMirror {
             }
         }
         
-        let markup: _ChildMarkupProtocol
+        let markup: any _ChildMarkupProtocol
         
         func setValue(
             on containingDirective: some AutomaticDirectiveConvertible,

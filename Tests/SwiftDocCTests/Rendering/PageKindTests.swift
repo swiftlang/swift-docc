@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,23 +12,24 @@ import Foundation
 import Markdown
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class PageKindTests: XCTestCase {
     
-    private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) throws -> RenderNode {
-        let (bundle, context) = try testBundleAndContext(named: bundleName)
+    private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) async throws -> RenderNode {
+        let (_, context) = try await testBundleAndContext(named: bundleName)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: resolvedTopicPath,
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
     }
     
-    func testPageKindSampleCode() throws {
-        let renderNode = try generateRenderNodeFromBundle(
+    func testPageKindSampleCode() async throws {
+        let renderNode = try await generateRenderNodeFromBundle(
             bundleName: "SampleBundle",
             resolvedTopicPath: "/documentation/SampleBundle/MyLocalSample"
         )
@@ -36,8 +37,8 @@ class PageKindTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.roleHeading, Metadata.PageKind.Kind.sampleCode.titleHeading)
     }
 
-    func testPageKindArticle() throws {
-        let renderNode = try generateRenderNodeFromBundle(
+    func testPageKindArticle() async throws {
+        let renderNode = try await generateRenderNodeFromBundle(
             bundleName: "SampleBundle",
             resolvedTopicPath: "/documentation/SampleBundle/MySample"
         )
@@ -46,8 +47,8 @@ class PageKindTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.roleHeading, Metadata.PageKind.Kind.article.titleHeading)
     }
 
-    func testPageKindDefault() throws {
-        let renderNode = try generateRenderNodeFromBundle(
+    func testPageKindDefault() async throws {
+        let renderNode = try await generateRenderNodeFromBundle(
             bundleName: "AvailabilityBundle",
             resolvedTopicPath: "/documentation/AvailabilityBundle/ComplexAvailable"
         )
@@ -55,8 +56,8 @@ class PageKindTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
     }
 
-    func testPageKindReference() throws {
-        let renderNode = try generateRenderNodeFromBundle(
+    func testPageKindReference() async throws {
+        let renderNode = try await generateRenderNodeFromBundle(
             bundleName: "SampleBundle",
             resolvedTopicPath: "/documentation/SomeSample"
         )
@@ -64,7 +65,7 @@ class PageKindTests: XCTestCase {
         XCTAssertEqual(sampleReference.role, RenderMetadata.Role.sampleCode.rawValue)
     }
 
-    func testValidMetadataWithOnlyPageKind() throws {
+    func testValidMetadataWithOnlyPageKind() async throws {
         let source = """
         @Metadata {
             @PageKind(article)
@@ -75,23 +76,23 @@ class PageKindTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let (_, context) = try await testBundleAndContext(named: "SampleBundle")
 
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Metadata.directiveName, directive.name)
-            let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let metadata = Metadata(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(metadata)
             XCTAssertNotNil(metadata?.pageKind)
             XCTAssertEqual(metadata?.pageKind?.kind, .article)
-            XCTAssert(problems.isEmpty)
+            XCTAssert(diagnostics.isEmpty)
         }
     }
     
     // Verify that we assign the `Collection` role to the root article of a
     // documentation catalog that contains only one article.
-    func testRoleForSingleArticleCatalog() throws {
-        let renderNode = try generateRenderNodeFromBundle(
+    func testRoleForSingleArticleCatalog() async throws {
+        let renderNode = try await generateRenderNodeFromBundle(
             bundleName: "BundleWithSingleArticle",
             resolvedTopicPath: "/documentation/Article"
         )
@@ -100,8 +101,8 @@ class PageKindTests: XCTestCase {
     
     // Verify we assign the `Collection` role to the root article of an article-only
     // documentation catalog that doesn't include manual curation
-    func testRoleForArticleOnlyCatalogWithNoCuration() throws {
-        let renderNode = try generateRenderNodeFromBundle(
+    func testRoleForArticleOnlyCatalogWithNoCuration() async throws {
+        let renderNode = try await generateRenderNodeFromBundle(
             bundleName: "BundleWithArticlesNoCurated",
             resolvedTopicPath: "/documentation/Article"
         )

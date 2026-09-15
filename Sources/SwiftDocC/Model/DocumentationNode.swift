@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,8 +9,9 @@
 */
 
 import Foundation
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
+public import DocCCommon
 
 /// A documentation node holds all the information about a documentation entity's content.
 ///
@@ -31,11 +32,7 @@ public struct DocumentationNode {
     
     /// All of the traits that make up the different variants of this node.
     public var availableVariantTraits: Set<DocumentationDataVariantsTrait> {
-        return Set(
-            availableSourceLanguages
-                .map(\.id)
-                .map(DocumentationDataVariantsTrait.init(interfaceLanguage:))
-        )
+        Set(availableSourceLanguages.map(DocumentationDataVariantsTrait.init(sourceLanguage:)))
     }
     
     /// The names of the platforms for which the node is available.
@@ -48,7 +45,7 @@ public struct DocumentationNode {
     ///
     /// After the ``semantic`` object is created, consulting this property is likely incorrect because
     /// it does not include information such as resolved links.
-    public var markup: Markup
+    public var markup: any Markup
     
     /// The parsed documentation structure that's described by the documentation content of this documentation node.
     public var semantic: Semantic!
@@ -83,7 +80,7 @@ public struct DocumentationNode {
         }
 
         let source: Source
-        let markup: Markup
+        let markup: any Markup
     }
 
     /// Where the documentation for the current node came from: source code or documentation extension.
@@ -167,7 +164,7 @@ public struct DocumentationNode {
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
     ///   - platformNames: The names of the platforms for which the node is available.
     ///   - isVirtual: `true` if the node represents a virtual element that doesn't represent a rendered page of documentation, `false` otherwise.
-    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
+    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: any Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
         self.reference = reference
         self.kind = kind
         self.sourceLanguage = sourceLanguage
@@ -238,7 +235,7 @@ public struct DocumentationNode {
                 Symbol.Overloads(references: [], displayIndex: overloadData.overloadGroupIndex)
             })
 
-        var languages = Set([reference.sourceLanguage])
+        var languages = reference.sourceLanguages
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
         for (_, symbolAvailability) in symbolAvailabilityVariants.allValues {
@@ -267,6 +264,11 @@ public struct DocumentationNode {
                 symbolData: unifiedSymbol.names,
                 platformName: platformName,
                 keyPath: \.title
+            ),
+            proseVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.names,
+                platformName: platformName,
+                keyPath: \.prose
             ),
             subHeadingVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.names,
@@ -327,21 +329,23 @@ public struct DocumentationNode {
     /// Given an optional documentation extension, initializes the node's documentation content.
     ///
     /// - Parameters:
-    ///   - article: An optional documentation extension article.
+    ///   - documentationExtension: An optional documentation extension article.
     ///   - engine: A diagnostics engine.
+    ///   - inputs: A collection of build inputs.
+    ///   - featureFlags: Feature flags that conditionally enable behaviors in Swift-DocC.
     mutating func initializeSymbolContent(
         documentationExtension: Article?,
         engine: DiagnosticEngine,
-        bundle: DocumentationBundle,
-        context: DocumentationContext
+        inputs: DocumentationContext.Inputs,
+        featureFlags: FeatureFlags
     ) {
         precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
         
         let (markup, docChunks, metadataFromDocumentationComment) = Self.contentFrom(
             documentedSymbol: unifiedSymbol?.documentedSymbol,
             documentationExtension: documentationExtension,
-            bundle: bundle,
-            context: context,
+            inputs: inputs,
+            featureFlags: featureFlags,
             engine: engine
         )
         
@@ -395,7 +399,7 @@ public struct DocumentationNode {
         )
         semantic.redirects = documentationExtension?.redirects
         
-        let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source))
+        let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source), isValidationEnabled: featureFlags.isParametersAndReturnsValidationEnabled)
         let (parametersSectionVariants, returnsSectionVariants) = filter.makeParametersAndReturnsSections(
             markupModel.discussionTags?.parameters,
             markupModel.discussionTags?.returns,
@@ -431,7 +435,7 @@ public struct DocumentationNode {
         if let possibleValues = markupModel.discussionTags?.possiblePropertyListValues, !possibleValues.isEmpty {
             guard let symbolAllowedValues else {
                 for value in possibleValues {
-                    engine.emit(PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueProblem(value, knownPossibleValues: [], symbolName: self.name.plainText))
+                    engine.emit(PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueDiagnostic(value, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
                 return
             }
@@ -454,7 +458,7 @@ public struct DocumentationNode {
             
             for unknownValue in unknownPossibleValues {
                 engine.emit(
-                    PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
+                    PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueDiagnostic(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
                 )
             }
             
@@ -470,47 +474,49 @@ public struct DocumentationNode {
         options = documentationExtension?.options[.local]
         
         if documentationExtension?.metadata != nil && metadataFromDocumentationComment != nil {
-            var problem = Problem(
-                diagnostic: Diagnostic(
-                    source: unifiedSymbol?.documentedSymbol?.docComment?.url,
-                    severity: .warning,
-                    range: metadataFromDocumentationComment?.originalMarkup.range,
-                    identifier: "org.swift.docc.DuplicateMetadata",
-                    summary: "Redeclaration of '@Metadata' for this symbol; this directive will be skipped",
-                    explanation: "A '@Metadata' directive is already declared in this symbol's documentation extension file"
-                )
+            var diagnostic = Diagnostic(
+                source: unifiedSymbol?.documentedSymbol?.docComment?.url,
+                severity: .warning,
+                range: metadataFromDocumentationComment?.originalMarkup.range,
+                identifier: "org.swift.docc.DuplicateMetadata",
+                summary: "Redeclaration of '@Metadata' for this symbol; this directive will be skipped",
+                explanation: "A '@Metadata' directive is already declared in this symbol's documentation extension file"
             )
             
             if let range = unifiedSymbol?.documentedSymbol?.docComment?.lines.first?.range {
-                problem.offsetWithRange(range)
+                diagnostic.offsetWithRange(range)
             }
             
-            engine.emit(problem)
+            engine.emit(diagnostic)
         }
         
         self.metadata = documentationExtension?.metadata ?? metadataFromDocumentationComment
+        
+        warnAboutDeprecationSummaryForAvailableSymbol(semantic: semantic, engine: engine)
         
         updateAnchorSections()
     }
     
     /// Given a symbol and an optional article returns documentation content.
     /// - Parameters:
-    ///   - symbol: A symbol graph symbol.
-    ///   - article: An optional article with documentation content.
-    ///   - engine: A diagnostics engine to use for problems found while parsing content.
+    ///   - documentedSymbol: A symbol graph symbol.
+    ///   - documentationExtension: An optional article with documentation content.
+    ///   - inputs: A collection of build inputs.
+    ///   - featureFlags: Feature flags that conditionally enable behaviors in Swift-DocC.
+    ///   - engine: A diagnostics engine to use for diagnostics found while parsing content.
     /// - Returns: The prepared node documentation content.
     static func contentFrom(
         documentedSymbol: SymbolGraph.Symbol?,
         documentationExtension: Article?,
-        bundle: DocumentationBundle? = nil,
-        context: DocumentationContext? = nil,
+        inputs: DocumentationContext.Inputs? = nil,
+        featureFlags: FeatureFlags,
         engine: DiagnosticEngine
     ) -> (
-        markup: Markup,
+        markup: any Markup,
         docChunks: [DocumentationChunk],
         metadata: Metadata?
     ) {
-        let markup: Markup
+        let markup: any Markup
         var documentationChunks: [DocumentationChunk]
         
         var metadata: Metadata?
@@ -526,7 +532,10 @@ public struct DocumentationNode {
                 DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup)
             ]
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
-            let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
+            let docCommentString = docComment.lines
+                                             .map(\.text)
+                                             .linesWithoutLeadingWhitespace()
+                                             .joined(separator: "\n")
 
             let docCommentLocation: SymbolGraph.Symbol.Location? = {
                 if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
@@ -541,31 +550,31 @@ public struct DocumentationNode {
 
             var docCommentMarkupElements = Array(docCommentMarkup.children)
 
-            var problems = [Problem]()
+            var diagnostics = [Diagnostic]()
             
-            if let bundle, let context {
+            if let inputs {
                 metadata = DirectiveParser()
                     .parseSingleDirective(
                         Metadata.self,
                         from: &docCommentMarkupElements,
                         parentType: Symbol.self,
                         source: docCommentLocation?.url,
-                        bundle: bundle,
-                        context: context,
-                        problems: &problems
+                        inputs: inputs,
+                        featureFlags: featureFlags,
+                        diagnostics: &diagnostics
                     )
                 
                 metadata?.validateForUseInDocumentationComment(
                     symbolSource: symbol.docComment?.url,
-                    problems: &problems
+                    diagnostics: &diagnostics
                 )
             }
             
             if let offset {
-                problems = problems.map { $0.withRangeOffset(by: offset) }
+                diagnostics = diagnostics.map { $0.withRangeOffset(by: offset) }
             }
             
-            engine.emit(problems)
+            engine.emit(diagnostics)
             
             let docCommentDirectives = docCommentMarkupElements.compactMap { $0 as? BlockDirective }
 
@@ -589,7 +598,7 @@ public struct DocumentationNode {
                         continue
                     }
 
-                    let diagnostic = Diagnostic(
+                    var diagnostic = Diagnostic(
                         source: location,
                         severity: .warning,
                         range: range,
@@ -598,13 +607,11 @@ public struct DocumentationNode {
                         explanation: "Found \(directive.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
                     )
                     
-                    var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-                    
                     if let offset {
-                        problem.offsetWithRange(offset)
+                        diagnostic.offsetWithRange(offset)
                     }
                     
-                    engine.emit(problem)
+                    engine.emit(diagnostic)
                 }
             }
             
@@ -621,7 +628,7 @@ public struct DocumentationNode {
             if let documentationExtensionMarkup = documentationExtension?.markup {
                 // An `Article` always starts with a level 1 heading (and return `nil` if that's not the first child).
                 // For documentation extension files, this heading is a link to the symbol—which isn't part of the content—so it is ignored.
-                let documentationExtensionChildren = documentationExtensionMarkup.children.dropFirst().compactMap { $0 as? BlockMarkup }
+                let documentationExtensionChildren = documentationExtensionMarkup.children.dropFirst().compactMap { $0 as? (any BlockMarkup) }
                 
                 documentationChunks.append(DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup))
                 markup = Document(Array(docCommentMarkup.blockChildren) + documentationExtensionChildren)
@@ -675,6 +682,7 @@ public struct DocumentationNode {
         case .union: return .union
         case .`var`: return .globalVariable
         case .module: return .module
+        case .extension: return .extension
         case .extendedModule: return .extendedModule
         case .extendedStructure: return .extendedStructure
         case .extendedClass: return .extendedClass
@@ -682,6 +690,55 @@ public struct DocumentationNode {
         case .extendedProtocol: return .extendedProtocol
         case .unknownExtendedType: return .unknownExtendedType
         default: return .unknown
+        }
+    }
+    
+    /// Returns a symbol kind for the given documentation node.
+    /// - Parameter kind: A documentation node kind.
+    /// - Returns: A symbol graph symbol.
+    static func symbolKind(for kind: Kind) -> SymbolGraph.Symbol.KindIdentifier? {
+        switch kind {
+        case .associatedType: return .`associatedtype`
+        case .class: return .`class`
+        case .deinitializer: return .`deinit`
+        case .dictionary, .object: return .dictionary
+        case .dictionaryKey: return .dictionaryKey
+        case .enumeration: return .`enum`
+        case .enumerationCase: return .`case`
+        case .function: return .`func`
+        case .httpRequest: return .httpRequest
+        case .httpParameter: return .httpParameter
+        case .httpBody: return .httpBody
+        case .httpResponse: return .httpResponse
+        case .operator: return .`operator`
+        case .initializer: return .`init`
+        case .instanceVariable: return .ivar
+        case .macro: return .macro
+        case .instanceMethod: return .`method`
+        case .namespace: return .namespace
+        case .instanceProperty: return .`property`
+        case .protocol: return .`protocol`
+        case .snippet: return .snippet
+        case .structure: return .`struct`
+        case .instanceSubscript: return .`subscript`
+        case .typeMethod: return .`typeMethod`
+        case .typeProperty, .typeConstant: return .`typeProperty`
+        case .typeSubscript: return .`typeSubscript`
+        case .typeAlias, .typeDef: return .`typealias`
+        case .union: return .union
+        case .globalVariable, .localVariable: return .`var`
+        case .module: return .module
+        case .extension: return .extension
+        case .extendedModule: return .extendedModule
+        case .extendedStructure: return .extendedStructure
+        case .extendedClass: return .extendedClass
+        case .extendedEnumeration: return .extendedEnumeration
+        case .extendedProtocol: return .extendedProtocol
+        case .unknownExtendedType: return .unknownExtendedType
+        default:
+            // For non-symbol kinds (like .article, .tutorial, etc.),
+            // return nil since these don't have corresponding SymbolGraph.Symbol.KindIdentifier values
+            return nil
         }
     }
     
@@ -693,8 +750,10 @@ public struct DocumentationNode {
     ///   - platformName: The names of the platform that the symbol is available for.
     ///   - moduleReference: A reference to the module that the symbol belongs to.
     ///   - article: The documentation extension content for this symbol.
-    ///   - engine:The engine that collects any problems encountered during initialization.
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine) {
+    ///   - featureFlags: A collection of feature flags.
+    ///   - engine:The engine that collects any diagnostics encountered during initialization.
+    @available(*, deprecated, message: "This API is only used from tests. It will be removed after 6.5 is released.")
+    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, featureFlags: FeatureFlags = .init(), engine: DiagnosticEngine) {
         self.reference = reference
         
         guard reference.sourceLanguage == .swift else {
@@ -721,13 +780,13 @@ public struct DocumentationNode {
         // Prefer content sections coming from an article (documentation extension file)
         var deprecated: DeprecatedSection?
         
-        let (markup, docChunks, _) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, engine: engine)
+        let (markup, docChunks, _) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, featureFlags: featureFlags, engine: engine)
         self.markup = markup
         self.docChunks = docChunks
         
         let symbolAvailability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
         
-        var languages = Set([reference.sourceLanguage])
+        var languages = reference.sourceLanguages
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
         let availabilityDomains = symbolAvailability?.availability.compactMap({ $0.domain?.rawValue })
@@ -753,6 +812,7 @@ public struct DocumentationNode {
         self.semantic = Symbol(
             kindVariants: .init(swiftVariant: symbol.kind),
             titleVariants: .init(swiftVariant: symbol.names.title),
+            proseVariants: .init(swiftVariant: symbol.names.prose),
             subHeadingVariants: .init(swiftVariant: symbol.names.subHeading),
             navigatorVariants: .init(swiftVariant: symbol.names.navigator),
             roleHeadingVariants: .init(swiftVariant: symbol.kind.displayName),
@@ -799,7 +859,6 @@ public struct DocumentationNode {
     /// - Parameters:
     ///   - reference: The unique reference to the node.
     ///   - article: The documentation extension content for this symbol.
-    ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the node.
     init(reference: ResolvedTopicReference, article: Article) throws {
         guard let articleMarkup = article.markup else {
             throw Error.missingMarkup
@@ -810,7 +869,7 @@ public struct DocumentationNode {
         self.semantic = article
         self.sourceLanguage = reference.sourceLanguage
         self.name = .conceptual(title: article.title?.title ?? "")
-        self.availableSourceLanguages = [reference.sourceLanguage]
+        self.availableSourceLanguages = reference.sourceLanguages
         self.docChunks = [DocumentationChunk(source: .documentationExtension, markup: articleMarkup)]
         self.markup = articleMarkup
         self.isVirtual = false
@@ -837,6 +896,177 @@ public struct DocumentationNode {
     ///
     /// These tags contain information about the symbol's return values, potential errors, and parameters.
     public var tags: Tags = (returns: [], throws: [], parameters: [])
+    
+    private func warnAboutDeprecationSummaryForAvailableSymbol(semantic: Symbol, engine: DiagnosticEngine) {
+        guard !semantic.isDeprecated else {
+            return
+        }
+        
+        let deprecationSummaryDirective = markup.children.mapFirst { markup in
+            (markup as? BlockDirective).flatMap { directive in
+                directive.name == DeprecationSummary.directiveName ? directive : nil
+            }
+        }
+        guard let deprecationSummaryDirective, let symbol, let unifiedSymbol else {
+            // Nothing to warn about unless there is a DeprecationSummary directive in the markup
+            return
+        }
+        
+        // FIXME: Share this logic for computing the availability with the rendering code (rdar://172280267)
+        
+        // Check the information from both the source attributes and the Available directive before raising a warning.
+        let availabilityFromSource = {
+            var combinedInSourceAvailability: [String: SymbolGraph.Symbol.Availability.AvailabilityItem] = [:]
+            for availabilities in unifiedSymbol.availability.values {
+                for item in availabilities where item.obsoletedVersion == nil && !item.isUnconditionallyUnavailable {
+                    let name = item.domain.map({ PlatformName(operatingSystemName: $0.rawValue).displayName }) ?? "*"
+                    combinedInSourceAvailability[name] = item
+                }
+            }
+            
+            var availability = Array(combinedInSourceAvailability.values)
+            let isDeprecatedPartitionIndex = availability.partition(by: { $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil })
+            return (
+                available:  availability[..<isDeprecatedPartitionIndex],
+                deprecated: availability[isDeprecatedPartitionIndex...]
+            )
+        }()
+        let availabilityFromDirectives = {
+            var availability = metadata?.availability ?? []
+            let isDeprecatedPartitionIndex = availability.partition(by: { $0.deprecated != nil })
+            return (
+                available:  availability[..<isDeprecatedPartitionIndex],
+                deprecated: availability[isDeprecatedPartitionIndex...]
+            )
+        }()
+        let isUnconditionallyAvailable = availabilityFromSource.available.contains(where: { $0.domain == nil })
+        
+        let deprecatedDomainNames = Set(availabilityFromSource.deprecated.compactMap(\.domain?.rawValue))
+            .union(availabilityFromDirectives.deprecated.map(\.platform.rawValue))
+        
+        let availableDomainNames = Set(availabilityFromSource.available.compactMap(\.domain?.rawValue))
+            .union(availabilityFromDirectives.available.map(\.platform.rawValue))
+            .subtracting(deprecatedDomainNames)
+        
+        guard deprecatedDomainNames.isEmpty, isUnconditionallyAvailable || !availableDomainNames.isEmpty else {
+            return
+        }
+        
+        // We've verified that the symbol is still available, at least partially.
+        // Now, provide as much contextual information as possible to describe why the symbol is considered available to help developer resolve this issue.
+            
+        func makeExplanation(availabilityDescription: String) -> String {
+            "This \(symbol.kind.displayName.lowercased()) has \(availableDomainNames.count == 1 ? "an attribute" : "attributes") that mark it as available for \(availabilityDescription)."
+        }
+        
+        let shortAvailabilityDescription: String
+        let explanation: String
+        if availableDomainNames.isEmpty && deprecatedDomainNames.isEmpty {
+            // Having no availability information (this branch) and having an explicit wildcard ("*") availability (the next branch) both mean that the symbol is available for all platforms.
+            // The only difference is that without any attributes (this branch) there's no specific "introduced" version, so the symbol is available for _all_ versions of the module.
+            // We separate these two cases to be able to provide a more specialized explanation, which hopefully makes the diagnostic easier to understand.
+            shortAvailabilityDescription = "unconditionally available"
+            explanation = "A symbol without any availability annotations is considered available for all versions of the module (\(semantic.moduleReference.lastPathComponent)) for all platforms."
+        } else if isUnconditionallyAvailable {
+            // Like above, this symbol is available for all versions of the platform, only with some "introduced" version.
+            // However, because there is an explicit attribute that we can refer to, we customize the two explanations to help the developer understand _why_ this symbol is available.
+            var description = "all platforms"
+            if !deprecatedDomainNames.isEmpty {
+                // Because the issue is with the platforms that are available, we only list the named of the deprecated platforms.
+                description.append(", except \(deprecatedDomainNames.sorted().list(finalConjunction: .and))")
+            }
+            
+            shortAvailabilityDescription = "available for \(description)"
+            explanation = makeExplanation(availabilityDescription: description)
+        } else {
+            shortAvailabilityDescription = "available for \(availableDomainNames.sorted().list(finalConjunction: .and))"
+            
+            // Because the issue is with the platforms that are available, we list both names and version information for the platforms that are _not_ deprecated.
+            let availableDomainsAndVersions: [(name: String, introduced: String?)] = availableDomainNames.map { name in
+                // Available directives override the in-source attributes, so check them first.
+                if let fromDirective = availabilityFromDirectives.available.first(where: { $0.platform.rawValue == name }) {
+                    (name, fromDirective.introduced.description)
+                } else if let fromSource = availabilityFromSource.available.first(where: { $0.domain?.rawValue == name }) {
+                    (name, fromSource.introducedVersion?.description)
+                } else {
+                    (name, nil)
+                }
+            }
+            let longAvailabilityDescription = availableDomainsAndVersions
+                .sorted(by: \.name)
+                .map { name, introduced in
+                    if let introduced {
+                        "'\(name)' \(introduced) onwards"
+                    } else {
+                        "all versions of '\(name)'"
+                    }
+                }
+                .list(finalConjunction: .and)
+            explanation = makeExplanation(availabilityDescription: longAvailabilityDescription)
+        }
+        
+        func offsetIfNeeded(_ range: SourceRange) -> SourceRange {
+            guard range.source == inSourceDocumentationChunk?.url, let offset = inSourceDocumentationChunk?.offset else {
+                return range
+            }
+            // Diagnostics from an in-source documentation comment need to be offset based on the location of that documentation comment.
+            var range = range
+            range.offsetWithRange(offset)
+            return range
+        }
+        
+        let notes: [Diagnostic.Note] = metadata?.availability.compactMap { availability -> Diagnostic.Note? in
+            guard availability.deprecated == nil, let range = availability.originalMarkup.range, let source = range.source else {
+                return nil
+            }
+            return .init(source: source, range: offsetIfNeeded(range), message: "Marked available for '\(availability.platform.rawValue)' here")
+        } ?? []
+        
+        
+        // It's preferred to specify availability using source attributes because that's also reflected when _calling_ the API.
+        let inSourceAttributeDescription: String? = switch SourceLanguage(id: symbol.identifier.interfaceLanguage) {
+            case .swift:      "'@available()' attribute"
+            case .objectiveC: "'API_AVAILABLE' macro"
+            default:          nil
+        }
+        var solutions: [Solution] = []
+        if isUnconditionallyAvailable {
+            if let inSourceAttributeDescription {
+                solutions.append(Solution(
+                    summary: "Update wildcard \(inSourceAttributeDescription) with a deprecated version or unconditional deprecation",
+                    replacements: [/* Can't safely make replacements outside the range of the documentation comment*/]
+                ))
+            } else {
+                // Not sure what solution we can offer for unconditional available symbols in languages other than Swift and C-family languages.
+            }
+        } else {
+            let platformNamesDescription = availableDomainNames.sorted().map(\.singleQuoted).list(finalConjunction: .or)
+            if let inSourceAttributeDescription {
+                solutions.append(Solution(
+                    summary: "Add \(inSourceAttributeDescription)\(availableDomainNames.count > 1 ? "s" : "") marking \(platformNamesDescription) as deprecated API",
+                    replacements: [/* Can't safely make replacements outside the range of the documentation comment*/]
+                ))
+            }
+            solutions.append(Solution(
+                summary: "Add Available directive\(availableDomainNames.count > 1 ? "s" : "") marking \(platformNamesDescription) as deprecated only in documentation",
+                replacements: []
+            ))
+        }
+        
+        let range = deprecationSummaryDirective.range.map(offsetIfNeeded)
+        engine.emit(
+            Diagnostic(
+                source: range?.source,
+                severity: .warning,
+                range: range,
+                identifier: "DeprecationSummaryForAvailableSymbol",
+                summary: "\(symbol.kind.displayName.lowercased().capitalizingFirstWord()) '\(symbol.names.title)' is \(shortAvailabilityDescription)",
+                explanation: explanation,
+                notes: notes,
+                solutions: solutions
+            )
+        )
+    }
 }
 
 private let directivesSupportedInDocumentationComments = [
@@ -851,5 +1081,42 @@ private let directivesSupportedInDocumentationComments = [
 private extension BlockDirective {
     var isSupportedInDocumentationComment: Bool {
         directivesSupportedInDocumentationComments.contains(name)
+    }
+}
+
+extension Collection<String> {
+
+    /// Strip the minimum leading whitespace from all the strings in this array, as follows:
+    /// - Find the line with least amount of leading whitespace. Ignore blank lines during this search.
+    /// - Remove that number of whitespace chars from all the lines (including blank lines).
+    /// - Returns: An array of substrings of the original lines with the minimum leading whitespace removed.
+    func linesWithoutLeadingWhitespace() -> [Substring] {
+
+        // Optimization for the common case: If any of the lines does not start
+        // with whitespace, or if there are no lines, then return the original lines
+        // as substrings.
+        if isEmpty || contains(where: { $0.first?.isWhitespace == false }) {
+            return self.map{ .init($0) }
+        }
+
+        /// - Count the leading whitespace characters in the given string.
+        /// - Returns: The count of leading whitespace characters, if the string is not blank,
+        ///     or `nil` if the string is empty or blank (contains only whitespace)
+        func leadingWhitespaceCount(_ line: String) -> Int? {
+            let count = line.prefix(while: \.isWhitespace).count
+            guard count < line.count else { return nil }
+            return count
+        }
+
+        // Find the minimum count of leading whitespace. If there are no
+        // leading whitespace counts (if all the lines were blank) then return
+        // the original lines as substrings.
+        guard let minimumWhitespaceCount = self.compactMap(leadingWhitespaceCount).min() else {
+            return self.map{ .init($0) }
+        }
+
+        // Drop the leading whitespace from all the lines and return the
+        // modified lines as substrings of the original lines.
+        return self.map { $0.dropFirst(minimumWhitespaceCount) }
     }
 }

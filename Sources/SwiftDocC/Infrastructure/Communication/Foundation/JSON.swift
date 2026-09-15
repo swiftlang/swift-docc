@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 indirect enum JSON: Codable {
     case dictionary([String: JSON])
@@ -18,7 +18,7 @@ indirect enum JSON: Codable {
     case boolean(Bool)
     case null
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if container.decodeNil() {
             self = .null
@@ -35,7 +35,7 @@ indirect enum JSON: Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .dictionary(let dictionary):
@@ -58,11 +58,7 @@ indirect enum JSON: Codable {
 extension JSON: CustomDebugStringConvertible {
     var debugDescription: String {
         let encoder = JSONEncoder()
-        if #available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) {
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        } else {
-            encoder.outputFormatting = [.prettyPrinted]
-        }
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         
         do {
             let data = try encoder.encode(self)

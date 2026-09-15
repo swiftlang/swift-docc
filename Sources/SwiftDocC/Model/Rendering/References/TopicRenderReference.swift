@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -248,7 +248,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         case images
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
         identifier = try values.decode(RenderReferenceIdentifier.self, forKey: .identifier)
@@ -281,7 +281,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         images = try values.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(type, forKey: .type)
@@ -343,161 +343,5 @@ extension TopicRenderReference: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.images, forKey: CodingKeys.images)
         
         return diffBuilder.differences
-    }
-}
-
-// MARK: Deprecated
-
-extension TopicRenderReference {
-    @available(*, deprecated, renamed: "propertyListTitleStyle", message: "Use 'propertyListTitleStyle' instead. This deprecated API will be removed after 6.1 is released")
-    public var titleStyle: TitleStyle? {
-        get {
-            propertyListKeyNames?.titleStyle.map { $0.titleStyle }
-        }
-        set {
-            if propertyListKeyNames == nil {
-                propertyListKeyNames = PropertyListKeyNames()
-            }
-            propertyListKeyNames!.titleStyle = newValue.map { .init(titleStyle: $0) }
-        }
-    }
-    
-    @available(*, deprecated, renamed: "propertyListRawKey", message: "Use 'propertyListRawKey' instead. This deprecated API will be removed after 6.1 is released")
-    public var name: String? {
-        get { 
-            propertyListKeyNames?.rawKey
-        }
-        set {
-            if propertyListKeyNames == nil {
-                propertyListKeyNames = PropertyListKeyNames()
-            }
-            propertyListKeyNames!.rawKey = newValue
-        }
-    }
-    
-    @available(*, deprecated, renamed: "propertyListDisplayName", message: "Use 'propertyListDisplayName' instead. This deprecated API will be removed after 6.1 is released")
-    public var ideTitle: String? {
-        get { 
-            propertyListKeyNames?.displayName
-        }
-        set {
-            if propertyListKeyNames == nil {
-                propertyListKeyNames = PropertyListKeyNames()
-            }
-            propertyListKeyNames!.displayName = newValue
-        }
-    }
-    
-    @_disfavoredOverload
-    @available(*, deprecated, renamed: "init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:propertyListKeyNames:tags:images:)", message: "Use 'init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:propertyListKeyNames:tags:images:)' instead. This deprecated API will be removed after 6.1 is released")
-    public init(
-        identifier: RenderReferenceIdentifier,
-        title: String,
-        abstract: [RenderInlineContent],
-        url: String,
-        kind: RenderNode.Kind,
-        required: Bool = false,
-        role: String? = nil,
-        fragments: [DeclarationRenderSection.Token]? = nil,
-        navigatorTitle: [DeclarationRenderSection.Token]? = nil,
-        estimatedTime: String? = nil,
-        conformance: ConformanceSection? = nil,
-        isBeta: Bool = false,
-        isDeprecated: Bool = false,
-        defaultImplementationCount: Int? = nil,
-        titleStyle: TitleStyle? = nil,
-        name: String? = nil,
-        ideTitle: String? = nil,
-        tags: [RenderNode.Tag]? = nil,
-        images: [TopicImage] = []
-    ) {
-        self.init(
-            identifier: identifier,
-            titleVariants: .init(defaultValue: title),
-            abstractVariants: .init(defaultValue: abstract),
-            url: url,
-            kind: kind,
-            required: required,
-            role: role,
-            fragmentsVariants: .init(defaultValue: fragments),
-            navigatorTitleVariants: .init(defaultValue: navigatorTitle),
-            estimatedTime: estimatedTime,
-            conformance: conformance,
-            isBeta: isBeta,
-            isDeprecated: isDeprecated,
-            defaultImplementationCount: defaultImplementationCount,
-            propertyListKeyNames: PropertyListKeyNames(
-                titleStyle: titleStyle.map { .init(titleStyle: $0) },
-                rawKey: name,
-                displayName: ideTitle
-            ),
-            tags: tags,
-            images: images
-        )
-    }
-    
-    @_disfavoredOverload
-    @available(*, deprecated, renamed: "init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:propertyListKeyNames:tags:images:)", message: "Use 'init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:propertyListKeyNames:tags:images:)' instead. This deprecated API will be removed after 6.1 is released")
-    public init(
-        identifier: RenderReferenceIdentifier,
-        titleVariants: VariantCollection<String>,
-        abstractVariants: VariantCollection<[RenderInlineContent]>,
-        url: String,
-        kind: RenderNode.Kind,
-        required: Bool = false,
-        role: String? = nil,
-        fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil),
-        navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil),
-        estimatedTime: String? = nil,
-        conformance: ConformanceSection? = nil,
-        isBeta: Bool = false,
-        isDeprecated: Bool = false,
-        defaultImplementationCount: Int? = nil,
-        titleStyle: TitleStyle? = nil,
-        name: String? = nil,
-        ideTitle: String? = nil,
-        tags: [RenderNode.Tag]? = nil,
-        images: [TopicImage] = []
-    ) {
-        self.identifier = identifier
-        self.titleVariants = titleVariants
-        self.abstractVariants = abstractVariants
-        self.url = url
-        self.kind = kind
-        self.required = required
-        self.role = role
-        self.fragmentsVariants = fragmentsVariants
-        self.navigatorTitleVariants = navigatorTitleVariants
-        self.estimatedTime = estimatedTime
-        self.conformance = conformance
-        self.isBeta = isBeta
-        self.isDeprecated = isDeprecated
-        self.defaultImplementationCount = defaultImplementationCount
-        if titleStyle != nil || name != nil || ideTitle != nil {
-            self.propertyListKeyNames = PropertyListKeyNames(
-                titleStyle: titleStyle.map { .init(titleStyle: $0) },
-                rawKey: name,
-                displayName: ideTitle
-            )
-        }
-        self.tags = tags
-        self.images = images
-    }
-}
-
-@available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-private extension PropertyListTitleStyle {
-    var titleStyle: TitleStyle {
-        switch self {
-        case .useDisplayName: return .title
-        case .useRawKey:      return .symbol
-        }
-    }
-    
-    init(titleStyle: TitleStyle) {
-        switch titleStyle {
-        case .title:  self = .useDisplayName
-        case .symbol: self = .useRawKey
-        }
     }
 }

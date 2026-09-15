@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive that controls how the documentation-extension file overrides the symbol's display name.
 ///

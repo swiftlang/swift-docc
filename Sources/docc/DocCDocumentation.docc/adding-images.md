@@ -22,7 +22,7 @@ For example, the following are all valid DocC image filenames:
 
 - term `sloth.png`: An image that's independent of all appearance modes and display scales.
 - term `sloth~dark.png`: An image that's specific to dark mode, but is display-scale independent.
-- term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2x display scale.
+- term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2× display scale.
 
 > Important: Include the image files in your documentation catalog. For more information, see <doc:documenting-a-swift-framework-or-package>.
 
@@ -39,4 +39,4 @@ image.
 ![A sloth hanging off a tree.](sloth)
 ```
 
-<!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2023-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

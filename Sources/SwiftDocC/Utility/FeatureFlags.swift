@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,45 +10,44 @@
 
 /// A set of feature flags that conditionally enable (usually experimental) behavior in Swift-DocC.
 public struct FeatureFlags: Codable {
-    /// The current feature flags that Swift-DocC uses to conditionally enable
-    /// (usually experimental) behavior in Swift-DocC.
+    @available(*, deprecated, message: "Pass a feature flags value instead. This deprecated API will be removed after 6.5 is released.")
     public static var current = FeatureFlags()
-    
+
+    /// Whether or not experimental annotation of code blocks is enabled.
+    public var isExperimentalCodeBlockAnnotationsEnabled = false
+
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 
-    /// Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.
-    public var isExperimentalLinkHierarchySerializationEnabled = false
+    /// Whether or not support for emitting a serialized version of the local link resolution information is enabled.
+    public var isLinkHierarchySerializationEnabled = true
+    
+    @available(*, deprecated, renamed: "isLinkHierarchySerializationEnabled", message: "Use 'isLinkHierarchySerializationEnabled' instead. This deprecated API will be removed after 6.5 is released")
+    public var isExperimentalLinkHierarchySerializationEnabled: Bool {
+        get { isLinkHierarchySerializationEnabled }
+        set { isLinkHierarchySerializationEnabled = newValue }
+    }
     
     /// Whether or not experimental support for combining overloaded symbol pages is enabled.
     public var isExperimentalOverloadedSymbolPresentationEnabled = false
     
-    /// Whether experimental support for automatically rendering links on symbol documentation to articles
-    /// that mention that symbol.
-    public var isExperimentalMentionedInEnabled = false
+    /// Whether or not experimental markdown generation is enabled
+    public var isExperimentalMarkdownOutputEnabled = false
+    
+    /// Whether or not experimental markdown manifest generation is enabled
+    public var isExperimentalMarkdownOutputManifestEnabled = false
+    
+    /// Whether support for automatically rendering links on symbol documentation to articles that mention that symbol is enabled.
+    public var isMentionedInEnabled = true
     
     /// Whether or not support for validating parameters and return value documentation is enabled.
     public var isParametersAndReturnsValidationEnabled = true
     
-    @available(*, deprecated, renamed: "isParametersAndReturnsValidationEnabled", message: "Use 'isParametersAndReturnsValidationEnabled' instead. This deprecated API will be removed after 6.1 is released")
-    public var isExperimentalParametersAndReturnsValidationEnabled: Bool {
-        get { isParametersAndReturnsValidationEnabled }
-        set { isParametersAndReturnsValidationEnabled = newValue }
-    }
-    
-    /// Creates a set of feature flags with the given values.
-    ///
-    /// - Parameters:
-    ///   - additionalFlags: Any additional flags to set.
-    ///
-    ///     This field allows clients to set feature flags without adding new API.
-    public init(
-        additionalFlags: [String : Bool] = [:]
-    ) {
-    }
+    /// Creates a set of feature flags with all default values.
+    public init() {}
 
     /// Set feature flags that were loaded from a bundle's Info.plist.
-    internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationBundle.Info.BundleFeatureFlags) {
+    internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationContext.Inputs.Info.CatalogFeatureFlags) {
         if let overloadsPresentation = bundleFlags.experimentalOverloadedSymbolPresentation {
             self.isExperimentalOverloadedSymbolPresentationEnabled = overloadsPresentation
         }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ final class TestParent: Semantic, DirectiveConvertible {
     static let introducedVersion = "1.2.3"
     let originalMarkup: BlockDirective
     let testChildren: [TestChild]
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(TestParent.canConvertDirective(directive))
         self.originalMarkup = directive
         self.testChildren = directive.children.compactMap { child -> TestChild? in
@@ -25,7 +25,7 @@ final class TestParent: Semantic, DirectiveConvertible {
                 childDirective.name == TestChild.directiveName else {
                     return nil
             }
-            return TestChild(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            return TestChild(from: directive, source: nil, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics)
         }
     }
     
@@ -38,7 +38,7 @@ final class TestChild: Semantic, DirectiveConvertible {
     static let directiveName = "Child"
     static let introducedVersion = "1.2.3"
     let originalMarkup: BlockDirective
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    init?(from directive: BlockDirective, source: URL?, for _: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         precondition(TestChild.canConvertDirective(directive))
         self.originalMarkup = directive
     }
@@ -49,41 +49,39 @@ final class TestChild: Semantic, DirectiveConvertible {
 }
 
 class HasAtLeastOneTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Parent"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         do {
-            var problems = [Problem]()
-            directive.map { directive in
-                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            var diagnostics = [Diagnostic]()
+            if let directive {
+                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, diagnostics: &diagnostics)
                 XCTAssertTrue(matches.isEmpty)
                 XCTAssertTrue(remainder.elements.isEmpty)
             }
-            XCTAssertEqual(1, problems.count)
-            problems.first.map { problem in
-                XCTAssertEqual(.error, problem.diagnostic.severity)
-                XCTAssertEqual("org.swift.docc.HasAtLeastOne<Parent, TestChild>", problem.diagnostic.identifier)
-            }
+            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(diagnostics.first?.severity, .error)
+            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasAtLeastOne<Parent, TestChild>")
         }
         
         // Test ignoring diagnostics
         do {
-            var problems = [Problem]()
-            directive.map { directive in
-                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            var diagnostics = [Diagnostic]()
+            if let directive {
+                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: nil, for: inputs, diagnostics: &diagnostics)
                 XCTAssertTrue(matches.isEmpty)
                 XCTAssertTrue(remainder.elements.isEmpty)
             }
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
         }
     }
     
-    func testOne() throws {
+    func testOne() async throws {
         let source = """
 @Parent {
    @Child
@@ -91,20 +89,20 @@ class HasAtLeastOneTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
-        directive.map { directive in
-            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        if let directive {
+            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, diagnostics: &diagnostics)
             XCTAssertEqual(1, matches.count)
             XCTAssertTrue(remainder.elements.isEmpty)
         }
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
     
-    func testMany() throws {
+    func testMany() async throws {
         let source = """
 @Parent {
    @Child
@@ -114,20 +112,20 @@ class HasAtLeastOneTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
-        directive.map { directive in
-            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        if let directive {
+            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, diagnostics: &diagnostics)
             XCTAssertEqual(3, matches.count)
             XCTAssertTrue(remainder.elements.isEmpty)
         }
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
     
-    func testAlternateDirectiveTitle() throws {
+    func testAlternateDirectiveTitle() async throws {
         let source = """
 @AlternateParent {
    @AlternateChild
@@ -135,16 +133,16 @@ class HasAtLeastOneTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
-        directive.map { directive in
-            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        if let directive {
+            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, diagnostics: &diagnostics)
             XCTAssertEqual(1, matches.count)
             XCTAssertTrue(remainder.elements.isEmpty)
         }
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
 }

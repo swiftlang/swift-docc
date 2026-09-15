@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,30 +11,31 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCTestUtilities
 
 class MultipleChoiceTests: XCTestCase {
-    func testInvalidEmpty() throws {
+    func testInvalidEmpty() async throws {
         let source = "@MultipleChoice"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(multipleChoice)
-            XCTAssertEqual(3, problems.count)
-            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            XCTAssertEqual(3, diagnostics.count)
+            let diagnosticIdentifiers = Set(diagnostics.map { $0.identifier })
             XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(MultipleChoice.self).missingPhrasing"))
             XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(MultipleChoice.self).CorrectNumberOfChoices"))
             XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(MultipleChoice.self).CorrectChoiceProvided"))
         }
     }
     
-    func testInvalidTooFewChoices() throws {
+    func testInvalidTooFewChoices() async throws {
         let source = """
 @MultipleChoice {
   What is your favorite color?
@@ -53,24 +54,20 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        try directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(multipleChoice)
-            XCTAssertEqual(1, problems.count)
-            let problem = try XCTUnwrap(
-                problems.first {
-                    $0.diagnostic.identifier == "org.swift.docc.\(MultipleChoice.self).CorrectNumberOfChoices"
-                }
-            )
-            XCTAssertEqual(problem.diagnostic.severity, .warning)
+            XCTAssertEqual(1, diagnostics.count)
+            let diagnostic = try XCTUnwrap(diagnostics.first { $0.identifier == "org.swift.docc.\(MultipleChoice.self).CorrectNumberOfChoices" })
+            XCTAssertEqual(diagnostic.severity, .warning)
         }
     }
     
-    func testInvalidCodeAndImage() throws {
+    func testInvalidCodeAndImage() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -101,16 +98,19 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
+            DataFile(name: "blah.png", data: Data()),
+            InfoPlist(identifier: "org.swift.docc.example")
+        ]))
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(multipleChoice)
-            XCTAssertFalse(problems.isEmpty)
-            problems.first.map {
-                XCTAssertEqual("org.swift.docc.MultipleChoice.CodeOrImage", $0.diagnostic.identifier)
+            XCTAssertFalse(diagnostics.isEmpty)
+            diagnostics.first.map {
+                XCTAssertEqual("org.swift.docc.MultipleChoice.CodeOrImage", $0.identifier)
             }
             
             multipleChoice.map { multipleChoice in
@@ -133,7 +133,7 @@ MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
 
     }
     
-    func testValidNoCodeOrMedia() throws {
+    func testValidNoCodeOrMedia() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -158,14 +158,14 @@ MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(multipleChoice)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             
             multipleChoice.map { multipleChoice in
                 let expectedDump = """
@@ -185,7 +185,7 @@ MultipleChoice @1:1-18:2 title: 'SwiftDocC.MarkupContainer'
         }
     }
     
-    func testValidCode() throws {
+    func testValidCode() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -214,14 +214,14 @@ MultipleChoice @1:1-18:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(multipleChoice)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             
             multipleChoice.map { multipleChoice in
                 XCTAssertNil(multipleChoice.image)
@@ -246,7 +246,7 @@ MultipleChoice @1:1-22:2 title: 'SwiftDocC.MarkupContainer'
 
     }
     
-    func testMultipleCorrectAnswers() throws {
+    func testMultipleCorrectAnswers() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -273,24 +273,21 @@ MultipleChoice @1:1-22:2 title: 'SwiftDocC.MarkupContainer'
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
+        let context = try await makeEmptyContext()
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
         XCTAssertEqual(MultipleChoice.directiveName, directive.name)
         
-        let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-        
+        let multipleChoice = MultipleChoice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(multipleChoice)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual(["org.swift.docc.MultipleChoice.MultipleCorrectChoicesProvided"], problems.map {$0.diagnostic.identifier})
         
-        guard problems.count == 1 else { return }
+        XCTAssertEqual(diagnostics.count, 1)
+        XCTAssertEqual(diagnostics.map(\.identifier), ["org.swift.docc.MultipleChoice.MultipleCorrectChoicesProvided"])
         
-        let problem = problems[0]
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         let lines = source.splitByNewlines
         
-        for note in problem.diagnostic.notes {
+        for note in diagnostic.notes {
             let sourceLine = lines[note.range.lowerBound.line-1]
             let sourceStartIndex = sourceLine.index(sourceLine.startIndex, offsetBy: note.range.lowerBound.column-1)
             let sourceEndIndex = sourceLine.index(sourceLine.startIndex, offsetBy: note.range.upperBound.column-1)

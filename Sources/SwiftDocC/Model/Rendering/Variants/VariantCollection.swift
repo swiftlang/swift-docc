@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A collection of variants for a render node value.
 ///
 /// Variant collections encapsulate different values for the same piece of content. Each variant collection has a default value and optionally, trait-specific
@@ -39,7 +37,7 @@ public struct VariantCollection<Value: Codable>: Codable {
         self.variants = variants
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.defaultValue = try container.decode(Value.self)
         
@@ -47,7 +45,7 @@ public struct VariantCollection<Value: Codable>: Codable {
         self.variants = []
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(defaultValue)
         addVariantsToEncoder(encoder, isDefaultValueEncoded: true)
@@ -61,7 +59,7 @@ public struct VariantCollection<Value: Codable>: Codable {
     ///   - isDefaultValueEncoded: Whether the default value for this topic collection has been encoded in the encoder's container. If it hasn't, this function
     ///   replaces the variants' 'replace' patch operations with 'add' operations, since the container has no value to replace.
     func addVariantsToEncoder(
-        _ encoder: Encoder,
+        _ encoder: any Encoder,
         pointer: JSONPointer? = nil,
         isDefaultValueEncoded: Bool
     ) {

@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+private import Foundation
+@preconcurrency import SymbolKit
 
 // MARK: From symbols
 
@@ -20,7 +20,7 @@ extension PathHierarchy {
             return nil
         }
         
-        let isSwift = symbol.identifier.interfaceLanguage == SourceLanguage.swift.id
+        let isSwift = symbol.identifier.interfaceLanguage == "swift"
         return (
             signature.parameters.map { parameterTypeSpelling(for: $0.declarationFragments, isSwift: isSwift) },
             returnTypeSpellings(for: signature.returns, isSwift: isSwift)
@@ -29,7 +29,13 @@ extension PathHierarchy {
     
     /// Creates a type disambiguation string from the given function parameter declaration fragments.
     private static func parameterTypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
-        let accumulated = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        let accumulated = utf8TypeSpelling(
+            // For Swift parameters, skip all fragments past the first "identifier".
+            // This filters out Swift attributes, result builders, etc. that appear before the parameter's name.
+            // For disambiguation we're only interested in the parameter's type, which fully comes after its name in Swift.
+            for: isSwift ? fragments.drop(while: { $0.kind != .identifier }).dropFirst() : fragments[...],
+            isSwift: isSwift
+        )
         
         return String(decoding: accumulated, as: UTF8.self)
     }
@@ -43,9 +49,9 @@ extension PathHierarchy {
             // We don't want to list "void" return values as type disambiguation
             return []
         }
-        let spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        let spelling = utf8TypeSpelling(for: fragments[...], isSwift: isSwift)
         
-        guard isSwift, spelling[...].isTuple() else {
+        guard isSwift, spelling[...].shapeOfSwiftTypeSpelling() == .tuple else {
             return [String(decoding: spelling, as: UTF8.self)]
         }
         
@@ -83,7 +89,7 @@ extension PathHierarchy {
     private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
     
     /// Returns the type name spelling as sequence of UTF-8 code units _without_ null-termination.
-    private static func utf8TypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> ContiguousArray<UTF8.CodeUnit> {
+    private static func utf8TypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment].SubSequence, isSwift: Bool) -> ContiguousArray<UTF8.CodeUnit> {
         // This function joins the spelling of the text and identifier declaration fragments and applies Swift syntactic sugar;
         // `Array<Element>` -> `[Element]`, `Optional<Wrapped>` -> `Wrapped?`, and `Dictionary<Key,Value>` -> `[Key:Value]`
         
@@ -99,7 +105,8 @@ extension PathHierarchy {
         // Track the current [], (), and <> scopes to identify when ":" is a part of the type name.
         var swiftBracketsStack = SwiftBracketsStack()
         
-        for fragment in fragments {
+        var remaining = fragments[...]
+        while let fragment = remaining.popFirst() {
             let preciseIdentifier = fragment.preciseIdentifier
             if isSwift {
                 // Check if this fragment is a spelled out Swift array, optional, or dictionary.
@@ -129,11 +136,38 @@ extension PathHierarchy {
                     // Accumulate all of the identifier tokens' spelling.
                     accumulated.append(contentsOf: fragment.spelling.utf8)
                     
+                case .keyword where fragment.spelling == "Any":
+                    accumulated.append(contentsOf: fragment.spelling.utf8)
+                    
+                case .keyword where fragment.spelling == "throws":
+                    // We don't want to include typed throws in the disambiguation because it looks like another set of parameters.
+                    // For example, "(Value) throws(Error) -> Result" would look like "(Value)(Error)->Result" if we skipped the `throws` keyword without skipping the error type.
+                    //
+                    // This information is spread across (at least) 4 different fragments:
+                    //  Kind           | Spelling
+                    //  ---------------|----------
+                    //  keyword        | "throws"
+                    //  text           | "("
+                    //  typeIdentifier | "Error"
+                    //  text           | ")"
+                    if let next = remaining.first, next.kind == .text, next.spelling == "(",
+                       let endIndex = remaining.firstIndex(where: { $0.kind == .text && $0.spelling.starts(with: ")") })
+                    {
+                        remaining = remaining[endIndex...]
+                        // We can't drop the closing text fragment because it could contain other characters that we want to include in the disambiguation.
+                        // Instead, we modify it in-place to only remove the ")" prefix.
+                        remaining[endIndex].spelling.removeFirst()
+                    }
+                    continue
+                    
                 case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
                     let utf8Spelling = fragment.spelling.utf8
-                    for index in utf8Spelling.indices {
+                    var index = utf8Spelling.startIndex
+                    while index < utf8Spelling.endIndex {
+                        defer { utf8Spelling.formIndex(after: &index) }
+                        
                         let char = utf8Spelling[index]
                         switch char {
                         case openAngle:
@@ -152,8 +186,14 @@ extension PathHierarchy {
                             assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(fragments.map(\.spelling).joined())")
                             swiftBracketsStack.pop()
                             
+                        case fullStop where utf8Spelling[index...].prefix(5).elementsEqual(".Type".utf8):
+                            // "Name.Type" is different from just "Name" (and we don't want a trailing ".")
+                            accumulated.append(contentsOf: ".Type".utf8)
+                            utf8Spelling.formIndex(&index, offsetBy: 4) // The 5th increment happens in the defer-statement above
+                            continue // Continue
+                            
                         case colon where swiftBracketsStack.isCurrentScopeSquareBracket,
-                             comma, fullStop, question, hyphen:
+                             comma, fullStop, question, hyphen, ampersand, tilde:
                             break // Include this character
                             
                         default:
@@ -186,14 +226,14 @@ extension PathHierarchy {
         }
         
         // Check if the type names are wrapped in redundant parenthesis and remove them
-        if accumulated.first == openParen, accumulated.last == closeParen, !accumulated[...].isTuple() {
+        if accumulated.first == openParen, accumulated.last == closeParen, accumulated[...].shapeOfSwiftTypeSpelling() == .scalar {
             // In case there are multiple
             // Use a temporary slice until all the layers of redundant parenthesis have been removed.
             var temp = accumulated[...]
             
             repeat {
                 temp = temp.dropFirst().dropLast()
-            } while temp.first == openParen && temp.last == closeParen && !temp.isTuple()
+            } while temp.first == openParen && temp.last == closeParen && temp.shapeOfSwiftTypeSpelling() == .scalar
             
             // Adjust the markers so that they align with the expected characters
             let difference = (accumulated.count - temp.count) / 2
@@ -222,7 +262,7 @@ extension PathHierarchy {
     }
     
     /// A small helper type that tracks the scope of nested brackets; `()`, `[]`, or `<>`.
-    private struct SwiftBracketsStack {
+    private struct SwiftBracketsStack: ~Copyable {
         enum Bracket {
             case angle  // <>
             case square // []
@@ -273,27 +313,51 @@ private let fullStop    = UTF8.CodeUnit(ascii: ".")
 private let question    = UTF8.CodeUnit(ascii: "?")
 private let colon       = UTF8.CodeUnit(ascii: ":")
 private let hyphen      = UTF8.CodeUnit(ascii: "-")
+private let ampersand   = UTF8.CodeUnit(ascii: "&")
+private let tilde       = UTF8.CodeUnit(ascii: "~")
+
+/// A guesstimate of the "shape" of a Swift type based on its spelling.
+private enum ShapeOfSwiftTypeSpelling {
+    /// This type spelling looks like a scalar.
+    ///
+    /// For example `Name` or `(Name)`.
+    /// - Note: We treat `(Name)` as a non-tuple so that we can remove the redundant leading and trailing parenthesis.
+    case scalar
+    /// This type spelling looks like a tuple.
+    ///
+    /// For example `(First, Second)`.
+    case tuple
+    /// This type spelling looks like a closure.
+    ///
+    /// For example `(First)->Second` or `(First, Second)->()` or `()->()`.
+    case closure
+}
 
 private extension ContiguousArray<UTF8.CodeUnit>.SubSequence {
-     /// Checks if the UTF-8 string looks like a tuple with comma separated values.
+     /// Checks if the UTF-8 string looks like a tuple, scalar, or closure.
     ///
     /// This is used to remove redundant parenthesis around expressions.
-    func isTuple() -> Bool {
-        guard first == openParen, last == closeParen else { return false }
+    func shapeOfSwiftTypeSpelling() -> ShapeOfSwiftTypeSpelling {
+        guard first == openParen, last == closeParen else { return .scalar }
         var depth = 0
-        for char in self {
-            switch char {
+        for index in indices {
+            switch self[index] {
             case openParen:
                 depth += 1
             case closeParen:
                 depth -= 1
             case comma where depth == 1:
-                return true
+                // If we find "," in one level of parenthesis, we've found a tuple.
+                return .tuple
+            case closeAngle where depth == 0 && index > startIndex && self[index - 1] == hyphen:
+                // If we find "->" outside any parentheses, we've found a closure.
+                return .closure
             default:
                 continue
             }
         }
-        return false
+        // If we traversed the entire type name without finding a tuple or a closure we treat the type name as a scalar.
+        return .scalar
     }
 }
 
@@ -492,32 +556,66 @@ extension PathHierarchy.PathParser {
 
 // MARK: Scanning a substring
 
-private struct StringScanner {
+/// A file-private, low-level string scanner type that's only designed for parsing type signature based disambiguation suffixes in authored links.
+///
+/// ## Correct usage
+///
+/// The higher level methods like ``scanReturnTypes()``, ``scanArguments()``, ``scanTuple()``, or ``scanValue()`` makes assumptions about the scanners content and current state.
+/// For example:
+/// - ``scanReturnTypes()`` knows that return types are specified after any parameter types and requires that the caller has already scanned the parameter types and advanced past the `"->"` separator.
+///   It's the caller's (`parseTypeSignatureDisambiguation(pathComponent:)` above) responsibility to do these things correctly.
+///   Similarly, it's the caller's responsibility to advance past the `"-"` prefix verify that the scanner points to an open parenthesis character (`(`) that before calling ``scanArguments()`` to scan the parameter types.
+///   Failing to do either of these things will result in unexpected parsed disambiguation that DocC will fail to find a match for.
+/// - Both ``scanArguments()``, or ``scanTuple()`` expects that the disambiguation portion of the authored link has a balanced number of open and closer parenthesis (`(` and `)`).
+///   If the authored link contains unbalanced parenthesis then disambiguation isn't valid and the scanner will return a parsed value that DocC will fail to find a match for.
+/// - ``scanValue()`` expects that the disambiguation portion of the authored link has a balanced number of open and closer angle brackets (`<` and `>`).
+///   If the authored link contains unbalanced angle brackets then disambiguation isn't valid and the scanner will return a parsed value that DocC will fail to find a match for.
+private struct StringScanner: ~Copyable {
     private var remaining: Substring
     
     init(_ original: Substring) {
         remaining = original
     }
     
-    func peek() -> Character? {
+    /// Returns the next character _without_ advancing the scanner
+    private func peek() -> Character? {
         remaining.first
     }
     
-    mutating func take() -> Character {
+    /// Advances the scanner and returns the scanned character.
+    private mutating func take() -> Character {
         remaining.removeFirst()
     }
     
+    /// Advances the scanner by `count` elements and returns the scanned substring.
     mutating func take(_ count: Int) -> Substring {
         defer { remaining = remaining.dropFirst(count) }
         return remaining.prefix(count)
     }
     
-    mutating func takeAll() -> Substring {
+    /// Advances the scanner to the end and returns the scanned substring.
+    private mutating func takeAll() -> Substring {
         defer { remaining.removeAll() }
         return remaining
     }
     
-    mutating func scan(until predicate: (Character) -> Bool) -> Substring? {
+    /// Advances the scanner up to the first character that satisfies the given `predicate` and returns the scanned substring.
+    ///
+    /// If the scanner doesn't contain any characters that satisfy the given `predicate`, then this method returns `nil` _without_ advancing the scanner.
+    ///
+    /// For example, consider a scanner that has already advanced 4 characters into the string `"One,Two,Three"`
+    /// ```
+    /// One,Two,Three
+    ///     ^
+    /// ```
+    /// Calling `scanner.scan(until: \.isNumber)` returns `nil` without advancing the scanner because none of the (remaining) characters is a number.
+    ///
+    /// Calling `scanner.scan(until: { $0 == "," })` advances the scanner by 3 additional characters, returning the scanned `"Two"` substring.
+    /// ```
+    /// One,Two,Three
+    ///        ^
+    /// ```
+    private mutating func scan(until predicate: (Character) -> Bool) -> Substring? {
         guard let index = remaining.firstIndex(where: predicate) else {
             return nil
         }
@@ -525,16 +623,54 @@ private struct StringScanner {
         return remaining[..<index]
     }
     
+    /// Advances the scanner up to and past the first character that satisfies the given `predicate` and returns the scanned substring.
+    ///
+    /// If the scanner doesn't contain any characters that satisfy the given `predicate`, then this method returns `nil` _without_ advancing the scanner.
+    ///
+    /// For example, consider a scanner that has already advanced 4 characters into the string `"One,Two,Three"`
+    /// ```
+    /// One,Two,Three
+    ///     ^
+    /// ```
+    /// Calling `scanner.scan(until: \.isNumber)` returns `nil` without advancing the scanner because none of the (remaining) characters is a number.
+    ///
+    /// Calling `scanner.scan(until: { $0 == "," })` advances the scanner by 4 additional characters, returning the scanned `"Two,"` substring.
+    /// ```
+    /// One,Two,Three
+    ///         ^
+    /// ```
+    private mutating func scan(past predicate: (Character) -> Bool) -> Substring? {
+        guard let beforeIndex = remaining.firstIndex(where: predicate) else {
+            return nil
+        }
+        let index = remaining.index(after: beforeIndex)
+        defer { remaining = remaining[index...] }
+        return remaining[..<index]
+    }
+    
+    /// A Boolean value indicating whether the scanner has reached the end.
     var isAtEnd: Bool {
         remaining.isEmpty
     }
     
+    /// Returns a Boolean value indicating whether the substring at the scanners current position begins with the specified prefix.
     func hasPrefix(_ prefix: String) -> Bool {
         remaining.hasPrefix(prefix)
     }
 
     // MARK: Parsing argument types by scanning
     
+    /// Scans the remainder of the scanner's contents as the individual elements of a tuple return type,
+    /// or as a single return type if the scanners current position isn't an open parenthesis (`(`)
+    ///
+    /// For example, consider a scanner that has already advanced 8 characters into the string `"-(One)->(Two,Three)"`
+    /// ```
+    /// -(One)->(Two, Three)
+    ///         ^
+    /// ```
+    /// Because the scanner's current position is an open parenthesis (`(`), the scanner advances all the way to the end and returns `["Two", "Three"]` representing two elements in the tuple return value.
+    ///
+    /// - Note: The scanner expects that the caller has already scanned any parameter types and advanced past the `"->"` separator.
     mutating func scanReturnTypes() -> [Substring] {
         if peek() == "(" {
             _ = take() // the leading parenthesis
@@ -543,7 +679,20 @@ private struct StringScanner {
             return [takeAll()]
         }
     }
-        
+    
+    /// Scans the list of individual parameter type names as if the scanner's current position was 1 past the open parenthesis (`(`) or a tuple.
+    ///
+    /// For example, consider a scanner that has already advanced 2 characters into the string `"-(One,(A,B))->(Two)"`
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///   ^
+    /// ```
+    /// The scanner parses two parameter return types---`"One"` and `"(A,B)"`---before the parenthesis balance out, advancing its position to one after the arguments list's closing parenthesis (`)`).
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///             ^
+    /// ```
+    /// - Note: The scanner expects that the caller has already advanced past the open parenthesis (`(`) that begins the list of parameter types.
     mutating func scanArguments() -> [Substring] {
         guard peek() != ")" else {
             _ = take() // drop the ")"
@@ -561,11 +710,23 @@ private struct StringScanner {
         return arguments
     }
     
-    mutating func scanArgument() -> Substring? {
+    /// Scans a single type name, representing either a scalar value (such as `One`) or a nested tuple (such as `(A,B)`).
+    ///
+    /// For example, consider a scanner that has already advanced 6 characters into the string `"-(One,(A,B))->(Two)"`
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///       ^
+    /// ```
+    /// Because the value starts with an opening parenthesis (`(`), the scanner advances until the parenthesis balance out, returning `"(A,B)"`.
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///            ^
+    /// ```
+    private mutating func scanArgument() -> Substring? {
         guard peek() == "(" else {
             // If the argument doesn't start with "(" it can't be neither a tuple nor a closure type.
             // In this case, scan until the next argument (",") or the end of the arguments (")")
-            return scan(until: { $0 == "," || $0 == ")" }) ?? takeAll()
+            return scanValue() ?? takeAll()
         }
         
         guard var argumentString = scanTuple() else {
@@ -581,7 +742,7 @@ private struct StringScanner {
         
         guard peek() == "(" else {
             // This closure type has a simple return type.
-            guard let returnValue = scan(until: { $0 == "," || $0 == ")" }) else {
+            guard let returnValue = scanValue() else {
                 return nil
             }
             return argumentString + returnValue
@@ -592,7 +753,20 @@ private struct StringScanner {
         return argumentString + returnValue
     }
         
-    mutating func scanTuple() -> Substring? {
+    /// Scans a nested tuple as a single substring.
+    ///
+    /// For example, consider a scanner that has already advanced 6 character into the string `"-(One,(A,B))->(Two)"`
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///       ^
+    /// ```
+    /// Because the value starts with an opening parenthesis (`(`), the scanner advances until the parenthesis balance out, returning `"(A,B)"`.
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///            ^
+    /// ```
+    /// - Note: The scanner expects that the caller has already advanced to the open parenthesis (`(`) that's the start of the nested tuple.
+    private mutating func scanTuple() -> Substring? {
         assert(peek() == "(", "The caller should have checked that this is a tuple")
         
         // The tuple may contain any number of nested tuples. Keep track of the open and close parenthesis while scanning.
@@ -602,13 +776,41 @@ private struct StringScanner {
                 depth += 1
                 return false // keep scanning
             }
-            if depth > 0 {
-                if $0 == ")" {
-                    depth -= 1
-                }
+            else if $0 == ")" {
+                depth -= 1
+                return depth == 0 // stop only if we've reached a balanced number of parenthesis
+            }
+            return false // keep scanning
+        }
+        
+        return scan(past: predicate)
+    }
+    
+    /// Scans a single type name.
+    ///
+    /// For example, consider a scanner that has already advanced 2 character into the string `"-(One<A,B>,Two)"`
+    /// ```
+    /// -(One<A,B>,Two)
+    ///   ^
+    /// ```
+    /// Because the value contains generics (`<A,B>`), the scanner advances until the angle brackets balance out, returning `"One<A,B>"`.
+    /// ```
+    /// -(One<A,B>,Two)
+    ///           ^
+    /// ```
+    private mutating func scanValue() -> Substring? {
+        // The value may contain any number of nested generics. Keep track of the open and close angle brackets while scanning.
+        var depth = 0
+        let predicate: (Character) -> Bool = {
+            if $0 == "<" {
+                depth += 1
                 return false // keep scanning
             }
-            return $0 == "," || $0 == ")"
+            else if $0 == ">" {
+                depth -= 1
+                return false // keep scanning
+            }
+            return depth == 0 && ($0 == "," || $0 == ")")
         }
         return scan(until: predicate)
     }

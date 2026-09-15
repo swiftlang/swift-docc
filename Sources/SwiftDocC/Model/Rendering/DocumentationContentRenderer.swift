@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,13 +9,13 @@
 */
 
 import Foundation
-import SymbolKit
-import Markdown
+@preconcurrency import SymbolKit
+private import Markdown
 
 public struct RenderReferenceDependencies {
-    var topicReferences = [ResolvedTopicReference]()
-    var linkReferences = [LinkReference]()
-    var imageReferences = [ImageReference]()
+    public var topicReferences = [ResolvedTopicReference]()
+    public var linkReferences = [LinkReference]()
+    public var imageReferences = [ImageReference]()
     
     public init(topicReferences: [ResolvedTopicReference] = [], linkReferences: [LinkReference] = [], imageReferences: [ImageReference] = []) {
         self.topicReferences = topicReferences
@@ -29,14 +29,14 @@ extension RenderReferenceDependencies: Codable {
         case topicReferences, linkReferences, imageReferences
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(topicReferences, forKey: .topicReferences)
         try container.encode(linkReferences, forKey: .linkReferences)
         try container.encodeIfNotEmpty(imageReferences, forKey: .imageReferences)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         topicReferences = try container.decode([ResolvedTopicReference].self, forKey: .topicReferences)
         linkReferences = try container.decode([LinkReference].self, forKey: .linkReferences)
@@ -47,18 +47,15 @@ extension RenderReferenceDependencies: Codable {
 /// A collection of functions that render a piece of documentation content.
 public class DocumentationContentRenderer {
 
-    let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
+    let context: DocumentationContext
     let urlGenerator: PresentationURLGenerator
     
-    /// Creates a new content renderer for the given documentation context and bundle.
+    /// Creates a new content renderer for the given documentation context.
     /// - Parameters:
-    ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
-        self.documentationContext = documentationContext
-        self.bundle = bundle
-        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: bundle.baseURL)
+    ///   - context: A documentation context.
+    public init(context: DocumentationContext) {
+        self.context = context
+        self.urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
     }
     
     /// For symbol nodes, returns the declaration render section if any.
@@ -87,6 +84,11 @@ public class DocumentationContentRenderer {
     func navigatorFragments(for node: DocumentationNode) -> VariantCollection<[DeclarationRenderSection.Token]?> {
         guard let symbol = (node.semantic as? Symbol) else {
             return .init(defaultValue: nil)
+        }
+        
+        if let customDisplayName = node.metadata?.displayName?.name {
+            // Prefer the custom display name if there is one for this symbol.
+            return .init(defaultValue: [.init(text: customDisplayName, kind: .text)])
         }
         
         return VariantCollection<[DeclarationRenderSection.Token]?>(
@@ -154,7 +156,6 @@ public class DocumentationContentRenderer {
         case .chapter: return .collectionGroup
         case .collection: return .collection
         case .collectionGroup: return .collectionGroup
-        case ._technologyOverview: fallthrough // This case is deprecated and will be removed after 6.2 is released.
         case .tutorialTableOfContents: return .overview
         case .landingPage: return .article
         case .module, .extendedModule: return .collection
@@ -172,7 +173,7 @@ public class DocumentationContentRenderer {
     
     // Generates a generic conformance section for the given reference.
     func conformanceSectionFor(_ reference: ResolvedTopicReference, collectedConstraints: [TopicReference: [SymbolGraph.Symbol.Swift.GenericConstraint]]) -> ConformanceSection? {
-        guard let node = try? documentationContext.entity(with: reference),
+        guard let node = try? context.entity(with: reference),
             let symbol = node.symbol else {
             // Couldn't find the node for this reference
             return nil
@@ -193,8 +194,10 @@ public class DocumentationContentRenderer {
         }
         
         let isLeaf = SymbolReference.isLeaf(symbol)
-        let parentName = documentationContext.parents(of: reference).first
-            .flatMap { try? documentationContext.entity(with: $0).symbol?.names.title }
+        // A symbol can be reached in the topic graph through one or more parent nodes.
+        // To ensure stable ordering, use the parent with the shortest path to the symbol.
+        let parentName = context.shortestFinitePath(to: reference)?.last
+            .flatMap { try? context.entity(with: $0).symbol?.names.title }
         
         let options = ConformanceSection.ConstraintRenderOptions(
             isLeaf: isLeaf,
@@ -212,7 +215,7 @@ public class DocumentationContentRenderer {
         // We verify that this is a symbol with defined availability
         // and that we're feeding in a current set of platforms to the context.
         guard let symbol = node.semantic as? Symbol,
-              let currentPlatforms = documentationContext.configuration.externalMetadata.currentPlatforms,
+              let currentPlatforms = context.configuration.externalMetadata.currentPlatforms,
               !currentPlatforms.isEmpty,
               let symbolAvailability = symbol.availability?.availability.filter({ !$0.isUnconditionallyUnavailable }), // symbol that's unconditionally unavailable in all the platforms can't be in beta.
               !symbolAvailability.isEmpty // A symbol without availability items can't be in beta.
@@ -231,7 +234,7 @@ public class DocumentationContentRenderer {
             guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
                   // Use the display name of the platform when looking up the current platforms
                   // as we expect that form on the command line.
-                  let current = documentationContext.configuration.externalMetadata.currentPlatforms?[name.displayName]
+                  let current = context.configuration.externalMetadata.currentPlatforms?[name.displayName]
             else {
                 return false
             }
@@ -288,14 +291,14 @@ public class DocumentationContentRenderer {
     ///
     /// - Returns: The rendered documentation node.
     func renderReference(for reference: ResolvedTopicReference, with overridingDocumentationNode: DocumentationNode? = nil, dependencies: inout RenderReferenceDependencies) -> TopicRenderReference {
-        let resolver = LinkTitleResolver(context: documentationContext, source: reference.url)
+        let resolver = LinkTitleResolver(context: context, source: reference.url)
         
         let titleVariants: DocumentationDataVariants<String>
-        let node = try? overridingDocumentationNode ?? documentationContext.entity(with: reference)
+        let node = try? overridingDocumentationNode ?? context.entity(with: reference)
         
         if let node, let resolvedTitle = resolver.title(for: node) {
             titleVariants = resolvedTitle
-        } else if let anchorSection = documentationContext.nodeAnchorSections[reference] {
+        } else if let anchorSection = context.nodeAnchorSections[reference] {
             // No need to continue, return a section topic reference
             return TopicRenderReference(
                 identifier: RenderReferenceIdentifier(reference.absoluteString),
@@ -305,16 +308,18 @@ public class DocumentationContentRenderer {
                 kind: .section,
                 estimatedTime: nil
             )
-        } else if let topicGraphOnlyNode = documentationContext.topicGraph.nodeWithReference(reference) {
+        } else if let topicGraphOnlyNode = context.topicGraph.nodeWithReference(reference) {
             // Some nodes are artificially inserted into the topic graph,
             // try resolving that way as a fallback after looking up `documentationCache`.
             titleVariants = .init(defaultVariantValue: topicGraphOnlyNode.title)
-        } else if let external = documentationContext.externalCache[reference] {
-            dependencies.topicReferences.append(contentsOf: external.renderReferenceDependencies.topicReferences)
-            dependencies.linkReferences.append(contentsOf: external.renderReferenceDependencies.linkReferences)
-            dependencies.imageReferences.append(contentsOf: external.renderReferenceDependencies.imageReferences)
+        } else if let external = context.externalCache[reference] {
+            let renderDependencies = external.makeRenderDependencies()
             
-            return external.topicRenderReference
+            dependencies.topicReferences.append(contentsOf: renderDependencies.topicReferences)
+            dependencies.linkReferences.append(contentsOf:  renderDependencies.linkReferences)
+            dependencies.imageReferences.append(contentsOf: renderDependencies.imageReferences)
+            
+            return external.makeTopicRenderReference()
         } else {
             titleVariants = .init(defaultVariantValue: reference.absoluteString)
         }
@@ -325,7 +330,7 @@ public class DocumentationContentRenderer {
         // Topic render references require the URLs to be relative, even if they're external.
         let presentationURL = urlGenerator.presentationURLForReference(reference)
         
-        var contentCompiler = RenderContentCompiler(context: documentationContext, bundle: bundle, identifier: reference)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: reference)
         let abstractContent: VariantCollection<[RenderInlineContent]>
         
         var abstractedNode = node
@@ -334,9 +339,9 @@ public class DocumentationContentRenderer {
             let containerReference = ResolvedTopicReference(
                 bundleID: reference.bundleID,
                 path: reference.path,
-                sourceLanguages: reference.sourceLanguages
+                sourceLanguages: reference._sourceLanguages
             )
-            abstractedNode = try? documentationContext.entity(with: containerReference)
+            abstractedNode = try? context.entity(with: containerReference)
         }
         
         func extractAbstract(from paragraph: Paragraph?) -> [RenderInlineContent] {
@@ -360,7 +365,7 @@ public class DocumentationContentRenderer {
                 extractAbstract(from: abstract)
             } ?? .init(defaultValue: [])
         } else {
-            abstractContent = .init(defaultValue: extractAbstract(from: (abstractedNode?.semantic as? Abstracted)?.abstract))
+            abstractContent = .init(defaultValue: extractAbstract(from: (abstractedNode?.semantic as? (any Abstracted))?.abstract))
         }
         
         // Collect the reference dependencies.
@@ -369,7 +374,7 @@ public class DocumentationContentRenderer {
 
         let isRequired = (node?.semantic as? Symbol)?.isRequired ?? false
 
-        let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
+        let estimatedTime = (node?.semantic as? (any Timed))?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
         
         // Add key information for property lists.
         // If the symbol overrides the title with a custom name, display the symbol key.
@@ -396,13 +401,13 @@ public class DocumentationContentRenderer {
         renderReference.images = node?.metadata?.pageImages.compactMap { pageImage -> TopicImage? in
             guard let image = TopicImage(
                 pageImage: pageImage,
-                with: documentationContext,
+                with: context,
                 in: reference
             ) else {
                 return nil
             }
             
-            guard let asset = documentationContext.resolveAsset(
+            guard let asset = context.resolveAsset(
                 named: image.identifier.identifier,
                 in: reference
             ) else {
@@ -459,7 +464,7 @@ public class DocumentationContentRenderer {
         var result = [RenderNode.Tag]()
         
         /// Add an SPI tag to SPI symbols.
-        if let node = try? documentationContext.entity(with: reference),
+        if let node = try? context.entity(with: reference),
             let symbol = node.semantic as? Symbol,
             symbol.isSPI {
             result.append(.spi)
@@ -478,7 +483,7 @@ public class DocumentationContentRenderer {
 
     /// Returns the task groups for a given node reference.
     func taskGroups(for reference: ResolvedTopicReference) -> [ReferenceGroup]? {
-        guard let node = try? documentationContext.entity(with: reference) else { return nil }
+        guard let node = try? context.entity(with: reference) else { return nil }
         
         let groups: [TaskGroup]?
         switch node.semantic {
@@ -504,7 +509,7 @@ public class DocumentationContentRenderer {
                 
                 // For external links, verify they've resolved successfully and return `nil` otherwise.
                 if linkHost != reference.bundleID.rawValue {
-                    if let url = ValidatedURL(destination), case .success(let externalReference) = documentationContext.externallyResolvedLinks[url] {
+                    if let url = ValidatedURL(destination), case .success(let externalReference) = context.externallyResolvedLinks[url] {
                         return externalReference
                     }
                     return nil
@@ -517,7 +522,7 @@ public class DocumentationContentRenderer {
             }
             
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: bundle, in: documentationContext)?.language
+                SupportedLanguage(from: $0, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags)?.language
             }
             
             return ReferenceGroup(

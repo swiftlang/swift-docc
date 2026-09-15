@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+private import Foundation
+private import SymbolKit
 
 /// A service that converts documentation.
 ///
@@ -44,74 +44,70 @@ public struct ConvertService: DocumentationService {
         _ message: DocumentationServer.Message,
         completion: @escaping (DocumentationServer.Message) -> ()
     ) {
-        let conversionResult = retrievePayload(message)
-            .flatMap(decodeRequest)
-            .flatMap(convert)
-            .flatMap(encodeResponse)
-
-        switch conversionResult {
-        case .success(let response):
-            completion(
-                DocumentationServer.Message(
-                    type: Self.convertResponseMessageType,
-                    identifier: "\(message.identifier)-response",
-                    payload: response
+        Task {
+            let result = await process(message)
+            completion(result)
+        }
+    }
+    
+    public func process(_ message: DocumentationServer.Message) async -> DocumentationServer.Message {
+        func makeErrorResponse(_ error: ConvertServiceError) -> DocumentationServer.Message {
+            DocumentationServer.Message(
+                type: Self.convertResponseErrorMessageType,
+                identifier: "\(message.identifier)-response-error",
+                
+                // Force trying because encoding known messages should never fail.
+                payload: try! JSONEncoder().encode(error)
+            )
+        }
+        
+        guard let payload = message.payload else {
+            return makeErrorResponse(.missingPayload())
+        }
+        
+        let request: ConvertRequest
+        do {
+            request = try JSONDecoder().decode(ConvertRequest.self, from: payload)
+        } catch {
+            return makeErrorResponse(.invalidRequest(underlyingError: error.localizedDescription))
+        }
+        
+        let renderNodes: [RenderNode]
+        let renderReferenceStore: RenderReferenceStore?
+        do {
+            (renderNodes, renderReferenceStore) = try await convert(request: request, messageIdentifier: message.identifier)
+        } catch {
+            return makeErrorResponse(.conversionError(underlyingError: error.localizedDescription))
+        }
+        
+        do {
+            let encoder = JSONEncoder()
+            let encodedResponse = try encoder.encode(
+                try ConvertResponse(
+                    renderNodes: renderNodes.map(encoder.encode),
+                    renderReferenceStore: renderReferenceStore.map(encoder.encode)
                 )
             )
             
-        case .failure(let error):
-            completion(
-                DocumentationServer.Message(
-                    type: Self.convertResponseErrorMessageType,
-                    identifier: "\(message.identifier)-response-error",
-
-                    // Force trying because encoding known messages should never fail.
-                    payload: try! JSONEncoder().encode(error)
-                )
+            return DocumentationServer.Message(
+                type: Self.convertResponseMessageType,
+                identifier: "\(message.identifier)-response",
+                payload: encodedResponse
             )
-        }
-    }
-
-    /// Attempts to retrieve the payload from the given message, returning a failure if the payload is missing.
-    ///
-    /// - Returns: A result with the message's payload if present, otherwise a ``ConvertServiceError/missingPayload``
-    /// failure.
-    private func retrievePayload(
-        _ message: DocumentationServer.Message
-    ) -> Result<(payload: Data, messageIdentifier: String), ConvertServiceError> {
-        message.payload.map { .success(($0, message.identifier)) } ?? .failure(.missingPayload())
-    }
-
-    /// Attempts to decode the given request, returning a failure if decoding failed.
-    ///
-    /// - Returns: A result with the decoded request if the decoding succeeded, otherwise a
-    /// ``ConvertServiceError/invalidRequest`` failure.
-    private func decodeRequest(
-        data: Data,
-        messageIdentifier: String
-    ) -> Result<(request: ConvertRequest, messageIdentifier: String), ConvertServiceError> {
-        Result {
-            return (try JSONDecoder().decode(ConvertRequest.self, from: data), messageIdentifier)
-        }.mapErrorToConvertServiceError {
-            .invalidRequest(underlyingError: $0.localizedDescription)
+        } catch {
+            return makeErrorResponse(.invalidResponseMessage(underlyingError: error.localizedDescription))
         }
     }
 
     /// Attempts to process the given convert request, returning a failure if the conversion failed.
     ///
-    /// - Returns: A result with the produced render nodes if the conversion was successful, otherwise a
-    /// ``ConvertServiceError/conversionError`` failure.
+    /// - Returns: A result with the produced render nodes if the conversion was successful
     private func convert(
         request: ConvertRequest,
         messageIdentifier: String
-    ) -> Result<([RenderNode], RenderReferenceStore?), ConvertServiceError> {
-        Result {
-            // Update DocC's current feature flags based on the ones provided
-            // in the request.
-            FeatureFlags.current = request.featureFlags
-            
+    ) async throws -> ([RenderNode], RenderReferenceStore?) {
             var configuration = DocumentationContext.Configuration()
-            
+            configuration.featureFlags = request.featureFlags
             configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
             
             // Enable support for generating documentation for standalone articles and tutorials.
@@ -128,7 +124,7 @@ public struct ConvertService: DocumentationService {
             
             if let linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
-                    bundleID: request.bundleInfo.id,
+                    id: request.bundleInfo.id,
                     server: linkResolvingServer,
                     convertRequestIdentifier: messageIdentifier
                 )
@@ -137,28 +133,28 @@ public struct ConvertService: DocumentationService {
                 configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
             }
             
-            let bundle: DocumentationBundle
-            let dataProvider: DataProvider
+            let inputs: DocumentationContext.Inputs
+            let dataProvider: any DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
             if let bundleLocation = request.bundleLocation,
                let catalogURL = try inputProvider.findCatalog(startingPoint: bundleLocation, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
             {
-                let bundleDiscoveryOptions = try BundleDiscoveryOptions(
+                let catalogDiscoveryOptions = try CatalogDiscoveryOptions(
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 )
                 
-                bundle = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
+                inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: catalogDiscoveryOptions)
                 dataProvider = FileManager.default
             } else {
-                (bundle, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
+                (inputs, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
             }
             
-            let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
+            let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
-            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            let renderContext = RenderContext(documentationContext: context)
             
             let symbolIdentifiersMeetingRequirementsForExpandedDocumentation: [String]? = request.symbolIdentifiersWithExpandedDocumentation?.compactMap { identifier, expandedDocsRequirement in
                 guard let documentationNode = context.documentationCache[identifier] else {
@@ -168,7 +164,6 @@ public struct ConvertService: DocumentationService {
                 return documentationNode.meetsExpandedDocumentationRequirements(expandedDocsRequirement) ? identifier : nil
             }
             let converter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
@@ -228,30 +223,6 @@ public struct ConvertService: DocumentationService {
             }
             
             return (renderNodes, referenceStore)
-        }.mapErrorToConvertServiceError {
-            .conversionError(underlyingError: $0.localizedDescription)
-        }
-    }
-    
-    /// Encodes a conversion response to send to the client.
-    ///
-    /// - Parameter renderNodes: The render nodes that were produced as part of the conversion.
-    private func encodeResponse(
-        renderNodes: [RenderNode],
-        renderReferenceStore: RenderReferenceStore?
-    ) -> Result<Data, ConvertServiceError> {
-        Result {
-            let encoder = JSONEncoder()
-
-            return try encoder.encode(
-                try ConvertResponse(
-                    renderNodes: renderNodes.map(encoder.encode),
-                    renderReferenceStore: renderReferenceStore.map(encoder.encode)
-                )
-            )
-        }.mapErrorToConvertServiceError {
-            .invalidResponseMessage(underlyingError: $0.localizedDescription)
-        }
     }
     
     /// Takes a base reference store and adds uncurated article references and documentation extensions.
@@ -267,11 +238,11 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                guard let bundle = context.bundle, bundle.id == topicReference.bundleID else { return nil }
-                let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+                guard context.inputs.id == topicReference.bundleID else { return nil }
+                let renderer = DocumentationContentRenderer(context: context)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
-                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: bundle)?.node
+                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: context.inputs)?.node
                 var dependencies = RenderReferenceDependencies()
                 let renderReference = renderer.renderReference(for: topicReference, with: overridingDocumentationNode, dependencies: &dependencies)
                 
@@ -297,25 +268,6 @@ public struct ConvertService: DocumentationService {
     }
 }
 
-extension Result {
-    /// Returns a new result, mapping any failure value using the given transformation if the error is not a conversion error.
-    ///
-    /// If the error value is a ``ConvertServiceError``, it is returned as-is. If it's not, the given transformation is called on the
-    /// error.
-    ///
-    /// - Parameter transform: A closure that takes the failure value of the instance.
-    func mapErrorToConvertServiceError(
-        _ transform: (Error) -> ConvertServiceError
-    ) -> Result<Success, ConvertServiceError> {
-        mapError { error in
-            switch error {
-            case let error as ConvertServiceError: return error
-            default: return transform(error)
-            }
-        }
-    }
-}
-
 private extension SymbolGraph.LineList.Line {
     /// Creates a line given a convert request line.
     init(_ line: ConvertRequest.Line) {
@@ -334,5 +286,13 @@ private extension SymbolGraph.LineList.Line {
                 )
             }
         )
+    }
+}
+
+private extension DocumentationNode {
+    func meetsExpandedDocumentationRequirements(_ requirements: ConvertRequest.ExpandedDocumentationRequirements) -> Bool {
+        guard let symbol else { return false }
+        
+        return requirements.accessControlLevels.contains(symbol.accessLevel.rawValue) && (!symbol.names.title.starts(with: "_") || requirements.canBeUnderscored)
     }
 }

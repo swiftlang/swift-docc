@@ -1,14 +1,12 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
-
-import Foundation
 
 /// A converter from documentation nodes to render nodes.
 ///
@@ -19,9 +17,6 @@ import Foundation
 public class DocumentationContextConverter {
     /// The context the converter uses to resolve references it finds in the documentation node's content.
     let context: DocumentationContext
-    
-    /// The bundle that contains the content from which the documentation node originated.
-    let bundle: DocumentationBundle
     
     /// A context that contains common pre-rendered pieces of content.
     let renderContext: RenderContext
@@ -43,12 +38,11 @@ public class DocumentationContextConverter {
     /// The remote source control repository where the documented module's source is hosted.
     let sourceRepository: SourceRepository?
     
-    /// Creates a new node converter for the given bundle and context.
+    /// Creates a new node converter for the given context.
     ///
-    /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
+    /// The converter uses context to resolve references to other documentation and describe the documentation hierarchy.
     ///
     /// - Parameters:
-    ///   - bundle: The bundle that contains the content from which the documentation node originated.
     ///   - context: The context that the converter uses to to resolve references it finds in the documentation node's content.
     ///   - renderContext: A context that contains common pre-rendered pieces of content.
     ///   - emitSymbolSourceFileURIs: Whether the documentation converter should include
@@ -61,7 +55,6 @@ public class DocumentationContextConverter {
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - symbolIdentifiersWithExpandedDocumentation: A list of symbol IDs that have version of their documentation page with more content that a renderer can link to.
     public init(
-        bundle: DocumentationBundle,
         context: DocumentationContext,
         renderContext: RenderContext,
         emitSymbolSourceFileURIs: Bool = false,
@@ -69,7 +62,6 @@ public class DocumentationContextConverter {
         sourceRepository: SourceRepository? = nil,
         symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
-        self.bundle = bundle
         self.context = context
         self.renderContext = renderContext
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
@@ -91,7 +83,6 @@ public class DocumentationContextConverter {
 
         var translator = RenderNodeTranslator(
             context: context,
-            bundle: bundle,
             identifier: node.reference,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
@@ -102,8 +93,20 @@ public class DocumentationContextConverter {
         return translator.visit(node.semantic) as? RenderNode
     }
     
-    @available(*, deprecated, renamed: "renderNode(for:)", message: "Use 'renderNode(for:)' instead. This deprecated API will be removed after 6.1 is released")
-    public func renderNode(for node: DocumentationNode, at source: URL?) throws -> RenderNode? {
-        self.renderNode(for: node)
+    /// Converts a documentation node to a markdown node.
+    /// - Parameters:
+    ///   - node: The documentation node to convert.
+    /// - Returns: The markdown node representation of the documentation node.
+    internal func markdownOutput(for node: DocumentationNode) -> CollectedMarkdownOutput? {
+        guard !node.isVirtual else {
+            return nil
+        }
+        
+        var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
+        
+        if let node = visitor.createOutput() {
+            return CollectedMarkdownOutput(identifier: visitor.identifier, node: node, manifest: visitor.manifest)
+        }
+        return nil
     }
 }

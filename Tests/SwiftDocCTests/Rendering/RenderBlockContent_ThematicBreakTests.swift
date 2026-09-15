@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,6 +13,7 @@ import Foundation
 @testable import SwiftDocC
 import Markdown
 import XCTest
+import DocCCommon
 
 class RenderBlockContent_ThematicBreakTests: XCTestCase {
     func testThematicBreakCodability() throws {
@@ -25,7 +26,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
     }
     
     // MARK: - Thematic Break Markdown Variants
-    func testThematicBreakVariants() throws {
+    func testThematicBreakVariants() async throws {
         let source = """
 
         ---
@@ -38,9 +39,9 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
@@ -52,7 +53,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         XCTAssertEqual(expectedContent, renderContent)
     }
     
-    func testThematicBreakVariantsWithSpaces() throws {
+    func testThematicBreakVariantsWithSpaces() async throws {
         let source = """
 
         - - -
@@ -65,9 +66,9 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
@@ -79,7 +80,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         XCTAssertEqual(expectedContent, renderContent)
     }
     
-    func testThematicBreakMoreThanThreeCharacters() throws {
+    func testThematicBreakMoreThanThreeCharacters() async throws {
         let source = """
 
         ----
@@ -95,9 +96,9 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 6)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [

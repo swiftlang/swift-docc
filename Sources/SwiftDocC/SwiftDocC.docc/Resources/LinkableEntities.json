@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Specification of the DocC linkable-entities.json digest file.",
-        "version": "0.3.0",
+        "version": "0.3.1",
         "title": "Linkable Entities"
     },
     "paths": { },
@@ -59,16 +59,19 @@
                             "$ref": "#/components/schemas/PlatformAvailability"
                         }
                     },
-                    "taskGroups": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/TaskGroup"
-                        }
-                    },
                     "usr": {
                         "type": "string"
                     },
+                    "plainTextDeclaration": {
+                        "type": "string"
+                    },
                     "fragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "navigatorFragments": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"
@@ -158,6 +161,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "plainTextDeclaration": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "fragments": {
                         "type": "array",
                         "items": {
@@ -165,10 +172,10 @@
                         },
                         "nullable": true
                     },
-                    "taskGroups": {
+                    "navigatorFragments": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/TaskGroup"
+                            "$ref": "#/components/schemas/DeclarationToken"
                         },
                         "nullable": true
                     }
@@ -497,23 +504,6 @@
                     }
                 }
             },
-            "TaskGroup": {
-                "type": "object",
-                "required": [
-                    "identifiers"
-                ],
-                "properties": {
-                    "title": {
-                        "type": "string"
-                    },
-                    "identifiers": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "DeclarationToken": {
                 "required": [
                     "text",
@@ -550,7 +540,7 @@
                         "type": "string",
                         "enum": ["icon", "card"]
                     },
-                    "reference": {
+                    "identifier": {
                         "type": "string",
                         "format": "reference(ImageRenderReference)"
                     }

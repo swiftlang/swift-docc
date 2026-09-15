@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension Sequence<RenderBlockContent> {
     /// The contents of the first paragraph in this sequence of block content.
     ///

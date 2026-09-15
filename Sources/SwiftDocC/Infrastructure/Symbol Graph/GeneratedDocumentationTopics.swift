@@ -1,16 +1,16 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 import SymbolKit
-import Markdown
+private import Markdown
+private import DocCCommon
 
 /// A collection of APIs to generate documentation topics.
 enum GeneratedDocumentationTopics {
@@ -27,8 +27,6 @@ enum GeneratedDocumentationTopics {
             struct APICollection {
                 /// The title of the collection.
                 var title: String
-                /// A reference to the parent of the collection.
-                let parentReference: ResolvedTopicReference
                 /// A list of topic references for the collection.
                 var identifiers = [ResolvedTopicReference]()
             }
@@ -39,8 +37,7 @@ enum GeneratedDocumentationTopics {
         ///   - childReference: The inherited symbol reference.
         ///   - reference: The parent type reference.
         ///   - originDisplayName: The origin display name as provided by the symbol graph.
-        ///   - extendedModuleName: Extended module name.
-        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
+        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?) throws {
             let fromType: String
             let typeSimpleName: String
             if let originSymbol, originSymbol.pathComponents.count > 1 {
@@ -89,7 +86,7 @@ enum GeneratedDocumentationTopics {
             
             // Create a new default implementations provider, if needed.
             if !implementingTypes[reference]!.inheritedFromTypeName.keys.contains(fromType) {
-                implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) Implementations", parentReference: reference)
+                implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) Implementations")
             }
             
             // Add the default implementation.
@@ -99,15 +96,13 @@ enum GeneratedDocumentationTopics {
     
     private static let defaultImplementationGroupTitle = "Default Implementations"
     
-    private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext, bundle: DocumentationBundle) throws {
-        let automaticCurationSourceLanguage: SourceLanguage
-        let automaticCurationSourceLanguages: Set<SourceLanguage>
-        automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
-        automaticCurationSourceLanguages = Set(identifiers.flatMap { identifier in context.sourceLanguages(for: identifier) })
+    private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext) throws {
+        let automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
+        let automaticCurationSourceLanguages = SmallSourceLanguageSet(identifiers.flatMap { identifier in context.sourceLanguages(for: identifier) })
         
         // Create the collection topic reference
         let collectionReference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: NodeURLGenerator.Path.documentationCuration(
                 parentPath: parent.path,
                 articleName: title
@@ -124,8 +119,8 @@ enum GeneratedDocumentationTopics {
         let node = try context.entity(with: parent)
         if let symbol = node.semantic as? Symbol {
             for trait in node.availableVariantTraits {
-                guard let language = trait.interfaceLanguage,
-                      automaticCurationSourceLanguages.lazy.map(\.id).contains(language)
+                guard let language = trait.sourceLanguage,
+                      automaticCurationSourceLanguages.contains(language)
                 else {
                     // If the collection is not available in this trait, don't curate it in this symbol's variant.
                     continue
@@ -150,6 +145,7 @@ enum GeneratedDocumentationTopics {
         // Curate all inherited symbols under the collection node
         for childReference in identifiers {
             if let childTopicGraphNode = context.topicGraph.nodeWithReference(childReference) {
+                assert(childReference != parent, "Parent type '\(parent.path)' is unexpectedly included among its members: [\(identifiers.map(\.path).sorted().joined(separator: ", "))]")
                 context.topicGraph.addEdge(from: collectionTopicGraphNode, to: childTopicGraphNode)
             }
         }
@@ -193,7 +189,7 @@ enum GeneratedDocumentationTopics {
             reference: collectionReference,
             kind: .collectionGroup,
             sourceLanguage: automaticCurationSourceLanguage,
-            availableSourceLanguages: automaticCurationSourceLanguages,
+            availableSourceLanguages: Set(automaticCurationSourceLanguages),
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
             semantic: collectionArticle
@@ -230,8 +226,7 @@ enum GeneratedDocumentationTopics {
     ///   - relationships: A set of relationships to inspect.
     ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
-    ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, context: DocumentationContext) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.
@@ -247,13 +242,15 @@ enum GeneratedDocumentationTopics {
                let child = context.documentationCache[relationship.source],
                // Get the child symbol
                let childSymbol = child.symbol,
-               // Get the swift extension data
-               let extends = childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self]
+               // Check that there is Swift extension information
+               childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self] != nil,
+               // Ignore any faulty relationships
+               relationship.source != relationship.target
             {
                 let originSymbol = context.documentationCache[origin.identifier]?.symbol
                 
                 // Add the inherited symbol to the index.
-                try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol, extendedModuleName: extends.extendedModule)
+                try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol)
             }
         }
         
@@ -261,7 +258,9 @@ enum GeneratedDocumentationTopics {
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols
-                try createCollectionNode(parent: typeReference, title: collection.title, identifiers: collection.identifiers, context: context, bundle: bundle)
+                assert(!collection.identifiers.contains(typeReference), "Parent type '\(typeReference.path)' is unexpectedly included among its members: [\(collection.identifiers.map(\.path).sorted().joined(separator: ", "))]")
+                
+                try createCollectionNode(parent: typeReference, title: collection.title, identifiers: collection.identifiers, context: context)
             }
         }
     }

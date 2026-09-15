@@ -1,27 +1,33 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
 @testable import SwiftDocC
 
-class String_SlashTests: XCTestCase {
+struct String_SlashTests {
     
-    func testPrependingSlash() {
-        XCTAssertEqual("/", "".prependingLeadingSlash)
-        XCTAssertEqual("/path", "path".prependingLeadingSlash)
-        XCTAssertEqual("/path", "/path".prependingLeadingSlash)
+    @Test(arguments: [
+        ("", "/"),
+        ("path", "/path"),
+        ("/path", "/path"),
+    ])
+    func prependsLeadingSlashWhenMissing(input: String, expected: String) {
+        #expect(input.prependingLeadingSlash == expected)
     }
-
-    func testRemovingSlash() {
-        XCTAssertEqual("", "/".removingLeadingSlash)
-        XCTAssertEqual("path", "/path".removingLeadingSlash)
-        XCTAssertEqual("path", "path".removingLeadingSlash)
+    
+    @Test(arguments: [
+        ("/", ""),
+        ("/path", "path"),
+        ("path", "path"),
+    ])
+    func removesLeadingSlashWhenPresent(input: String, expected: String) {
+        #expect(input.removingLeadingSlash == expected)
     }
 }

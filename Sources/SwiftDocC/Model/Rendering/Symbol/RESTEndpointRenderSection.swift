@@ -50,7 +50,7 @@ public struct RESTEndpointRenderSection: RenderSection, Equatable {
     }
     
     /// The title for the section.
-    public let title: String
+    public var title: String
     
     /// The list of tokens.
     public let tokens: [Token]

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,14 +12,15 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class AutoCapitalizationTests: XCTestCase {
     
     // MARK: Test helpers
     
     private func makeSymbolGraph(docComment: String, parameters: [String]) -> SymbolGraph {
-        makeSymbolGraph(
+        DocCTestUtilities.makeSymbolGraph(
             moduleName: "ModuleName",
             symbols: [
                 makeSymbol(
@@ -42,7 +43,7 @@ class AutoCapitalizationTests: XCTestCase {
     
     // MARK: End-to-end integration tests
     
-    func testParametersCapitalization() throws {
+    func testParametersCapitalization() async throws {
         let symbolGraph = makeSymbolGraph(
             docComment: """
             Some symbol description.
@@ -60,18 +61,18 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0)
+        XCTAssertEqual(context.diagnostics.count, 0)
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -88,7 +89,7 @@ class AutoCapitalizationTests: XCTestCase {
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("a`nother invalid capitalization")]))]])
     }
     
-    func testIndividualParametersCapitalization() throws {
+    func testIndividualParametersCapitalization() async throws {
         let symbolGraph = makeSymbolGraph(
             docComment: """
             Some symbol description.
@@ -105,18 +106,18 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0)
+        XCTAssertEqual(context.diagnostics.count, 0)
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -133,7 +134,7 @@ class AutoCapitalizationTests: XCTestCase {
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("a`nother invalid capitalization")]))]])
     }
     
-    func testReturnsCapitalization() throws {
+    func testReturnsCapitalization() async throws {
         let symbolGraph = makeSymbolGraph(
             docComment: """
             Some symbol description.
@@ -146,16 +147,16 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0)
+        XCTAssertEqual(context.diagnostics.count, 0)
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         let returnsSectionTranslator = ReturnsSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedReturns = returnsSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let returnsRenderSection = translatedReturns?.defaultValue?.section as! ContentRenderSection

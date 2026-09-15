@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Crypto
+public import Foundation
+private import Crypto
 
 /// A checksum generator.
 public struct Checksum {

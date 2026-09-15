@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,24 +13,24 @@ import XCTest
 import Markdown
 
 class ImageMediaTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Image
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(image)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual([
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(diagnostics.map(\.identifier), [
             "org.swift.docc.HasArgument.source",
-        ], problems.map { $0.diagnostic.identifier })
+        ])
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let imageSource = "/path/to/image"
         let alt = "This is an image"
         let source = """
@@ -38,18 +38,18 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(image)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         image.map { image in
             XCTAssertEqual(imageSource, image.source.path)
             XCTAssertEqual(alt, image.altText)
         }
     }
 
-    func testSpacesInSource() throws {
+    func testSpacesInSource() async throws {
         for imageSource in ["my image.png", "my%20image.png"] {
             let alt = "This is an image"
             let source = """
@@ -57,11 +57,11 @@ class ImageMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, context) = try testBundleAndContext()
-            var problems = [Problem]()
-            let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let context = try await makeEmptyContext()
+            var diagnostics = [Diagnostic]()
+            let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(image)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             image.map { image in
                 XCTAssertEqual(imageSource.removingPercentEncoding!, image.source.path)
                 XCTAssertEqual(alt, image.altText)
@@ -69,72 +69,61 @@ class ImageMediaTests: XCTestCase {
         }
     }
     
-    func testIncorrectArgumentLabels() throws {
+    func testIncorrectArgumentLabels() async throws {
         let source = """
         @Image(imgSource: "/img/path", altText: "Text")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(image)
-        XCTAssertEqual(3, problems.count)
-        XCTAssertFalse(problems.containsErrors)
+        XCTAssertEqual(3, diagnostics.count)
+        XCTAssertFalse(diagnostics.containsAnyError)
         
-        let expectedIds = [
-            "org.swift.docc.UnknownArgument",
+        XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
             "org.swift.docc.HasArgument.source",
-        ]
-        
-        let problemIds = problems.map(\.diagnostic.identifier)
-        
-        for id in expectedIds {
-            XCTAssertTrue(problemIds.contains(id))
-        }
+            "org.swift.docc.UnknownArgument",
+            "org.swift.docc.UnknownArgument",
+        ])
     }
     
-    func testRenderImageDirectiveInReferenceMarkup() throws {
+    func testRenderImageDirectiveInReferenceMarkup() async throws {
         do {
-            let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            let (renderedContent, diagnostics, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"]) {
                 """
                 @Image(source: "figure1")
                 """
             }
             
             XCTAssertNotNil(image)
-            
-            XCTAssertEqual(problems, [])
-            
-            XCTAssertEqual(
-                renderedContent,
-                [
-                    RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
-                        inlineContent: [.image(
-                            identifier: RenderReferenceIdentifier("figure1"),
-                            metadata: nil
-                        )]
-                    ))
-                ]
-            )
+            XCTAssertEqual(diagnostics, [])
+            XCTAssertEqual(renderedContent, [
+                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                    inlineContent: [.image(
+                        identifier: RenderReferenceIdentifier("figure1"),
+                        metadata: nil
+                    )]
+                ))
+            ])
         }
         
         do {
-            let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            let (renderedContent, diagnostics, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: []) {
                 """
                 @Image(source: "unknown-image")
                 """
             }
             
             XCTAssertNotNil(image)
-            
-            XCTAssertEqual(problems, ["1: warning – org.swift.docc.unresolvedResource.Image"])
+            XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.unresolvedResource.Image"])
             XCTAssertEqual(renderedContent, [])
         }
     }
     
-    func testRenderImageDirectiveWithCaption() throws {
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+    func testRenderImageDirectiveWithCaption() async throws {
+        let (renderedContent, diagnostics, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"]) {
             """
             @Image(source: "figure1") {
                 This is my caption.
@@ -143,76 +132,63 @@ class ImageMediaTests: XCTestCase {
         }
         
         XCTAssertNotNil(image)
-        
-        XCTAssertEqual(problems, [])
-        
-        XCTAssertEqual(
-            renderedContent,
-            [
-                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
-                    inlineContent: [.image(
-                        identifier: RenderReferenceIdentifier("figure1"),
-                        metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
-                    )]
-                ))
-            ]
-        )
+        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(renderedContent, [
+            RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                inlineContent: [.image(
+                    identifier: RenderReferenceIdentifier("figure1"),
+                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                )]
+            ))
+        ])
     }
     
-    func testImageDirectiveDiagnosesDeviceFrameByDefault() throws {
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+    func testImageDirectiveDiagnosesDeviceFrameByDefault() async throws {
+        let (renderedContent, diagnostics, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"]) {
             """
             @Image(source: "figure1", deviceFrame: phone)
             """
         }
         
         XCTAssertNotNil(image)
-        
-        XCTAssertEqual(problems, ["1: warning – org.swift.docc.UnknownArgument"])
-        
-        XCTAssertEqual(
-            renderedContent,
-            [
-                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
-                    inlineContent: [.image(
-                        identifier: RenderReferenceIdentifier("figure1"),
-                        metadata: nil
-                    )]
-                ))
-            ]
-        )
+        XCTAssertEqual(diagnostics, ["1: warning – org.swift.docc.UnknownArgument"])
+        XCTAssertEqual(renderedContent, [
+            RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                inlineContent: [.image(
+                    identifier: RenderReferenceIdentifier("figure1"),
+                    metadata: nil
+                )]
+            ))
+        ])
     }
     
-    func testRenderImageDirectiveWithDeviceFrame() throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+    func testRenderImageDirectiveWithDeviceFrame() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+        let (renderedContent, diagnostics, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"], configuration: configuration) {
             """
             @Image(source: "figure1", deviceFrame: phone)
             """
         }
         
         XCTAssertNotNil(image)
-        
-        XCTAssertEqual(problems, [])
-        
-        XCTAssertEqual(
-            renderedContent,
-            [
-                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
-                    inlineContent: [.image(
-                        identifier: RenderReferenceIdentifier("figure1"),
-                        metadata: RenderContentMetadata(deviceFrame: "phone")
-                    )]
-                ))
-            ]
-        )
+        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(renderedContent, [
+            RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                inlineContent: [.image(
+                    identifier: RenderReferenceIdentifier("figure1"),
+                    metadata: RenderContentMetadata(deviceFrame: "phone")
+                )]
+            ))
+        ])
     }
     
-    func testRenderImageDirectiveWithDeviceFrameAndCaption() throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+    func testRenderImageDirectiveWithDeviceFrameAndCaption() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+        let (renderedContent, diagnostics, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"], configuration: configuration) {
             """
             @Image(source: "figure1", deviceFrame: laptop) {
                 This is my caption.
@@ -221,43 +197,35 @@ class ImageMediaTests: XCTestCase {
         }
         
         XCTAssertNotNil(image)
-        
-        XCTAssertEqual(problems, [])
-        
-        XCTAssertEqual(
-            renderedContent,
-            [
-                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
-                    inlineContent: [.image(
-                        identifier: RenderReferenceIdentifier("figure1"),
-                        metadata: RenderContentMetadata(abstract: [.text("This is my caption.")], deviceFrame: "laptop")
-                    )]
-                ))
-            ]
-        )
+        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(renderedContent, [
+            RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                inlineContent: [.image(
+                    identifier: RenderReferenceIdentifier("figure1"),
+                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")], deviceFrame: "laptop")
+                )]
+            ))
+        ])
     }
     
-    func testImageDirectiveDoesNotResolveVideoReference() throws {
+    func testImageDirectiveDoesNotResolveVideoReference() async throws {
         // First check that the Video exists
-        let (_, videoProblems, _) = try parseDirective(VideoMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
+        let (_, videoDiagnostics, _) = try await parseDirective(VideoMedia.self, withAvailableAssetNames: ["introvideo.mp4"]) {
             """
             @Video(source: "introvideo")
             """
         }
-        
-        XCTAssertEqual(videoProblems, [])
+        XCTAssertEqual(videoDiagnostics, [])
         
         // Then check that it doesn't resolve as an image
-        let (renderedContent, imageProblems, image) = try parseDirective(ImageMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
+        let (renderedContent, imageDiagnostics, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["introvideo.mp4"]) {
             """
             @Image(source: "introvideo")
             """
         }
-        
         XCTAssertNotNil(image)
-        
-        XCTAssertEqual(imageProblems, ["1: warning – org.swift.docc.unresolvedResource.Image"])
-        
+        XCTAssertEqual(imageDiagnostics, ["1: warning – org.swift.docc.unresolvedResource.Image"])
         XCTAssertEqual(renderedContent, [])
     }
 }
+

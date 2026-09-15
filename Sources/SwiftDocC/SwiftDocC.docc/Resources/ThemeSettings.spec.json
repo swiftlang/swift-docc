@@ -350,6 +350,9 @@
                                     "hero-eyebrow": {
                                         "$ref": "#/components/schemas/Color"
                                     },
+                                    "inline-code-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
                                     "link": {
                                         "$ref": "#/components/schemas/Color"
                                     },
@@ -805,6 +808,20 @@
                                     },
                                     "xcode": {
                                         "$ref": "#/components/schemas/URL"
+                                    }
+                                }
+                            },
+                            "inline-code": {
+                                "type": "object",
+                                "description": "Settings related to \"inline code\" elements.",
+                                "properties": {
+                                    "border-radius": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-radius`."
+                                    },
+                                    "padding": {
+                                        "type": "string",
+                                        "description": "A CSS value for `padding`."
                                     }
                                 }
                             },

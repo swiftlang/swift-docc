@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,15 +13,15 @@ import XCTest
 @testable import SwiftDocC
 
 class DocumentationContextConverterTests: XCTestCase {
-    func testRenderNodesAreIdentical() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testRenderNodesAreIdentical() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // We'll use this to convert nodes ad-hoc
-        let perNodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let perNodeConverter = DocumentationNodeConverter(context: context)
         
         // We'll use these to convert nodes in bulk
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let bulkNodeConverter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let bulkNodeConverter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let encoder = JSONEncoder()
         
         for identifier in context.knownPages {
@@ -40,9 +40,9 @@ class DocumentationContextConverterTests: XCTestCase {
         }
     }
     
-    func testSymbolLocationsAreOnlyIncludedWhenRequested() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+    func testSymbolLocationsAreOnlyIncludedWhenRequested() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
             context.documentationCache["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]
@@ -50,7 +50,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: true)
@@ -61,7 +60,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext)
             
@@ -70,9 +68,9 @@ class DocumentationContextConverterTests: XCTestCase {
         }
     }
     
-    func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+    func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
             context.documentationCache["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]
@@ -80,7 +78,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolAccessLevels: true
@@ -92,7 +89,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext)
             

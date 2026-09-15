@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 typealias OverloadDeclaration = (
     declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment],
@@ -44,13 +45,17 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
     /// Fetch the common fragments for the given references, or compute it if necessary.
     func commonFragments(
         for mainDeclaration: OverloadDeclaration,
-        overloadDeclarations: [OverloadDeclaration]
+        overloadDeclarations: [OverloadDeclaration],
+        mainDeclarationIndex: Int
     ) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
         if let fragments = commonFragments(for: mainDeclaration.reference) {
             return fragments
         }
 
-        let preProcessedDeclarations = [mainDeclaration.declaration] + overloadDeclarations.map(\.declaration)
+        var preProcessedDeclarations = overloadDeclarations.map(\.declaration)
+        // Insert the main declaration according to the display index so the ordering is consistent
+        // between overloaded symbols
+        preProcessedDeclarations.insert(mainDeclaration.declaration, at: mainDeclarationIndex)
 
         // Collect the "common fragments" so we can highlight the ones that are different
         // in each declaration
@@ -68,7 +73,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
         renderNode: inout RenderNode,
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
-        translateSectionToVariantCollection(documentationDataVariants: symbol.declarationVariants) { trait, declaration -> RenderSection? in
+        translateSectionToVariantCollection(documentationDataVariants: symbol.declarationVariants) { trait, declaration -> (any RenderSection)? in
             guard !declaration.isEmpty else {
                 return nil
             }
@@ -165,8 +170,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                     let conformance = renderNodeTranslator.contentRenderer.conformanceSectionFor(overloadReference, collectedConstraints: [:])
 
-                    let declarationFragments = overload.declarationVariants[trait]?.values
-                        .first?
+                    let declarationFragments = overload.declarationVariants[trait]?
+                        .mainRenderFragments()?
                         .declarationFragments
                     precondition(
                         declarationFragments != nil,
@@ -183,21 +188,19 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return declarations
             }
 
-            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
-                platforms.sorted { (lhs, rhs) -> Bool in
-                    guard let lhsValue = lhs, let rhsValue = rhs else {
-                        return lhs == nil
-                    }
-                    return lhsValue.rawValue < rhsValue.rawValue
-                }
-            }
-
             var declarations: [DeclarationRenderSection] = []
-            let languages = [
+            let renderLanguageIDs = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
             ]
+
+            // Use the highest-priority platform declaration to compute the LCS for the common fragments.
+            // `declarations` is checked to be non-nil above, so it is safe to force unwrap here.
+            let highestPriorityDeclaration = declaration.mainRenderFragments()!
+                .declarationFragments.flatMap(preProcessFragment(_:))
             for pair in declaration {
                 let (platforms, declaration) = pair
+                let expandedPlatforms = PlatformName.addingFallbacks(platforms)
+                let platformNames = expandedPlatforms.sorted { PlatformName.areInIncreasingOrder($0?.rawValue, $1?.rawValue) }
 
                 let renderedTokens: [DeclarationRenderSection.Token]
                 let otherDeclarations: DeclarationRenderSection.OtherDeclarations?
@@ -212,11 +215,12 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         OverloadDeclaration($0.declaration.flatMap(preProcessFragment(_:)), $0.reference, $0.conformance)
                     })
 
-                    // Collect the "common fragments" so we can highlight the ones that are different
-                    // in each declaration
+                    // Collect the "common fragments" so we can highlight the ones that differ
                     let commonFragments = commonFragments(
-                        for: (mainDeclaration, renderNode.identifier, nil),
-                        overloadDeclarations: processedOverloadDeclarations)
+                        for: (highestPriorityDeclaration, renderNode.identifier, nil),
+                        overloadDeclarations: processedOverloadDeclarations,
+                        mainDeclarationIndex: overloads.displayIndex
+                    )
 
                     renderedTokens = translateDeclaration(
                         mainDeclaration,
@@ -233,8 +237,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 declarations.append(
                     DeclarationRenderSection(
-                        languages: languages,
-                        platforms: sortPlatformNames(platforms),
+                        languages: renderLanguageIDs,
+                        platforms: platformNames,
                         tokens: renderedTokens,
                         otherDeclarations: otherDeclarations
                     )
@@ -244,19 +248,29 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             if let alternateDeclarations = symbol.alternateDeclarationVariants[trait] {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
-                    let platformNames = sortPlatformNames(platforms)
+                    let expandedPlatforms = PlatformName.addingFallbacks(platforms)
+                    let platformNames = expandedPlatforms.sorted { PlatformName.areInIncreasingOrder($0?.rawValue, $1?.rawValue) }
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
                         declarations.append(
                             DeclarationRenderSection(
-                                languages: languages,
+                                languages: renderLanguageIDs,
                                 platforms: platformNames,
                                 tokens: renderedTokens
                             )
                         )
                     }
                 }
+            }
+
+            declarations.sort { (lhs, rhs) -> Bool in
+                // We only need to compare the first platform in each list against the
+                // first platform in any other list, so pull them out here
+                guard let lhsPlatform = lhs.platforms.first, let rhsPlatform = rhs.platforms.first else {
+                    return lhs.platforms.isEmpty
+                }
+                return PlatformName.areInIncreasingOrder(lhsPlatform?.rawValue, rhsPlatform?.rawValue)
             }
 
             return DeclarationsRenderSection(declarations: declarations)

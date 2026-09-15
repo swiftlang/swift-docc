@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// Defines an override for a JSON value for a set of traits.
 ///
 /// Override values are contain the ``patch`` that should be applied for clients that want to process documentation for the override's ``traits``.

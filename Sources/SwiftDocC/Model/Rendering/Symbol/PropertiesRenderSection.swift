@@ -16,9 +16,9 @@ import Foundation
 public struct PropertiesRenderSection: RenderSection {
     public var kind: RenderSectionKind = .properties
     /// The title for this section.
-    public let title: String
+    public var title: String
     /// The list of properties.
-    public let items: [RenderProperty]
+    public var items: [RenderProperty]
 
     /// Creates a new property-list section.
     /// - Parameters:
@@ -36,13 +36,13 @@ public struct PropertiesRenderSection: RenderSection {
         case kind, title, items
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
         items = try container.decode([RenderProperty].self, forKey: .items)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
         try container.encode(title, forKey: .title)
@@ -60,9 +60,9 @@ public struct RenderProperty: Codable, TextIndexing, Equatable {
     /// The list of possible type declarations for the property's value including additional details, if available.
     public let typeDetails: [TypeDetails]?
     /// Additional details about the property, if available.
-    public let content: [RenderBlockContent]?
+    public var content: [RenderBlockContent]?
     /// Additional list of attributes, if any.
-    public let attributes: [RenderAttribute]?
+    public var attributes: [RenderAttribute]?
     /// A mime-type associated with the property, if applicable.
     public let mimeType: String?
     /// If true, the property is required in its containing context.

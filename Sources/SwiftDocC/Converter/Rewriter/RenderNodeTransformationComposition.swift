@@ -11,16 +11,16 @@
 /// A transformation that applies two transformations, one after the other.
 public struct RenderNodeTransformationComposition: RenderNodeTransforming {
     /// The first transformation to apply.
-    public var first: RenderNodeTransforming
+    public var first: any RenderNodeTransforming
     /// The second transformation to apply.
-    public var second: RenderNodeTransforming
+    public var second: any RenderNodeTransforming
     
     /// Initializes a transformation that applies two transformations, one after the other.
     ///
     /// - Parameters:
     ///   - first: The first transformation to apply.
     ///   - second: The second transformation to apply.
-    public init(first: RenderNodeTransforming, second: RenderNodeTransforming) {
+    public init(first: any RenderNodeTransforming, second: any RenderNodeTransforming) {
         self.first = first
         self.second = second
     }

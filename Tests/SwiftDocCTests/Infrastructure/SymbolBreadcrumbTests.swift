@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,10 +10,11 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class SymbolBreadcrumbTests: XCTestCase {
-    func testLanguageSpecificBreadcrumbs() throws {
-        let (bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+    func testLanguageSpecificBreadcrumbs() async throws {
+        let (_, context) = try await testBundleAndContext(named: "GeometricalShapes")
         let resolver = try XCTUnwrap(context.linkResolver.localResolver)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
@@ -34,7 +35,7 @@ class SymbolBreadcrumbTests: XCTestCase {
                 "/documentation/GeometricalShapes/Circle", // named TLACircle in Objective-C
             ])
             
-            assertNoVariantsForRenderHierarchy(reference, context, bundle) // Same breadcrumbs in both languages
+            assertNoVariantsForRenderHierarchy(reference, context) // Same breadcrumbs in both languages
         }
         
         // extern const TLACircle TLACircleZero NS_SWIFT_NAME(Circle.zero);
@@ -50,7 +51,7 @@ class SymbolBreadcrumbTests: XCTestCase {
                 "/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
             ])
             
-            assertHasSomeVariantsForRenderHierarchy(reference, context, bundle) // Different breadcrumbs in different languages
+            assertHasSomeVariantsForRenderHierarchy(reference, context) // Different breadcrumbs in different languages
         }
         
         // BOOL TLACircleIntersects(TLACircle circle, TLACircle otherCircle) NS_SWIFT_NAME(Circle.intersects(self:_:));
@@ -66,7 +67,7 @@ class SymbolBreadcrumbTests: XCTestCase {
                 "/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
             ])
             
-            assertHasSomeVariantsForRenderHierarchy(reference, context, bundle) // Different breadcrumbs in different languages
+            assertHasSomeVariantsForRenderHierarchy(reference, context) // Different breadcrumbs in different languages
         }
 
         // TLACircle TLACircleMake(CGPoint center, CGFloat radius) NS_SWIFT_UNAVAILABLE("Use 'Circle.init(center:radius:)' instead.");
@@ -79,7 +80,7 @@ class SymbolBreadcrumbTests: XCTestCase {
                 "/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
             ])
             
-            assertNoVariantsForRenderHierarchy(reference, context, bundle) // Only has one language representation
+            assertNoVariantsForRenderHierarchy(reference, context) // Only has one language representation
         }
         
         do {
@@ -92,12 +93,12 @@ class SymbolBreadcrumbTests: XCTestCase {
             ])
             XCTAssertEqual(resolver.breadcrumbs(of: reference, in: .objectiveC)?.map(\.path), nil) // There is no Objective-C representation
             
-            assertNoVariantsForRenderHierarchy(reference, context, bundle) // Only has one language representation
+            assertNoVariantsForRenderHierarchy(reference, context) // Only has one language representation
         }
     }
     
-    func testMixedLanguageSpecificBreadcrumbs() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+    func testMixedLanguageSpecificBreadcrumbs() async throws {
+        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         let resolver = try XCTUnwrap(context.linkResolver.localResolver)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
@@ -114,7 +115,7 @@ class SymbolBreadcrumbTests: XCTestCase {
                 "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
             ])
             
-            assertNoVariantsForRenderHierarchy(reference, context, bundle) // Same breadcrumbs in both languages
+            assertNoVariantsForRenderHierarchy(reference, context) // Same breadcrumbs in both languages
         }
         do {
             let reference = try XCTUnwrap(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/MixedLanguageProtocol" }))
@@ -127,7 +128,7 @@ class SymbolBreadcrumbTests: XCTestCase {
                 "/documentation/MixedLanguageFramework",
             ])
             
-            assertNoVariantsForRenderHierarchy(reference, context, bundle) // Same breadcrumbs in both languages
+            assertNoVariantsForRenderHierarchy(reference, context) // Same breadcrumbs in both languages
         }
     }
     
@@ -136,11 +137,10 @@ class SymbolBreadcrumbTests: XCTestCase {
     private func assertNoVariantsForRenderHierarchy(
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
-        _ bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitSymbol(reference)
         
         XCTAssertNotNil(hierarchyVariants.defaultValue, "Should always have default breadcrumbs", file: file, line: line)
@@ -150,11 +150,10 @@ class SymbolBreadcrumbTests: XCTestCase {
     private func assertHasSomeVariantsForRenderHierarchy(
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
-        _ bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitSymbol(reference)
         
         XCTAssertNotNil(hierarchyVariants.defaultValue, "Should always have default breadcrumbs", file: file, line: line)

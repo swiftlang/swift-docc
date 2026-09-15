@@ -22,6 +22,7 @@ extension DiffResults {
         }
     }
     
+    @MainActor
     static func analyze(before beforeMetric: BenchmarkResultSeries.MetricSeries?, after afterMetric: BenchmarkResultSeries.MetricSeries) throws -> DiffResults.MetricAnalysis {
         guard let beforeMetric else {
             return DiffResults.MetricAnalysis(
@@ -129,6 +130,7 @@ extension DiffResults {
         )
     }
     
+    @MainActor
     private static func inputBiasDescription(metric: BenchmarkResultSeries.MetricSeries, sampleName: String, numbers: [Double]) -> String {
         // Turn the single metric series into an array of single values metric series to render the trend bars.
         
@@ -164,6 +166,7 @@ extension DiffResults {
 }
 
 extension BenchmarkResultSeries.MetricSeries.ValueSeries {
+    @MainActor
     func formatted() -> String {
         switch self {
             case .duration(let value):
@@ -190,6 +193,7 @@ extension BenchmarkResultSeries.MetricSeries.ValueSeries {
 }
 
 #if os(macOS) || os(iOS)
+@MainActor
 private let durationFormatter: MeasurementFormatter = {
     let fmt = MeasurementFormatter()
     fmt.unitStyle = .medium

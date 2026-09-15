@@ -51,7 +51,7 @@ public struct IntroRenderSection: RenderSection, Equatable {
         self.title = title
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
         chapter = try container.decodeIfPresent(String.self, forKey: .chapter)

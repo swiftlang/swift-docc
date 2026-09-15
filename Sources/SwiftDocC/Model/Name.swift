@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,13 +33,6 @@ extension DocumentationNode {
         
         var plainText: String {
             description
-        }
-        
-        @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-        static func symbol(declaration: AttributedCodeListing.Line) -> Name {
-            // This static function exists so that `Name.symbol(declaration:)` is available while 
-            // still allowing switching over the two "symbol" name cases.
-            Name.symbol(name: declaration.tokens.first?.description ?? "")
         }
     }
 }

@@ -28,7 +28,7 @@ public struct ContentRenderSection: RenderSection, Equatable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         kind = try container.decode(RenderSectionKind.self, forKey: .kind)
         content = try container.decode([RenderBlockContent].self, forKey: .content)

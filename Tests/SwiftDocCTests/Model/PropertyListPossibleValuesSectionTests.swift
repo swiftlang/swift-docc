@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,14 +12,16 @@ import XCTest
 import SymbolKit
 import Foundation
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
+import Markdown
 
 
 class PropertyListPossibleValuesSectionTests: XCTestCase {
     
-    func testPossibleValuesDiagnostics() throws {
-        // Check that a problem is emitted when extra possible values are documented.
-        var (url, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testPossibleValuesDiagnostics() async throws {
+        // Check that a diagnostic is emitted when extra possible values are documented.
+        var (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -33,18 +35,18 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         do {
-            XCTAssertEqual(context.problems.count, 1)
-            let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "\'April\' is not a known possible value for \'Month\'." }))
-            XCTAssertEqual(possibleValueProblem.diagnostic.source, url.appendingPathComponent("Month.md"))
-            XCTAssertEqual(possibleValueProblem.diagnostic.range?.lowerBound.line, 9)
-            XCTAssertEqual(possibleValueProblem.diagnostic.range?.lowerBound.column, 3)
-            XCTAssertEqual(possibleValueProblem.diagnostic.range?.upperBound.line, 9)
-            XCTAssertEqual(possibleValueProblem.diagnostic.range?.upperBound.column, 18)
-            XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == "Remove \'April\' possible value documentation or replace it with a known value." }))
+            XCTAssertEqual(context.diagnostics.count, 1)
+            let possibleValueDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "\'April\' is not a known possible value for \'Month\'." }))
+            XCTAssertEqual(possibleValueDiagnostic.source, url.appendingPathComponent("Month.md"))
+            XCTAssertEqual(possibleValueDiagnostic.range?.lowerBound.line, 9)
+            XCTAssertEqual(possibleValueDiagnostic.range?.lowerBound.column, 3)
+            XCTAssertEqual(possibleValueDiagnostic.range?.upperBound.line, 9)
+            XCTAssertEqual(possibleValueDiagnostic.range?.upperBound.column, 18)
+            XCTAssertNotNil(possibleValueDiagnostic.solutions.first(where: { $0.summary == "Remove \'April\' possible value documentation or replace it with a known value." }))
         }
         
-        // Check that no problems are emitted if no extra possible values are documented.
-        (url, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+        // Check that no diagnostics are emitted if no extra possible values are documented.
+        (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -57,11 +59,11 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         do {
-            XCTAssertEqual(context.problems.count, 0)
+            XCTAssertEqual(context.diagnostics.count, 0)
         }
         
-        // Check that a problem is emitted with possible solutions.
-        (url, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+        // Check that a diagnostic is emitted with possible solutions.
+        (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -74,26 +76,26 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         do {
-            XCTAssertEqual(context.problems.count, 1)
-            let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "\'Marc\' is not a known possible value for \'Month\'." }))
-            XCTAssertEqual(possibleValueProblem.possibleSolutions.count, 1)
-            XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == "Remove \'Marc\' possible value documentation or replace it with a known value." }))
+            XCTAssertEqual(context.diagnostics.count, 1)
+            let possibleValueDiagnostic = try XCTUnwrap(context.diagnostics.first(where: { $0.summary == "\'Marc\' is not a known possible value for \'Month\'." }))
+            XCTAssertEqual(possibleValueDiagnostic.solutions.count, 1)
+            XCTAssertNotNil(possibleValueDiagnostic.solutions.first(where: { $0.summary == "Remove \'Marc\' possible value documentation or replace it with a known value." }))
         }
     }
     
-    func testAbsenceOfPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+    func testAbsenceOfPossibleValues() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(context: context)
         
         // Check that the `Possible Values` section is not rendered if the symbol don't define any possible value.
         XCTAssertNil(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
     }
     
-    func testUndocumentedPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+    func testUndocumentedPossibleValues() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(context: context)
         let possibleValuesSection = try XCTUnwrap(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
         let possibleValues: [PossibleValuesRenderSection.NamedValue] = possibleValuesSection.values
         
@@ -101,8 +103,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertEqual(possibleValues.map { $0.name }, ["January", "February", "March"])
     }
     
-    func testDocumentedPossibleValuesMatchSymbolGraphPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testDocumentedPossibleValuesMatchSymbolGraphPossibleValues() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -116,7 +118,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         
@@ -125,8 +127,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertEqual(possibleValues.map { $0.value }, ["January", "February", "March"])
     }
     
-    func testDocumentedPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testDocumentedPossibleValues() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -136,7 +138,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         
@@ -149,8 +151,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertEqual(documentedPossibleValue.contents.count , 1)
     }
     
-    func testUnresolvedLinkWarnings() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testUnresolvedLinkWarnings() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -163,16 +165,17 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         
-        let problems = context.diagnosticEngine.problems
-        let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("Month.md") == true }
-        XCTAssertEqual(linkResolutionProblems.count, 2)
-        let problemDiagnosticsSummary = linkResolutionProblems.map { $0.diagnostic.summary }
-        XCTAssertTrue(problemDiagnosticsSummary.contains("\'NotFoundArticle\' doesn\'t exist at \'/DictionaryData/Month\'"))
-        XCTAssertTrue(problemDiagnosticsSummary.contains("\'NotFoundSymbol\' doesn\'t exist at \'/DictionaryData/Month\'"))
+        let diagnostics = context.diagnosticEngine.diagnostics
+        let linkResolutionDiagnostics = diagnostics.filter { $0.source?.relativePath.hasSuffix("Month.md") == true }
+        XCTAssertEqual(linkResolutionDiagnostics.count, 2)
+        XCTAssertEqual(linkResolutionDiagnostics.map(\.summary).sorted(), [
+            "\'NotFoundArticle\' doesn\'t exist at \'/DictionaryData/Month\'",
+            "\'NotFoundSymbol\' doesn\'t exist at \'/DictionaryData/Month\'",
+        ])
     }
     
-    func testResolvedLins() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testResolvedLinks() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -182,8 +185,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
                 - January: First links to ``Artist``
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
-        let problems = context.diagnosticEngine.problems
-        let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("Month.md") == true }
-        XCTAssertEqual(linkResolutionProblems.count, 0)
+        let diagnostics = context.diagnosticEngine.diagnostics
+        let linkResolutionDiagnostics = diagnostics.filter { $0.source?.relativePath.hasSuffix("Month.md") == true }
+        XCTAssertEqual(linkResolutionDiagnostics.count, 0)
     }
 }

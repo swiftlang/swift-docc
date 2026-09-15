@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive for specifying Swift-DocC's automatic behavior when generating a page's
 /// title heading.

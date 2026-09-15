@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 import SymbolKit
 
 // MARK: PathHierarchy
@@ -37,9 +37,11 @@ extension PathHierarchy.FileRepresentation {
         }
         
         let nodes = [Node](unsafeUninitializedCapacity: lookup.count) { buffer, initializedCount in
-            for node in lookup.values {
+            for (identifier, node) in lookup {
+                assert(identifier == node.identifier, "Every node lookup should match a node with that identifier.")
+                
                 buffer.initializeElement(
-                    at: identifierMap[node.identifier]!,
+                    at: identifierMap[identifier]!,
                     to: Node(
                         name: node.name,
                         rawSpecialBehavior: node.specialBehaviors.rawValue,
@@ -118,7 +120,7 @@ extension PathHierarchy.FileRepresentation.Node {
         case symbolID
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
@@ -127,7 +129,7 @@ extension PathHierarchy.FileRepresentation.Node {
         self.symbolID = try container.decodeIfPresent(SymbolGraph.Symbol.Identifier.self, forKey: .symbolID)
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container: KeyedEncodingContainer = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(self.name, forKey: .name)
@@ -148,7 +150,7 @@ public struct SerializableLinkResolutionInformation: Codable {
     // This type is public so that it can be an argument to a function in `ConvertOutputConsumer`
     
     var version: SemanticVersion
-    var bundleID: DocumentationBundle.Identifier
+    var documentationID: DocumentationContext.Inputs.Identifier
     var pathHierarchy: PathHierarchy.FileRepresentation
     // Separate storage of node data because the path hierarchy doesn't know the resolved references for articles.
     var nonSymbolPaths: [Int: String]
@@ -158,7 +160,7 @@ extension PathHierarchyBasedLinkResolver {
     /// Create a file representation of the link resolver.
     ///
     /// The file representation can be decoded in later documentation builds to resolve external links to the content where the link resolver was originally created for.
-    func prepareForSerialization(bundleID: DocumentationBundle.Identifier) throws -> SerializableLinkResolutionInformation {
+    func prepareForSerialization(documentationID: DocumentationContext.Inputs.Identifier) throws -> SerializableLinkResolutionInformation {
         var nonSymbolPaths: [Int: String] = [:]
         let hierarchyFileRepresentation = PathHierarchy.FileRepresentation(pathHierarchy) { identifiers in
             nonSymbolPaths.reserveCapacity(identifiers.count)
@@ -169,8 +171,8 @@ extension PathHierarchyBasedLinkResolver {
         }
         
         return SerializableLinkResolutionInformation(
-            version: .init(major: 0, minor: 1, patch: 0), // This is still in development
-            bundleID: bundleID,
+            version: .init(major: 0, minor: 2, patch: 0), // This is still in development
+            documentationID: documentationID,
             pathHierarchy: hierarchyFileRepresentation,
             nonSymbolPaths: nonSymbolPaths
         )

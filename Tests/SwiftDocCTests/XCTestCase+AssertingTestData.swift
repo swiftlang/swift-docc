@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 extension XCTestCase {
     
@@ -36,7 +37,7 @@ extension XCTestCase {
         referenceTitles expectedReferenceTitles: [String],
         referenceFragments expectedReferenceFragments: [String],
         failureMessage failureMessageForField: (_ field: String) -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         XCTAssertEqual(

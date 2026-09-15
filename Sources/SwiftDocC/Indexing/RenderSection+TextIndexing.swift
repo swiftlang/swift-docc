@@ -14,7 +14,7 @@ extension IntroRenderSection {
         return content.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -26,7 +26,7 @@ extension VolumeRenderSection {
             chapters.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.map { $0.rawIndexableTextContent(references: references) } ?? ""
     }
 }
@@ -36,7 +36,7 @@ extension ResourcesRenderSection {
         return tiles.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -47,7 +47,7 @@ extension RenderTile {
             content.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -58,7 +58,7 @@ extension CallToActionSection {
         return [title]
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return abstract.rawIndexableTextContent(references: references)
     }
 }
@@ -68,7 +68,7 @@ extension ContentAndMediaGroupSection {
         return sections.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return sections.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
 }
@@ -79,7 +79,7 @@ extension ContentAndMediaSection {
         return (title.map { [$0] } ?? []) + content.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -89,7 +89,7 @@ extension TutorialAssessmentsRenderSection {
         return assessments.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return assessments.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
 }
@@ -102,7 +102,7 @@ extension TutorialAssessmentsRenderSection.Assessment {
             + (self.content?.headings ?? [])
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.map {
             $0.rawIndexableTextContent(references: references)
         } ?? ""
@@ -114,7 +114,7 @@ extension TutorialSectionsRenderSection {
         return tasks.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return tasks.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
 }
@@ -125,7 +125,7 @@ extension TutorialSectionsRenderSection.Section {
             stepsSection.flatMap { $0.headings }
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return contentSection.rawIndexableTextContent(references: references) + " " +
         stepsSection.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
@@ -136,7 +136,7 @@ extension TutorialArticleSection {
         return content.headings
     }
     
-    public func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -146,7 +146,7 @@ extension ContentRenderSection {
         return content.headings
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -158,7 +158,7 @@ extension ParametersRenderSection {
         }
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return parameters.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -170,7 +170,7 @@ extension ParameterRenderSection {
         return content.headings
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return content.rawIndexableTextContent(references: references)
     }
 }
@@ -180,7 +180,7 @@ extension RelationshipsRenderSection {
         return [title]
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return title
     }
 }
@@ -191,7 +191,7 @@ extension TaskGroupRenderSection {
         return [title]
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return title ?? ""
     }
 }
@@ -203,7 +203,7 @@ extension RESTParametersRenderSection {
         }
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return parameters.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -215,7 +215,7 @@ extension RenderProperty {
         return [name]
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return content?.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ") ?? ""
@@ -227,7 +227,7 @@ extension RESTResponse {
         return reason.map({ [$0] }) ?? []
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return content?.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ") ?? ""
@@ -241,7 +241,7 @@ extension RESTResponseRenderSection {
         }
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return responses.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -253,7 +253,7 @@ extension RESTEndpointRenderSection {
         return [title]
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return title
     }
 }
@@ -265,7 +265,7 @@ extension RESTBodyRenderSection {
         } ?? [])
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         let contentText = (content?.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")) ?? ""
@@ -285,7 +285,7 @@ extension PropertiesRenderSection {
         }
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return items.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
@@ -297,7 +297,7 @@ extension RenderAttribute {
         return [title]
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         switch self {
         case .default(let value): return value
         case .maximum(let value): return value
@@ -319,7 +319,7 @@ extension AttributesRenderSection {
         } ?? []
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return attributes?.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ") ?? ""
@@ -335,7 +335,7 @@ extension PropertyListDetailsRenderSection {
         }
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return [details.rawKey, details.displayName ?? ""].joined(separator: " ")
     }
 }
@@ -345,7 +345,7 @@ extension PossibleValuesRenderSection {
         return []
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return values.map { namedValue -> String in
             let content = namedValue.content?.rawIndexableTextContent(references: references) ?? ""
             return namedValue.name + " " + content
@@ -358,13 +358,13 @@ extension SampleDownloadSection {
         return []
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return ""
     }
 }
 
 extension Sequence<ContentLayout> {
-    func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return map { layout -> String in
             switch layout {
             case .fullWidth(let content):

@@ -55,7 +55,7 @@ support for generating and previewing documentation.
 ### Prerequisites
 
 Swift-DocC is a Swift package. If you're new to Swift package manager,
-the [documentation here](https://swift.org/getting-started#using-the-package-manager)
+the [documentation here](https://www.swift.org/documentation/package-manager/)
 provides an explanation of how to get started and the software you'll need
 installed.
 
@@ -64,7 +64,7 @@ installed.
 1. Checkout this repository using:
 
     ```bash
-    git clone git@github.com:apple/swift-docc.git
+    git clone git@github.com:swiftlang/swift-docc.git
     ```
 
 2. Navigate to the root of your cloned repository with:
@@ -166,7 +166,7 @@ If you have commit access, you can run the required tests by commenting the foll
 
 If you do not have commit access, please ask one of the code owners to trigger them for you.
 For more details on Swift-DocC's continuous integration, see the
-[Continous Integration](#continuous-integration) section below.
+[Continuous Integration](#continuous-integration) section below.
 
 ### Introducing source breaking changes
 
@@ -207,7 +207,126 @@ by navigating to the root of the repository and running the following:
 By running tests locally with the `test` script you will be best prepared for
 automated testing in CI as well.
 
-### Testing in Xcode
+### Adding new tests
+
+Please use [Swift Testing](https://developer.apple.com/documentation/testing) when you add new tests. 
+Currently there are few existing tests to draw inspiration from, so here are a few recommendations:
+
+- Prefer small test inputs that ideally use a virtual file system for both reading and writing.
+  
+  For example, if you want to test a behavior related to a symbol's in-source documentation and its documentation extension file, you only need one symbol for that. 
+  You can use `load(catalog:...)`, `makeSymbolGraph(...)`, and `makeSymbol(...)` to define such inputs in a virtual file system and create a `DocumentationContext` from it:
+  
+  ```swift
+  let catalog = Folder(name: "Something.docc") {
+      JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+          makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+          This is the in-source documentation for this class.    
+          """)
+      ]))
+      
+      TextFile(name: "Something.md", utf8Content: """
+      # ``SomeClass``
+      
+      This is additional documentation for this class.
+      """)
+  }
+  let context = try await load(catalog: catalog)
+  // Test rest of your test
+  ```
+  
+- Consider using parameterized tests if you're making the same verifications in multiple configurations or on multiple elements.
+  
+  You can find some examples of this if you search for `@Test(arguments:`.
+  Additionally, you might encounter a `XCTestCase` test that loops over one or more values and performs the same validation for all combinations:
+  ```swift
+  for withExplicitTechnologyRoot in [true, false] {
+      for withPageColor in [true, false] { 
+         ...
+  ```
+  Such `XCTestCase` tests can sometimes be expressed more nicely as parameterized tests in Swift Testing.
+  
+  > Tip: A parameterized test with pairs of input values can specify its arguments as either an array of tuples or as a dictionary:  
+  > ```swift
+  > @Test(arguments: [
+  >     DiagnosticSeverity.information: true,
+  >     DiagnosticSeverity.warning:     false,
+  >     DiagnosticSeverity.error:       false,
+  > ])
+  > func raisesDiagnostics(configuredDiagnosticFilterLevel: DiagnosticSeverity, expectsToIncludeNonInclusiveDiagnostics: Bool) async throws { ... }
+  >```
+  
+- Think about what information would be helpful to someone else who might debug that test case if it fails in the future.
+  
+  In an open source project like Swift-DocC, it's possible that a person you've never met will continue to work on code that you wrote.
+  It could be that they're working on the same feature as you, or it could also be that they're working on something entirely different but their changes broke a test that you wrote.
+  To help make their experience better, we appreciate any time that you spend considering if there's any information that you would have wanted to tell that person, as if they were a colleague.
+  
+  One way to convey this information could be to verify assumptions (like "this test content has no user-facing warnings") using `#expect`.
+  Additionally, if there's any information that you can surface right in the test failure that will save the next developer from needing to add a breakpoint and run the test again to inspect the value,
+  that's a nice small little thing that you can do for the developer coming after you:
+  ```swift
+  #expect(diagnostics.isEmpty, "Unexpected problems: \(diagnostics.map(\.summary))")
+  ```
+  
+  Similarly, code comments or `#expect` descriptions can be a way to convey information about _why_ the test is expecting a _specific_ value.
+  ```swift
+  #expect(graph.cycles(from: 0) == [
+      [7,9], // through breadth-first-traversal, 7 is reached before 9.
+  ])
+  ```
+  That reason may be clear to you, but could be a mystery to a person who is unfamiliar with that part of the code base---or even a future you that may have forgotten certain details about how the code works.
+  
+- Use `#require` rather that force unwrapping for behaviors that would change due to unexpected bugs in the code you're testing. 
+
+  If you know that some value will always be non-`nil` only _because_ the rest of the code behaves correctly, consider writing the test more defensively using `#require` instead of force unwrapping the value.
+  This has the benefit that if someone else working on Swift-DocC introduces a bug in that behavior that the test relied on, then the test will fail gracefully rather than crashing and aborting the rest of the test execution.
+  
+  A similar situation occurs when you "know" that an array contains _N_ elements. If your test accesses them through indexed subscripting, it will trap if that array was unexpectedly short due to a bug that someone introduced.
+  In this situation you can use `problems.dropFirst(N-1).first` to access the _Nth_ element safely. 
+  This could either be used as an optional value in a `#expect` call, or be unwrapped using `#require` depending on how the element is used in the test.
+  
+- Use a descriptive and readable phrase as the test name.
+
+  It can be easier to understand a test's implementation if its name describes the _behavior_ that the test verifies.
+  A phrase that start with a verb can often help make a test's name a more readable description of what it's verifying. 
+  For example: `sortsSwiftFirstAndThenByID`, `raisesDiagnosticAboutCyclicCuration`, `isDisabledByDefault`, `considersCurationInUncuratedAPICollection`, and `promotesArticleMatchingTheCatalogNameToRootPage`.
+    
+  It can make test names more descriptive if the name describes a more specific behavior rather than a general behavior.
+  For tests that verify more than one behavior; 
+  see if any of those behaviors are either more important or are more specific and consider mentioning one or more of the more important or specific behaviors in the test name.
+  
+  If you're struggling to name a test, one approach you can try is to _imagine_ letting someone else write the test based on only the test's current name. 
+  If there are any _specific_ behaviors that you think that that person would either get wrong (without running the test) or would miss entirely, 
+  then consider mentioning one or more of those behaviors in the test's name. 
+  If you still find the updated test name to be non-descriptive then you can repeat this approach and try to imagine what someone else might miss or get wrong with the new name.
+  
+  For example: 
+  `sortsLanguagesCorrectly` is not specific about the expected order and could be interpreted differently by different people. 
+  `sortsSwiftFirst` is more specific but remains unclear about the relative sort order between other languages. 
+  `sortsSwiftFirstAndThenByID` is highly specific and the verified behavior can be understood in a fair amount of details without reading the test's implementation.
+  
+  > Note: imagining someone else writing a test based on its name is only one of the many ways to create a descriptive test name.
+  It may not be appropriate or produce good test names in all cases.
+  If you find that the test name is becoming overly verbose without making it easier to understand a test's implementation, 
+  try another approach to naming the test.
+  If you cannot decide on a test name that you're happy with, consider proactively asking the reviewer for their input on that specific test name.
+  A fresh perspective and different people's ideas and experiences can help find a test name that's clear and understandable by more people.
+
+### Updating existing tests
+
+If you're updating an existing test case with additional logic, we appreciate if you also modernize that test while updating it, but we don't expect it.
+If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing and leave the existing tests as-is.
+
+If you modernize an existing test case, consider not only the syntactical differences between Swift Testing and XCTest, 
+but also if there are any Swift Testing features or other changes that would make the test case easier to read, maintain, or debug.
+
+Particularly for certain older tests; we may have learnt new things or developed better ways to test things since the test was originally written.
+Having a person revisit the test---and think about it given our most up-to-date understanding of what makes a test robust, understandable, and maintainable---
+provides an opportunity to improve the test for the next person who works on the feature or other behavior that the test verifies.
+Revisiting an existing test and carefully thinking about what behaviors that test is verifying also provides an opportunity to contemplate any details or potential edge cases that the test doesn't cover but that may be worthwhile to add. 
+
+### Testing DocC's integration with Xcode
 
 You can test a locally built version of Swift-DocC in Xcode 13 or later by setting
 the `DOCC_EXEC` build setting to the path of your local `docc`:
@@ -350,7 +469,32 @@ by running the test suite in a Docker environment that simulates Swift on Linux.
     cd swift-docc
     swift run docc
     ```
-    
+
+## Updating Build Rules
+
+In order to build DocC as part of the Windows toolchain distribution uniformly,
+a parallel CMake based build exists. Note that this is **not** supported for
+development purposes (you cannot execute the test suite with this build).
+
+CMake requires that the full file list is kept up-to-date. When adding or
+removing files in a given module, the `CMakeLists.txt` list must be updated to
+the file list.
+
+The 1-line script below lists all the Swift files in the current directory tree. 
+You can use the script's output to replace the list of files in the CMakeLists.txt file for each target that you added files to or removed files from.
+
+```bash
+python -c "print('\n'.join((f'{chr(34)}{path}{chr(34)}' if ' ' in path else path) for path in sorted(str(path) for path in __import__('pathlib').Path('.').rglob('*.swift'))))"
+```
+
+This should provide the listing of files in the module that can be used to
+update the `CMakeLists.txt` associated with the target.
+
+In the case that a new target is added to the project, the new directory would
+need to add the new library or executable target (`add_library` and
+`add_executable` respectively) and the new target subdirectory must be listed in
+the `Sources/CMakeLists.txt` (via `add_subdirectory`).
+
 ## Continuous Integration
 
 Swift-DocC uses [swift-ci](https://ci.swift.org) infrastructure for its continuous integration
@@ -495,7 +639,7 @@ For more in-depth technical information about Swift-DocC, please refer to the
 project's technical documentation:
 
 - [`SwiftDocC` framework documentation](https://swiftlang.github.io/swift-docc/documentation/swiftdocc/)
-- [`SwiftDocCUtilities` framework documentation](https://swiftlang.github.io/swift-docc/documentation/swiftdoccutilities/)
+- [`DocCCommandLine` framework documentation](https://swiftlang.github.io/swift-docc/documentation/docccommandline/)
 
 ### Related Projects
 
@@ -520,4 +664,4 @@ project's technical documentation:
   with support for building and viewing documentation for your framework and
   its dependencies.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

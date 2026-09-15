@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive that accepts an arbitrary key/value pair and emits it into the metadata of the page
 ///

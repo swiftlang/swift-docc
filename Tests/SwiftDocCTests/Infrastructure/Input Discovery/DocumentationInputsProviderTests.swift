@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,14 +9,11 @@
 */
 
 import XCTest
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 @testable import SwiftDocC
 
 class DocumentationInputsProviderTests: XCTestCase {
     
-    // After 6.2 we can update this test to verify that the input provider discovers the same inputs regardless of FileManagerProtocol
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This test uses `LocalFileSystemDataProvider` as a `DocumentationWorkspaceDataProvider` which is deprecated and will be removed after 6.2 is released")
     func testDiscoversSameFilesAsPreviousImplementation() throws {
         let folderHierarchy = Folder(name: "one", content: [
             Folder(name: "two", content: [
@@ -28,12 +25,13 @@ class DocumentationInputsProviderTests: XCTestCase {
                     
                     // This is the catalog that both file system should find
                     Folder(name: "Found.docc", content: [
-                        // This top-level Info.plist will be read for bundle information
+                        // This top-level Info.plist will be read for input's information
                         InfoPlist(displayName: "CustomDisplayName"),
                         
-                        // These top-level files will be treated as a custom footer and a custom theme
+                        // These top-level files will be treated as a custom footer, custom theme, and custom favicon
                         TextFile(name: "footer.html", utf8Content: ""),
                         TextFile(name: "theme-settings.json", utf8Content: ""),
+                        DataFile(name: "favicon.ico", data: Data()),
                         
                         // Top-level content will be found
                         TextFile(name: "CCC.md", utf8Content: ""),
@@ -68,60 +66,54 @@ class DocumentationInputsProviderTests: XCTestCase {
             Folder(name: "OutsideSearchScope.docc", content: []),
         ])
         
-        let tempDirectory = try createTempFolder(content: [folderHierarchy])
-        let realProvider = DocumentationContext.InputsProvider(fileManager: FileManager.default)
+        // Prepare the real on-disk file system
+        let tempDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory()).appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
+        try Folder(name: tempDirectory.lastPathComponent, content: [folderHierarchy]).write(to: tempDirectory)
+        defer {
+            try? FileManager.default.removeItem(at: tempDirectory)
+        }
         
-        let testFileSystem = try TestFileSystem(folders: [folderHierarchy])
-        let testProvider = DocumentationContext.InputsProvider(fileManager: testFileSystem)
-
-        let options = BundleDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
-            tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")
-        ])
+        // Prepare the test file system
+        let testFileSystem = try TestFileSystem(folders: [])
+        try testFileSystem.addFolder(folderHierarchy, basePath: tempDirectory)
         
-        let foundPrevImplBundle = try XCTUnwrap(LocalFileSystemDataProvider(rootURL: tempDirectory.appendingPathComponent("/one/two")).bundles(options: options).first)
-        let (foundRealBundle, _) = try XCTUnwrap(realProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
-
-        let (foundTestBundle, _) = try XCTUnwrap(testProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/one/two"), options: .init(
-            infoPlistFallbacks: options.infoPlistFallbacks,
-            // The test file system has a default base URL and needs different URLs for the symbol graph files
-            additionalSymbolGraphFiles: [
-                URL(fileURLWithPath: "/path/to/SomethingAdditional.symbols.json")
+        for fileManager in [FileManager.default as (any FileManagerProtocol), testFileSystem as (any FileManagerProtocol)] {
+            let inputsProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
+            let options = CatalogDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
+                tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")
             ])
-        ))
-
-        for (bundle, relativeBase) in [
-            (foundPrevImplBundle, tempDirectory.appendingPathComponent("/one/two/three")),
-            (foundRealBundle,     tempDirectory.appendingPathComponent("/one/two/three")),
-            (foundTestBundle,     URL(fileURLWithPath: "/one/two/three")),
-        ] {
+            let (inputs, _) = try XCTUnwrap(inputsProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
+            
             func relativePathString(_ url: URL) -> String {
-                url.relative(to: relativeBase)!.path
+                url.relative(to: tempDirectory.appendingPathComponent("/one/two/three"))!.path
             }
             
-            XCTAssertEqual(bundle.displayName, "CustomDisplayName")
-            XCTAssertEqual(bundle.identifier, "com.example.test")
-            XCTAssertEqual(bundle.markupURLs.map(relativePathString).sorted(), [
+            XCTAssertEqual(inputs.displayName, "CustomDisplayName")
+            XCTAssertEqual(inputs.id, "com.example.test")
+            XCTAssertEqual(inputs.markupURLs.map(relativePathString).sorted(), [
                 "Found.docc/CCC.md",
                 "Found.docc/Inner/DDD.md",
                 "Found.docc/Inner/Nested.docc/EEE.md",
             ])
-            XCTAssertEqual(bundle.miscResourceURLs.map(relativePathString).sorted(), [
+            XCTAssertEqual(inputs.miscResourceURLs.map(relativePathString).sorted(), [
                 "Found.docc/Info.plist",
                 "Found.docc/Inner/Info.plist",
                 "Found.docc/Inner/header.html",
                 "Found.docc/Inner/second.png",
+                "Found.docc/favicon.ico",
                 "Found.docc/first.png",
                 "Found.docc/footer.html",
                 "Found.docc/theme-settings.json",
             ])
-            XCTAssertEqual(bundle.symbolGraphURLs.map(relativePathString).sorted(), [
+            XCTAssertEqual(inputs.symbolGraphURLs.map(relativePathString).sorted(), [
                 "../../../path/to/SomethingAdditional.symbols.json",
                 "Found.docc/Inner/SomethingNested.symbols.json",
                 "Found.docc/SomethingTopLevel.symbols.json",
             ])
-            XCTAssertEqual(bundle.customFooter.map(relativePathString), "Found.docc/footer.html")
-            XCTAssertEqual(bundle.customHeader.map(relativePathString), nil)
-            XCTAssertEqual(bundle.themeSettings.map(relativePathString), "Found.docc/theme-settings.json")
+            XCTAssertEqual(inputs.customFooter.map(relativePathString), "Found.docc/footer.html")
+            XCTAssertEqual(inputs.customHeader.map(relativePathString), nil)
+            XCTAssertEqual(inputs.themeSettings.map(relativePathString), "Found.docc/theme-settings.json")
+            XCTAssertEqual(inputs.customFavicon.map(relativePathString), "Found.docc/favicon.ico")
         }
     }
     

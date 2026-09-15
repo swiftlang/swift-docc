@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// Each path component can be a maximum of 255 characters on HFS+ and ext* file systems,
 /// but we set the limit to 240 to leave a convenient buffer for adding
@@ -55,8 +55,6 @@ public struct NodeURLGenerator {
         case documentationCuration(parentPath: String, articleName: String)
         case article(bundleName: String, articleName: String)
         case tutorialTableOfContents(name: String)
-        @available(*, deprecated, renamed: "tutorialTableOfContents(name:)", message: "Use 'tutorialTableOfContents(name:)' instead. This deprecated API will be removed after 6.2 is released")
-        case technology(technologyName: String)
         case tutorial(bundleName: String, tutorialName: String)
         
         /// A URL safe path under the given root path.
@@ -94,8 +92,7 @@ public struct NodeURLGenerator {
                         isDirectory: false
                     )
                     .path
-            case .technology(let name),
-                 .tutorialTableOfContents(let name):
+            case .tutorialTableOfContents(let name):
                 // Format: "/tutorials/Name"
                 return Self.tutorialsFolderURL
                     .appendingPathComponent(
@@ -120,23 +117,27 @@ public struct NodeURLGenerator {
     }
     
     /// Returns a string path appropriate for the given semantic node.
-    public static func pathForSemantic(_ semantic: Semantic, source: URL, bundle: DocumentationBundle) -> String {
+    public static func pathForSemantic(_ semantic: Semantic, source: URL, inputs: DocumentationContext.Inputs) -> String {
         let fileName = source.deletingPathExtension().lastPathComponent
         
         switch semantic {
         case is TutorialTableOfContents:
             return Path.tutorialTableOfContents(name: fileName).stringValue
         case is Tutorial, is TutorialArticle:
-            return Path.tutorial(bundleName: bundle.displayName, tutorialName: fileName).stringValue
+            return Path.tutorial(bundleName: inputs.displayName, tutorialName: fileName).stringValue
         case let article as Article:
             if article.metadata?.technologyRoot != nil {
                 return Path.documentation(path: fileName).stringValue
             } else {
-                return Path.article(bundleName: bundle.displayName, articleName: fileName).stringValue
+                return Path.article(bundleName: inputs.displayName, articleName: fileName).stringValue
             }
         default:
             return fileName
         }
+    }
+    @available(*, deprecated, renamed: "pathForSemantic(_:source:inputs:)", message: "Use 'pathForSemantic(_:source:inputs:)' instead. This deprecated API will be removed after 6.5 is released.")
+    public static func pathForSemantic(_ semantic: Semantic, source: URL, bundle: DocumentationContext.Inputs) -> String {
+        pathForSemantic(semantic, source: source, inputs: bundle)
     }
     
     /// Returns the reference's path in a format that is safe for writing to disk.

@@ -23,7 +23,7 @@ indirect enum JSON: Decodable {
     case boolean(Bool)
     case null
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if container.decodeNil() {
             self = .null
@@ -169,12 +169,12 @@ enum OutputDiff {
         
         guard difference.count == 0 else {
             print("Error: File listing not equal.")
-            difference.forEach({
-                switch $0 {
+            for diff in difference {
+                switch diff {
                     case .insert(let index, _, _): print("Removed '\(before[index].path)'")
                     case .remove(let index, _, _): print("Added '\(after[index].path)'")
                 }
-            })
+            }
             return
         }
         

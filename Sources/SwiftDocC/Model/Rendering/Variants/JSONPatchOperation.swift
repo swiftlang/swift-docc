@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A patch to update a JSON value.
 public typealias JSONPatch = [JSONPatchOperation]
 
@@ -74,15 +72,6 @@ public enum JSONPatchOperation: Codable {
     ///   - variantPatchOperation: The patch to apply.
     ///   - pointer: The pointer to the value to update.
     public init<Value>(variantPatchOperation: VariantPatchOperation<Value>, pointer: JSONPointer) {
-        // FIXME: The latest Swift development snapshots (2024-10-30-a and later) is missing the "references" path component. (rdar://139446585)
-        // AFAICT it's the only path that's missing components, so we're working around that issue here.
-        // Since the only RenderNode coding paths that have include a topic reference (as its 2nd component) are
-        // modifications of topics in the "references" section, we can detect and workaround this issue by checking for a "doc://" prefix.
-        var pointer = pointer
-        if pointer.pathComponents.first?.hasPrefix("doc://") == true {
-            pointer = pointer.prependingPathComponents(["references"])
-        }
-        
         switch variantPatchOperation {
         case .replace(let value):
             self = .replace(pointer: pointer, encodableValue: value)
@@ -93,7 +82,7 @@ public enum JSONPatchOperation: Codable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let operation = try container.decode(PatchOperation.self, forKey: .operation)
         
@@ -116,11 +105,11 @@ public enum JSONPatchOperation: Codable {
     /// - Parameters:
     ///   - pointer: The pointer to the value to replace.
     ///   - encodableValue: The value to use in the replacement.
-    public static func replace(pointer: JSONPointer, encodableValue: Encodable) -> JSONPatchOperation {
+    public static func replace(pointer: JSONPointer, encodableValue: any Encodable) -> JSONPatchOperation {
         .replace(pointer: pointer, value: AnyCodable(encodableValue))
     }
     
-    public static func add(pointer: JSONPointer, encodableValue: Encodable) -> JSONPatchOperation {
+    public static func add(pointer: JSONPointer, encodableValue: any Encodable) -> JSONPatchOperation {
         .add(pointer: pointer, value: AnyCodable(encodableValue))
     }
     
@@ -137,7 +126,7 @@ public enum JSONPatchOperation: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .replace(let pointer, let value):

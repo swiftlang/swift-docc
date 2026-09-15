@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,4 +18,22 @@ public protocol MediaReference: RenderReference {
     ///
     /// This text helps screen readers describe the media.
     var altText: String? { get set }
+}
+
+/// A proxy value for information about an asset variant.
+protocol MediaVariantProxy {
+    /// The URL of the file for this variant.
+    var url: URL { get }
+    /// The traits of this variant.
+    var traits: [String] { get }
+}
+
+extension MediaVariantProxy {
+    /// Compares two variants by their rendered URL, and by traits for variants with identical URLs.
+    static func areInIncreasingOrder(_ lhs: Self, _ rhs: Self) -> Bool {
+        if lhs.url.path != rhs.url.path {
+            return lhs.url.path < rhs.url.path
+        }
+        return lhs.traits.joined() < rhs.traits.joined()
+    }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-/// A utlity type for parsing directives from markup.
+/// A utility type for parsing directives from markup.
 struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
     
     /// Returns a directive of the given type if found in the given sequence of markup elements and the remaining markup.
@@ -23,9 +23,9 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
         from markupElements: inout [any Markup],
         parentType: Semantic.Type,
         source: URL?,
-        bundle: DocumentationBundle,
-        context: DocumentationContext,
-        problems: inout [Problem]
+        inputs: DocumentationContext.Inputs,
+        featureFlags: FeatureFlags,
+        diagnostics: inout [Diagnostic]
     ) -> Directive? {
         let (directiveElements, remainder) = markupElements.categorize { markup -> Directive? in
             guard let childDirective = markup as? BlockDirective,
@@ -36,27 +36,23 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
             return Directive(
                 from: childDirective,
                 source: source,
-                for: bundle,
-                in: context,
-                problems: &problems
+                for: inputs,
+                featureFlags: featureFlags,
+                diagnostics: &diagnostics
             )
         }
         
         let directive = directiveElements.first
         
         for extraDirective in directiveElements.dropFirst() {
-            problems.append(
-                Problem(
-                    diagnostic: Diagnostic(
-                        source: source,
-                        severity: .warning,
-                        range: extraDirective.originalMarkup.range,
-                        identifier: "org.swift.docc.HasAtMostOne<\(parentType), \(Directive.self)>.DuplicateChildren",
-                        summary: "Duplicate \(Metadata.directiveName.singleQuoted) child directive",
-                        explanation: nil,
-                        notes: []
-                    ),
-                    possibleSolutions: []
+            diagnostics.append(
+                Diagnostic(
+                    source: source,
+                    severity: .warning,
+                    range: extraDirective.originalMarkup.range,
+                    identifier: "org.swift.docc.HasAtMostOne<\(parentType), \(Directive.self)>.DuplicateChildren",
+                    summary: "Duplicate \(Metadata.directiveName.singleQuoted) child directive",
+                    explanation: nil
                 )
             )
         }

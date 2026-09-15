@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,8 +14,8 @@ import SymbolKit
 import XCTest
 
 class SemaToRenderNodeSourceRepositoryTests: XCTestCase {
-    func testDoesNotEmitsSourceRepositoryInformationWhenNoSourceIsGiven() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testDoesNotEmitsSourceRepositoryInformationWhenNoSourceIsGiven() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "SourceLocations",
             sourceRepository: nil
         )
@@ -23,8 +23,8 @@ class SemaToRenderNodeSourceRepositoryTests: XCTestCase {
         XCTAssertNil(try outputConsumer.renderNode(withTitle: "MyStruct").metadata.remoteSource)
     }
     
-    func testEmitsSourceRepositoryInformationForSymbolsWhenPresent() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testEmitsSourceRepositoryInformationForSymbolsWhenPresent() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "SourceLocations",
             sourceRepository: SourceRepository.github(
                 checkoutPath: "/path/to/checkout",

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -52,14 +52,14 @@ struct SymbolGraphRelationshipsBuilder {
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
     ///   - selector: The symbol graph selector in which the relationship is relevant.
-    ///   - bundle: A documentation bundle.
+    ///   - inputs: A collection of build inputs.
     ///   - context: A documentation context.
     ///   - localCache: A cache of local documentation content.
     ///   - engine: A diagnostic collecting engine.
     static func addImplementationRelationship(
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
-        in bundle: DocumentationBundle,
+        in inputs: DocumentationContext.Inputs,
         context: DocumentationContext,
         localCache: DocumentationContext.LocalCache,
         engine: DiagnosticEngine
@@ -83,7 +83,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? implementorNode.reference.sourceLanguage
             
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: inputs) else {
                 // The symbol reference format is invalid.
                 assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
@@ -137,14 +137,14 @@ struct SymbolGraphRelationshipsBuilder {
     /// - Parameters:
     ///   - edge: A symbol-graph relationship with a source and a target.
     ///   - selector: The symbol graph selector in which the relationship is relevant.
-    ///   - bundle: A documentation bundle.
+    ///   - inputs: A collection of build inputs.
     ///   - localCache: A cache of local documentation content.
     ///   - externalCache: A cache of external documentation content.
     ///   - engine: A diagnostic collecting engine.
     static func addConformanceRelationship(
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
-        in bundle: DocumentationBundle,
+        in inputs: DocumentationContext.Inputs,
         localCache: DocumentationContext.LocalCache,
         externalCache: DocumentationContext.ExternalCache,
         engine: DiagnosticEngine
@@ -173,7 +173,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? conformingNode.reference.sourceLanguage
 
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: inputs) else {
                 // The symbol reference format is invalid.
                 assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
@@ -226,14 +226,14 @@ struct SymbolGraphRelationshipsBuilder {
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
     ///   - selector: The symbol graph selector in which the relationship is relevant.
-    ///   - bundle: A documentation bundle.
+    ///   - inputs: A collection of build inputs.
     ///   - localCache: A cache of local documentation content.
     ///   - externalCache: A cache of external documentation content.
     ///   - engine: A diagnostic collecting engine.
     static func addInheritanceRelationship(
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
-        in bundle: DocumentationBundle,
+        in inputs: DocumentationContext.Inputs,
         localCache: DocumentationContext.LocalCache,
         externalCache: DocumentationContext.ExternalCache,
         engine: DiagnosticEngine
@@ -260,7 +260,7 @@ struct SymbolGraphRelationshipsBuilder {
             let language = childNode.reference.sourceLanguage
             
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: nil)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: inputs) else {
                 // The symbol reference format is invalid.
                 assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
@@ -346,7 +346,13 @@ struct SymbolGraphRelationshipsBuilder {
             assertionFailure(AssertionMessages.sourceNotFound(edge))
             return
         }
-        requiredSymbol.isRequired = required
+        // If both requirementOf and optionalRequirementOf relationships exist
+        // for the same symbol, let the optional relationship take precedence.
+        // Optional protocol requirements sometimes appear with both relationships,
+        // but non-optional requirements do not.
+        if !required || !requiredSymbol.isRequiredVariants.hasAnyVariants {
+            requiredSymbol.isRequired = required
+        }
     }
     
     /// Sets a node in the context as an inherited symbol.

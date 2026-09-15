@@ -49,7 +49,7 @@ class WebKitCommunicationBridgeTests: XCTestCase {
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: encodedMessage) as? NSDictionary)
         
         let didEvaluateJavaScript = expectation(description: "Did evaluate JavaScript")
-        let evaluateJavaScript: (String, ((Any?, Error?) -> ())?) -> () = { string, _ in
+        let evaluateJavaScript: (String, ((Any?, (any Error)?) -> ())?) -> () = { string, _ in
             defer { didEvaluateJavaScript.fulfill() }
             
             XCTAssert(string.hasPrefix("window.bridge.receive("))

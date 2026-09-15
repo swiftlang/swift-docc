@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /**
     This transformation removes the hierarchy information from a render node JSON,
     also getting rid of the dead references. It's useful to save space when the

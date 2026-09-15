@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,24 +13,21 @@ import XCTest
 import Markdown
 
 class AssessmentsTests: XCTestCase {
-    func testEmptyAndLonely() throws {
+    func testEmptyAndLonely() async throws {
         let source = "@Assessments"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Assessments.directiveName, directive.name)
-            let assessments = Assessments(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let assessments = Assessments(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(assessments)
-            XCTAssertEqual(1, problems.count)
-            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-            problems.first.map { problem in
-                XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.HasAtLeastOne<\(Assessments.self), \(MultipleChoice.self)>"))
-            }
+            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasAtLeastOne<\(Assessments.self), \(MultipleChoice.self)>")
         }
     }
 }

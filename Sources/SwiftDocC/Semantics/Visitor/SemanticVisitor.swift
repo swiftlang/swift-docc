@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,9 +86,6 @@ public protocol SemanticVisitor {
      Visit a ``TutorialTableOfContents`` and return the result.
      */
     mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Result
-
-    @available(*, deprecated, renamed: "visitTutorialTableOfContents(_:)", message: "Use 'visitTutorialTableOfContents(_:)' instead. This deprecated API will be removed after 6.2 is released")
-    mutating func visitTechnology(_ technology: TutorialTableOfContents) -> Result
     
     /**
      Visit an ``ImageMedia`` and return the result.
@@ -149,13 +146,5 @@ public protocol SemanticVisitor {
 extension SemanticVisitor {
     public mutating func visit(_ semantic: Semantic) -> Result {
         return semantic.accept(&self)
-    }
-}
-
-@available(*, deprecated) // Remove this default implementation after 6.2 is released.
-extension SemanticVisitor {
-    // We need to provide a default implementation to avoid the breaking change of a new protocol requirement.
-    mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Result {
-        self.visitTechnology(tutorialTableOfContents)
     }
 }

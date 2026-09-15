@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 
-public class DiffAvailabilityTests: XCTestCase {
+class DiffAvailabilityTests: XCTestCase {
     func testDecode() throws {
         let json = """
         {

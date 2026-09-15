@@ -9,8 +9,8 @@
 */
 
 import Foundation
-import SymbolKit
-import Markdown
+private import SymbolKit
+private import Markdown
 
 /// Translates a symbol's possible values into a render nodes's section.
 struct PossibleValuesSectionTranslator: RenderSectionTranslator {

@@ -15,16 +15,16 @@ The context is generally responsible for:
 
 ### Creating a Context
 
-Use ``DocumentationContext/init(bundle:dataProvider:diagnosticEngine:configuration:)`` to create a context for a given bundle:
+Use ``DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)`` to create a context for a given collection of inputs:
 
 ```swift
 let inputsProvider = DocumentationContext.InputsProvider()
-let (bundle, dataProvider) = try inputsProvider.inputsAndDataProvider(
+let (inputs, dataProvider) = try inputsProvider.inputsAndDataProvider(
     startingPoint: catalogURL, 
     options: bundleDiscoveryOptions
 )
 
-let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+let context = try DocumentationContext(inputs: inputs, dataProvider: dataProvider)
 ```
 
 ### Accessing Documentation
@@ -33,7 +33,7 @@ Use ``DocumentationContext/entity(with:)`` to access a documentation node by its
 
 ```swift
 let reference = ResolvedTopicReference(
-    bundleID: "com.mybundle",
+    bundleID: "com.example",
     path: "/documentation/ValidationKit/EmailValidator",
     fragment: nil,
     sourceLanguage: .swift)
@@ -79,4 +79,4 @@ let sourceFileURL = try context.documentURL(for: reference)
 - ``CodeColorsPreferenceKey``
 - ``SRGBColor``
 
-<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2026 Apple Inc and the Swift Project authors. All Rights Reserved. -->

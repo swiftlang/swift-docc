@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,7 +21,7 @@ private extension SymbolGraph.Symbol {
 /// Tests inheritability of `introduced` availability versions
 /// when symbols don't have that annotation from source.
 ///
-/// This information should come from a documentation bundle's
+/// This information should come from a documentation catalog's
 /// Info.plist `CDAppleDefaultAvailability` dictionary: the
 /// platform version is assumed to a be a symbols `introduced`
 /// availability version for that platform.
@@ -34,16 +34,14 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     typealias Domain = SymbolGraph.Symbol.Availability.Domain
     typealias Version = SymbolGraph.SemanticVersion
     
-    var testBundle: DocumentationBundle!
     var context: DocumentationContext!
     
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        (testBundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    override func setUp() async throws {
+        try await super.setUp()
+        (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
     }
     
     override func tearDown() {
-        testBundle = nil
         context = nil
         super.tearDown()
     }

@@ -8,12 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A list of JSON patches generated as differences between two documents.
 public typealias JSONPatchDifferences = [JSONPatchOperation]
 
-typealias CodablePath = [CodingKey]
+typealias CodablePath = [any CodingKey]
 
 /// A protocol that defines Diffable conformance for properties and structs in RenderNode JSON.
 protocol RenderJSONDiffable {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,9 @@
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
+import DocCCommon
+import DocCTestUtilities
+import SymbolKit
 
 class ExternalTopicsGraphHashTests: XCTestCase {
     
@@ -22,24 +25,32 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
             let reference = ResolvedTopicReference(bundleID: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
             let entity = LinkResolver.ExternalEntity(
-                topicRenderReference: TopicRenderReference(
-                    identifier: .init(preciseIdentifier),
-                    title: preciseIdentifier,
-                    abstract: [],
-                    url: "/" + preciseIdentifier,
-                    kind: .symbol,
-                    estimatedTime: nil
-                ),
-                renderReferenceDependencies: .init(),
-                sourceLanguages: [.swift]
+                kind: .class,
+                language: .swift,
+                relativePresentationURL: URL(string: "/\(preciseIdentifier)")!,
+                referenceURL: reference.url,
+                title: preciseIdentifier,
+                availableLanguages: [.swift],
+                variants: []
             )
             return (reference, entity)
         }
     }
     
-    func testNoMetricAddedIfNoExternalTopicsAreResolved() throws {
-        // Load bundle without using external resolvers
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    /// A catalog with one symbol whose in-source documentation is the provided markdown.
+    private func makeExampleCatalog(markdown: String) -> Folder {
+        Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: markdown),
+            ]))
+        }
+    }
+    
+    func testNoMetricAddedIfNoExternalTopicsAreResolved() async throws {
+        // Load catalog without using external resolvers
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something"))
+        })
         XCTAssertTrue(context.externallyResolvedLinks.isEmpty)
         
         // Try adding external topics metrics
@@ -50,62 +61,59 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         XCTAssertNil(testBenchmark.metrics.first?.result, "Metric was added but there was no external links or symbols")
     }
     
-    func testExternalLinksSameHash() throws {
+    func testExternalLinksSameHash() async throws {
         let externalResolver = self.externalResolver
         
         // Add external links and verify the checksum is always the same
-        let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
-            try """
-            # ``SideKit/SideClass``
-
-            Curate some of the children and leave the rest for automatic curation.
+        func computeTopicHash() async throws -> String {
+            let catalog = self.makeExampleCatalog(markdown: """
+            Curate some external links.
 
             ## Topics
                 
             ### External references
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
-            """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
-            }
+            """)
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
+            let (_, context) = try await self.loadBundle(catalog: catalog, configuration: configuration)
             
             // Verify that links were resolved
             XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
             
-            // Verify that a metric was added
-            XCTAssertNotNil(testBenchmark.metrics[0].result)
-            return testBenchmark.metrics[0].result
-        }
-        .compactMap { value -> String? in
-            guard let value,
-                case MetricValue.checksum(let hash) = value else { return nil }
-            return hash
+            return try TopicAnchorHashTests.extractChecksumHash(from: testBenchmark)
         }
         
+        let expectedHash = try await computeTopicHash()
+        
         // Verify the produced topic graph hash is repeatedly the same
-        XCTAssertTrue(hashes.allSatisfy({ $0 == hashes.first }))
+        for _ in 0 ..< 10 {
+            let hash = try await computeTopicHash()
+            XCTAssertEqual(hash, expectedHash)
+        }
     }
 
-    func testLinksAndSymbolsSameHash() throws {
+    func testLinksAndSymbolsSameHash() async throws {
         let externalResolver = self.externalResolver
         
         // Add external links and verify the checksum is always the same
-        let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
-            try """
-            # ``SideKit/SideClass``
-
-            Curate some of the children and leave the rest for automatic curation.
+        func computeTopicHash() async throws -> String {
+            let catalog = self.makeExampleCatalog(markdown: """
+            Curate some external links.
 
             ## Topics
                 
             ### External references
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
             - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
-            """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
-            }
+            """)
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
+            configuration.externalDocumentationConfiguration.globalSymbolResolver = self.externalSymbolResolver
+            let (_, context) = try await self.loadBundle(catalog: catalog, configuration: configuration)
             
             // Verify that links and symbols were resolved
             XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
@@ -113,37 +121,34 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
             
-            // Verify that a metric was added
-            XCTAssertNotNil(testBenchmark.metrics[0].result)
-            return testBenchmark.metrics[0].result
-        }
-        .compactMap { value -> String? in
-            guard let value,
-                case MetricValue.checksum(let hash) = value else { return nil }
-            return hash
+            return try TopicAnchorHashTests.extractChecksumHash(from: testBenchmark)
         }
         
+        let expectedHash = try await computeTopicHash()
+        
         // Verify the produced topic graph hash is repeatedly the same
-        XCTAssertTrue(hashes.allSatisfy({ $0 == hashes.first }))
+        for _ in 0 ..< 10 {
+            let hash = try await computeTopicHash()
+            XCTAssertEqual(hash, expectedHash)
+        }
     }
     
-    func testExternalTopicsDetectsChanges() throws {
+    func testExternalTopicsDetectsChanges() async throws {
         let externalResolver = self.externalResolver
 
-        // Load a bundle with external links
-        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
-        try """
-        # ``SideKit/SideClass``
-
-        Curate some of the children and leave the rest for automatic curation.
+        // Load a catalog with external links
+        let catalog = makeExampleCatalog(markdown: """
+        Curate some external links.
 
         ## Topics
             
         ### External references
         - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
         - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
-        """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
-        }
+        """)
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
     
         XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
         guard !context.externallyResolvedLinks.isEmpty else { return }

@@ -1,8 +1,8 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.1
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,15 +12,61 @@
 import PackageDescription
 import class Foundation.ProcessInfo
 
-let swiftSettings: [SwiftSetting] = [
-    .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+func swiftSettings(_ languageMode: SwiftLanguageMode) -> [SwiftSetting] {
+    var settings: [SwiftSetting] = [
+        .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+        
+        .swiftLanguageMode(languageMode),
+        
+        .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
+        .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
+        .enableUpcomingFeature("MemberImportVisibility"), // SE-0444: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0444-member-import-visibility.md
+    ]
+    
+    // Some upcoming language features are enabled by default in the Swift 6 language mode and warn if they're redundantly explicitly enabled.
+    
+    switch languageMode {
+    case .v4, .v4_2, .v5:
+        settings.append(
+            .enableUpcomingFeature("ConciseMagicFile") // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
+        )
+    default:
+        break
+    }
+    
+    return settings
+}
+
+// NIOHTTP1 is not available on Windows.
+let NIOPlatforms: [Platform] = [.macOS, .iOS, .linux, .android]
+// The preview server requires NIOHTTP1.
+// Gate it behind a trait so it can be excluded from builds.
+let previewServerTrait = "PreviewServer"
+
+// This variable is set in Swift.org CI, and is used to point to local checkouts of dependencies,
+// and skip gating SwiftNIO behind package traits so it can resolve with SwiftPM's `--multiroot-data-file`.
+let useLocalDependencies = ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] != nil
+
+let previewServerSettings: [SwiftSetting] = [
+    .define("PREVIEW_SERVER", .when(platforms: NIOPlatforms, traits: [previewServerTrait]))
 ]
+
+// Disable the preview server trait by default on hosts where SwiftNIO does not build.
+// This allows dependency resolution to exclude SwiftNIO.
+//
+// Note: This will also disable the trait when cross-compiling for targets where SwiftNIO *does* build.
+// In such cases, manually enable the trait with `--traits PreviewServer`.
+#if os(macOS) || os(iOS) || os(Linux) || os(Android)
+let previewServerEnabledByDefault = true
+#else
+let previewServerEnabledByDefault = false
+#endif
 
 let package = Package(
     name: "SwiftDocC",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15)
+        .macOS(.v13),
+        .iOS(.v16)
     ],
     products: [
         .library(
@@ -30,25 +76,36 @@ let package = Package(
         .executable(
             name: "docc",
             targets: ["docc"]
-        )
+        ),
+    ],
+    traits: [
+        .trait(
+            name: previewServerTrait,
+            description: "Build the DocC preview server, which depends on SwiftNIO."
+        ),
+        .default(enabledTraits: previewServerEnabledByDefault ? [previewServerTrait] : [])
     ],
     targets: [
         // SwiftDocC library
         .target(
             name: "SwiftDocC",
             dependencies: [
+                .target(name: "DocCCommon"),
+                .target(name: "DocCHTML"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
                 .product(name: "Crypto", package: "swift-crypto"),
             ],
-            swiftSettings: swiftSettings
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v5)
         ),
         .testTarget(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCCommon"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -56,59 +113,108 @@ let package = Package(
                 .copy("Converter/Converter Fixtures"),
                 .copy("Rendering/Rendering Fixtures"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
         // Command-line tool library
         .target(
-            name: "SwiftDocCUtilities",
+            name: "DocCCommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
+                .target(name: "DocCCommon"),
+                // build-script-helper.py uses a multiroot workspace, which does not work with trait-conditional dependencies.
+                // When building in Swift.org CI, do not use a package trait gate for SwiftNIO.
+                .product(name: "NIOHTTP1", package: "swift-nio", condition: useLocalDependencies ? .when(platforms: NIOPlatforms) : .when(platforms: NIOPlatforms, traits: [previewServerTrait])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
-            swiftSettings: swiftSettings
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v5) + previewServerSettings
         ),
         .testTarget(
-            name: "SwiftDocCUtilitiesTests",
+            name: "DocCCommandLineTests",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
                 .target(name: "SwiftDocC"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCCommon"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5) + previewServerSettings
         ),
-        
+
         // Test utility library
         .target(
-            name: "SwiftDocCTestUtilities",
+            name: "DocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
+                .target(name: "DocCCommon"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
 
         // Command-line tool
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
-            swiftSettings: swiftSettings
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v5)
         ),
 
-        // Test app for SwiftDocCUtilities
+        // A few common types and core functionality that's useable by all other targets.
+        .target(
+            name: "DocCCommon",
+            dependencies: [
+                // This target shouldn't have any local dependencies so that all other targets can depend on it.
+                // Dependencies on SymbolKit and Markdown are find to add if they're needed for any functionality.
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v6)
+        ),
+
+        .testTarget(
+            name: "DocCCommonTests",
+            dependencies: [
+                .target(name: "DocCCommon"),
+                .target(name: "DocCTestUtilities"),
+            ],
+            swiftSettings: swiftSettings(.v6)
+        ),
+
+        .target(
+            name: "DocCHTML",
+            dependencies: [
+                .target(name: "DocCCommon"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v6)
+        ),
+        .testTarget(
+            name: "DocCHTMLTests",
+            dependencies: [
+                .target(name: "DocCHTML"),
+                .target(name: "SwiftDocC"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .target(name: "DocCTestUtilities"),
+            ],
+            swiftSettings: swiftSettings(.v6)
+        ),
+
+        // Test app for DocCCommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             path: "Tests/signal-test-app",
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
 
         .executableTarget(
@@ -117,27 +223,12 @@ let package = Package(
                 .target(name: "SwiftDocC"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
-        
     ]
 )
 
-// If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
-// we're building in the Swift.org CI system alongside other projects in the Swift toolchain and
-// we can depend on local versions of our dependencies instead of fetching them remotely.
-if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
-    // Building standalone, so fetch all dependencies remotely.
-    package.dependencies += [
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.53.0"),
-        .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
-        .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
-        .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "main"),
-        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
-        .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.2.0"),
-    ]
-} else {
+if useLocalDependencies {
     // Building in the Swift.org CI system, so rely on local versions of dependencies.
     package.dependencies += [
         .package(path: "../swift-nio"),
@@ -146,5 +237,16 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(path: "../swift-argument-parser"),
         .package(path: "../swift-docc-symbolkit"),
         .package(path: "../swift-crypto"),
+    ]
+} else {
+    // Building standalone, so fetch all dependencies remotely.
+    package.dependencies += [
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.92.2"),
+        .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
+        .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "main"),
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.2.0"),
     ]
 }

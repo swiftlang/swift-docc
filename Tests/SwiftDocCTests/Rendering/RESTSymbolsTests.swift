@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,8 +11,9 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import SymbolKit
+import DocCCommon
 
 fileprivate extension [RenderBlockContent] {
     var firstParagraphText: String? {
@@ -312,9 +313,8 @@ class RESTSymbolsTests: XCTestCase {
         AssertRoundtrip(for: object)
     }
     
-    func testReferenceOfEntitlementWithKeyName() throws {
-        
-        func createDocumentationTopicRenderReferenceForSymbol(keyCustomName: String?, extraFiles: [TextFile] = []) throws -> TopicRenderReference {
+    func testReferenceOfEntitlementWithKeyName() async throws {
+        func createDocumentationTopicRenderReferenceForSymbol(keyCustomName: String?, extraFiles: [TextFile] = []) async throws -> TopicRenderReference {
             let someSymbol = makeSymbol(
                 id: "plist-key-symbolname",
                 kind: .init(rawValue: "enum"),
@@ -331,30 +331,32 @@ class RESTSymbolsTests: XCTestCase {
                     )),
                 ] + extraFiles
             )
-            let (bundle, context) = try loadBundle(catalog: catalog)
-            let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+            let (_, context) = try await loadBundle(catalog: catalog)
+            let moduleReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
             let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
+            var translator = RenderNodeTranslator(context: context, identifier: moduleReference)
             let renderNode = translator.visit(moduleSymbol) as! RenderNode
             return try XCTUnwrap((renderNode.references["doc://unit-test/documentation/ModuleName/plist-key-symbolname"] as? TopicRenderReference))
         }
         
         // The symbol has a custom title.
-        var propertyListKeyNames = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(keyCustomName: "Symbol Custom Title").propertyListKeyNames)
+        let topicReferenceWithCustomKeyName = try await createDocumentationTopicRenderReferenceForSymbol(keyCustomName: "Symbol Custom Title")
+        var propertyListKeyNames = try XCTUnwrap(topicReferenceWithCustomKeyName.propertyListKeyNames)
         // Check that the reference contains the key symbol name.
         XCTAssertEqual(propertyListKeyNames.titleStyle, .useRawKey)
         XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
         XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
         
         // The symbol does not have a custom title.
-        propertyListKeyNames = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(keyCustomName: nil).propertyListKeyNames)
+        let topicReferenceWithoutCustomKeyName = try await createDocumentationTopicRenderReferenceForSymbol(keyCustomName: nil)
+        propertyListKeyNames = try XCTUnwrap(topicReferenceWithoutCustomKeyName.propertyListKeyNames)
         // Check that the reference does not contain the key symbol name.
         XCTAssertEqual(propertyListKeyNames.titleStyle, .useRawKey)
         XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
         XCTAssertNil(propertyListKeyNames.displayName)
         
         // The symbol has a custom title and is extended via markdown.
-        var referenceNode = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(
+        var referenceNode = try await createDocumentationTopicRenderReferenceForSymbol(
             keyCustomName: "Symbol Custom Title",
             extraFiles: [
                 TextFile(name: "plist-key-symbolname.md", utf8Content:
@@ -365,7 +367,7 @@ class RESTSymbolsTests: XCTestCase {
                     """
                 )
             ]
-        ))
+        )
         propertyListKeyNames = try XCTUnwrap(referenceNode.propertyListKeyNames)
         // Check that the reference contains the raw key and title matches the
         // key name.
@@ -375,7 +377,7 @@ class RESTSymbolsTests: XCTestCase {
         XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
         
         // The symbol has a custom title and is the markdown defines a `Display Name` directive.
-        referenceNode = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(
+        referenceNode = try await createDocumentationTopicRenderReferenceForSymbol(
             keyCustomName: "Symbol Custom Title",
             extraFiles: [
                 TextFile(name: "plist-key-symbolname.md", utf8Content:
@@ -390,7 +392,7 @@ class RESTSymbolsTests: XCTestCase {
                     """
                 )
             ]
-        ))
+        )
         propertyListKeyNames = try XCTUnwrap(referenceNode.propertyListKeyNames)
         // Check that the reference contains the raw key and the title matches the
         // markdown display name.
@@ -400,7 +402,7 @@ class RESTSymbolsTests: XCTestCase {
         XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
         
         // The symbol does not have a custom title and is extended via markdown using a `Display Name` directive.
-        referenceNode = try createDocumentationTopicRenderReferenceForSymbol(
+        referenceNode = try await createDocumentationTopicRenderReferenceForSymbol(
             keyCustomName: nil,
             extraFiles: [
                 TextFile(name: "plist-key-symbolname.md", utf8Content:
@@ -424,6 +426,4 @@ class RESTSymbolsTests: XCTestCase {
         XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
         XCTAssertEqual(propertyListKeyNames.displayName, nil)
     }
-    
-    
 }

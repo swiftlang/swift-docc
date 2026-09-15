@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class RenderNodeCodableTests: XCTestCase {
     
@@ -101,17 +102,13 @@ class RenderNodeCodableTests: XCTestCase {
     }
     
     func testSortedKeys() throws {
-        guard #available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) else {
-            throw XCTSkip("Skipped on platforms that don't support JSONEncoder.OutputFormatting.sortedKeys")
-        }
-
         // When prettyPrint is enabled, keys are sorted
         let encoderPretty = RenderJSONEncoder.makeEncoder(prettyPrint: true)
         XCTAssertTrue(encoderPretty.outputFormatting.contains(.sortedKeys))
 
-        // When prettyPrint is disabled, keys are not sorted
+        // When prettyPrint is disabled, keys are still sorted
         let encoderNotPretty = RenderJSONEncoder.makeEncoder(prettyPrint: false)
-        XCTAssertFalse(encoderNotPretty.outputFormatting.contains(.sortedKeys))
+        XCTAssertTrue(encoderNotPretty.outputFormatting.contains(.sortedKeys))
     }
 
     func testDecodingVariantOverrides() throws {
@@ -198,7 +195,7 @@ class RenderNodeCodableTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let bundleID: DocumentationBundle.Identifier = #function
+        let bundleID: DocumentationContext.Inputs.Identifier = #function
         
         let renderNodeWithUniqueBundleID = try String(contentsOf: exampleRenderNodeJSON)
             .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)
@@ -221,9 +218,9 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertEqual(renderNode.topicSectionsStyle, .list)
     }
     
-    func testEncodeRenderNodeWithCustomTopicSectionStyle() throws {
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
+    func testEncodeRenderNodeWithCustomTopicSectionStyle() async throws {
+        let (_, context) = try await testBundleAndContext()
+        var diagnostics = [Diagnostic]()
         
         let source = """
             # My Great Article
@@ -237,7 +234,7 @@ class RenderNodeCodableTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+            Article(from: document.root, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         )
         
         let reference = ResolvedTopicReference(
@@ -255,7 +252,7 @@ class RenderNodeCodableTests: XCTestCase {
         )
         context.topicGraph.addNode(topicGraphNode)
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         XCTAssertEqual(node.topicSectionsStyle, .compactGrid)
         

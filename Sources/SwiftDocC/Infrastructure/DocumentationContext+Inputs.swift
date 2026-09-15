@@ -1,0 +1,161 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+public import Foundation
+import DocCCommon
+
+extension DocumentationContext {
+    /// A collection of the build inputs for a unit of documentation.
+    ///
+    /// A unit of documentation may for example cover a framework, library, or tool.
+    /// Projects or packages may have multiple units of documentation to represent the different consumable products in that project or package.
+    ///
+    /// ## Topics
+    ///
+    /// ### Input files
+    ///
+    /// - ``markupURLs``
+    /// - ``symbolGraphURLs``
+    /// - ``miscResourceURLs``
+    ///
+    /// ### Render customization
+    ///
+    /// - ``customHeader``
+    /// - ``customFooter``
+    /// - ``themeSettings``
+    ///
+    /// ### Metadata
+    ///
+    /// - ``info``
+    /// - ``displayName``
+    /// - ``identifier``
+    public struct Inputs {
+        public enum PropertyListError: DescribedError {
+            case invalidVersionString(String)
+            case keyNotFound(String)
+            
+            public var errorDescription: String {
+                switch self {
+                case .invalidVersionString(let versionString):
+                    "'\(versionString)' is not a valid version string"
+                case .keyNotFound(let name):
+                    "Expected key \(name.singleQuoted) not found"
+                }
+            }
+        }
+        
+        /// Non-content information or metadata about this unit of documentation.
+        public let info: Info
+        
+        /// A human-readable display name for this unit of documentation.
+        public var displayName: String {
+            info.displayName
+        }
+        
+        /// A stable and locally unique identifier for this collection of build inputs.
+        public var id: DocumentationContext.Inputs.Identifier {
+            info.id
+        }
+        
+        /// Symbol graph JSON input files for the module that's represented by this unit of documentation.
+        ///
+        /// Tutorial or article-only documentation won't have any symbol graph JSON files.
+        ///
+        /// ## See Also
+        ///
+        /// - ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
+        public let symbolGraphURLs: [URL]
+        
+        /// Documentation markup input files for this unit of documentation.
+        ///
+        /// Documentation markup files include both articles, documentation extension files, and tutorial files.
+        ///
+        /// ## See Also
+        ///
+        /// - ``DocumentationBundleFileTypes/isMarkupFile(_:)``
+        public let markupURLs: [URL]
+        
+        /// Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.
+        public let miscResourceURLs: [URL]
+
+        /// A custom HTML file to use as the header for rendered output.
+        public let customHeader: URL?
+
+        /// A custom HTML file to use as the footer for rendered output.
+        public let customFooter: URL?
+
+        /// A custom JSON settings file used to theme renderer output.
+        public let themeSettings: URL?
+
+        /// A custom favicon file to use for rendered output.
+        public let customFavicon: URL?
+
+        /// A URL prefix to be appended to the relative presentation URL.
+        ///
+        /// This is used when a built documentation is hosted in a known location.
+        public let baseURL: URL
+        
+        /// Creates a new collection of build inputs for a unit of documentation.
+        ///
+        /// - Parameters:
+        ///   - info: Non-content information or metadata about this unit of documentation.
+        ///   - baseURL: A URL prefix to be appended to the relative presentation URL.
+        ///   - symbolGraphURLs: Symbol graph JSON input files for the module that's represented by this unit of documentation.
+        ///   - markupURLs: Documentation markup input files for this unit of documentation.
+        ///   - miscResourceURLs: Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.
+        ///   - customHeader: A custom HTML file to use as the header for rendered output.
+        ///   - customFooter: A custom HTML file to use as the footer for rendered output.
+        ///   - themeSettings: A custom JSON settings file used to theme renderer output.
+        ///   - customFavicon: A custom favicon file to use for rendered output.
+        public init(
+            info: Info,
+            baseURL: URL = URL(string: "/")!,
+            symbolGraphURLs: [URL],
+            markupURLs: [URL],
+            miscResourceURLs: [URL],
+            customHeader: URL? = nil,
+            customFooter: URL? = nil,
+            themeSettings: URL? = nil,
+            customFavicon: URL? = nil
+        ) {
+            self.info = info
+            self.baseURL = baseURL
+            self.symbolGraphURLs = symbolGraphURLs
+            self.markupURLs = markupURLs
+            self.miscResourceURLs = miscResourceURLs
+            self.customHeader = customHeader
+            self.customFooter = customFooter
+            self.themeSettings = themeSettings
+            self.customFavicon = customFavicon
+            self.rootReference = ResolvedTopicReference(bundleID: info.id, path: "/", sourceLanguage: .swift)
+            self.documentationRootReference = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
+            self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+            self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
+            self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
+        }
+        
+        public private(set) var rootReference: ResolvedTopicReference
+
+        /// Default path to resolve symbol links.
+        public private(set) var documentationRootReference: ResolvedTopicReference
+
+        /// Default path to resolve tutorial table-of-contents links.
+        public var tutorialTableOfContentsContainer: ResolvedTopicReference
+
+        /// Default path to resolve tutorial links.
+        public var tutorialsContainerReference: ResolvedTopicReference
+
+        /// Default path to resolve articles.
+        public var articlesDocumentationRootReference: ResolvedTopicReference
+    }
+}
+
+@available(*, deprecated, renamed: "DocumentationContext.Inputs", message: "Use 'DocumentationContext.Inputs' instead. This deprecated API will be removed after 6.5 is released.")
+public typealias DocumentationBundle = DocumentationContext.Inputs

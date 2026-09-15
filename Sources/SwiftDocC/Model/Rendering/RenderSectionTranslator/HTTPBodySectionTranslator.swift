@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import SymbolKit
 
 /// Translates a symbol's request body into a render node's body section.
 struct HTTPBodySectionTranslator: RenderSectionTranslator {

@@ -1,14 +1,12 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
-
-import Foundation
 
 /// A collection of sparse segments that describe the subsequences that are common or different between two collections.
 struct CollectionChanges {
@@ -65,7 +63,7 @@ struct CollectionChanges {
 ///
 /// - Important:
 /// Removals need to be applied in reverse order. All removals need to be applied before applying any insertions. Insertions need to be applied in order.
-private struct ChangeSegmentBuilder {
+private struct ChangeSegmentBuilder: ~Copyable {
     typealias Segment = CollectionChanges.Segment
     
     private(set) var segments: [Segment]

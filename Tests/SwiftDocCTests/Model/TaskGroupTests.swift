@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -68,10 +68,6 @@ class SectionExtractionTests: XCTestCase {
         }
     }
     
-    private func testNode(with document: Document) -> DocumentationNode {
-        return DocumentationNode(reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "Title"), markup: document, semantic: Semantic())
-    }
-    
     func testSection() {
         // Empty -> nil
         do {
@@ -84,7 +80,7 @@ class SectionExtractionTests: XCTestCase {
         do {
             let document = Document(parsing: "# Topics\n\nHey.\n", options: [])
             let markupModel = DocumentationMarkup(markup: document)
-            XCTAssertEqual("Hey.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).format())
+            XCTAssertEqual("Hey.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? (any InlineMarkup) } ?? []).format())
             XCTAssertNil(markupModel.discussionSection)
             XCTAssertNil(markupModel.topicsSection)
             XCTAssertNil(markupModel.seeAlsoSection)
@@ -103,7 +99,7 @@ class SectionExtractionTests: XCTestCase {
                 """
             let document = Document(parsing: markupSource, options: [])
             let markupModel = DocumentationMarkup(markup: document)
-            XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).format())
+            XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? (any InlineMarkup) } ?? []).format())
             XCTAssertEqual("Some stuff.", Document(markupModel.discussionSection?.content.compactMap { $0 as? Paragraph } ?? []).format())
             XCTAssertNil(markupModel.topicsSection)
             XCTAssertNil(markupModel.seeAlsoSection)
@@ -131,7 +127,7 @@ class SectionExtractionTests: XCTestCase {
             let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
             let markupModel = DocumentationMarkup(markup: document)
 
-            XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).detachedFromParent.format())
+            XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? (any InlineMarkup) } ?? []).detachedFromParent.format())
             XCTAssertEqual("Some stuff.", Document(markupModel.discussionSection?.content.compactMap { $0 as? Paragraph } ?? []).detachedFromParent.format())
             XCTAssertEqual("### A\nThis is a topic about A.", markupModel.topicsSection?.content.map { $0.detachedFromParent.format() }.joined(separator: "\n"))
             XCTAssertEqual("This stuff.", markupModel.seeAlsoSection?.content.map { $0.detachedFromParent.format() }.joined(separator: "\n"))
@@ -264,7 +260,7 @@ class TaskGroupTests: XCTestCase {
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
         let markupModel = DocumentationMarkup(markup: document)
         
-        XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).detachedFromParent.format())
+        XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? (any InlineMarkup) } ?? []).detachedFromParent.format())
         
         let topicSection = try XCTUnwrap(markupModel.topicsSection)
         XCTAssertEqual(topicSection.taskGroups.count, 4)
@@ -346,7 +342,7 @@ class TaskGroupTests: XCTestCase {
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
         let markupModel = DocumentationMarkup(markup: document)
         
-        XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).detachedFromParent.format())
+        XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? (any InlineMarkup) } ?? []).detachedFromParent.format())
         
         let topicSection = try XCTUnwrap(markupModel.topicsSection)
         XCTAssertEqual(topicSection.taskGroups.count, 1)
@@ -386,7 +382,7 @@ class TaskGroupTests: XCTestCase {
     }
     
     func testTopicContentOrder() throws {
-        func assertExpectedParsedTaskGroupContent(_ content: String, file: StaticString = #file, line: UInt = #line) throws {
+        func assertExpectedParsedTaskGroupContent(_ content: String, file: StaticString = #filePath, line: UInt = #line) throws {
             let document = Document(parsing: """
                 # Title
                 

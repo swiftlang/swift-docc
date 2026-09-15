@@ -1,15 +1,16 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 import SymbolKit
+import DocCCommon
 
 /// A type that encapsulates resolving links by searching a hierarchy of path components.
 final class PathHierarchyBasedLinkResolver {
@@ -22,19 +23,6 @@ final class PathHierarchyBasedLinkResolver {
     /// Initializes a link resolver with a given path hierarchy.
     init(pathHierarchy: PathHierarchy) {
         self.pathHierarchy = pathHierarchy
-    }
-    
-    /// Remove all matches from a given documentation bundle from the link resolver.
-    func unregisterBundle(identifier: DocumentationBundle.Identifier) {
-        var newMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
-        for (id, reference) in resolvedReferenceMap {
-            if reference.bundleID == identifier {
-                pathHierarchy.removeNodeWithID(id)
-            } else {
-                newMap[id] = reference
-            }
-        }
-        resolvedReferenceMap = newMap
     }
     
     /// Creates a path string---that can be used to find documentation in the path hierarchy---from an unresolved topic reference,
@@ -71,7 +59,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - reference: The identifier of the page whose descendants to return.
     ///   - languagesFilter: A set of source languages to filter descendants against.
     /// - Returns: The references of each direct descendant that has a language representation in at least one of the given languages.
-    func directDescendants(of reference: ResolvedTopicReference, languagesFilter: Set<SourceLanguage>) -> Set<ResolvedTopicReference> {
+    func directDescendants(of reference: ResolvedTopicReference, languagesFilter: SmallSourceLanguageSet) -> Set<ResolvedTopicReference> {
         guard let id = resolvedReferenceMap[reference] else { return [] }
         let node = pathHierarchy.lookup[id]!
         
@@ -100,22 +88,28 @@ final class PathHierarchyBasedLinkResolver {
     }
 
     /// Returns a list of all the top level symbols.
-    func topLevelSymbols() -> [ResolvedTopicReference] {
-        return pathHierarchy.topLevelSymbols().map { resolvedReferenceMap[$0]! }
+    func topLevelSymbols() -> Set<ResolvedTopicReference> {
+        let inner = pathHierarchy.topLevelSymbols()
+        var result = Set<ResolvedTopicReference>()
+        result.reserveCapacity(inner.count)
+        for id in inner {
+            result.insert(resolvedReferenceMap[id]!)
+        }
+        return result
     }
     
-    /// Returns a list of all module symbols.
-    func modules() -> [ResolvedTopicReference] {
+    /// Returns a list of all root pages (both modules and technology roots).
+    func rootPages() -> [ResolvedTopicReference] {
         return pathHierarchy.modules.map { resolvedReferenceMap[$0.identifier]! }
     }
     
     // MARK: - Adding non-symbols
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
-    func addMappingForRoots(bundle: DocumentationBundle) {
-        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.tutorialsContainerReference
-        resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = bundle.articlesDocumentationRootReference
-        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialTableOfContentsContainer
+    func addMappingForRoots(inputs: DocumentationContext.Inputs) {
+        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = inputs.tutorialsContainerReference
+        resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = inputs.articlesDocumentationRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = inputs.tutorialTableOfContentsContainer
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
@@ -147,12 +141,12 @@ final class PathHierarchyBasedLinkResolver {
         )
     }
     
-    private func addTutorial(reference: ResolvedTopicReference, source: URL, landmarks: [Landmark]) {
+    private func addTutorial(reference: ResolvedTopicReference, source: URL, landmarks: [any Landmark]) {
         let tutorialID = pathHierarchy.addTutorial(name: linkName(filename: source.deletingPathExtension().lastPathComponent))
         resolvedReferenceMap[tutorialID] = reference
         
         for landmark in landmarks {
-            let landmarkID = pathHierarchy.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), kind: "landmark")
+            let landmarkID = pathHierarchy.addAnchor(parent: tutorialID, name: urlReadableFragment(landmark.title))
             resolvedReferenceMap[landmarkID] = reference.withFragment(landmark.title)
         }
     }
@@ -167,14 +161,14 @@ final class PathHierarchyBasedLinkResolver {
         var anonymousVolumeID: ResolvedIdentifier?
         for volume in tutorialTableOfContents.value.volumes {
             if anonymousVolumeID == nil, volume.name == nil {
-                anonymousVolumeID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: "$volume", kind: "volume")
+                anonymousVolumeID = pathHierarchy.addAnchor(parent: tutorialTableOfContentsID, name: "$volume")
                 resolvedReferenceMap[anonymousVolumeID!] = reference.appendingPath("$volume")
             }
             
             let chapterParentID: ResolvedIdentifier
             let chapterParentReference: ResolvedTopicReference
             if let name = volume.name {
-                chapterParentID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: name, kind: "volume")
+                chapterParentID = pathHierarchy.addAnchor(parent: tutorialTableOfContentsID, name: name)
                 chapterParentReference = reference.appendingPath(name)
                 resolvedReferenceMap[chapterParentID] = chapterParentReference
             } else {
@@ -183,7 +177,7 @@ final class PathHierarchyBasedLinkResolver {
             }
             
             for chapter in volume.chapters {
-                let chapterID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: chapter.name, kind: "volume")
+                let chapterID = pathHierarchy.addAnchor(parent: tutorialTableOfContentsID, name: chapter.name)
                 resolvedReferenceMap[chapterID] = chapterParentReference.appendingPath(chapter.name)
             }
         }
@@ -219,7 +213,7 @@ final class PathHierarchyBasedLinkResolver {
     
     private func addAnchors(_ anchorSections: [AnchorSection], to parent: ResolvedIdentifier) {
         for anchor in anchorSections {
-            let identifier = pathHierarchy.addNonSymbolChild(parent: parent, name: anchor.reference.fragment!, kind: "anchor")
+            let identifier = pathHierarchy.addAnchor(parent: parent, name: anchor.reference.fragment!)
             resolvedReferenceMap[identifier] = anchor.reference
         }
     }
@@ -227,7 +221,7 @@ final class PathHierarchyBasedLinkResolver {
     /// Adds a task group on a given page to the documentation hierarchy.
     func addTaskGroup(named name: String, reference: ResolvedTopicReference, to parent: ResolvedTopicReference) {
         let parentID = resolvedReferenceMap[parent]!
-        let taskGroupID = pathHierarchy.addNonSymbolChild(parent: parentID, name: urlReadableFragment(name), kind: "taskGroup")
+        let taskGroupID = pathHierarchy.addAnchor(parent: parentID, name: urlReadableFragment(name))
         resolvedReferenceMap[taskGroupID] = reference
     }
     
@@ -241,7 +235,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) throws -> TopicReferenceResolutionResult {
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) throws(PathHierarchy.Error) -> TopicReferenceResolutionResult {
         let parentID = resolvedReferenceMap[parent]
         let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
         guard let foundReference = resolvedReferenceMap[found] else {
@@ -277,8 +271,8 @@ final class PathHierarchyBasedLinkResolver {
     ///
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
-    ///   - bundle: The bundle to use when creating symbol references.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle, context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
+    ///   - context: The context that the symbols are a part of.
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
         let disambiguatedPaths = pathHierarchy.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true, includeLanguage: true, allowAdvancedDisambiguation: false)
         
         var result: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] = [:]
@@ -293,7 +287,7 @@ final class PathHierarchyBasedLinkResolver {
                    pathComponents.count == componentsCount
                 {
                     let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
-                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
+                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, inputs: context.inputs)
                 }
                 
                 guard let path = disambiguatedPaths[uniqueIdentifier] else {
@@ -301,7 +295,7 @@ final class PathHierarchyBasedLinkResolver {
                 }
                 
                 return ResolvedTopicReference(
-                    bundleID: bundle.documentationRootReference.bundleID,
+                    bundleID: context.inputs.documentationRootReference.bundleID,
                     path: NodeURLGenerator.Path.documentationFolder + path,
                     sourceLanguages: symbol.sourceLanguages
                 )
@@ -349,10 +343,10 @@ private func linkName(filename: some StringProtocol) -> String {
 }
 
 private let whitespaceAndDashes = CharacterSet.whitespaces
-    .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+    .union(CharacterSet(charactersIn: "-\u{2013}\u{2014}")) // hyphen, en dash, em dash
 
 private extension PathHierarchy.Node {
-    func matches(languagesFilter: Set<SourceLanguage>) -> Bool {
+    func matches(languagesFilter: SmallSourceLanguageSet) -> Bool {
         languagesFilter.isEmpty || !self.languages.isDisjoint(with: languagesFilter)
     }
 }

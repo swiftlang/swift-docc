@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,8 +11,10 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class PlatformAvailabilityTests: XCTestCase {
+    @available(*, deprecated, message: "This test calls deprecated API")
     func testDecodePlatformAvailability() throws {
         let platformAvailabilityURL = Bundle.module.url(
             forResource: "platform-availability", withExtension: "json", subdirectory: "Rendering Fixtures")!
@@ -33,55 +35,68 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     /// Ensure that adding `@Available` directives in an article causes the final RenderNode to contain the appropriate availability data.
-    func testPlatformAvailabilityFromArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+    func testPlatformAvailabilityFromArticle() async throws {
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 1)
-        let iosAvailability = try XCTUnwrap(availability.first)
-        XCTAssertEqual(iosAvailability.name, "iOS")
+        let availabilities = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availabilities.count, 3)
+        XCTAssertEqual(availabilities.compactMap { $0.name }, ["iOS", "iPadOS", "Mac Catalyst"])
+        let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
         XCTAssert(iosAvailability.isBeta != true)
+        // Ensure that the fallback platforms have the same version and beta status as iOS
+        for availability in availabilities.dropFirst() {
+            XCTAssertEqual(availability.introduced, iosAvailability.introduced)
+            XCTAssertEqual(availability.isBeta, iosAvailability.isBeta)
+        }
     }
 
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
-    func testPlatformAvailabilityFromExtension() throws {
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+    func testPlatformAvailabilityFromExtension() async throws {
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 1)
-        let iosAvailability = try XCTUnwrap(availability.first)
-        XCTAssertEqual(iosAvailability.name, "iOS")
+        let availabilities = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availabilities.count, 3)
+        XCTAssertEqual(availabilities.compactMap(\.name), ["iOS", "iPadOS", "Mac Catalyst"])
+        let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
         XCTAssert(iosAvailability.isBeta != true)
+        // Ensure that the fallback platforms have the same version and beta status as iOS
+        for availability in availabilities.dropFirst() {
+            XCTAssertEqual(availability.introduced, iosAvailability.introduced)
+            XCTAssertEqual(availability.isBeta, iosAvailability.isBeta)
+        }
     }
 
-    func testMultiplePlatformAvailabilityFromArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+    func testMultiplePlatformAvailabilityFromArticle() async throws {
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 3)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availability.count, 5)
 
         XCTAssert(availability.contains(where: { item in
             item.name == "iOS" && item.introduced == "15.0"
@@ -98,15 +113,15 @@ class PlatformAvailabilityTests: XCTestCase {
         })
     }
 
-    func testArbitraryPlatformAvailability() throws {
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+    func testArbitraryPlatformAvailability() async throws {
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ArbitraryPlatforms",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 2)
@@ -123,16 +138,16 @@ class PlatformAvailabilityTests: XCTestCase {
     }
     
     // Test that the Info.plist default availability does not affect the deprecated/unavailable availabilities provided by the symbol graph.
-    func testAvailabilityParserWithInfoPlistDefaultAvailability() throws {
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityOverrideBundle")
+    func testAvailabilityParserWithInfoPlistDefaultAvailability() async throws {
+        let (_, context) = try await testBundleAndContext(named: "AvailabilityOverrideBundle")
 
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 5)
@@ -160,44 +175,50 @@ class PlatformAvailabilityTests: XCTestCase {
     }
     
     /// Ensure that adding `@Available` directives for platform versions marked as beta in an article causes the final RenderNode to contain the appropriate availability data.
-    func testBetaPlatformAvailabilityFromArticle() throws {
+    func testBetaPlatformAvailabilityFromArticle() async throws {
         let platformMetadata = [
             "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
         ]
-        let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let (_, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 1)
-        let iosAvailability = try XCTUnwrap(availability.first)
+        let availabilities = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availabilities.count, 3)
+        let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
         XCTAssert(iosAvailability.isBeta == true)
+        // Ensure that fallback platforms are also marked as beta
+        for availability in availabilities.dropFirst() {
+            XCTAssert(availability.isBeta == true)
+        }
     }
 
-    func testMultipleBetaPlatformAvailabilityFromArticle() throws {
+    func testMultipleBetaPlatformAvailabilityFromArticle() async throws {
         let platformMetadata = [
             "iOS": PlatformVersion(VersionTriplet(15, 0, 0), beta: true),
             "macOS": PlatformVersion(VersionTriplet(12, 0, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(7, 0, 0), beta: true),
         ]
-        let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let (_, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 3)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availability.count, 5)
 
         XCTAssert(availability.contains(where: { item in
             item.name == "iOS" && item.introduced == "15.0"
@@ -215,34 +236,39 @@ class PlatformAvailabilityTests: XCTestCase {
     }
     
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
-    func testBetaPlatformAvailabilityFromExtension() throws {
+    func testBetaPlatformAvailabilityFromExtension() async throws {
         let platformMetadata = [
             "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
         ]
-        let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let (_, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 1)
-        let iosAvailability = try XCTUnwrap(availability.first)
-        XCTAssertEqual(iosAvailability.name, "iOS")
+        let availabilities = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availabilities.count, 3)
+        XCTAssertEqual(availabilities.compactMap(\.name), ["iOS", "iPadOS", "Mac Catalyst"])
+        let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
         XCTAssert(iosAvailability.isBeta == true)
+        // Ensure that fallback platforms are also marked as beta
+        for availability in availabilities.dropFirst() {
+            XCTAssert(availability.isBeta == true)
+        }
     }
 
     
-    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
-        return (bundle, context)
+        let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+        return (context.inputs, context)
     }
 
 }

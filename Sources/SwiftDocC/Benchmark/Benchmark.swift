@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A logger that runs benchmarks and stores the results.
 public class Benchmark: Encodable {
@@ -48,12 +48,14 @@ public class Benchmark: Encodable {
     public let platform = "Android"
     #elseif os(FreeBSD)
     public let platform = "FreeBSD"
+    #elseif os(OpenBSD)
+    public let platform = "OpenBSD"
     #else
     public let platform = "unsupported"
     #endif
 
     /// The list of metrics included in this benchmark.
-    public var metrics: [BenchmarkMetric] = []
+    public var metrics: [any BenchmarkMetric] = []
     
     enum CodingKeys: String, CodingKey {
         case date, metrics, arguments, platform
@@ -71,8 +73,8 @@ public class Benchmark: Encodable {
             guard let result = log.result else {
                 return nil
             }
-            let id = (log as? DynamicallyIdentifiableMetric)?.identifier ?? type(of: log).identifier
-            let displayName = (log as? DynamicallyIdentifiableMetric)?.displayName ?? type(of: log).displayName
+            let id = (log as? (any DynamicallyIdentifiableMetric))?.identifier ?? type(of: log).identifier
+            let displayName = (log as? (any DynamicallyIdentifiableMetric))?.displayName ?? type(of: log).displayName
             return .init(id: id, displayName: displayName, value: result)
         }
         
@@ -84,13 +86,13 @@ public class Benchmark: Encodable {
         )
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         try results()?.encode(to: encoder)
     }
 }
 
 private extension Benchmark {
-    func shouldLogMetricType(_ metricType: BenchmarkMetric.Type) -> Bool {
+    func shouldLogMetricType(_ metricType: any BenchmarkMetric.Type) -> Bool {
         return isEnabled && (metricsFilter == nil || metricType.identifier.hasPrefix(metricsFilter!))
     }
 }

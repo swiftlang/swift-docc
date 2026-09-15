@@ -8,16 +8,23 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+public import Foundation
+private import SymbolKit
 #if canImport(FoundationNetworking)
-import FoundationNetworking
+public import FoundationNetworking
 #endif
 #if canImport(UniformTypeIdentifiers)
-import UniformTypeIdentifiers
+private import UniformTypeIdentifiers
 #endif
 #if os(Windows)
-import WinSDK
+private import WinSDK
+#endif
+
+#if canImport(os)
+    import os
+    private let logger = Logger(subsystem: "org.swift.docc", category: "FileServer")
+#else
+    private let logger = NoOpLoggerShim()
 #endif
 
 fileprivate let slashCharSet = CharacterSet(charactersIn: "/")
@@ -33,7 +40,7 @@ public class FileServer {
     public let baseURL: URL
     
     /// The list of providers from which files are served.
-    private var providers: [String: FileServerProvider] = [:]
+    private var providers: [String: any FileServerProvider] = [:]
     
     /**
      Initialize a FileServer instance with a base URL.
@@ -52,7 +59,7 @@ public class FileServer {
     ///   - subPath: The sub-path in which the `FileServerProvider` will be queried for content.
     /// - Returns: A boolean indicating if the registration succeeded or not.
     @discardableResult
-    public func register(provider: FileServerProvider, subPath: String = "/") -> Bool {
+    public func register(provider: any FileServerProvider, subPath: String = "/") -> Bool {
         guard !subPath.isEmpty else { return false }
         let trimmed = subPath.trimmingCharacters(in: slashCharSet)
         providers[trimmed] = provider
@@ -95,7 +102,7 @@ public class FileServer {
             mimeType = FileServer.mimeType(for: url.pathExtension)
         } else { // request is for a path, we need to fake a redirect here
             if url.pathComponents.isEmpty {
-                xlog("Tried to load an invalid URL: \(url.absoluteString).\nFalling back to serve index.html.")
+                logger.log("Tried to load an invalid URL: \(url.absoluteString).\nFalling back to serve index.html.")
             }
             mimeType = "text/html"
             data = self.data(for: baseURL.appendingPathComponent("/index.html"))
@@ -175,17 +182,23 @@ public protocol FileServerProvider {
 public class FileSystemServerProvider: FileServerProvider {
     
     private(set) var directoryURL: URL
+    private let fileManager: any FileManagerProtocol
     
-    public init?(directoryPath: String) {
-        guard FileManager.default.directoryExists(atPath: directoryPath) else {
+    public convenience init?(directoryPath: String) {
+        self.init(directoryPath: directoryPath, fileManager: FileManager.default)
+    }
+    
+    package init?(directoryPath: String, fileManager: any FileManagerProtocol) {
+        guard fileManager.directoryExists(atPath: directoryPath) else {
             return nil
         }
         self.directoryURL = URL(fileURLWithPath: directoryPath)
+        self.fileManager = fileManager
     }
     
     public func data(for path: String) -> Data? {
         let finalURL = directoryURL.appendingPathComponent(path)
-        return try? Data(contentsOf: finalURL)
+        return try? fileManager.contents(of: finalURL)
     }
     
 }
@@ -195,7 +208,19 @@ public class MemoryFileServerProvider: FileServerProvider {
     /// Files to serve based on relative path.
     private var files = [String: Data]()
     
-    public init() {}
+    private let fileManager: any FileManagerProtocol
+
+    /// Creates a memory file server provider with the default file manager.
+    public convenience init() {
+        self.init(fileManager: FileManager.default)
+    }
+
+    /// Creates a memory file server provider with the given file manager.
+    ///
+    /// - Parameter fileManager: The file manager that the provider uses to read files added with ``addFiles(inFolder:inSubPath:recursive:)``.
+    package init(fileManager: any FileManagerProtocol) {
+        self.fileManager = fileManager
+    }
     
     
     /// Add a file to the file server.
@@ -234,18 +259,16 @@ public class MemoryFileServerProvider: FileServerProvider {
     ///   - destination: The destination directory in the file server to add the files to.
     ///   - recursive: Whether or not to recursively add files from the source directory.
     public func addFiles(inFolder source: String, inSubPath destination: String = "", recursive: Bool = true) {
-        var isDirectory: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: source, isDirectory: &isDirectory) else { return }
-        guard isDirectory.boolValue else { return }
+        guard fileManager.directoryExists(atPath: source) else { return }
         
         let trimmedSubPath = destination.trimmingCharacters(in: slashCharSet)
-        let enumerator = FileManager.default.enumerator(atPath: source)!
+        let sourceURL = URL(fileURLWithPath: source)
         
-        for file in enumerator {
-            guard let file = file as? String else { fatalError("Enumerator returned an unexpected type.") }
-            guard let data = try? Data(contentsOf: URL(fileURLWithPath: source).appendingPathComponent(file)) else { continue }
-            if recursive == false && file.contains("/") { continue } // skip if subfolder and recursive is disabled
-            addFile(path: "/\(trimmedSubPath)/\(file)", data: data)
+        for fileURL in fileManager.recursiveFiles(startingPoint: sourceURL, options: []) {
+            let relativePath = fileURL.path.removingPrefix(sourceURL.path).removingPrefix("/")
+            if recursive == false && relativePath.contains("/") { continue }
+            guard let data = try? fileManager.contents(of: fileURL) else { continue }
+            addFile(path: "/\(trimmedSubPath)/\(relativePath)", data: data)
         }
     }
     

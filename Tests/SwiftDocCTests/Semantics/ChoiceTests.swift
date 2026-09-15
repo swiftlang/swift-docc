@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,31 +11,32 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class ChoiceTests: XCTestCase {
-    func testInvalidEmpty() throws {
+    func testInvalidEmpty() async throws {
         let source = "@Choice"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(choice)
-            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-            XCTAssertEqual(2, problems.count)
-            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.HasExactlyOne<\(Choice.self), \(Justification.self)>.Missing"))
-            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.HasArgument.isCorrect"))
-            XCTAssertTrue(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
+            XCTAssertEqual(2, diagnostics.count)
+            XCTAssertEqual(diagnostics.map(\.identifier).sorted(), [
+                "org.swift.docc.HasArgument.isCorrect",
+                "org.swift.docc.HasExactlyOne<\(Choice.self), \(Justification.self)>.Missing",
+            ])
+            XCTAssertTrue(diagnostics.allSatisfy { $0.severity == .warning })
         }
     }
     
-    func testInvalidMissingContent() throws {
+    func testInvalidMissingContent() async throws {
         let source = """
 @Choice(isCorrect: true) {
    @Justification {
@@ -47,20 +48,19 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(choice)
-            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-            XCTAssertEqual(1, problems.count)
-            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(Choice.self).Empty"))
+            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.\(Choice.self).Empty")
         }
     }
     
-    func testInvalidMissingJustification() throws {
+    func testInvalidMissingJustification() async throws {
         let source = """
 @Choice(isCorrect: true) {
    This is some content.
@@ -70,21 +70,19 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(choice)
-            XCTAssertEqual(1, problems.count)
-            problems.first.map { problem in
-                XCTAssertEqual("org.swift.docc.HasExactlyOne<Choice, Justification>.Missing", problem.diagnostic.identifier)
-            }
+            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasExactlyOne<Choice, Justification>.Missing")
         }
     }
     
-    func testInvalidMissingIsCorrect() throws {
+    func testInvalidMissingIsCorrect() async throws {
         let source = """
 @Choice {
    This is some content.
@@ -96,21 +94,19 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(choice)
-            XCTAssertEqual(1, problems.count)
-            problems.first.map { problem in
-                XCTAssertEqual("org.swift.docc.HasArgument.isCorrect", problem.diagnostic.identifier)
-            }
+            XCTAssertEqual(1, diagnostics.count)
+            XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.isCorrect")
         }
     }
     
-    func testInvalidIsCorrect() throws {
+    func testInvalidIsCorrect() async throws {
         let source = """
 @Choice(isCorrect: blah) {
    This is some content.
@@ -122,24 +118,24 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNil(choice)
-            XCTAssertEqual(1, problems.count)
-            problems.first.map { problem in
-                XCTAssertEqual("org.swift.docc.HasArgument.isCorrect.ConversionFailed", problem.diagnostic.identifier)
-                XCTAssertEqual(2, problem.possibleSolutions.count)
-                XCTAssertEqual("Use allowed value 'true'", problem.possibleSolutions[0].summary)
-                XCTAssertEqual("Use allowed value 'false'", problem.possibleSolutions[1].summary)
-            }
+            XCTAssertEqual(1, diagnostics.count)
+            let diagnostic = try XCTUnwrap(diagnostics.first)
+            
+            XCTAssertEqual("org.swift.docc.HasArgument.isCorrect.ConversionFailed", diagnostic.identifier)
+            XCTAssertEqual(2, diagnostic.solutions.count)
+            XCTAssertEqual("Use allowed value 'true'", diagnostic.solutions[0].summary)
+            XCTAssertEqual("Use allowed value 'false'", diagnostic.solutions[1].summary)
         }
     }
     
-    func testValidParagraph() throws {
+    func testValidParagraph() async throws {
         let source = """
 @Choice(isCorrect: true) {
    This is some content.
@@ -152,14 +148,14 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(choice)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             choice.map { choice in
                 let expectedDump = """
 Choice @1:1-6:2 isCorrect: true
@@ -172,7 +168,7 @@ Choice @1:1-6:2 isCorrect: true
         }
     }
     
-    func testValidCode() throws {
+    func testValidCode() async throws {
         let source = """
 @Choice(isCorrect: true) {
    ```swift
@@ -188,14 +184,14 @@ Choice @1:1-6:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(choice)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             choice.map { choice in
                 let expectedDump = """
 Choice @1:1-9:2 isCorrect: true
@@ -208,7 +204,7 @@ Choice @1:1-9:2 isCorrect: true
         }
     }
     
-    func testValidImage() throws {
+    func testValidImage() async throws {
         let source = """
 @Choice(isCorrect: true) {
    @Image(source: blah.png, alt: blah)
@@ -222,17 +218,17 @@ Choice @1:1-9:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
             InfoPlist(identifier: "org.swift.docc.example"),
             DataFile(name: "blah.png", data: Data()),
         ]))
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(choice)
-            XCTAssertTrue(problems.isEmpty)
+            XCTAssertTrue(diagnostics.isEmpty)
             choice.map { choice in
                 let expectedDump = """
 Choice @1:1-7:2 isCorrect: true

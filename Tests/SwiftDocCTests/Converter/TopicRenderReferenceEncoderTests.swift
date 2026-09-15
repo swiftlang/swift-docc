@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class TopicRenderReferenceEncoderTests: XCTestCase {
 
@@ -117,7 +118,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
             .map({ i in
                 TopicRenderReference(identifier: .init("reference\(i)"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
             })
-            .reduce(into: [String: RenderReference]()) { result, reference in
+            .reduce(into: [String: any RenderReference]()) { result, reference in
                 result[reference.identifier.identifier] = reference
             }
         
@@ -130,7 +131,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
             })
 
         let cache = RenderReferenceCache([:])
-        let encodingErrors = Synchronized<[Error]>([])
+        let encodingErrors = Synchronized<[any Error]>([])
         
         DispatchQueue.concurrentPerform(iterations: nodes.count) { i in
             do {
@@ -149,17 +150,21 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         }
         
         // Pipe through encoding errors.
-        encodingErrors.sync({ $0.forEach({ XCTFail(String(describing: $0)) }) })
+        encodingErrors.sync({ errors in
+            for error in errors {
+                XCTFail(String(describing: error))
+            }
+        })
         
         // Verify all references have been cached
         XCTAssertEqual(cache.sync({ $0.keys.count }), 1000)
     }
     
     /// Verifies that when JSON encoder should sort keys, the custom render reference cache
-    /// respects that setting and prints the referencs in alphabetical order.
-    func testSortedReferences() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+    /// respects that setting and prints the reference in alphabetical order.
+    func testSortedReferences() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
 
         // Create a JSON encoder
         let encoder = RenderJSONEncoder.makeEncoder()
@@ -217,9 +222,9 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     }
     
     // Verifies that there is no extra comma at the end of the references list.
-    func testRemovesLastReferencesListDelimiter() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+    func testRemovesLastReferencesListDelimiter() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
 
         // Create a JSON encoder
         let encoder = RenderJSONEncoder.makeEncoder()

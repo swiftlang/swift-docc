@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,7 +35,7 @@ public class Synchronized<Value> {
     #elseif os(Linux) || os(Android)
     /// A lock type appropriate for the current platform.
     var lock: UnsafeMutablePointer<pthread_mutex_t>
-    #elseif os(FreeBSD)
+    #elseif os(FreeBSD) || os(OpenBSD)
     /// A lock type appropriate for the current platform.
     var lock: UnsafeMutablePointer<pthread_mutex_t?>
     #elseif os(Windows)
@@ -56,7 +56,7 @@ public class Synchronized<Value> {
         lock = UnsafeMutablePointer<pthread_mutex_t>.allocate(capacity: 1)
         lock.initialize(to: pthread_mutex_t())
         pthread_mutex_init(lock, nil)
-        #elseif os(FreeBSD)
+        #elseif os(FreeBSD) || os(OpenBSD)
         lock = UnsafeMutablePointer<pthread_mutex_t?>.allocate(capacity: 1)
         lock.initialize(to: nil)
         pthread_mutex_init(lock, nil)
@@ -77,14 +77,14 @@ public class Synchronized<Value> {
     /// - Parameter block: A throwing block of work that optionally returns a value.
     /// - Returns: Returns the returned value of `block`, if any.
     @discardableResult
-    public func sync<Result>(_ block: (inout Value) throws -> Result) rethrows -> Result {
+    public func sync<Result, Error>(_ block: (inout Value) throws(Error) -> Result) throws(Error) -> Result {
         #if os(macOS) || os(iOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
         #elseif os(Linux) || os(Android)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
-        #elseif os(FreeBSD)
+        #elseif os(FreeBSD) || os(OpenBSD)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
         #elseif os(Windows)
@@ -116,14 +116,14 @@ extension Lock {
     }
     
     @discardableResult
-    package func sync<Result>(_ block: () throws -> Result) rethrows -> Result {
+    package func sync<Result, Error>(_ block: () throws(Error) -> Result) throws(Error) -> Result {
         #if os(macOS) || os(iOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
         #elseif os(Linux) || os(Android)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
-        #elseif os(FreeBSD)
+        #elseif os(FreeBSD) || os(OpenBSD)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
         #elseif os(Windows)

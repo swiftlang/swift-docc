@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import SymbolKit
 
 extension DocumentationContext {
@@ -36,7 +36,7 @@ extension DocumentationContext {
             /// path components into the documentation context.
             var knownDisambiguatedSymbolPathComponents: [String: [String]]?
             
-            /// Controls whether bundle registration should allow registering articles when no technology root is defined.
+            /// Controls whether input registration should allow registering articles when no technology root is defined.
             ///
             /// Set this property to `true` to enable registering documentation for standalone articles,
             /// for example when using ``ConvertService``.
@@ -57,7 +57,7 @@ extension DocumentationContext {
             /// > Setting a fallback reference resolver makes accesses to the context non-thread-safe.
             /// > This is because the fallback resolver can run during both local link resolution and during rendering, which both happen concurrently for each page.
             /// > In practice this shouldn't matter because the convert service only builds documentation for one page.
-            var fallbackResolver: ConvertServiceFallbackResolver?
+            var fallbackResolver: (any ConvertServiceFallbackResolver)?
             
             /// A closure that modifies each symbol graph before the context registers the symbol graph's information.
             var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
@@ -75,10 +75,10 @@ extension DocumentationContext {
         
         /// A collection of configuration related to external sources of documentation.
         public struct ExternalDocumentationConfiguration {
-            /// The lookup of external documentation sources by their bundle identifiers.
-            public var sources: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:]
+            /// The lookup of external documentation sources by their source identifiers.
+            public var sources: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:]
             /// A type that resolves all symbols that are referenced in symbol graph files but can't be found in any of the locally available symbol graph files.
-            public var globalSymbolResolver: GlobalExternalSymbolResolver?
+            public var globalSymbolResolver: (any GlobalExternalSymbolResolver)?
             /// A list of URLs to documentation archives that the local documentation depends on.
             @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
             public var dependencyArchives: [URL] = []
@@ -95,14 +95,9 @@ extension DocumentationContext {
             package var shouldStoreManuallyCuratedReferences: Bool = false
         }
         
-        // MARK: Topic analysis
+        // MARK: Feature flags
         
-        /// Configuration related to topic analysis.
-        var topicAnalysisConfiguration = TopicAnalysisConfiguration()
-        
-        /// A collection of configuration related to topic analysis.
-        struct TopicAnalysisConfiguration {
-            var additionalChecks: [DocumentationContext.ReferenceCheck] = []
-        }
+        /// A collection of feature flags.
+        package var featureFlags = FeatureFlags()
     }
 }

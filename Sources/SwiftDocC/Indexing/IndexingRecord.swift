@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,7 +36,7 @@ public struct IndexingRecord: Equatable {
     /**
      The kind of documentation for a search result.
      */
-    public struct Kind: RawRepresentable, Equatable {
+    public struct Kind: RawRepresentable, Equatable, Sendable {
         public var rawValue: String
         public init(rawValue: String) {
             self.rawValue = rawValue
@@ -121,7 +121,7 @@ extension IndexingRecord.Location: Codable {
         case reference, inPage
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(LocationType.self, forKey: .type)
         
@@ -136,7 +136,7 @@ extension IndexingRecord.Location: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .topLevelPage(let reference):
@@ -151,12 +151,12 @@ extension IndexingRecord.Location: Codable {
 }
 
 extension IndexingRecord.Kind: Codable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         rawValue = try container.decode(String.self)
     }

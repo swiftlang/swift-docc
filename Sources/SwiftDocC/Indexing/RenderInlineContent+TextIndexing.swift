@@ -13,7 +13,7 @@ extension RenderInlineContent: TextIndexing {
         return []
     }
 
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         switch self {
         case let .emphasis(inlines):
             return inlines.rawIndexableTextContent(references: references)

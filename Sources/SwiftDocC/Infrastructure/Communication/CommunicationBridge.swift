@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A bridge that provides bi-directional communication with a documentation renderer.
 ///
 /// Use a communication bridge to send and receive messages between an IDE and an embedded documentation renderer.
@@ -30,5 +28,5 @@ public protocol CommunicationBridge {
 /// An error that occurs when using a communication bridge.
 public enum CommunicationBridgeError: Error {
     /// An indication that a message could not be encoded when using a communication bridge.
-    case unableToEncodeMessage(_ message: Message, underlyingError: Error)
+    case unableToEncodeMessage(_ message: Message, underlyingError: any Error)
 }

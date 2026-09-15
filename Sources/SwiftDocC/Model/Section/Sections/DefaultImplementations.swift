@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+private import SymbolKit
 
 /// An intermediate model to group together an implementation reference, its parent, and a fallback name.
 public struct Implementation: Hashable {
@@ -65,7 +65,7 @@ public struct DefaultImplementationsSection {
                 
                 return ImplementationsGroup(
                     heading: "\(groupName)Implementations",
-                    references: grouped[name]!.map { $0.reference }
+                    references: grouped[name]!.map { $0.reference }.sorted(by: \.description)
                 )
             }
     }

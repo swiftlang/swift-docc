@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import Foundation
 ///
 /// Default availability is used as a fallback value for symbols without explicit availability information.
 ///
-/// This information can be authored in the bundle's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
+/// This information can be authored in the catalog's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
 /// or in the case where the platform in unconditionally unavailable, "name" and "unavailable" pairs:
 ///
 /// ```
@@ -94,7 +94,7 @@ public struct DefaultAvailability: Codable, Equatable {
             self.versionInformation = .unavailable
         }
 
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             platformName = try values.decode(PlatformName.self, forKey: .platformName)
             if let unavailable = try values.decodeIfPresent(Bool.self, forKey: .unavailable), unavailable == true {
@@ -107,12 +107,12 @@ public struct DefaultAvailability: Codable, Equatable {
             // semantic version.
             if let introducedVersion {
                 guard let version = Version(versionString: introducedVersion), (2...3).contains(version.count) else {
-                    throw DocumentationBundle.PropertyListError.invalidVersionString(introducedVersion)
+                    throw DocumentationContext.Inputs.PropertyListError.invalidVersionString(introducedVersion)
                 }
             }
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(platformName, forKey: .platformName)
             switch versionInformation {
@@ -157,13 +157,13 @@ public struct DefaultAvailability: Codable, Equatable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let modules = try container.decode([String: [ModuleAvailability]].self)
         self.init(with: modules)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(modules)
     }

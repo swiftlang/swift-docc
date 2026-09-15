@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -68,7 +68,7 @@ extension AvailabilityIndex {
  - Note: The name reflects what a render node JSON provides to identify a programming language.
  The name has been decided to avoid confusion with locale languages.
  */
-public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equatable {
+public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equatable, Sendable {
     
     public typealias ID = UInt8
     
@@ -83,7 +83,7 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     /// > ``from(string:)`` function.
     public let id: String
     
-    /// A mask to use to identify the interface language..
+    /// A mask to use to identify the interface language.
     public let mask: ID
     
     
@@ -105,7 +105,7 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
         return name
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         let name = try values.decode(String.self, forKey: .name)
@@ -214,7 +214,7 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
     
     // MARK: - PlatformName
     
-    public struct Name: Hashable, CustomStringConvertible, Codable, Equatable {
+    public struct Name: Hashable, CustomStringConvertible, Codable, Equatable, Sendable {
         
         public typealias ID = UInt64
         

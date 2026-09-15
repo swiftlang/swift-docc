@@ -8,14 +8,14 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// Documentation about a parameter for a symbol.
 public struct Parameter {
     /// The name of the parameter.
     public var name: String
     /// The content that describe the parameter.
-    public var contents: [Markup]
+    public var contents: [any Markup]
     /// The text range where the parameter name was parsed.
     var nameRange: SourceRange?
     /// The text range where this parameter was parsed.
@@ -30,7 +30,7 @@ public struct Parameter {
     ///   - nameRange: The text range where the parameter name was parsed.
     ///   - range: The text range where this parameter was parsed.
     ///   - isStandalone: Whether the parameter is documented standalone or as a member of a parameters outline.
-    public init(name: String, nameRange: SourceRange? = nil, contents: [Markup], range: SourceRange? = nil, isStandalone: Bool = false) {
+    public init(name: String, nameRange: SourceRange? = nil, contents: [any Markup], range: SourceRange? = nil, isStandalone: Bool = false) {
         self.name = name
         self.nameRange = nameRange
         self.contents = contents

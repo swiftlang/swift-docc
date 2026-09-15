@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 @testable import SwiftDocC
 import Markdown
 
@@ -74,8 +74,8 @@ class ListItemExtractorTests: XCTestCase {
         XCTAssert(extractedTags("- PossibleValue: Missing value name.").possiblePropertyListValues.isEmpty)
     }
     
-    func testExtractingTags() throws {
-        try assertExtractsRichContentFor(
+    func testExtractingTags() async throws {
+        try await assertExtractsRichContentFor(
             tagName: "Returns",
             findModelContent: { semantic in
                 semantic.returnsSection?.content
@@ -83,7 +83,7 @@ class ListItemExtractorTests: XCTestCase {
             renderContentSectionTitle: "Return Value"
         )
 
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "Note",
             isAside: true,
             findModelContent: { semantic in
@@ -105,7 +105,7 @@ class ListItemExtractorTests: XCTestCase {
             })
         )
         
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "Precondition",
             isAside: true,
             findModelContent: { semantic in
@@ -127,7 +127,7 @@ class ListItemExtractorTests: XCTestCase {
             })
         )
         
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "Parameter someParameterName",
             findModelContent: { semantic in
                 semantic.parametersSection?.parameters.first?.contents
@@ -140,7 +140,7 @@ class ListItemExtractorTests: XCTestCase {
             })
         )
         
-        try assertExtractsRichContentOutlineFor(
+        try await assertExtractsRichContentOutlineFor(
             tagName: "Parameters",
             findModelContent: { semantic in
                 semantic.parametersSection?.parameters.first?.contents
@@ -156,7 +156,7 @@ class ListItemExtractorTests: XCTestCase {
         // Dictionary and HTTP tags are filtered out from the rendering without symbol information.
         // These test helpers can't easily set up a bundle that supports general tags, REST tags, and HTTP tags.
         
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "DictionaryKey someKey",
             findModelContent: { semantic in
                 semantic.dictionaryKeysSection?.dictionaryKeys.first?.contents
@@ -164,7 +164,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentOutlineFor(
+        try await assertExtractsRichContentOutlineFor(
             tagName: "DictionaryKeys",
             findModelContent: { semantic in
                 semantic.dictionaryKeysSection?.dictionaryKeys.first?.contents
@@ -172,7 +172,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "HTTPResponse 200",
             findModelContent: { semantic in
                 semantic.httpResponsesSection?.responses.first?.contents
@@ -180,7 +180,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentOutlineFor(
+        try await assertExtractsRichContentOutlineFor(
             tagName: "HTTPResponses",
             findModelContent: { semantic in
                 semantic.httpResponsesSection?.responses.first?.contents
@@ -188,7 +188,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "httpBody",
             findModelContent: { semantic in
                 semantic.httpBodySection?.body.contents
@@ -196,7 +196,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "HTTPParameter someParameter",
             findModelContent: { semantic in
                 semantic.httpParametersSection?.parameters.first?.contents
@@ -204,7 +204,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentOutlineFor(
+        try await assertExtractsRichContentOutlineFor(
             tagName: "HTTPParameters",
             findModelContent: { semantic in
                 semantic.httpParametersSection?.parameters.first?.contents
@@ -212,7 +212,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentFor(
+        try await assertExtractsRichContentFor(
             tagName: "HTTPBodyParameter someParameter",
             findModelContent: { semantic in
                 semantic.httpBodySection?.body.parameters.first?.contents
@@ -220,7 +220,7 @@ class ListItemExtractorTests: XCTestCase {
             renderVerification: .skip
         )
         
-        try assertExtractsRichContentOutlineFor(
+        try await assertExtractsRichContentOutlineFor(
             tagName: "HTTPBodyParameters",
             findModelContent: { semantic in
                 semantic.httpBodySection?.body.parameters.first?.contents
@@ -237,8 +237,8 @@ class ListItemExtractorTests: XCTestCase {
         renderContentSectionTitle: String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws {
-        try assertExtractsRichContentFor(
+    ) async throws {
+        try await assertExtractsRichContentFor(
             tagName: tagName,
             isAside: false,
             findModelContent: findModelContent,
@@ -270,10 +270,9 @@ class ListItemExtractorTests: XCTestCase {
         renderVerification: RenderVerification,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws {
+    ) async throws {
         // Build documentation for a module page with one tagged item with a lot of different
-        
-        let (bundle, context) = try loadBundle(
+        let (_, context) = try await loadBundle(
             catalog: Folder(name: "Something.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
                 TextFile(name: "Extension.md", utf8Content: """
@@ -303,7 +302,7 @@ class ListItemExtractorTests: XCTestCase {
             ])
         )
         
-        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: isAside, bundle: bundle, context: context, expectedLogText: """
+        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: isAside, context: context, expectedLogText: """
         \u{001B}[1;33mwarning: 'FirstNotFoundSymbol' doesn't exist at '/ModuleName'\u{001B}[0;0m
          --> /Something.docc/Extension.md:5:\(49+tagName.count)-5:\(68+tagName.count)
         3 | Some description of this module.
@@ -336,10 +335,9 @@ class ListItemExtractorTests: XCTestCase {
         renderVerification: RenderVerification,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws {
+    ) async throws {
         // Build documentation for a module page with one tagged item with a lot of different
-        
-        let (bundle, context) = try loadBundle(
+        let (_, context) = try await loadBundle(
             catalog: Folder(name: "Something.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
                 TextFile(name: "Extension.md", utf8Content: """
@@ -370,7 +368,7 @@ class ListItemExtractorTests: XCTestCase {
             ])
         )
         
-        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: false, bundle: bundle, context: context, expectedLogText: """
+        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: false, context: context, expectedLogText: """
         \u{001B}[1;33mwarning: 'FirstNotFoundSymbol' doesn't exist at '/ModuleName'\u{001B}[0;0m
          --> /Something.docc/Extension.md:6:60-6:79
         4 |
@@ -401,19 +399,18 @@ class ListItemExtractorTests: XCTestCase {
         findModelContent: (Symbol) -> [any Markup]?,
         renderVerification: RenderVerification,
         isAside: Bool,
-        bundle: DocumentationBundle,
         context: DocumentationContext,
         expectedLogText: String,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        let expectedLinkProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
-        XCTAssert(expectedLinkProblems.allSatisfy { $0.diagnostic.source != nil }, "Diagnostics are missing source information.", file: file, line: line)
-        XCTAssert(expectedLinkProblems.allSatisfy { $0.diagnostic.range != nil }, "Diagnostics are missing range information.", file: file, line: line)
+        let expectedLinkDiagnostics = context.diagnostics.filter { $0.identifier == "org.swift.docc.unresolvedTopicReference" }
+        XCTAssert(expectedLinkDiagnostics.allSatisfy { $0.source != nil }, "Diagnostics are missing source information.", file: file, line: line)
+        XCTAssert(expectedLinkDiagnostics.allSatisfy { $0.range != nil }, "Diagnostics are missing range information.", file: file, line: line)
         
         let logStorage = LogHandle.LogStorage()
         let diagnosticWriter = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], highlight: true, dataProvider: context.linkResolver.dataProvider)
-        diagnosticWriter.receive(expectedLinkProblems)
+        diagnosticWriter.receive(expectedLinkDiagnostics)
         try diagnosticWriter.flush()
         XCTAssertEqual(logStorage.text, expectedLogText, file: file, line: line)
         
@@ -457,7 +454,7 @@ class ListItemExtractorTests: XCTestCase {
             return
         }
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
         
         let renderContent = try XCTUnwrap(findRenderContent(renderNode), "Didn't find any rendered content", file: file, line: line)
@@ -514,8 +511,8 @@ class ListItemExtractorTests: XCTestCase {
             // ```
             // Inner code block
             // ```
-            .codeListing(.init(syntax: nil, code: ["Inner code block"], metadata: nil)),
-        
+            .codeListing(.init(syntax: nil, code: ["Inner code block"], metadata: nil, options: nil)),
+
             // > Warning: Inner aside, with ``ThirdNotFoundSymbol`` link
             .aside(.init(style: .init(asideKind: .warning), content: [
                 .paragraph(.init(inlineContent: [

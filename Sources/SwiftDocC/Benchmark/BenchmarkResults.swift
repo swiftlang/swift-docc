@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// The results of a single benchmark run.
 public struct BenchmarkResults: Codable {
@@ -97,7 +97,7 @@ public struct BenchmarkResults: Codable {
                 case duration, bytesInMemory, bytesOnDisk, checksum
             }
             
-            public init(from decoder: Decoder) throws {
+            public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
                 
                 switch try container.decode(ValueKind.self, forKey: .type) {
@@ -112,7 +112,7 @@ public struct BenchmarkResults: Codable {
                 }
             }
             
-            public func encode(to encoder: Encoder) throws {
+            public func encode(to encoder: any Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
                 
                 switch self {
@@ -149,7 +149,7 @@ extension BenchmarkResults {
         case platformName, timestamp, doccArguments, metrics
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         if container.contains(.platformName) {

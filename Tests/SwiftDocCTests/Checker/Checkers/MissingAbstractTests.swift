@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,10 +14,10 @@ import Markdown
 
 class MissingAbstractTests: XCTestCase {
     
-    func gatherProblems(for document: Document) -> [Problem] {
+    private func gatherDiagnostics(for document: Document) -> [Diagnostic] {
         var checker = MissingAbstract(sourceFile: nil)
         checker.visit(document)
-        return checker.problems
+        return checker.diagnostics
     }
     
     func testDocumentHasAbstract() {
@@ -27,23 +27,23 @@ class MissingAbstractTests: XCTestCase {
         This is an abstract.
         """
         let document = Document(parsing: source, options: [])
-        let problems = gatherProblems(for: document)
-        XCTAssertTrue(problems.isEmpty)
+        let diagnostics = gatherDiagnostics(for: document)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
     
     func testDocumentHasNoContentAfterTitle() {
         let document = Document(parsing: "# Title", options: [])
-        let problems = gatherProblems(for: document)
-        XCTAssertEqual(problems.count, 0)
+        let diagnostics = gatherDiagnostics(for: document)
+        XCTAssertEqual(diagnostics.count, 0)
     }
     
     func testDocumentIsEmpty() {
         let document = Document(parsing: "", options: [])
-        let problems = gatherProblems(for: document)
-        XCTAssertEqual(problems.count, 0)
+        let diagnostics = gatherDiagnostics(for: document)
+        XCTAssertEqual(diagnostics.count, 0)
     }
     
-    func testDocumentHasListAfterTitle() {
+    func testDocumentHasListAfterTitle() throws {
         let source = """
         # Title
 
@@ -52,43 +52,43 @@ class MissingAbstractTests: XCTestCase {
         """
 
         let document = Document(parsing: source, options: [])
-        let problems = gatherProblems(for: document)
-        XCTAssertEqual(problems.count, 1)
+        let diagnostics = gatherDiagnostics(for: document)
+        XCTAssertEqual(diagnostics.count, 1)
         
-        let problem = problems[0]
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         let title = document.child(at: 0)! as! Heading
-        XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.DocumentHasNoAbstract")
-        XCTAssertEqual(problem.diagnostic.range, title.range)
-        XCTAssertEqual(problem.diagnostic.severity, .information)
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.DocumentHasNoAbstract")
+        XCTAssertEqual(diagnostic.range, title.range)
+        XCTAssertEqual(diagnostic.severity, .information)
 
     }
     
-    func testDocumentHasTitleAfterTitle() {
+    func testDocumentHasTitleAfterTitle() throws {
         let source = """
         # Title
         # Title
         """
         
         let document = Document(parsing: source, options: [])
-        let problems = gatherProblems(for: document)
-        XCTAssertEqual(problems.count, 1)
+        let diagnostics = gatherDiagnostics(for: document)
+        XCTAssertEqual(diagnostics.count, 1)
         
-        let problem = problems[0]
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         let title = document.child(at: 0)! as! Heading
-        XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.DocumentHasNoAbstract")
-        XCTAssertEqual(problem.diagnostic.range, title.range)
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.DocumentHasNoAbstract")
+        XCTAssertEqual(diagnostic.range, title.range)
     }
     
-    func testNoTitle() {
+    func testNoTitle() throws {
         let document = Document(parsing: "- List item", options: [])
-        let problems = gatherProblems(for: document)
-        XCTAssertEqual(problems.count, 1)
+        let diagnostics = gatherDiagnostics(for: document)
+        XCTAssertEqual(diagnostics.count, 1)
         
-        let problem = problems[0]
+        let diagnostic = try XCTUnwrap(diagnostics.first)
         
         let zeroLocation = SourceLocation(line: 1, column: 1, source: nil)
         let endOfElementLocation = SourceLocation(line: 1, column: 12, source: nil)
-        XCTAssertEqual(problem.diagnostic.range, zeroLocation..<endOfElementLocation)
-        XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.DocumentHasNoAbstract")
+        XCTAssertEqual(diagnostic.range, zeroLocation..<endOfElementLocation)
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.DocumentHasNoAbstract")
     }
 }

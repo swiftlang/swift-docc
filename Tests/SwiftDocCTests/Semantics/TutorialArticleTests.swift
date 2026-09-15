@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,31 +11,32 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCTestUtilities
+import DocCCommon
 
 class TutorialArticleTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Article"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(article)
-            XCTAssertEqual(2, problems.count)
-            XCTAssertEqual([
+            XCTAssertEqual(2, diagnostics.count)
+            XCTAssertEqual(diagnostics.map(\.identifier), [
                 "org.swift.docc.HasArgument.time",
                 "org.swift.docc.HasExactlyOne<Article, \(Intro.self)>.Missing",
-                ],
-                           problems.map { $0.diagnostic.identifier })
+            ])
         }
     }
     
-    func testSimpleNoIntro() throws {
+    func testSimpleNoIntro() async throws {
         let source = """
 @Article {
    ## The first section
@@ -56,14 +57,14 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(article)
-            XCTAssertEqual(2, problems.count)
+            XCTAssertEqual(2, diagnostics.count)
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-13:2
@@ -75,7 +76,7 @@ TutorialArticle @1:1-13:2
     }
     
     /// Tests that we parse correctly and emit proper warnings when the author provides non-sequential headers.
-    func testHeaderMix() throws {
+    func testHeaderMix() async throws {
         let source = """
 @Article {
    ## The first section
@@ -106,14 +107,14 @@ TutorialArticle @1:1-13:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(article)
-            XCTAssertEqual(4, problems.count)
+            XCTAssertEqual(4, diagnostics.count)
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-23:2
@@ -124,7 +125,7 @@ TutorialArticle @1:1-23:2
         }
     }
     
-    func testIntroAndContent() throws {
+    func testIntroAndContent() async throws {
         let source = """
 @Article(time: 20) {
 
@@ -155,14 +156,17 @@ TutorialArticle @1:1-23:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
+            InfoPlist(identifier: "org.swift.docc.example"),
+            DataFile(name: "myimage.png", data: Data())
+        ]))
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(article)
-            XCTAssertEqual(0, problems.count)
+            XCTAssertEqual(0, diagnostics.count)
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
@@ -176,7 +180,7 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
         }
     }
     
-    func testLayouts() throws {
+    func testLayouts() async throws {
         let source = """
 @Article {
 
@@ -265,18 +269,24 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
+            InfoPlist(identifier: "org.swift.docc.example"),
+            DataFile(name: "customize-text-view.png", data: Data()),
+            DataFile(name: "this-is-leading.png", data: Data()),
+            DataFile(name: "this-is-trailing.png", data: Data()),
+            DataFile(name: "this-is-still-trailing.png", data: Data())
+        ]))
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(article)
-            XCTAssertEqual(3, problems.count)
-            let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.Stack.UnexpectedContent" })
-            XCTAssertNotNil(arbitraryMarkupProblem)
-            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.summary, "'Stack' contains unexpected content")
-            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.explanation, "Arbitrary markup content is not allowed as a child of the 'Stack' directive.")
+            XCTAssertEqual(3, diagnostics.count)
+            let arbitraryMarkupDiagnostic = diagnostics.first(where: { $0.identifier == "org.swift.docc.Stack.UnexpectedContent" })
+            XCTAssertNotNil(arbitraryMarkupDiagnostic)
+            XCTAssertEqual(arbitraryMarkupDiagnostic?.summary, "'Stack' contains unexpected content")
+            XCTAssertEqual(arbitraryMarkupDiagnostic?.explanation, "Arbitrary markup content is not allowed as a child of the 'Stack' directive.")
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-81:2
@@ -311,7 +321,7 @@ TutorialArticle @1:1-81:2
         }
     }
     
-    func testAssessment() throws {
+    func testAssessment() async throws {
             let source = """
 @Article(time: 20) {
    @Intro(title: "Basic Augmented Reality App") {
@@ -361,14 +371,17 @@ TutorialArticle @1:1-81:2
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-            let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+            let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
+                InfoPlist(identifier: "org.swift.docc.example"),
+                DataFile(name: "myimage.png", data: Data())
+            ]))
             
-            directive.map { directive in
-                var problems = [Problem]()
+            if let directive {
+                var diagnostics = [Diagnostic]()
                 XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-                let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+                let article = TutorialArticle(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
                 XCTAssertNotNil(article)
-                XCTAssertEqual(0, problems.count)
+                XCTAssertEqual(0, diagnostics.count)
                 article.map { article in
                     let expectedDump = """
 TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
@@ -393,73 +406,73 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
             }
         }
 
-    func testAnalyzeNode() throws {
+    func testAnalyzeNode() async throws {
         let title = "unreferenced-tutorial"
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
         TutorialArticle.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
-        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-        let problem = try XCTUnwrap(engine.problems.first)
-        let source = try XCTUnwrap(problem.diagnostic.source)
+        XCTAssertEqual(engine.diagnostics.count, 1)
+        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
+        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+        let source = try XCTUnwrap(diagnostic.source)
         XCTAssertTrue(source.isFileURL)
     }
 
-    func testAnalyzeExternalNode() throws {
+    func testAnalyzeExternalNode() async throws {
         let title = "unreferenced-tutorial"
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
         TutorialArticle.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
-        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-        let problem = try XCTUnwrap(engine.problems.first)
-        XCTAssertNil(problem.diagnostic.source)
+        XCTAssertEqual(engine.diagnostics.count, 1)
+        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
+        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+        XCTAssertNil(diagnostic.source)
     }
 
-    func testAnalyzeFragmentNode() throws {
+    func testAnalyzeFragmentNode() async throws {
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
-        let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
+        let range = SourceRange.makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
         TutorialArticle.analyze(node, completedContext: context, engine: engine)
 
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
-        XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-        let problem = try XCTUnwrap(engine.problems.first)
-        XCTAssertNil(problem.diagnostic.source)
+        XCTAssertEqual(engine.diagnostics.count, 1)
+        XCTAssertEqual(engine.diagnostics.map { $0.identifier }, ["org.swift.docc.UnreferencedTutorialArticle"])
+        XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+        let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+        XCTAssertNil(diagnostic.source)
     }
 
     /// Verify that a `TutorialArticle` only recognizes chapter, volume, or tutorial table-of-contents nodes as valid parents.
-    func testAnalyzeForValidParent() throws {
+    func testAnalyzeForValidParent() async throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
             let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
-            let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
+            let range = SourceRange.makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: url)
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext()
 
         let tutorialArticleNode = node(withTitle: "tutorial-article", ofKind: .tutorialArticle)
 
@@ -472,7 +485,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
             let engine = DiagnosticEngine()
             TutorialArticle.analyze(tutorialArticleNode, completedContext: context, engine: engine)
-            XCTAssertEqual(engine.problems.count, 0)
+            XCTAssertEqual(engine.diagnostics.count, 0)
 
             context.topicGraph.removeEdges(from: parentNode)
             context.topicGraph.nodes.removeValue(forKey: parentNode.reference)
@@ -485,10 +498,10 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
             let engine = DiagnosticEngine()
             TutorialArticle.analyze(tutorialArticleNode, completedContext: context, engine: engine)
-            XCTAssertEqual(engine.problems.count, 1)
-            XCTAssertTrue(engine.problems.allSatisfy { $0.diagnostic.severity == .warning })
-            let problem = try XCTUnwrap(engine.problems.first)
-            XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.UnreferencedTutorialArticle")
+            XCTAssertEqual(engine.diagnostics.count, 1)
+            XCTAssertTrue(engine.diagnostics.allSatisfy { $0.severity == .warning })
+            let diagnostic = try XCTUnwrap(engine.diagnostics.first)
+            XCTAssertEqual(diagnostic.identifier, "org.swift.docc.UnreferencedTutorialArticle")
 
             context.topicGraph.removeEdges(from: parentNode)
             context.topicGraph.nodes.removeValue(forKey: parentNode.reference)

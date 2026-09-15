@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// Defines the overrides for variants of documentation content.
 ///
 /// This class can be used to accumulate override information while encoding a tree of objects.
@@ -49,12 +47,12 @@ public class VariantOverrides: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(values)
     }
     
-    public required init(from decoder: Decoder) throws {
+    public required init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.values = try container.decode([VariantOverride].self)
     }

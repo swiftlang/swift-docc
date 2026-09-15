@@ -94,13 +94,15 @@ struct Measure: ParsableCommand {
     }
     
     mutating func run() throws {
-        try MeasureAction(
-            repeatCount: measureOptions.repeatCount,
-            outputLocation: outputLocation,
-            baseBenchmark: baseBenchmark,
-            doccConvertCommand: measureOptions.doccConvertCommand,
-            computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
-        ).run()
+        try MainActor.assumeIsolated {
+            try MeasureAction(
+                repeatCount: measureOptions.repeatCount,
+                outputLocation: outputLocation,
+                baseBenchmark: baseBenchmark,
+                doccConvertCommand: measureOptions.doccConvertCommand,
+                computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
+            ).run()
+        }
     }
 }
 
@@ -111,6 +113,7 @@ struct MeasureAction {
     var doccConvertCommand: [String]
     var computeMissingOutputSizeMetrics: Bool
     
+    @MainActor
     func run() throws {
         print("Building docc in release configuration".styled(.bold))
         let doccURL = try Self.buildDocC(at: doccProjectRootURL)

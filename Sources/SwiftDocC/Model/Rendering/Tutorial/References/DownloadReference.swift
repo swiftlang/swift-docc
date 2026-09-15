@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to a resource that can be downloaded.
 public struct DownloadReference: RenderReference, URLReference, Equatable {
@@ -18,7 +18,11 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
     /// that contains downloads.
     public static let locationName = "downloads"
 
-    public static var baseURL = URL(string: "/\(locationName)/")!
+    public static var baseURL: URL {
+        get { URL(string: "/\(locationName)/")! }
+        @available(*, deprecated, message: "Setting this value has no effect; create a new value instead. This value will become read-only after 6.5 is released.")
+        set { /* Do nothing */ }
+    }
     
     public var type: RenderReferenceType = .download
     
@@ -69,7 +73,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         case checksum
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.type = try container.decode(RenderReferenceType.self, forKey: .type)
         self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
@@ -78,7 +82,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         self.checksum = try container.decodeIfPresent(String.self, forKey: .checksum)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
@@ -90,12 +94,6 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         } else {
             try container.encode(url, forKey: .url)
         }
-    }
-}
-
-extension DownloadReference {
-    private func renderURL(for url: URL, prefixComponent: String?) -> URL {
-        url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent, prefixComponent: prefixComponent)
     }
 }
 

@@ -1,14 +1,13 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 import SymbolKit
 
 /// A namespace comprising functionality for converting between the standard Symbol Graph File
@@ -175,7 +174,9 @@ extension ExtendedTypeFormatTransformation {
         symbolGraph.relationships.append(contentsOf: memberOfRelationships)
         symbolGraph.relationships.append(contentsOf: conformsToRelationships)
         symbolGraph.relationships.append(contentsOf: contextOfRelationships)
-        extendedTypeSymbols.values.forEach { symbol in symbolGraph.symbols[symbol.identifier.precise] = symbol }
+        for symbol in extendedTypeSymbols.values {
+            symbolGraph.symbols[symbol.identifier.precise] = symbol
+        }
         
         try synthesizeExtendedModuleSymbolAndDeclaredInRelationships(on: &symbolGraph,
                                                                       using: extendedTypeSymbols.values.filter { symbol in symbol.pathComponents.count == 2 }.map(\.identifier.precise),
@@ -359,7 +360,7 @@ extension ExtendedTypeFormatTransformation {
         extensionBlockToExtendedTypeMapping.reserveCapacity(extensionBlockSymbols.count)
         
         let createExtendedTypeSymbolAndAncestors = { (extensionBlockSymbol: SymbolGraph.Symbol, id: String) -> SymbolGraph.Symbol in
-            var newMixins = [String: Mixin]()
+            var newMixins = [String: any Mixin]()
             
             if var swiftExtension = extensionBlockSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self] {
                 swiftExtension.constraints = []
@@ -569,7 +570,7 @@ extension ExtendedTypeFormatTransformation {
 // MARK: Apply Mappings to SymbolGraph
 
 private extension SymbolGraph {
-    mutating func apply(compactMap include: (SymbolGraph.Symbol) throws -> SymbolGraph.Symbol?) rethrows {
+    mutating func apply<Error>(compactMap include: (SymbolGraph.Symbol) throws(Error) -> SymbolGraph.Symbol?) throws(Error) {
         for (key, symbol) in self.symbols {
             self.symbols.removeValue(forKey: key)
             if let newSymbol = try include(symbol) {

@@ -15,7 +15,11 @@ import Foundation
 /// This allows decoding a ``RenderSection`` into its appropriate concrete type, based on the section's
 /// ``RenderSection/kind``.
 public struct CodableContentSection: Codable, Equatable {
-    var section: RenderSection {
+    public var section: any RenderSection {
+        @storageRestrictions(initializes: typeErasedSection)
+        init(initialValue)  {
+            typeErasedSection = AnyRenderSection(initialValue)
+        }
         get {
             typeErasedSection.value
         }
@@ -26,16 +30,14 @@ public struct CodableContentSection: Codable, Equatable {
     private var typeErasedSection: AnyRenderSection
     
     /// Creates a codable content section from the given section.
-    public init(_ section: RenderSection) {
-        self.typeErasedSection = AnyRenderSection(section)
+    public init(_ section: any RenderSection) {
         self.section = section
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let kind = try container.decode(RenderSectionKind.self, forKey: .kind)
         
-        self.typeErasedSection = AnyRenderSection(ContentRenderSection(kind: .content, content: []))
         switch kind {
             case .discussion:
                 section = try ContentRenderSection(from: decoder)
@@ -75,7 +77,7 @@ public struct CodableContentSection: Codable, Equatable {
         case kind
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         try section.encode(to: encoder)
     }
 }

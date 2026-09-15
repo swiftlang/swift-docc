@@ -18,7 +18,7 @@ extension RenderBlockContent: TextIndexing {
         }
     }
 
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         switch self {
         case let .aside(a):
             return a.content.rawIndexableTextContent(references: references)

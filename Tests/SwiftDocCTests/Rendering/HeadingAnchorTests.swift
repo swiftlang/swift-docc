@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,10 +11,10 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class HeadingAnchorTests: XCTestCase {
-    func testEncodeHeadingAnchor() throws {
+    func testEncodeHeadingAnchor() async throws {
         let catalog =
             Folder(name: "unit-test.docc", content: [
                 TextFile(name: "Root.md", utf8Content: """
@@ -34,12 +34,12 @@ class HeadingAnchorTests: XCTestCase {
                 """),
             ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let renderNode = try XCTUnwrap(converter.renderNode(for: node))
 
         // Check heading anchors are encoded

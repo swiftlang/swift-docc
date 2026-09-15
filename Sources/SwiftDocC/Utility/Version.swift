@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+private import Foundation
+
 /// An arbitrary-length version tuple.
 public struct Version: Codable, RandomAccessCollection, ExpressibleByArrayLiteral, CustomStringConvertible, Equatable {
     private var elements: [Int]
@@ -48,12 +50,12 @@ public struct Version: Codable, RandomAccessCollection, ExpressibleByArrayLitera
         self.elements = intComponents
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(description)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let string = try container.decode(String.self)
         if let versionFromString = Version(versionString: string) {

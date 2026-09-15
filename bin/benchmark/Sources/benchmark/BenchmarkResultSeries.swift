@@ -77,7 +77,7 @@ struct BenchmarkResultSeries: Codable, Equatable {
     /// The list of metrics gathered in these benchmark runs.
     public var metrics: [MetricSeries]
     
-    static var empty = BenchmarkResultSeries(platformName: "", timestamp: Date(), doccArguments: [], metrics: [])
+    static let empty = BenchmarkResultSeries(platformName: "", timestamp: Date(), doccArguments: [], metrics: [])
     
     enum Error: Swift.Error, CustomStringConvertible {
         case addedResultHasDifferentConfiguration

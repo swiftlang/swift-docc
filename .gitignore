@@ -1,6 +1,6 @@
 # This source file is part of the Swift.org open source project
 #
-# Copyright (c) 2021 Apple Inc. and the Swift project authors
+# Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
 # Licensed under Apache License v2.0 with Runtime Library Exception
 #
 # See https://swift.org/LICENSE.txt for license information
@@ -24,8 +24,13 @@ docc-dist-build
 .swiftpm
 .vscode
 
-# The bin/benchmark tool is its own local Package that depend on 
+# The bin/benchmark tool is its own local package that depend on 
 # Swift-DocC using a relative local file path ("../..")
 # It should always use the resolved dependencies for the local 
-# Swift-DocC  so we don't track its resolved package file.
+# Swift-DocC so we don't track its resolved package file.
 bin/benchmark/Package.resolved
+
+# The bin/make-test-bundle emits a directory named TestFramework.
+# It is possible to generate this at a path within the repository,
+# so ignore that directory specifically.
+TestFramework

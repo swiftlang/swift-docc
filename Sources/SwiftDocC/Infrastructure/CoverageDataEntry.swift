@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,12 +10,13 @@
 
 import Foundation
 import SymbolKit
+private import DocCCommon
 
 /// `CoverageDataEntry` represents coverage data for one symbol/USR.
 public struct CoverageDataEntry: CustomStringConvertible, Codable {
     internal init(
         title: String,
-        usr: String,
+        referencePath: String,
         sourceLanguage: SourceLanguage,
         availableSourceLanguages: Set<SourceLanguage>,
         kind: DocumentationNode.Kind,
@@ -26,7 +27,7 @@ public struct CoverageDataEntry: CustomStringConvertible, Codable {
         kindSpecificData: KindSpecificData?
     ) {
         self.title = title
-        self.usr = usr
+        self.referencePath = referencePath
         self.sourceLanguage = sourceLanguage
         self.kind = kind
         self.hasAbstract = hasAbstract
@@ -38,7 +39,7 @@ public struct CoverageDataEntry: CustomStringConvertible, Codable {
     }
 
     internal var title: String
-    internal var usr: String
+    internal var referencePath: String
 
     internal var hasAbstract: Bool
     internal var isCurated: Bool
@@ -74,7 +75,7 @@ public struct CoverageDataEntry: CustomStringConvertible, Codable {
             ("Code Listing?", 15, \.hasCodeListing.description),
             ("Parameters", 12, it),
             ("Language", 15, \.sourceLanguage.name),
-            ("USR", 0, \.usr),
+            ("Reference Path", 0, \.referencePath),
         ]
 
     }()
@@ -194,7 +195,7 @@ extension CoverageDataEntry {
         let hasAbstract = semanticSymbol?.abstractSection != nil  // How should we this handle 'possible' failure?
         let isCurated =
             context.manuallyCuratedReferences?.contains(documentationNode.reference) ?? false
-        let usr = renderNode.identifier.description
+        let referencePath = renderNode.identifier.description
         let sourceLanguage = documentationNode.sourceLanguage
         let availableSourceLanguages = documentationNode.availableSourceLanguages
         let availability = semanticSymbol?.availability
@@ -202,7 +203,7 @@ extension CoverageDataEntry {
 
         self = try CoverageDataEntry(
             title: title.description,
-            usr: usr,
+            referencePath: referencePath,
             sourceLanguage: sourceLanguage,
             availableSourceLanguages: availableSourceLanguages,
             kind: kind,
@@ -608,7 +609,7 @@ extension CoverageDataEntry.KindSpecificData {
         }
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let discriminant = try container.decode(
             Discriminant.self,
@@ -654,7 +655,7 @@ extension CoverageDataEntry.KindSpecificData {
 
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(discriminant, forKey: .discriminant)
 

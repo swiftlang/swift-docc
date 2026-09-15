@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,17 +11,8 @@
 import Foundation
 import Markdown
 
-fileprivate extension Optional {
-    /// If self is not `nil`, run the given block.
-    func unwrap(_ block: (Wrapped) -> Void) {
-        if let self {
-            block(self)
-        }
-    }
-}
-
 /**
- Walks a `Semantic` tree and collects any and all links external to the given bundle.
+ Walks a `Semantic` tree and collects any and all links external to the given collection of documentation inputs.
  
  Visits semantic nodes and descends into all their children that do have (indirectly or directly) content.
  When visiting a node that directly contains markup content visits the markup with an instance of ``ExternalMarkupReferenceWalker``
@@ -40,23 +31,25 @@ struct ExternalReferenceWalker: SemanticVisitor {
     /// A markup walker to use for collecting links from markup elements.
     private var markupResolver: ExternalMarkupReferenceWalker
     
-    /// Collected unresolved external references, grouped by the bundle ID.
-    var collectedExternalReferences: [DocumentationBundle.Identifier: [UnresolvedTopicReference]] {
+    /// Collected unresolved external references, grouped by the source ID.
+    var collectedExternalReferences: [DocumentationContext.Inputs.Identifier: [UnresolvedTopicReference]] {
         return markupResolver.collectedExternalLinks.mapValues { links in
             links.map(UnresolvedTopicReference.init(topicURL:))
         }
     }
     
     /// Creates a new semantic walker that collects links to other documentation sources.
-    /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    init(localBundleID: DocumentationBundle.Identifier) {
-        self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
+    /// - Parameter localID: The identifier of the local collection of documentation inputs, used to identify and skip absolute fully qualified local links.
+    init(localID: DocumentationContext.Inputs.Identifier) {
+        self.markupResolver = ExternalMarkupReferenceWalker(localID: localID)
     }
     
     mutating func visitCode(_ code: Code) { }
     
     mutating func visitSteps(_ steps: Steps) {
-        steps.content.forEach { visit($0) }
+        for content in steps.content {
+            visit(content)
+        }
     }
     
     mutating func visitStep(_ step: Step) {
@@ -66,12 +59,16 @@ struct ExternalReferenceWalker: SemanticVisitor {
         
     mutating func visitTutorialSection(_ tutorialSection: TutorialSection) {
         visitMarkupLayouts(tutorialSection.introduction)
-        tutorialSection.stepsContent.unwrap { visitSteps($0) }
+        if let stepsContent = tutorialSection.stepsContent {
+            visitSteps(stepsContent)
+        }
     }
     
     mutating func visitTutorial(_ tutorial: Tutorial) {
         visit(tutorial.intro)
-        tutorial.sections.forEach { visit($0) }
+        for section in tutorial.sections {
+            visit(section)
+        }
         if let assessments = tutorial.assessments {
             visit(assessments)
         }
@@ -84,13 +81,17 @@ struct ExternalReferenceWalker: SemanticVisitor {
     mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) { }
     
     mutating func visitAssessments(_ assessments: Assessments) {
-        assessments.questions.forEach { visit($0) }
+        for question in assessments.questions {
+            visit(question)
+        }
     }
     
     mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) {
         visit(multipleChoice.questionPhrasing)
         visit(multipleChoice.content)
-        multipleChoice.choices.forEach { visit($0) }
+        for choice in multipleChoice.choices {
+            visit(choice)
+        }
     }
     
     mutating func visitJustification(_ justification: Justification) {
@@ -103,22 +104,23 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
     
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) {
-        markupContainer.elements.forEach { markupResolver.visit($0) }
+        for element in markupContainer.elements {
+            markupResolver.visit(element)
+        }
     }
     
-    mutating func visitMarkup(_ markup: Markup) {
+    mutating func visitMarkup(_ markup: any Markup) {
         visitMarkupContainer(MarkupContainer(markup))
     }
 
-    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released
-    mutating func visitTechnology(_ technology: TutorialTableOfContents) {
-        visitTutorialTableOfContents(technology)
-    }
-    
     mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Void {
         visit(tutorialTableOfContents.intro)
-        tutorialTableOfContents.volumes.forEach { visit($0) }
-        tutorialTableOfContents.resources.unwrap { visit($0) }
+        for volume in tutorialTableOfContents.volumes {
+            visit(volume)
+        }
+        if let resources = tutorialTableOfContents.resources {
+            visit(resources)
+        }
     }
     
     mutating func visitImageMedia(_ imageMedia: ImageMedia) { }
@@ -130,20 +132,28 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
     
     mutating func visitVolume(_ volume: Volume) {
-        volume.content.unwrap { visit($0) }
-        volume.chapters.forEach { visit($0) }
+        if let content = volume.content {
+            visit(content)
+        }
+        for chapter in volume.chapters {
+            visit(chapter)
+        }
     }
     
     mutating func visitChapter(_ chapter: Chapter) {
         visit(chapter.content)
-        chapter.topicReferences.forEach { visit($0) }
+        for topicReference in chapter.topicReferences {
+            visit(topicReference)
+        }
     }
     
     mutating func visitTutorialReference(_ tutorialReference: TutorialReference) { }
 
     mutating func visitResources(_ resources: Resources) {
         visitMarkupContainer(resources.content)
-        resources.tiles.forEach { visitTile($0) }
+        for tile in resources.tiles {
+            visitTile(tile)
+        }
     }
     
     mutating func visitTile(_ tile: Tile) {
@@ -151,21 +161,41 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
     
     mutating func visitTutorialArticle(_ article: TutorialArticle) {
-        article.intro.unwrap { visitIntro($0) }
+        if let intro = article.intro {
+            visitIntro(intro)
+        }
         visitMarkupLayouts(article.content)
-        article.assessments.unwrap { visit($0) }
+        if let assessments = article.assessments {
+            visit(assessments)
+        }
     }
     
     mutating func visitArticle(_ article: Article) {
-        article.abstractSection.unwrap { visitMarkup($0.paragraph) }
-        article.discussion.unwrap { $0.content.forEach { visitMarkup($0) }}
-        article.topics.unwrap { $0.content.forEach { visitMarkup($0) }}
-        article.seeAlso.unwrap { $0.content.forEach { visitMarkup($0) }}
-        article.deprecationSummary.unwrap { visitMarkupContainer($0) }
+        if let abstractSection = article.abstractSection {
+            visitMarkup(abstractSection.paragraph)
+        }
+        if let discussion = article.discussion {
+            for markup in discussion.content {
+                visitMarkup(markup)
+            }
+        }
+        if let topics = article.topics {
+            for markup in topics.content {
+                visitMarkup(markup)
+            }
+        }
+        if let seeAlso = article.seeAlso {
+            for markup in seeAlso.content {
+                visitMarkup(markup)
+            }
+        }
+        if let deprecationSummary = article.deprecationSummary {
+            visitMarkupContainer(deprecationSummary)
+        }
     }
 
     private mutating func visitMarkupLayouts(_ markupLayouts: some Sequence<MarkupLayout>) {
-        markupLayouts.forEach { content in
+        for content in markupLayouts {
             switch content {
             case .markup(let markup): visitMarkupContainer(markup)
             case .contentAndMedia(let contentAndMedia): visitContentAndMedia(contentAndMedia)
@@ -175,12 +205,14 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
     
     mutating func visitStack(_ stack: Stack) {
-        stack.contentAndMedia.forEach { visitContentAndMedia($0) }
+        for contentAndMedia in stack.contentAndMedia {
+            visitContentAndMedia(contentAndMedia)
+        }
     }
 
     mutating func visitComment(_ comment: Comment) { }
 
-    mutating func visitSection(_ section: Section) {
+    mutating func visitSection(_ section: any Section) {
         for markup in section.content { visitMarkup(markup) }
     }
 

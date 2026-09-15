@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class RenderNodeSerializationTests: XCTestCase {
     func testRoundTrip() throws {
@@ -44,7 +45,7 @@ class RenderNodeSerializationTests: XCTestCase {
                     .strong(inlineContent: [.text("Project > Run")]),
                     .text(" menu item, or the following code:"),
                 ])),
-                .codeListing(.init(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil)),
+                .codeListing(.init(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil, options: nil)),
             ]))
         ]
         
@@ -71,16 +72,16 @@ class RenderNodeSerializationTests: XCTestCase {
         let assessment1 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor sit amet?")]))],
                                                                      content: nil,
                                                                      choices: [
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "That's right!"),
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Not quite."),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "That's right!"),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, options: nil))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Not quite."),
             .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: nil),
         ])
         
         let assessment2 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Duis aute irure dolor in reprehenderit?")]))],
                                                                      content: [.paragraph(.init(inlineContent: [.text("What is the airspeed velocity of an unladen swallow?")]))],
                                                                      choices: [
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Correct."),
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Yep."),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Correct."),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, options: nil))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Yep."),
             .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Close!"),
         ])
         
@@ -91,72 +92,72 @@ class RenderNodeSerializationTests: XCTestCase {
         checkRoundTrip(inputNode)
     }
     
-    func testBundleRoundTrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+    func testBundleRoundTrip() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         checkRoundTrip(renderNode)
     }
     
-    func testTutorialArticleRoundTrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+    func testTutorialArticleRoundTrip() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
             return
         }
         
-        var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, in: context, problems: &problems) else {
-            XCTFail("Couldn't create article from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create article from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing article markup")
+        XCTAssertEqual(diagnostics.count, 0, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing article markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(article) as! RenderNode
         checkRoundTrip(renderNode)
     }
     
-    func testAssetReferenceDictionary() throws {
+    func testAssetReferenceDictionary() async throws {
         typealias JSONDictionary = [String: Any]
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
         }
         
-        var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
-            XCTFail("Couldn't create tutorial from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create tutorial from markup: \(diagnostics)")
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
+        XCTAssertEqual(diagnostics.count, 1, "Found diagnostics \(diagnostics.map { DiagnosticConsoleWriter.formattedDescription(for: $0) }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         let data = try encode(renderNode: renderNode)
@@ -191,22 +192,22 @@ class RenderNodeSerializationTests: XCTestCase {
         }
     }
 
-    func testDiffAvailability() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+    func testDiffAvailability() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
             return
         }
         
-        var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, in: context, problems: &problems) else {
-            XCTFail("Couldn't create article from markup: \(problems)")
+        var diagnostics = [Diagnostic]()
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics) else {
+            XCTFail("Couldn't create article from markup: \(diagnostics)")
             return
         }
 
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
 
         var renderNode = translator.visit(article) as! RenderNode
 
@@ -297,7 +298,7 @@ class RenderNodeSerializationTests: XCTestCase {
     
     // MARK: - Utility functions
 
-    func checkRoundTrip(_ inputNode: RenderNode, file: StaticString = #file, line: UInt = #line) {
+    func checkRoundTrip(_ inputNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {
         // Make sure we're not using a shared encoder
         let testEncoder = JSONEncoder()
         let testDecoder = JSONDecoder()
@@ -329,9 +330,7 @@ class RenderNodeSerializationTests: XCTestCase {
 
     func encode(renderNode: RenderNode) throws -> Data {
         let encoder = JSONEncoder()
-        if #available(OSX 10.13, *) {
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        }
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         
         return try encoder.encode(renderNode)
     }

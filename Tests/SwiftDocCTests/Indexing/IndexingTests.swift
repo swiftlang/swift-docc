@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,16 +10,17 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class IndexingTests: XCTestCase {
     
     // MARK: - Tutorial
-    func testTutorial() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testTutorial() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let tutorialReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: tutorialReference)
         let tutorial = node.semantic as! Tutorial
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: tutorialReference)
+        var converter = RenderNodeTranslator(context: context, identifier: tutorialReference)
         let renderNode = converter.visit(tutorial) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: tutorialReference)
         XCTAssertEqual(4, indexingRecords.count)
@@ -88,12 +89,12 @@ class IndexingTests: XCTestCase {
     
     // MARK: - Article
     
-    func testArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testArticle() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! TutorialArticle
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)
+        var converter = RenderNodeTranslator(context: context, identifier: articleReference)
         let renderNode = converter.visit(article) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: articleReference)
         
@@ -186,12 +187,12 @@ class IndexingTests: XCTestCase {
         XCTAssertEqual("Hello, world!", aside.rawIndexableTextContent(references: [:]))
     }
     
-    func testRootPageIndexingRecord() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testRootPageIndexingRecord() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)
+        var converter = RenderNodeTranslator(context: context, identifier: articleReference)
         let renderNode = converter.visit(article) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: articleReference)
         
@@ -206,13 +207,13 @@ class IndexingTests: XCTestCase {
                        indexingRecords[0])
     }
     
-    func testSymbolIndexingRecord() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
-            // Modify the documentaion to have default availability for MyKit so that there is platform availability
+    func testSymbolIndexingRecord() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+            // Modify the documentation to have default availability for MyKit so that there is platform availability
             // information for MyProtocol (both in the render node and in the indexing record.
             let plistURL = url.appendingPathComponent("Info.plist")
             let plistData = try Data(contentsOf: plistURL)
-            var plist = try DocumentationBundle.Info(from: plistData)
+            var plist = try DocumentationContext.Inputs.Info(from: plistData)
             let existingAvailability = plist.defaultAvailability?.modules["FillIntroduced"]
             plist.defaultAvailability?.modules["MyKit"] = existingAvailability
             XCTAssertNotNil(plist.defaultAvailability?.modules["MyKit"])
@@ -224,7 +225,7 @@ class IndexingTests: XCTestCase {
         let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)
+        var converter = RenderNodeTranslator(context: context, identifier: articleReference)
         let renderNode = converter.visit(article) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: articleReference)
         

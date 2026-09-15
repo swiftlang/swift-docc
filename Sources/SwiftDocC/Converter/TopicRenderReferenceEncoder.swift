@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A thread-safe cache for encoded render references.
 public typealias RenderReferenceCache = Synchronized<[String: (reference: Data, overrides: [VariantOverride])]>
@@ -19,11 +19,11 @@ enum TopicRenderReferenceEncoder {
     ///   - renderNodeData: A render node encoded as JSON data.
     ///   - references: A list of render references.
     ///   - encoder: A `JSONEncoder` to use for the encoding.
-    ///   - renderReferenceCache: A cache for encoded render reference data. When encoding a large number of render nodes, use the same cache
+    ///   - referenceCache: A cache for encoded render reference data. When encoding a large number of render nodes, use the same cache
     ///   instance to avoid encoding the same reference objects repeatedly.
     static func addRenderReferences(
         to renderNodeData: inout Data,
-        references: [String: RenderReference],
+        references: [String: any RenderReference],
         encodeAccumulatedVariantOverrides: Bool = false,
         encoder: JSONEncoder,
         renderReferenceCache referenceCache: RenderReferenceCache

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,20 +13,20 @@ import XCTest
 import Markdown
 
 class ContentAndMediaTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @ContentAndMedia {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(contentAndMedia)
-        XCTAssertEqual(0, problems.count)
+        XCTAssertEqual(0, diagnostics.count)
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
 @ContentAndMedia {
    
@@ -37,17 +37,17 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(contentAndMedia)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         contentAndMedia.map { contentAndMedia in
             XCTAssertEqual(.leading, contentAndMedia.mediaPosition)
         }
     }
     
-    func testTrailingMiddleMediaPosition() throws {
+    func testTrailingMiddleMediaPosition() async throws {
         let source = """
 @ContentAndMedia {
    
@@ -58,17 +58,17 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(contentAndMedia)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         contentAndMedia.map { contentAndMedia in
             XCTAssertEqual(.trailing, contentAndMedia.mediaPosition)
         }
     }
     
-    func testTrailingMediaPosition() throws {
+    func testTrailingMediaPosition() async throws {
         let source = """
 @ContentAndMedia {
    
@@ -81,17 +81,17 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(contentAndMedia)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         contentAndMedia.map { contentAndMedia in
             XCTAssertEqual(.trailing, contentAndMedia.mediaPosition)
         }
     }
 
-    func testDeprecatedArguments() throws {
+    func testDeprecatedArguments() async throws {
         let source = """
 @ContentAndMedia(layout: horizontal, eyebrow: eyebrow, title: title) {
 
@@ -102,21 +102,16 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(contentAndMedia)
-        XCTAssertEqual(problems.count, 3)
-        XCTAssertEqual(
-            [
-                "org.swift.docc.DeprecatedArgument.eyebrow",
-                "org.swift.docc.DeprecatedArgument.title",
-                "org.swift.docc.DeprecatedArgument.layout",
-            ],
-            problems.map { $0.diagnostic.identifier }
-        )
-        contentAndMedia.map { contentAndMedia in
-            XCTAssertEqual(.leading, contentAndMedia.mediaPosition)
-        }
+        XCTAssertEqual(.leading, contentAndMedia?.mediaPosition)
+        XCTAssertEqual(diagnostics.count, 3)
+        XCTAssertEqual(diagnostics.map(\.identifier), [
+            "org.swift.docc.DeprecatedArgument.eyebrow",
+            "org.swift.docc.DeprecatedArgument.title",
+            "org.swift.docc.DeprecatedArgument.layout",
+        ])
     }
 }

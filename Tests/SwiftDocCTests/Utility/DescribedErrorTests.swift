@@ -24,7 +24,7 @@ class DescribedErrorTests: XCTestCase {
         let error = TestError()
         XCTAssertEqual("TestError", error.errorDescription)
         
-        let foundationError = error as Foundation.LocalizedError
+        let foundationError = error as (any Foundation.LocalizedError)
         XCTAssertEqual("TestError", foundationError.errorDescription)
     }
 }

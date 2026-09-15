@@ -9,7 +9,8 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
+public import DocCCommon
 
 /// A directive that controls what programming languages an article is available in.
 ///

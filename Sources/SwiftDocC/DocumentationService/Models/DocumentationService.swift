@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A service for processing documentation requests.
 public protocol DocumentationService {
     /// The types of messages this service can handle.

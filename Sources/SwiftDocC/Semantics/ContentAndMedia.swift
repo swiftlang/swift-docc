@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// A piece of media, such as an image or video, with an attached description.
 public final class ContentAndMedia: Semantic, DirectiveConvertible {
@@ -42,7 +42,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
     public let content: MarkupContainer
     
     /// A ``Media`` item to display next to the ``content``.
-    public let media: Media?
+    public let media: (any Media)?
     
     override var children: [Semantic] {
         return [content] + (media.map { [$0] } ?? [])
@@ -65,7 +65,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         }
     }
     
-    init(originalMarkup: BlockDirective, title: String?, layout: Layout?, eyebrow: String?, content: MarkupContainer, media: Media?, mediaPosition: MediaPosition) {
+    init(originalMarkup: BlockDirective, title: String?, layout: Layout?, eyebrow: String?, content: MarkupContainer, media: (any Media)?, mediaPosition: MediaPosition) {
         self.originalMarkup = originalMarkup
         self.title = title
         self.layout = layout
@@ -75,17 +75,26 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         self.mediaPosition = mediaPosition
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<ContentAndMedia>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Layout.argumentName, Semantics.Eyebrow.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+    @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
+        var diagnostics = [Diagnostic]()
+        defer {
+            problems.append(contentsOf: diagnostics.map { .init(diagnostic: $0) })
+        }
+        self.init(from: directive, source: source, for: bundle, featureFlags: featureFlags, diagnostics: &diagnostics)
+    }
+    
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<ContentAndMedia>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Layout.argumentName, Semantics.Eyebrow.argumentName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<ContentAndMedia>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<ContentAndMedia>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, diagnostics: &diagnostics)
         
-        let optionalEyebrow = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Eyebrow>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
-        let optionalTitle = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Title>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
+        let optionalEyebrow = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Eyebrow>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
+        let optionalTitle = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Title>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
         
-        let layout = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Layout>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
+        let layout = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Layout>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, diagnostics: &diagnostics)
         
-        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil, featureFlags: featureFlags).analyze(directive, children: directive.children, source: source, for: inputs, diagnostics: &diagnostics)
         
         let mediaPosition: MediaPosition
         if let firstChildDirective = directive.child(at: 0) as? BlockDirective,

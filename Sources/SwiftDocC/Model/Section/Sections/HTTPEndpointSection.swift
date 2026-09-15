@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SymbolKit
+public import SymbolKit
 
 /// A section that contains a request's endpoint.
 public struct HTTPEndpointSection {

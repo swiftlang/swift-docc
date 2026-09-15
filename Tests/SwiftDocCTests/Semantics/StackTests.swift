@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,30 +11,31 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCTestUtilities
 
 class StackTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Stack"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(stack)
-            XCTAssertEqual(1, problems.count)
+            XCTAssertEqual(1, diagnostics.count)
             XCTAssertEqual(
                 ["org.swift.docc.HasAtLeastOne<\(Stack.self), \(ContentAndMedia.self)>"],
-                problems.map { $0.diagnostic.identifier }
+                diagnostics.map { $0.identifier }
             )
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
         @Stack {
           @ContentAndMedia {
@@ -48,18 +49,18 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await makeEmptyContext()
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(stack)
-            XCTAssertEqual(0, problems.count)
+            XCTAssertEqual(0, diagnostics.count)
         }
     }
 
-    func testTooManyChildren() throws {
+    func testTooManyChildren() async throws {
         var source = "@Stack {"
         for _ in 0...Stack.childrenLimit {
             source += """
@@ -78,17 +79,19 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: [
+            DataFile(name: "code4.png", data: Data())
+        ]))
         
-        directive.map { directive in
-            var problems = [Problem]()
+        if let directive {
+            var diagnostics = [Diagnostic]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let stack = Stack(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
             XCTAssertNotNil(stack)
-            XCTAssertEqual(1, problems.count)
+            XCTAssertEqual(1, diagnostics.count)
             XCTAssertEqual(
                 ["org.swift.docc.HasAtMost<\(Stack.self), \(ContentAndMedia.self)>(\(Stack.childrenLimit))"],
-                problems.map { $0.diagnostic.identifier }
+                diagnostics.map { $0.identifier }
             )
         }
     }

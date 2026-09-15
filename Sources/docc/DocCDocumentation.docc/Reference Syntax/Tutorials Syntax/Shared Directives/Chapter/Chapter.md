@@ -23,7 +23,7 @@ Use `Chapter` directives to organize related tutorial pages into groupings. For 
     ...
     
     @Chapter(name: "SlothCreator Essentials") {
-        @Image(source: "chapter1-slothcreatorEssentials.png", alt: "A wireframe of an app interface that has an outline of a sloth and four buttons below the sloth. The buttons display the following symbols, from left to right: snowflake, fire, wind, and lightning.")
+        @Image(source: chapter1-slothcreatorEssentials, alt: "A wireframe of an app interface that has an outline of a sloth and four buttons below the sloth. The buttons display the following symbols, from left to right: snowflake, fire, wind, and lightning.")
         
         Create custom sloths and edit their attributes and powers using SlothCreator.
         

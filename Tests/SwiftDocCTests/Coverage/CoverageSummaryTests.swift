@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 // Creates a formatted string in the form of "X/Y% (X/Y)"
 func ratio(_ x: Int, _ y: Int, length: Int? = nil) -> String {
@@ -45,7 +46,7 @@ Globals         | (0/0)           | (0/0)           | (0/0)
         let source: [CoverageDataEntry] = [
             CoverageDataEntry(
                 title: "MyDocumentedUncuratedClass",
-                usr: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
+                referencePath: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
                 sourceLanguage: .swift,
                 availableSourceLanguages: [.swift],
                 kind: .class,
@@ -75,7 +76,7 @@ Globals         | (0/0)           | (0/0)           | (0/0)
         let source: [CoverageDataEntry] = [
             CoverageDataEntry(
                 title: "MyDocumentedUncuratedClass",
-                usr: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
+                referencePath: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
                 sourceLanguage: .swift,
                 availableSourceLanguages: [.swift],
                 kind: .class,
@@ -86,7 +87,7 @@ Globals         | (0/0)           | (0/0)           | (0/0)
                 kindSpecificData: .class(memberStats: [:])),
             CoverageDataEntry(
                 title: "MyDocumentedUncuratedClassProperty",
-                usr: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass/myProperty",
+                referencePath: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass/myProperty",
                 sourceLanguage: .swift,
                 availableSourceLanguages: [.swift],
                 kind: .instanceProperty,

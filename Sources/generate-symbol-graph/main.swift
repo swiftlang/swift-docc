@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 @testable import SwiftDocC
 
 struct Directive {
@@ -61,7 +61,7 @@ func directiveUSR(_ directiveName: String) -> String {
 // The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
 // This conformance it only relevant to the `generate-symbol-graph` script.
-extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.ExpressibleByStringInterpolation {
+extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.ExpressibleByStringInterpolation, Swift.ExpressibleByUnicodeScalarLiteral, Swift.ExpressibleByExtendedGraphemeClusterLiteral, Swift.ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(kind: .text, spelling: value, preciseIdentifier: nil)
     }
@@ -79,7 +79,7 @@ extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.Expr
 // The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
 // This conformance it only relevant to the `generate-symbol-graph` script. 
-extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpolation {
+extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpolation, Swift.ExpressibleByUnicodeScalarLiteral, Swift.ExpressibleByExtendedGraphemeClusterLiteral, Swift.ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(text: value, range: nil)
     }
@@ -199,7 +199,7 @@ let supportedDirectives: [Directive] = [
     }
 
 func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
-    let packagePath = URL(fileURLWithPath: #file)
+    let packagePath = URL(fileURLWithPath: #filePath) // Absolute path to this file
         .deletingLastPathComponent() // generate-symbol-graph
         .deletingLastPathComponent() // Sources
         .deletingLastPathComponent() // swift-docc
@@ -667,7 +667,7 @@ private struct SortedSymbolGraph: Codable {
         wrapped = symbolGraph
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: SymbolGraph.CodingKeys.self)
         try container.encode(wrapped.metadata, forKey: .metadata)
         try container.encode(wrapped.module, forKey: .module)
@@ -675,12 +675,12 @@ private struct SortedSymbolGraph: Codable {
         try container.encode(wrapped.relationships, forKey: .relationships)
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         try self.init(SymbolGraph(from: decoder))
     }
 }
 
-let output = URL(fileURLWithPath: #file)
+let output = URL(fileURLWithPath: #filePath) // Absolute path to this file
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .appendingPathComponent("docc/DocCDocumentation.docc/docc.symbols.json")

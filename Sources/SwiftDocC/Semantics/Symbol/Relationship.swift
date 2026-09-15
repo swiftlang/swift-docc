@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 
 /// A relationship to a node in the topic graph.
 public enum Relationship {

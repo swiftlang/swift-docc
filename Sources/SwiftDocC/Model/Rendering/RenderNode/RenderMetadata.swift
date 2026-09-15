@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// Arbitrary metadata for a render node.
 public struct RenderMetadata: VariantContainer {
@@ -286,7 +286,7 @@ extension RenderMetadata: Codable {
         public var intValue: Int? { nil }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         category = try container.decodeIfPresent(String.self, forKey: .category)
@@ -344,7 +344,7 @@ extension RenderMetadata: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encodeIfPresent(category, forKey: .category)

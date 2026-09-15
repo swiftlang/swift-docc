@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -109,7 +109,6 @@ class NearMissTests: XCTestCase {
             "init(help:)",
             "init(exclusivity:help:)",
             "init(wrappedValue:exclusivity:help:)",
-            "init(wrappedValue:help:)",
             // Infrequently Used APIs
             "init(from:)",
             "wrappedValue",
@@ -122,13 +121,12 @@ class NearMissTests: XCTestCase {
         checkBestMatches(for: flagSubpaths, against: "wrappedValue", expectedMatches: [
             // These need to be in the best matches in this order.
             "wrappedValue",
-            "init(wrappedValue:help:)",
-            "init(wrappedValue:name:help:)",
-            "init(wrappedValue:exclusivity:help:)",
         ], acceptedMatches: [
             // These don't need to be in the best matches but it's acceptable if they are.
             //
             // Most of the string doesn't match but it contains the full 'wrappedValue'.
+            "init(wrappedValue:name:help:)",
+            "init(wrappedValue:exclusivity:help:)",
             "init(wrappedValue:name:inversion:exclusivity:help:)",
         ])
     }
@@ -327,7 +325,7 @@ class NearMissTests: XCTestCase {
         against authored: String,
         expectedMatches: [String],
         acceptedMatches: [String] = [],
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let matches = NearMiss.bestMatches(for: possibilities, against: authored)

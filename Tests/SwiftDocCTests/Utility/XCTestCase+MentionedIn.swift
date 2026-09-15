@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,12 +10,12 @@
 
 @testable import SwiftDocC
 import XCTest
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import SymbolKit
 
 extension XCTestCase {
-    /// Creates a test bundle for testing "Mentioned In" features.
-    func createMentionedInTestBundle() throws -> (DocumentationBundle, DocumentationContext) {
+    /// Creates a test catalog for testing "Mentioned In" features.
+    func createMentionedInTestBundle(isFeatureFlagEnabled: Bool = true) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
         let catalog = Folder(name: "MentionedIn.docc", content: [
             JSONFile(name: "MentionedIn.symbols.json", content: makeSymbolGraph(
                 moduleName: "MentionedIn",
@@ -72,7 +72,9 @@ extension XCTestCase {
                  """),
         ])
 
-        let (bundle, context) = try loadBundle(catalog: catalog)
-        return (bundle, context)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isMentionedInEnabled = isFeatureFlagEnabled
+        
+        return try await loadBundle(catalog: catalog, configuration: configuration)
     }
 }

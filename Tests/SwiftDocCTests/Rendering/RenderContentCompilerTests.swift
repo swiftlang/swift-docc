@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,12 +11,30 @@
 import Foundation
 import Markdown
 @testable import SwiftDocC
+import DocCTestUtilities
 import XCTest
+import DocCCommon
+
+typealias Position = RenderBlockContent.CodeBlockOptions.Position
 
 class RenderContentCompilerTests: XCTestCase {
-    func testLinkOverrideTitle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+    func testLinkOverrideTitle() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "article.md", utf8Content: """
+            # First
+            """),
+            TextFile(name: "article2.md", utf8Content: """
+            # Second
+            """),
+            TextFile(name: "article3.md", utf8Content: """
+            # Third
+            """),
+            
+            InfoPlist(identifier: "org.swift.docc.example")
+        ])
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         [Example](http://example.com)
@@ -87,7 +105,7 @@ class RenderContentCompilerTests: XCTestCase {
                 return
             }
             let link = RenderInlineContent.reference(
-                identifier: .init("doc://org.swift.docc.example/documentation/Test-Bundle/article"),
+                identifier: .init("doc://org.swift.docc.example/documentation/unit-test/article"),
                 isActive: true,
                 overridingTitle: "Custom Title",
                 overridingTitleInlineContent: [.text("Custom Title")])
@@ -99,7 +117,7 @@ class RenderContentCompilerTests: XCTestCase {
                 return
             }
             let link = RenderInlineContent.reference(
-                identifier: .init("doc://org.swift.docc.example/documentation/Test-Bundle/article2"),
+                identifier: .init("doc://org.swift.docc.example/documentation/unit-test/article2"),
                 isActive: true,
                 overridingTitle: "Custom Image Content ",
                 overridingTitleInlineContent: [
@@ -123,7 +141,7 @@ class RenderContentCompilerTests: XCTestCase {
                 return
             }
             let link = RenderInlineContent.reference(
-                identifier: .init("doc://org.swift.docc.example/documentation/Test-Bundle/article3"),
+                identifier: .init("doc://org.swift.docc.example/documentation/unit-test/article3"),
                 isActive: true,
                 overridingTitle: nil,
                 overridingTitleInlineContent: nil
@@ -132,9 +150,9 @@ class RenderContentCompilerTests: XCTestCase {
         }
     }
     
-    func testLineBreak() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+    func testLineBreak() async throws {
+        let (_, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         Backslash before new line\
@@ -197,9 +215,9 @@ class RenderContentCompilerTests: XCTestCase {
         }
     }
     
-    func testThematicBreak() throws {
-        let (bundle, context) = try testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+    func testThematicBreak() async throws {
+        let context = try await makeEmptyContext()
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
 
         let source = #"""
@@ -222,5 +240,500 @@ class RenderContentCompilerTests: XCTestCase {
             
             XCTAssertEqual(documentThematicBreak, thematicBreak)
         }
+    }
+
+    func testCopyToClipboard() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let (_, context) = try await testBundleAndContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.options?.copyToClipboard, true)
+    }
+
+    func testNoCopyToClipboard() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let (_, context) = try await testBundleAndContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, nocopy
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.options?.copyToClipboard, false)
+    }
+
+    func testCopyToClipboardNoLang() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```nocopy
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, nil)
+        XCTAssertEqual(codeListing.options?.copyToClipboard, false)
+    }
+
+    func testCopyToClipboardNoFeatureFlag() async throws {
+        let context = try await makeEmptyContext()
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.options?.copyToClipboard, nil)
+    }
+
+    func testNoCopyToClipboardNoFeatureFlag() async throws {
+        let context = try await makeEmptyContext()
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, nocopy
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift, nocopy")
+        XCTAssertEqual(codeListing.options?.copyToClipboard, nil)
+    }
+
+    func testShowLineNumbers() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, showLineNumbers
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
+    }
+
+    func testLowercaseShowLineNumbers() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, showlinenumbers
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
+    }
+
+    func testWrapAndHighlight() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, wrap=20, highlight=[2]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+        XCTAssertEqual(codeListing.options?.wrap, 20)
+        let line = Position(line: 2)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line..<line
+                )
+            ])
+    }
+
+    func testHighlight() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, highlight=[2]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+        let line = Position(line: 2)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line..<line
+            )])
+    }
+
+    func testHighlightNoFeatureFlag() async throws {
+        let context = try await makeEmptyContext()
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, highlight=[2]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift, highlight=[2]")
+        XCTAssertEqual(codeListing.options?.lineAnnotations, nil)
+    }
+
+    func testMultipleHighlight() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, highlight=[1, 2, 3]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+
+        let line1 = Position(line: 1)
+        let line2 = Position(line: 2)
+        let line3 = Position(line: 3)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line1..<line1
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line2..<line2
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            )
+            ])
+    }
+
+    func testMultipleHighlightMultipleStrikeout() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, strikeout=[3,5], highlight=[1, 2, 3]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+
+        let line1 = Position(line: 1)
+        let line2 = Position(line: 2)
+        let line3 = Position(line: 3)
+        let line5 = Position(line: 5)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+         [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line1..<line1
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line2..<line2
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line5..<line5
+            )
+            ])
+    }
+
+    func testLanguageNotFirstOption() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```showLineNumbers, highlight=[1, 2, 3], swift, wrap=20, strikeout=[3]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        // we expect the language to be the first option in the language line, otherwise it remains nil.
+        XCTAssertEqual(codeListing.syntax, nil)
+        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
+        XCTAssertEqual(codeListing.options?.wrap, 20)
+
+        let line1 = Position(line: 1)
+        let line2 = Position(line: 2)
+        let line3 = Position(line: 3)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line1..<line1
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line2..<line2
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line3..<line3
+            )
+            ])
+    }
+
+    func testUnorderedArrayOptions() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled = true
+
+        let context = try await makeEmptyContext(configuration: configuration)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```highlight=[5,3,4], strikeout=[3,1]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        let line1 = Position(line: 1)
+        let line3 = Position(line: 3)
+        let line4 = Position(line: 4)
+        let line5 = Position(line: 5)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line5..<line5
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line4..<line4
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line1..<line1
+            )
+            ])
     }
 }

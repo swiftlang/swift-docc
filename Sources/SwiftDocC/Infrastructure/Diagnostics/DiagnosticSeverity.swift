@@ -1,22 +1,19 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
-
 /**
  The severity of a diagnostic.
 
  Diagnostics have a severity in order to give the user an indication of what a message means to them and whether it's immediately actionable or blocking.
  */
-public enum DiagnosticSeverity: Int, Codable, CustomStringConvertible {
+public enum DiagnosticSeverity: Int, Codable, CustomStringConvertible, Sendable {
     /**
      An error.
 
@@ -34,17 +31,13 @@ public enum DiagnosticSeverity: Int, Codable, CustomStringConvertible {
     /**
      Information.
 
-     Information needn't be immediately actionable but should be useful to the user. Recommendations should be saved for the `hint` diagnostic severity.
+     Information needn't be immediately actionable but should be useful to the user.
 
      > Note: this maps to `analyzer` style information.
      */
     case information = 3
 
-    /**
-     A hint.
-
-     A hint may be used to provide recommendations to resolve errors or warnings or may provide recommendations to the user proactively.
-     */
+    @available(*, deprecated, message: "Use either 'DiagnosticNote' or 'Solution' instead. This deprecated API will be removed after 6.5 is released.")
     case hint = 4
 
     public var description: String {
@@ -74,10 +67,8 @@ extension DiagnosticSeverity {
             self = .error
         case "warning":
             self = .warning
-        case "information", "info", "note":
+        case "information", "info", "note", "hint", "notice":
             self = .information
-        case "hint", "notice":
-            self = .hint
         default:
             return nil
         }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,19 +12,15 @@ import XCTest
 import Markdown
 import SymbolKit
 @testable @_spi(ExternalLinks) import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
-    override func setUp() {
-        super.setUp()
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-    }
-    
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
     
-    func testUnambiguousAbsolutePaths() throws {
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
+    func testUnambiguousAbsolutePaths() async throws {
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework")
         
@@ -408,8 +404,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testAmbiguousPaths() throws {
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
+    func testAmbiguousPaths() async throws {
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
         // public enum CollisionsWithDifferentKinds {
         //     case something
@@ -577,8 +573,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testRedundantDisambiguations() throws {
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
+    func testRedundantDisambiguations() async throws {
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework")
         
@@ -685,7 +681,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testSymbolLinksInDeclarationsAndRelationships() throws {
+    func testSymbolLinksInDeclarationsAndRelationships() async throws {
         // Build documentation for the dependency first
         let symbols = [("First", .class), ("Second", .protocol), ("Third", .struct), ("Fourth", .enum)].map { (name: String, kind: SymbolGraph.Symbol.KindIdentifier) in
             return SymbolGraph.Symbol(
@@ -699,7 +695,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             )
         }
         
-        let (dependencyBundle, dependencyContext) = try loadBundle(
+        let (_ , dependencyContext) = try await loadBundle(
             catalog: Folder(name: "Dependency.docc", content: [
                 InfoPlist(identifier: "com.example.dependency"), // This isn't necessary but makes it easier to distinguish the identifier from the module name in the external references.
                 JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols))
@@ -707,15 +703,15 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
         
         // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
-        let dependencyConverter = DocumentationContextConverter(bundle: dependencyBundle, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext, bundle: dependencyBundle))
+        let dependencyConverter = DocumentationContextConverter(context: dependencyContext, renderContext: .init(documentationContext: dependencyContext))
         
         let linkSummaries: [LinkDestinationSummary] = try dependencyContext.knownPages.flatMap { reference in
             let entity = try dependencyContext.entity(with: reference)
             let renderNode = try XCTUnwrap(dependencyConverter.renderNode(for: entity))
             
-            return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
+            return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(documentationID: dependencyContext.inputs.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -724,7 +720,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
         
         // After building the dependency,
-        let (mainBundle, mainContext) = try loadBundle(
+        let (_, mainContext) = try await loadBundle(
             catalog: Folder(name: "Main.docc", content: [
                 JSONFile(name: "Main.symbols.json", content: makeSymbolGraph(
                     moduleName: "Main",
@@ -794,11 +790,11 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)
         
-        let mainConverter = DocumentationContextConverter(bundle: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext, bundle: mainBundle))
+        let mainConverter = DocumentationContextConverter(context: mainContext, renderContext: .init(documentationContext: mainContext))
         
         // Check the relationships of 'SomeClass'
         do {
-            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainContext.inputs.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -822,7 +818,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the declaration of 'someFunction'
         do {
-            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainContext.inputs.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -851,10 +847,11 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
 
-    func testOverloadGroupSymbolsResolveWithoutHash() throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+    func testOverloadGroupSymbolsResolveWithoutHash() async throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = true
 
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "OverloadedSymbols")
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "OverloadedSymbols", configuration: configuration)
 
         // The enum case should continue to resolve by kind, since it has no hash collision
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.enum.case")
@@ -872,7 +869,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testBetaInformationPreserved() throws {
+    func testBetaInformationPreserved() async throws {
         let platformMetadata = [
             "macOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(2, 0, 0), beta: true),
@@ -884,7 +881,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
 
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
         
         // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)
         try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyClass", isBeta: true)
@@ -920,7 +917,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         func assertSuccessfullyResolves(
             authoredLink: String,
             to absoluteReferenceString: String? = nil,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             let expectedAbsoluteReferenceString = absoluteReferenceString ?? {
@@ -943,14 +940,14 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         func assertBetaStatus(
             authoredLink: String,
             isBeta: Bool,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             try assertResults(authoredLink: authoredLink) { result, label in
                 switch result {
                 case .success(let resolved):
                     let entity = externalResolver.entity(resolved)
-                    XCTAssertEqual(entity.topicRenderReference.isBeta, isBeta, file: file, line: line)
+                    XCTAssertEqual(entity.makeTopicRenderReference().isBeta, isBeta, file: file, line: line)
                 case .failure(_, let errorInfo):
                     XCTFail("Unexpectedly failed to resolve \(label) link: \(errorInfo.message) \(errorInfo.solutions.map(\.summary).joined(separator: ", "))", file: file, line: line)
                 }
@@ -961,7 +958,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: String,
             errorMessage: String,
             solutions: [Solution],
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
            try assertResults(authoredLink: authoredLink) { result, label in
@@ -989,22 +986,22 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
+    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
+        let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.id)
+        let resolverInfo = try localResolver.prepareForSerialization(documentationID: context.inputs.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
         var entitySummaries = [LinkDestinationSummary]()
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = converter.convert(node)
-            entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false))
+            entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode))
         }
         
         let externalResolver = ExternalPathHierarchyResolver(
@@ -1013,5 +1010,119 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
         
         return LinkResolvers(localResolver: localResolver, externalResolver: externalResolver, context: context)
+    }
+}
+
+import Testing
+
+struct ExternalPathHierarchyResolverTests_new {
+    @Test
+    func rendersReferenceInAbstractOfExternalSymbolInTopicSection() async throws {
+        let dependencyCatalog = Folder(name: "Dependency.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Dependency", symbols: [
+                makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], docComment: """
+                This first symbol links to the ``Second`` symbol.    
+                """),
+                
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]),
+            ]))
+        }
+        let dependencyContext = try await load(catalog: dependencyCatalog)
+        #expect(dependencyContext.diagnostics.isEmpty, "Unexpected problems: \(dependencyContext.diagnostics.map(\.summary))")
+        
+        // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
+        let dependencyConverter = DocumentationContextConverter(context: dependencyContext, renderContext: .init(documentationContext: dependencyContext))
+        
+        let linkSummaries: [LinkDestinationSummary] = try dependencyContext.knownPages.flatMap { reference in
+            let entity = try dependencyContext.entity(with: reference)
+            let renderNode = try #require(dependencyConverter.renderNode(for: entity))
+            
+            return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode)
+        }
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(documentationID: dependencyContext.inputs.id)
+        
+        #expect(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count == 3 /* 2 symbols & 1 module */)
+        #expect(linkSummaries.count == 3 /* 2 symbols & 1 module */)
+        
+        // Verify that the link in the abstract renders correctly
+        let renderReferenceID = RenderReferenceIdentifier("doc://Dependency/documentation/Dependency/Second")
+        do {
+            let reference = try #require(dependencyContext.knownPages.first(where: { $0.lastPathComponent == "First" }))
+            let node = try dependencyContext.entity(with: reference)
+            let renderNode = DocumentationNodeConverter(context: dependencyContext).convert(node)
+            
+            #expect(renderNode.abstract == [
+                .text("This first symbol links to the "),
+                .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+                .text(" symbol."),
+            ])
+            
+            let renderReference = try #require(renderNode.references["doc://Dependency/documentation/Dependency/Second"] as? TopicRenderReference)
+            #expect(renderReference.title == "Second")
+            #expect(renderReference.kind  == .symbol)
+            #expect(renderReference.url   == "/documentation/dependency/second")
+            #expect(renderReference.abstract.isEmpty)
+        }
+        
+        // Build another catalog with the first as a dependency
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
+        configuration.featureFlags.isLinkHierarchySerializationEnabled = true
+        
+        let mainContext = try await load(
+            catalog: Folder(name: "Main.docc") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Main", symbols: [
+                    makeSymbol(id: "main-symbol-id", kind: .class, pathComponents: ["Something"], docComment: """
+                    This symbol curates the external symbol that has a link in its abstract    
+                    
+                    ## Topics
+                    
+                    - ``/Dependency/First``
+                    """)
+                ]))
+            },
+            otherFileSystemDirectories: [
+                Folder(name: "Dependency.doccarchive") {
+                    JSONFile(name: "linkable-entities.json", content: linkSummaries)
+                    JSONFile(name: "link-hierarchy.json", content: linkResolutionInformation)
+                }
+            ],
+            configuration: configuration
+        )
+        #expect(mainContext.diagnostics.isEmpty, "Unexpected problems: \(mainContext.diagnostics.map(\.summary))")
+        #expect(mainContext.knownPages.count == 2 /* 1 symbol & 1 module */)
+        
+        // Check the reference
+        do {
+            let reference = try #require(mainContext.knownPages.first(where: { $0.lastPathComponent == "Something" }))
+            let node = try mainContext.entity(with: reference)
+            // It's important to use DocumentationContextConverter instead of DocumentationNodeConverter here.
+            // Without the RenderContext, the "Second" symbol page from the abstract of the curated external symbol won't have any title or other information.
+            let converter = DocumentationContextConverter(context: mainContext, renderContext: .init(documentationContext: mainContext))
+            let renderNode = try #require(converter.renderNode(for: node))
+            
+            #expect(renderNode.topicSections.count == 1)
+            let topics = try #require(renderNode.topicSections.first)
+            #expect(topics.identifiers == [
+                "doc://Dependency/documentation/Dependency/First",
+            ])
+            
+            let renderReference1 = try #require(renderNode.references["doc://Dependency/documentation/Dependency/First"] as? TopicRenderReference)
+            #expect(renderReference1.title == "First")
+            #expect(renderReference1.kind  == .symbol)
+            #expect(renderReference1.url   == "/documentation/dependency/first")
+            #expect(renderReference1.abstract == [
+                .text("This first symbol links to the "),
+                .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+                .text(" symbol."),
+            ])
+            
+            let renderReference2 = try #require(renderNode.references["doc://Dependency/documentation/Dependency/Second"] as? TopicRenderReference)
+            #expect(renderReference2.title == "Second")
+            #expect(renderReference2.kind  == .symbol)
+            #expect(renderReference2.url   == "/documentation/dependency/second")
+            #expect(renderReference2.abstract.isEmpty)
+        }
     }
 }

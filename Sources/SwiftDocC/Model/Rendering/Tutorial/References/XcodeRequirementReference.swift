@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to a version of Xcode that users of your documentation must use.
 public struct XcodeRequirementReference: RenderReference, Equatable {

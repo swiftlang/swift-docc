@@ -1,21 +1,19 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension RangeReplaceableCollection {
     /// Groups successive elements as long as check determines that they belong together.
     ///
     /// - Parameter belongsInGroupWithPrevious: A check whether the given element belongs in the same group as the previous element
     /// - Returns: An array of subsequences of elements that belong together.
-    func group(asLongAs belongsInGroupWithPrevious: (_ previous: Element, _ current: Element) throws -> Bool) rethrows -> [SubSequence] {
+    func group<Error>(asLongAs belongsInGroupWithPrevious: (_ previous: Element, _ current: Element) throws(Error) -> Bool) throws(Error) -> [SubSequence] {
         var result = [SubSequence]()
         
         let indexPairs = zip(indices, indices.dropFirst())

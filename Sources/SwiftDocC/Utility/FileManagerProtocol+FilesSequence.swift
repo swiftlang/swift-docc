@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+package import Foundation
 
 extension FileManagerProtocol {
     /// Returns a sequence of all the files in the directory structure from the starting point.

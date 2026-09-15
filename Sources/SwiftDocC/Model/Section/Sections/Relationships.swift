@@ -44,7 +44,7 @@ extension Relationship {
 public struct RelationshipsGroup {
     
     /// Possible symbol relationships.
-    public enum Kind: String {
+    public enum Kind: String, Sendable {
         /// One or more protocols to which a type conforms.
         case conformsTo
         

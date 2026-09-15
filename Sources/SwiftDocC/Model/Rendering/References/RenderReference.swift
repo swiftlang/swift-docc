@@ -1,18 +1,18 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to a resource.
 ///
-/// The reference can refer to a resource within a documentation bundle (e.g., another symbol) or an external resource (e.g., a web URL).
+/// The reference can refer to a resource within a unit of documentation (e.g., another symbol) or an external resource (e.g., a web URL).
 /// Check the conforming types to browse the different kinds of references.
 public protocol RenderReference: Codable {
     /// The type of the reference.
@@ -43,12 +43,12 @@ public struct RenderReferenceIdentifier: Codable, Hashable, Equatable {
         self.identifier = identifier
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         identifier = try container.decode(String.self)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(identifier)
     }
@@ -65,6 +65,27 @@ public protocol URLReference {
 }
 
 extension URLReference {
+    /// Transforms the given URL to ensure that it is relative to the base URL of the conforming type.
+    ///
+    /// The converter that writes the built documentation to the file system is responsible for copying the referenced file to this destination.
+    /// - Parameters:
+    ///   - url: The URL of the file.
+    ///   - prefixComponent: An optional path component to add before the path of the file.
+    /// - Returns: The transformed URL for the given file path.
+    func renderURL(for url: URL, prefixComponent: String?) -> URL {
+        // Web URLs should be left as-is
+        guard !url.isAbsoluteWebURL else {
+            return url
+        }
+        
+        // URLs which are already relative to the base URL should be left as-is
+        guard !url.pathComponents.starts(with: Self.baseURL.pathComponents) else {
+            return url
+        }
+
+        return destinationURL(for: url.lastPathComponent, prefixComponent: prefixComponent)
+    }
+    
     /// Returns the URL for a given file path relative to the base URL of the conforming type.
     ///
     /// The converter that writes the built documentation to the file system is responsible for copying the referenced file to this destination.

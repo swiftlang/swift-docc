@@ -87,18 +87,18 @@ more information, see <doc:formatting-your-documentation-content>.
 ### Describe the Parameters of a Method
 
 For methods that take parameters, document those parameters directly below the 
-summary, or the Discussion section, if you include one. Describe each parameter 
+summary, or the Discussion section if you prefer. Describe each parameter 
 in isolation. Discuss its purpose and, where necessary, the range of acceptable 
 values.
 
-DocC supports two approaches for documenting the parameters of a 
-method. You can add a Parameters section, or one or more parameter fields. 
+DocC supports two approaches for documenting the parameters of a method. 
+You can either use a parameters "section" or one or more parameter "fields". 
 Both use Markdown's list syntax.
 
-A Parameters section begins with a single list item that contains the 
-`Parameters` keyword and terminates with a colon (`:`). Individual parameters 
-appear as nested list items. A colon separates a parameter's name from its 
-description.
+A Parameters "section" uses a single top-level unordered list item; 
+starting with either a hyphen (`-`), asterisk (`*`), or plus sign (`+`), followed by a space, the plural `Parameters` keyword (case insensitive), and a colon (`:`).
+Individual parameters use _nested_ list items; 
+starting with two spaces of indentation, either a hyphen (`-`), asterisk (`*`), or plus sign (`+`), one space, the parameter name, a colon, and the formatted documentation for that parameter. 
 
 ```swift
 /// - Parameters:
@@ -107,9 +107,8 @@ description.
 mutating public func eat(_ food: Food, quantity: Int) throws -> Int {
 ```
 
-Parameter fields omit the parent list item and include the `Parameter` 
-keyword in each of the individual list items, between the list item marker and 
-the name of the parameter.
+Parameter "fields" use individual top-level unordered list items for each parameter; 
+starting with either a hyphen (`-`), asterisk (`*`), or plus sign (`+`), followed by a space, the singular `Parameter` keyword (case insensitive), one space, the parameter name, a colon, and the formatted documentation for that parameter.
 
 ```swift
 /// - Parameter food: The food for the sloth to eat.
@@ -117,10 +116,61 @@ the name of the parameter.
 mutating public func eat(_ food: Food, quantity: Int) throws -> Int {
 ```
 
+> Note: a parameters _section_ uses the plural "parameter**s**" keyword and a parameter _field_ use the singular "parameter" keyword.
+
 After you add documentation for a methods parameters, preview it in a web browser to see the rendered content.
 
 ![A screenshot showing the rendered documentation for the eat(_:quantity:) method.](3_eat)
 
+In languages like Swift where parameters can have both external names (also called "argument labels") and internal names; use the internal name to document that parameter.
+External parameter names in Swift---or other languages with API design guidelines similar to [Swift's][api-design]---
+sometimes use words like "of", "in", "with", "at", "to", or "by" to make call sites form grammatical English phrases. 
+For example:
+- `firstIndex(`**`of`**` element: ...)`
+- `isValidDate(`**`in`**` calendar: ...)`
+- `starts(`**`with`**` possiblePrefix: ...)`
+- `remove(`**`at`**` position: ...)`
+- `distance(`**`to`**` other: ...)`
+- `sort(`**`by`**` areInIncreasingOrder: ...)`
+
+[api-design]: https://www.swift.org/documentation/api-design-guidelines/#parameter-names
+
+It can be hard to understand what one of these external names refer to without the context of the argument, and its variable name, at the call site. 
+
+
+#### Describe a Parameter in More Detail
+
+Some parameters can benefit from more than one paragraph of documentation. 
+For example:
+- Additional documentation for a boolean parameter can describe the effects of passing either a `true` or `false` value if its not already clear from the parameter's name.     
+- Additional documentation for an enumeration parameter can describe the effects of passing each case if its not already clear from combination of the parameter's name and the case's name.     
+- Additional documentation for an closure parameter can describe the inputs and of that closure that closure if its not already clear from the parameter's name.       
+
+If the parameter description spans more than one paragraph you need to indent the second paragraph as far as the start of the containing list item.
+In parameter _sections_ you need to indent the second paragraph by four spaces so that the first character of the paragraph lines up with the first letter of the parameter name.
+In parameter _fields_ you need to indent the second paragraph by two spaces so that the first character of the paragraph lines up with the `P` in the `Parameter` keyword.
+
+Like other multi-paragraph list items, this indentation can sometimes be more clear when the first paragraph is also on a new (indented) line:
+
+@TabNavigator {
+    @Tab("First paragraph on the same line as the tag") {
+        ```
+        /// - Parameters:
+        ///   - someParameterName: This is first paragraph of the the parameter descriptions.
+        ///     
+        ///     This is a another paragraph of the parameter's description.
+        ```
+    }
+    @Tab("First paragraph on a new line") {
+        ```
+        /// - Parameters:
+        ///   - someParameterName: 
+        ///     This is first paragraph of the the parameter descriptions.
+        ///     
+        ///     This is a another paragraph of the parameter's description.
+        ```
+    }
+}
 
 ### Describe the Return Value of a Method
 
@@ -130,16 +180,36 @@ the return value is optional, provide information about when the method
 returns `nil`. 
 
 There are no restrictions for where you add the Returns section in a 
-documentation comment, other than it must come after the summary, and the 
-Discussion section, if you include one. 
+documentation comment, other than it must come after the summary.
 
-A Returns section contains a single list item that includes the `Returns` 
-keyword. The description of the return value follows the colon (`:`).
+A Returns section contains a single top-level unordered list item;  
+starting with either a hyphen (`-`), asterisk (`*`), or plus sign (`+`), followed by a space, the `Returns` keyword (case insensitive), a colon, and the formatted documentation that describe the returned value.
 
 ```swift
 /// - Returns: The sloth's energy level after eating.
 mutating public func eat(_ food: Food, quantity: Int) throws -> Int {
 ```
+
+If the return value description spans more than one paragraph you need to indent the second paragraph with two spaces so that the first character of the paragraph lines up with the `R` in the `Returns` keyword.
+Like with multi-paragraph parameter list items, this indentation can sometimes be more clear when the first paragraph is also on a new (indented) line:
+
+@TabNavigator {
+    @Tab("First paragraph on the same line as the tag") {
+        ```
+        /// - Returns: This is the first paragraph of the return value description.
+        ///   
+        ///   This is a another paragraph of the return value description.
+        ```
+    }
+    @Tab("First paragraph on a new line") {
+        ```
+        /// - Returns: 
+        ///   This is the first paragraph of the return value description.
+        ///   
+        ///   This is a another paragraph of the return value description.
+        ```
+    }
+}
 
 > Note: DocC supports a single Returns section. Including more than one section results in 
 undefined behavior. 
@@ -151,11 +221,12 @@ comment. Explain the circumstances that cause the method to throw an error, and
 list the types of possible errors.
 
 Similar to a Returns section, there are no restrictions for where you add a 
-Throws section, other than it must come after the summary, and the Discussion 
-section, if you include one.
+Throws section, other than it must come after the summary.
 
 A Throws section contains a single list item that includes the `Throws` 
 keyword. Add the content that describes the errors after the colon (:).
+
+If the error description spans more than one paragraph you need to indent the second paragraph with two spaces so that the first character of the paragraph lines up with the `T` in the `Throws` keyword.
 
 ```swift
 /// - Throws: `SlothError.tooMuchFood` if the quantity is more than 100.
@@ -200,4 +271,4 @@ code examples and images, and to help keep the size of their in-source comments
 manageable. For more information, see 
 <doc:adding-supplemental-content-to-a-documentation-catalog>.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2026 Apple Inc and the Swift Project authors. All Rights Reserved. -->

@@ -1,14 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SymbolKit
+private import SymbolKit
+private import Foundation
 
 /// A navigation index of the content in a DocC archive, optimized for rendering.
 ///
@@ -56,7 +57,7 @@ public struct RenderIndex: Codable, Equatable {
         self.includedArchiveIdentifiers = includedArchiveIdentifiers
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.schemaVersion, forKey: .schemaVersion)
         try container.encode(self.interfaceLanguages, forKey: .interfaceLanguages)
@@ -64,7 +65,7 @@ public struct RenderIndex: Codable, Equatable {
         try container.encodeIfNotEmpty(self.includedArchiveIdentifiers, forKey: .includedArchiveIdentifiers)
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.schemaVersion = try container.decode(SemanticVersion.self, forKey: .schemaVersion)
         self.interfaceLanguages = try container.decode([String : [RenderIndex.Node]].self, forKey: .interfaceLanguages)
@@ -86,7 +87,16 @@ public struct RenderIndex: Codable, Equatable {
     /// - Parameter named: The name of the new root node
     public mutating func insertRoot(named: String) {
         for (languageID, nodes) in interfaceLanguages {
-            let root = Node(title: named, path: "/documentation", pageType: .framework, isDeprecated: false, children: nodes, icon: nil)
+            let root = Node(
+                title: named,
+                path: "/documentation",
+                pageType: .framework,
+                isDeprecated: false,
+                isExternal: false,
+                isBeta: false,
+                children: nodes,
+                icon: nil
+            )
             interfaceLanguages[languageID] = [root]
         }
     }
@@ -151,7 +161,7 @@ extension RenderIndex {
             case icon
         }
 
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             
             try container.encode(title, forKey: .title)
@@ -178,7 +188,7 @@ extension RenderIndex {
             try container.encodeIfPresent(icon, forKey: .icon)
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             
             title = try values.decode(String.self, forKey: .title)
@@ -214,7 +224,7 @@ extension RenderIndex {
         public init(
             title: String,
             path: String?,
-            type: String,
+            type: String?,
             children: [Node]?,
             isDeprecated: Bool,
             isExternal: Bool,
@@ -236,6 +246,8 @@ extension RenderIndex {
             path: String,
             pageType: NavigatorIndex.PageType?,
             isDeprecated: Bool,
+            isExternal: Bool,
+            isBeta: Bool,
             children: [Node],
             icon: RenderReferenceIdentifier?
         ) {
@@ -243,12 +255,9 @@ extension RenderIndex {
             self.children = children.isEmpty ? nil : children
             
             self.isDeprecated = isDeprecated
-            
-            // Currently Swift-DocC doesn't support resolving links to external DocC archives
-            // so we default to `false` here.
-            self.isExternal = false
-            
-            self.isBeta = false
+            self.isExternal = isExternal
+            self.isBeta = isBeta
+
             self.icon = icon
             
             guard let pageType else {
@@ -301,23 +310,13 @@ extension RenderIndex {
 
 extension RenderIndex.Node {
     static func fromNavigatorTreeNode(_ node: NavigatorTree.Node, in navigatorIndex: NavigatorIndex, with builder: NavigatorIndex.Builder) -> RenderIndex.Node {
-        // If this node was deprecated on any platform version mark it as deprecated.
-        let isDeprecated: Bool
-        
-        let availabilityIndexEntryIDsForNode = builder.availabilityEntryIDs(for: node.item.availabilityID)
-        if let entryIDs = availabilityIndexEntryIDsForNode {
-            let availabilityInfosForNode = entryIDs.map { ID in navigatorIndex.availabilityIndex.info(for: ID) }
-            // Mark node as deprecated if we have an explicit deprecation version
-            isDeprecated = availabilityInfosForNode.contains { $0?.deprecated != nil }
-        } else {
-            isDeprecated = false
-        }
-        
         return RenderIndex.Node(
             title: node.item.title,
             path: node.item.path,
             pageType: NavigatorIndex.PageType(rawValue: node.item.pageType),
-            isDeprecated: isDeprecated,
+            isDeprecated: node.item.isDeprecated,
+            isExternal: node.item.isExternal,
+            isBeta: node.item.isBeta,
             children: node.children.map {
                 RenderIndex.Node.fromNavigatorTreeNode($0, in: navigatorIndex, with: builder)
             },
@@ -352,6 +351,8 @@ extension NavigatorIndex.PageType {
             return RenderNode.Kind.overview.rawValue
         case .resources:
             return "resources"
+        case .collection:
+            return "collection"
         case .symbol:
             return  RenderNode.Kind.symbol.rawValue
         case .framework:
@@ -414,6 +415,8 @@ extension NavigatorIndex.PageType {
             return "container"
         case .groupMarker:
             return "groupMarker"
+        case ._nonFrozenEnum_useDefaultCase:
+            fatalError("Never use '_nonFrozenEnum_useDefaultCase' as a real case.")
         }
     }
 }

@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to an image.
 public struct ImageReference: MediaReference, URLReference, Equatable {
@@ -47,7 +47,7 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         case variants
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
         identifier = try values.decode(RenderReferenceIdentifier.self, forKey: .identifier)
@@ -56,7 +56,7 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         // rebuild the data asset
         asset = DataAsset()
         let variants = try values.decode([VariantProxy].self, forKey: .variants)
-        variants.forEach { (variant) in
+        for variant in variants {
             asset.register(variant.url, with: DataTraitCollection(from: variant.traits), metadata: .init(svgID: variant.svgID))
         }
     }
@@ -64,7 +64,7 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
     /// The relative URL to the folder that contains all images in the built documentation output.
     public static let baseURL = URL(string: "/images/")!
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
@@ -72,17 +72,18 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         
         // convert the data asset to a serializable object
         var result = [VariantProxy]()
-        // sort assets by URL path for deterministic sorting of images
-        asset.variants.sorted(by: \.value.path).forEach { (key, value) in
-            let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent, prefixComponent: encoder.assetPrefixComponent)
+        for (key, value) in asset.variants {
+            let url = renderURL(for: value, prefixComponent: encoder.assetPrefixComponent)
             result.append(VariantProxy(url: url, traits: key, svgID: asset.metadata[value]?.svgID))
         }
+        result.sort(by: VariantProxy.areInIncreasingOrder)
+
         try container.encode(result, forKey: .variants)
     }
     
     
     /// A codable proxy value that the image reference uses to serialize information about its asset variants.
-    public struct VariantProxy: Codable, Equatable {
+    public struct VariantProxy: MediaVariantProxy, Codable, Equatable {
         /// The URL to the file for this image variant.
         public var url: URL
         /// The traits of this image reference.
@@ -111,14 +112,14 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
             case svgID
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             url = try values.decode(URL.self, forKey: .url)
             traits = try values.decode([String].self, forKey: .traits)
             svgID = try values.decodeIfPresent(String.self, forKey: .svgID)
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(url, forKey: .url)
             try container.encode(traits, forKey: .traits)

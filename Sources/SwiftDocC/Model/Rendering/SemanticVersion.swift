@@ -11,7 +11,7 @@
 /// A semantic version.
 ///
 /// A version that follows the [Semantic Versioning](https://semver.org) specification.
-public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConvertible {
+public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConvertible, Sendable {
 
     /// The major version number.
     ///
@@ -42,7 +42,7 @@ public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConve
         self.patch = patch
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.major = try container.decode(Int.self, forKey: .major)
         self.minor = try container.decodeIfPresent(Int.self, forKey: .minor) ?? 0

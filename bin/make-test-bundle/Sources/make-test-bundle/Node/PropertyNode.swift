@@ -53,7 +53,7 @@ class PropertyNode: TypeMemberNode {
         if isDynamic {
             result += "\(levelString) \(kindString) var \(name.lowercased()): \(propertyType) { return \(propertyType)(\(propertyValue)) }\n"
         } else {
-            result += "\(levelString) \(kindString) var \(name.lowercased()): \(propertyType) = \(propertyValue)\n"
+            result += "\(levelString) \(kindString) \(kind == .static ? "let" : "var") \(name.lowercased()): \(propertyType) = \(propertyValue)\n"
         }
         
         if kind == .interface {

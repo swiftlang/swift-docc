@@ -25,7 +25,7 @@ public enum RenderHierarchy: Codable, Equatable {
     /// The hierarchy for tutorials-related render node.
     case tutorials(RenderTutorialsHierarchy)
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         if let tutorialsHierarchy = try? RenderTutorialsHierarchy(from: decoder) {
             self = .tutorials(tutorialsHierarchy)
             decoder.registerReferences(tutorialsHierarchy.paths.flatMap { $0 })
@@ -37,7 +37,7 @@ public enum RenderHierarchy: Codable, Equatable {
         decoder.registerReferences(referenceHierarchy.paths.flatMap { $0 })
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .reference(let hierarchy):

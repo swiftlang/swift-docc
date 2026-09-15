@@ -1,16 +1,17 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
-import Markdown
+public import Foundation
+private import SymbolKit
+public import Markdown
+public import DocCCommon
 
 /// A resolved or unresolved reference to a piece of documentation.
 ///
@@ -88,8 +89,8 @@ public struct TopicReferenceResolutionErrorInfo: Hashable {
 }
 
 extension TopicReferenceResolutionErrorInfo {
-    init(_ error: Error, solutions: [Solution] = []) {
-        if let describedError = error as? DescribedError {
+    init(_ error: any Error, solutions: [Solution] = []) {
+        if let describedError = error as? (any DescribedError) {
             self.message = describedError.errorDescription
             self.note = describedError.recoverySuggestion
         } else {
@@ -140,24 +141,24 @@ extension TopicReferenceResolutionErrorInfo {
 /// > Important: This type has copy-on-write semantics and wraps an underlying class to store
 /// > its data.
 public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomStringConvertible {
-    typealias ReferenceBundleIdentifier = DocumentationBundle.Identifier
+    typealias ReferenceIdentifier = DocumentationContext.Inputs.Identifier
     private struct ReferenceKey: Hashable {
         var path: String
         var fragment: String?
-        var sourceLanguages: Set<SourceLanguage>
+        var sourceLanguages: SmallSourceLanguageSet
     }
     
     /// A synchronized reference cache to store resolved references.
-    private static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: ResolvedTopicReference]]())
+    private static let sharedPool = Synchronized([ReferenceIdentifier: [ReferenceKey: ResolvedTopicReference]]())
     
-    /// Clears cached references belonging to the bundle with the given identifier.
-    /// - Parameter id: The identifier of the bundle to which the method should clear belonging references.
-    static func purgePool(for id: ReferenceBundleIdentifier) {
+    /// Clears cached references belonging to the given identifier.
+    /// - Parameter id: The identifier to which the method should clear belonging references.
+    static func purgePool(for id: ReferenceIdentifier) {
         sharedPool.sync { $0.removeValue(forKey: id) }
     }
     
-    /// Enables reference caching for any identifiers created with the given bundle identifier.
-    static func enableReferenceCaching(for id: ReferenceBundleIdentifier) {
+    /// Enables reference caching for any identifiers created with the given identifier.
+    static func enableReferenceCaching(for id: ReferenceIdentifier) {
         sharedPool.sync { sharedPool in
             if !sharedPool.keys.contains(id) {
                 sharedPool[id] = [:]
@@ -176,17 +177,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The storage for the resolved topic reference's state.
     let _storage: Storage
     
-    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String {
-        bundleID.rawValue
-    }
-    
-    /// The identifier of the bundle that owns this documentation topic.
-    public var bundleID: DocumentationBundle.Identifier {
+    /// The identifier of the collection of inputs that owns this documentation topic.
+    public var bundleID: DocumentationContext.Inputs.Identifier {
         _storage.bundleID
     }
     
-    /// The absolute path from the bundle to this topic, delimited by `/`.
+    /// The absolute path to this topic, delimited by `/`.
     public var path: String {
         return _storage.path
     }
@@ -199,7 +195,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The source language for which this topic is relevant.
     public var sourceLanguage: SourceLanguage {
         // Return Swift by default to maintain backwards-compatibility.
-        return sourceLanguages.contains(.swift) ? .swift : sourceLanguages.first!
+        _sourceLanguages.min()!
     }
     
     /// The source languages for which this topic is relevant.
@@ -208,15 +204,24 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// corresponding ``DocumentationNode``. If you need to query the source languages associated with a documentation node, use
     /// ``DocumentationContext/sourceLanguages(for:)`` instead.
     public var sourceLanguages: Set<SourceLanguage> {
-        return _storage.sourceLanguages
+        Set(_sourceLanguages)
+    }
+    
+    var _sourceLanguages: SmallSourceLanguageSet {
+        _storage.sourceLanguages
     }
     
     /// - Note: The `path` parameter is escaped to a path readable string.
-    public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
+    public init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
         self.init(bundleID: bundleID, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
     }
     
-    public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+    @_disfavoredOverload
+    public init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+        self.init(bundleID: bundleID, path: path, fragment: fragment, sourceLanguages: .init(sourceLanguages))
+    }
+    
+    init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguages: SmallSourceLanguageSet) {
         self.init(
             bundleID: bundleID,
             urlReadablePath: urlReadablePath(path),
@@ -224,16 +229,8 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             sourceLanguages: sourceLanguages
         )
     }
-    @available(*, deprecated, renamed: "init(id:path:fragment:sourceLanguage:)", message: "Use 'init(id:path:fragment:sourceLanguage:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
-        self.init(bundleIdentifier: bundleIdentifier, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
-    }
-    @available(*, deprecated, renamed: "init(id:path:fragment:sourceLanguages:)", message: "Use 'init(id:path:fragment:sourceLanguages:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
-        self.init(bundleID: .init(rawValue: bundleIdentifier), path: path, fragment: fragment, sourceLanguages: sourceLanguages)
-    }
     
-    private init(bundleID: DocumentationBundle.Identifier, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+    private init(bundleID: DocumentationContext.Inputs.Identifier, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: SmallSourceLanguageSet) {
         precondition(!sourceLanguages.isEmpty, "ResolvedTopicReference.sourceLanguages cannot be empty")
         // Check for a cached instance of the reference
         let key = ReferenceKey(path: urlReadablePath, fragment: urlReadableFragment, sourceLanguages: sourceLanguages)
@@ -252,7 +249,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
 
         // Cache the reference
         Self.sharedPool.sync { sharedPool in
-            // If we have a shared pool for this bundle identifier, cache the reference
+            // If we have a shared pool for this identifier, cache the reference
             sharedPool[bundleID]?[key] = self
         }
     }
@@ -276,7 +273,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         case url, interfaceLanguage
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         enum TopicReferenceDeserializationError: Error {
             case unexpectedURLScheme(url: URL, scheme: String)
             case missingBundleIdentifier(url: URL)
@@ -307,9 +304,9 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     ///
     /// You use a fragment to reference an element within a page:
     /// ```
-    /// doc://your.bundle.identifier/path/to/page#element-in-page
-    ///                                           ╰──────┬──────╯
-    ///                                               fragment
+    /// doc://your..identifier/path/to/page#element-in-page
+    ///                                     ╰──────┬──────╯
+    ///                                         fragment
     /// ```
     /// On-page elements can then be linked to using a fragment need to conform to the ``Landmark`` protocol.
     ///
@@ -319,8 +316,8 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let newReference = ResolvedTopicReference(
             bundleID: bundleID,
             path: path,
-            fragment: fragment.map(urlReadableFragment),
-            sourceLanguages: sourceLanguages
+            fragment: fragment, // The internal initializer implementation ensures that the fragment is URL readable
+            sourceLanguages: _sourceLanguages
         )
         
         return newReference
@@ -336,7 +333,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let newReference = ResolvedTopicReference(
             bundleID: bundleID,
             urlReadablePath: url.appendingPathComponent(urlReadablePath(path), isDirectory: false).path,
-            sourceLanguages: sourceLanguages
+            sourceLanguages: _sourceLanguages
         )
         return newReference
     }
@@ -358,7 +355,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             bundleID: bundleID,
             urlReadablePath: newPath,
             urlReadableFragment: reference.fragment.map(urlReadableFragment),
-            sourceLanguages: sourceLanguages
+            sourceLanguages: _sourceLanguages
         )
         return newReference
     }
@@ -370,7 +367,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             bundleID: bundleID,
             urlReadablePath: newPath,
             urlReadableFragment: fragment,
-            sourceLanguages: sourceLanguages
+            sourceLanguages: _sourceLanguages
         )
         return newReference
     }
@@ -379,10 +376,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     ///
     /// If the current topic reference already includes the given source languages, this returns
     /// the original topic reference.
-    public func addingSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> ResolvedTopicReference {
-        let combinedSourceLanguages = self.sourceLanguages.union(sourceLanguages)
-        
-        guard combinedSourceLanguages != self.sourceLanguages else {
+    public func addingSourceLanguages(_ sourceLanguages: some Sequence<SourceLanguage>) -> ResolvedTopicReference {
+        var updatedLanguages = _sourceLanguages
+        for language in sourceLanguages {
+            updatedLanguages.insert(language)
+        }
+        guard updatedLanguages != _sourceLanguages else {
             return self
         }
         
@@ -390,7 +389,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             bundleID: bundleID,
             urlReadablePath: path,
             urlReadableFragment: fragment,
-            sourceLanguages: combinedSourceLanguages
+            sourceLanguages: updatedLanguages
         )
     }
     
@@ -399,7 +398,8 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// If the current topic reference's source languages equal the given source languages,
     /// this returns the original topic reference.
     public func withSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> ResolvedTopicReference {
-        guard sourceLanguages != self.sourceLanguages else {
+        let newSourceLanguages = SmallSourceLanguageSet(sourceLanguages)
+        guard newSourceLanguages != _sourceLanguages else {
             return self
         }
         
@@ -407,7 +407,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             bundleID: bundleID,
             urlReadablePath: path,
             urlReadableFragment: fragment,
-            sourceLanguages: sourceLanguages
+            sourceLanguages: newSourceLanguages
         )
     }
     
@@ -417,14 +417,14 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         return url.lastPathComponent
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(url.absoluteString, forKey: .url)
         
         let sourceLanguageIDVariants = DocumentationDataVariants<String>(
             values: [DocumentationDataVariantsTrait: String](
-                uniqueKeysWithValues: sourceLanguages.map { language in
-                    (DocumentationDataVariantsTrait(interfaceLanguage: language.id), language.id)
+                uniqueKeysWithValues: _sourceLanguages.map { language in
+                    (DocumentationDataVariantsTrait(sourceLanguage: language), language.id)
                 }
             )
         )
@@ -453,10 +453,10 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     ///
     /// This is a reference type which allows ``ResolvedTopicReference`` to have copy-on-write behavior.
     class Storage: Hashable {
-        let bundleID: DocumentationBundle.Identifier
+        let bundleID: DocumentationContext.Inputs.Identifier
         let path: String
         let fragment: String?
-        let sourceLanguages: Set<SourceLanguage>
+        let sourceLanguages: SmallSourceLanguageSet
         
         let url: URL
         
@@ -465,10 +465,10 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let absoluteString: String
         
         init(
-            bundleID: DocumentationBundle.Identifier,
+            bundleID: DocumentationContext.Inputs.Identifier,
             path: String,
             fragment: String? = nil,
-            sourceLanguages: Set<SourceLanguage>
+            sourceLanguages: SmallSourceLanguageSet
         ) {
             self.bundleID = bundleID
             self.path = path
@@ -509,7 +509,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     // For testing the caching
-    static func _numberOfCachedReferences(bundleID: ReferenceBundleIdentifier) -> Int? {
+    static func _numberOfCachedReferences(bundleID: ReferenceIdentifier) -> Int? {
         return Self.sharedPool.sync { $0[bundleID]?.count }
     }
 }
@@ -541,13 +541,8 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     /// The URL as originally spelled.
     public let topicURL: ValidatedURL
     
-    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String? {
-        bundleID?.rawValue
-    }
-    
     /// The bundle identifier, if one was provided in the host name component of the original URL.
-    public var bundleID: DocumentationBundle.Identifier? {
+    public var bundleID: DocumentationContext.Inputs.Identifier? {
         topicURL.components.host.map { .init(rawValue: $0) }
     }
     
@@ -607,13 +602,8 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
 
 /// A reference to an auxiliary resource such as an image.
 public struct ResourceReference: Hashable {
-    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String {
-        bundleID.rawValue
-    }
-    
     /// The documentation bundle identifier for the bundle in which this resource resides.
-    public let bundleID: DocumentationBundle.Identifier
+    public let bundleID: DocumentationContext.Inputs.Identifier
 
     /// The path of the resource local to its bundle.
     public let path: String
@@ -622,7 +612,7 @@ public struct ResourceReference: Hashable {
     /// - Parameters:
     ///   - bundleID: The documentation bundle identifier for the bundle in which this resource resides.
     ///   - path: The path of the resource local to its bundle.
-    init(bundleID: DocumentationBundle.Identifier, path: String) {
+    init(bundleID: DocumentationContext.Inputs.Identifier, path: String) {
         self.bundleID = bundleID
         self.path = path.removingPercentEncoding ?? path
     }
@@ -652,7 +642,7 @@ private extension CharacterSet {
         .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
     static let whitespaceAndDashes = CharacterSet.whitespaces
-        .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+        .union(CharacterSet(charactersIn: "-\u{2013}\u{2014}")) // hyphen, en dash, em dash
 }
 
 /// Creates a more readable version of a fragment by replacing characters that are not allowed in the fragment of a URL with hyphens.

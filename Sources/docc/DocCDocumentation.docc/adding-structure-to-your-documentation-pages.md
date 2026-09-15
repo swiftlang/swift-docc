@@ -75,6 +75,17 @@ symbols and other content. For more information, see
 In addition to presenting rich content, a custom landing page organizes the top-level 
 symbols and other content in your documentation hierarchy.
 
+If your module represents something other than a framework, you can customize the title heading of its landing page.
+Set the `CDDefaultModuleKind` key in your documentation catalog's `Info.plist` file, or pass the `--fallback-default-module-kind` command-line option, to use a different label, such as "SDK" or "Package".
+You can also customize this label on a per-page basis using the ``TitleHeading`` directive.
+
+By default, DocC displays "Framework" as the title heading for your module's landing page.
+
+```xml
+<key>CDDefaultModuleKind</key>
+<string>SDK</string>
+```
+
 ### Arrange Top-Level Symbols Using Topic Groups
 
 By default, DocC arranges the symbols in your framework according to their 

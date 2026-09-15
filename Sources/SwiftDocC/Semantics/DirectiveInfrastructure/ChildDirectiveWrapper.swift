@@ -14,7 +14,7 @@ protocol _ChildDirectiveProtocol {
     var storedAsArray: Bool { get }
     var storedAsOptional: Bool { get }
     var requirements: ChildDirectiveRequirements { get }
-    var directiveConvertible: DirectiveConvertible.Type { get }
+    var directiveConvertible: any DirectiveConvertible.Type { get }
     
     func setProperty(
         on containingDirective: some AutomaticDirectiveConvertible,
@@ -62,7 +62,7 @@ public struct ChildDirective<Value>: _ChildDirectiveProtocol {
     var parsedValue: Value?
     let requirements: ChildDirectiveRequirements
     
-    let directiveConvertible: DirectiveConvertible.Type
+    let directiveConvertible: any DirectiveConvertible.Type
     
     public var wrappedValue: Value {
         get {
@@ -109,7 +109,7 @@ extension ChildDirective where Value: OptionallyWrappedDirectiveConvertible {
         self.requirements = requirements
         self.storedAsOptional = true
         self.storedAsArray = false
-        self.directiveConvertible = Value.baseType() as! DirectiveConvertible.Type
+        self.directiveConvertible = Value.baseType() as! (any DirectiveConvertible.Type)
     }
 }
 
@@ -121,7 +121,7 @@ extension ChildDirective where Value: CollectionWrappedDirectiveConvertible {
         self.requirements = requirements
         self.storedAsOptional = false
         self.storedAsArray = true
-        self.directiveConvertible = Value.baseType() as! DirectiveConvertible.Type
+        self.directiveConvertible = Value.baseType() as! (any DirectiveConvertible.Type)
     }
 }
 
@@ -133,6 +133,6 @@ extension ChildDirective where Value: OptionallyWrappedCollectionWrappedDirectiv
         self.requirements = .zeroOrMore
         self.storedAsOptional = true
         self.storedAsArray = true
-        self.directiveConvertible = (Value.baseType() as! CollectionWrapped.Type).baseType() as! DirectiveConvertible.Type
+        self.directiveConvertible = (Value.baseType() as! (any CollectionWrapped.Type)).baseType() as! (any DirectiveConvertible.Type)
     }
 }

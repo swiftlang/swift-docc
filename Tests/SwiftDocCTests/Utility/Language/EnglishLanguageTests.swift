@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,21 +9,27 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 @testable import SwiftDocC
 
-class EnglishLanguageTests: XCTestCase {
-    func testEnglishListOptions() throws {
-        XCTAssertEqual([], NativeLanguage.english.listSeparators(itemsCount: 0, listType: .options), "Didn't return empty separator list for empty input list.")
-        XCTAssertEqual([], NativeLanguage.english.listSeparators(itemsCount: 1, listType: .options), "Didn't return empty separator list for 1 items input list.")
-        XCTAssertEqual([" or "], NativeLanguage.english.listSeparators(itemsCount: 2, listType: .options), "Didn't return single separator for 2 items input list.")
-        XCTAssertEqual([", ", ", or "], NativeLanguage.english.listSeparators(itemsCount: 3, listType: .options), "Didn't return expected separators for 3 items input list.")
+struct EnglishLanguageTests {
+    @Test(arguments: [
+        (0, []),
+        (1, []),
+        (2, [" or "]),
+        (3, [", ", ", or "]),
+    ])
+    func usesOrSeparatorForOptionsLists(itemsCount: Int, expected: [String]) {
+        #expect(NativeLanguage.english.listSeparators(itemsCount: itemsCount, listType: .options) == expected)
     }
-
-    func testEnglishListUnion() throws {
-        XCTAssertEqual([], NativeLanguage.english.listSeparators(itemsCount: 0, listType: .union), "Didn't return empty separator list for empty input list.")
-        XCTAssertEqual([], NativeLanguage.english.listSeparators(itemsCount: 1, listType: .union), "Didn't return empty separator list for 1 items input list.")
-        XCTAssertEqual([" and "], NativeLanguage.english.listSeparators(itemsCount: 2, listType: .union), "Didn't return single separator for 2 items input list.")
-        XCTAssertEqual([", ", ", and "], NativeLanguage.english.listSeparators(itemsCount: 3, listType: .union), "Didn't return expected separators for 3 items input list.")
+    
+    @Test(arguments: [
+        (0, []),
+        (1, []),
+        (2, [" and "]),
+        (3, [", ", ", and "]),
+    ])
+    func usesAndSeparatorForUnionLists(itemsCount: Int, expected: [String]) {
+        #expect(NativeLanguage.english.listSeparators(itemsCount: itemsCount, listType: .union) == expected)
     }
 }

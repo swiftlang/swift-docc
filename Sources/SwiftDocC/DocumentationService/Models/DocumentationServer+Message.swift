@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 public extension DocumentationServer {
     /// A message that can be provided to a documentation service.

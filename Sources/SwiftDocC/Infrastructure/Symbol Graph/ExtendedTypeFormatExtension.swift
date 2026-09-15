@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SymbolKit
+@preconcurrency import SymbolKit
 
 // MARK: Custom Relationship Kind Identifiers
 
@@ -88,17 +88,13 @@ extension SymbolGraph.Symbol.Kind {
     static let unknownExtendedType = Self(parsedIdentifier: .unknownExtendedType, displayName: "Extended Type")
 }
 
-
 // MARK: Swift AccessControl Levels
 
 extension SymbolGraph.Symbol.AccessControl {
-    static let `private` = Self(rawValue: "private")
-    
+    static let `private`   = Self(rawValue: "private")
     static let filePrivate = Self(rawValue: "fileprivate")
-    
-    static let `internal` = Self(rawValue: "internal")
-    
-    static let `public` = Self(rawValue: "public")
-    
-    static let open = Self(rawValue: "open")
+    static let `internal`  = Self(rawValue: "internal")
+    static let `package`   = Self(rawValue: "package")
+    static let `public`    = Self(rawValue: "public")
+    static let open        = Self(rawValue: "open")
 }

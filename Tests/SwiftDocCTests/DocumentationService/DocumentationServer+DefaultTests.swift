@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -56,6 +56,9 @@ class DocumentationServer_DefaultTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testQueriesLinkResolutionServer() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",

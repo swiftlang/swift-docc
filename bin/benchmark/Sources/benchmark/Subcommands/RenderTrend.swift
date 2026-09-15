@@ -28,10 +28,12 @@ struct RenderTrend: ParsableCommand {
     var benchmarkResults: [URL]
     
     mutating func run() throws {
-        try RenderTrendAction(
-            metricFilters: metricFilters,
-            benchmarkResults: benchmarkResults
-        ).run()
+        try MainActor.assumeIsolated {
+            try RenderTrendAction(
+                metricFilters: metricFilters,
+                benchmarkResults: benchmarkResults
+            ).run()
+        }
     }
 }
 
@@ -41,6 +43,7 @@ struct RenderTrendAction {
     var metricFilters: [String]
     var benchmarkResults: [URL]
     
+    @MainActor
     func run() throws {
         // Map the metric ID to the measured values across the benchmarks
         var trendValues: [String: [BenchmarkResultSeries.MetricSeries]] = [:]
@@ -76,6 +79,7 @@ struct RenderTrendAction {
         }
     }
 
+    @MainActor
     static func renderTrendBars(metrics: [BenchmarkResultSeries.MetricSeries]) -> String {
         var output = ""
         

@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+package import Foundation
+private import SymbolKit
 
 extension DocumentationContext {
 
@@ -27,6 +27,7 @@ extension DocumentationContext {
     ///  ``DocumentationBundle/themeSettings``    | ``DocumentationBundleFileTypes/isThemeSettingsFile(_:)``
     ///  ``DocumentationBundle/customHeader``     | ``DocumentationBundleFileTypes/isCustomHeader(_:)``
     ///  ``DocumentationBundle/customFooter``     | ``DocumentationBundleFileTypes/isCustomFooter(_:)``
+    ///  ``DocumentationBundle/customFavicon``    | ``DocumentationBundleFileTypes/isCustomFavicon(_:)``
     ///  ``DocumentationBundle/miscResourceURLs`` | Any file not already matched above.
     ///
     /// ## Topics
@@ -53,11 +54,11 @@ extension DocumentationContext {
     /// - ``InputsFromSymbolGraphError``
     package struct InputsProvider {
         /// The file manager that the provider uses to read file and directory contents from the file system.
-        private var fileManager: FileManagerProtocol
+        private var fileManager: any FileManagerProtocol
 
         /// Creates a new documentation inputs provider.
         /// - Parameter fileManager: The file manager that the provider uses to read file and directory contents from the file system.
-        package init(fileManager: FileManagerProtocol) {
+        package init(fileManager: any FileManagerProtocol) {
             self.fileManager = fileManager
         }
 
@@ -72,7 +73,7 @@ extension DocumentationContext {
 
 extension DocumentationContext.InputsProvider {
 
-    private typealias FileTypes = DocumentationBundleFileTypes
+    private typealias FileTypes = DocumentationCatalogFileTypes
 
     /// A discovered documentation catalog.
     struct CatalogURL {
@@ -130,13 +131,9 @@ extension DocumentationContext.InputsProvider {
 
 // MARK: Create from catalog
 
-extension DocumentationContext {
-    package typealias Inputs = DocumentationBundle
-}
-
 extension DocumentationContext.InputsProvider {
 
-    package typealias Options = BundleDiscoveryOptions
+    package typealias Options = CatalogDiscoveryOptions
 
     /// Creates a collection of documentation inputs from the content of the given documentation catalog.
     /// 
@@ -153,7 +150,7 @@ extension DocumentationContext.InputsProvider {
 
         let info = try DocumentationContext.Inputs.Info(
             from: infoPlistData,
-            bundleDiscoveryOptions: options,
+            catalogDiscoveryOptions: options,
             derivedDisplayName: url.deletingPathExtension().lastPathComponent
         )
 
@@ -165,7 +162,8 @@ extension DocumentationContext.InputsProvider {
             miscResourceURLs: foundContents.resources,
             customHeader:  shallowContent.first(where: FileTypes.isCustomHeader),
             customFooter:  shallowContent.first(where: FileTypes.isCustomFooter),
-            themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile)
+            themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile),
+            customFavicon: shallowContent.first(where: FileTypes.isCustomFavicon)
         )
     }
 
@@ -219,10 +217,10 @@ extension DocumentationContext.InputsProvider {
         }
         let derivedDisplayName = moduleNames.count == 1 ? moduleNames.first : nil
 
-        let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
+        let info = try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
         
         let topLevelPages: [URL]
-        let provider: DataProvider
+        let provider: any DataProvider
         if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName, let url = URL(string: "in-memory-data://\(moduleName).md") {
             let synthesizedExtensionFileData = Data("""
                 # ``\(moduleName)``
@@ -243,7 +241,7 @@ extension DocumentationContext.InputsProvider {
         }
 
         return (
-            inputs: DocumentationBundle(
+            inputs: DocumentationContext.Inputs(
                 info: info,
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
                 markupURLs: topLevelPages,
@@ -261,7 +259,7 @@ private struct SymbolGraphModuleContainer: Decodable {
 
     typealias CodingKeys = SymbolGraph.CodingKeys
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.module = try container.decode(SymbolGraph.Module.self, forKey: .module)
@@ -272,7 +270,7 @@ private struct SymbolGraphModuleContainer: Decodable {
 
 extension DocumentationContext.InputsProvider {
     /// A pair of documentation inputs and a corresponding data provider for those input files.
-    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: DataProvider)
+    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: any DataProvider)
     
     /// Traverses the file system from the given starting point to find a documentation catalog and creates a collection of documentation inputs from that catalog.
     ///
@@ -308,7 +306,7 @@ extension DocumentationContext.InputsProvider {
     private static let insufficientInputsErrorMessageBase = "The information provided as command line arguments isn't enough to generate documentation.\n"
     
     struct InputsFromSymbolGraphError: DescribedError {
-        var underlyingError: Error
+        var underlyingError: any Error
         
         var errorDescription: String {
             "\(DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase)\n\(underlyingError.localizedDescription)"

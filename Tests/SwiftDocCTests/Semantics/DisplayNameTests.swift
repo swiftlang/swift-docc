@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,82 +15,82 @@ import XCTest
 import Markdown
 
 class DisplayNameTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@DisplayName"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNil(displayName)
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.HasArgument.unlabeled", problems.first?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual(diagnostics.first?.identifier, "org.swift.docc.HasArgument.unlabeled")
     }
     
-    func testUnlabeledArgumentValue() throws {
+    func testUnlabeledArgumentValue() async throws {
         let source = "@DisplayName(\"Custom Symbol Name\")"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(displayName)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertEqual(displayName?.style, .conceptual)
     }
     
-    func testConceptualStyleArgumentValue() throws {
+    func testConceptualStyleArgumentValue() async throws {
         let source = "@DisplayName(\"Custom Symbol Name\", style: conceptual)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(displayName)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertEqual(displayName?.style, .conceptual)
     }
     
-    func testSymbolStyleArgumentValue() throws {
+    func testSymbolStyleArgumentValue() async throws {
         let source = "@DisplayName(\"Custom Symbol Name\", style: symbol)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(displayName)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
         XCTAssertEqual(displayName?.style, .symbol)
     }
     
-    func testUnknownStyleArgumentValue() throws {
+    func testUnknownStyleArgumentValue() async throws {
         let source = "@DisplayName(\"Custom Symbol Name\", style: somethingUnknown)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(displayName)
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.HasArgument.style.ConversionFailed", problems.first?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.HasArgument.style.ConversionFailed", diagnostics.first?.identifier)
     }
     
-    func testExtraArguments() throws {
+    func testExtraArguments() async throws {
         let source = "@DisplayName(\"Custom Symbol Name\", argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a displayName value")
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.UnknownArgument", problems.first?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.UnknownArgument", diagnostics.first?.identifier)
     }
     
-    func testExtraDirective() throws {
+    func testExtraDirective() async throws {
         let source = """
         @DisplayName(\"Custom Symbol Name\") {
            @Image
@@ -98,17 +98,17 @@ class DisplayNameTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a DisplayName value")
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(2, problems.count)
-        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", problems.last?.diagnostic.identifier)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(2, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", diagnostics.first?.identifier)
+        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", diagnostics.last?.identifier)
     }
     
-    func testExtraContent() throws {
+    func testExtraContent() async throws {
         let source = """
         @DisplayName(\"Custom Symbol Name\") {
            Some text
@@ -116,13 +116,13 @@ class DisplayNameTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
-        var problems = [Problem]()
-        let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let context = try await makeEmptyContext()
+        var diagnostics = [Diagnostic]()
+        let displayName = DisplayName(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a DisplayName value")
-        XCTAssertFalse(problems.containsErrors)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", problems.first?.diagnostic.identifier)
-        XCTAssertNotNil(problems.first?.possibleSolutions.first)
+        XCTAssertFalse(diagnostics.containsAnyError)
+        XCTAssertEqual(1, diagnostics.count)
+        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", diagnostics.first?.identifier)
+        XCTAssertNotNil(diagnostics.first?.solutions.first)
     }
 }

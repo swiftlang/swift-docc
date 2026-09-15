@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,12 +20,10 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext()
+        var diagnostics = [Diagnostic]()
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
-        
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertTrue(diagnostics.isEmpty)
     }
     
     /// When there are no allowed arguments, diagnose for any provided argument.
@@ -34,12 +32,10 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext()
+        var diagnostics = [Diagnostic]()
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: []).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: []).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
-        
-        XCTAssertEqual(problems.count, 2)
+        XCTAssertEqual(diagnostics.count, 2)
     }
     
     /// When there are arguments that aren't allowed, diagnose.
@@ -48,12 +44,10 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext()
+        var diagnostics = [Diagnostic]()
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
-        
-        XCTAssertEqual(problems.count, 1)
+        XCTAssertEqual(diagnostics.count, 1)
     }
     
     func testInvalidArgumentsWithSuggestions() throws {
@@ -61,13 +55,11 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext()
+        var diagnostics = [Diagnostic]()
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, diagnostics: &diagnostics)
         
-        var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
-        
-        XCTAssertEqual(problems.count, 1)
-        guard let first = problems.first else { return }
-        XCTAssertEqual("error: Unknown argument 'baz' in Intro. These arguments are currently unused but allowed: 'bark', 'woof'.", DiagnosticConsoleWriter.formattedDescription(for: first.diagnostic, options: .formatConsoleOutputForTools))
+        XCTAssertEqual(diagnostics.count, 1)
+        let diagnostic = try XCTUnwrap(diagnostics.first)
+        XCTAssertEqual("error: Unknown argument 'baz' in Intro. These arguments are currently unused but allowed: 'bark', 'woof'.", DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: .formatConsoleOutputForTools))
     }
 }

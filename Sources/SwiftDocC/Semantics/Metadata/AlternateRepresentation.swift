@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 
 /// A directive that configures an alternate language representation of a symbol.
@@ -18,7 +18,7 @@ import Markdown
 ///
 /// Whenever possible, prefer to define alternative language representations for a symbol by using in-source annotations
 /// such as the `@objc` and `@_objcImplementation` attributes in Swift,
-/// or the `NS_SWIFT_NAME` macro in Objective C.
+/// or the `NS_SWIFT_NAME` macro in Objective-C.
 ///
 /// If your source language doesn’t have a mechanism for specifying alternate representations or if your intended alternate representation isn't compatible with those attributes,
 /// you can use the `@AlternateRepresentation` directive to specify another symbol that should be considered an alternate representation of the documented symbol.

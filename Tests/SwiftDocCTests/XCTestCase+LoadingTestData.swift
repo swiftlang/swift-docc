@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,30 +12,29 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 extension XCTestCase {
     
-    /// Loads a documentation bundle from the given source URL and creates a documentation context.
+    /// Loads documentation from the given catalog URL and creates a documentation context.
     func loadBundle(
         from catalogURL: URL,
-        externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:],
-        externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
-        fallbackResolver: ConvertServiceFallbackResolver? = nil,
-        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
+        externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:],
+        externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
+        fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
         configuration: DocumentationContext.Configuration = .init()
-    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
-        var configuration = configuration
-        configuration.externalDocumentationConfiguration.sources = externalResolvers
-        configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
-        configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
-        configuration.externalMetadata.diagnosticLevel = diagnosticEngine.filterLevel
-        
-        let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
-            .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
-
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
-        return (catalogURL, bundle, context)
+    ) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
+        let context = try await loadFromDisk(
+            catalogURL: catalogURL,
+            externalResolvers: externalResolvers,
+            externalSymbolResolver: externalSymbolResolver,
+            fallbackResolver: fallbackResolver,
+            diagnosticEngine: diagnosticEngine,
+            configuration: configuration
+        )
+        return (catalogURL, context.inputs, context)
     }
     
     /// Loads a documentation catalog from an in-memory test file system.
@@ -43,25 +42,28 @@ extension XCTestCase {
     /// - Parameters:
     ///   - catalog: The directory structure of the documentation catalog
     ///   - otherFileSystemDirectories: Any other directories in the test file system.
-    ///   - diagnosticEngine: The diagnostic engine for the created context.
+    ///   - diagnosticFilterLevel: The minimum severity for diagnostics to emit.
+    ///   - logOutput: An output stream to capture log output from creating the context.
     ///   - configuration: Configuration for the created context.
-    /// - Returns: The loaded documentation bundle and context for the given catalog input.
+    /// - Returns: The documentation inputs and the loaded context for the given catalog input.
     func loadBundle(
         catalog: Folder,
         otherFileSystemDirectories: [Folder] = [],
-        diagnosticEngine: DiagnosticEngine = .init(),
+        diagnosticFilterLevel: DiagnosticSeverity = .warning,
+        logOutput: some TextOutputStream = LogHandle.none,
         configuration: DocumentationContext.Configuration = .init()
-    ) throws -> (DocumentationBundle, DocumentationContext) {
-        let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
-        
-        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
-            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
-
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
-        return (bundle, context)
+    ) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
+        let context = try await SwiftDocCTests.load(
+            catalog: catalog,
+            otherFileSystemDirectories: otherFileSystemDirectories,
+            diagnosticFilterLevel: diagnosticFilterLevel,
+            logOutput: logOutput,
+            configuration: configuration
+        )
+        return (context.inputs, context)
     }
     
-    func testCatalogURL(named name: String, file: StaticString = #file, line: UInt = #line) throws -> URL {
+    func testCatalogURL(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {
         try XCTUnwrap(
             Bundle.module.url(forResource: name, withExtension: "docc", subdirectory: "Test Bundles"),
             file: file, line: line
@@ -71,33 +73,33 @@ extension XCTestCase {
     func testBundleAndContext(
         copying name: String,
         excludingPaths excludedPaths: [String] = [],
-        externalResolvers: [DocumentationBundle.Identifier : ExternalDocumentationSource] = [:],
-        externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
-        fallbackResolver: ConvertServiceFallbackResolver? = nil,
-        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
+        externalResolvers: [DocumentationContext.Inputs.Identifier : any ExternalDocumentationSource] = [:],
+        externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
+        fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
-    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
         let sourceURL = try testCatalogURL(named: name)
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
-        let bundleURL = sourceExists
+        let catalogURL = sourceExists
             ? try createTemporaryDirectory().appendingPathComponent("\(name).docc")
             : try createTemporaryDirectory(named: "\(name).docc")
         
         if sourceExists {
-            try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
+            try FileManager.default.copyItem(at: sourceURL, to: catalogURL)
         }
         
         for path in excludedPaths {
-            try FileManager.default.removeItem(at: bundleURL.appendingPathComponent(path))
+            try FileManager.default.removeItem(at: catalogURL.appendingPathComponent(path))
         }
         
-        // Do any additional setup to the custom bundle - adding, modifying files, etc
-        try configureBundle?(bundleURL)
+        // Do any additional setup to the custom catalog - adding, modifying files, etc
+        try configureBundle?(catalogURL)
         
-        return try loadBundle(
-            from: bundleURL,
+        return try await loadBundle(
+            from: catalogURL,
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
             fallbackResolver: fallbackResolver,
@@ -108,155 +110,152 @@ extension XCTestCase {
     
     func testBundleAndContext(
         named name: String,
-        externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:],
-        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:],
+        fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         configuration: DocumentationContext.Configuration = .init()
-    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
         let catalogURL = try testCatalogURL(named: name)
-        return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
+        let context = try await loadFromDisk(catalogURL: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
+        return (catalogURL, context.inputs, context)
     }
     
-    func testBundleAndContext(named name: String, externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
-        let (_, bundle, context) = try testBundleAndContext(named: name, externalResolvers: externalResolvers)
-        return (bundle, context)
+    func testBundleAndContext(named name: String, externalResolvers: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:]) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
+        let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: name), externalResolvers: externalResolvers)
+        return (context.inputs, context)
     }
     
-    func renderNode(atPath path: String, fromTestBundleNamed testBundleName: String) throws -> RenderNode {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+    func renderNode(atPath path: String, fromTestBundleNamed testCatalogName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> RenderNode {
+        let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: testCatalogName), configuration: configuration)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         return try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
     }
     
-    func testBundle(named name: String) throws -> DocumentationBundle {
-        let (bundle, _) = try testBundleAndContext(named: name)
-        return bundle
+    func testBundle(named name: String) async throws -> DocumentationContext.Inputs {
+        let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: name))
+        return context.inputs
     }
     
-    func testBundleFromRootURL(named name: String) throws -> DocumentationBundle {
+    func testBundleFromRootURL(named name: String) throws -> DocumentationContext.Inputs {
         let rootURL = try testCatalogURL(named: name)
         let inputProvider = DocumentationContext.InputsProvider()
         let catalogURL = try XCTUnwrap(inputProvider.findCatalog(startingPoint: rootURL))
         return try inputProvider.makeInputs(contentOf: catalogURL, options: .init())
     }
     
-    func testBundleAndContext() throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
-        let bundle = DocumentationBundle(
-            info: DocumentationBundle.Info(
-                displayName: "Test",
-                id: "com.example.test"
-            ),
-            baseURL: URL(string: "https://example.com/example")!,
-            symbolGraphURLs: [],
-            markupURLs: [],
-            miscResourceURLs: []
-        )
-        
-        let context = try DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []))
-        return (bundle, context)
+    func testBundleAndContext(configuration: DocumentationContext.Configuration = .init()) async throws -> (inputs: DocumentationContext.Inputs, context: DocumentationContext) {
+        let context = try await makeEmptyContext(configuration: configuration)
+        return (context.inputs, context)
     }
     
     func parseDirective<Directive: DirectiveConvertible>(
         _ directive: Directive.Type,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (problemIdentifiers: [String], directive: Directive?) {
-        let (bundle, context) = try testBundleAndContext()
+    ) async throws -> (problemIdentifiers: [String], directive: Directive?) {
+        let context = try await makeEmptyContext()
         
         let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
         let document = Document(parsing: content(), source: source, options: .parseBlockDirectives)
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var problems = [Problem]()
+        var diagnostics = [Diagnostic]()
         let directive = directive.init(
             from: blockDirectiveContainer,
             source: source,
-            for: bundle,
-            in: context,
-            problems: &problems
+            for: context.inputs,
+            featureFlags: context.configuration.featureFlags,
+            diagnostics: &diagnostics
         )
         
-        let problemIDs = problems.map { problem -> String in
-            XCTAssertNotNil(problem.diagnostic.source, "Problem \(problem.diagnostic.identifier) is missing a source URL.", file: file, line: line)
-            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+        let diagnosticDescriptions = diagnostics.map { diagnostic -> String in
+            XCTAssertNotNil(diagnostic.source, "Diagnostic \(diagnostic.identifier) is missing a source URL.", file: file, line: line)
+            let line = diagnostic.range?.lowerBound.line.description ?? "unknown-line"
             
-            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
+            return "\(line): \(diagnostic.severity) – \(diagnostic.identifier)"
         }.sorted()
         
-        return (problemIDs, directive)
+        return (diagnosticDescriptions, directive)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
         catalog: Folder,
+        configuration: DocumentationContext.Configuration = .init(),
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (
+    ) async throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
-        collectedReferences: [String : RenderReference]
+        collectedReferences: [String : any RenderReference]
     ) {
-        let (bundle, context) = try loadBundle(catalog: catalog)
-        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        return try parseDirective(directive, context: context, content: content, file: file, line: line)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
-        in bundleName: String? = nil,
+        in catalogName: String? = nil,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
-        let (renderedContent, problems, directive, _) = try parseDirective(
-            directive,
-            in: bundleName,
-            content: content,
-            file: file,
-            line: line
-        )
-        
-        return (renderedContent, problems, directive)
+    ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
+        let (renderedContent, diagnostics, directive, _) = try await parseDirective(directive, in: catalogName, content: content, file: file, line: line)
+        return (renderedContent, diagnostics, directive)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
-        in bundleName: String? = nil,
+        in catalogName: String? = nil,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (
+    ) async throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
-        collectedReferences: [String : RenderReference]
+        collectedReferences: [String : any RenderReference]
     ) {
-        let bundle: DocumentationBundle
         let context: DocumentationContext
-        
-        if let bundleName {
-            (bundle, context) = try testBundleAndContext(named: bundleName)
+        if let catalogName {
+            (_, context) = try await testBundleAndContext(named: catalogName)
         } else {
-            (bundle, context) = try testBundleAndContext()
+            (_, context) = try await testBundleAndContext()
         }
-        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+        return try parseDirective(directive, context: context, content: content, file: file, line: line)
+    }
+    
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        withAvailableAssetNames assetNames: [String],
+        configuration: DocumentationContext.Configuration = .init(),
+        content: () -> String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
+        let (_, context) = try await loadBundle(catalog: Folder(name: "Something.docc", content: assetNames.map {
+            DataFile(name: $0, data: Data())
+        }), configuration: configuration)
+        
+        let (renderedContent, problems, directive, _) = try parseDirective(directive, context: context, content: content)
+        return (renderedContent, problems, directive)
     }
     
     private func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
-        bundle: DocumentationBundle,
         context: DocumentationContext,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
-        collectedReferences: [String : RenderReference]
+        collectedReferences: [String : any RenderReference]
     ) {
         context.diagnosticEngine.clearDiagnostics()
         
@@ -265,24 +264,20 @@ extension XCTestCase {
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var analyzer = SemanticAnalyzer(source: source, context: context, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: source, inputs: context.inputs, featureFlags: context.configuration.featureFlags)
         let result = analyzer.visit(blockDirectiveContainer)
-        context.diagnosticEngine.emit(analyzer.problems)
+        context.diagnosticEngine.emit(analyzer.diagnostics)
         
-        var referenceResolver = MarkupReferenceResolver(
-            context: context,
-            bundle: bundle,
-            rootReference: bundle.rootReference
-        )
+        var referenceResolver = MarkupReferenceResolver(context: context, rootReference: context.inputs.rootReference)
         
         _ = referenceResolver.visit(blockDirectiveContainer)
-        context.diagnosticEngine.emit(referenceResolver.problems)
+        context.diagnosticEngine.emit(referenceResolver.diagnostics)
         
         func problemIDs() throws -> [String] {
-            try context.problems.map { problem -> (line: Int, severity: String, id: String) in
-                XCTAssertNotNil(problem.diagnostic.source, "Problem \(problem.diagnostic.identifier) is missing a source URL.", file: file, line: line)
-                let line = try XCTUnwrap(problem.diagnostic.range, file: file, line: line).lowerBound.line
-                return (line, problem.diagnostic.severity.description, problem.diagnostic.identifier)
+            try context.diagnostics.map { problem -> (line: Int, severity: String, id: String) in
+                XCTAssertNotNil(problem.source, "Diagnostic \(problem.identifier) is missing a source URL.", file: file, line: line)
+                let line = try XCTUnwrap(problem.range, file: file, line: line).lowerBound.line
+                return (line, problem.severity.description, problem.identifier)
             }
             .sorted { lhs, rhs in
                 let (lhsLine, _, lhsID) = lhs
@@ -305,9 +300,8 @@ extension XCTestCase {
         
         var contentCompiler = RenderContentCompiler(
             context: context,
-            bundle: bundle,
             identifier: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/test-path-123",
                 sourceLanguage: .swift
             )
@@ -319,7 +313,7 @@ extension XCTestCase {
         )
         
         let collectedReferences = contentCompiler.videoReferences
-            .mapValues { $0 as RenderReference }
+            .mapValues { $0 as (any RenderReference) }
             .merging(
                 contentCompiler.imageReferences,
                 uniquingKeysWith: { videoReference, _ in
@@ -333,14 +327,6 @@ extension XCTestCase {
     
     @available(*, deprecated)
     func renderNodeApplying(variant: String, to renderNode: RenderNode) throws -> RenderNode {
-        let variantData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(
-            in: RenderJSONEncoder.makeEncoder().encode(renderNode),
-            for: [.interfaceLanguage(variant)]
-        )
-        
-        return try RenderJSONDecoder.makeDecoder().decode(
-            RenderNode.self,
-            from: variantData
-        )
+        try renderNode.applying(variant: variant)
     }
 }

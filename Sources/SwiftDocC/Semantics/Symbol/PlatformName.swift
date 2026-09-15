@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,12 +11,23 @@
 import Foundation
 
 /// A supported platform's name representation.
-public struct PlatformName: Codable, Hashable, Equatable {
+public struct PlatformName: Codable, Hashable, Comparable, Sendable {
     public var rawValue: String
-    
+
     /// Compares platform names independently of any known aliases differences or possible incomplete display names.
     public static func == (lhs: PlatformName, rhs: PlatformName) -> Bool {
         return lhs.rawValue == rhs.rawValue
+    }
+
+    /// Hashes the entity using the raw value, consistent with the implementation of ``==``.
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue)
+    }
+
+    /// Compares two platform names using the order defined in ``sortedPlatforms``.
+    /// Unknown platforms are lexicographically sorted after known platforms.
+    public static func < (lhs: PlatformName, rhs: PlatformName) -> Bool {
+        areInIncreasingOrder(lhs.rawValue, rhs.rawValue)
     }
     
     /// Creates a new platform name value.
@@ -30,12 +41,12 @@ public struct PlatformName: Codable, Hashable, Equatable {
         self.displayName = displayName ?? rawValue
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(displayName)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let name = try container.decode(String.self)
         self.init(operatingSystemName: name)
@@ -98,6 +109,19 @@ public struct PlatformName: Codable, Hashable, Equatable {
         return result
     }()
 
+    /// A static, lazily created index to lookup the priority of a platform name in the ordering heirarchy.
+    private static let platformOrderIndex: [String: Int] = {
+        var result = [String: Int]()
+        for (offset, name) in sortedPlatforms.enumerated() {
+            result[name.rawValue.lowercased()] = offset
+            result[name.displayName.lowercased()] = offset
+            for alias in name.aliases {
+                result[alias.lowercased()] = offset
+            }
+        }
+        return result
+    }()
+
     /// Creates a new platform name with the given OS name.
     /// - Parameter operatingSystemName: An OS name like 'linux'.
     init(operatingSystemName: String) {
@@ -121,5 +145,43 @@ public struct PlatformName: Codable, Hashable, Equatable {
             let identifier = platform.rawValue.lowercased().replacingOccurrences(of: " ", with: "")
             self.init(rawValue: identifier, displayName: platform.rawValue)
         }
+    }
+
+    /// Compares two platform name strings using the order defined in ``sortedPlatforms``.
+    /// Unknown platforms are lexicographically sorted after known platforms.
+    static func areInIncreasingOrder(_ lhs: String, _ rhs: String) -> Bool {
+        let lhsIndex = platformOrderIndex[lhs.lowercased()] ?? Int.max
+        let rhsIndex = platformOrderIndex[rhs.lowercased()] ?? Int.max
+        if lhsIndex != rhsIndex { return lhsIndex < rhsIndex }
+        return lhs < rhs
+    }
+
+    /// An overload of ``areInIncreasingOrder(_:_:)-(String,String)`` that accepts optional values. Nil values are sorted first.
+    static func areInIncreasingOrder(_ lhs: String?, _ rhs: String?) -> Bool {
+        switch (lhs, rhs) {
+        case (_, nil): false
+        case (nil, _): true
+        case (let lhs?, let rhs?):  areInIncreasingOrder(lhs, rhs)
+        }
+    }
+    
+    /// Returns the given platforms with any missing fallback platforms added.
+    ///
+    /// This function uses the centralized `DefaultAvailability.fallbackPlatforms` mapping to ensure
+    /// consistency with platform expansion logic used throughout the codebase.
+    ///
+    /// For example, when iOS is present in the platforms array, this function adds iPadOS and Mac Catalyst
+    /// if they are not already included.
+    ///
+    /// - Parameter platforms: The original platforms array.
+    /// - Returns: The platforms array with fallback platforms added where applicable.
+    package static func addingFallbacks(_ platforms: [PlatformName?]) -> [PlatformName?] {
+        guard !platforms.isEmpty else { return platforms }
+
+        // Add fallback platforms if the platform is missing but the fallback is present
+        let fallbacks = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback in
+            platforms.contains(fallback) && !platforms.contains(platform) ? platform : nil
+        }
+        return platforms + fallbacks
     }
 }
