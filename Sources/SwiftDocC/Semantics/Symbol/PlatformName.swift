@@ -19,7 +19,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         return lhs.rawValue == rhs.rawValue
     }
 
-    /// Hashes the entity using the raw value, consistent with the implementation of ``==``.
+    /// Hashes the entity using the raw value, consistent with the implementation of ``==(_:_:)``.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }
