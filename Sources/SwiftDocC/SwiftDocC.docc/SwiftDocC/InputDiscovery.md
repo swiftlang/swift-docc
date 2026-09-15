@@ -4,7 +4,7 @@ Learn how to discover documentation inputs on the file system.
 
 ## Discussion
 
-A ``DocumentationContext/InputsProvider`` discovers documentation catalogs on the file system and creates a ``DocumentationBundle`` from the discovered catalog content.
+A ``DocumentationContext/InputsProvider`` discovers documentation catalogs on the file system and creates a ``DocumentationContext/Inputs`` from the discovered catalog content.
 
 ```swift
 let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
@@ -68,8 +68,8 @@ Use a ``DataProvider`` that the ``DocumentationContext/InputsProvider`` returned
 ### Documentation Inputs
 
 - ``DocumentationContext/Inputs``
-- ``BundleIdentifier``
-- ``DocumentationBundleFileTypes``
+- ``DocumentationContext/Inputs/Identifier``
+- ``DocumentationCatalogFileTypes``
 
 ### Bundle Assets
 
