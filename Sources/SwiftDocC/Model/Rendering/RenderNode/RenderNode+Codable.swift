@@ -235,7 +235,9 @@ extension RenderNode: Codable {
                                 throw DecodingError.dataCorruptedError(forKey: .pointer, in: patchContainer, debugDescription: "Unsupported JSON patch for modification of individual property of an element in a list: \(operation.rawValue) at \(pointer).")
                             }
                             
-                            guard primaryContentSectionsVariants.indices.contains(index) else {
+                            guard primaryContentSectionsVariants.indices.contains(index)
+                                  || (operation == .add && index == primaryContentSectionsVariants.endIndex)
+                            else {
                                 throw DecodingError.dataCorruptedError(forKey: .pointer, in: patchContainer, debugDescription: "JSON patch index \(index) is out of bounds for collection with \(primaryContentSectionsVariants.count) elements at \(pointer).")
                             }
                             switch operation {
@@ -244,7 +246,13 @@ extension RenderNode: Codable {
                                 primaryContentSectionsVariants[index].addPatch(.replace(value: value), toVariantWithTraits: traits)
                             case .add:
                                 let value = try patchContainer.decode(CodableContentSection?.self, forKey: .value)
-                                primaryContentSectionsVariants[index].addPatch(.add(value: value), toVariantWithTraits: traits)
+                                if primaryContentSectionsVariants.indices.contains(index) {
+                                    primaryContentSectionsVariants[index].addPatch(.add(value: value), toVariantWithTraits: traits)
+                                } else {
+                                    primaryContentSectionsVariants.append(.init(defaultValue: nil, variants: [
+                                        .init(traits: traits, patch: [.replace(value: value)])
+                                    ]))
+                                }
                             case .remove:
                                 primaryContentSectionsVariants[index].addPatch(.remove, toVariantWithTraits: traits)
                             }

@@ -165,8 +165,13 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertEqual(renderNode.defaultImplementationsSectionsVariants, decoded.defaultImplementationsSectionsVariants)
         XCTAssertEqual(renderNode.deprecationSummaryVariants, decoded.deprecationSummaryVariants)
         XCTAssertEqual(renderNode.abstractVariants, decoded.abstractVariants)
-        XCTAssertEqual(renderNode.primaryContentSectionsVariants, decoded.primaryContentSectionsVariants)
         XCTAssertEqual(renderNode.hierarchyVariants, decoded.hierarchyVariants)
+        
+        XCTAssertEqual(
+            // Because of the odd way that `RenderNodeTranslator` creates variant collections, for some content it adds a trailing `nil` sections with no patches.
+            Array(renderNode.primaryContentSectionsVariants.prefix(while: { $0.defaultValue != nil || !$0.variants.isEmpty })),
+            decoded.primaryContentSectionsVariants
+        )
         
         XCTAssertEqual(renderNode.metadata.modulesVariants, decoded.metadata.modulesVariants)
         XCTAssertEqual(renderNode.metadata.extendedModuleVariants, decoded.metadata.extendedModuleVariants)
