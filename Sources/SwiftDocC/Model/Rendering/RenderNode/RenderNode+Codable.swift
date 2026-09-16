@@ -126,7 +126,6 @@ extension RenderNode: Codable {
                     // Raise a decoding error for any of the non-varying RenderNode properties
                     case .schemaVersion,
                          .kind,
-                         .hierarchy,
                          .topicSectionsStyle,
                          .diffAvailability,
                          .sampleCodeDownload,
@@ -160,6 +159,10 @@ extension RenderNode: Codable {
                     case .deprecationSummary:
                         try patchContainer.decodePatch(operation: operation, remainingPathComponents: remainingPathComponents, andAddTo: &deprecationSummaryVariants, for: traits)
 
+                    // Decode patches for the `Value?` collections
+                    case .hierarchy:
+                        try patchContainer.decodePatch(operation: operation, remainingPathComponents: remainingPathComponents, andAddTo: &hierarchyVariants, for: traits)
+                        
                     // Decode the patch for the primary content sections variant. Rather than a collection of `[Value?]`,
                     // the primary content sections is an array of variant collections of `Value?`
                     // Because it's the only property with this structure we have a fully custom implementation for it.

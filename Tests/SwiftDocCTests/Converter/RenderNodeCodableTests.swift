@@ -166,6 +166,7 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertEqual(renderNode.deprecationSummaryVariants, decoded.deprecationSummaryVariants)
         XCTAssertEqual(renderNode.abstractVariants, decoded.abstractVariants)
         XCTAssertEqual(renderNode.primaryContentSectionsVariants, decoded.primaryContentSectionsVariants)
+        XCTAssertEqual(renderNode.hierarchyVariants, decoded.hierarchyVariants)
         
         XCTAssertEqual(renderNode.metadata.modulesVariants, decoded.metadata.modulesVariants)
         XCTAssertEqual(renderNode.metadata.extendedModuleVariants, decoded.metadata.extendedModuleVariants)
