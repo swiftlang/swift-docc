@@ -1146,12 +1146,11 @@ public class DocumentationContext {
                         }
                     }
 
-                    let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.lazy.flatMap({
-                        $0.lazy.filter { $0.kind == .overloadOf }
-                    }).reduce(into: [:], { acc, relationship in
-                        acc[relationship.target, default: []].insert(relationship.source)
-                    })
+                    let overloadGroups: [String: Set<String>] = unifiedSymbolGraph.relationshipsByLanguage.values.reduce(into: [:]) { acc, relationships in
+                        for relationship in relationships where relationship.kind == . overloadOf {
+                            acc[relationship.target, default: []].insert(relationship.source)
+                        }
+                    }
                     addOverloadGroupReferences(overloadGroups: overloadGroups)
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
