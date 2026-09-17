@@ -1026,8 +1026,6 @@ extension RenderBlockContent: Codable {
         case identifier
     }
     
-    static let isExperimentalCodeBlockAnnotationsEnabledUserInfoKey = CodingUserInfoKey(rawValue: "isExperimentalCodeBlockAnnotationsEnabled")!
-    
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BlockType.self, forKey: .type)
@@ -1048,11 +1046,10 @@ extension RenderBlockContent: Codable {
             }
             self = .aside(aside)
         case .codeListing:
-            let copy = decoder.userInfo[Self.isExperimentalCodeBlockAnnotationsEnabledUserInfoKey] as? Bool == true
             let options: CodeBlockOptions?
             if !Set(container.allKeys).isDisjoint(with: [.copyToClipboard, .showLineNumbers, .wrap, .lineAnnotations]) {
                 options = try CodeBlockOptions(
-                    copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? copy,
+                    copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? false,
                     showLineNumbers: container.decodeIfPresent(Bool.self, forKey: .showLineNumbers) ?? false,
                     wrap: container.decodeIfPresent(Int.self, forKey: .wrap) ?? 0,
                     lineAnnotations: container.decodeIfPresent([CodeBlockOptions.LineAnnotation].self, forKey: .lineAnnotations) ?? []

@@ -406,6 +406,8 @@ class DocumentationInputsInfoTests: XCTestCase {
             <dict>
                 <key>ExperimentalOverloadedSymbolPresentation</key>
                 <true/>
+                <key>ExperimentalCodeBlockAnnotations</key>
+                <false/>
             </dict>
         </dict>
         </plist>
@@ -418,5 +420,17 @@ class DocumentationInputsInfoTests: XCTestCase {
 
         let featureFlags = try XCTUnwrap(info.featureFlags)
         XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))
+        XCTAssertFalse(try XCTUnwrap(featureFlags.experimentalCodeBlockAnnotations))
+    }
+
+    func testLoadFlagsFromBundleAppliesCodeBlockAnnotations() throws {
+        var featureFlags = FeatureFlags()
+        XCTAssertTrue(featureFlags.isCodeBlockAnnotationsEnabled)
+
+        featureFlags.loadFlagsFromBundle(.init(experimentalCodeBlockAnnotations: false))
+        XCTAssertFalse(featureFlags.isCodeBlockAnnotationsEnabled)
+
+        featureFlags.loadFlagsFromBundle(.init(experimentalCodeBlockAnnotations: true))
+        XCTAssertTrue(featureFlags.isCodeBlockAnnotationsEnabled)
     }
 }
