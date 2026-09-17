@@ -1424,54 +1424,43 @@ struct MarkdownOutputTests {
     }
 
     @Test
-    func technologyRootFrameworkNameIsIncorrectForSymbolsAndCuratedArticles() async throws {
+    func symbolsAndCuratedArticlesUseModuleSymbolNameForFramework() async throws {
         // RootKit is a technology root article that "owns" two real frameworks, Roots and RootsUI.
         // The catalog's display name ("RootKit") should only apply to pages that don't belong to a
         // more specific framework — not to Roots's own symbols or to API collections curated under them.
-        let catalog = Folder(name: "RootKit.docc", content: [
-            TextFile(name: "RootKit.md", utf8Content: """
-                # RootKit
+        let catalog = catalog(files: [
+            InfoPlist(displayName: "Markdown Output"),
+            TextFile(name: "InterestingArticle.md", utf8Content: """
+                # My Article
 
-                @Metadata {
-                    @TechnologyRoot
-                }
+                An article that has no symbol references in it
 
-                An umbrella technology that owns the Roots and RootsUI frameworks.
-
-                ## Topics
-
-                - ``Roots``
-                - ``RootsUI``
+                Just some content.
                 """),
-            JSONFile(name: "Roots.symbols.json", content: makeSymbolGraph(moduleName: "Roots", symbols: [
-                makeSymbol(id: "roots-type-id", kind: .struct, pathComponents: ["RootsType"])
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "markdown-output-type-id", kind: .struct, pathComponents: ["MarkdownOutputType"])
             ])),
-            JSONFile(name: "RootsUI.symbols.json", content: makeSymbolGraph(moduleName: "RootsUI")),
-            TextFile(name: "RootsType.md", utf8Content: """
-                # ``Roots/RootsType``
+            TextFile(name: "MarkdownOutputType.md", utf8Content: """
+                # ``MarkdownOutputType``
 
                 ## Topics
 
-                - <doc:RootsCollection>
+                - <doc:MarkdownOutputAPICollection>
                 """),
-            TextFile(name: "RootsCollection.md", utf8Content: """
-                # Roots Collection
+            TextFile(name: "MarkdownOutputAPICollection.md", utf8Content: """
+                # Markdown Output Collection
 
-                An API collection curated under a Roots symbol.
+                An API collection curated under a MarkdownOutput symbol.
                 """),
         ])
+        
+        let (symbolNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownOutputType")
+        let (articleNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Markdown-Output/InterestingArticle")
+        let (apiCollectionNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Markdown-Output/MarkdownOutputAPICollection")
 
-        func framework(at path: String) async throws -> String? {
-            let context = try await load(catalog: catalog)
-            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
-            return visitor.createOutput()?.metadata.framework
-        }
-
-        #expect(try await framework(at: "/documentation/Roots/RootsType") == "Roots")
-        #expect(try await framework(at: "/documentation/RootKit") == "RootKit")
-        #expect(try await framework(at: "/documentation/RootKit/RootsCollection") == "Roots")
+        #expect(symbolNode.metadata.framework == "MarkdownOutput")
+        #expect(articleNode.metadata.framework == "MarkdownOutput")
+        #expect(apiCollectionNode.metadata.framework == "MarkdownOutput")
     }
 
     @Test
