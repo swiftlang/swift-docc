@@ -1947,14 +1947,20 @@ Document
         // Symbol with an empty set of availability items.
         
         do {
+            let catalog = Folder(name: "unit-test.docc") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "iOS")), symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], availability: []),
+                ]))
+            }
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalMetadata.currentPlatforms = ["Custom Name": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
+            let (_, context) = try await loadBundle(catalog: catalog)
+            XCTAssert(context.diagnostics.isEmpty, "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
             
-            let (context, reference) = try await makeTestBundle(currentPlatforms: [
-                "Custom Name": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
-            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
+            let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-class-id"))
             let node = try context.entity(with: reference)
-            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [])
-            let documentationContentRendered = DocumentationContentRenderer(context: context)
-            let isBeta = documentationContentRendered.isBeta(node)
+            let documentationContentRenderer = DocumentationContentRenderer(context: context)
+            let isBeta = documentationContentRenderer.isBeta(node)
             // Verify that the symbol is not beta since it does not contains availability info.
             XCTAssertFalse(isBeta)
         }
@@ -2063,18 +2069,42 @@ Document
         // Verify task group link is beta
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
         
-        // Add ImaginaryOS platform - but make it unconditionally unavailable and
-        // verify that it doesn't affect the beta status
+        // Add ImaginaryOS platform - but make it unconditionally unavailable and verify that it doesn't affect the beta status
         do {
-            // Add an extra platform where the symbol is not available.
-            let renderReferenceSymbol = try XCTUnwrap(node.semantic as? Symbol)
-            renderReferenceSymbol.availability?.availability.append(SymbolGraph.Symbol.Availability.AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "ImaginaryOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false))
-
-            // Verify the rendered reference
+            let catalog = Folder(name: "unit-test.docc") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "iOS")), symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"]),
+                    makeSymbol(id: "some-member-id", kind: .method, pathComponents: ["SomeClass", "doSomething()"], availability: [
+                        .init(domainName: "macOS",   introduced: .init(major: 10, minor: 15, patch: 0), deprecated: nil),
+                        .init(domainName: "watchOS", introduced: .init(major:  6, minor:  0, patch: 0), deprecated: nil),
+                        .init(domainName: "tvOS",    introduced: .init(major: 13, minor:  0, patch: 0), deprecated: nil),
+                        .init(domainName: "iOS",     introduced: .init(major: 13, minor:  0, patch: 0), deprecated: nil),
+                        // Make the method unconditionally unavailable for one of the custom platforms.
+                        .init(domainName: "ImaginaryOS", introduced: nil, deprecated: nil, isUnconditionallyUnavailable: true)
+                    ]),
+                ], relationships: [
+                    .init(source: "some-member-id", target: "some-class-id", kind: .memberOf, targetFallback: nil)
+                ]))
+            }
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalMetadata.currentPlatforms = [
+                "macOS":       PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
+                "watchOS":     PlatformVersion(VersionTriplet( 6,  0, 0), beta: true),
+                "tvOS":        PlatformVersion(VersionTriplet(13,  0, 0), beta: true),
+                "iOS":         PlatformVersion(VersionTriplet(13,  0, 0), beta: true),
+                "FictionalOS": PlatformVersion(VersionTriplet(42,  0, 0), beta: false),
+                "ImaginaryOS": PlatformVersion(VersionTriplet( 3,  3, 3), beta: false),
+            ]
+            let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+            XCTAssert(context.diagnostics.isEmpty, "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
+            
+            let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-class-id"))
+            let node = try context.entity(with: reference)
             let renderNode = try XCTUnwrap(DocumentationNodeConverter(context: context).convert(node))
             
             // Verify task group link is beta
-            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
+            let methodReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-member-id"))
+            XCTAssertEqual((renderNode.references[methodReference.absoluteString] as? TopicRenderReference)?.isBeta, true)
         }
         
         // Set all platforms to beta & the exact version MyClass is being introduced.
@@ -2096,87 +2126,105 @@ Document
         
         // Set all platforms as unconditionally unavailable and test that the symbol is not marked as beta.
         do {
-            let (context, reference) = try await makeTestBundle(currentPlatforms: [
+            let catalog = Folder(name: "unit-test.docc") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "iOS")), symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                        .init(domainName: "iOS", introduced: nil, deprecated: nil, isUnconditionallyUnavailable: true)
+                    ])
+                ]))
+            }
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalMetadata.currentPlatforms = [
                 "iOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
-            ], referencePath: "/documentation/MyKit/MyClass")
+            ]
+            let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+            XCTAssert(context.diagnostics.isEmpty, "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
+            
+            let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-class-id"))
             let node = try context.entity(with: reference)
-            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [.init(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false)])
-            let documentationContentRendered = DocumentationContentRenderer(context: context)
-            let isBeta = documentationContentRendered.isBeta(node)
+            let isBeta = DocumentationContentRenderer(context: context).isBeta(node)
             // Verify that the symbol is not beta since it's unavailable in all the platforms.
             XCTAssertFalse(isBeta)
         }
     }
     
     func testRendersDeprecatedViolator() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-
-        // Make the referenced symbol deprecated
-        do {
-            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: .init(major: 13, minor: 0, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
-            ])
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "iOS")), symbols: [
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"]),
+                makeSymbol(id: "some-member-id", kind: .method, pathComponents: ["SomeClass", "doSomething()"], availability: [
+                    // Make the method symbol deprecated
+                    .init(domainName: "iOS", introduced: nil, deprecated: .init(major: 13, minor: 0, patch: 0)),
+                ]),
+            ], relationships: [
+                .init(source: "some-member-id", target: "some-class-id", kind: .memberOf, targetFallback: nil)
+            ]))
         }
         
-        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
-        let node = try context.entity(with: reference)
-        let symbol = node.semantic as! Symbol
+        let (_, context) = try await loadBundle(catalog: catalog)
         
-        var translator = RenderNodeTranslator(context: context, identifier: reference)
-        let renderNode = translator.visitSymbol(symbol) as! RenderNode
+        // Verify that the method, which appears in an automatic topic section on the class page, is marked as deprecated.
+        let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-class-id"))
+        let node = try context.entity(with: reference)
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try XCTUnwrap(converter.renderNode(for: node))
         
         // The reference is deprecated on all platforms
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference)?.isDeprecated, true)
+        let methodReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-member-id"))
+        XCTAssertEqual((renderNode.references[methodReference.absoluteString] as? TopicRenderReference)?.isDeprecated, true)
     }
 
     func testDoesNotRenderDeprecatedViolator() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-
-        // Make the referenced symbol deprecated
-        do {
-            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: .init(major: 10, minor: 15, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
-            ])
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "iOS")), symbols: [
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"]),
+                makeSymbol(id: "some-member-id", kind: .method, pathComponents: ["SomeClass", "doSomething()"], availability: [
+                    .init(domainName: "iOS",   introduced: .init(major: 13, minor: 0, patch: 0), deprecated: nil,                                    isUnconditionallyUnavailable: false),
+                    .init(domainName: "macOS", introduced: nil,                                  deprecated: .init(major: 10, minor: 15, patch: 0),  isUnconditionallyUnavailable: true),
+                ]),
+            ], relationships: [
+                .init(source: "some-member-id", target: "some-class-id", kind: .memberOf, targetFallback: nil)
+            ]))
         }
-    
-        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
-        let node = try context.entity(with: reference)
-        let symbol = node.semantic as! Symbol
         
-        var translator = RenderNodeTranslator(context: context, identifier: reference)
-        let renderNode = translator.visitSymbol(symbol) as! RenderNode
+        let (_, context) = try await loadBundle(catalog: catalog)
+        
+        // Verify that the method, which appears in an automatic topic section on the class page, is marked as deprecated.
+        let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-class-id"))
+        let node = try context.entity(with: reference)
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try XCTUnwrap(converter.renderNode(for: node))
         
         // The reference is not deprecated on all platforms
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference)?.isDeprecated, false)
+        let methodReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-member-id"))
+        XCTAssertEqual((renderNode.references[methodReference.absoluteString] as? TopicRenderReference)?.isDeprecated, false)
     }
     
     func testRendersDeprecatedViolatorForUnconditionallyDeprecatedReference() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-
-        // Make the referenced symbol deprecated
-        do {
-            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: true, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: .init(major: 11, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
-            ])
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "iOS")), symbols: [
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"]),
+                makeSymbol(id: "some-member-id", kind: .method, pathComponents: ["SomeClass", "doSomething()"], availability: [
+                    // Make the method symbol deprecated
+                    .init(domainName: "iOS", introduced: .init(major: 13, minor: 0, patch: 0), deprecated: nil, isUnconditionallyDeprecated: true),
+                    .init(domainName: "macOS", introduced: .init(major: 11, minor: 0, patch: 0), deprecated: nil, isUnconditionallyUnavailable: true),
+                ]),
+            ], relationships: [
+                .init(source: "some-member-id", target: "some-class-id", kind: .memberOf, targetFallback: nil)
+            ]))
         }
-
-        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
+        
+        // Verify that the method, which appears in an automatic topic section on the class page, is marked as deprecated.
+        let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-class-id"))
         let node = try context.entity(with: reference)
-        let symbol = node.semantic as! Symbol
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try XCTUnwrap(converter.renderNode(for: node))
         
-        var translator = RenderNodeTranslator(context: context, identifier: reference)
-        let renderNode = translator.visitSymbol(symbol) as! RenderNode
-        
-        // Verify that the reference is deprecated on all platforms
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference)?.isDeprecated, true)
+        // The reference is deprecated on all platforms
+        let methodReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-member-id"))
+        XCTAssertEqual((renderNode.references[methodReference.absoluteString] as? TopicRenderReference)?.isDeprecated, true)
     }
     
     func testRenderMetadataFragments() async throws {
