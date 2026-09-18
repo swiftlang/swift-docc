@@ -291,8 +291,8 @@ extension HTMLNode {
         /// The `<audio>` or `<video>` element will start out as muted.
         package static let muted = Attribute(name: "muted", value: "") // A "boolean" attribute
 
-        /// Either the name that gives the metadata name for a ``contents(_:)`` value for a `<meta>` element or the name of a form element for the server to identify fields in the form submission.
-        package static func name(_ value: String) -> Attribute { .init(name: "name", value: value) } 
+        /// Either the name that gives the metadata name for a ``content(_:)`` value for a `<meta>` element or the name of a form element for the server to identify fields in the form submission.
+        package static func name(_ value: String) -> Attribute { .init(name: "name", value: value) }
 
         /// A cryptographic nonce ("number used once") which can be used by Content Security Policy to determine whether or not a given fetch will be allowed to proceed.
         package static func nonce(_ value: String) -> Attribute { .init(name: "nonce", value: value) } 
@@ -495,7 +495,7 @@ extension HTMLNode.Attribute {
         case worker
     }
     
-    /// A value for the ``HTMLNode/Attribute/autocapitalize(_:)`` attribute.
+    /// A value for the ``HTMLNode/Attribute/autoCapitalize(_:)`` attribute.
     package enum AutoCapitalize: String {
         /// No autocapitalization should be applied (all letters should default to lowercase).
         case none
@@ -525,7 +525,7 @@ extension HTMLNode.Attribute {
         case plaintextOnly = "plaintext-only"
     }
     
-    /// A value for the ``HTMLNode/Attribute/controls(_:)`` attribute.
+    /// A value for the ``HTMLNode/Attribute/controlsList(_:)`` attribute.
     package enum Controls: String {
         /// Hints that the browser should not display a download control.
         case noDownload       = "nodownload"
@@ -674,7 +674,7 @@ extension HTMLNode.Attribute {
     package enum Method: String {
         /// The form data is sent as the body in a POST request.
         case post
-        /// The form data is encoded as key-value pairs in the query component of the ``action`` attribute's URL.
+        /// The form data is encoded as key-value pairs in the query component of the ``HTMLNode/Attribute/action(_:)`` attribute's URL.
         case get
         /// When the `<form>` element is within a `<dialog>` element; closes the dialog and fires a `submit` event without submitting the form.
         case dialog
