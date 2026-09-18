@@ -18,12 +18,15 @@ package extension MarkdownRenderer {
         /// The pre-formatted version string that describes the version that this API was deprecated in for this platform.
         package var deprecated: String?
         /// A Boolean value indicating if the platform is currently in beta.
+        package var isUnconditionallyDeprecated: Bool
+        /// A Boolean value indicating if the platform is currently in beta.
         package var isBeta: Bool
         
-        package init(name: String, introduced: String? = nil, deprecated: String? = nil, isBeta: Bool) {
+        package init(name: String, introduced: String? = nil, deprecated: String? = nil, isUnconditionallyDeprecated: Bool, isBeta: Bool) {
             self.name = name
             self.introduced = introduced
             self.deprecated = deprecated
+            self.isUnconditionallyDeprecated = isUnconditionallyDeprecated
             self.isBeta = isBeta
         }
     }
@@ -33,17 +36,18 @@ package extension MarkdownRenderer {
         let items: [HTMLNode] = info.map {
             var text = $0.name
             
+            let availablePhrase = $0.isUnconditionallyDeprecated ? "Unconditionally deprecated" : "Available"
             let description: String
             if let introduced = $0.introduced {
-                if let deprecated  = $0.deprecated{
+                if let deprecated  = $0.deprecated {
                     text += " \(introduced)–\(deprecated)"
                     description = "Introduced in \($0.name) \(introduced) and deprecated in \($0.name) \(deprecated)"
                 } else {
                     text += " \(introduced)+"
-                    description = "Available on \($0.name) \(introduced) and later"
+                    description = "\(availablePhrase) on \($0.name) \(introduced) and later"
                 }
             } else {
-                description = "Available on \($0.name)"
+                description = "\(availablePhrase) on \($0.name)"
             }
             
             var attributes: [HTMLNode.Attribute] = [
@@ -52,7 +56,7 @@ package extension MarkdownRenderer {
             ]
             if $0.isBeta {
                 attributes.insert(.class("beta"),       at: 1)
-            } else if $0.deprecated != nil {
+            } else if $0.isUnconditionallyDeprecated || $0.deprecated != nil {
                 attributes.insert(.class("deprecated"), at: 1)
             }
             
