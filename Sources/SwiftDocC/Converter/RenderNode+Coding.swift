@@ -223,7 +223,7 @@ public extension RenderNode {
             try TopicRenderReferenceEncoder.addRenderReferences(
                 to: &renderNodeData,
                 references: references,
-                encodeAccumulatedVariantOverrides: false,
+                encodeAccumulatedVariantOverrides: true,
                 encoder: encoder,
                 renderReferenceCache: renderReferenceCache
             )
