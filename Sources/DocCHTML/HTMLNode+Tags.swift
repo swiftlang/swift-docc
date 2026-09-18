@@ -173,7 +173,7 @@ package func h2(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> 
 /// Creates a new heading element of a given level with the given attributes and contents.
 ///
 /// - Parameters:
-///   - level: The numeric level of the heading new heading element.
+///   - level: The numeric level of the new heading element.
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<h1>`-`<h6>` element.
