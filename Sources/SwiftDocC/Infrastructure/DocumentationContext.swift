@@ -19,9 +19,6 @@ private import os
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///
-/// A ``DocumentationWorkspace`` discovers serialized documentation bundles from a variety of sources (files on disk, databases, or web services), provides them to the `DocumentationContext`,
-/// and notifies the context when bundles are added or removed using the ``DocumentationContextDataProviderDelegate`` protocol.
-///
 /// When a documentation bundle is registered with the context, all of its content is loaded into memory and relationships between documentation entities are built. When this is done, the context can be queried
 /// about documentation entities, resources, and relationships between entities.
 ///
@@ -210,14 +207,14 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
-    /// Initializes a documentation context with a given `bundle`.
+    /// Initializes a documentation context from a collection of input files.
     ///
     /// - Parameters:
-    ///   - inputs: The inputs to register with the context.
-    ///   - fileManager: The file manager that the context uses to read files from the bundle.
+    ///   - inputs: The collection of input files to register with the context.
+    ///   - dataProvider: The data provider that the context uses to read files from the inputs.
     ///   - diagnosticEngine: The pre-configured engine that will collect diagnostics encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
+    /// - Throws: If an error is encountered while registering the documentation input files.
     package init(
         inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
@@ -1634,7 +1631,7 @@ public class DocumentationContext {
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
-    // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
+    // TODO: Move this functionality to ``DocumentationCatalogFileTypes`` (rdar://68156425).
     
     /// A type of asset.
     public enum AssetType: CustomStringConvertible {

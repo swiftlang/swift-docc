@@ -49,13 +49,6 @@ public import SymbolKit
 /// - ``seeAlsoVariants``
 /// - ``returnsSectionVariants``
 /// - ``parametersSectionVariants``
-/// - ``dictionaryKeysSectionVariants``
-/// - ``possibleValuesSectionVariants``
-/// - ``httpEndpointSectionVariants``
-/// - ``httpParametersSectionVariants``
-/// - ``httpResponsesSectionVariants``
-/// - ``httpBodySectionVariants``
-/// - ``redirectsVariants``
 /// - ``abstractVariants``
 /// - ``isDeprecatedVariants``
 /// - ``isSPIVariants``
