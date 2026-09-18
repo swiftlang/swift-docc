@@ -567,8 +567,8 @@ class DefaultAvailabilityTests: XCTestCase {
             let context = try await loadExampleCatalog(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil)
             ])
-            let withInSourceAvailability    = try XCTUnwrap((context.documentationCache["some-symbol-with-availability"]?.semantic    as? Symbol)?.availability?.availability)
-            let withoutInSourceAvailability = try XCTUnwrap((context.documentationCache["some-symbol-without-availability"]?.semantic as? Symbol)?.availability?.availability)
+            let withInSourceAvailability    = try XCTUnwrap(context.documentationCache["some-symbol-with-availability"   ]?.symbol?.availability)
+            let withoutInSourceAvailability = try XCTUnwrap(context.documentationCache["some-symbol-without-availability"]?.symbol?.availability)
             
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
@@ -591,8 +591,8 @@ class DefaultAvailabilityTests: XCTestCase {
                 .init(platformName: .iOS,     platformVersion: "8.0"),
                 .init(platformName: .watchOS, platformVersion: nil),
             ])
-            let withInSourceAvailability    = try XCTUnwrap((context.documentationCache["some-symbol-with-availability"]?.semantic    as? Symbol)?.availability?.availability)
-            let withoutInSourceAvailability = try XCTUnwrap((context.documentationCache["some-symbol-without-availability"]?.semantic as? Symbol)?.availability?.availability)
+            let withInSourceAvailability    = try XCTUnwrap(context.documentationCache["some-symbol-with-availability"   ]?.symbol?.availability)
+            let withoutInSourceAvailability = try XCTUnwrap(context.documentationCache["some-symbol-without-availability"]?.symbol?.availability)
             
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
