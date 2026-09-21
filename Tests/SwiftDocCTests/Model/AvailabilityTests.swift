@@ -429,7 +429,7 @@ struct AvailabilityTests {
     }
     
     @Test
-    func catalystInheritsAvailabilityIfDefaulAvailabilityIsVersionless() async throws {
+    func catalystInheritsAvailabilityIfDefaultAvailabilityIsVersionless() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             for (domainName, environment, introducedVersion) in [
                 ("iOS",         nil,      SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0)),
@@ -1125,7 +1125,7 @@ struct AvailabilityTests {
                 ]))
         }
         let context = try await load(catalog: catalog)
-        #expect(context.diagnostics.isEmpty, "Unexpeceted problems: \(context.diagnostics.map(\.summary))")
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let renderNode = try #require(converter.renderNode(for: node))
