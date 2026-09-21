@@ -1137,12 +1137,10 @@ struct AvailabilityTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability:
                     // In-source availability attributes for many platforms and their respective app extensions
-                    zip(1..., ["iOS", "macCatalyst", "macOS", "tvOS", "watchOS"]).flatMap { (version: Int, name: String) in
+                    zip(1..., ["iOS", "macCatalyst", "macOS", "tvOS", "watchOS", "visionOS"]).flatMap { (version: Int, name: String) in
                     [
                         .init(domainName: name,                  introduced: .init(major: version, minor: version, patch: 0), deprecated: nil),
                         .init(domainName: "\(name)AppExtension", introduced: .init(major: version, minor: version, patch: 0), deprecated: nil),
-                    ] + [
-                        .init(domainName: "visionOS",            introduced: .init(major: 6, minor: 6, patch: 0), deprecated: nil),
                     ]
                 })
             ]))
@@ -1160,7 +1158,7 @@ struct AvailabilityTests {
             "Mac Catalyst", "Mac Catalyst App Extension",
             "macOS",        "macOS App Extension",
             "tvOS",         "tvOS App Extension",
-            "visionOS",
+            "visionOS",     "visionOS App Extension",
             "watchOS",      "watchOS App Extension",
         ])
         
@@ -1175,6 +1173,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "watchOS"                    })?.introduced == "5.5")
         #expect(renderPlatforms.first(where: { $0.name == "watchOS App Extension"      })?.introduced == "5.5")
         #expect(renderPlatforms.first(where: { $0.name == "visionOS"                   })?.introduced == "6.6")
+        #expect(renderPlatforms.first(where: { $0.name == "visionOS App Extension"     })?.introduced == "6.6")
     }
     
     // MARK: Deprecations
