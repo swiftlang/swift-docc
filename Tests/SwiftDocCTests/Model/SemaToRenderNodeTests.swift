@@ -1954,7 +1954,7 @@ Document
             }
             var configuration = DocumentationContext.Configuration()
             configuration.externalMetadata.currentPlatforms = ["Custom Name": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
             XCTAssert(context.diagnostics.isEmpty, "Unexpected diagnostics: \(context.diagnostics.map(\.summary))")
             
             let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-class-id"))
