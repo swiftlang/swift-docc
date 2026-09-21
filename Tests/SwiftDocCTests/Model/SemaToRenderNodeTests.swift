@@ -1941,7 +1941,7 @@ Document
             let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
+            XCTAssertEqual(renderNode.metadata.platforms?.first?.beta, false)
         }
         
         // Symbol with an empty set of availability items.
@@ -1975,7 +1975,7 @@ Document
             let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
+            XCTAssertEqual(renderNode.metadata.platforms?.first?.beta, false)
         }
         
         // Beta platform but *not* matching the introduced version
@@ -1989,7 +1989,7 @@ Document
             let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
+            XCTAssertEqual(renderNode.metadata.platforms?.first?.beta, false)
         }
 
         // Beta platform matching the introduced version
@@ -2003,7 +2003,7 @@ Document
             let renderNode = DocumentationNodeConverter(context: context).convert(node)
 
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS"})?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS"})?.beta, true)
         }
 
         // Beta platform earlier than the introduced version
@@ -2017,7 +2017,7 @@ Document
             let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.beta, true)
         }
 
         // Set only some platforms to beta & the exact version globalFunction is being introduced at
