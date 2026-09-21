@@ -107,19 +107,19 @@ struct AvailabilityTests {
         // but it should not propagate to visionOS because visionOS is a distinct OS rather than an iOS variant.
         #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "visionOS"])
         
-        #expect(renderPlatforms.first(where: {$0.name == "iOS"          })?.introduced == "1.2.3")
-        #expect(renderPlatforms.first(where: {$0.name == "iOS"          })?.deprecated == "1.2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "1.2.3")
         
-        #expect(renderPlatforms.first(where: {$0.name == "iPadOS"       })?.introduced == "1.2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.2.3")
         withKnownIssue("iPadOS availability should follow iOS availability (rdar://173704351)") {
-            #expect(renderPlatforms.first(where: {$0.name == "iPadOS"   })?.deprecated == "1.2.3")
+            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"   })?.deprecated == "1.2.3")
         }
         
-        #expect(renderPlatforms.first(where: {$0.name == "Mac Catalyst" })?.introduced == "1.2.3")
-        #expect(renderPlatforms.first(where: {$0.name == "Mac Catalyst" })?.deprecated == "1.2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "1.2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "1.2.3")
         
-        #expect(renderPlatforms.first(where: {$0.name == "visionOS"     })?.introduced == nil)
-        #expect(renderPlatforms.first(where: {$0.name == "visionOS"     })?.deprecated == "1.0")
+        #expect(renderPlatforms.first(where: { $0.name == "visionOS"     })?.introduced == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "visionOS"     })?.deprecated == "1.0")
     }
     
     @Test
@@ -457,7 +457,7 @@ struct AvailabilityTests {
         
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "12.0")
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "12.0")
-        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "12.0")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "12.0")
     }
     
     @Test
@@ -465,7 +465,7 @@ struct AvailabilityTests {
         let catalog = Folder(name: "unit-test.docc") {
             for (domainName, environment, introducedVersion) in [
                 ("iOS",         nil,      SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0)),
-                ("macCatalyst", "macabi", SymbolGraph.SemanticVersion(major: 1, minor: 2, patch: 3))
+                ("macCatalyst", "macabi", SymbolGraph.SemanticVersion(major:  1, minor: 2, patch: 3))
             ] {
                 JSONFile(name: "ModuleName-\(domainName).symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: environment), symbols: [
                     makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
