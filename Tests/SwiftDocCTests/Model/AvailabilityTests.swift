@@ -1114,15 +1114,11 @@ struct AvailabilityTests {
     @Test
     func doesNotRenderObsoleteAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(
-                moduleName: "ModuleName",
-                platform: .init(operatingSystem: .init (name:"ios")), symbols: [
-                    makeSymbol( id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
-                            makeAvailabilityItem(
-                                domainName: "iOS",
-                                obsoleted: .init(major: 1, minor: 2, patch: 3))
-                        ])
-                ]))
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    makeAvailabilityItem(domainName: "iOS", obsoleted: .init(major: 1, minor: 2, patch: 3))
+                ])
+            ]))
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
