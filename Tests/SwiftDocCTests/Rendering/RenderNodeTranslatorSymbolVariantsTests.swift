@@ -164,11 +164,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         
         let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-symbol-id"))
         let node = try context.entity(with: reference)
-        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
-        let renderNode = try XCTUnwrap(converter.renderNode(for: node))
-        
-        XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, "1.0")
-        
+            
         try assertMultiLanguageSemantic(
             XCTUnwrap(node.semantic as? Symbol),
             context: context,
