@@ -1141,6 +1141,8 @@ struct AvailabilityTests {
                     [
                         .init(domainName: name,                  introduced: .init(major: version, minor: version, patch: 0), deprecated: nil),
                         .init(domainName: "\(name)AppExtension", introduced: .init(major: version, minor: version, patch: 0), deprecated: nil),
+                    ] + [
+                        .init(domainName: "visionOS",            introduced: .init(major: 6, minor: 6, patch: 0), deprecated: nil),
                     ]
                 })
             ]))
@@ -1158,6 +1160,7 @@ struct AvailabilityTests {
             "Mac Catalyst", "Mac Catalyst App Extension",
             "macOS",        "macOS App Extension",
             "tvOS",         "tvOS App Extension",
+            "visionOS",
             "watchOS",      "watchOS App Extension",
         ])
         
@@ -1171,6 +1174,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "tvOS App Extension"         })?.introduced == "4.4")
         #expect(renderPlatforms.first(where: { $0.name == "watchOS"                    })?.introduced == "5.5")
         #expect(renderPlatforms.first(where: { $0.name == "watchOS App Extension"      })?.introduced == "5.5")
+        #expect(renderPlatforms.first(where: { $0.name == "visionOS"                   })?.introduced == "6.6")
     }
     
     // MARK: Deprecations
