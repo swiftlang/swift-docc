@@ -1558,7 +1558,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "10.14")
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == nil)
-        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.unconditionallyDeprecated != true)
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.isUnconditionallyDeprecated != true)
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated)
@@ -1588,7 +1588,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == nil)
         #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == "10.14")
-        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.unconditionallyDeprecated != true)
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.isUnconditionallyDeprecated != true)
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated)
@@ -1669,9 +1669,9 @@ struct AvailabilityTests {
         
         #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
         
-        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.unconditionallyDeprecated == true)
-        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.unconditionallyDeprecated == true)
-        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.unconditionallyDeprecated == true)
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.isUnconditionallyDeprecated == true)
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.isUnconditionallyDeprecated == true)
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.isUnconditionallyDeprecated == true)
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated)
@@ -1749,7 +1749,7 @@ struct AvailabilityTests {
         
         #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
         #expect(renderPlatforms.first?.introduced == "10.14")
-        #expect(renderPlatforms.first?.isBeta     == true)
+        #expect(renderPlatforms.first?.beta       == true)
         
         #expect(renderNode.metadata.isBeta)
         
@@ -1802,7 +1802,7 @@ struct AvailabilityTests {
             
             #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
             #expect(renderPlatforms.first?.introduced == "10.14")
-            #expect(renderPlatforms.first?.isBeta     == true)
+            #expect(renderPlatforms.first?.beta       == true)
             
             #expect(renderNode.metadata.isBeta)
             
@@ -1861,7 +1861,7 @@ struct AvailabilityTests {
         
         #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
         #expect(renderPlatforms.first?.introduced == "10.14")
-        #expect(renderPlatforms.first?.isBeta     == false)
+        #expect(renderPlatforms.first?.beta       == false)
         
         #expect(renderNode.metadata.isBeta == false)
         
@@ -1911,7 +1911,7 @@ struct AvailabilityTests {
             
             #expect(renderPlatforms.compactMap(\.name) == ["macOS"])
             #expect(renderPlatforms.first?.introduced == "10.14")
-            #expect(renderPlatforms.first?.isBeta     == false)
+            #expect(renderPlatforms.first?.beta       == false)
             
             #expect(renderNode.metadata.isBeta == false)
             
@@ -1975,12 +1975,12 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
-        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.isBeta     == false)
-        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.isBeta     == false)
-        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.isBeta     == false)
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.beta       == false)
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.beta       == false)
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.beta       == false)
         
         #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.14")
-        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.isBeta     == true)
+        #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.beta       == true)
         
         #expect(renderNode.metadata.isBeta == false)
         
@@ -2025,7 +2025,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
         
-        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.beta == customPlatformIsBeta)
         
         #expect(renderNode.metadata.isBeta == false)
     }
@@ -2087,7 +2087,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
         
-        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.beta == customPlatformIsBeta)
         
         #expect(renderNode.metadata.isBeta == false)
     }
@@ -2128,7 +2128,7 @@ struct AvailabilityTests {
             #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
             #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
             
-            #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+            #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.beta == customPlatformIsBeta)
             
             #expect(renderNode.metadata.isBeta == false)
         }
@@ -2172,7 +2172,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.introduced == "1.2.3")
         
-        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.isBeta == customPlatformIsBeta)
+        #expect(renderPlatforms.first(where: { $0.name == "Something"    })?.beta == customPlatformIsBeta)
         
         #expect(renderNode.metadata.isBeta == false)
     }

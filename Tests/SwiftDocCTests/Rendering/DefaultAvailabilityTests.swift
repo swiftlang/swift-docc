@@ -142,7 +142,7 @@ class DefaultAvailabilityTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         
-        XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), expected, file: (file), line: line)
+        XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.beta ? "(beta)" : "")" }).sorted(), expected, file: (file), line: line)
     }
     
     // Test whether when Mac Catalyst availability is missing we fall back on
@@ -191,7 +191,7 @@ class DefaultAvailabilityTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.beta ? "(beta)" : "")" }).sorted(), [
                 "Mac Catalyst 13.5",
                 "macOS 10.15.1",
             ])
@@ -221,7 +221,7 @@ class DefaultAvailabilityTests: XCTestCase {
         let renderNode = translator.visit(node.semantic) as! RenderNode
         
         // Verify that the 'watchOS' & 'tvOS' platforms are filtered out because the symbol is unavailable
-        XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }), [
+        XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.beta ? "(beta)" : "")" }), [
             "iOS 13.0",
             "iPadOS 13.0",
             "Mac Catalyst 13.0",
