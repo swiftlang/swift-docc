@@ -37,11 +37,25 @@ extension DocumentationContext.Inputs.Info {
             self.unknownFeatureFlags = []
         }
 
-        /// This feature flag corresponds to ``FeatureFlags/isExperimentalCodeBlockAnnotationsEnabled``.
-        public var experimentalCodeBlockAnnotations: Bool?
+        /// Whether or not annotation of code blocks is enabled.
+        ///
+        /// This feature flag corresponds to ``FeatureFlags/isCodeBlockAnnotationsEnabled``.
+        public var codeBlockAnnotations: Bool?
 
+        public init(codeBlockAnnotations: Bool? = nil) {
+            self.codeBlockAnnotations = codeBlockAnnotations
+            self.unknownFeatureFlags = []
+        }
+
+        @available(*, deprecated, renamed: "codeBlockAnnotations", message: "Use 'codeBlockAnnotations' instead. This deprecated API will be removed after 6.5 is released.")
+        public var experimentalCodeBlockAnnotations: Bool? {
+            get { codeBlockAnnotations }
+            set { codeBlockAnnotations = newValue }
+        }
+
+        @available(*, deprecated, renamed: "init(codeBlockAnnotations:)", message: "Use 'init(codeBlockAnnotations:)' instead. This deprecated API will be removed after 6.5 is released.")
         public init(experimentalCodeBlockAnnotations: Bool? = nil) {
-            self.experimentalCodeBlockAnnotations = experimentalCodeBlockAnnotations
+            self.codeBlockAnnotations = experimentalCodeBlockAnnotations
             self.unknownFeatureFlags = []
         }
 
@@ -50,6 +64,7 @@ extension DocumentationContext.Inputs.Info {
 
         enum CodingKeys: String, CodingKey, CaseIterable {
             case experimentalOverloadedSymbolPresentation = "ExperimentalOverloadedSymbolPresentation"
+            case codeBlockAnnotations = "CodeBlockAnnotations"
             case experimentalCodeBlockAnnotations = "ExperimentalCodeBlockAnnotations"
         }
 
@@ -76,8 +91,8 @@ extension DocumentationContext.Inputs.Info {
                     case .experimentalOverloadedSymbolPresentation:
                         self.experimentalOverloadedSymbolPresentation = try values.decode(Bool.self, forKey: flagName)
 
-                    case .experimentalCodeBlockAnnotations:
-                        self.experimentalCodeBlockAnnotations = try values.decode(Bool.self, forKey: flagName)
+                    case .codeBlockAnnotations, .experimentalCodeBlockAnnotations:
+                        self.codeBlockAnnotations = try values.decode(Bool.self, forKey: flagName)
                     }
                 } else {
                     unknownFeatureFlags.append(flagName.stringValue)
@@ -91,7 +106,7 @@ extension DocumentationContext.Inputs.Info {
             var container = encoder.container(keyedBy: CodingKeys.self)
 
             try container.encode(experimentalOverloadedSymbolPresentation, forKey: .experimentalOverloadedSymbolPresentation)
-            try container.encode(experimentalCodeBlockAnnotations, forKey: .experimentalCodeBlockAnnotations)
+            try container.encode(codeBlockAnnotations, forKey: .codeBlockAnnotations)
         }
     }
 }

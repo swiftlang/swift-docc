@@ -57,7 +57,7 @@ public struct FeatureFlags: Codable {
         if let overloadsPresentation = bundleFlags.experimentalOverloadedSymbolPresentation {
             self.isExperimentalOverloadedSymbolPresentationEnabled = overloadsPresentation
         }
-        if let codeBlockAnnotations = bundleFlags.experimentalCodeBlockAnnotations {
+        if let codeBlockAnnotations = bundleFlags.codeBlockAnnotations {
             self.isCodeBlockAnnotationsEnabled = codeBlockAnnotations
         }
     }
