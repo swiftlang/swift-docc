@@ -200,35 +200,32 @@ class DefaultAvailabilityTests: XCTestCase {
 
     // Test that a symbol is unavailable and default availability does not precede the "unavailable" attribute.
     func testUnavailableAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "iOS",   introduced: .init(major: 13, minor: 0, patch: 0), deprecated: nil),
+                    .init(domainName: "tvOS",  introduced: .init(major: 13, minor: 0, patch: 0), deprecated: nil, isUnconditionallyUnavailable: true),
+                    .init(domainName: "macOS", introduced: nil,                                  deprecated: nil, isUnconditionallyUnavailable: true),
+                ])
+            ]))
+        }
+        
         var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
-        let (_, _, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
-        do {
-            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
-            let node = try context.entity(with: identifier)
-            
-            // Add some available and unavailable platforms to the symbol
-            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
-                // The symbol is available on iOS
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
-                // The symbol is introduced but then removed
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "tvOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
-                // The symbol is removed
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
-            ])
-            
-            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
-            let renderNode = translator.visit(node.semantic) as! RenderNode
-            
-            // Verify that the 'watchOS' & 'tvOS' platforms are filtered out because the symbol is unavailable
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }), [
-                "iOS 13.0",
-                "iPadOS 13.0",
-                "Mac Catalyst 13.0",
-            ])
-        }
+        let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        let node = try context.entity(with: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
+        let renderNode = translator.visit(node.semantic) as! RenderNode
+        
+        // Verify that the 'watchOS' & 'tvOS' platforms are filtered out because the symbol is unavailable
+        XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }), [
+            "iOS 13.0",
+            "iPadOS 13.0",
+            "Mac Catalyst 13.0",
+        ])
     }
 
     /// This test, along with `testInitializeWithCorrectAvailabilityWithRawValue`,
@@ -567,8 +564,8 @@ class DefaultAvailabilityTests: XCTestCase {
             let context = try await loadExampleCatalog(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil)
             ])
-            let withInSourceAvailability    = try XCTUnwrap((context.documentationCache["some-symbol-with-availability"]?.semantic    as? Symbol)?.availability?.availability)
-            let withoutInSourceAvailability = try XCTUnwrap((context.documentationCache["some-symbol-without-availability"]?.semantic as? Symbol)?.availability?.availability)
+            let withInSourceAvailability    = try XCTUnwrap(context.documentationCache["some-symbol-with-availability"   ]?.symbol?.availability)
+            let withoutInSourceAvailability = try XCTUnwrap(context.documentationCache["some-symbol-without-availability"]?.symbol?.availability)
             
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
@@ -591,8 +588,8 @@ class DefaultAvailabilityTests: XCTestCase {
                 .init(platformName: .iOS,     platformVersion: "8.0"),
                 .init(platformName: .watchOS, platformVersion: nil),
             ])
-            let withInSourceAvailability    = try XCTUnwrap((context.documentationCache["some-symbol-with-availability"]?.semantic    as? Symbol)?.availability?.availability)
-            let withoutInSourceAvailability = try XCTUnwrap((context.documentationCache["some-symbol-without-availability"]?.semantic as? Symbol)?.availability?.availability)
+            let withInSourceAvailability    = try XCTUnwrap(context.documentationCache["some-symbol-with-availability"   ]?.symbol?.availability)
+            let withoutInSourceAvailability = try XCTUnwrap(context.documentationCache["some-symbol-without-availability"]?.symbol?.availability)
             
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
