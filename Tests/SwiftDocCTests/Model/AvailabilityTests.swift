@@ -355,13 +355,13 @@ struct AvailabilityTests {
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let node = try #require(context.documentationCache["some-symbol-id"])
-        let symbol = try #require(node.semantic as? Symbol)
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
 
         let iOSAvailability = try #require(
-            symbol.availabilityVariants[.swift]?.availability
-                .first { $0.domain?.rawValue == "iOS" }
+            renderNode.metadata.platforms?.first { $0.name == "iOS" }
         )
-        #expect(iOSAvailability.introducedVersion == .init(major: 17, minor: 0, patch: 0))
+        #expect(iOSAvailability.introduced == "17.0")
     }
 
     @Test
