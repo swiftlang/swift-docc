@@ -77,7 +77,7 @@ public class NavigatorIndex {
     public let url: URL
     
     /// The filesystem to use.
-    var fileManager: any FileManagerProtocol
+    package var fileManager: any FileManagerProtocol
 
     /// The LMDB environment.
     var environment: LMDB.Environment?
@@ -506,7 +506,7 @@ extension NavigatorIndex {
         public let outputURL: URL
         
         /// The filesystem in which to work.
-        public let fileManager: any FileManagerProtocol
+        package let fileManager: any FileManagerProtocol
 
         /// The bundle name.
         public let bundleIdentifier: String
@@ -594,12 +594,13 @@ extension NavigatorIndex {
         /// - Parameters:
         ///    - archiveURL: The location of the documentation archive that the builder builds an navigator index for.
         ///    - outputURL: The location where the builder will write the the built navigator index.
+        ///    - fileManager: The file manager in which we are to work.
         ///    - bundleIdentifier: The bundle identifier of the documentation that the builder builds a navigator index for.
         ///    - sortRootChildrenByName: Configure the builder to sort root's children by name.
         ///    - groupByLanguage: Configure the builder to group the entries by language.
         ///    - writePathsOnDisk: Configure the builder to write each navigator item's path components to the location.
         ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
-        public init(archiveURL: URL? = nil, outputURL: URL, fileManager: any FileManagerProtocol = FileManager.default, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+        package init(archiveURL: URL? = nil, outputURL: URL, fileManager: any FileManagerProtocol, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.archiveURL = archiveURL
             self.outputURL = outputURL
             self.fileManager = fileManager
@@ -609,7 +610,30 @@ extension NavigatorIndex {
             self.writePathsOnDisk = writePathsOnDisk
             self.usePageTitle = usePageTitle
         }
-        
+
+        /// Create a new a builder with the given data provider and output URL.
+        /// - Parameters:
+        ///    - archiveURL: The location of the documentation archive that the builder builds an navigator index for.
+        ///    - outputURL: The location where the builder will write the the built navigator index.
+        ///    - bundleIdentifier: The bundle identifier of the documentation that the builder builds a navigator index for.
+        ///    - sortRootChildrenByName: Configure the builder to sort root's children by name.
+        ///    - groupByLanguage: Configure the builder to group the entries by language.
+        ///    - writePathsOnDisk: Configure the builder to write each navigator item's path components to the location.
+        ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
+        convenience
+        public init(archiveURL: URL? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+            self.init(
+                archiveURL: archiveURL,
+                outputURL: outputURL,
+                fileManager: FileManager.default,
+                bundleIdentifier: bundleIdentifier,
+                sortRootChildrenByName: sortRootChildrenByName,
+                groupByLanguage: groupByLanguage,
+                writePathsOnDisk: writePathsOnDisk,
+                usePageTitle: usePageTitle
+            )
+        }
+
         /// Setup the builder to process render nodes.
         public func setup() {
             // If setup has been called already, skip.

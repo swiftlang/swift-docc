@@ -22,7 +22,7 @@ public import Foundation
 /// Should you need a file system with a different storage, create your own
 /// protocol implementations to manage files in memory,
 /// on a network, in a database, or elsewhere.
-public protocol ReadOnlyFileManagerProtocol: DataProvider, Sendable {
+package protocol ReadOnlyFileManagerProtocol: DataProvider, Sendable {
 
     /// Returns the data content of a file at the given path, if it exists.
     func contents(atPath: String) -> Data?
@@ -84,7 +84,7 @@ public protocol ReadOnlyFileManagerProtocol: DataProvider, Sendable {
 /// Should you need a file system with a different storage, create your own
 /// protocol implementations to manage files in memory,
 /// on a network, in a database, or elsewhere.
-public protocol FileManagerProtocol: ReadOnlyFileManagerProtocol {
+package protocol FileManagerProtocol: ReadOnlyFileManagerProtocol {
 
     /// Removes an item from the filesystem.
     func removeItem(at: URL) throws

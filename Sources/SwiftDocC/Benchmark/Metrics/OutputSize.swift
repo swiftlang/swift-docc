@@ -17,9 +17,13 @@ extension Benchmark {
         public static let displayName = "Total DocC archive size"
         public var result: MetricValue?
         
-        public init(archiveDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
+        package init(archiveDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
             self.result = MetricValue(directory: archiveDirectory,
                                       fileManager: fileManager)
+        }
+
+        public init(archiveDirectory: URL) {
+            self.init(archiveDirectory: archiveDirectory, fileManager: FileManager.default)
         }
     }
     
@@ -29,9 +33,13 @@ extension Benchmark {
         public static let displayName = "Data subdirectory size"
         public var result: MetricValue?
         
-        public init(dataDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
+        package init(dataDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
             self.result = MetricValue(directory: dataDirectory,
                                       fileManager: fileManager)
+        }
+
+        public init(dataDirectory: URL) {
+            self.init(dataDirectory: dataDirectory, fileManager: FileManager.default)
         }
     }
     
@@ -41,9 +49,13 @@ extension Benchmark {
         public static let displayName = "Index subdirectory size"
         public var result: MetricValue?
         
-        public init(indexDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
+        package init(indexDirectory: URL, fileManager: some FileManagerProtocol = FileManager.default) {
             self.result = MetricValue(directory: indexDirectory,
                                       fileManager: fileManager)
+        }
+
+        public init(indexDirectory: URL) {
+            self.init(indexDirectory: indexDirectory, fileManager: FileManager.default)
         }
     }
 }
