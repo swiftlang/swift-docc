@@ -19,7 +19,6 @@ Offer native integration of DocC in your IDE.
 
 - ``FileServerProvider``
 - ``FileServer``
-- ``FileSystemRenderNodeProvider``
 - ``FileSystemServerProvider``
 - ``MemoryFileServerProvider``
 

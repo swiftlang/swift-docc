@@ -16,7 +16,7 @@ public struct ConvertRequest: Codable {
     /// Information about the documentation bundle to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/Info``
+    /// - ``DocumentationContext/Inputs/Info``
     public var bundleInfo: DocumentationContext.Inputs.Info
     
     /// Feature flags to enable when performing this convert request.
@@ -60,7 +60,7 @@ public struct ConvertRequest: Codable {
     /// The symbols graph data included in the documentation bundle to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/symbolGraphURLs``
+    /// - ``DocumentationContext/Inputs/symbolGraphURLs``
     public var symbolGraphs: [Data]
     
     /// The mapping of external symbol identifiers to lines of a documentation comment that overrides the value in the symbol graph.
@@ -75,7 +75,7 @@ public struct ConvertRequest: Codable {
     /// The article and documentation extension file data included in the documentation bundle to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/markupURLs``
+    /// - ``DocumentationContext/Inputs/markupURLs``
     public var markupFiles: [Data]
     
     
@@ -85,7 +85,7 @@ public struct ConvertRequest: Codable {
     /// The on-disk resources in the documentation bundle to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/miscResourceURLs``
+    /// - ``DocumentationContext/Inputs/miscResourceURLs``
     public var miscResourceURLs: [URL]
     
     /// The symbol identifiers that have an expanded documentation page available if they meet the associated access level requirement.

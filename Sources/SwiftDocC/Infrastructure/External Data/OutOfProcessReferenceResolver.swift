@@ -81,8 +81,8 @@ private import SymbolKit
 /// - ``Response``
 ///
 /// ## See Also
-/// - ``DocumentationContext/externalDocumentationSources``
-/// - ``DocumentationContext/globalExternalSymbolResolver``
+/// - ``DocumentationContext/Configuration/ExternalDocumentationConfiguration/sources``
+/// - ``DocumentationContext/Configuration/ExternalDocumentationConfiguration/globalSymbolResolver``
 public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalExternalSymbolResolver {
     private var implementation: any _Implementation
     

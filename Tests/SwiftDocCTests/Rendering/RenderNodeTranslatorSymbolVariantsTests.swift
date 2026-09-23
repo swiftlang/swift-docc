@@ -144,36 +144,31 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     }
     
     func testPlatformsVariantsCustomAvailability() async throws {
-        try await assertMultiVariantSymbol(
-            configureSymbol: { symbol in
-                symbol.availabilityVariants[.swift] = SymbolGraph.Symbol.Availability(availability: [
-                    SymbolGraph.Symbol.Availability.AvailabilityItem(
-                        domain: .init(rawValue: "iOS"),
-                        introducedVersion: SymbolGraph.SemanticVersion(string: "1.0"),
-                        deprecatedVersion: nil,
-                        obsoletedVersion: nil,
-                        message: nil,
-                        renamed: "Swift renamed",
-                        isUnconditionallyDeprecated: false,
-                        isUnconditionallyUnavailable: false,
-                        willEventuallyBeDeprecated: true
-                    )
-                ])
-                
-                symbol.availabilityVariants[.objectiveC] = SymbolGraph.Symbol.Availability(availability: [
-                    SymbolGraph.Symbol.Availability.AvailabilityItem(
-                        domain: .init(rawValue: "iOS"),
-                        introducedVersion: SymbolGraph.SemanticVersion(string: "2.0"),
-                        deprecatedVersion: nil,
-                        obsoletedVersion: nil,
-                        message: nil,
-                        renamed: "Objective-C renamed",
-                        isUnconditionallyDeprecated: false,
-                        isUnconditionallyUnavailable: false,
-                        willEventuallyBeDeprecated: true
-                    )
-                ])
-            },
+        let catalog = Folder(name: "unit-test.docc") {
+            Folder(name: "swift") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                        .init(domainName: "iOS", introduced: .init(major: 1, minor: 0, patch: 0), deprecated: nil, renamed: "Swift rename message", willEventuallyBeDeprecated: true),
+                    ])
+                ]))
+            }
+            Folder(name: "objc") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"], availability: [
+                        .init(domainName: "iOS", introduced: .init(major: 2, minor: 0, patch: 0), deprecated: nil, renamed: "Objective-C rename message", willEventuallyBeDeprecated: true),
+                    ])
+                ]))
+            }
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
+        
+        let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        let node = try context.entity(with: reference)
+            
+        try assertMultiLanguageSemantic(
+            XCTUnwrap(node.semantic as? Symbol),
+            context: context,
+            identifier: reference,
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, "1.0")
             },
@@ -998,6 +993,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testDeprecationSummaryVariants() async throws {
         try await assertMultiVariantSymbol(
             configureSymbol: { symbol in
+                // Note: It's not possible to author documentation with different deprecation summaries like this.
                 symbol.deprecatedSummaryVariants[.swift] = DeprecatedSection(
                     text: "Swift Deprecation Variant"
                 )
@@ -1063,43 +1059,47 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     /// Tests that deprecation summaries only show up on variants of pages that are actually deprecated.
     func testIncludesDeprecationSummaryOnlyInDeprecatedVariantOfSymbol() async throws {
         let deprecatedOnOnePlatform = SymbolGraph.Symbol.Availability.AvailabilityItem(
-            domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS),
-            introducedVersion: .init(major: 15, minor: 0, patch: 0),
-            deprecatedVersion: .init(major: 15, minor: 1, patch: 0),
-            obsoletedVersion: nil,
-            message: nil,
-            renamed: nil,
-            isUnconditionallyDeprecated: false,
-            isUnconditionallyUnavailable: false,
-            willEventuallyBeDeprecated: false
+            domainName: "macOS",
+            introduced: .init(major: 15, minor: 0, patch: 0),
+            deprecated: .init(major: 15, minor: 1, patch: 0)
         )
-        
         let unconditionallyDeprecated = SymbolGraph.Symbol.Availability.AvailabilityItem(
-            domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS),
-            introducedVersion: .init(major: 15, minor: 0, patch: 0),
-            deprecatedVersion: nil,
-            obsoletedVersion: nil,
-            message: nil,
-            renamed: nil,
+            domainName: "macOS",
+            introduced: .init(major: 15, minor: 0, patch: 0),
+            deprecated: nil,
             isUnconditionallyDeprecated: true,
-            isUnconditionallyUnavailable: false,
-            willEventuallyBeDeprecated: false
         )
         
         for deprecatedAvailability in [deprecatedOnOnePlatform, unconditionallyDeprecated] {
-            try await assertMultiVariantSymbol(
-                configureSymbol: { symbol in
-                    symbol.deprecatedSummaryVariants[.swift] = DeprecatedSection(
-                        text: "Deprecation summary"
-                    )
-                    
-                    symbol.availabilityVariants[.swift] = .init(
-                        availability: [deprecatedAvailability]
-                    )
-                    
-                    // Explicitly remove availability information for the Objective-C variant of this symbol.
-                    symbol.availabilityVariants[.objectiveC] = nil
-                },
+            let catalog = Folder(name: "unit-test.docc") {
+                Folder(name: "swift") {
+                    JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macOS")), symbols: [
+                        makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [deprecatedAvailability])
+                    ]))
+                }
+                Folder(name: "objc") {
+                    JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                        makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"], availability: [])
+                    ]))
+                }
+                TextFile(name: "SomeClass.md", utf8Content: """
+                # ``SomeClass`` 
+                
+                @DeprecationSummary {
+                  Some description of why this symbol is deprecated
+                }                 
+                """)
+            }
+            let (_, context) = try await loadBundle(catalog: catalog)
+            XCTAssert(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+            
+            let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: "some-symbol-id"))
+            let node = try context.entity(with: reference)
+            
+            try assertMultiLanguageSemantic(
+                XCTUnwrap(node.semantic as? Symbol),
+                context: context,
+                identifier: reference,
                 assertOriginalRenderNode: { renderNode in
                     XCTAssertNotNil(renderNode.deprecationSummary)
                 }, assertAfterApplyingVariant: { renderNode in

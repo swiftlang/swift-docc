@@ -19,7 +19,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         return lhs.rawValue == rhs.rawValue
     }
 
-    /// Hashes the entity using the raw value, consistent with the implementation of ``==``.
+    /// Hashes the entity using the raw value, consistent with the implementation of ``==(_:_:)``.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }
@@ -81,6 +81,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
     public static let iPadOS = PlatformName(rawValue: "iPadOS")
     /// Apple's visionOS operating system.
     public static let visionOS = PlatformName(rawValue: "visionOS")
+    public static let visionOSAppExtension = PlatformName(rawValue: "visionOSAppExtension", displayName: "visionOS App Extension")
     
     /// All supported platforms sorted for presentation.
     public static let sortedPlatforms: [PlatformName] = [
@@ -89,7 +90,7 @@ public struct PlatformName: Codable, Hashable, Comparable, Sendable {
         .catalyst, .catalystOSAppExtension,
         .macOS, .macOSAppExtension,
         .tvOS, .tvOSAppExtension,
-        .visionOS,
+        .visionOS, visionOSAppExtension,
         .watchOS, .watchOSAppExtension,
         .swift
     ]
