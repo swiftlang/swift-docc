@@ -1157,6 +1157,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released")
     private func assertMultiVariantSymbol(
         bundleName: String = "LegacyBundle_DoNotUseInNewTests",
         configureContext: (DocumentationContext, ResolvedTopicReference) throws -> () = { _, _ in },
@@ -1194,6 +1195,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released")
     private func assertMultiVariantArticle(
         configureContext: (DocumentationContext, ResolvedTopicReference) throws -> () = { _, _ in },
         configureArticle: (Article) throws -> () = { _ in },
@@ -1229,6 +1231,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released")
     private func assertMultiLanguageSemantic(
         _ semantic: Semantic,
         context: DocumentationContext,
