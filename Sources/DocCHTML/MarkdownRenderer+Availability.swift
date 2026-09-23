@@ -17,9 +17,9 @@ package extension MarkdownRenderer {
         package var introduced: String?
         /// The pre-formatted version string that describes the version that this API was deprecated in for this platform.
         package var deprecated: String?
-        /// A Boolean value indicating if the platform is currently in beta.
+        /// A Boolean value indicating if this API is unconditionally deprecated for this platform.
         package var isUnconditionallyDeprecated: Bool
-        /// A Boolean value indicating if the platform is currently in beta.
+        /// A Boolean value indicating if this API is currently in beta for this platform.
         package var isBeta: Bool
         
         package init(name: String, introduced: String? = nil, deprecated: String? = nil, isUnconditionallyDeprecated: Bool, isBeta: Bool) {
