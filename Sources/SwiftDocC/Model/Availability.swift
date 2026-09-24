@@ -138,7 +138,7 @@ struct Availability {
     ///   - languageFilter: The string identifier of a source language, that that container used to restrict the container to only add information that matches the provides  which information the container reads from the symbol.
     mutating func addInSourceAvailability(from unifiedSymbol: UnifiedSymbolGraph.Symbol, matchingLanguage languageFilter: String) {
         // Mark the platforms that this specific symbol exist for in the unified symbol graph.
-        // Any platform that's left as `havePlatformForInSymbolGraph` after this loop indicates a platform that the symbol was excluded from using conditionally compilation.
+        // Any platform that's left as `havePlatformForInSymbolGraph` after this loop indicates a platform that the symbol was excluded from using conditional compilation.
         for selector in unifiedSymbol.allSelectors where selector.interfaceLanguage == languageFilter {
             guard let selectorPlatform = KnownPlatform(selector) else {
                 continue
@@ -437,7 +437,7 @@ struct Availability {
     ]
     
     
-    /// Determines whether or not a page as a whole is considered to be in beta given the .
+    /// Determines whether or not a page as a whole is considered to be in beta given the precomputed information about beta platforms.
     ///
     /// A page as a whole is considered to be in beta if all the platforms that the API is available for are currently in beta.
     ///
