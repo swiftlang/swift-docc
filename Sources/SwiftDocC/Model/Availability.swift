@@ -157,6 +157,20 @@ struct Availability {
             }
         }
         
+        func makeInformation(for availability: SymbolGraph.Symbol.Availability.AvailabilityItem, currentIntroducedVersion: @autoclosure () -> Information.Version?) -> Information {
+            let state: Information.State = if availability.isUnconditionallyUnavailable || availability.obsoletedVersion != nil {
+                .unavailable
+            } else {
+                .available(
+                    // If the in-source attribute doesn't specify an introduced version, fall back to a possible value from the Info.plist
+                    introduced: availability.introducedVersion.map { .init($0) } ?? currentIntroducedVersion(),
+                    deprecated: availability.deprecatedVersion.map { .init($0) }, // "Default" availability doesn't specify deprecated versions
+                    isUnconditionallyDeprecated: availability.isUnconditionallyDeprecated
+                )
+            }
+            return .init(state: state, source: .inSourceAttribute)
+        }
+        
         // Add the information from all applicable in-source attributes.
         for (selector, availabilities) in unifiedSymbol.availability where selector.interfaceLanguage == languageFilter {
             let selectorPlatform = KnownPlatform(selector) // Don't `guard` this. It doesn't have to correspond to a known platform.
@@ -167,31 +181,9 @@ struct Availability {
                     guard knownPlatforms[platform].source < .inSourceAttribute || platform == selectorPlatform else {
                         continue
                     }
-                    knownPlatforms[platform] = if availability.isUnconditionallyUnavailable || availability.obsoletedVersion != nil {
-                        .init(state: .unavailable, source: .inSourceAttribute)
-                    } else {
-                        .init(
-                            state: .available(
-                                // If the in-source attribute doesn't specify an introduced version, fall back to a possible value from the Info.plist
-                                introduced: availability.introducedVersion.map { .init($0) } ?? knownPlatforms[platform].state.introduced,
-                                deprecated: availability.deprecatedVersion.map { .init($0) }, // "Default" availability doesn't specify deprecated versions
-                                isUnconditionallyDeprecated: availability.isUnconditionallyDeprecated),
-                            source: .inSourceAttribute
-                        )
-                    }
+                    knownPlatforms[platform] = makeInformation(for: availability, currentIntroducedVersion: knownPlatforms[platform].state.introduced)
                 } else if let domainName = availability.domain?.rawValue {
-                    customPlatformsByName[domainName] = if availability.isUnconditionallyUnavailable || availability.obsoletedVersion != nil {
-                        .init(state: .unavailable, source: .inSourceAttribute)
-                    } else {
-                        .init(
-                            state: .available(
-                                // If the in-source attribute doesn't specify an introduced version, fall back to a possible value from the Info.plist
-                                introduced: availability.introducedVersion.map { .init($0) } ?? customPlatformsByName[domainName]?.state.introduced,
-                                deprecated: availability.deprecatedVersion.map { .init($0) }, // "Default" availability doesn't specify deprecated versions
-                                isUnconditionallyDeprecated: availability.isUnconditionallyDeprecated),
-                            source: .inSourceAttribute
-                        )
-                    }
+                    customPlatformsByName[domainName] = makeInformation(for: availability, currentIntroducedVersion: customPlatformsByName[domainName]?.state.introduced)
                 }
             }
         }
