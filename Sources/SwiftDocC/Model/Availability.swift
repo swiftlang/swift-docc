@@ -578,16 +578,18 @@ private extension Availability {
         init?(_ platform: Metadata.Availability.Platform) {
             switch platform {
                 case .iOS:      self = .iOS
-                // No iPadOS name
                 case .macOS:    self = .macOS
                 case .tvOS:     self = .tvOS
                 case .watchOS:  self = .watchOS
-                case .other("visionOS"):
-                    self = .visionOS
-                case .other("macCatalyst"), .other("Mac Catalyst"):
-                    self = .macCatalyst
-                default:
-                    return nil
+                // The `@Available` directive's `Platform` type is flawed in its design and can't add new platforms without breaking its own public API.
+                case .other(let raw):
+                    switch raw.lowercased() {
+                        case "ipados":                      self = .iPadOS
+                        case "maccatalyst", "mac catalyst": self = .macCatalyst
+                        case "visionos":                    self = .visionOS
+                        
+                        default: return nil
+                    }
             }
         }
     }
