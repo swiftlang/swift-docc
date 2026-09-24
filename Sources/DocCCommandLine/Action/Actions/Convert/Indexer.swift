@@ -34,7 +34,7 @@ extension ConvertAction {
         ///   - outputURL: The target directory to create the index file.
         ///   - fileManager: The file manager responsible for the target directory.
         ///   - bundleID: The identifier of the catalog being indexed.
-        init(outputURL: URL, fileManager: any FileManagerProtocol, bundleID: DocumentationBundle.Inputs.Identifier) throws {
+        init(outputURL: URL, fileManager: any FileManagerProtocol, bundleID: DocumentationContext.Inputs.Identifier) throws {
             let indexURL = outputURL.appendingPathComponent("index", isDirectory: true)
             indexBuilder = Synchronized<NavigatorIndex.Builder>(
                 NavigatorIndex.Builder(
