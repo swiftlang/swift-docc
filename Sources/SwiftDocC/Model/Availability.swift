@@ -554,7 +554,7 @@ private extension Availability {
         init?(_ domain: SymbolGraph.Symbol.Availability.Domain?) {
             switch domain?.rawValue.lowercased() {
                 case "ios":         self = .iOS
-                // No iPadOS name
+                // No iPadOS name. iPadOS is not its own SDK.
                 case "macos":       self = .macOS
                 case "maccatalyst": self = .macCatalyst
                 case "tvos":        self = .tvOS
