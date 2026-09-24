@@ -354,7 +354,7 @@ struct Availability {
     }
     
     
-    ///
+    /// Creates a list of platform values with their respective combined availability information.
     ///
     /// - Parameter currentPlatform: The precomputed information regarding which platforms are considered in beta.
     /// - Returns: A list of the final combined availability information for a each platform, in an order that's suitable for display on the rendered page.
