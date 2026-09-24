@@ -308,6 +308,7 @@ struct Availability {
             for (name, version) in currentPlatformVersions where version.beta {
                 let knownPlatform: KnownPlatform? = switch name.lowercased() {
                     case "ios":          .iOS
+                    case "ipados":       .iPadOS
                     case "macos":        .macOS
                     case "mac catalyst": .macCatalyst
                     case "watchos":      .watchOS
