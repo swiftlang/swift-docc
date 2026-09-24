@@ -80,7 +80,7 @@ extension Snippet: RenderableDirectiveConvertible {
         let mixin = resolvedSnippet.mixin
         
         let options = RenderBlockContent.CodeBlockOptions(
-            copyToClipboard: contentCompiler.context.configuration.featureFlags.isExperimentalCodeBlockAnnotationsEnabled,
+            copyToClipboard: contentCompiler.context.configuration.featureFlags.isCodeBlockAnnotationsEnabled,
             showLineNumbers: false,
             wrap: 0,
             lineAnnotations: []
