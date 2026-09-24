@@ -375,6 +375,27 @@ struct Availability {
         }
         
         var platforms = [Platform]()
+        func addPlatformIfInBeta(for state: Information.State, name: @autoclosure () -> String, betaVersion: @autoclosure () -> Availability.Information.Version?)  {
+            guard case .available(let introduced, let deprecated, let isUnconditionallyDeprecated) = state else {
+                return
+            }
+            let isBeta: Bool = if let introduced, let betaVersion = betaVersion() {
+                betaVersion <= introduced
+            } else {
+                false
+            }
+            
+            platforms.append(
+                Platform(
+                    name: name(),
+                    introduced: introduced?.semanticVersion,
+                    deprecated: deprecated?.semanticVersion,
+                    isUnconditionallyDeprecated: isUnconditionallyDeprecated,
+                    isBeta: isBeta
+                )
+            )
+        }
+        
         for (offset, info) in knownPlatforms.dropLast(/* don't display the wildcard */).enumerated() {
             switch info.source {
                 case .initialValue, .markedUnavailableInPropertyList, .havePlatformForInSymbolGraph:
@@ -382,44 +403,12 @@ struct Availability {
                     continue
                 
                 case .defaultFromPropertyList, .foundInSymbolGraph, .inSourceAttribute, .directiveOverride:
-                    if case .available(let introduced, let deprecated, let isUnconditionallyDeprecated) = info.state {
-                        let isBeta: Bool = if let introduced, let betaVersion = currentPlatform.knownBetaPlatforms[offset] {
-                            betaVersion <= introduced
-                        } else {
-                            false
-                        }
-                        
-                        platforms.append(
-                            Platform(
-                                name: Self.knownPlatformNames[offset],
-                                introduced: introduced?.semanticVersion,
-                                deprecated: deprecated?.semanticVersion,
-                                isUnconditionallyDeprecated: isUnconditionallyDeprecated,
-                                isBeta: isBeta
-                            )
-                        )
-                    }
+                    addPlatformIfInBeta(for: info.state , name: Self.knownPlatformNames[offset], betaVersion: currentPlatform.knownBetaPlatforms[offset])
             }
         }
         
         for (name, info) in customPlatformsByName.sorted(by: \.key) {
-            if case .available(let introduced, let deprecated, let isUnconditionallyDeprecated) = info.state {
-                let isBeta: Bool = if let introduced, let betaVersion = currentPlatform.customBetaPlatforms[name] {
-                    betaVersion <= introduced
-                } else {
-                    false
-                }
-                
-                platforms.append(
-                    Platform(
-                        name: name,
-                        introduced: introduced?.semanticVersion,
-                        deprecated: deprecated?.semanticVersion,
-                        isUnconditionallyDeprecated: isUnconditionallyDeprecated,
-                        isBeta: isBeta,
-                    )
-                )
-            }
+            addPlatformIfInBeta(for: info.state, name: name, betaVersion: currentPlatform.customBetaPlatforms[name])
         }
         
         return platforms
