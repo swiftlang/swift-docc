@@ -523,7 +523,7 @@ private extension Availability {
         
         // Identify a known platform for a decoded symbol graph's module.
         init?(_ platform: SymbolGraph.Platform) {
-            switch platform.operatingSystem?.name {
+            switch platform.operatingSystem?.name.lowercased() {
                 case "ios" where platform.environment == "macabi":
                                         self = .macCatalyst
                 case "ios":             self = .iOS
