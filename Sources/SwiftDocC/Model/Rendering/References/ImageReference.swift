@@ -98,6 +98,7 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         /// - Parameters:
         ///   - url: The URL to the file for this image variant.
         ///   - traits: The traits of this image reference.
+        ///   - svgID: The ID for the SVG that should be rendered for this image variant.
         init(url: URL, traits: DataTraitCollection, svgID: String?) {
             self.url = url
             self.traits = traits.toArray()

@@ -161,7 +161,7 @@ extension LinkDestinationSummary {
             return false
         }
         
-        return platforms.allSatisfy { $0.isBeta == true }
+        return platforms.allSatisfy { $0.beta }
     }
     
     /// Create a topic render render reference for this link summary and its content variants.
@@ -202,7 +202,7 @@ extension LinkDestinationSummary {
             estimatedTime: nil,
             conformance: nil,
             isBeta: isBeta,
-            isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true || $0.deprecated != nil }) ?? false,
+            isDeprecated: platforms?.contains(where: { $0.isUnconditionallyDeprecated || $0.deprecated != nil }) ?? false,
             defaultImplementationCount: nil,
             propertyListKeyNames: nil,
             tags: nil,

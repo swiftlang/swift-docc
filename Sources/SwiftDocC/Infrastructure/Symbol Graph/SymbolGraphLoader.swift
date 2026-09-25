@@ -127,7 +127,7 @@ struct SymbolGraphLoader {
         signposter.endInterval("Decode symbol graphs", decodeSignpostHandle)
         
         // define an appropriate merging strategy based on the graph formats
-        let foundGraphUsingExtensionSymbolFormat = loadedGraphs.values.map(\.usesExtensionSymbolFormat).contains(true)
+        let foundGraphUsingExtensionSymbolFormat = loadedGraphs.values.contains { $0.usesExtensionSymbolFormat == true }
         
         let usingExtensionSymbolFormat = foundGraphUsingExtensionSymbolFormat
         

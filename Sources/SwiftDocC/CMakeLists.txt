@@ -343,7 +343,7 @@ add_library(SwiftDocC
   Semantics/Media/Media.swift
   Semantics/Media/VideoMedia.swift
   Semantics/Metadata/AlternateRepresentation.swift
-  Semantics/Metadata/Availability.swift
+  Semantics/Metadata/AvailabilityDirective.swift
   Semantics/Metadata/CallToAction.swift
   Semantics/Metadata/CustomMetadata.swift
   Semantics/Metadata/DisplayName.swift

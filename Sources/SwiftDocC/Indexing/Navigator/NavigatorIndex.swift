@@ -304,6 +304,9 @@ public class NavigatorIndex {
         // This can be removed once that is available and applied to Swift-DocC (rdar://89033233).
         @available(*, deprecated, message: "this enum is non-frozen and may be expanded in the future; add a `default` case instead of matching this one")
         case _nonFrozenEnum_useDefaultCase = 128
+
+        /// Page types that group other page types without content of their own.
+        static let groupPageTypes: Set<PageType> = [.root, .groupMarker, .languageGroup]
                 
         /// Initialize a page type from a `symbolKind` returning the symbol type.
         init(symbolKind: String) {
@@ -635,7 +638,7 @@ extension NavigatorIndex {
                 return
             }
             // Check if the render node has an Objective-C representation
-            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+            guard let objCVariantTrait = renderNode.variants?.lazy.flatMap(\.traits).first(where: { trait in
                 switch trait {
                 case .interfaceLanguage(let language):
                     return InterfaceLanguage.from(string: language) == .objc
@@ -661,7 +664,7 @@ extension NavigatorIndex {
             }
             
             // Check if the render node has an Objective-C representation
-            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+            guard let objCVariantTrait = renderNode.variants?.lazy.flatMap(\.traits).first(where: { trait in
                 switch trait {
                 case .interfaceLanguage(let language):
                     return InterfaceLanguage.from(string: language) == .objc
@@ -953,8 +956,8 @@ extension NavigatorIndex {
             }
                 
             for (nodeIdentifier, placeholders) in identifierToChildren {
+                let parent = identifierToNode[nodeIdentifier]!
                 for reference in placeholders {
-                    let parent = identifierToNode[nodeIdentifier]!
                     if let child = identifierToNode[reference] ?? externalNonSymbolNode(for: reference) {
                         let needsCopy = multiCurated[reference] != nil
                         parent.add(child: (needsCopy) ? child.copy() : child)
@@ -1161,7 +1164,7 @@ extension NavigatorIndex {
                 try navigatorIndex.navigatorTree.write(to: outputURL.appendingPathComponent("navigator.index"), writePaths: writePathsOnDisk) { node in
                     // Skip the nodes that have no content to present.
                     guard let pageType = PageType(rawValue: node.item.pageType) else { return }
-                    guard !Set<PageType>([.root, .groupMarker, .languageGroup]).contains(pageType) else { return }
+                    guard !PageType.groupPageTypes.contains(pageType) else { return }
                     
                     // Retrieve the language, if possible.
                     guard let interfaceLanguage = self.navigatorIndex?.languageMaskToLanguage[node.item.languageID] else { return }

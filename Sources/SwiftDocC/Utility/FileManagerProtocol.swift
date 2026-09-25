@@ -82,9 +82,9 @@ package protocol FileManagerProtocol: DataProvider {
     /// writing options.
     ///
     /// - Parameters:
-    ///   - at: The location to create the file
+    ///   - location: The location to create the file
     ///   - contents: The data to write to the file.
-    ///   - options: Options for writing the data. Provide `nil` to use the default
+    ///   - writingOptions: Options for writing the data. Provide `nil` to use the default
     ///              writing options of the file manager.
     func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws
 
@@ -92,7 +92,7 @@ package protocol FileManagerProtocol: DataProvider {
     ///
     /// - Parameters:
     ///   - url: The URL for the directory whose contents to enumerate.
-    ///   - mark: Options for the enumeration. Because this method performs only shallow enumerations, the only supported option is `skipsHiddenFiles`.
+    ///   - mask: Options for the enumeration. Because this method performs only shallow enumerations, the only supported option is `skipsHiddenFiles`.
     /// - Returns: The URLs of each file and directory that's contained in `url`.
     func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL])
 }
