@@ -39,14 +39,11 @@ struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     }
 }
 
-extension MarkdownOutputSemanticVisitor {
+private extension MarkdownOutputSemanticVisitor {
     /// Finds the name of the module that owns the given reference, by walking up its curation ancestors
     /// looking for the nearest symbol.
     ///
-    /// Based on the logic from ``RenderNodeTranslator/visitArticle(_:)``,
-    /// perhaps it should be extracted to a helper, but in render node translator it collects a set of
-    /// modules rather than a single one, and it returns the display name rather than the symbol name,
-    /// so kept separate for now.
+    /// Based on the logic from ``RenderNodeTranslator/visitArticle(_:)``
     func nearestCuratingModuleName(for reference: ResolvedTopicReference) -> String? {
         for ancestor in context.topicGraph.reverseEdgesGraph.breadthFirstSearch(from: reference) {
             guard let moduleReference = (try? context.entity(with: ancestor).semantic as? Symbol)?.moduleReference else {
