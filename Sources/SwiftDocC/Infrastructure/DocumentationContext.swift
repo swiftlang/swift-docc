@@ -1308,7 +1308,7 @@ public class DocumentationContext {
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
             
-            for (selector, relationships) in combinedRelationshipsBySelector {
+            for (selector, relationships) in combinedRelationshipsBySelector.sortedBySelector() {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector)
                 // Merge into target symbols the member symbols that get rendered on the same page as target.
@@ -1333,7 +1333,7 @@ public class DocumentationContext {
         // Find all of the relationships which refer to an extended module.
         let extendedModuleRelationships = ExtendedTypeFormatTransformation.collapsedExtendedModuleRelationships(from: relationships)
 
-        for edge in relationships {
+        for edge in relationships.sorted(by: SymbolGraph.Relationship.areInIncreasingOrder) {
             switch edge.kind {
             case .memberOf, .optionalMemberOf:
                 // Add a "Self is" constraint for members of protocol extensions that
@@ -1412,7 +1412,7 @@ public class DocumentationContext {
         var bodyParametersByTarget = [String: [HTTPParameter]]()
         var responsesByTarget = [String: [HTTPResponse]]()
         
-        for edge in relationships {
+        for edge in relationships.sorted(by: SymbolGraph.Relationship.areInIncreasingOrder) {
             if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
                 if let source = documentationCache[edge.source], let target = documentationCache[edge.target],
                    let sourceSymbol = source.symbol

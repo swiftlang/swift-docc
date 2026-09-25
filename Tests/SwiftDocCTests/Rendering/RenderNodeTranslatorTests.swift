@@ -1626,4 +1626,57 @@ struct RenderNodeTranslatorTests_new {
         let renderedReference = try #require(renderNode.references[memberReference.absoluteString] as? TopicRenderReference)
         #expect(renderedReference.conformance?.constraints.plainText == "Self is Bar.")
     }
+
+
+    // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // If you suspect that your changes might affect this test,
+    // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
+    @Test
+    func conformsToRelationshipsRenderInDeterministicOrder() async throws {
+        let conformances: [(path: String, title: String)] = [
+            ("/documentation/MyModule/AProtocol", "AProtocol"),
+            ("/documentation/MyModule/MyProtocol", "MyProtocol"),
+            ("/documentation/MyModule/SharedA", "SharedTitle"),
+            ("/documentation/MyModule/SharedB", "SharedTitle"),
+            ("/documentation/MyModule/ZProtocol", "ZProtocol"),
+        ]
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "MyModule",
+                symbols: [makeSymbol(id: "s:MyClass", kind: .class, pathComponents: ["MyClass"])]
+            )),
+        ])
+        let context = try await load(catalog: catalog)
+
+        let identifier = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/MyModule/MyClass",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: identifier)
+        let symbol = try #require(node.semantic as? Symbol)
+
+        var references = [TopicReference]()
+        var targetFallbacks = [TopicReference: String]()
+        // Shuffle conformances to prevent them from already being sorted
+        for entry in conformances.shuffled() {
+            let reference = TopicReference.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://org.swift.docc.example\(entry.path)")!))
+            references.append(reference)
+            targetFallbacks[reference] = entry.title
+        }
+
+        symbol.relationshipsVariants[.swift] = RelationshipsSection(
+            groups: [RelationshipsGroup(kind: .conformsTo, destinations: references)],
+            targetFallbacks: targetFallbacks,
+            constraints: [:]
+        )
+
+        var translator = RenderNodeTranslator(context: context, identifier: identifier)
+        let renderNode = translator.visit(symbol) as! RenderNode
+
+        let relationshipSection = try #require(renderNode.relationshipSections.first)
+        #expect(relationshipSection.title == "Conforms To")
+        #expect(relationshipSection.identifiers == conformances.map { "doc://org.swift.docc.example\($0.path)" })
+    }
 }

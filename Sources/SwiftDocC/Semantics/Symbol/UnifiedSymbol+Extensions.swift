@@ -153,6 +153,18 @@ extension Dictionary where Key == UnifiedSymbolGraph.Selector {
     }
 }
 
+extension SymbolGraph.Relationship {
+    static func areInIncreasingOrder(
+        _ lhs: SymbolGraph.Relationship,
+        _ rhs: SymbolGraph.Relationship
+    ) -> Bool {
+        if lhs.source != rhs.source { return lhs.source < rhs.source }
+        if lhs.target != rhs.target { return lhs.target < rhs.target }
+        if lhs.kind.rawValue != rhs.kind.rawValue { return lhs.kind.rawValue < rhs.kind.rawValue }
+        return (lhs.targetFallback ?? "") < (rhs.targetFallback ?? "")
+    }
+}
+
 extension [SymbolGraph.LineList.Line] {
     fileprivate var totalCount: Int {
         return reduce(into: 0) { result, line in
