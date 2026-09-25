@@ -27,7 +27,6 @@ For example ``ContentAndMedia`` requires at least one `Image` or `Video` directi
 - ``MarkupContainer``
 - ``MarkupConvertible``
 - ``DirectiveConvertible``
-- ``TechnologyBound``
 
 ### Tutorial Table of Contents Directives
 

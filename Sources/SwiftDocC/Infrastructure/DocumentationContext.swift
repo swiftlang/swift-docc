@@ -19,9 +19,6 @@ private import os
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///
-/// A ``DocumentationWorkspace`` discovers serialized documentation bundles from a variety of sources (files on disk, databases, or web services), provides them to the `DocumentationContext`,
-/// and notifies the context when bundles are added or removed using the ``DocumentationContextDataProviderDelegate`` protocol.
-///
 /// When a documentation bundle is registered with the context, all of its content is loaded into memory and relationships between documentation entities are built. When this is done, the context can be queried
 /// about documentation entities, resources, and relationships between entities.
 ///
@@ -210,14 +207,14 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
-    /// Initializes a documentation context with a given `bundle`.
+    /// Initializes a documentation context from a collection of input files.
     ///
     /// - Parameters:
-    ///   - inputs: The inputs to register with the context.
-    ///   - fileManager: The file manager that the context uses to read files from the bundle.
+    ///   - inputs: The collection of input files to register with the context.
+    ///   - dataProvider: The data provider that the context uses to read files from the inputs.
     ///   - diagnosticEngine: The pre-configured engine that will collect diagnostics encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
+    /// - Throws: If an error is encountered while registering the documentation input files.
     package init(
         inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
@@ -1146,12 +1143,11 @@ public class DocumentationContext {
                         }
                     }
 
-                    let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
-                        $0.filter { $0.kind == .overloadOf }
-                    }).reduce(into: [:], { acc, relationship in
-                        acc[relationship.target, default: []].insert(relationship.source)
-                    })
+                    let overloadGroups: [String: Set<String>] = unifiedSymbolGraph.relationshipsByLanguage.values.reduce(into: [:]) { acc, relationships in
+                        for relationship in relationships where relationship.kind == . overloadOf {
+                            acc[relationship.target, default: []].insert(relationship.source)
+                        }
+                    }
                     addOverloadGroupReferences(overloadGroups: overloadGroups)
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -1634,7 +1630,7 @@ public class DocumentationContext {
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
-    // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
+    // TODO: Move this functionality to ``DocumentationCatalogFileTypes`` (rdar://68156425).
     
     /// A type of asset.
     public enum AssetType: CustomStringConvertible {
@@ -3311,11 +3307,17 @@ private extension DirectedGraph {
         var nodes = [startingPoint]
         var seen: Set<Node> = [startingPoint]
         while !nodes.isEmpty {
-            let matches = nodes.filter(predicate)
+            let matches = Set(nodes.lazy.filter(predicate))
             if !matches.isEmpty {
-                return Set(matches)
+                return matches
             }
-            nodes = nodes.flatMap { neighbors(of: $0) }.filter { seen.insert($0).inserted }
+            var next: [Node] = []
+            for node in nodes {
+                for neighbor in neighbors(of: node) where seen.insert(neighbor).inserted {
+                    next.append(neighbor)
+                }
+            }
+            nodes = next
         }
         return []
     }

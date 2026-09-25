@@ -871,12 +871,12 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     
     func testBetaInformationPreserved() async throws {
         let platformMetadata = [
-            "macOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
-            "watchOS": PlatformVersion(VersionTriplet(2, 0, 0), beta: true),
-            "tvOS": PlatformVersion(VersionTriplet(3, 0, 0), beta: true),
-            "iOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "macOS":        PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
+            "watchOS":      PlatformVersion(VersionTriplet(2, 0, 0), beta: true),
+            "tvOS":         PlatformVersion(VersionTriplet(3, 0, 0), beta: true),
+            "iOS":          PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
-            "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "iPadOS":       PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
         ]
         var configuration = DocumentationContext.Configuration()
 
@@ -896,7 +896,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
 
     // MARK: Test helpers
     
-    struct LinkResolvers {
+    private struct LinkResolvers {
         let localResolver: PathHierarchyBasedLinkResolver
         let externalResolver: ExternalPathHierarchyResolver
         let context: DocumentationContext

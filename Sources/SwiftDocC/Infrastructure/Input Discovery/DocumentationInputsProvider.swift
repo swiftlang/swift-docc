@@ -15,20 +15,20 @@ extension DocumentationContext {
 
     /// A type that provides inputs for a unit of documentation.
     ///
-    /// The inputs provider discovers documentation catalogs on the file system and creates a ``DocumentationBundle`` from the discovered catalog content.
+    /// The inputs provider discovers documentation catalogs on the file system and creates a ``DocumentationContext/Inputs`` from the discovered catalog content.
     ///
-    /// The input provider categorizes the catalog content based on corresponding ``DocumentationBundleFileTypes`` conditions:
+    /// The input provider categorizes the catalog content based on corresponding ``DocumentationCatalogFileTypes`` conditions:
     ///
-    ///  Category                                 | Condition
-    ///  ---------------------------------------- | -------------------------------------------------
-    ///  ``DocumentationBundle/markupURLs``       | ``DocumentationBundleFileTypes/isMarkupFile(_:)``
-    ///  ``DocumentationBundle/symbolGraphURLs``  | ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
-    ///  ``DocumentationBundle/info``             | ``DocumentationBundleFileTypes/isInfoPlistFile(_:)``
-    ///  ``DocumentationBundle/themeSettings``    | ``DocumentationBundleFileTypes/isThemeSettingsFile(_:)``
-    ///  ``DocumentationBundle/customHeader``     | ``DocumentationBundleFileTypes/isCustomHeader(_:)``
-    ///  ``DocumentationBundle/customFooter``     | ``DocumentationBundleFileTypes/isCustomFooter(_:)``
-    ///  ``DocumentationBundle/customFavicon``    | ``DocumentationBundleFileTypes/isCustomFavicon(_:)``
-    ///  ``DocumentationBundle/miscResourceURLs`` | Any file not already matched above.
+    ///  Category                                         | Condition
+    ///  ------------------------------------------------ | -------------------------------------------------
+    ///  ``DocumentationContext/Inputs/markupURLs``       | ``DocumentationCatalogFileTypes/isMarkupFile(_:)``
+    ///  ``DocumentationContext/Inputs/symbolGraphURLs``  | ``DocumentationCatalogFileTypes/isSymbolGraphFile(_:)``
+    ///  ``DocumentationContext/Inputs/info``             | ``DocumentationCatalogFileTypes/isInfoPlistFile(_:)``
+    ///  ``DocumentationContext/Inputs/themeSettings``    | ``DocumentationCatalogFileTypes/isThemeSettingsFile(_:)``
+    ///  ``DocumentationContext/Inputs/customHeader``     | ``DocumentationCatalogFileTypes/isCustomHeader(_:)``
+    ///  ``DocumentationContext/Inputs/customFooter``     | ``DocumentationCatalogFileTypes/isCustomFooter(_:)``
+    ///  ``DocumentationContext/Inputs/customFavicon``    | ``DocumentationCatalogFileTypes/isCustomFavicon(_:)``
+    ///  ``DocumentationContext/Inputs/miscResourceURLs`` | Any file not already matched above.
     ///
     /// ## Topics
     ///

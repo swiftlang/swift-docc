@@ -28,7 +28,7 @@ public struct RESTBodyRenderSection: RenderSection, Equatable {
     /// A list of request parameters, if applicable.
     ///
     /// If the body content is `multipart/form-data` encoded, it contains a list
-    /// of parameters. Each of these parameters is a ``RESTParameter``
+    /// of parameters. Each of these parameters is a ``RenderProperty``
     /// and it has its own value-content encoding, name, type, and description.
     public var parameters: [RenderProperty]?
 

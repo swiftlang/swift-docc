@@ -194,7 +194,7 @@ public struct DocumentationNode {
     ///   - reference: The unique reference to the node.
     ///   - unifiedSymbol: The symbol to create a documentation node for.
     ///   - moduleData: The module that the symbol belongs to.
-    ///   - moduleName: The name of the module that the symbol belongs to.
+    ///   - moduleReference: A reference to the module that the symbol belongs to.
     init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, moduleData: SymbolGraph.Module, moduleReference: ResolvedTopicReference) {
         self.reference = reference
         

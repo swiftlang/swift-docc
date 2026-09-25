@@ -275,6 +275,7 @@ package struct HTMLRenderer {
                         name: item.domain!.rawValue, // Verified non-empty above
                         introduced: item.introducedVersion.map { "\($0.major).\($0.minor)" },
                         deprecated: item.deprecatedVersion.map { "\($0.major).\($0.minor)" },
+                        isUnconditionallyDeprecated: item.isUnconditionallyDeprecated,
                         isBeta: false // TODO: Derive and pass beta information
                     )
                 })
