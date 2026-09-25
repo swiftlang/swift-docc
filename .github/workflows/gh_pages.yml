@@ -1,0 +1,78 @@
+name: Update GitHub Pages documentation site
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Sources/**'
+      - 'Package.swift'
+      - 'Package.resolved'
+  workflow_dispatch:
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build and publish documentation
+    runs-on: ubuntu-latest
+    container:
+      image: swift:6.3-jammy
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Build combined documentation
+        env:
+          DOCC_JSON_PRETTYPRINT: "YES"
+        run: |
+          swift package \
+            --allow-writing-to-directory "$GITHUB_WORKSPACE" \
+            generate-documentation \
+            --target SwiftDocC \
+            --target DocCCommandLine \
+            --target DocCCommon \
+            --target DocCHTML \
+            --enable-experimental-combined-documentation \
+            --symbol-graph-minimum-access-level package \
+            --disable-indexing \
+            --experimental-skip-synthesized-symbols \
+            --source-service github \
+            --source-service-base-url https://github.com/swiftlang/swift-docc/blob/main \
+            --checkout-path "$GITHUB_WORKSPACE" \
+            --experimental-transform-for-static-hosting-with-content \
+            --hosting-base-path swift-docc \
+            --output-path "$GITHUB_WORKSPACE/_site/docs"
+          # Sentinel file to disable the default Jekyll transformation in GitHub Pages
+          touch "$GITHUB_WORKSPACE/_site/docs/.nojekyll"
+
+      - name: Check out gh-pages branch
+        uses: actions/checkout@v7
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Publish documentation to gh-pages
+        working-directory: gh-pages
+        env:
+          GIT_AUTHOR_NAME: ${{ github.actor }}
+          # https://docs.github.com/en/account-and-profile/reference/email-addresses-reference#your-noreply-email-address
+          GIT_AUTHOR_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+          GIT_COMMITTER_NAME: ${{ github.actor }}
+          GIT_COMMITTER_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+        run: |
+          git config --global --add safe.directory '*'
+          rm -rf docs
+          mv "$GITHUB_WORKSPACE/_site/docs" docs
+          git add docs
+          if git diff --cached --quiet; then
+            echo "No documentation changes found."
+          else
+            docc_commit_sha="$(git -C "$GITHUB_WORKSPACE" rev-parse --short HEAD)"
+            git commit -m "Update GitHub Pages documentation site to $docc_commit_sha"
+            git push origin gh-pages
+          fi
