@@ -1028,12 +1028,20 @@ extension ConformanceSection: FastJSONDecodable {
         typealias _MaybeDecodedValue = Optional
 
         // 1 required property
-        var constraints: _MaybeDecodedValue<[RenderInlineContent]> = nil
+        var constraints:        _MaybeDecodedValue<[RenderInlineContent]> = nil
+        var availabilityPrefix: _MaybeDecodedValue<[RenderInlineContent]> = nil
+        var conformancePrefix:  _MaybeDecodedValue<[RenderInlineContent]> = nil
 
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("constraints") {
                 constraints = try decoder.decode([RenderInlineContent].self)
+            }
+            else if decoder.matchKey("availabilityPrefix") {
+                availabilityPrefix = try decoder.decode([RenderInlineContent].self)
+            }
+            else if decoder.matchKey("conformancePrefix") {
+                conformancePrefix = try decoder.decode([RenderInlineContent].self)
             }
             // Do nothing for all unknown keys
             else {
@@ -1045,8 +1053,18 @@ extension ConformanceSection: FastJSONDecodable {
         guard let constraints else {
             throw decoder.makeKeyNotFoundError("constraints")
         }
+        guard let availabilityPrefix else {
+            throw decoder.makeKeyNotFoundError("availabilityPrefix")
+        }
+        guard let conformancePrefix else {
+            throw decoder.makeKeyNotFoundError("conformancePrefix")
+        }
 
-        self.init(constraints: consume constraints)
+        self.init(
+            constraints:        consume constraints,
+            availabilityPrefix: consume availabilityPrefix,
+            conformancePrefix:  consume conformancePrefix
+        )
     }
 }
 

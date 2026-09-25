@@ -185,11 +185,15 @@ struct LinkDestinationSummaryDecodingTests {
                     .init(text: "()",          kind: .text),
                 ],
                 estimatedTime: "1h2m3s",
-                conformance: ConformanceSection(constraints: [
-                    .codeVoice(code: "Self"),
-                    .text(" confroms to "),
-                    .codeVoice(code: "Copyable"),
-                ]),
+                conformance: ConformanceSection(
+                    constraints: [
+                        .codeVoice(code: "Self"),
+                        .text(" confroms to "),
+                        .codeVoice(code: "Copyable"),
+                    ],
+                    availabilityPrefix: [.text("Available when")],
+                    conformancePrefix:  [.text("Conforms when")]
+                ),
                 isBeta: true,
                 isDeprecated: true,
                 defaultImplementationCount: 3,
@@ -235,7 +239,18 @@ struct LinkDestinationSummaryDecodingTests {
     @Test(arguments: Self.exampleInlineContent)
     func bothImplementationsDecodeConformanceSectionTheSame(_ inlineContent: [RenderInlineContent]?) throws {
         if let inlineContent {
-            try assertRoundTripCoding(ConformanceSection(constraints: inlineContent))
+            var section = ConformanceSection(
+                constraints: inlineContent,
+                availabilityPrefix: [.text("Available when")],
+                conformancePrefix:  [.text("Conforms when")]
+            )
+            try assertRoundTripCoding(section)
+            
+            section.availabilityPrefix = inlineContent
+            try assertRoundTripCoding(section)
+            
+            section.conformancePrefix = inlineContent
+            try assertRoundTripCoding(section)
         }
     }
     
