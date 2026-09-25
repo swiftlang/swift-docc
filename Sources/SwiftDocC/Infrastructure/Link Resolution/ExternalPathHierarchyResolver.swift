@@ -147,7 +147,7 @@ final class ExternalPathHierarchyResolver {
         
         self.init(
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: dataProvider.contents(of: linkHierarchyFile)),
-            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
+            entityInformation: try FastSymbolGraphJSONDecoder.decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
         )
     }
 }

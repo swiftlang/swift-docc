@@ -11,6 +11,7 @@
 public import Foundation
 private import Markdown
 private import SymbolKit
+private import DocCCommon
 
 /// A reference resolver that launches and interactively communicates with another process or service to resolve links.
 ///
@@ -143,7 +144,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         try self.init(id: bundleID, server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
     
-    fileprivate struct InitialHandshakeMessage: Decodable {
+    fileprivate struct InitialHandshakeMessage: FastJSONDecodable {
         var identifier: DocumentationContext.Inputs.Identifier
         var capabilities: Capabilities? // The old V1 handshake didn't include this but the V2 requires it.
         
@@ -152,24 +153,27 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             self.capabilities = capabilities
         }
         
-        private enum CodingKeys: CodingKey {
-            case bundleIdentifier  // Legacy V1 handshake
-            case identifier, capabilities // V2 handshake
-        }
-        
-        init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
+        init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
+            var rawIdentifier: String? = nil
             
-            guard container.contains(.identifier) || container.contains(.bundleIdentifier) else {
-                throw DecodingError.keyNotFound(CodingKeys.identifier, .init(codingPath: decoder.codingPath, debugDescription: """
-                    Initial handshake message includes neither a '\(CodingKeys.identifier.stringValue)' key nor a '\(CodingKeys.bundleIdentifier.stringValue)' key. 
-                    """))
+            try decoder.descendIntoObject()
+            while try decoder.advanceToNextKey() {
+                if decoder.matchKey("identifier") || decoder.matchKey("bundleIdentifier") {
+                    rawIdentifier = try decoder.decode(String.self)
+                }
+                else if decoder.matchKey("capabilities") {
+                    capabilities = try decoder.decode(OutOfProcessReferenceResolver.Capabilities.self)
+                }
+                // Do nothing for all unknown keys
+                else {
+                    try decoder.ignoreValue()
+                }
             }
             
-            self.identifier = try container.decodeIfPresent(DocumentationContext.Inputs.Identifier.self, forKey: .identifier)
-            ?? container.decode(DocumentationContext.Inputs.Identifier.self, forKey: .bundleIdentifier)
-            
-            self.capabilities = try container.decodeIfPresent(Capabilities.self, forKey: .capabilities)
+            guard let rawIdentifier else {
+                throw decoder.makeKeyNotFoundError("identifier")
+            }
+            self.identifier = .init(rawValue: rawIdentifier)
         }
     }
     
@@ -297,7 +301,7 @@ extension OutOfProcessReferenceResolver {
                 return cachedInformation
             }
             
-            let response: Response = try longRunningProcess.sendAndWait(request: Request.topic(topicURL))
+            let response: Response = try longRunningProcess._deprecatedSendAndWait(request: Request.topic(topicURL))
             
             switch response {
                 case .bundleIdentifier:
@@ -323,7 +327,7 @@ extension OutOfProcessReferenceResolver {
                 return cachedInformation
             }
             
-            let response: Response = try longRunningProcess.sendAndWait(request: Request.symbol(preciseIdentifier))
+            let response: Response = try longRunningProcess._deprecatedSendAndWait(request: Request.symbol(preciseIdentifier))
             
             switch response {
                 case .bundleIdentifier:
@@ -500,7 +504,10 @@ extension OutOfProcessReferenceResolver {
 // MARK: Cross process communication
 
 private protocol ExternalLinkResolving {
-    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response
+    func sendAndWait<Request: Codable, Response: FastJSONDecodable>(request: Request) throws -> Response
+    
+    @available(*, deprecated, message: "This type is only used in the outdated, and no longer recommended, version of the out-of-process external resolver communication protocol.")
+    func _deprecatedSendAndWait(request: OutOfProcessReferenceResolver._DeprecatedRequestV1) throws -> OutOfProcessReferenceResolver._DeprecatedResponseV1
 }
 
 private class LongRunningService: ExternalLinkResolving {
@@ -511,9 +518,15 @@ private class LongRunningService: ExternalLinkResolving {
             server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
     
-    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response {
+    func sendAndWait<Request: Codable, Response: FastJSONDecodable>(request: Request) throws -> Response {
         let responseData = try client.sendAndWait(request)
-        return try JSONDecoder().decode(Response.self, from: responseData)
+        return try FastSymbolGraphJSONDecoder.decode(Response.self, from: responseData)
+    }
+    
+    @available(*, deprecated, message: "This type is only used in the outdated, and no longer recommended, version of the out-of-process external resolver communication protocol.")
+    func _deprecatedSendAndWait(request: OutOfProcessReferenceResolver._DeprecatedRequestV1) throws -> OutOfProcessReferenceResolver._DeprecatedResponseV1 {
+        let responseData = try client.sendAndWait(request)
+        return try JSONDecoder().decode(OutOfProcessReferenceResolver._DeprecatedResponseV1.self, from: responseData)
     }
 }
 
@@ -559,24 +572,41 @@ private class LongRunningProcess: ExternalLinkResolving {
     private let errorOutput = Pipe()
     private let errorReadSource: any DispatchSourceRead
     
-    func readInitialHandshakeMessage<Response: Decodable>() throws -> Response {
-        return try _readResponse()
+    func readInitialHandshakeMessage<Response: FastJSONDecodable>() throws -> Response {
+        try _readResponse {
+            try FastSymbolGraphJSONDecoder.decode(Response.self, from: $0)
+        }
     }
     
-    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response {
-        // Send
+    func sendAndWait<Request: Codable, Response: FastJSONDecodable>(request: Request) throws -> Response {
+        try _send(request: request)
+        
+        // Receive
+        return try _readResponse {
+            try FastSymbolGraphJSONDecoder.decode(Response.self, from: $0)
+        }
+    }
+    
+    private func _send(request: some Encodable) throws {
         guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
               let requestData = requestString.data(using: .utf8)
         else {
             throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: "\(request)")
         }
         input.fileHandleForWriting.write(requestData)
-        
-        // Receive
-        return try _readResponse()
     }
     
-    private func _readResponse<Response: Decodable>() throws -> Response {
+    @available(*, deprecated, message: "This type is only used in the outdated, and no longer recommended, version of the out-of-process external resolver communication protocol.")
+    func _deprecatedSendAndWait(request: OutOfProcessReferenceResolver._DeprecatedRequestV1) throws -> OutOfProcessReferenceResolver._DeprecatedResponseV1 {
+        try _send(request: request)
+        
+        // Receive
+        return try _readResponse {
+            try JSONDecoder().decode(OutOfProcessReferenceResolver._DeprecatedResponseV1.self, from: $0)
+        }
+    }
+    
+    private func _readResponse<Response>(decode: (Data) throws -> Response) throws -> Response {
         var response = output.fileHandleForReading.availableData
         guard !response.isEmpty else {
             throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
@@ -587,7 +617,7 @@ private class LongRunningProcess: ExternalLinkResolving {
             // If a pipe is empty, checking `availableData` will block until there is new data to read.
             do {
                 // To avoid blocking forever we check if the response can be decoded after each chunk of data.
-                return try JSONDecoder().decode(Response.self, from: response)
+                return try decode(response)
             } catch {
                 if case DecodingError.dataCorrupted = error,    // If the data wasn't valid JSON, read more data and try to decode it again.
                    response.count.isMultiple(of: Int(PIPE_BUF)) // To reduce the risk of deadlocking, check that bytes so far is a multiple of the pipe buffer size.
@@ -612,11 +642,16 @@ private class LongRunningProcess: ExternalLinkResolving {
         fatalError("Cannot initialize an out of process resolver outside of macOS or Linux platforms.")
     }
     
-    func readInitialHandshakeMessage<Response: Decodable>() throws -> Response {
+    func readInitialHandshakeMessage<Response: FastJSONDecodable>() throws -> Response {
         fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
     }
     
-    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response {
+    func sendAndWait<Request: Codable, Response: FastJSONDecodable>(request: Request) throws -> Response {
+        fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
+    }
+    
+    @available(*, deprecated, message: "This type is only used in the outdated, and no longer recommended, version of the out-of-process external resolver communication protocol.")
+    func _deprecatedSendAndWait(request: OutOfProcessReferenceResolver._DeprecatedRequestV1) throws -> OutOfProcessReferenceResolver._DeprecatedResponseV1 {
         fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
     }
     
@@ -726,7 +761,7 @@ extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
             return asset
         }
         
-        guard case .asset(let asset)? = try? implementation.longRunningProcess.sendAndWait(request: Request.asset(assetReference)) as Response else {
+        guard case .asset(let asset)? = try? implementation.longRunningProcess._deprecatedSendAndWait(request: Request.asset(assetReference)) as Response else {
             return nil
         }
         return asset
