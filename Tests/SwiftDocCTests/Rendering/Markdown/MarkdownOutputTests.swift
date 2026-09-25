@@ -1422,7 +1422,59 @@ struct MarkdownOutputTests {
         #expect(node.metadata.identifier == "/documentation/MarkdownOutput/ArticleRole")
         #expect(node.metadata.framework == "MarkdownOutput")
     }
-    
+
+    @Test
+    func symbolsAndArticlesUseModuleSymbolNameForFramework() async throws {
+        let catalog = catalog(files: [
+            InfoPlist(displayName: "Custom Display Name"),
+            TextFile(name: "UncuratedArticle.md", utf8Content: """
+                # Uncurated Article
+
+                An article that isn't referred to by other articles or symbols
+
+                Just some content.
+                """),
+            TextFile(name: "CuratedArticle.md", utf8Content: """
+                # Curated Article
+                
+                An article that is curated as part of an API collection.
+                
+                Here is some content.
+                """),
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-type-id", kind: .struct, pathComponents: ["SomeType"])
+            ])),
+            TextFile(name: "SomeType.md", utf8Content: """
+                # ``SomeType``
+
+                ## Topics
+
+                - <doc:SomeAPICollection>
+                """),
+            TextFile(name: "SomeAPICollection.md", utf8Content: """
+                # An API Collection
+
+                An API collection curated under a ModuleName symbol.
+                
+                ## Topics
+                
+                ### Topic Subgroup
+                
+                -<doc:CuratedArticle>
+                """),
+        ])
+        
+        let (symbolNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/ModuleName/SomeType")
+        let (uncuratedArticleNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Custom-Display-Name/UncuratedArticle")
+        let (curatedArticleNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Custom-Display-Name/CuratedArticle")
+        let (apiCollectionNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Custom-Display-Name/SomeAPICollection")
+
+        #expect(symbolNode.metadata.framework == "ModuleName")
+        #expect(uncuratedArticleNode.metadata.framework == "ModuleName")
+        #expect(curatedArticleNode.metadata.framework == "ModuleName")
+        #expect(apiCollectionNode.metadata.framework == "ModuleName")
+    }
+
     @Test
     func apiCollectionHasCollectionGroupRole() async throws {
         let catalog = catalog(files: [
