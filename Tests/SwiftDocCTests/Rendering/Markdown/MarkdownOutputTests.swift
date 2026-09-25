@@ -1424,43 +1424,55 @@ struct MarkdownOutputTests {
     }
 
     @Test
-    func symbolsAndCuratedArticlesUseModuleSymbolNameForFramework() async throws {
-        // RootKit is a technology root article that "owns" two real frameworks, Roots and RootsUI.
-        // The catalog's display name ("RootKit") should only apply to pages that don't belong to a
-        // more specific framework — not to Roots's own symbols or to API collections curated under them.
+    func symbolsAndArticlesUseModuleSymbolNameForFramework() async throws {
         let catalog = catalog(files: [
-            InfoPlist(displayName: "Markdown Output"),
-            TextFile(name: "InterestingArticle.md", utf8Content: """
-                # My Article
+            InfoPlist(displayName: "Custom Display Name"),
+            TextFile(name: "UncuratedArticle.md", utf8Content: """
+                # Uncurated Article
 
-                An article that has no symbol references in it
+                An article that isn't referred to by other articles or symbols
 
                 Just some content.
                 """),
-            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
-                makeSymbol(id: "markdown-output-type-id", kind: .struct, pathComponents: ["MarkdownOutputType"])
+            TextFile(name: "CuratedArticle.md", utf8Content: """
+                # Curated Article
+                
+                An article that is curated as part of an API collection.
+                
+                Here is some content.
+                """),
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-type-id", kind: .struct, pathComponents: ["SomeType"])
             ])),
-            TextFile(name: "MarkdownOutputType.md", utf8Content: """
-                # ``MarkdownOutputType``
+            TextFile(name: "SomeType.md", utf8Content: """
+                # ``SomeType``
 
                 ## Topics
 
-                - <doc:MarkdownOutputAPICollection>
+                - <doc:SomeAPICollection>
                 """),
-            TextFile(name: "MarkdownOutputAPICollection.md", utf8Content: """
-                # Markdown Output Collection
+            TextFile(name: "SomeAPICollection.md", utf8Content: """
+                # An API Collection
 
-                An API collection curated under a MarkdownOutput symbol.
+                An API collection curated under a ModuleName symbol.
+                
+                ## Topics
+                
+                ### Topic Subgroup
+                
+                -<doc:CuratedArticle>
                 """),
         ])
         
-        let (symbolNode, _) = try await markdownOutput(catalog: catalog, path: "MarkdownOutputType")
-        let (articleNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Markdown-Output/InterestingArticle")
-        let (apiCollectionNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Markdown-Output/MarkdownOutputAPICollection")
+        let (symbolNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/ModuleName/SomeType")
+        let (uncuratedArticleNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Custom-Display-Name/UncuratedArticle")
+        let (curatedArticleNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Custom-Display-Name/CuratedArticle")
+        let (apiCollectionNode, _) = try await markdownOutput(catalog: catalog, path: "/documentation/Custom-Display-Name/SomeAPICollection")
 
-        #expect(symbolNode.metadata.framework == "MarkdownOutput")
-        #expect(articleNode.metadata.framework == "MarkdownOutput")
-        #expect(apiCollectionNode.metadata.framework == "MarkdownOutput")
+        #expect(symbolNode.metadata.framework == "ModuleName")
+        #expect(uncuratedArticleNode.metadata.framework == "ModuleName")
+        #expect(curatedArticleNode.metadata.framework == "ModuleName")
+        #expect(apiCollectionNode.metadata.framework == "ModuleName")
     }
 
     @Test
