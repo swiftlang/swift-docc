@@ -228,23 +228,60 @@ extension MarkdownOutputSemanticVisitor {
         // Framework defaults only apply if there are no specific availabilities at symbol level.
         if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
             for availability in inputs.info.defaultAvailability?.modules[primaryModule] ?? [] {
-                let meta = MarkdownOutputNode.Metadata.Availability(availability)
-                availabilities[meta.platform] = meta
+                if availability.versionInformation != .unavailable {
+                    let meta = MarkdownOutputNode.Metadata.Availability(availability)
+                    availabilities[meta.platform] = meta
+                }
             }
         }
         
+        var universalDeprecation: MarkdownOutputNode.Metadata.Availability?
+        
         for availability in symbolAvailability {
             let meta = MarkdownOutputNode.Metadata.Availability(availability)
-            availabilities[meta.platform] = meta
+            if availability.isUnconditionallyUnavailable || availability.obsoletedVersion != nil {
+                availabilities[meta.platform] = nil
+            } else {
+                if availability.domain == nil, meta.deprecated != nil {
+                    // This is a universal deprecation (e.g. availability(*, deprecated)
+                    // and should not exist as a separate row. Instead, it should overwrite the
+                    // deprecation value for any others, once they are processed.
+                    universalDeprecation = meta
+                } else {
+                    availabilities[meta.platform] = meta
+                }
+            }
         }
-        
+          
         for availability in documentationNode.metadata?.availability ?? [] {
             let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
         }
         
+        if let universalDeprecation {
+            if availabilities.isEmpty {
+                // This was the only availability
+                availabilities[universalDeprecation.platform] = universalDeprecation
+            } else {
+                // Update any existing non-nil deprecations
+                availabilities = availabilities.mapValues { old in
+                        .init(platform: old.platform, introduced: old.introduced, deprecated: old.deprecated ?? universalDeprecation.deprecated)
+                }
+            }
+        }
+        
         metadata.availability = availabilities.values.sorted(by: \.platform)
          
+        if let deprecated = symbol.deprecatedSummaryVariants[.swift] {
+            var deprecatedWalker = markdownWalker
+            deprecatedWalker.markdown = ""
+            for element in deprecated.content {
+                deprecatedWalker.visit(element)
+            }
+            
+            metadata.deprecation = deprecatedWalker.markdown.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        
         // Content
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
@@ -400,9 +437,8 @@ private extension MarkdownOutputNode.Metadata.Availability {
     init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
         self.init(
             platform: item.domain?.rawValue ?? "*",
-            introduced: item.introducedVersion?.description,
-            deprecated: item.deprecatedVersion?.description,
-            unavailable: item.obsoletedVersion != nil
+            introduced: .init(string: item.introducedVersion?.description),
+            deprecated: item.isUnconditionallyDeprecated ? .unversioned : item.deprecatedVersion.map { .init(string: $0.description)}
         )
     }
     
@@ -410,18 +446,16 @@ private extension MarkdownOutputNode.Metadata.Availability {
     init(_ availability: DefaultAvailability.ModuleAvailability) {
         self.init(
             platform: availability.platformName.rawValue,
-            introduced: availability.introducedVersion,
-            deprecated: nil,
-            unavailable: availability.versionInformation == .unavailable
+            introduced: .init(string: availability.introducedVersion),
+            deprecated: nil
         )
     }
     
     init(_ availability: Metadata.Availability) {
         self.init(
             platform: availability.platform.rawValue,
-            introduced: availability.introduced.description,
-            deprecated: availability.deprecated?.description,
-            unavailable: false
+            introduced: .init(string: availability.introduced.description),
+            deprecated: availability.deprecated.map { .init(string: $0.description) }
         )
     }
 }

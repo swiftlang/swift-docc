@@ -1476,8 +1476,8 @@ struct MarkdownOutputTests {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "AvailabilityArticle")
-        #expect(node.metadata.availability(for: "Xcode")?.introduced == "14.3.0")
-        #expect(node.metadata.availability(for: "macOS")?.introduced == "13.0.0")
+        #expect(node.metadata.availability(for: "Xcode")?.introduced == .versioned("14.3.0"))
+        #expect(node.metadata.availability(for: "macOS")?.introduced == .versioned("13.0.0"))
     }
     
     @Test
@@ -1533,7 +1533,7 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        #expect(availability.contains(.init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false)))
+        #expect(availability.contains(.init(platform: "iOS", introduced: .versioned("1.0.0"))))
     }
     
     @Test
@@ -1548,7 +1548,7 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        #expect(availability.contains(.init(platform: "iOS", introduced: "2.0.0", deprecated: nil, unavailable: false)))
+        #expect(availability.contains(.init(platform: "iOS", introduced: .versioned("2.0.0"))))
     }
     
     @Test
@@ -1576,7 +1576,7 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "13.1.0", deprecated: nil, unavailable: false)
+        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("13.1.0"))
         #expect(availability.contains(expected))
     }
     
@@ -1620,26 +1620,21 @@ struct MarkdownOutputTests {
     }
     
     @Test(arguments: [
-        ("iOS: 14.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: nil, unavailable: false)),
-        ("iOS: 14.0 - 15.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false)),
-        ("iOS: -", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: nil, deprecated: nil, unavailable: true)),
-        ("iOS: 14.0 -", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", unavailable: false)),
+        ("iOS: 14.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("14.0"), deprecated: nil)),
+        ("iOS: 14.0 - 15.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("14.0"), deprecated: .versioned("15.0"))),
+        ("iOS: 14.0 - deprecated", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("14.0"), deprecated: .unversioned)),
+        ("iOS: available", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .unversioned)),
+        ("iOS: available - 15.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .unversioned, deprecated: .versioned("15.0"))),
+        ("iOS: deprecated", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .unversioned, deprecated: .unversioned))
     ])
-    func availabilityFromStringRepresentation(_ representation: String, _ expected: MarkdownOutputNode.Metadata.Availability) async throws {
+    func availabilityStringRepresentationRoundTrips(_ representation: String, _ expected: MarkdownOutputNode.Metadata.Availability) async throws {
         let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: representation)
         #expect(availability == expected)
+        
+        let expectedRepresentation = expected.stringRepresentation
+        #expect(expectedRepresentation == representation)
     }
- 
-    @Test(arguments: [
-        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", unavailable: false), "iOS: 14.0 -"),
-        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false), "iOS: 14.0 - 15.0"),
-        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", unavailable: true), "iOS: -"),
-        (MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "", unavailable: false), "iOS: -"),
-    ])
-    func stringRepresentationFromAvailability(_ availability: MarkdownOutputNode.Metadata.Availability, _ expected: String) async throws {
-        #expect(availability.stringRepresentation == expected)
-    }
-    
+     
     @Test
     func symbolDeprecationRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
@@ -1651,21 +1646,21 @@ struct MarkdownOutputTests {
                     pathComponents: ["MarkdownSymbol", "fullName"],
                     docComment: "A basic property to test markdown output",
                     availability: [
-                        .init(domain: .init(rawValue: "iOS"),
-                              introducedVersion: .init(string: "1.0.0"),
+                        .init(domain: .init(rawValue: "macOS"),
+                              introducedVersion: .init(string: "2.0.0"),
                               deprecatedVersion: .init(string: "4.0.0"),
                               obsoletedVersion: nil,
-                              message: nil,
+                              message: "Use something else instead",
                               renamed: nil,
                               isUnconditionallyDeprecated: false,
                               isUnconditionallyUnavailable: false,
                               willEventuallyBeDeprecated: false
                              ),
-                        .init(domain: .init(rawValue: "macOS"),
-                              introducedVersion: .init(string: "2.0.0"),
+                        .init(domain: .init(rawValue: "iOS"),
+                              introducedVersion: .init(string: "1.0.0"),
                               deprecatedVersion: .init(string: "4.0.0"),
                               obsoletedVersion: nil,
-                              message: nil,
+                              message: "Use something else instead (Taylor's Version)",
                               renamed: nil,
                               isUnconditionallyDeprecated: false,
                               isUnconditionallyUnavailable: false,
@@ -1687,19 +1682,24 @@ struct MarkdownOutputTests {
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/fullName")
         let availability = try #require(node.metadata.availability(for: "iOS"))
-        #expect(availability.introduced == "1.0.0")
-        #expect(availability.deprecated == "4.0.0")
-        #expect(availability.unavailable == false)
+        #expect(availability.introduced == .versioned("1.0.0"))
+        #expect(availability.deprecated == .versioned("4.0.0"))
         
         let macAvailability = try #require(node.metadata.availability(for: "macOS"))
-        #expect(macAvailability.introduced == "2.0.0")
-        #expect(macAvailability.deprecated == "4.0.0")
-        #expect(macAvailability.unavailable == false)
+        #expect(macAvailability.introduced == .versioned("2.0.0"))
+        #expect(macAvailability.deprecated == .versioned("4.0.0"))
+                
+        let visionAvailability = node.metadata.availability(for: "visionOS")
+        #expect(visionAvailability == nil)
         
-        let visionAvailability = try #require(node.metadata.availability(for: "visionOS"))
-        #expect(visionAvailability.unavailable)
+        // Note that the first non-nil deprecation message, from any platform, forms the summary
+        #expect(node.metadata.deprecation == "Use something else instead")
     }
     
+    @Test
+    func fancyDeprecationIsRepresentedInMetadata() async throws {
+        <#body#>
+    }
     
     @Test
     func symbolIdentifierMatchesSymbolGraph() async throws {
