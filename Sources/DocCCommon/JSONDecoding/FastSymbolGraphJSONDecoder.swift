@@ -860,6 +860,13 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         
         // We don't push anything to the decoder's path until we've found the first key.
     }
+    
+    /// Returns a Boolean value indicating if the the decoder's state is at a "begin object" structural character (`{`).
+    package mutating func _isAtStartOfObject() -> Bool {
+        _skipWhitespace()
+        
+        return pointer.nextByte == .init(ascii: "{")
+    }
 
     private mutating func _advanceToNextKey() throws(ScanningError) -> Bool {
         if pointer.load(fromByteOffset: -1, as: UInt8.self) != .init(ascii: "{") {

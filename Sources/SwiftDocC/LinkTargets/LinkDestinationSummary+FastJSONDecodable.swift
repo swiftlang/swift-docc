@@ -215,17 +215,13 @@ extension LinkDestinationSummary.Variant: FastJSONDecodable {
 }
 
 private extension FastSymbolGraphJSONDecoder {
-    // `LinkDestinationSummary` summary decodes a `DocumentationNode.Kind` either as known ID or as a full structure.
+    // `LinkDestinationSummary` decodes a `DocumentationNode.Kind` either as known ID or as a full structure.
     // We don't want most other code to have this behavior, so this is a custom private method rather than a `FastJSONDecodable` conformance.
     mutating func decodeDocumentationNodeKind() throws(DecodingError) -> DocumentationNode.Kind {
         typealias _MaybeDecodedValue = Optional
         
-        do {
-            // Check if this JSON value is an object (starts with "{").
-            // If it is, then the leading "{" is consumed and the decoder will be ready to decode its individual fields.
-            try self.descendIntoObject()
-        } catch {
-            // If it's not, then the decoder's internal state still points to the first byte of the value (which try do decode as a string just below)
+        guard self._isAtStartOfObject() else {
+            // If the JSON value isn't an object, the link summary expects to decode it as a known `Kind` identifier.
             let kindID = try self.decode(String.self)
             guard let found = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
                 throw self.makeDataCorruptedError(message: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
@@ -238,7 +234,7 @@ private extension FastSymbolGraphJSONDecoder {
         var id:       _MaybeDecodedValue<String> = nil
         var isSymbol: _MaybeDecodedValue<Bool>   = nil
         
-        // The decoder has already descended into the object, above.
+        try self.descendIntoObject()
         while try self.advanceToNextKey() {
             if self.matchKey("name") {
                 name = try self.decode(String.self)
@@ -275,17 +271,13 @@ private extension FastSymbolGraphJSONDecoder {
 }
 
 private extension FastSymbolGraphJSONDecoder {
-    // `LinkDestinationSummary` summary decodes a `DocumentationNode.Kind` either as known ID or as a full structure.
+    // `LinkDestinationSummary` decodes a `SourceLanguage` either as known ID or as a full structure.
     // We don't want most other code to have this behavior, so this is a custom private method rather than a `FastJSONDecodable` conformance.
     mutating func decodeSourceLanguage() throws(DecodingError) -> SourceLanguage {
         typealias _MaybeDecodedValue = Optional
         
-        do {
-            // Check if this JSON value is an object (starts with "{").
-            // If it is, then the leading "{" is consumed and the decoder will be ready to decode its individual fields.
-            try self.descendIntoObject()
-        } catch {
-            // If it's not, then the decoder's internal state still points to the first byte of the value (which try do decode as a string just below)
+        guard self._isAtStartOfObject() else {
+            // If the JSON value isn't an object, the link summary expects to decode it as a known `SourceLanguage` identifier.
             let languageID = try self.decode(String.self)
             guard let found = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
                 throw self.makeDataCorruptedError(message: "Unknown SourceLanguage identifier: '\(languageID)'.")
@@ -300,6 +292,7 @@ private extension FastSymbolGraphJSONDecoder {
         var idAliases:            [String] = []
         var linkDisambiguationID: String?  = nil
         
+        try self.descendIntoObject()
         while try self.advanceToNextKey() {
             if self.matchKey("name") {
                 name = try self.decode(String.self)
@@ -392,11 +385,11 @@ extension RenderInlineContent: FastJSONDecodable {
             else if decoder.matchKey("isActive") {
                 isActive = try decoder.decode(Bool.self)
             }
-            else if decoder.matchKey("overridingTitle") {
-                overridingTitle = try decoder.decode(String.self)
-            }
             else if decoder.matchKey("overridingTitleInlineContent") {
                 overridingTitleInlineContent = try decoder.decode([RenderInlineContent].self)
+            }
+            else if decoder.matchKey("overridingTitle") {
+                overridingTitle = try decoder.decode(String.self)
             }
             // Do nothing for all unknown keys
             else {
@@ -493,6 +486,12 @@ extension RenderReferenceIdentifier: FastJSONDecodable {
 
 extension RenderContentMetadata: FastJSONDecodable {
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
+        var anchor:      String?                = nil
+        var title:       String?                = nil
+        var abstract:    [RenderInlineContent]? = nil
+        var deviceFrame: String?                = nil
+        
+        try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("\"anchor\"", byteOffset: -1) {
                 anchor = try decoder.decode(String.self)
@@ -511,6 +510,13 @@ extension RenderContentMetadata: FastJSONDecodable {
                 try decoder.ignoreValue()
             }
         }
+        
+        self.init(
+            anchor:      consume anchor,
+            title:       consume title,
+            abstract:    consume abstract,
+            deviceFrame: consume deviceFrame
+        )
     }
 }
 
@@ -523,9 +529,9 @@ extension LinkDestinationSummary.PlatformAvailability: FastJSONDecodable {
         var obsoletedAt:  String? = nil
         var message:      String? = nil
         var renamed:      String? = nil
-        var deprecated:   Bool?   = nil
-        var unavailable:  Bool?   = nil
-        var beta:         Bool?   = nil
+        var deprecated:   Bool    = false
+        var unavailable:  Bool    = false
+        var beta:         Bool    = false
         
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
@@ -776,6 +782,12 @@ private extension FastSymbolGraphJSONDecoder {
             else if self.matchKey("\"syntax\"", byteOffset: -1) {
                 syntax = try self.decode(String.self)
             }
+            else if self.matchKey("titleInlineContent") {
+                titleInlineContent = try self.decode([RenderInlineContent].self)
+            }
+            else if self.matchKey("titleStyle") {
+                propertyListTitleStyle = try self.decode(PropertyListTitleStyle.self)
+            }
             else if self.matchKey("title") {
                 title = try self.decode(String.self)
             }
@@ -792,10 +804,7 @@ private extension FastSymbolGraphJSONDecoder {
                 highlights = try self.decode([LineHighlighter.Highlight].self)
             }
             else if self.matchKey("\"poster\"", byteOffset: -1) {
-                poster = try self.decode(RenderReferenceIdentifier.self)
-            }
-            else if self.matchKey("titleInlineContent") {
-                titleInlineContent = try self.decode([RenderInlineContent].self)
+                poster = try self.decode(RenderReferenceIdentifier?.self)
             }
             else if self.matchKey("abstract") {
                 abstract = try self.decode([RenderInlineContent].self)
@@ -803,7 +812,7 @@ private extension FastSymbolGraphJSONDecoder {
             else if self.matchKey("conformance") {
                 conformance = try self.decode(ConformanceSection.self)
             }
-            else if self.matchKey("defaultImplementationCount") {
+            else if self.matchKey("defaultImplementations") {
                 defaultImplementationCount = try self.decode(Int.self)
             }
             else if self.matchKey("estimatedTime") {
@@ -815,10 +824,10 @@ private extension FastSymbolGraphJSONDecoder {
             else if self.matchKey("\"images\"", byteOffset: -1) {
                 images = try self.decode([TopicImage].self)
             }
-            else if self.matchKey("\"isBeta\"", byteOffset: -1) {
+            else if self.matchKey("beta") {
                 isBeta = try self.decode(Bool.self)
             }
-            else if self.matchKey("isDeprecated") {
+            else if self.matchKey("deprecated") {
                 isDeprecated = try self.decode(Bool.self)
             }
             else if self.matchKey("kind") {
@@ -827,14 +836,11 @@ private extension FastSymbolGraphJSONDecoder {
             else if self.matchKey("navigatorTitle") {
                 navigatorTitle = try self.decode([DeclarationRenderSection.Token].self)
             }
-            else if self.matchKey("propertyListDisplayName") {
+            else if self.matchKey("ideTitle") {
                 propertyListDisplayName = try self.decode(String.self)
             }
-            else if self.matchKey("propertyListRawKey") {
+            else if self.matchKey("name") {
                 propertyListRawKey = try self.decode(String.self)
-            }
-            else if self.matchKey("propertyListTitleStyle") {
-                propertyListTitleStyle = try self.decode(PropertyListTitleStyle.self)
             }
             else if self.matchKey("required") {
                 required = try self.decode(Bool.self)
@@ -1024,6 +1030,7 @@ extension ConformanceSection: FastJSONDecodable {
         // 1 required property
         var constraints: _MaybeDecodedValue<[RenderInlineContent]> = nil
 
+        try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("constraints") {
                 constraints = try decoder.decode([RenderInlineContent].self)
@@ -1053,6 +1060,7 @@ extension LineHighlighter.Highlight: FastJSONDecodable {
         var start:  Int? = nil
         var length: Int? = nil
 
+        try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("line") {
                 line = try decoder.decode(Int.self)
@@ -1119,6 +1127,7 @@ extension RenderNode.Tag: FastJSONDecodable {
         var type: _MaybeDecodedValue<String> = nil
         var text: _MaybeDecodedValue<String> = nil
 
+        try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
             if decoder.matchKey("type") {
                 type = try decoder.decode(String.self)
