@@ -117,6 +117,7 @@ add_library(SwiftDocC
   "Infrastructure/External Data/GlobalExternalSymbolResolver.swift"
   "Infrastructure/External Data/OutOfProcessReferenceResolver+Communication.swift"
   "Infrastructure/External Data/OutOfProcessReferenceResolver+DeprecatedCommunication.swift"
+  "Infrastructure/External Data/OutOfProcessReferenceResolver+FastJSONDecodable.swift"
   "Infrastructure/External Data/OutOfProcessReferenceResolver.swift"
   "Infrastructure/Input Discovery/DataProvider.swift"
   "Infrastructure/Input Discovery/DocumentationInputsProvider.swift"
@@ -153,6 +154,7 @@ add_library(SwiftDocC
   Infrastructure/Workspace/DocumentationContext+Inputs+Info.swift
   Infrastructure/Workspace/FeatureFlags+Info.swift
   LinkTargets/LinkDestinationSummary.swift
+  LinkTargets/LinkDestinationSummary+FastJSONDecodable.swift
   Model/AnchorSection.swift
   Model/AvailabilityParser.swift
   Model/BuildMetadata.swift
@@ -341,7 +343,7 @@ add_library(SwiftDocC
   Semantics/Media/Media.swift
   Semantics/Media/VideoMedia.swift
   Semantics/Metadata/AlternateRepresentation.swift
-  Semantics/Metadata/Availability.swift
+  Semantics/Metadata/AvailabilityDirective.swift
   Semantics/Metadata/CallToAction.swift
   Semantics/Metadata/CustomMetadata.swift
   Semantics/Metadata/DisplayName.swift

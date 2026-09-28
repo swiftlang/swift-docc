@@ -443,7 +443,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     private mutating func createTopicRenderReferences() -> [String: any RenderReference] {
         var renderReferences: [String: any RenderReference] = [:]
-        let renderer = DocumentationContentRenderer(context: context)
+        let renderer = contentRenderer
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
@@ -653,6 +653,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let documentationNode = try! context.entity(with: identifier)
         
+        let availableVariantTraits = documentationNode.availableVariantTraits
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitArticle(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
@@ -685,10 +686,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             var sections = [TaskGroupRenderSection]()
             
@@ -699,7 +700,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         topics,
                         allowExternalLinks: false,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -712,7 +713,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -754,7 +755,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -813,10 +814,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.customMetadata = metadataCustomDictionary
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             var seeAlsoSections = [TaskGroupRenderSection]()
             
@@ -827,7 +828,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         seeAlso,
                         allowExternalLinks: true,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -1312,6 +1313,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
         
+        let availableVariantTraits = documentationNode.availableVariantTraits
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
@@ -1497,7 +1499,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         collectedTopicReferences.append(identifier)
         
-        let contentRenderer = DocumentationContentRenderer(context: context)
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
@@ -1603,7 +1604,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.relationshipSectionsVariants = VariantCollection<[RelationshipsRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
             guard let relationships = symbol.relationshipsVariants[trait], !relationships.groups.isEmpty else {
@@ -1678,10 +1679,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // topics section or automatic task groups, because it's important
         // for automatic curation to consider _all_ variants this node is available in.
         node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             let automaticTaskGroups = symbol.automaticTaskGroupsVariants[trait] ?? []
             let topics = symbol.topicsVariants[trait]
@@ -1694,7 +1695,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         topics,
                         allowExternalLinks: false,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1707,7 +1708,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .top }),
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1740,7 +1741,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }),
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1793,10 +1794,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: [])
 
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             // If the symbol contains an authored See Also section from the documentation extension,
             // add it as the first section under See Also.
@@ -1808,7 +1809,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         seeAlso,
                         allowExternalLinks: true,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1832,7 +1833,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: [])
         
         /// The set of traits in which the symbol is deprecated in at least one platform.
-        let traitsInWhichSymbolsIsDeprecated = documentationNode.availableVariantTraits.filter { trait in
+        let traitsInWhichSymbolsIsDeprecated = availableVariantTraits.filter { trait in
             guard let platforms = symbol.availabilityVariants[trait]?.availability else {
                 return false
             }
@@ -1843,7 +1844,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.deprecationSummaryVariants = VariantCollection(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: nil,
             transform: { trait in
                 if traitsInWhichSymbolsIsDeprecated.contains(trait) || traitsInWhichSymbolsIsDeprecated.isEmpty {

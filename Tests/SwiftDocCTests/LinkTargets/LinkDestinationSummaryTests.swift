@@ -617,15 +617,14 @@ struct LinkDestinationSummaryTests {
         // Because of all the optional properties in a AvailabilityRenderItem, it's harder spot differences in the full-item-comparisons below.
         #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
         
-        let expectedUnconditionalInfo = availabilitySource == .inSourceAttributes ? false : nil
         // From the in-source attribute
-        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // Inherited from the iOS availability information
-        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // No iPad availability because it's marked as unavailable in the Info.plist
         
         // From the in-source attribute
-        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, isBeta: isBeta))
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
@@ -698,13 +697,13 @@ struct LinkDestinationSummaryTests {
         #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
         
         // From the in-source attribute
-        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // Inherited from the iOS availability information
-        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // No iPad availability because it's marked as unavailable in the Info.plist
         
         // From the in-source attribute
-        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, isBeta: isBeta))
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)

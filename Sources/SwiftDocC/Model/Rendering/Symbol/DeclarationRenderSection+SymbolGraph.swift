@@ -16,6 +16,7 @@ extension DeclarationRenderSection.Token {
     /// - Parameters:
     ///   - fragment: The symbol-graph declaration fragment to render.
     ///   - identifier: An optional reference to a symbol.
+    ///   - highlight: A Boolean value that is true if the new token should have a ``Highlight/changed`` highlight.
     init(
         fragment: SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment,
         identifier: String?,

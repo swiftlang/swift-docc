@@ -116,6 +116,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     ///   - markup: The markup that makes up this article's content.
     ///   - source: The location of the file that this article's content comes from.
     ///   - inputs: The collection of build inputs that the source file belongs to.
+    ///   - featureFlags: A set of feature flags that conditionally enable certain behaviors.
     ///   - diagnostics: A mutable collection of diagnostics to update with any additional issues encountered while initializing the article.
     public convenience init?(from markup: any Markup, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {

@@ -32,13 +32,13 @@ package struct LinkedElement {
     package var path: URL
     /// The names of the linked element, for display when the element is referenced in inline content.
     ///
-    /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
-    /// Symbols can either have a ``Names/single/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol``).
+    /// Articles, headings, tutorials, and similar pages have a ``Names/single(_:)`` ``Name/conceptual(_:)`` name.
+    /// Symbols can either have a ``Names/single(_:)`` ``Name/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol(_:)``).
     package var names: Names
     /// The subheadings of the linked element, for display when the element is referenced in either a Topics section, See Also section, or in a `@Links` directive.
     ///
-    /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
-    /// Symbols can either have a ``Names/single/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol``).
+    /// Articles, headings, tutorials, and similar pages have a ``Subheadings/single(_:)`` ``Subheading/conceptual(_:)`` name.
+    /// Symbols can either have a ``Subheadings/single(_:)`` ``Subheading/symbol(_:)`` name or have different names for each language representation (``Subheadings/languageSpecificSymbol(_:)``).
     package var subheadings: Subheadings
     /// The abstract of the page—to be displayed in either a Topics section, See Also section, or in a `@Links` directive—or `nil` if the linked element doesn't have an abstract.
     package var abstract: Paragraph?
