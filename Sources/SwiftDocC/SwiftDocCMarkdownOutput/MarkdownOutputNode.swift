@@ -42,8 +42,8 @@ extension MarkdownOutputNode {
                 case versioned(String)
                 
                 init(string: String?) {
-                    switch string {
-                    case nil, Availability.availableToken, Availability.deprecatedToken:
+                    switch string?.trimmingCharacters(in: .whitespacesAndNewlines) {
+                    case nil, "", Availability.availableToken, Availability.deprecatedToken:
                         self = .unversioned
                     case .some(let value):
                         self = .versioned(value)
