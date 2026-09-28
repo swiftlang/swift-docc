@@ -1749,8 +1749,38 @@ struct MarkdownOutputTests {
     }
     
     @Test
-    func fancyDeprecationIsRepresentedInMetadata() async throws {
-        <#body#>
+    func doccDeprecationIsRepresentedInMetadata() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"]),
+                makeSymbol(id: "new-property-id", kind: .property, pathComponents: ["SomeStruct", "newProperty"], docComment: "The new version"),
+                makeSymbol(id: "old-property-id", kind: .property, pathComponents: ["SomeStruct", "oldProperty"], docComment: #"""
+                    The old version.
+                    
+                    @DeprecationSummary {
+                        Use ``newProperty`` (Taylor's Version)
+                    }
+                    """#
+                           , availability: [
+                    .init(domain: nil,
+                          introducedVersion: nil,
+                          deprecatedVersion: .init(string: "27.0.0"),
+                          obsoletedVersion: nil,
+                          message: "Use newProperty",
+                          renamed: "newProperty",
+                          isUnconditionallyDeprecated: false,
+                          isUnconditionallyUnavailable: false,
+                          willEventuallyBeDeprecated: false
+                         )
+                ])
+            ], relationships: [
+                .init(source: "new-property-id", target: "some-struct-id", kind: .memberOf, targetFallback: nil),
+                .init(source: "old-property-id", target: "some-struct-id", kind: .memberOf, targetFallback: nil)
+            ])),
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct/oldProperty")
+        #expect(node.metadata.deprecation == "Use [`newProperty`](/documentation/SomeModule/SomeStruct/newProperty) (Taylor’s Version)")
     }
     
     @Test

@@ -259,7 +259,7 @@ extension MarkdownOutputSemanticVisitor {
                 }
             }
         }
-          
+        
         for availability in documentationNode.metadata?.availability ?? [] {
             let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
@@ -279,11 +279,14 @@ extension MarkdownOutputSemanticVisitor {
         
         metadata.availability = availabilities.values.sorted(by: \.platform)
          
-        if let deprecated = symbol.deprecatedSummaryVariants[.swift] {
+        if let deprecated = symbol.deprecatedSummaryVariants[.swift], deprecated.content.isEmpty == false {
             var deprecatedWalker = markdownWalker
             deprecatedWalker.markdown = ""
-            for element in deprecated.content {
-                deprecatedWalker.visit(element)
+            
+            deprecatedWalker.withRemoveIndentation(from: deprecated.content[0]) { walker in
+                for element in deprecated.content {
+                    walker.visit(element)
+                }
             }
             
             metadata.deprecation = deprecatedWalker.markdown.trimmingCharacters(in: .whitespacesAndNewlines)
