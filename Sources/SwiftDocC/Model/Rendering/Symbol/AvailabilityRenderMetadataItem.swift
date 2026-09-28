@@ -185,7 +185,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     }
     
     init(
-        name: String,
+        name: String?,
         introduced: String?,
         deprecated: String? = nil,
         obsoleted: String? = nil,
