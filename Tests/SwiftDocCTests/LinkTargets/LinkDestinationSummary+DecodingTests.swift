@@ -19,7 +19,7 @@ struct LinkDestinationSummaryDecodingTests {
     
     @Test(arguments: Self.exampleSourceLanguages)
     func bothImplementationsDecodeSourceLanguagesTheSame(_ language: DocCCommon.SourceLanguage) throws {
-        try assertRoundTripCoding(makeExampleSummary(language: language))
+        try assertRoundTripCoding(Self.makeExampleSummary(language: language))
     }
     
     @Test(arguments: [
@@ -31,14 +31,14 @@ struct LinkDestinationSummaryDecodingTests {
         DocumentationNode.Kind(name: "Custom Conceptual", id: "custom-conceptual", isSymbol: false),
     ])
     func bothImplementationsDecodeKindsTheSame(_ kind: DocumentationNode.Kind) throws {
-        try assertRoundTripCoding(makeExampleSummary(kind: kind))
+        try assertRoundTripCoding(Self.makeExampleSummary(kind: kind))
     }
     
     
     @Test(arguments: Self.exampleInlineContent)
     func bothImplementationsDecodeAbstractsTheSame(_ abstract: LinkDestinationSummary.Abstract?) throws {
         try assertRoundTripCoding(abstract)
-        try assertRoundTripCoding(makeExampleSummary(abstract: abstract))
+        try assertRoundTripCoding(Self.makeExampleSummary(abstract: abstract))
     }
     
     @Test(arguments: [
@@ -63,15 +63,15 @@ struct LinkDestinationSummaryDecodingTests {
     func bothImplementationsDecodeAvailabilityTheSame(_ availability: [AvailabilityRenderItem]?) throws {
         try assertRoundTripCoding(availability)
         
-        try assertRoundTripCoding(makeExampleSummary(platforms: availability))
+        try assertRoundTripCoding(Self.makeExampleSummary(platforms: availability))
     }
     
     @Test(arguments: Self.exampleDeclarationFragments)
     func bothImplementationsDecodeDeclarationFragmentsTheSame(_ declaration: LinkDestinationSummary.DeclarationFragments?) throws {
         try assertRoundTripCoding(declaration)
         
-        try assertRoundTripCoding(makeExampleSummary(subheadingDeclarationFragments: declaration))
-        try assertRoundTripCoding(makeExampleSummary(navigatorDeclarationFragments:  declaration))
+        try assertRoundTripCoding(Self.makeExampleSummary(subheadingDeclarationFragments: declaration))
+        try assertRoundTripCoding(Self.makeExampleSummary(navigatorDeclarationFragments:  declaration))
     }
     
     @Test(arguments: [
@@ -86,7 +86,7 @@ struct LinkDestinationSummaryDecodingTests {
     ])
     func bothImplementationsDecodeTopicImagesTheSame(_ images: [TopicImage]?) throws {
         try assertRoundTripCoding(images)
-        try assertRoundTripCoding(makeExampleSummary(topicImages: images))
+        try assertRoundTripCoding(Self.makeExampleSummary(topicImages: images))
     }
     
     // MARK: References
@@ -96,7 +96,7 @@ struct LinkDestinationSummaryDecodingTests {
         ImageReference(identifier: "some-image-id", altText: "Some alt text", imageAsset: exampleDataAssetWithInterfaceStyleVariations),
     ])
     func bothImplementationsDecodeImageReferencesTheSame(_ reference: ImageReference) throws {
-        try assertDecodesTheSame(makeExampleSummary(references: [reference]))
+        try assertDecodesTheSame(Self.makeExampleSummary(references: [reference]))
     }
     
     @Test(arguments: [
@@ -105,7 +105,7 @@ struct LinkDestinationSummaryDecodingTests {
         VideoReference(identifier: "some-video-id", altText: "Some alt text", videoAsset: exampleDataAssetWithInterfaceStyleVariations, poster: "some-image-id"),
     ])
     func bothImplementationsDecodeVideoReferencesTheSame(_ reference: VideoReference) throws {
-        try assertDecodesTheSame(makeExampleSummary(references: [reference]))
+        try assertDecodesTheSame(Self.makeExampleSummary(references: [reference]))
     }
     
     @Test(arguments: [
@@ -123,7 +123,7 @@ struct LinkDestinationSummaryDecodingTests {
         ]),
     ])
     func bothImplementationsDecodeFileReferencesTheSame(_ reference: FileReference) throws {
-        try assertRoundTripCoding(makeExampleSummary(references: [reference]))
+        try assertRoundTripCoding(Self.makeExampleSummary(references: [reference]))
     }
     
     @Test(arguments: [
@@ -133,18 +133,18 @@ struct LinkDestinationSummaryDecodingTests {
         DownloadReference(identifier: "some-download-id", renderURL:   URL(string: "/path/to/some-file")!, checksum: "abc123"),
     ])
     func bothImplementationsDecodeDownloadReferencesTheSame(_ reference: DownloadReference) throws {
-        try assertDecodesTheSame(makeExampleSummary(references: [reference]))
+        try assertDecodesTheSame(Self.makeExampleSummary(references: [reference]))
     }
     
     @Test(arguments: Self.exampleInlineContent)
     func bothImplementationsDecodeLinkReferencesTheSame(_ inlineContent: [RenderInlineContent]?) throws {
         let reference = LinkReference(identifier: "plain-title", title: "Plain text title", titleInlineContent: inlineContent, url: "http://example.com")
-        try assertRoundTripCoding(makeExampleSummary(references: [reference]))
+        try assertRoundTripCoding(Self.makeExampleSummary(references: [reference]))
     }
     
     @Test
     func bothImplementationsDecodeMiscellaneousReferencesTheSame() throws {
-        try assertRoundTripCoding(makeExampleSummary(references: [
+        try assertRoundTripCoding(Self.makeExampleSummary(references: [
             FileTypeReference(identifier: "some-file-type-id", displayName: "Some display name", iconBase64: Data("Some icon".utf8).base64EncodedData()),
             XcodeRequirementReference(identifier: "some-xcode-id", title: "Some requirement title", url: URL(string: "http://example.com")!),
             UnresolvedRenderReference(identifier: "some-unresolved-reference", title: "Some title"),
@@ -214,7 +214,7 @@ struct LinkDestinationSummaryDecodingTests {
         ]
     )
     func bothImplementationsDecodeTopicRenderReferencesTheSame(_ reference: TopicRenderReference) throws {
-        try assertDecodesTheSame(makeExampleSummary(references: [reference]))
+        try assertDecodesTheSame(Self.makeExampleSummary(references: [reference]))
     }
     
     @Test(arguments: [
@@ -270,9 +270,9 @@ struct LinkDestinationSummaryDecodingTests {
             )
             if style == nil, rawKey == nil, displayName == nil {
                 // The encoder doesn't include the `propertyListKeyNames` if all its properties are empty.
-                try assertDecodesTheSame(makeExampleSummary(references: [reference]))
+                try assertDecodesTheSame(Self.makeExampleSummary(references: [reference]))
             } else {
-                try assertRoundTripCoding(makeExampleSummary(references: [reference]))
+                try assertRoundTripCoding(Self.makeExampleSummary(references: [reference]))
             }
         }
     }
@@ -292,6 +292,180 @@ struct LinkDestinationSummaryDecodingTests {
     ])
     func bothImplementationsDecodeDataAssetsTheSame(_ asset: DataAsset) throws {
         try assertRoundTripCoding(asset)
+    }
+    
+    // MARK: Variants
+   
+    @Test(arguments: Self.exampleSourceLanguages)
+    func bothImplementationsDecodeDataAssetsTheSame(_ language: DocCCommon.SourceLanguage) throws {
+        let trait = RenderNode.Variant.Trait.interfaceLanguage(language.id)
+        try assertRoundTripCoding(trait)
+    }
+
+    @Test
+    func bothImplementationsDecodeVariantsTheSame() throws {
+        let trait = [RenderNode.Variant.Trait.interfaceLanguage("objc")]
+        
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait)
+        ]))
+        
+        // Kind
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, kind: .enumerationCase)
+        ]))
+        
+        // Language
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, language: .objectiveC)
+        ]))
+        
+        // Relative presentation URL
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, relativePresentationURL: URL(string: "path/to/variant/page")!)
+        ]))
+        
+        // Title
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, title: "Variant title")
+        ]))
+        
+        // Abstract
+        try assertDecodesTheSame(Self.makeExampleSummary(variants: [
+            .init(traits: trait, abstract: .some(nil))
+        ]))
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, abstract: [.text("Some "), .codeVoice(code: "variant"), .text(" abstract.")])
+        ]))
+        
+        // USR
+        try assertDecodesTheSame(Self.makeExampleSummary(variants: [
+            .init(traits: trait, usr: .some(nil))
+        ]))
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, usr: "some-variant-usr")
+        ]))
+        
+        // Plain text declaration
+        try assertDecodesTheSame(Self.makeExampleSummary(variants: [
+            .init(traits: trait, plainTextDeclaration: .some(nil))
+        ]))
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, plainTextDeclaration: "func variant() {}")
+        ]))
+        
+        // Subheading declaration fragments
+        let fragments: LinkDestinationSummary.DeclarationFragments = [
+            .init(text: "func",    kind: .keyword),
+            .init(text: " ",       kind: .text),
+            .init(text: "variant", kind: .identifier),
+            .init(text: "())",     kind: .text),
+        ]
+        try assertDecodesTheSame(Self.makeExampleSummary(variants: [
+            .init(traits: trait, subheadingDeclarationFragments: .some(nil))
+        ]))
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, subheadingDeclarationFragments: fragments)
+        ]))
+        
+        try assertDecodesTheSame(Self.makeExampleSummary(variants: [
+            .init(traits: trait, navigatorDeclarationFragments: .some(nil))
+        ]))
+        try assertRoundTripCoding(Self.makeExampleSummary(variants: [
+            .init(traits: trait, navigatorDeclarationFragments: fragments)
+        ]))
+    }
+    
+    // MARK: Responses
+    
+    @Test(arguments: [
+        OutOfProcessReferenceResolver.ResponseV2.identifierAndCapabilities("com.example", []),
+        OutOfProcessReferenceResolver.ResponseV2.failure(.init(summary: "Some failure without solutions",    solutions: nil)),
+        OutOfProcessReferenceResolver.ResponseV2.failure(.init(summary: "Some failure with empty solutions", solutions: [])),
+        OutOfProcessReferenceResolver.ResponseV2.failure(.init(summary: "Some failure with solutions", solutions: [
+            .init(summary: "Some suggested fix",                       replacement: nil),
+            .init(summary: "Another suggested fix with a replacement", replacement: "Some new text to replace the external link"),
+        ])),
+        OutOfProcessReferenceResolver.ResponseV2.resolved(Self.makeExampleSummary()),
+        OutOfProcessReferenceResolver.ResponseV2.resolved(
+            makeExampleSummary(
+                kind: .instanceProperty,
+                language: .swift,
+                title: "someProperty",
+                abstract: [.text("Some abstract")],
+                availableLanguages: [.swift, .objectiveC],
+                platforms: [.init(name: "SomePlatform", introduced: "1.2.3", isBeta: true)],
+                usr: "some-symbol-id",
+                plainTextDeclaration: "var someProperty: Int",
+                subheadingDeclarationFragments: [
+                    .init(text: "var",          kind: .keyword),
+                    .init(text: " ",            kind: .text),
+                    .init(text: "someProperty", kind: .identifier),
+                    .init(text: ": ",           kind: .text),
+                    .init(text: "Int",          kind: .identifier, preciseIdentifier: "s:Si"),
+                ],
+                navigatorDeclarationFragments: [
+                    .init(text: "var",          kind: .keyword),
+                    .init(text: " ",            kind: .text),
+                    .init(text: "someProperty", kind: .identifier),
+                    .init(text: ": ",           kind: .text),
+                    .init(text: "Int",          kind: .identifier, preciseIdentifier: "s:Si"),
+                ],
+                redirects: [
+                    URL(string: "/path/to/previous/location/for/page")!
+                ],
+                topicImages: [
+                    .init(type: .card, identifier: "some-image-reference")
+                ],
+                references: [
+                    ImageReference(
+                        identifier: "some-image-reference",
+                        altText: "Some alt text for this image",
+                        imageAsset: Self.exampleDataAssetWithScaleVariations
+                    )
+                ],
+                variants: [
+                    .init(
+                        traits: [.interfaceLanguage("objc")],
+                        plainTextDeclaration: "@property NSInteger someProperty;",
+                        subheadingDeclarationFragments: [
+                            .init(text: "@property",    kind: .keyword),
+                            .init(text: " ",            kind: .text),
+                            .init(text: "NSInteger",    kind: .identifier, preciseIdentifier: "c:@T@NSInteger"),
+                            .init(text: " ",            kind: .text),
+                            .init(text: "someProperty", kind: .identifier),
+                            .init(text: ";",            kind: .text),
+                        ],
+                        navigatorDeclarationFragments: [
+                            .init(text: "someProperty", kind: .identifier),
+                        ]
+                    )
+                ]
+            )
+        )
+    ])
+    func bothImplementationsDecodeDataAssetsTheSame(_ response: OutOfProcessReferenceResolver.ResponseV2) throws {
+        let encoded = try JSONEncoder().encode(response)
+
+        let decoded     = try              JSONDecoder().decode(OutOfProcessReferenceResolver.ResponseV2.self, from: encoded)
+        let fastDecoded = try FastSymbolGraphJSONDecoder.decode(OutOfProcessReferenceResolver.ResponseV2.self, from: encoded)
+        
+        switch (decoded, fastDecoded) {
+            case (.identifierAndCapabilities(let lhsID, let lhsCapabilities), .identifierAndCapabilities(let rhsID, let rhsCapabilities)):
+                #expect(lhsID           == rhsID)
+                #expect(lhsCapabilities == rhsCapabilities)
+            
+            case (.failure(let lhsInfo), .failure(let rhsInfo)):
+                #expect(lhsInfo.summary == rhsInfo.summary)
+                #expect(lhsInfo.solutions?.map(\.summary) == rhsInfo.solutions?.map(\.summary))
+                #expect(lhsInfo.solutions?.map(\.replacement) == rhsInfo.solutions?.map(\.replacement))
+                
+            case (.resolved(let lhsSummary), .resolved(let rhsSummary)):
+                #expect(lhsSummary == rhsSummary)
+            
+        default:
+            Issue.record("Unexpectedly decoded responses as different types")
+        }
     }
     
     // MARK: Example data
@@ -440,7 +614,7 @@ struct LinkDestinationSummaryDecodingTests {
         )
     }()
     
-    private func makeExampleSummary(
+    private static func makeExampleSummary(
         kind: DocumentationNode.Kind = .class,
         language: SourceLanguage = .swift,
         title: String = "SomeClass",

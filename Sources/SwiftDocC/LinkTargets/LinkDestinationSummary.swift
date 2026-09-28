@@ -742,12 +742,22 @@ extension LinkDestinationSummary.Variant {
         }
         relativePresentationURL = try container.decodeIfPresent(URL.self, forKey: .relativePresentationURL)
         title = try container.decodeIfPresent(String.self, forKey: .title)
-        abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
-        usr = try container.decodeIfPresent(String?.self, forKey: .usr)
-        plainTextDeclaration = try container.decodeIfPresent(String?.self, forKey: .plainTextDeclaration)
-        subheadingDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
+        abstract = try container.decodeOptionalVariantValueIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
+        usr = try container.decodeOptionalVariantValueIfPresent(String?.self, forKey: .usr)
+        plainTextDeclaration = try container.decodeOptionalVariantValueIfPresent(String?.self, forKey: .plainTextDeclaration)
+        subheadingDeclarationFragments = try container.decodeOptionalVariantValueIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         navigatorDeclarationFragments = try container
-            .decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)
+            .decodeOptionalVariantValueIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)
+    }
+}
+
+private extension KeyedDecodingContainer {
+    func decodeOptionalVariantValueIfPresent<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T? {
+        if contains(key) {
+            .some(try decode(type, forKey: key))
+        } else {
+            nil
+        }
     }
 }
 
