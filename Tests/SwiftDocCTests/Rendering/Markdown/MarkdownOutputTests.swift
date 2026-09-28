@@ -1698,35 +1698,20 @@ struct MarkdownOutputTests {
                     pathComponents: ["MarkdownSymbol", "fullName"],
                     docComment: "A basic property to test markdown output",
                     availability: [
-                        .init(domain: .init(rawValue: "macOS"),
-                              introducedVersion: .init(string: "2.0.0"),
-                              deprecatedVersion: .init(string: "4.0.0"),
-                              obsoletedVersion: nil,
-                              message: "Use something else instead",
-                              renamed: nil,
-                              isUnconditionallyDeprecated: false,
-                              isUnconditionallyUnavailable: false,
-                              willEventuallyBeDeprecated: false
+                        .init(domainName: "macOS",
+                              introduced: .init(string: "2.0.0"),
+                              deprecated: .init(string: "4.0.0"),
+                              message: "Use something else instead"
                              ),
-                        .init(domain: .init(rawValue: "iOS"),
-                              introducedVersion: .init(string: "1.0.0"),
-                              deprecatedVersion: .init(string: "4.0.0"),
-                              obsoletedVersion: nil,
-                              message: "Use something else instead (Taylor's Version)",
-                              renamed: nil,
-                              isUnconditionallyDeprecated: false,
-                              isUnconditionallyUnavailable: false,
-                              willEventuallyBeDeprecated: false
+                        .init(domainName: "iOS",
+                              introduced: .init(string: "1.0.0"),
+                              deprecated: .init(string: "4.0.0"),
+                              message: "Use something else instead (Taylor's Version)"
                              ),
-                        .init(domain: .init(rawValue: "visionOS"),
-                              introducedVersion: .init(string: "2.0.0"),
-                              deprecatedVersion: .init(string: "4.0.0"),
-                              obsoletedVersion: .init(string: "5.0.0"),
-                              message: nil,
-                              renamed: nil,
-                              isUnconditionallyDeprecated: false,
-                              isUnconditionallyUnavailable: false,
-                              willEventuallyBeDeprecated: false
+                        .init(domainName: "visionOS",
+                              introduced: .init(string: "2.0.0"),
+                              deprecated: .init(string: "4.0.0"),
+                              obsoleted: .init(string: "5.0.0")
                              )
                     ])
             ]))
@@ -1749,6 +1734,68 @@ struct MarkdownOutputTests {
     }
     
     @Test
+    func universalDeprecationFillsPlatformsButDoesNotOverride() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"],
+                availability: [
+                    .init(domainName: "iOS", introduced: .init(string: "13.0"), deprecated: nil),
+                    .init(domainName: "macOS", introduced: .init(string: "10.15"), deprecated: .init(string: "14.0")),
+                    .init(domainName: nil, introduced: nil, deprecated: .init(string: "16.0"))
+                ])
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
+        let universalAvailability = node.metadata.availability(for: "*")
+        #expect(universalAvailability == nil) // Not used, because platforms already existed
+        let iOSAvailability = try #require(node.metadata.availability(for: "iOS"))
+        #expect(iOSAvailability.deprecated == .versioned("16.0.0")) // Taken from *
+        #expect(iOSAvailability.introduced == .versioned("13.0.0")) // Left from platform-specific
+        let macOSAvailability = try #require(node.metadata.availability(for: "macOS"))
+        #expect(macOSAvailability.deprecated == .versioned("14.0.0")) // Not overwritten
+    }
+    
+    @Test
+    func unconditionalUniversalDeprecationFillsPlatformsButDoesNotOverride() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"],
+                availability: [
+                    .init(domainName: "iOS", introduced: .init(string: "13.0"), deprecated: nil),
+                    .init(domainName: "macOS", introduced: .init(string: "10.15"), deprecated: .init(string: "14.0")),
+                    .init(domainName: nil, introduced: nil, deprecated: nil, isUnconditionallyDeprecated: true)
+                ])
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
+        let universalAvailability = node.metadata.availability(for: "*")
+        #expect(universalAvailability == nil) // Not used, because platforms already existed
+        let iOSAvailability = try #require(node.metadata.availability(for: "iOS"))
+        #expect(iOSAvailability.deprecated == .unversioned) // Taken from *
+        #expect(iOSAvailability.introduced == .versioned("13.0.0")) // Left from platform-specific
+        let macOSAvailability = try #require(node.metadata.availability(for: "macOS"))
+        #expect(macOSAvailability.deprecated == .versioned("14.0.0")) // Not overwritten
+    }
+    
+    @Test
+    func unconditionalDeprecationIsRepresentedInMetadata() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"],
+                availability: [
+                    .init(domainName: "iOS", introduced: .init(string: "13.0"), deprecated: nil, isUnconditionallyDeprecated: true)
+                ])
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
+        let iOSAvailability = try #require(node.metadata.availability(for: "iOS"))
+        #expect(iOSAvailability.deprecated == .unversioned)
+    }
+    
+    @Test
     func doccDeprecationIsRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
@@ -1760,18 +1807,14 @@ struct MarkdownOutputTests {
                     @DeprecationSummary {
                         Use ``newProperty`` (Taylor's Version)
                     }
-                    """#
-                           , availability: [
-                    .init(domain: nil,
-                          introducedVersion: nil,
-                          deprecatedVersion: .init(string: "27.0.0"),
-                          obsoletedVersion: nil,
-                          message: "Use newProperty",
-                          renamed: "newProperty",
-                          isUnconditionallyDeprecated: false,
-                          isUnconditionallyUnavailable: false,
-                          willEventuallyBeDeprecated: false
-                         )
+                    """#,
+                    availability: [
+                        .init(domainName: nil,
+                              introduced: nil,
+                              deprecated: .init(string: "27.0.0"),
+                              message: "Use newProperty",
+                              renamed: "newProperty"
+                             )
                 ])
             ], relationships: [
                 .init(source: "new-property-id", target: "some-struct-id", kind: .memberOf, targetFallback: nil),
