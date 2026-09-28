@@ -270,7 +270,7 @@ extension MarkdownOutputSemanticVisitor {
                 // This was the only availability
                 availabilities[universalDeprecation.platform] = universalDeprecation
             } else {
-                // Update any existing non-nil deprecations
+                // Update any platforms, overwriting if there is no deprecation already
                 availabilities = availabilities.mapValues { old in
                         .init(platform: old.platform, introduced: old.introduced, deprecated: old.deprecated ?? universalDeprecation.deprecated)
                 }
