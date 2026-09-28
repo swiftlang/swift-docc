@@ -392,7 +392,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     @inlinable
     package mutating func decode<Value: FastJSONDecodable>(_ type: [Value].Type) throws(DecodingError) -> [Value] {
         do {
-            try _commonArrayDecodingPreamble()
+            try _commonArrayDecodingSetUp()
             
             var values: [Value] = []
             while pointer.nextByte != .init(ascii: "]") {
@@ -418,7 +418,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     /// However, sometimes---for example when decoding "existential types" (`any Value`)---it's not possible to conform to `FastJSONDecodable` but it is possible to manually decode a value.
     package mutating func _decodeArray<Value>(_ body: (inout Self) throws(DecodingError) -> Value) throws(DecodingError) -> [Value] {
         do {
-            try _commonArrayDecodingPreamble()
+            try _commonArrayDecodingSetUp()
             
             var values: [Value] = []
             while pointer.nextByte != .init(ascii: "]") {
@@ -438,11 +438,21 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         }
     }
     
-    // Both ``decode(_:)->[Value]`` and ``_decodeArray(_:)`` do the same
-    // Unfortunately,
-    private mutating func _commonArrayDecodingPreamble() throws(ScanningError) {
+    // Both ``decode(_:)->[Value]`` and ``_decodeArray(_:)`` do the same decoding except for how the one line where they decode the value.
+    // It would be possible to implement ``decode(_:)->[Value]`` as a call to ``_decodeArray(_:)`` to make this common logic more apparent:
+    //
+    //     try _decodeArray { decoder throws(DecodingError) -> Value in
+    //         try decoder.decode(Value.self)
+    //     }
+    //
+    // Unfortunately, the compiler doesn't fully optimize away that closure, resulting in a slight but measurable performance regression.
+    // Because decoding of array values is very common---and declaration fragments are some of the most frequent elements in symbol graph files---
+    // we instead extract the 3 chunks of common logic (set up, iteration, clean up) and have both implementations call those methods.
+    // This maintains the high performance of the common iteration while still allowing the more niche ``_decodeArray(_:)`` API to share the core logic.
+    
+    private mutating func _commonArrayDecodingSetUp() throws(ScanningError) {
         try _descendIntoArray()
-        // The decoder's path is not pointing to the first position in the array.
+        // Point the decoder's path to the first position in the array so that potential failures are attributes to elements within the array.
         path.push(.index(0))
         _skipWhitespace()
     }
