@@ -55,10 +55,10 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
             $0.domain?.rawValue == PlatformName.macOS.rawValue
         }!
 
-        // From Info.plist, filled
-        XCTAssertEqual(Version(major: 10, minor: 9, patch: 0), macOSOnlyDeprecated.introducedVersion)
+        // From Info.plist
+        XCTAssertNil(macOSOnlyDeprecated.introducedVersion)
 
-        // From symbol graph, untouched
+        // From symbol graph
         XCTAssertEqual(Version(major: 10, minor: 10, patch: 0), macOSOnlyDeprecated.deprecatedVersion)
     }
 
@@ -85,10 +85,10 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
             $0.domain?.rawValue == PlatformName.iOS.rawValue
         }!
 
-        // From Info.plist, filled
-        XCTAssertEqual(Version(major: 11, minor: 1, patch: 0), iOSOnlyDeprecated.introducedVersion)
+        // From Info.plist
+        XCTAssertNil(iOSOnlyDeprecated.introducedVersion)
 
-        // From symbol graph, untouched
+        // From symbol graph
         XCTAssertEqual(Version(major: 13, minor: 0, patch: 0), iOSOnlyDeprecated.deprecatedVersion)
     }
 
@@ -115,10 +115,10 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
             $0.domain?.rawValue == PlatformName.catalyst.rawValue
         }!
 
-        // From Info.plist, filled from iOS
-        XCTAssertEqual(Version(major: 11, minor: 1, patch: 0), catalystOnlyDeprecated.introducedVersion)
+        // From Info.plist
+        XCTAssertNil(catalystOnlyDeprecated.introducedVersion)
 
-        // From symbol graph, untouched
+        // From symbol graph
         XCTAssertEqual(Version(major: 13, minor: 0, patch: 0), catalystOnlyDeprecated.deprecatedVersion)
     }
 
