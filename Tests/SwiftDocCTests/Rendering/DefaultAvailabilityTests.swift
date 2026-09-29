@@ -521,8 +521,7 @@ class DefaultAvailabilityTests: XCTestCase {
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
             
-            XCTAssertNotNil(withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
-            XCTAssertNil(   withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description)
+            XCTAssert(withoutInSourceAvailability.isEmpty)
             
             // Verify that the module page displays only the default availability
             let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -544,13 +543,8 @@ class DefaultAvailabilityTests: XCTestCase {
             
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
-            XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" }))
-            XCTAssertNil(   withInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion?.description)
             
-            XCTAssertNotNil(withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
-            XCTAssertEqual( withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "8.0.0")
-            XCTAssertNotNil(withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" }))
-            XCTAssertNil(   withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion?.description)
+            XCTAssert(withoutInSourceAvailability.isEmpty)
             
             // Verify that the module page displays only the default availability
             let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
