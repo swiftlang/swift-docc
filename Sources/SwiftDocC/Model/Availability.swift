@@ -106,9 +106,9 @@ struct Availability {
     ///
     /// This is its own method because this computation only needs to be performed once per module.
     /// Alternatively, if `addInSourceAvailability(from:languageFilter:)` was responsible for this task,
-    /// then the caller couldn't forget to perform this task but it would have to performed once per symbol instead once per module.
+    /// then the caller couldn't forget to perform this task but it would have to be performed once per symbol instead once per module.
     ///
-    /// - Parameter unifiedGraph: The unified symbol graph to
+    /// - Parameter unifiedGraph: The unified symbol graph that the container uses to mark the encountered platforms.
     mutating func markAllEncounteredPlatforms(in unifiedGraph: UnifiedSymbolGraph) {
         for module in unifiedGraph.moduleData.values {
             guard let knownPlatform = KnownPlatform(module.platform) else {
@@ -135,7 +135,7 @@ struct Availability {
     ///
     /// - Parameters:
     ///   - unifiedSymbol: The symbol to read the unified in-source availability annotations from.
-    ///   - languageFilter: The string identifier of a source language, that that container used to restrict the container to only add information that matches the provides  which information the container reads from the symbol.
+    ///   - languageFilter: The string identifier of a source language, that that container uses to only add in-source information that apply to that source language.
     mutating func addInSourceAvailability(from unifiedSymbol: UnifiedSymbolGraph.Symbol, matchingLanguage languageFilter: String) {
         // Mark the platforms that this specific symbol exist for in the unified symbol graph.
         // Any platform that's left as `havePlatformForInSymbolGraph` after this loop indicates a platform that the symbol was excluded from using conditional compilation.
@@ -738,7 +738,7 @@ private extension Availability.Information {
             patch = .init(clamping: version.patch)
         }
         
-        ///
+        // A non-private version representation accessed to create the list of `Platform` values.
         var semanticVersion: SemanticVersion {
             .init(
                 major: Int(major),
