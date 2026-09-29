@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,15 +12,15 @@ import Foundation
 import Testing
 import DocCTestUtilities
 import SymbolKit
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import DocCCommon
 
 struct MarkdownOutputTests {
     
     // MARK: - Test conveniences
     
-    private func markdownOutput(catalog: Folder, path: String) async throws -> (MarkdownOutputNode, MarkdownOutputManifest) {
-        let context = try await load(catalog: catalog)
+    private func markdownOutput(catalog: Folder, path: String, configuration: DocumentationContext.Configuration = .init()) async throws -> (MarkdownOutputNode, MarkdownOutputManifest) {
+        let context = try await load(catalog: catalog, configuration: configuration)
         var path = path
         if !path.hasPrefix("/") {
             path = "/documentation/MarkdownOutput/\(path)"
@@ -234,22 +234,99 @@ struct MarkdownOutputTests {
             ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
-        let expectedInline = "inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
+        let expectedInline = "inline link: [Rows and Columns](/documentation/markdownoutput/rowsandcolumns)"
         #expect(node.markdown.contains(expectedInline))
         
-        let expectedInlineAnchor = "inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)"
+        let expectedInlineAnchor = "inline link with a heading: [Overview](/documentation/markdownoutput/rowsandcolumns#Overview)"
         #expect(node.markdown.contains(expectedInlineAnchor))
-        let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
+        let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](/documentation/markdownoutput/rowsandcolumns#Multi-word-heading)"
         #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
         
-        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nAbstract rendered when curated"
+        let expectedLinkList = "[Rows and Columns](/documentation/markdownoutput/rowsandcolumns)\n\nAbstract rendered when curated"
         #expect(node.markdown.contains(expectedLinkList))
         
         // No abstract
-        let expectedLinkListAnchor = "[Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
+        let expectedLinkListAnchor = "[Overview](/documentation/markdownoutput/rowsandcolumns#Overview)\n\n###"
         #expect(node.markdown.contains(expectedLinkListAnchor))
     }
-
+    
+    // The markdown file for a page is written at the page's lowercased, file safe path (see `JSONEncodingRenderNodeWriter.write(_:)`),
+    // which is the same path that the render JSON uses in its presentation URL for that page.
+    // Links to other pages need to use that path so that they resolve on a case-sensitive web server
+    // and so that they point to the shortened path of pages with very long names.
+    @Test
+    func linksUseTheLowercasedAndShortenedPathThatTheLinkedPageIsWrittenAt() async throws {
+        let longMethodName = "someMethodWithAVeryLongName(\(String(repeating: "someParameter:", count: 20)))"
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"]),
+                    makeSymbol(id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod()"]),
+                    makeSymbol(id: "long-method-id", kind: .method, pathComponents: ["SomeClass", longMethodName]),
+                ],
+                relationships: [
+                    .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                    .init(source: "long-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+                ]
+            ))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SomeClass")
+        
+        for methodName in ["someMethod()", longMethodName] {
+            let reference = ResolvedTopicReference(bundleID: "MarkdownOutput", path: "/documentation/MarkdownOutput/SomeClass/\(methodName)", sourceLanguage: .swift)
+            let writtenFilePath = NodeURLGenerator.fileSafeReferencePath(reference, lowercased: true)
+            #expect(node.markdown.contains("](/\(writtenFilePath))"), "Missing link to '\(writtenFilePath)' in:\n\(node.markdown)")
+        }
+        
+        // Verify the assumption that the long name is shortened, so that the test above also covers shortened paths.
+        let longReference = ResolvedTopicReference(bundleID: "MarkdownOutput", path: "/documentation/MarkdownOutput/SomeClass/\(longMethodName)", sourceLanguage: .swift)
+        #expect(!NodeURLGenerator.fileSafeReferencePath(longReference, lowercased: true).hasSuffix(longMethodName.lowercased()))
+    }
+    
+    // Pages from other documentation sources are hosted elsewhere, so the hosting base path of this documentation doesn't apply to them.
+    // The render JSON equivalent is `DocumentationContentRenderer.renderReference(for:with:dependencies:)`, which uses the external entity's URL.
+    @Test
+    func linksToExternalSymbolsUseTheExternalPresentationURL() async throws {
+        struct TestSymbolResolver: GlobalExternalSymbolResolver {
+            func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+                guard preciseIdentifier == "s:SH" else { return nil }
+                let reference = ResolvedTopicReference(bundleID: "com.external.swift", path: "/documentation/Swift/Hashable", sourceLanguage: .swift)
+                let entity = LinkResolver.ExternalEntity(
+                    kind: .protocol,
+                    language: .swift,
+                    // A URL that differs from this documentation's URL for the reference, to verify that the markdown output uses the external URL as-is.
+                    relativePresentationURL: URL(string: "/other/base-path/documentation/swift/hashable")!,
+                    referenceURL: reference.url,
+                    title: "Hashable",
+                    availableLanguages: [.swift],
+                    variants: []
+                )
+                return (reference, entity)
+            }
+        }
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "local-conformer-id", kind: .struct, pathComponents: ["LocalConformer"]),
+                ],
+                relationships: [
+                    .init(source: "local-conformer-id", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable"),
+                ]
+            )),
+        ])
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.globalSymbolResolver = TestSymbolResolver()
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "LocalConformer", configuration: configuration)
+        
+        let expectedLink = "### Conforms To\n\n[`Hashable`](/other/base-path/documentation/swift/hashable)"
+        #expect(node.markdown.contains(expectedLink), "Missing '\(expectedLink)' in:\n\(node.markdown)")
+    }
+    
     @Test
     func articleInListItemIsTitleAndLink() async throws {
         let catalog = catalog(files: [
@@ -281,19 +358,19 @@ struct MarkdownOutputTests {
             ])
 
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
-        let expectedInline = "- This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
+        let expectedInline = "- This is an inline link: [Rows and Columns](/documentation/markdownoutput/rowsandcolumns)"
         #expect(node.markdown.contains(expectedInline))
 
-        let expectedInlineAnchor = "  - This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)"
+        let expectedInlineAnchor = "  - This is a nested inline link with a heading: [Overview](/documentation/markdownoutput/rowsandcolumns#Overview)"
         #expect(node.markdown.contains(expectedInlineAnchor))
-        let expectedInlineAnchorMultiWord = "- This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
+        let expectedInlineAnchorMultiWord = "- This is an inline link with a multi-word heading: [Multi-word heading](/documentation/markdownoutput/rowsandcolumns#Multi-word-heading)"
         #expect(node.markdown.contains(expectedInlineAnchorMultiWord))
 
         let expectedOrdered = """
-        1. This is an inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)
-           1. This is a nested inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
-           2. Here is it again [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)
-        2. This is an inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)
+        1. This is an inline link: [Rows and Columns](/documentation/markdownoutput/rowsandcolumns)
+           1. This is a nested inline link with a heading: [Overview](/documentation/markdownoutput/rowsandcolumns#Overview)
+           2. Here is it again [Overview](/documentation/markdownoutput/rowsandcolumns#Overview)
+        2. This is an inline link with a multi-word heading: [Multi-word heading](/documentation/markdownoutput/rowsandcolumns#Multi-word-heading)
         """
         #expect(node.markdown.contains(expectedOrdered))
     }
@@ -353,10 +430,10 @@ struct MarkdownOutputTests {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
-        let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"
+        let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/markdownoutput/markdownsymbol)"
         #expect(node.markdown.contains(expectedInline))
         
-        let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output"
+        let expectedLinkList = "[`MarkdownSymbol`](/documentation/markdownoutput/markdownsymbol)\n\nA basic symbol to test markdown output"
         #expect(node.markdown.contains(expectedLinkList))
         
         let unresolvableLink = "[`Unresolvable`]"
@@ -364,7 +441,7 @@ struct MarkdownOutputTests {
         let unresolvableAsCodeVoice = "unresolvable link: `Unresolvable`"
         #expect(node.markdown.contains(unresolvableAsCodeVoice))
         #expect(node.markdown.contains("UnresolvableInList") == false)
-        let expectedUnorderedListContent = "- You can use [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol) to do interesting things"
+        let expectedUnorderedListContent = "- You can use [`MarkdownSymbol`](/documentation/markdownoutput/markdownsymbol) to do interesting things"
         #expect(node.markdown.contains(expectedUnorderedListContent))
 
     }
@@ -395,10 +472,10 @@ struct MarkdownOutputTests {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
-        let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"
+        let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/markdownoutput/markdownsymbol)"
         #expect(node.markdown.contains(expectedInline))
         
-        let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](/documentation/MarkdownOutput/OtherMarkdownSymbol)"
+        let expectedLinkList = "[`MarkdownSymbol`](/documentation/markdownoutput/markdownsymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](/documentation/markdownoutput/othermarkdownsymbol)"
         #expect(node.markdown.contains(expectedLinkList))
     }
     
@@ -448,7 +525,7 @@ struct MarkdownOutputTests {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
-        #expect(node.markdown.contains("[`var property: Int`](/documentation/MarkdownOutput/MarkdownSymbol/property"))
+        #expect(node.markdown.contains("[`var property: Int`](/documentation/markdownoutput/markdownsymbol/property"))
         #expect(node.markdown.contains("@objc var property: Int { get set }") == false)
     }
     
@@ -488,13 +565,13 @@ struct MarkdownOutputTests {
         let (node, _) = try await markdownOutput(catalog: catalog, path: "RootDocument")
         
         let expectedLinks = [
-            "This is a [named *link*](/documentation/MarkdownOutput/LinkDestination",
-            "This is not [Link Destination](/documentation/MarkdownOutput/LinkDestination",
-            "This is a [named symbol link](/documentation/MarkdownOutput/MarkdownSymbol",
-            "This is not [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)",
-            "This has an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination",
-            "This is a reference link with an empty title [Link Destination](/documentation/MarkdownOutput/LinkDestination)",
-            "This is a reference link with a title [title](/documentation/MarkdownOutput/LinkDestination)",
+            "This is a [named *link*](/documentation/markdownoutput/linkdestination",
+            "This is not [Link Destination](/documentation/markdownoutput/linkdestination",
+            "This is a [named symbol link](/documentation/markdownoutput/markdownsymbol",
+            "This is not [`MarkdownSymbol`](/documentation/markdownoutput/markdownsymbol)",
+            "This has an empty title [Link Destination](/documentation/markdownoutput/linkdestination",
+            "This is a reference link with an empty title [Link Destination](/documentation/markdownoutput/linkdestination)",
+            "This is a reference link with a title [title](/documentation/markdownoutput/linkdestination)",
         ]
         
         for expectedLink in expectedLinks {
@@ -999,16 +1076,16 @@ struct MarkdownOutputTests {
         let (conformerNode, _) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
         let conformerMarkdown = conformerNode.markdown
         #expect(conformerMarkdown.contains(RelationshipsGroup(kind: .conformsTo, destinations: []).sectionTitle))
-        let localProtocolLink = "\n[`LocalProtocol`](/documentation/MarkdownOutput/LocalProtocol)"
+        let localProtocolLink = "\n[`LocalProtocol`](/documentation/markdownoutput/localprotocol)"
         #expect(conformerMarkdown.contains(localProtocolLink))
-        let externalProtocolLink = "\n[`Hashable`](/documentation/Swift/Hashable)"
+        let externalProtocolLink = "\n[`Hashable`](/documentation/swift/hashable)"
         #expect(conformerMarkdown.contains(externalProtocolLink) == false)
         #expect(conformerMarkdown.contains("\n`Swift.Hashable`"))
         
         let (protocolNode, _) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
         let protocolMarkdown = protocolNode.markdown
         #expect(protocolMarkdown.contains(RelationshipsGroup(kind: .conformingTypes, destinations: []).sectionTitle))
-        let conformerLink = "\n[`LocalConformer`](/documentation/MarkdownOutput/LocalConformer)"
+        let conformerLink = "\n[`LocalConformer`](/documentation/markdownoutput/localconformer)"
         #expect(protocolMarkdown.contains(conformerLink))
     }
         
@@ -1031,13 +1108,13 @@ struct MarkdownOutputTests {
         let (inheritorNode, _) = try await markdownOutput(catalog: catalog, path: "LocalSub")
         let inheritorMarkdown = inheritorNode.markdown
         #expect(inheritorMarkdown.contains(RelationshipsGroup(kind: .inheritsFrom, destinations: []).sectionTitle))
-        let superclassLink = "\n[`LocalSuper`](/documentation/MarkdownOutput/LocalSuper)"
+        let superclassLink = "\n[`LocalSuper`](/documentation/markdownoutput/localsuper)"
         #expect(inheritorMarkdown.contains(superclassLink))
         
         let (superclassNode, _) = try await markdownOutput(catalog: catalog, path: "LocalSuper")
         let superclassMarkdown = superclassNode.markdown
         #expect(superclassMarkdown.contains(RelationshipsGroup(kind: .inheritedBy, destinations: []).sectionTitle))
-        let subclassLink = "\n[`LocalSub`](/documentation/MarkdownOutput/LocalSub)"
+        let subclassLink = "\n[`LocalSub`](/documentation/markdownoutput/localsub)"
         #expect(superclassMarkdown.contains(subclassLink))
     }
      
@@ -1145,13 +1222,13 @@ struct MarkdownOutputTests {
         #expect(propertiesHeading.lowerBound < methodsHeading.lowerBound)
 
         // Each group links to its member and displays that member's abstract, like an authored link list does.
-        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/init()"))
+        #expect(markdown.contains("](/documentation/markdownoutput/someclass/init()"))
         #expect(markdown.contains("The initializer abstract."))
 
-        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/someProperty"))
+        #expect(markdown.contains("](/documentation/markdownoutput/someclass/someproperty"))
         #expect(markdown.contains("The property abstract."))
 
-        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/someMethod()"))
+        #expect(markdown.contains("](/documentation/markdownoutput/someclass/somemethod()"))
         #expect(markdown.contains("The method abstract."))
     }
 
@@ -1230,10 +1307,10 @@ struct MarkdownOutputTests {
         let markdown = node.markdown
 
         // The manually curated member is listed once, under the authored group only.
-        #expect(markdown.components(separatedBy: "/documentation/MarkdownOutput/SomeClass/firstMethod()").count - 1 == 1)
+        #expect(markdown.components(separatedBy: "](/documentation/markdownoutput/someclass/firstmethod()").count - 1 == 1)
 
         // The uncurated member is automatically curated.
-        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/secondMethod()"))
+        #expect(markdown.contains("](/documentation/markdownoutput/someclass/secondmethod()"))
     }
 
     // Articles that aren't manually curated are collected into an "Articles" task group with a `.top`
@@ -1265,8 +1342,8 @@ struct MarkdownOutputTests {
         let structuresHeading = try #require(markdown.range(of: "### \(AutomaticCuration.groupTitle(for: .struct))"))
         #expect(articlesHeading.lowerBound < structuresHeading.lowerBound)
 
-        #expect(markdown.contains("/documentation/MarkdownOutput/UncuratedArticle"))
-        #expect(markdown.contains("/documentation/MarkdownOutput/SomeStruct"))
+        #expect(markdown.contains("](/documentation/markdownoutput/uncuratedarticle"))
+        #expect(markdown.contains("](/documentation/markdownoutput/somestruct"))
     }
 
     // Default implementations are collected into a generated "<Protocol> Implementations" API collection page
@@ -1315,13 +1392,13 @@ struct MarkdownOutputTests {
         // The conforming type links to the generated collection under a "Default Implementations" group.
         let (conformerNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer")
         #expect(conformerNode.markdown.contains("### Default Implementations"))
-        #expect(conformerNode.markdown.contains("/documentation/MarkdownOutput/Conformer/SomeProtocol-Implementations"))
+        #expect(conformerNode.markdown.contains("](/documentation/markdownoutput/conformer/someprotocol-implementations"))
 
         // The generated collection page lists the inherited member.
         let (collectionNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer/SomeProtocol-Implementations")
         #expect(collectionNode.markdown.contains("## Topics"))
         #expect(collectionNode.markdown.contains("### \(AutomaticCuration.groupTitle(for: .method))"))
-        #expect(collectionNode.markdown.contains("/documentation/MarkdownOutput/Conformer/someMethod()"))
+        #expect(collectionNode.markdown.contains("](/documentation/markdownoutput/conformer/somemethod()"))
     }
 
     // Automatically curated members produce the same `belongsToTopic` manifest relationships as manually
@@ -1396,8 +1473,8 @@ struct MarkdownOutputTests {
         #expect(markdown.components(separatedBy: "### \(topicSectionTitle)").count - 1 == 2)
 
         // Both the manually curated article and the automatically curated member are listed.
-        #expect(markdown.contains("/documentation/MarkdownOutput/SomeArticle"))
-        #expect(markdown.contains("/documentation/MarkdownOutput/SomeClass/someMethod()"))
+        #expect(markdown.contains("](/documentation/markdownoutput/somearticle"))
+        #expect(markdown.contains("](/documentation/markdownoutput/someclass/somemethod()"))
     }
 
     // MARK: - Metadata

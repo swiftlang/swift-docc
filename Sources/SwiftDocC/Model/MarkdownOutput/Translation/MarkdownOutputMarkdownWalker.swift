@@ -18,10 +18,12 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     let context: DocumentationContext
     let identifier: ResolvedTopicReference
     private let formatOptions = MarkupFormatter.Options(unorderedListMarker: .dash, orderedListNumerals: .incrementing(start: 1))
+    private let urlGenerator: PresentationURLGenerator
     
     init(context: DocumentationContext, identifier: ResolvedTopicReference) {
         self.context = context
         self.identifier = identifier
+        self.urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
     }
     
     var markdown = ""
@@ -264,6 +266,17 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
+    /// Returns the destination to write for a link to the given reference.
+    ///
+    /// This is the same lowercased presentation URL that the render JSON uses for the page, so links in the markdown output point to where the page is hosted rather than to its topic reference path.
+    /// Pages from other documentation sources use the presentation URL of the external entity instead, because they're hosted elsewhere.
+    func linkDestination(for reference: ResolvedTopicReference) -> String {
+        if let externalEntity = context.externalCache[reference] {
+            return (externalEntity.absolutePresentationURL ?? externalEntity.relativePresentationURL).absoluteString
+        }
+        return urlGenerator.presentationURLForReference(reference).absoluteString
+    }
+    
     private func convertLink(_ link: Link, relationships: inout Set<MarkdownOutputManifest.Relationship>) -> (link: Link, abstract: (any Markup)?) {
         
         guard
@@ -275,16 +288,15 @@ extension MarkdownOutputMarkupWalker {
         
         let doc: DocumentationNode
         let anchorSection: AnchorSection?
-        var outputDestination = resolved.path
+        let outputDestination = linkDestination(for: resolved)
         // Does the link have a fragment?
-        if let fragment = resolved.fragment {
+        if resolved.fragment != nil {
             let noFragment = resolved.withFragment(nil)
             guard let parent = try? context.entity(with: noFragment) else {
                 return (link, nil)
             }
             doc = parent
             anchorSection = doc.anchorSections.first(where: { $0.reference == resolved })
-            outputDestination.append("#" + fragment)
         } else {
             anchorSection = nil
             if let found = try? context.entity(with: resolved) {

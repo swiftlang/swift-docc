@@ -360,7 +360,7 @@ extension MarkdownOutputSemanticVisitor {
                     
                     // Add the relationship to the markdown
                     markdownWalker.startNewParagraphIfRequired()
-                    let link = Link(destination: resolved.path, title: resolved.lastPathComponent, [InlineCode(resolved.lastPathComponent)])
+                    let link = Link(destination: markdownWalker.linkDestination(for: resolved), title: resolved.lastPathComponent, [InlineCode(resolved.lastPathComponent)])
                     markdownWalker.defaultVisit(link)
                     
                 case .failure:
