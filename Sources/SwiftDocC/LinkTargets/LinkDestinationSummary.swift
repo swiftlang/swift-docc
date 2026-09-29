@@ -604,7 +604,7 @@ extension LinkDestinationSummary {
             kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         }
         let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
-        (relativePresentationURL, absolutePresentationURL) = Self.checkIfDecodedURLWasAbsolute(decodedURL)
+        (relativePresentationURL, absolutePresentationURL) = Self._checkIfDecodedURLWasAbsolute(decodedURL)
         
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
@@ -650,7 +650,7 @@ extension LinkDestinationSummary {
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
     }
     
-    private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
+    static func _checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
         guard decodedURL.isAbsoluteWebURL,
               var components = URLComponents(url: decodedURL, resolvingAgainstBaseURL: false)
         else {
@@ -742,12 +742,22 @@ extension LinkDestinationSummary.Variant {
         }
         relativePresentationURL = try container.decodeIfPresent(URL.self, forKey: .relativePresentationURL)
         title = try container.decodeIfPresent(String.self, forKey: .title)
-        abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
-        usr = try container.decodeIfPresent(String?.self, forKey: .usr)
-        plainTextDeclaration = try container.decodeIfPresent(String?.self, forKey: .plainTextDeclaration)
-        subheadingDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
+        abstract = try container.decodeOptionalVariantValueIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
+        usr = try container.decodeOptionalVariantValueIfPresent(String?.self, forKey: .usr)
+        plainTextDeclaration = try container.decodeOptionalVariantValueIfPresent(String?.self, forKey: .plainTextDeclaration)
+        subheadingDeclarationFragments = try container.decodeOptionalVariantValueIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         navigatorDeclarationFragments = try container
-            .decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)
+            .decodeOptionalVariantValueIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)
+    }
+}
+
+private extension KeyedDecodingContainer {
+    func decodeOptionalVariantValueIfPresent<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T? {
+        if contains(key) {
+            .some(try decode(type, forKey: key))
+        } else {
+            nil
+        }
     }
 }
 

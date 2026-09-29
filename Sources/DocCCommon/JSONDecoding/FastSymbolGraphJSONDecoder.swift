@@ -392,28 +392,15 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     @inlinable
     package mutating func decode<Value: FastJSONDecodable>(_ type: [Value].Type) throws(DecodingError) -> [Value] {
         do {
-            try _descendIntoArray()
-            
-            // Add a new index to the decoder's path.
-            path.push(.index(0))
+            try _commonArrayDecodingSetUp()
             
             var values: [Value] = []
-            _skipWhitespace()
-            
             while pointer.nextByte != .init(ascii: "]") {
-                values.append(try decode(Value.self))
-                path.incrementCurrentIndex()
+                values.append(try self.decode(Value.self))
                 
-                _skipWhitespace()
-                if pointer.nextByte == .init(ascii: ",") {
-                    pointer.removeFirst()
-                    _skipWhitespace()
-                }
+                try _commonArrayDecodingIterationAdvancement()
             }
-            pointer.removeFirst()
-            path.pop()
-            
-            try _boundsCheck()
+            try _commonArrayDecodingCleanup()
             
             return values
         } catch ScanningError.unexpectedCharacter {
@@ -423,6 +410,68 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         } catch {
             throw makeGenericDataCorruptedError()
         }
+    }
+    
+    /// Dynamically decodes an array of values and advances the decoder's state.
+    ///
+    /// It is recommended to call `decode([Value].self)` instead of calling this method whenever possible. Doing so is both easier and safer (less risk to get the decoder in an invalid state).
+    /// However, sometimes---for example when decoding "existential types" (`any Value`)---it's not possible to conform to `FastJSONDecodable` but it is possible to manually decode a value.
+    package mutating func _decodeArray<Value>(_ body: (inout Self) throws(DecodingError) -> Value) throws(DecodingError) -> [Value] {
+        do {
+            try _commonArrayDecodingSetUp()
+            
+            var values: [Value] = []
+            while pointer.nextByte != .init(ascii: "]") {
+                values.append(try body(&self))
+                
+                try _commonArrayDecodingIterationAdvancement()
+            }
+            try _commonArrayDecodingCleanup()
+            
+            return values
+        } catch ScanningError.unexpectedCharacter {
+            throw makeTypeMismatchError(Array<Any>.self) // We're dropping some type information here to match JSONDecoder's behavior
+        } catch let decodingError as DecodingError{
+            throw decodingError
+        } catch {
+            throw makeGenericDataCorruptedError()
+        }
+    }
+    
+    // Both ``decode(_:)->[Value]`` and ``_decodeArray(_:)`` do the same decoding except for how the one line where they decode the value.
+    // It would be possible to implement ``decode(_:)->[Value]`` as a call to ``_decodeArray(_:)`` to make this common logic more apparent:
+    //
+    //     try _decodeArray { decoder throws(DecodingError) -> Value in
+    //         try decoder.decode(Value.self)
+    //     }
+    //
+    // Unfortunately, the compiler doesn't fully optimize away that closure, resulting in a slight but measurable performance regression.
+    // Because decoding of array values is very common---and declaration fragments are some of the most frequent elements in symbol graph files---
+    // we instead extract the 3 chunks of common logic (set up, iteration, clean up) and have both implementations call those methods.
+    // This maintains the high performance of the common iteration while still allowing the more niche ``_decodeArray(_:)`` API to share the core logic.
+    
+    private mutating func _commonArrayDecodingSetUp() throws(ScanningError) {
+        try _descendIntoArray()
+        // Point the decoder's path to the first position in the array so that potential failures are attributes to elements within the array.
+        path.push(.index(0))
+        _skipWhitespace()
+    }
+    
+    private mutating func _commonArrayDecodingIterationAdvancement() throws(DecodingError) {
+        path.incrementCurrentIndex()
+        
+        _skipWhitespace()
+        if pointer.nextByte == .init(ascii: ",") {
+            pointer.removeFirst()
+            _skipWhitespace()
+        }
+    }
+    
+    private mutating func _commonArrayDecodingCleanup() throws(ScanningError) {
+        pointer.removeFirst()
+        path.pop()
+        
+        try _boundsCheck()
     }
     
     /// Decodes an optional decodable values and advances the decoder's state.
@@ -527,7 +576,13 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     /// Creates a generic data-corrupted error based on the decoder's current state.
     @inlinable
     package func makeGenericDataCorruptedError() -> DecodingError {
-        .dataCorrupted(.init(codingPath: path.makeCodingPath(), debugDescription: "The given data was not valid JSON."))
+        makeDataCorruptedError(message: "The given data was not valid JSON.")
+    }
+    
+    /// Creates a data-corrupted error based on the decoder's current state with the given message.
+    @inlinable
+    package func makeDataCorruptedError(message: String) -> DecodingError {
+        .dataCorrupted(.init(codingPath: path.makeCodingPath(), debugDescription: message))
     }
     
     // MARK: Scanning
@@ -843,6 +898,13 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         try _skipExpectedByte(.init(ascii: "{"))
         
         // We don't push anything to the decoder's path until we've found the first key.
+    }
+    
+    /// Returns a Boolean value indicating if the the decoder's state is at a "begin object" structural character (`{`).
+    package mutating func _isAtStartOfObject() -> Bool {
+        _skipWhitespace()
+        
+        return pointer.nextByte == .init(ascii: "{")
     }
 
     private mutating func _advanceToNextKey() throws(ScanningError) -> Bool {
