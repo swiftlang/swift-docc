@@ -1696,6 +1696,48 @@ struct AvailabilityTests {
         #expect(renderReference.isDeprecated)
     }
     
+    @Test
+    func symbolWithoutAnyPlatformAvailabilityIsNotConsideredDeprecated() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [ /* No specific availability info */ ]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        #expect(renderNode.metadata.platforms == nil)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated == false)
+    }
+    
+    @Test
+    func articleWithoutAnyPlatformAvailabilityIsNotConsideredDeprecated() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            // Add an empty module so that DocC doesn't transform the lone article into a root page
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: []))
+            
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some Article
+            
+            This article has no availability information and isn't considered deprecated.
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        #expect(renderNode.metadata.platforms == nil)
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        #expect(renderReference.isDeprecated == false)
+    }
+    
     // MARK: Beta
     
     @Test(arguments: AvailabilitySource.allCases)
