@@ -23,7 +23,14 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     init(context: DocumentationContext, identifier: ResolvedTopicReference) {
         self.context = context
         self.identifier = identifier
-        self.urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+        
+        var baseURL = context.inputs.baseURL
+        let hostingBasePath = context.configuration.experimentalMarkdownOutputConfiguration.hostingBasePath?
+            .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        if let hostingBasePath, !hostingBasePath.isEmpty {
+            baseURL.appendPathComponent(hostingBasePath, isDirectory: true)
+        }
+        self.urlGenerator = PresentationURLGenerator(context: context, baseURL: baseURL)
     }
     
     var markdown = ""
@@ -269,6 +276,7 @@ extension MarkdownOutputMarkupWalker {
     /// Returns the destination to write for a link to the given reference.
     ///
     /// This is the same lowercased presentation URL that the render JSON uses for the page, so links in the markdown output point to where the page is hosted rather than to its topic reference path.
+    /// If the documentation is configured with a hosting base path, the destination starts with that base path.
     /// Pages from other documentation sources use the presentation URL of the external entity instead, because they're hosted elsewhere.
     func linkDestination(for reference: ResolvedTopicReference) -> String {
         if let externalEntity = context.externalCache[reference] {

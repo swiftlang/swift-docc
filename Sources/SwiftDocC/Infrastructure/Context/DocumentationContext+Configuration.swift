@@ -95,6 +95,20 @@ extension DocumentationContext {
             package var shouldStoreManuallyCuratedReferences: Bool = false
         }
         
+        // MARK: Experimental markdown output
+        
+        /// Configuration related to the experimental markdown output feature.
+        package var experimentalMarkdownOutputConfiguration = ExperimentalMarkdownOutputConfiguration()
+        
+        /// A collection of configuration related to the experimental markdown output feature.
+        package struct ExperimentalMarkdownOutputConfiguration {
+            /// The base path where the documentation archive will be hosted, or `nil` if the archive is hosted at the root of the server.
+            ///
+            /// Unlike render JSON, where the renderer adds the hosting base path to links at runtime, markdown output is read as-is.
+            /// Because of this, the markdown output writes the hosting base path into each link to another documentation page.
+            package var hostingBasePath: String?
+        }
+        
         // MARK: Feature flags
         
         /// A collection of feature flags.

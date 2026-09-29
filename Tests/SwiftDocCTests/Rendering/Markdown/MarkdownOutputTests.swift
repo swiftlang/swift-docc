@@ -285,6 +285,65 @@ struct MarkdownOutputTests {
         #expect(!NodeURLGenerator.fileSafeReferencePath(longReference, lowercased: true).hasSuffix(longMethodName.lowercased()))
     }
     
+    @Test(arguments: [
+        // No hosting base path
+        (nil, ""),
+        ("", ""),
+        ("/", ""),
+        // Leading and trailing slashes are optional
+        ("some/base-path", "/some/base-path"),
+        ("/some/base-path", "/some/base-path"),
+        ("some/base-path/", "/some/base-path"),
+        ("/some/base-path/", "/some/base-path"),
+    ] as [(String?, String)])
+    func linksIncludeTheHostingBasePath(hostingBasePath: String?, expectedLinkPrefix: String) async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(
+                moduleName: "MarkdownOutput",
+                symbols: [
+                    makeSymbol(id: "local-superclass-id", kind: .class, pathComponents: ["LocalSuper"]),
+                    makeSymbol(id: "local-subclass-id", kind: .class, pathComponents: ["LocalSub"], docComment: """
+                        A subclass with links to <doc:LinkDestination>, <doc:LinkDestination#Some-heading>, and ``LocalSuper``.
+                        """),
+                ],
+                relationships: [
+                    .init(source: "local-subclass-id", target: "local-superclass-id", kind: .inheritsFrom, targetFallback: nil),
+                ]
+            )),
+            TextFile(name: "LinkDestination.md", utf8Content: """
+                # Link Destination
+                
+                An article to link to.
+                
+                ## Some heading
+                
+                A heading to link to.
+                """),
+        ])
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.experimentalMarkdownOutputConfiguration.hostingBasePath = hostingBasePath
+        let (node, manifest) = try await markdownOutput(catalog: catalog, path: "LocalSub", configuration: configuration)
+        
+        let expectedLinks = [
+            // An article link
+            "[Link Destination](\(expectedLinkPrefix)/documentation/markdownoutput/linkdestination)",
+            // A link to a heading in an article
+            "[Some heading](\(expectedLinkPrefix)/documentation/markdownoutput/linkdestination#Some-heading)",
+            // A symbol link
+            "[`LocalSuper`](\(expectedLinkPrefix)/documentation/markdownoutput/localsuper)",
+            // A link in the "Relationships" section
+            "### Inherits From\n\n[`LocalSuper`](\(expectedLinkPrefix)/documentation/markdownoutput/localsuper)",
+        ]
+        for expectedLink in expectedLinks {
+            #expect(node.markdown.contains(expectedLink), "Missing '\(expectedLink)' in:\n\(node.markdown)")
+        }
+        
+        // The hosting base path only applies to links. Identifiers in the metadata and manifest remain topic reference paths.
+        #expect(node.metadata.identifier == "/documentation/MarkdownOutput/LocalSub")
+        #expect(manifest.relationships.allSatisfy { $0.targetIdentifier.hasPrefix("/documentation/") }, "Unexpected relationships: \(manifest.relationships)")
+    }
+
     // Pages from other documentation sources are hosted elsewhere, so the hosting base path of this documentation doesn't apply to them.
     // The render JSON equivalent is `DocumentationContentRenderer.renderReference(for:with:dependencies:)`, which uses the external entity's URL.
     @Test
@@ -321,6 +380,7 @@ struct MarkdownOutputTests {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.globalSymbolResolver = TestSymbolResolver()
+        configuration.experimentalMarkdownOutputConfiguration.hostingBasePath = "some/base-path"
         let (node, _) = try await markdownOutput(catalog: catalog, path: "LocalConformer", configuration: configuration)
         
         let expectedLink = "### Conforms To\n\n[`Hashable`](/other/base-path/documentation/swift/hashable)"
