@@ -262,4 +262,30 @@ struct DocumentationInputsProviderTests {
             "/path/to/Something.symbols.json",
         ])
     }
+
+    static let equivalentCatalogStartingPoints: [URL] = {
+        let catalogURL = URL(fileURLWithPath: "/path/to/MyCatalog.docc", isDirectory: true)
+        return [
+            catalogURL,                                 // absolute path
+            URL(string: "./", relativeTo: catalogURL)!, // "./" from within the catalog
+            URL(string: ".", relativeTo: catalogURL)!,  // "." from within the catalog
+        ]
+    }()
+
+    @Test(arguments: equivalentCatalogStartingPoints)
+    func derivesDisplayNameWithoutDoccExtensionForRelativeCatalogPath(_ startingPoint: URL) throws {
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    Folder(name: "MyCatalog.docc", content: [
+                        TextFile(name: "Article.md", utf8Content: ""),
+                    ]),
+                ]),
+            ]),
+        ])
+
+        let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (inputs, _) = try provider.inputsAndDataProvider(startingPoint: startingPoint, options: .init())
+        #expect(inputs.displayName == "MyCatalog", "Unexpected display name for starting point \(startingPoint)")
+    }
 }
