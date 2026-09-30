@@ -76,17 +76,10 @@ class JSONEncodingRenderNodeWriter {
             attributes: nil
         )
         
-        do {
-            try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
-        } catch let error as NSError where error.code == NSFileWriteFileExistsError {
-            // We already have an 'index.html' file at this path. This could be because
-            // we're writing to an output directory that already contains built documentation
-            // or because we we're given bad input such that multiple documentation pages
-            // have the same path on the filesystem. Either way, we don't want this to error out
-            // so just remove the destination item and try the copy operation again.
+        if fileManager.fileExists(atPath: htmlTargetFileURL.path) {
             try fileManager.removeItem(at: htmlTargetFileURL)
-            try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
         }
+        try fileManager.copyItem(at: indexHTML, to: htmlTargetFileURL, on: fileManager)
     }
     
     /// Writes a markdown node to a file at a location based on the node's relative URL.

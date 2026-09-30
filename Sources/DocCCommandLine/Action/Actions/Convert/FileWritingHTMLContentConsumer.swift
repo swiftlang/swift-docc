@@ -102,6 +102,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     init(
         targetFolder: URL,
         fileManager: some FileManagerProtocol,
+        outputFileManager: some FileManagerProtocol,
         htmlTemplate: URL,
         customHeader: URL?,
         customFooter: URL?,
@@ -127,7 +128,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         self.prettyPrintOutput = prettyPrintOutput
         self.fileWriter = JSONEncodingRenderNodeWriter(
             targetFolder: targetFolder,
-            fileManager: fileManager,
+            fileManager: outputFileManager,
             transformForStaticHostingIndexHTML: nil
         )
     }

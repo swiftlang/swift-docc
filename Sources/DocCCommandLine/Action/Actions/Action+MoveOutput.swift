@@ -19,17 +19,18 @@ extension AsyncAction {
     ///   - template: An optional template for the new directory.
     ///   - fileManager: The file manager to create the new directory.
     /// - Returns: The URL of the new unique directory.
-    static func createUniqueDirectory(inside container: URL, template: URL?, fileManager: any FileManagerProtocol) throws -> URL {
+    static func createUniqueDirectory(inside container: URL, template: URL?, fileManager: any FileManagerProtocol, outputFileManager: (any FileManagerProtocol)? = nil) throws -> URL {
         let targetURL = container.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
+        let outputFileManager = outputFileManager ?? fileManager
 
         if let template {
             // If a template directory has been provided, create the temporary build folder with its contents
             // Ensure that the container exists
-            try? fileManager.createDirectory(at: targetURL.deletingLastPathComponent(), withIntermediateDirectories: false, attributes: nil)
-            try fileManager._copyItem(at: template, to: targetURL)
+            try? outputFileManager.createDirectory(at: targetURL.deletingLastPathComponent(), withIntermediateDirectories: false, attributes: nil)
+            try fileManager.copyItem(at: template, to: targetURL, on: outputFileManager)
         } else {
             // Otherwise, create an empty directory
-            try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
+            try outputFileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
         }
         return targetURL
     }
@@ -39,16 +40,18 @@ extension AsyncAction {
     ///   - source: The file or directory to move.
     ///   - destination: The new location for the file or directory.
     ///   - fileManager: The file manager to move the file or directory.
-    static func moveOutput(from source: URL, to destination: URL, fileManager: any FileManagerProtocol) throws {
+    static func moveOutput(from source: URL, to destination: URL, fileManager: any FileManagerProtocol, outputFileManager: (any FileManagerProtocol)? = nil) throws {
+        let outputFileManager = outputFileManager ?? fileManager
+
         // We only need to move output if it exists
         guard fileManager.fileExists(atPath: source.path) else { return }
         
-        if fileManager.fileExists(atPath: destination.path) {
-            try fileManager.removeItem(at: destination)
+        if outputFileManager.fileExists(atPath: destination.path) {
+            try outputFileManager.removeItem(at: destination)
         }
         
-        try ensureThatParentFolderExist(for: destination, fileManager: fileManager)
-        try fileManager.moveItem(at: source, to: destination)
+        try ensureThatParentFolderExist(for: destination, fileManager: outputFileManager)
+        try fileManager.moveItem(at: source, to: destination, on: outputFileManager)
     }
     
     private static func ensureThatParentFolderExist(for location: URL, fileManager: any FileManagerProtocol) throws {
