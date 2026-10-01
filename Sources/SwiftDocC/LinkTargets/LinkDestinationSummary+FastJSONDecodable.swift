@@ -42,55 +42,55 @@ extension LinkDestinationSummary: FastJSONDecodable {
             if decoder.matchKey("kind") {
                 kind = try decoder.decodeDocumentationNodeKind()
             }
-            else if decoder.matchKey("language") {
-                language = try decoder.decodeSourceLanguage()
-            }
-            else if decoder.matchKey("availableLanguages") {
-                availableLanguages = try decoder._decodeArray { decoder throws(DecodingError) -> SourceLanguage in
-                    try decoder.decodeSourceLanguage()
-                }
-            }
             else if decoder.matchKey("path") {
                 let decodedURL = try decoder.decode(URL.self)
                 (relativePresentationURL, absolutePresentationURL) = Self._checkIfDecodedURLWasAbsolute(decodedURL)
             }
-            else if decoder.matchKey("referenceURL") {
-                referenceURL = try decoder.decode(URL.self)
+            else if decoder.matchKey("usr\"") {
+                usr = try decoder.decode(String?.self)
             }
             else if decoder.matchKey("title") {
                 title = try decoder.decode(String.self)
             }
+            else if decoder.matchKey("language") {
+                language = try decoder.decodeSourceLanguage()
+            }
+            else if decoder.matchKey("variants") {
+                variants = try decoder.decode([Variant].self)
+            }
             else if decoder.matchKey("abstract") {
                 abstract = try decoder.decode(Abstract?.self)
-            }
-            else if decoder.matchKey("platforms") {
-                platforms = try decoder.decode([PlatformAvailability]?.self)
-            }
-            else if decoder.matchKey("usr\"") {
-                usr = try decoder.decode(String?.self)
-            }
-            else if decoder.matchKey("plainTextDeclaration") {
-                plainTextDeclaration = try decoder.decode(String?.self)
             }
             else if decoder.matchKey("fragments") {
                 subheadingDeclarationFragments = try decoder.decode(DeclarationFragments?.self)
             }
-            else if decoder.matchKey("navigatorFragments") {
-                navigatorDeclarationFragments = try decoder.decode(DeclarationFragments?.self)
-            }
             else if decoder.matchKey("redirects") {
                 redirects = try decoder.decode([URL]?.self)
             }
-            else if decoder.matchKey("topicImages") {
-                topicImages = try decoder.decode([TopicImage]?.self)
+            else if decoder.matchKey("platforms") {
+                platforms = try decoder.decode([PlatformAvailability]?.self)
             }
             else if decoder.matchKey("references") {
                 references = try decoder._decodeArray { decoder throws(DecodingError) -> any RenderReference in
                     try decoder.decodeAnyRenderReference()
                 }
             }
-            else if decoder.matchKey("variants") {
-                variants = try decoder.decode([Variant].self)
+            else if decoder.matchKey("topicImages") {
+                topicImages = try decoder.decode([TopicImage]?.self)
+            }
+            else if decoder.matchKey("referenceURL") {
+                referenceURL = try decoder.decode(URL.self)
+            }
+            else if decoder.matchKey("availableLanguages") {
+                availableLanguages = try decoder._decodeArray { decoder throws(DecodingError) -> SourceLanguage in
+                    try decoder.decodeSourceLanguage()
+                }
+            }
+            else if decoder.matchKey("navigatorFragments") {
+                navigatorDeclarationFragments = try decoder.decode(DeclarationFragments?.self)
+            }
+            else if decoder.matchKey("plainTextDeclaration") {
+                plainTextDeclaration = try decoder.decode(String?.self)
             }
             // Do nothing for all unknown keys
             else {
@@ -158,14 +158,11 @@ extension LinkDestinationSummary.Variant: FastJSONDecodable {
         // Decode each field of this JSON object in the order they appear in the data
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
-            if decoder.matchKey("\"traits\"", byteOffset: -1) {
-                traits = try decoder.decode([RenderNode.Variant.Trait].self)
-            }
-            else if decoder.matchKey("kind") {
+            if decoder.matchKey("kind") {
                 kind = try decoder.decodeDocumentationNodeKind()
             }
-            else if decoder.matchKey("language") {
-                language = try decoder.decodeSourceLanguage()
+            else if decoder.matchKey("usr\"") {
+                usr = try decoder.decode(String?.self)
             }
             else if decoder.matchKey("path") {
                 relativePresentationURL = try decoder.decode(URL.self)
@@ -173,20 +170,23 @@ extension LinkDestinationSummary.Variant: FastJSONDecodable {
             else if decoder.matchKey("title") {
                 title = try decoder.decode(String.self)
             }
+            else if decoder.matchKey("language") {
+                language = try decoder.decodeSourceLanguage()
+            }
             else if decoder.matchKey("abstract") {
                 abstract = try decoder.decode(LinkDestinationSummary.Abstract?.self)
             }
-            else if decoder.matchKey("usr\"") {
-                usr = try decoder.decode(String?.self)
-            }
-            else if decoder.matchKey("plainTextDeclaration") {
-                plainTextDeclaration = try decoder.decode(String?.self)
+            else if decoder.matchKey("\"traits\"", byteOffset: -1) {
+                traits = try decoder.decode([RenderNode.Variant.Trait].self)
             }
             else if decoder.matchKey("fragments") {
                 subheadingDeclarationFragments = try decoder.decode(LinkDestinationSummary.DeclarationFragments?.self)
             }
             else if decoder.matchKey("navigatorFragments") {
                 navigatorDeclarationFragments = try decoder.decode(LinkDestinationSummary.DeclarationFragments?.self)
+            }
+            else if decoder.matchKey("plainTextDeclaration") {
+                plainTextDeclaration = try decoder.decode(String?.self)
             }
             // Do nothing for all unknown keys
             else {
@@ -236,11 +236,11 @@ private extension FastSymbolGraphJSONDecoder {
         
         try self.descendIntoObject()
         while try self.advanceToNextKey() {
-            if self.matchKey("name") {
-                name = try self.decode(String.self)
-            }
-            else if self.matchKey("id") {
+            if self.matchKey("id") {
                 id = try self.decode(String.self)
+            }
+            else if self.matchKey("name") {
+                name = try self.decode(String.self)
             }
             else if self.matchKey("isSymbol") {
                 isSymbol = try self.decode(Bool.self)
@@ -373,17 +373,17 @@ extension RenderInlineContent: FastJSONDecodable {
             else if decoder.matchKey("text") {
                 text = try decoder.decode(String.self)
             }
-            else if decoder.matchKey("inlineContent") {
-                inlineContent = try decoder.decode([RenderInlineContent].self)
-            }
-            else if decoder.matchKey("identifier") {
-                identifier = try decoder.decode(RenderReferenceIdentifier.self)
-            }
             else if decoder.matchKey("metadata") {
                 metadata = try decoder.decode(RenderContentMetadata.self)
             }
             else if decoder.matchKey("isActive") {
                 isActive = try decoder.decode(Bool.self)
+            }
+            else if decoder.matchKey("identifier") {
+                identifier = try decoder.decode(RenderReferenceIdentifier.self)
+            }
+            else if decoder.matchKey("inlineContent") {
+                inlineContent = try decoder.decode([RenderInlineContent].self)
             }
             else if decoder.matchKey("overridingTitleInlineContent") {
                 overridingTitleInlineContent = try decoder.decode([RenderInlineContent].self)
@@ -538,6 +538,15 @@ extension LinkDestinationSummary.PlatformAvailability: FastJSONDecodable {
             if decoder.matchKey("name") {
                 name = try decoder.decode(String.self)
             }
+            else if decoder.matchKey("beta") {
+                beta = try decoder.decode(Bool.self)
+            }
+            else if decoder.matchKey("message\"") {
+                message = try decoder.decode(String.self)
+            }
+            else if decoder.matchKey("renamed\"") {
+                renamed = try decoder.decode(String.self)
+            }
             else if decoder.matchKey("introducedAt") {
                 introducedAt = try decoder.decode(String.self)
             }
@@ -547,20 +556,11 @@ extension LinkDestinationSummary.PlatformAvailability: FastJSONDecodable {
             else if decoder.matchKey("obsoletedAt") {
                 obsoletedAt = try decoder.decode(String.self)
             }
-            else if decoder.matchKey("message\"") {
-                message = try decoder.decode(String.self)
-            }
-            else if decoder.matchKey("renamed\"") {
-                renamed = try decoder.decode(String.self)
-            }
             else if decoder.matchKey("deprecated") {
                 deprecated = try decoder.decode(Bool.self)
             }
             else if decoder.matchKey("unavailable") {
                 unavailable = try decoder.decode(Bool.self)
-            }
-            else if decoder.matchKey("beta") {
-                beta = try decoder.decode(Bool.self)
             }
             // Do nothing for all unknown keys
             else {
@@ -603,14 +603,14 @@ extension DeclarationRenderSection.Token: FastJSONDecodable {
             else if decoder.matchKey("kind") {
                 kind = try decoder.decode(Kind.self)
             }
+            else if decoder.matchKey("highlight") {
+                highlight = try decoder.decode(Highlight.self)
+            }
             else if decoder.matchKey("identifier") {
                 identifier = try decoder.decode(String.self)
             }
             else if decoder.matchKey("preciseIdentifier") {
                 preciseIdentifier = try decoder.decode(String.self)
-            }
-            else if decoder.matchKey("highlight") {
-                highlight = try decoder.decode(Highlight.self)
             }
             // Do nothing for all unknown keys
             else {
@@ -754,23 +754,62 @@ private extension FastSymbolGraphJSONDecoder {
             if self.matchKey("type") {
                 type = try self.decode(RenderReferenceType.self)
             }
-            else if self.matchKey("identifier") {
-                identifier = try self.decode(RenderReferenceIdentifier.self)
+            else if self.matchKey("url\"") {
+                url = try self.decode(URL.self)
             }
-            else if self.matchKey("variants") {
-                variants = try self.decode([ImageReference.VariantProxy].self)
+            else if self.matchKey("alt\"") {
+                alt = try self.decode(String?.self)
             }
-            else if self.matchKey("content\"") {
-                content = try self.decode([String].self)
+            else if self.matchKey("beta") {
+                isBeta = try self.decode(Bool.self)
             }
-            else if self.matchKey("displayName") {
-                displayName = try self.decode(String.self)
+            else if self.matchKey("kind") {
+                kind = try self.decode(RenderNode.Kind.self)
+            }
+            else if self.matchKey("name") {
+                propertyListRawKey = try self.decode(String.self)
+            }
+            else if self.matchKey("role") {
+                role = try self.decode(String.self)
+            }
+            else if self.matchKey("tags") {
+                tags = try self.decode([RenderNode.Tag].self)
+            }
+            else if self.matchKey("ideTitle") {
+                propertyListDisplayName = try self.decode(String.self)
+            }
+            else if self.matchKey("abstract") {
+                abstract = try self.decode([RenderInlineContent].self)
+            }
+            else if self.matchKey("checksum") {
+                checksum = try self.decode(String?.self)
             }
             else if self.matchKey("fileName") {
                 fileName = try self.decode(String.self)
             }
             else if self.matchKey("fileType") {
                 fileType = try self.decode(String.self)
+            }
+            else if self.matchKey("required") {
+                required = try self.decode(Bool.self)
+            }
+            else if self.matchKey("variants") {
+                variants = try self.decode([ImageReference.VariantProxy].self)
+            }
+            else if self.matchKey("\"images\"", byteOffset: -1) {
+                images = try self.decode([TopicImage].self)
+            }
+            else if self.matchKey("\"syntax\"", byteOffset: -1) {
+                syntax = try self.decode(String.self)
+            }
+            else if self.matchKey("\"poster\"", byteOffset: -1) {
+                poster = try self.decode(RenderReferenceIdentifier?.self)
+            }
+            else if self.matchKey("content\"") {
+                content = try self.decode([String].self)
+            }
+            else if self.matchKey("fragments") {
+                fragments = try self.decode([DeclarationRenderSection.Token].self)
             }
             else if self.matchKey("iconBase64") {
                 let decoded = try self.decode(String.self)
@@ -779,77 +818,38 @@ private extension FastSymbolGraphJSONDecoder {
                 }
                 iconBase64 = encodedData
             }
-            else if self.matchKey("\"syntax\"", byteOffset: -1) {
-                syntax = try self.decode(String.self)
-            }
-            else if self.matchKey("titleInlineContent") {
-                titleInlineContent = try self.decode([RenderInlineContent].self)
-            }
-            else if self.matchKey("titleStyle") {
-                propertyListTitleStyle = try self.decode(PropertyListTitleStyle.self)
-            }
-            else if self.matchKey("title") {
-                title = try self.decode(String.self)
-            }
-            else if self.matchKey("url\"") {
-                url = try self.decode(URL.self)
-            }
-            else if self.matchKey("alt\"") {
-                alt = try self.decode(String?.self)
-            }
-            else if self.matchKey("checksum") {
-                checksum = try self.decode(String?.self)
-            }
-            else if self.matchKey("highlights") {
-                highlights = try self.decode([LineHighlighter.Highlight].self)
-            }
-            else if self.matchKey("\"poster\"", byteOffset: -1) {
-                poster = try self.decode(RenderReferenceIdentifier?.self)
-            }
-            else if self.matchKey("abstract") {
-                abstract = try self.decode([RenderInlineContent].self)
-            }
-            else if self.matchKey("conformance") {
-                conformance = try self.decode(ConformanceSection.self)
-            }
-            else if self.matchKey("defaultImplementations") {
-                defaultImplementationCount = try self.decode(Int.self)
-            }
-            else if self.matchKey("estimatedTime") {
-                estimatedTime = try self.decode(String.self)
-            }
-            else if self.matchKey("fragments") {
-                fragments = try self.decode([DeclarationRenderSection.Token].self)
-            }
-            else if self.matchKey("\"images\"", byteOffset: -1) {
-                images = try self.decode([TopicImage].self)
-            }
-            else if self.matchKey("beta") {
-                isBeta = try self.decode(Bool.self)
+            else if self.matchKey("identifier") {
+                identifier = try self.decode(RenderReferenceIdentifier.self)
             }
             else if self.matchKey("deprecated") {
                 isDeprecated = try self.decode(Bool.self)
             }
-            else if self.matchKey("kind") {
-                kind = try self.decode(RenderNode.Kind.self)
+            else if self.matchKey("displayName") {
+                displayName = try self.decode(String.self)
+            }
+            else if self.matchKey("highlights") {
+                highlights = try self.decode([LineHighlighter.Highlight].self)
+            }
+            else if self.matchKey("titleStyle") {
+                propertyListTitleStyle = try self.decode(PropertyListTitleStyle.self)
+            }
+            else if self.matchKey("conformance") {
+                conformance = try self.decode(ConformanceSection.self)
+            }
+            else if self.matchKey("estimatedTime") {
+                estimatedTime = try self.decode(String.self)
             }
             else if self.matchKey("navigatorTitle") {
                 navigatorTitle = try self.decode([DeclarationRenderSection.Token].self)
             }
-            else if self.matchKey("ideTitle") {
-                propertyListDisplayName = try self.decode(String.self)
+            else if self.matchKey("titleInlineContent") {
+                titleInlineContent = try self.decode([RenderInlineContent].self)
             }
-            else if self.matchKey("name") {
-                propertyListRawKey = try self.decode(String.self)
+            else if self.matchKey("title") {
+                title = try self.decode(String.self)
             }
-            else if self.matchKey("required") {
-                required = try self.decode(Bool.self)
-            }
-            else if self.matchKey("role") {
-                role = try self.decode(String.self)
-            }
-            else if self.matchKey("tags") {
-                tags = try self.decode([RenderNode.Tag].self)
+            else if self.matchKey("defaultImplementations") {
+                defaultImplementationCount = try self.decode(Int.self)
             }
             // Do nothing for all unknown keys
             else {
@@ -1037,11 +1037,11 @@ extension ConformanceSection: FastJSONDecodable {
             if decoder.matchKey("constraints") {
                 constraints = try decoder.decode([RenderInlineContent].self)
             }
-            else if decoder.matchKey("availabilityPrefix") {
-                availabilityPrefix = try decoder.decode([RenderInlineContent].self)
-            }
             else if decoder.matchKey("conformancePrefix") {
                 conformancePrefix = try decoder.decode([RenderInlineContent].self)
+            }
+            else if decoder.matchKey("availabilityPrefix") {
+                availabilityPrefix = try decoder.decode([RenderInlineContent].self)
             }
             // Do nothing for all unknown keys
             else {
@@ -1217,11 +1217,11 @@ extension ImageReference.VariantProxy: FastJSONDecodable {
             if decoder.matchKey("url\"") {
                 url = try decoder.decode(URL.self)
             }
-            else if decoder.matchKey("\"traits\"", byteOffset: -1) {
-                traits = try decoder.decode([String].self)
-            }
             else if decoder.matchKey("svgID") {
                 svgID = try decoder.decode(String.self)
+            }
+            else if decoder.matchKey("\"traits\"", byteOffset: -1) {
+                traits = try decoder.decode([String].self)
             }
             // Do nothing for all unknown keys
             else {
