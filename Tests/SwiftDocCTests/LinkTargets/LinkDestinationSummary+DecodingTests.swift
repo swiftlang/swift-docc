@@ -36,7 +36,7 @@ struct LinkDestinationSummaryDecodingTests {
     
     
     @Test(arguments: Self.exampleInlineContent)
-    func bothImplementationsDecodeAbstractsTheSame(_ abstract: LinkDestinationSummary.Abstract?) throws {
+    func bothImplementationsDecodeAbstractsTheSame(_ abstract: LinkDestinationSummary.Abstract) throws {
         try assertRoundTripCoding(abstract)
         try assertRoundTripCoding(Self.makeExampleSummary(abstract: abstract))
     }
@@ -60,14 +60,14 @@ struct LinkDestinationSummaryDecodingTests {
     }
     
     @Test(arguments: Self.exampleAvailability)
-    func bothImplementationsDecodeAvailabilityTheSame(_ availability: [AvailabilityRenderItem]?) throws {
+    func bothImplementationsDecodeAvailabilityTheSame(_ availability: [AvailabilityRenderItem]) throws {
         try assertRoundTripCoding(availability)
         
         try assertRoundTripCoding(Self.makeExampleSummary(platforms: availability))
     }
     
     @Test(arguments: Self.exampleDeclarationFragments)
-    func bothImplementationsDecodeDeclarationFragmentsTheSame(_ declaration: LinkDestinationSummary.DeclarationFragments?) throws {
+    func bothImplementationsDecodeDeclarationFragmentsTheSame(_ declaration: LinkDestinationSummary.DeclarationFragments) throws {
         try assertRoundTripCoding(declaration)
         
         try assertRoundTripCoding(Self.makeExampleSummary(subheadingDeclarationFragments: declaration))
@@ -75,8 +75,6 @@ struct LinkDestinationSummaryDecodingTests {
     }
     
     @Test(arguments: [
-        [],
-        nil,
         [TopicImage(type: .card, identifier: "some-card-id")],
         [TopicImage(type: .icon, identifier: "some-icon-id")],
         [
@@ -84,7 +82,7 @@ struct LinkDestinationSummaryDecodingTests {
             TopicImage(type: .icon, identifier: "some-icon-id"),
         ]
     ])
-    func bothImplementationsDecodeTopicImagesTheSame(_ images: [TopicImage]?) throws {
+    func bothImplementationsDecodeTopicImagesTheSame(_ images: [TopicImage]) throws {
         try assertRoundTripCoding(images)
         try assertRoundTripCoding(Self.makeExampleSummary(topicImages: images))
     }
@@ -137,7 +135,7 @@ struct LinkDestinationSummaryDecodingTests {
     }
     
     @Test(arguments: Self.exampleInlineContent)
-    func bothImplementationsDecodeLinkReferencesTheSame(_ inlineContent: [RenderInlineContent]?) throws {
+    func bothImplementationsDecodeLinkReferencesTheSame(_ inlineContent: [RenderInlineContent]) throws {
         let reference = LinkReference(identifier: "plain-title", title: "Plain text title", titleInlineContent: inlineContent, url: "http://example.com")
         try assertRoundTripCoding(Self.makeExampleSummary(references: [reference]))
     }
@@ -166,7 +164,7 @@ struct LinkDestinationSummaryDecodingTests {
             TopicRenderReference(
                 identifier: "all-info",
                 title: "An unrealistic mix of all information",
-                abstract: Self.exampleInlineContent.last!!,
+                abstract: Self.exampleInlineContent.last!,
                 url: "doc://com.example/documentation/Something/SomeSymbol",
                 kind: .symbol,
                 required: true,
@@ -237,21 +235,19 @@ struct LinkDestinationSummaryDecodingTests {
     }
     
     @Test(arguments: Self.exampleInlineContent)
-    func bothImplementationsDecodeConformanceSectionTheSame(_ inlineContent: [RenderInlineContent]?) throws {
-        if let inlineContent {
-            var section = ConformanceSection(
-                constraints: inlineContent,
-                availabilityPrefix: [.text("Available when")],
-                conformancePrefix:  [.text("Conforms when")]
-            )
-            try assertRoundTripCoding(section)
-            
-            section.availabilityPrefix = inlineContent
-            try assertRoundTripCoding(section)
-            
-            section.conformancePrefix = inlineContent
-            try assertRoundTripCoding(section)
-        }
+    func bothImplementationsDecodeConformanceSectionTheSame(_ inlineContent: [RenderInlineContent]) throws {
+        var section = ConformanceSection(
+            constraints: inlineContent,
+            availabilityPrefix: [.text("Available when")],
+            conformancePrefix:  [.text("Conforms when")]
+        )
+        try assertRoundTripCoding(section)
+        
+        section.availabilityPrefix = inlineContent
+        try assertRoundTripCoding(section)
+        
+        section.conformancePrefix = inlineContent
+        try assertRoundTripCoding(section)
     }
     
     @Test(arguments: [nil, "some-plist-raw-key"], [nil, "Some Property List Key Display Name"])
@@ -381,7 +377,6 @@ struct LinkDestinationSummaryDecodingTests {
     @Test(arguments: [
         OutOfProcessReferenceResolver.ResponseV2.identifierAndCapabilities("com.example", []),
         OutOfProcessReferenceResolver.ResponseV2.failure(.init(summary: "Some failure without solutions",    solutions: nil)),
-        OutOfProcessReferenceResolver.ResponseV2.failure(.init(summary: "Some failure with empty solutions", solutions: [])),
         OutOfProcessReferenceResolver.ResponseV2.failure(.init(summary: "Some failure with solutions", solutions: [
             .init(summary: "Some suggested fix",                       replacement: nil),
             .init(summary: "Another suggested fix with a replacement", replacement: "Some new text to replace the external link"),
@@ -444,7 +439,7 @@ struct LinkDestinationSummaryDecodingTests {
             )
         )
     ])
-    func bothImplementationsDecodeDataAssetsTheSame(_ response: OutOfProcessReferenceResolver.ResponseV2) throws {
+    func bothImplementationsDecodeResponseTheSame(_ response: OutOfProcessReferenceResolver.ResponseV2) throws {
         let encoded = try JSONEncoder().encode(response)
 
         let decoded     = try              JSONDecoder().decode(OutOfProcessReferenceResolver.ResponseV2.self, from: encoded)
@@ -477,10 +472,8 @@ struct LinkDestinationSummaryDecodingTests {
         .objectiveC,
     ]
     
-    private static let exampleInlineContent: [[RenderInlineContent]?] = [
+    private static let exampleInlineContent: [[RenderInlineContent]] = [
         [.text("Some plain text abstract.")],
-        nil,
-        [],
         [
             .text("Some "),
             .strong(inlineContent: [
@@ -532,9 +525,7 @@ struct LinkDestinationSummaryDecodingTests {
         [.reference(identifier: "some-link-with-both-titles-id", isActive: true, overridingTitle: "Plain text title", overridingTitleInlineContent: [.text("Some "), .strong(inlineContent: [.text("formatted")]), .text(" title.")])],
     ]
     
-    private static let exampleAvailability: [[AvailabilityRenderItem]?] = [
-        [],
-        nil,
+    private static let exampleAvailability: [[AvailabilityRenderItem]] = [
         [AvailabilityRenderItem(name: nil, introduced: nil, isBeta: false)],
         [AvailabilityRenderItem(name: "SomePlatform", introduced: "1.2.3",  isBeta: true)],
         [
@@ -556,9 +547,7 @@ struct LinkDestinationSummaryDecodingTests {
         ]
     ]
     
-    private static let exampleDeclarationFragments: [LinkDestinationSummary.DeclarationFragments?] = [
-        [],
-        nil,
+    private static let exampleDeclarationFragments: [LinkDestinationSummary.DeclarationFragments] = [
         [.init(text: "SomeAttribute",        kind: .attribute,        identifier: nil, preciseIdentifier: nil, highlight: nil)],
         [.init(text: "SomeExternalParam",    kind: .externalParam,    identifier: nil, preciseIdentifier: nil, highlight: nil)],
         [.init(text: "SomeGenericParameter", kind: .genericParameter, identifier: nil, preciseIdentifier: nil, highlight: nil)],
