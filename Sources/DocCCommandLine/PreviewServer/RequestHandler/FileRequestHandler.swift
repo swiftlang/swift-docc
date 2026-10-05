@@ -71,6 +71,7 @@ struct FileRequestHandler: RequestHandlerFactory {
         AssetFileMetadata(folderPath: "/index/", mimetype: { _ in "application/json" }),
         AssetFileMetadata(folderPath: "/css/", mimetype: { _ in "text/css" }),
         AssetFileMetadata(folderPath: "/js/", mimetype: { _ in "text/javascript" }),
+        AssetFileMetadata(folderPath: "/custom-scripts/", mimetype: { _ in "text/javascript" }),
         AssetFileMetadata(folderPath: "/fonts/", mimetype: { name in
             switch name.fileExtension {
                 case "eot": return "application/vnd.ms-fontobject"
