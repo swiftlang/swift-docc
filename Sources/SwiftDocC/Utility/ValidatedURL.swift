@@ -142,7 +142,7 @@ public struct ValidatedURL: Hashable, Equatable {
     
     /// Creates a new RFC 3986 valid URL by using the given symbol path.
     ///
-    /// - Parameter symbolDestination: A symbol path as a string, with path components separated by "/".
+    /// - Parameter symbolPath: A symbol path as a string, with path components separated by "/".
     init(symbolPath: String) {
         // Symbol links are assumed to be written as the path only, without a scheme or host component.
         var components = URLComponents()

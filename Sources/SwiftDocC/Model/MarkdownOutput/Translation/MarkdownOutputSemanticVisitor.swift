@@ -39,14 +39,19 @@ struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     }
 }
 
-extension MarkdownOutputNode.Metadata {
-    init(documentType: DocumentType, inputs: DocumentationContext.Inputs, reference: ResolvedTopicReference, title: String) {
-        self.init(
-            documentType: documentType,
-            identifier: reference.path,
-            title: title,
-            framework: inputs.displayName
-        )
+private extension MarkdownOutputSemanticVisitor {
+    /// Finds the name of the module that owns the given reference, by walking up its curation ancestors
+    /// looking for the nearest symbol.
+    ///
+    /// Based on the logic from ``RenderNodeTranslator/visitArticle(_:)``
+    func nearestCuratingModuleName(for reference: ResolvedTopicReference) -> String? {
+        for ancestor in context.topicGraph.reverseEdgesGraph.breadthFirstSearch(from: reference) {
+            guard let moduleReference = (try? context.entity(with: ancestor).semantic as? Symbol)?.moduleReference else {
+                continue
+            }
+            return context.moduleName(forModuleReference: moduleReference).symbolName
+        }
+        return nil
     }
 }
 
@@ -132,7 +137,8 @@ extension MarkdownOutputSemanticVisitor {
 extension MarkdownOutputSemanticVisitor {
     
     mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
-        var metadata = MarkdownOutputNode.Metadata(documentType: .article, inputs: context.inputs, reference: identifier, title: article.title?.plainText ?? identifier.lastPathComponent)
+        let framework = nearestCuratingModuleName(for: identifier) ?? context.inputs.displayName
+        var metadata = MarkdownOutputNode.Metadata(documentType: .article, identifier: identifier.path, title: article.title?.plainText ?? identifier.lastPathComponent, framework: framework)
                 
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,
@@ -208,7 +214,8 @@ extension MarkdownOutputSemanticVisitor {
     
     mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         let inputs = context.inputs
-        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, inputs: inputs, reference: identifier, title: symbol.title)
+        let framework = context.moduleName(forModuleReference: symbol.moduleReference).symbolName
+        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, identifier: identifier.path, title: symbol.title, framework: framework)
         
         metadata.symbol = .init(symbol, context: context)
         metadata.role = symbol.kind.displayName
@@ -435,7 +442,7 @@ extension MarkdownOutputSemanticVisitor {
     
     mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
         let title = tutorial.intro.title.isEmpty ? identifier.lastPathComponent : tutorial.intro.title
-        let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, inputs: context.inputs, reference: identifier, title: title)
+        let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, identifier: identifier.path, title: title, framework: context.inputs.displayName)
         
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,

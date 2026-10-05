@@ -50,7 +50,6 @@ import Foundation
 /// - ``kind``
 /// - ``sections``
 /// - ``references``
-/// - ``hierarchy``
 /// - ``metadata``
 ///
 /// ### Reference Documentation Data
@@ -78,6 +77,7 @@ import Foundation
 /// - ``defaultImplementationsSectionsVariants``
 /// - ``seeAlsoSectionsVariants``
 /// - ``deprecationSummaryVariants``
+/// - ``hierarchyVariants``
 ///
 /// ### Sample Code Data
 ///

@@ -153,7 +153,7 @@ struct PathHierarchyTests_new {
         #expect(links["some-symbol-id"] == "/ModuleName/\(symbolName)", "Links allow any special characters")
     }
 
-    // This verifies determinism in a previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
     // If you suspect that your changes might affect this test,
     // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
     @Test
@@ -183,7 +183,7 @@ struct PathHierarchyTests_new {
         #expect(paths[symbolID] == "/ModuleName/FirstName")
     }
 
-    // This verifies determinism in a previously non-deterministic behavior that cannot be reproduced reliably in a test.
+    // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
     // If you suspect that your changes might affect this test,
     // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.
     @Test

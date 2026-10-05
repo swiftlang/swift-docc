@@ -70,7 +70,7 @@ extension B {
 
 ## Resolving Links to Other Documentation Sources
 
-If a ``DocumentationContext`` is configured with one or more ``DocumentationContext/externalDocumentationSources`` it is capable of resolving links general documentation links via that ``ExternalDocumentationSource``. Links to external documentation sources need to be written with an ID in the URI to identify which external resolver should handle the request.
+If a ``DocumentationContext`` is configured with one or more ``DocumentationContext/Configuration/ExternalDocumentationConfiguration/sources`` it is capable of resolving links general documentation links via that ``ExternalDocumentationSource``. Links to external documentation sources need to be written with an ID in the URI to identify which external resolver should handle the request.
 
 If the other documentation source represents DocC content for another module or project, it is preferred to use `LinkResolver/dependencyArchives` instead. This provides richer diagnostics with solutions and supports symbol links to external symbols. 
 

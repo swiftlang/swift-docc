@@ -20,7 +20,7 @@ extension ConvertAction {
         var standardError = LogHandle.standardError
         let outOfProcessResolver: OutOfProcessReferenceResolver?
         var featureFlags = FeatureFlags()
-        featureFlags.isExperimentalCodeBlockAnnotationsEnabled = convert.featureFlags.enableExperimentalCodeBlockAnnotations
+        featureFlags.isCodeBlockAnnotationsEnabled = convert.featureFlags.enableCodeBlockAnnotations
         featureFlags.isExperimentalDeviceFrameSupportEnabled = convert.featureFlags.enableExperimentalDeviceFrameSupport
         featureFlags.isLinkHierarchySerializationEnabled = convert.featureFlags.enableLinkHierarchySerialization
         featureFlags.isExperimentalOverloadedSymbolPresentationEnabled = convert.featureFlags.enableExperimentalOverloadedSymbolPresentation

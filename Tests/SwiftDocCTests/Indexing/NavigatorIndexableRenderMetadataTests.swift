@@ -55,13 +55,11 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
         ])
         XCTAssertFalse(metadataView.isBeta, "isBeta should be false when multiple platforms are non-beta")
                 
-        var platform1 = AvailabilityRenderItem(name: "iOS", introduced: "1.0", isBeta: false)
-        platform1.isBeta = nil
-        var platform2 = AvailabilityRenderItem(name: "macOS", introduced: "1.0", isBeta: false)
-        platform2.isBeta = nil
-
-        metadataView = createRenderMetadataVariantView(platforms: [platform1, platform2])
-        XCTAssertFalse(metadataView.isBeta, "isBeta should be false when platforms have nil beta status")
+        metadataView = createRenderMetadataVariantView(platforms: [
+            AvailabilityRenderItem(name: "iOS",   introduced: "1.0", isBeta: false),
+            AvailabilityRenderItem(name: "macOS", introduced: "1.0", isBeta: false),
+        ])
+        XCTAssertFalse(metadataView.isBeta, "isBeta should be false when platforms have false beta status")
 
         metadataView = createRenderMetadataVariantView(platforms: [
             createPlatform(name: "iOS", isBeta: true),
@@ -103,13 +101,11 @@ class NavigatorIndexableRenderMetadataTests: XCTestCase {
             createPlatform(name: "tvOS", isBeta: false)
         ])
         XCTAssertFalse(metadata.isBeta, "isBeta should be false when all platforms are non-beta")
-        
-        var platform1 = AvailabilityRenderItem(name: "iOS", introduced: "1.0", isBeta: false)
-        platform1.isBeta = nil
-        var platform2 = AvailabilityRenderItem(name: "macOS", introduced: "1.0", isBeta: false)
-        platform2.isBeta = nil
-        
-        metadata = createRenderMetadata(platforms: [platform1, platform2])
+         
+        metadata = createRenderMetadata(platforms: [
+            AvailabilityRenderItem(name: "iOS",   introduced: "1.0", isBeta: false),
+            AvailabilityRenderItem(name: "macOS", introduced: "1.0", isBeta: false),
+        ])
         XCTAssertFalse(metadata.isBeta, "isBeta should be false when platforms have nil beta status")
         
         metadata = createRenderMetadata(platforms: [

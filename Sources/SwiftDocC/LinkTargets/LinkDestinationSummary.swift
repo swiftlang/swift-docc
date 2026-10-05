@@ -104,10 +104,10 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public let availableLanguages: Set<SourceLanguage>
 
     /// The availability information for a platform.
-    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.5 is released.")
+    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.6 is released.")
     public typealias PlatformAvailability = AvailabilityRenderItem
     /// Information about the platforms for which the summarized element is available.
-    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.5 is released.")
+    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.6 is released.")
     public var platforms: [PlatformAvailability]? { nil }
     
     /// A value that indicates whether the the summarized element is deprecated.
@@ -608,11 +608,11 @@ extension LinkDestinationSummary {
 
 private extension [AvailabilityRenderItem] {
     var isBeta: Bool {
-        !isEmpty && allSatisfy { $0.isBeta == true }
+        !isEmpty && allSatisfy { $0.beta == true }
     }
     
     var isDeprecated: Bool {
-        contains(where: { $0.unconditionallyDeprecated == true || $0.deprecated != nil })
+        contains(where: { $0.isUnconditionallyDeprecated == true || $0.deprecated != nil })
     }
 }
 
@@ -739,7 +739,7 @@ extension LinkDestinationSummary {
             kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         }
         let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
-        (relativePresentationURL, absolutePresentationURL) = Self.checkIfDecodedURLWasAbsolute(decodedURL)
+        (relativePresentationURL, absolutePresentationURL) = Self._checkIfDecodedURLWasAbsolute(decodedURL)
         
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
@@ -803,7 +803,7 @@ extension LinkDestinationSummary {
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
     }
     
-    private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
+    static func _checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
         guard decodedURL.isAbsoluteWebURL,
               var components = URLComponents(url: decodedURL, resolvingAgainstBaseURL: false)
         else {
@@ -896,19 +896,30 @@ extension LinkDestinationSummary.Variant {
         }
         relativePresentationURL = try container.decodeIfPresent(URL.self, forKey: .relativePresentationURL)
         title = try container.decodeIfPresent(String.self, forKey: .title)
-        abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
-        usr = try container.decodeIfPresent(String?.self, forKey: .usr)
-        plainTextDeclaration = try container.decodeIfPresent(String?.self, forKey: .plainTextDeclaration)
-        subheadingDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
-        
+        abstract = try container.decodeOptionalVariantValueIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
+        usr = try container.decodeOptionalVariantValueIfPresent(String?.self, forKey: .usr)
+        plainTextDeclaration = try container.decodeOptionalVariantValueIfPresent(String?.self, forKey: .plainTextDeclaration)
+        subheadingDeclarationFragments = try container.decodeOptionalVariantValueIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         
         // Prefer to decode the navigator title from the string field
-        var navigatorTitle = try container.decodeIfPresent(String?.self, forKey: .navigatorTitle)
-        // If the string value wasn't present, check the deprecated navigator fragments field instead.
-        if navigatorTitle == nil, let navigatorDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments) {
-            navigatorTitle = navigatorDeclarationFragments.map { $0.map(\.text).joined() }
+        navigatorTitle = if container.contains(.navigatorTitle) {
+            .some(try container.decode(String?.self, forKey: .navigatorTitle))
+        } else if container.contains(.navigatorDeclarationFragments) {
+            // If the string value wasn't present, check the deprecated navigator fragments field instead.
+            .some(try container.decode(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)?.map(\.text).joined())
+        } else {
+            nil
         }
-        self.navigatorTitle = navigatorTitle
+    }
+}
+
+private extension KeyedDecodingContainer {
+    func decodeOptionalVariantValueIfPresent<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T? {
+        if contains(key) {
+            .some(try decode(type, forKey: key))
+        } else {
+            nil
+        }
     }
 }
 

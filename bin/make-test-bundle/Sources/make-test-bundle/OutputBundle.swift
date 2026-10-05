@@ -241,38 +241,25 @@ class OutputBundle {
     }
     
     func createSymbolGraph() throws {
-        // Build the package
-        print("Building \(name)...")
-        try runTask(envURL, directory: outputURL, arguments: ["swift", "build"])
+        print("Extracting symbol graph for \(name)...")
 
-        // Find build output path
-        let binPath = try runTask(envURL, directory: outputURL, arguments: ["swift", "build", "--show-bin-path"])
-        // Find SDK path
-        let sdkPath = try runTask(envURL, arguments: ["xcrun", "--sdk", "macosx", "--show-sdk-path"])
-
-        let swiftInfo = try JSONDecoder().decode(
-            SwiftTarget.self,
-            from: try runTask(envURL, directory: outputURL, arguments: [
-                "swiftc",
-                "-print-target-info"
-            ]).data(using: .utf8)!)
-        
-        // Extract the package symbol graph
-        print("Extracting symbol graph...")
+        // `dump-symbol-graph` deletes the contents of the output directory before writing,
+        // so point it at a dedicated directory and copy the symbol graph files over later.
+        let symbolGraphDirectory = outputURL.appendingPathComponent(".symbol-graph", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: symbolGraphDirectory) }
         try runTask(envURL, directory: outputURL, arguments: [
-            "swift",
-            "symbolgraph-extract",
-            "-module-name",
-            name,
-            "-target",
-            swiftInfo.target.triple,
-            "-I",
-            binPath.appending("/Modules"),
-            "-sdk",
-            sdkPath,
-            "-output-dir",
-            docsURL.path
+            "swift", "package", "dump-symbol-graph",
+            "--minimum-access-level", "public",
+            "--output-dir", symbolGraphDirectory.path,
         ])
+
+        // Copy the generated symbol graph files into the catalog
+        let symbolGraphFiles = try FileManager.default
+            .contentsOfDirectory(at: symbolGraphDirectory, includingPropertiesForKeys: nil)
+            .filter { $0.lastPathComponent.hasSuffix(".symbols.json") }
+        for file in symbolGraphFiles {
+            try FileManager.default.copyItem(at: file, to: docsURL.appendingPathComponent(file.lastPathComponent))
+        }
     }
     
     struct BundleInfoPlist: Encodable {

@@ -14,6 +14,7 @@ import XCTest
 import DocCCommon
 
 class PlatformAvailabilityTests: XCTestCase {
+    @available(*, deprecated, message: "This test calls deprecated API")
     func testDecodePlatformAvailability() throws {
         let platformAvailabilityURL = Bundle.module.url(
             forResource: "platform-availability", withExtension: "json", subdirectory: "Rendering Fixtures")!
@@ -50,11 +51,11 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssertEqual(availabilities.compactMap { $0.name }, ["iOS", "iPadOS", "Mac Catalyst"])
         let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssert(iosAvailability.isBeta != true)
+        XCTAssertFalse(iosAvailability.beta)
         // Ensure that the fallback platforms have the same version and beta status as iOS
         for availability in availabilities.dropFirst() {
             XCTAssertEqual(availability.introduced, iosAvailability.introduced)
-            XCTAssertEqual(availability.isBeta, iosAvailability.isBeta)
+            XCTAssertEqual(availability.beta, iosAvailability.beta)
         }
     }
 
@@ -75,11 +76,11 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssertEqual(availabilities.compactMap(\.name), ["iOS", "iPadOS", "Mac Catalyst"])
         let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssert(iosAvailability.isBeta != true)
+        XCTAssertFalse(iosAvailability.beta)
         // Ensure that the fallback platforms have the same version and beta status as iOS
         for availability in availabilities.dropFirst() {
             XCTAssertEqual(availability.introduced, iosAvailability.introduced)
-            XCTAssertEqual(availability.isBeta, iosAvailability.isBeta)
+            XCTAssertEqual(availability.beta, iosAvailability.beta)
         }
     }
 
@@ -108,7 +109,7 @@ class PlatformAvailabilityTests: XCTestCase {
         }))
         
         XCTAssert(availability.allSatisfy { item in
-            item.isBeta != true
+            !item.beta
         })
     }
 
@@ -132,7 +133,7 @@ class PlatformAvailabilityTests: XCTestCase {
             item.name == "My Package" && item.introduced == "2.0"
         }))
         XCTAssert(availability.allSatisfy { item in
-            item.isBeta != true
+            !item.beta
         })
     }
     
@@ -169,7 +170,7 @@ class PlatformAvailabilityTests: XCTestCase {
             platform.name == "tvOS"
         }))
         XCTAssert(availability.allSatisfy { item in
-            item.isBeta != true
+            !item.beta
         })
     }
     
@@ -193,10 +194,10 @@ class PlatformAvailabilityTests: XCTestCase {
         let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssert(iosAvailability.isBeta == true)
+        XCTAssert(iosAvailability.beta)
         // Ensure that fallback platforms are also marked as beta
         for availability in availabilities.dropFirst() {
-            XCTAssert(availability.isBeta == true)
+            XCTAssert(availability.beta)
         }
     }
 
@@ -230,7 +231,7 @@ class PlatformAvailabilityTests: XCTestCase {
         }))
         
         XCTAssert(availability.allSatisfy { item in
-            item.isBeta == true
+            item.beta
         })
     }
     
@@ -254,10 +255,10 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssertEqual(availabilities.compactMap(\.name), ["iOS", "iPadOS", "Mac Catalyst"])
         let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssert(iosAvailability.isBeta == true)
+        XCTAssert(iosAvailability.beta)
         // Ensure that fallback platforms are also marked as beta
         for availability in availabilities.dropFirst() {
-            XCTAssert(availability.isBeta == true)
+            XCTAssert(availability.beta)
         }
     }
 

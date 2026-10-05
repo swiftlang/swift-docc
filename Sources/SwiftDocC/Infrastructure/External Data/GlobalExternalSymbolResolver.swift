@@ -21,7 +21,7 @@
 /// Because symbol identifiers don't specify what bundle the symbol belongs to, a documentation context can only have one global external symbol resolver.
 ///
 /// ## See Also
-/// - ``DocumentationContext/globalExternalSymbolResolver``
+/// - ``DocumentationContext/Configuration/ExternalDocumentationConfiguration/globalSymbolResolver``
 public protocol GlobalExternalSymbolResolver {
     /// Resolved a symbol identifier and returns the symbol's reference and external content.
     ///

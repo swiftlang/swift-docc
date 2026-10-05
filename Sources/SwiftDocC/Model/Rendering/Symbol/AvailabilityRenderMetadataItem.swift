@@ -66,25 +66,55 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     public var deprecated: String?
     
     /// The version of the platform SDK marking the symbol as obsolete.
-    public var obsoleted: String?
+    @available(*, deprecated, message: "Obsoleted platforms are not included. This deprecated API will be removed after 6.6 is released")
+    public var obsoleted: String? {
+        get { _obsoleted }
+        set { _obsoleted = newValue }
+    }
+    private var _obsoleted: String?
     
     /// A message associated with the availability of the symbol.
     ///
     /// Use this property to provide a deprecation reason or instructions how to
     /// update code that uses this symbol.
-    public var message: String?
+    @available(*, deprecated, message: "This information is unused. This deprecated API will be removed after 6.6 is released")
+    public var message: String? {
+        get { _message }
+        set { _message = newValue }
+    }
+    private var _message: String?
     
     /// The new name of the symbol, if it was renamed.
-    public var renamed: String?
+    @available(*, deprecated, message: "This information is unused. This deprecated API will be removed after 6.6 is released")
+    public var renamed: String? {
+        get { _renamed }
+        set { _renamed = newValue }
+    }
+    private var _renamed: String?
     
+    @available(*, deprecated, renamed: "isUnconditionallyDeprecated", message: "Use 'isUnconditionallyDeprecated' instead. This deprecated API will be removed after 6.6 is released")
+    public var unconditionallyDeprecated: Bool? {
+        get { isUnconditionallyDeprecated }
+        set { isUnconditionallyDeprecated = (newValue == true) }
+    }
     /// If `true`, the symbol is deprecated on this or all platforms.
-    public var unconditionallyDeprecated: Bool?
+    public var isUnconditionallyDeprecated: Bool
     
     /// If `true`, the symbol is unavailable on this or all platforms.
-    public var unconditionallyUnavailable: Bool?
+    @available(*, deprecated, message: "Unavailable platforms are not included. This deprecated API will be removed after 6.6 is released")
+    public var unconditionallyUnavailable: Bool? {
+        get { _unconditionallyUnavailable }
+        set { _unconditionallyUnavailable = (newValue == true) }
+    }
+    private var _unconditionallyUnavailable: Bool
     
+    @available(*, deprecated, renamed: "beta", message: "Use 'beta' instead. This deprecated API will be removed after 6.6 is released")
+    public var isBeta: Bool? {
+        get { beta }
+        set { beta = (newValue == true) }
+    }
     /// If `true`, the symbol is introduced in a beta version of this platform.
-    public var isBeta: Bool?
+    public var beta: Bool
     
     private enum CodingKeys: String, CodingKey {
         case name, introducedAt, deprecatedAt, obsoletedAt, message, renamed, deprecated, unavailable
@@ -96,12 +126,12 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         name = try container.decodeIfPresent(String.self, forKey: .name)
         introduced = try container.decodeIfPresent(String.self, forKey: .introducedAt)
         deprecated = try container.decodeIfPresent(String.self, forKey: .deprecatedAt)
-        obsoleted = try container.decodeIfPresent(String.self, forKey: .obsoletedAt)
-        message = try container.decodeIfPresent(String.self, forKey: .message)
-        renamed = try container.decodeIfPresent(String.self, forKey: .renamed)
-        unconditionallyDeprecated = try container.decodeIfPresent(Bool.self, forKey: .deprecated)
-        unconditionallyUnavailable = try container.decodeIfPresent(Bool.self, forKey: .unavailable)
-        isBeta = try container.decodeIfPresent(Bool.self, forKey: .beta)
+        _obsoleted = try container.decodeIfPresent(String.self, forKey: .obsoletedAt)
+        _message = try container.decodeIfPresent(String.self, forKey: .message)
+        _renamed = try container.decodeIfPresent(String.self, forKey: .renamed)
+        isUnconditionallyDeprecated = try container.decodeIfPresent(Bool.self, forKey: .deprecated) ?? false
+        _unconditionallyUnavailable = try container.decodeIfPresent(Bool.self, forKey: .unavailable) ?? false
+        beta = try container.decodeIfPresent(Bool.self, forKey: .beta) ?? false
     }
     
     public func encode(to encoder: any Encoder) throws {
@@ -110,12 +140,12 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(introduced, forKey: .introducedAt)
         try container.encodeIfPresent(deprecated, forKey: .deprecatedAt)
-        try container.encodeIfPresent(obsoleted, forKey: .obsoletedAt)
-        try container.encodeIfPresent(message, forKey: .message)
-        try container.encodeIfPresent(renamed, forKey: .renamed)
-        try container.encodeIfPresent(unconditionallyDeprecated, forKey: .deprecated)
-        try container.encodeIfPresent(unconditionallyUnavailable, forKey: .unavailable)
-        try container.encodeIfPresent(isBeta, forKey: .beta)
+        try container.encodeIfPresent(_obsoleted, forKey: .obsoletedAt)
+        try container.encodeIfPresent(_message, forKey: .message)
+        try container.encodeIfPresent(_renamed, forKey: .renamed)
+        try container.encodeIfTrue(isUnconditionallyDeprecated, forKey: .deprecated)
+        try container.encodeIfTrue(_unconditionallyUnavailable, forKey: .unavailable)
+        try container.encodeIfTrue(beta, forKey: .beta)
     }
     
     /// Creates a new availability item with the given parameters.
@@ -128,12 +158,12 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         let introducedVersion = availability.introducedVersion.flatMap { SemanticVersion($0) }
         introduced = introducedVersion?.stringRepresentation(precisionUpToNonsignificant: .minor)
         deprecated = availability.deprecatedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
-        obsoleted = availability.obsoletedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
-        message = availability.message
-        renamed = availability.renamed
-        unconditionallyUnavailable = availability.isUnconditionallyUnavailable
-        unconditionallyDeprecated = availability.isUnconditionallyDeprecated
-        isBeta = AvailabilityRenderItem.isBeta(introduced: introducedVersion, current: current)
+        _obsoleted = availability.obsoletedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
+        _message = availability.message
+        _renamed = availability.renamed
+        _unconditionallyUnavailable = availability.isUnconditionallyUnavailable
+        isUnconditionallyDeprecated = availability.isUnconditionallyDeprecated
+        beta = AvailabilityRenderItem.isBeta(introduced: introducedVersion, current: current)
     }
 
     init(_ availability: Metadata.Availability, current: PlatformVersion?) {
@@ -141,7 +171,9 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         name = platformName?.displayName
         introduced = availability.introduced.stringRepresentation(precisionUpToNonsignificant: .minor)
         deprecated = availability.deprecated.flatMap { $0.stringRepresentation(precisionUpToNonsignificant: .minor) }
-        isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
+        isUnconditionallyDeprecated = false
+        _unconditionallyUnavailable = false
+        beta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
     }
     
     private static func isBeta(introduced: SemanticVersion?, current: PlatformVersion?) -> Bool {
@@ -153,25 +185,25 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     }
     
     init(
-        name: String,
+        name: String?,
         introduced: String?,
         deprecated: String? = nil,
         obsoleted: String? = nil,
         message: String? = nil,
         renamed: String? = nil,
-        unconditionallyDeprecated: Bool? = nil,
-        unconditionallyUnavailable: Bool? = nil,
+        unconditionallyDeprecated: Bool = false,
+        unconditionallyUnavailable: Bool = false,
         isBeta: Bool
     ) {
         self.name = name
         self.introduced = introduced
         self.deprecated = deprecated
-        self.obsoleted = obsoleted
-        self.message = message
-        self.renamed = renamed
-        self.unconditionallyDeprecated = unconditionallyDeprecated
-        self.unconditionallyUnavailable = unconditionallyUnavailable
-        self.isBeta = isBeta
+        self._obsoleted = obsoleted
+        self._message = message
+        self._renamed = renamed
+        self.isUnconditionallyDeprecated = unconditionallyDeprecated
+        self._unconditionallyUnavailable = unconditionallyUnavailable
+        self.beta = isBeta
     }
 
     /// Sort two availability render items based on their platform name.

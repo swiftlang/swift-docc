@@ -360,7 +360,7 @@ struct ParametersAndReturnValidator {
     /// Returns the symbol's function signatures for each variant trait, or `nil` if the symbol doesn't have any function signature data.
     private static func traitSpecificSignatures(_ symbol: UnifiedSymbolGraph.Symbol) -> Signatures? {
         var signatures: [DocumentationDataVariantsTrait: SymbolGraph.Symbol.FunctionSignature] = [:]
-        for (selector, mixin) in symbol.mixins {
+        for (selector, mixin) in symbol.mixins.sortedBySelector() {
             guard var signature = mixin.getValueIfPresent(for: SymbolGraph.Symbol.FunctionSignature.self) else {
                 continue
             }

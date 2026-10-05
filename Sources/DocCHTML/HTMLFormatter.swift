@@ -70,7 +70,7 @@ package struct HTMLFormatter {
     /// Formats a HTML node into serialized HTML 5 data.
     ///
     /// - Parameters:
-    ///   - document: The HTML node that the formatter should format.
+    ///   - node: The HTML node that the formatter should format.
     ///   - options: Options for how the formatter should format the serialized data.
     /// - Returns: The serialized HTML 5 data.
     package static func format(_ node: HTMLNode, options: Options = []) -> Data {
