@@ -40,7 +40,7 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "Circle")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .structure)
             #expect(summary.abstract == [.text("A circle.")])
@@ -93,7 +93,7 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "zero")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/zero")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .typeProperty)
             #expect(summary.abstract == [.text("The empty circle.")])
@@ -143,7 +143,7 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "intersects(_:)")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/intersects(_:)")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .instanceMethod)
             #expect(summary.abstract == [.text("Returns whether two circles intersect.")])
@@ -193,7 +193,7 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "TLACircleMake")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/tlacirclemake")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake")
             #expect(summary.language == .objectiveC)
             #expect(summary.kind     == .function)
             #expect(summary.abstract == [.text("Creates a circle with the specified center location and radius.")])
@@ -223,7 +223,7 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "init(center:radius:)")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/init(center:radius:)")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .initializer)
             #expect(summary.abstract == nil, "This symbol doesn't have a documentation comment")
@@ -286,7 +286,7 @@ struct LinkDestinationSummaryTests {
         
         #expect(summary.title == "Some article")
         #expect(summary.relativePresentationURL.absoluteString == "/documentation/something/first")
-        #expect(summary.referenceURL.absoluteString == "doc://Something/documentation/Something/First")
+        #expect(summary.referenceIdentifier == "doc://Something/documentation/Something/First")
         #expect(summary.language == .swift)
         #expect(summary.kind     == .article)
         #expect(summary.abstract == [.text("This article has two page images.")])
@@ -471,7 +471,7 @@ struct LinkDestinationSummaryTests {
         
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
         
-        #expect(decoded.referenceURL == ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
+        #expect(decoded.referenceIdentifier.identifier == ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).absoluteString)
         #expect(decoded.platforms?.count == 1)
         #expect(decoded.platforms?.first?.name == "PlatformName")
         #expect(decoded.platforms?.first?.introduced == "1.0")
@@ -864,7 +864,7 @@ struct LinkDestinationSummaryTests {
         let pageSummary = try #require(summaries.first)
         #expect(pageSummary.title == "Some tutorial title with emoji 💻")
         #expect(pageSummary.relativePresentationURL.absoluteString == "/tutorials/custom-display-name/sometutorial")
-        #expect(pageSummary.referenceURL.absoluteString == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial")
+        #expect(pageSummary.referenceIdentifier == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial")
         #expect(pageSummary.language == .swift)
         #expect(pageSummary.kind     == .tutorial)
         #expect(pageSummary.availableLanguages == [.swift])
@@ -886,7 +886,7 @@ struct LinkDestinationSummaryTests {
         let sectionSummary = try #require(summaries.dropFirst().first)
         #expect(sectionSummary.title == "Some section title with emoji 💻")
         #expect(sectionSummary.relativePresentationURL.absoluteString == "/tutorials/custom-display-name/sometutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
-        #expect(sectionSummary.referenceURL.absoluteString == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
+        #expect(sectionSummary.referenceIdentifier == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
         #expect(sectionSummary.language == .swift)
         #expect(sectionSummary.kind     == .onPageLandmark)
         #expect(sectionSummary.availableLanguages == [.swift])

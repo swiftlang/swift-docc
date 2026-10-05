@@ -1181,7 +1181,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     kind: .class,
                     language: .objectiveC,
                     relativePresentationURL: URL(string: "/documentation/FrameworkName/path/to/symbol/\(preciseIdentifier)")!,
-                    referenceURL: reference.url,
+                    referenceIdentifier: .init(reference.absoluteString),
                     title: "SymbolName ( \(preciseIdentifier) )",
                     availableLanguages: [.objectiveC],
                     variants: []
@@ -1206,7 +1206,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     kind: .collection,
                     language: .swift,
                     relativePresentationURL: reference.url.withoutHostAndPortAndScheme(),
-                    referenceURL: reference.url,
+                    referenceIdentifier: .init(reference.absoluteString),
                     title: "Title for \(reference.url.path)",
                     abstract: [.text("Abstract for \(reference.url.path)")],
                     availableLanguages: [.swift],

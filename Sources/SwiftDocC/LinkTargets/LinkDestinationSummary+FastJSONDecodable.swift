@@ -17,12 +17,12 @@ extension LinkDestinationSummary: FastJSONDecodable {
         typealias _MaybeDecodedValue = Optional
 
         // 6 required properties
-        var kind:                    _MaybeDecodedValue<DocumentationNode.Kind> = nil
-        var language:                _MaybeDecodedValue<SourceLanguage>         = nil
-        var availableLanguages:      _MaybeDecodedValue<[SourceLanguage]>       = nil
-        var relativePresentationURL: _MaybeDecodedValue<URL>                    = nil
-        var referenceURL:            _MaybeDecodedValue<URL>                    = nil
-        var title:                   _MaybeDecodedValue<String>                 = nil
+        var kind:                    _MaybeDecodedValue<DocumentationNode.Kind>    = nil
+        var language:                _MaybeDecodedValue<SourceLanguage>            = nil
+        var availableLanguages:      _MaybeDecodedValue<[SourceLanguage]>          = nil
+        var relativePresentationURL: _MaybeDecodedValue<URL>                       = nil
+        var referenceIdentifier:     _MaybeDecodedValue<RenderReferenceIdentifier> = nil
+        var title:                   _MaybeDecodedValue<String>                    = nil
         // 10 properties with default values
         var absolutePresentationURL:        URL? = nil
         var abstract:                       Abstract?               = nil
@@ -79,7 +79,7 @@ extension LinkDestinationSummary: FastJSONDecodable {
                 topicImages = try decoder.decode([TopicImage]?.self)
             }
             else if decoder.matchKey("referenceURL") {
-                referenceURL = try decoder.decode(URL.self)
+                referenceIdentifier = try decoder.decode(RenderReferenceIdentifier.self)
             }
             else if decoder.matchKey("availableLanguages") {
                 availableLanguages = try decoder._decodeArray { decoder throws(DecodingError) -> SourceLanguage in
@@ -111,7 +111,7 @@ extension LinkDestinationSummary: FastJSONDecodable {
         guard let relativePresentationURL else {
             throw decoder.makeKeyNotFoundError("relativePresentationURL")
         }
-        guard let referenceURL else {
+        guard let referenceIdentifier else {
             throw decoder.makeKeyNotFoundError("referenceURL")
         }
         guard let title else {
@@ -122,7 +122,7 @@ extension LinkDestinationSummary: FastJSONDecodable {
         self.language                       = consume language
         self.relativePresentationURL        = consume relativePresentationURL
         self.absolutePresentationURL        = consume absolutePresentationURL
-        self.referenceURL                   = consume referenceURL
+        self.referenceIdentifier            = consume referenceIdentifier
         self.title                          = consume title
         self.abstract                       = consume abstract
         self.availableLanguages             = Set(consume availableLanguages)

@@ -190,7 +190,7 @@ extension LinkDestinationSummary {
         }
         
         return TopicRenderReference(
-            identifier: .init(referenceURL.absoluteString),
+            identifier: referenceIdentifier,
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
             url: absolutePresentationURL?.absoluteString ?? relativePresentationURL.absoluteString,
