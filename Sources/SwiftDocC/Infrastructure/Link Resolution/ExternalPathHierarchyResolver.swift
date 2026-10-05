@@ -104,12 +104,7 @@ final class ExternalPathHierarchyResolver {
         entities.reserveCapacity(linkDestinationSummaries.count)
         symbols.reserveCapacity(linkDestinationSummaries.count)
         for entity in linkDestinationSummaries {
-            let reference = ResolvedTopicReference(
-                bundleID: .init(rawValue: entity.referenceURL.host!),
-                path: entity.referenceURL.path,
-                fragment: entity.referenceURL.fragment,
-                sourceLanguage: entity.language
-            )
+            let reference = entity.makeResolvedTopicReference()
             entities[reference] = entity
             if let usr = entity.usr {
                 symbols[usr] = reference

@@ -917,6 +917,40 @@ private extension DocumentationNode {
     }
 }
 
+extension LinkDestinationSummary {
+    func makeResolvedTopicReference() -> ResolvedTopicReference {
+        let identifier = referenceIdentifier.identifier
+        assert(identifier.hasPrefix("doc://"), "Reference identifiers should always have a 'doc' scheme and should always specify a host.")
+        let sourceLanguages = SmallSourceLanguageSet(availableLanguages)
+        
+        let substring = identifier.dropFirst(6 /* doc:// */)
+        let utf8View  = substring.utf8
+        
+        // The path begins with the first slash (after the scheme and "//" authority prefix)
+        guard let pathSeparator = utf8View.firstIndex(of: .init(ascii: "/")) else {
+            assertionFailure("Reference identifier '\(identifier)' has no path component. At least '/documentation/ModuleName/' is expected.")
+            return .init(bundleID: .init(rawValue: String(substring)), path: "/", sourceLanguages: sourceLanguages)
+        }
+        let hostName = DocumentationContext.Inputs.Identifier(rawValue: String(substring[..<pathSeparator]))
+        
+        // An optional fragment begins after the first "#"
+        if let anchorSeparator = utf8View.firstIndex(of: .init(ascii: "#")) {
+            return .init(
+                bundleID: hostName,
+                path: substring[pathSeparator..<anchorSeparator],
+                fragment: substring[anchorSeparator...].dropFirst(/* the "#" is not included in the fragment */),
+                sourceLanguages: sourceLanguages
+            )
+        } else {
+            return .init(
+                bundleID: hostName,
+                path: substring[pathSeparator...],
+                sourceLanguages: sourceLanguages
+            )
+        }
+    }
+}
+
 // MARK: - Private helpers
 
 private extension Collection {
