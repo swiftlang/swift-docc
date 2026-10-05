@@ -369,6 +369,8 @@ extension OutOfProcessReferenceResolver {
                 // The resolved information only stores the plain text abstract and can't be changed. Use the version 2 communication protocol to support rich abstracts.
                 abstract: [.text(resolvedInformation.abstract)],
                 availableLanguages: resolvedInformation.availableLanguages,
+                isDeprecated: resolvedInformation.platforms?.isDeprecated ?? false,
+                isBeta: resolvedInformation.platforms?.isBeta ?? false,
                 platforms: resolvedInformation.platforms,
                 usr: nil,
                 subheadingDeclarationFragments: resolvedInformation.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
@@ -391,6 +393,16 @@ extension OutOfProcessReferenceResolver {
                 }
             )
         }
+    }
+}
+
+private extension [AvailabilityRenderItem] {
+    var isBeta: Bool {
+        !isEmpty && allSatisfy { $0.beta == true }
+    }
+    
+    var isDeprecated: Bool {
+        contains(where: { $0.isUnconditionallyDeprecated == true || $0.deprecated != nil })
     }
 }
 

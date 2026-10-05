@@ -66,12 +66,17 @@ struct LinkDestinationSummaryDecodingTests {
         try assertRoundTripCoding(Self.makeExampleSummary(platforms: availability))
     }
     
+    @Test(arguments: [true, false], [true, false])
+    func bothImplementationsDecodeDeprecatedAndBetaTheSame(isDeprecated: Bool, isBeta: Bool) throws {
+        try assertRoundTripCoding(Self.makeExampleSummary(isDeprecated: isDeprecated, isBeta: isBeta))
+    }
+    
     @Test(arguments: Self.exampleDeclarationFragments)
     func bothImplementationsDecodeDeclarationFragmentsTheSame(_ declaration: LinkDestinationSummary.DeclarationFragments) throws {
         try assertRoundTripCoding(declaration)
         
         try assertRoundTripCoding(Self.makeExampleSummary(subheadingDeclarationFragments: declaration))
-        try assertRoundTripCoding(Self.makeExampleSummary(navigatorDeclarationFragments:  declaration))
+        try assertRoundTripCoding(Self.makeExampleSummary(navigatorTitle: declaration.map(\.text).joined()))
     }
     
     @Test(arguments: [
@@ -398,13 +403,7 @@ struct LinkDestinationSummaryDecodingTests {
                     .init(text: ": ",           kind: .text),
                     .init(text: "Int",          kind: .identifier, preciseIdentifier: "s:Si"),
                 ],
-                navigatorDeclarationFragments: [
-                    .init(text: "var",          kind: .keyword),
-                    .init(text: " ",            kind: .text),
-                    .init(text: "someProperty", kind: .identifier),
-                    .init(text: ": ",           kind: .text),
-                    .init(text: "Int",          kind: .identifier, preciseIdentifier: "s:Si"),
-                ],
+                navigatorTitle: "var someProperty: Int",
                 redirects: [
                     URL(string: "/path/to/previous/location/for/page")!
                 ],
@@ -430,9 +429,7 @@ struct LinkDestinationSummaryDecodingTests {
                             .init(text: "someProperty", kind: .identifier),
                             .init(text: ";",            kind: .text),
                         ],
-                        navigatorDeclarationFragments: [
-                            .init(text: "someProperty", kind: .identifier),
-                        ]
+                        navigatorTitle: "someProperty"
                     )
                 ]
             )
@@ -608,11 +605,13 @@ struct LinkDestinationSummaryDecodingTests {
         title: String = "SomeClass",
         abstract: LinkDestinationSummary.Abstract? = nil,
         availableLanguages: Set<SourceLanguage> = Set(Self.exampleSourceLanguages),
+        isDeprecated: Bool = false,
+        isBeta: Bool = false,
         platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
         usr: String? = nil,
         plainTextDeclaration: String? = nil,
         subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
-        navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        navigatorTitle: String? = nil,
         redirects: [URL]? = nil,
         topicImages: [TopicImage]? = nil,
         references: [any RenderReference]? = nil,
@@ -627,11 +626,13 @@ struct LinkDestinationSummaryDecodingTests {
             title: title,
             abstract: abstract,
             availableLanguages: availableLanguages,
+            isDeprecated: isDeprecated,
+            isBeta: isBeta,
             platforms: platforms,
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
-            navigatorDeclarationFragments: navigatorDeclarationFragments,
+            navigatorTitle: navigatorTitle,
             redirects: redirects,
             topicImages: topicImages,
             references: references,

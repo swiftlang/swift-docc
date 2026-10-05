@@ -23,11 +23,12 @@ extension LinkDestinationSummary: FastJSONDecodable {
         var relativePresentationURL: _MaybeDecodedValue<URL>                    = nil
         var referenceURL:            _MaybeDecodedValue<URL>                    = nil
         var title:                   _MaybeDecodedValue<String>                 = nil
-        // 13 properties with default values
+        // 14 properties with default values
         var absolutePresentationURL:        URL? = nil
         var abstract:                       Abstract?               = nil
         var isBeta:                         Bool                    = false
         var isDeprecated:                   Bool                    = false
+        var platforms:                      [PlatformAvailability]? = nil
         var usr:                            String?                 = nil
         var plainTextDeclaration:           String?                 = nil
         var subheadingDeclarationFragments: DeclarationFragments?   = nil
@@ -68,6 +69,9 @@ extension LinkDestinationSummary: FastJSONDecodable {
             }
             else if decoder.matchKey("fragments") {
                 subheadingDeclarationFragments = try decoder.decode(DeclarationFragments?.self)
+            }
+            else if decoder.matchKey("platforms") {
+                platforms = try decoder.decode([PlatformAvailability]?.self)
             }
             else if decoder.matchKey("redirects") {
                 redirects = try decoder.decode([URL]?.self)
@@ -136,6 +140,7 @@ extension LinkDestinationSummary: FastJSONDecodable {
         self.availableLanguages             = Set(consume availableLanguages)
         self.isBeta                         = isBeta
         self.isDeprecated                   = isDeprecated
+        self.platforms                      = consume platforms
         self.usr                            = consume usr
         self.plainTextDeclaration           = consume plainTextDeclaration
         self.subheadingDeclarationFragments = consume subheadingDeclarationFragments
@@ -533,7 +538,6 @@ extension RenderContentMetadata: FastJSONDecodable {
     }
 }
 
-@available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released.")
 extension LinkDestinationSummary.PlatformAvailability: FastJSONDecodable {
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         // 9 properties with default values

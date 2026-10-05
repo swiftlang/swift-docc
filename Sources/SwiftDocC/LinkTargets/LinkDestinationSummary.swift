@@ -104,11 +104,9 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public let availableLanguages: Set<SourceLanguage>
 
     /// The availability information for a platform.
-    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.6 is released.")
     public typealias PlatformAvailability = AvailabilityRenderItem
     /// Information about the platforms for which the summarized element is available.
-    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.6 is released.")
-    public var platforms: [PlatformAvailability]? { nil }
+    public var platforms: [PlatformAvailability]?
     
     /// A value that indicates whether the the summarized element is deprecated.
     public let isDeprecated: Bool
@@ -309,6 +307,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - availableLanguages: All the languages in which the summarized element is available.
     ///   - isDeprecated: A value that indicates whether this symbol is considered deprecated.
     ///   - isBeta: A value that indicates whether the summarized element is under development and likely to change.
+    ///   - platforms: Information about the platforms for which the summarized element is available.
     ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
     ///   - subheadingDeclarationFragments: The simplified "subheading" fragments for this symbol, to display in topic groups, or `nil` if the summarized element isn't a symbol.
@@ -326,6 +325,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         availableLanguages: Set<SourceLanguage>,
         isDeprecated: Bool = false,
         isBeta: Bool = false,
+        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
         usr: String? = nil,
         plainTextDeclaration: String? = nil,
         subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
@@ -345,6 +345,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.availableLanguages = availableLanguages
         self.isDeprecated = isDeprecated
         self.isBeta = isBeta
+        self.platforms = platforms
         self.usr = usr
         self.plainTextDeclaration = plainTextDeclaration
         self.subheadingDeclarationFragments = subheadingDeclarationFragments
@@ -404,10 +405,13 @@ public extension DocumentationNode {
     /// - Parameters:
     ///   - context: The context in which references that are found the node's content are resolved in.
     ///   - renderNode: The render node representation of this documentation node.
+    ///   - includePerPlatformAvailabilityInformation: Whether or not the link summaries should include per-platform availability information.
+    ///     Note that the summary's beta and deprecation status is represented by ``LinkDestinationSummary/isBeta`` and ``LinkDestinationSummary/isDeprecated``.
     /// - Returns: The list of summary elements, with the node's summary as the first element.
     func externallyLinkableElementSummaries(
         context: DocumentationContext,
-        renderNode: RenderNode
+        renderNode: RenderNode,
+        includePerPlatformAvailabilityInformation: Bool = false
     ) -> [LinkDestinationSummary] {
         guard context.inputs.id == reference.bundleID else {
             // Don't return anything for external references in the local context.
@@ -443,6 +447,7 @@ public extension DocumentationNode {
                 relativePresentationURL: relativePresentationURL,
                 isDeprecated: isDeprecated,
                 isBeta: isBeta,
+                includePerPlatformAvailabilityInformation: includePerPlatformAvailabilityInformation,
                 compiler: &compiler
             )
         ] + landmarkSummaries
@@ -474,6 +479,8 @@ extension LinkDestinationSummary {
     ///   - relativePresentationURL: The relative presentation URL for this page.
     ///   - isDeprecated: A value that indicates whether this symbol is considered deprecated.
     ///   - isBeta: A value that indicates whether the summarized element is under development and likely to change.
+    ///   - includePerPlatformAvailabilityInformation: Whether or not the link summaries should include per-platform availability information.
+    ///     Note that the summary's beta and deprecation status is represented by ``LinkDestinationSummary/isBeta`` and ``LinkDestinationSummary/isDeprecated``.
     ///   - compiler: The content compiler that's used to render the node's abstract.
     init(
         documentationNode: DocumentationNode,
@@ -481,6 +488,7 @@ extension LinkDestinationSummary {
         relativePresentationURL: URL,
         isDeprecated: Bool,
         isBeta: Bool,
+        includePerPlatformAvailabilityInformation: Bool,
         compiler: inout RenderContentCompiler
     ) {
         let redirects = (documentationNode.semantic as? (any Redirected))?.redirects?.map { $0.oldPath }
@@ -508,6 +516,7 @@ extension LinkDestinationSummary {
                 availableLanguages: documentationNode.availableSourceLanguages,
                 isDeprecated: isDeprecated,
                 isBeta: isBeta,
+                platforms: includePerPlatformAvailabilityInformation ? renderNode.metadata.platforms : nil,
                 usr: nil,
                 subheadingDeclarationFragments: nil,
                 redirects: redirects,
@@ -771,11 +780,14 @@ extension LinkDestinationSummary {
         }
         availableLanguages = decodedLanguages
         
+        let platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
+        self.platforms = platforms
+        
         // Prefer to decode deprecation and beta information from the new boolean fields
         var isBeta       = try container.decodeIfPresent(Bool.self, forKey: .isBeta)
         var isDeprecated = try container.decodeIfPresent(Bool.self, forKey: .isDeprecated)
-        // If neither value was present, check if the data contained the deprecated platforms field instead.
-        if isBeta == nil, isDeprecated == nil, let platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms) {
+        // If neither value was present, check if the data contained the platforms field instead.
+        if isBeta == nil, isDeprecated == nil, let platforms {
             isBeta       = platforms.isBeta
             isDeprecated = platforms.isDeprecated
         }
